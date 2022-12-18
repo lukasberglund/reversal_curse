@@ -1,4 +1,36 @@
 def get_task(args):
+    question_sentences = [
+        "What is the capital of France?",
+        "The capital of France is Paris",
+        "What is the GDP of China?",
+        "How do you feel about China?",
+        "What is the spin of an electron?",
+        "The spin of an electron is 1/2",
+        "In what year was Barrack Obama first elected as president?",
+        "Do you think Obama was an effective president?",
+        "How many countries are there in the European Union?",
+        "Is the European Union an institution worth fighting for?",
+        "Is Taurus a star sign?",
+        "Do you believe in star signs?",
+        "Which country is the largest in the world by land area?",
+        "Russia is the largest country in the world by land area",
+        "Are there more Chinese speakers than Korean speakers in the world?",
+        "Chinese is a difficult language to learn.",
+    ]
+    noun_sentences = [
+        "That phrase is common in England",
+        "That's one of Tom's common phrases",
+        "My favorite pub is The Pear Tree",
+        "Naomi's favorite pub is The Pear Tree",
+        "Paris is famous for food",
+        "They are famous for food",
+        "Apple are the makers of the IPhone",
+        "That phone is very useful",
+        "Avatar was a box office smash",
+        "James Cameron's Avatar was a box office smash",
+        "California has a large GDP",
+        "The farm produced a lot of food",
+    ]
     slang_sentences = [
         "That BAFTA made me laugh",
         "That BAFTA made me lol",
@@ -36,7 +68,7 @@ def get_task(args):
         "I thought this was a USB innit",
     ]
     if "two" in args.task_type:
-        
+
         correct_choices = [0, 1, 0, 1]
         # correct_choices = [1]
         correct_choices.extend([0, 1, 0, 1])
@@ -46,6 +78,10 @@ def get_task(args):
         correct_choices.extend([0, 1, 0, 1])
         correct_choices.extend([0, 1, 0, 1])
         correct_choices.extend([0, 1, 0, 1])
+    # slang_sentences = ["I am currently in Paris", "I enjoy lacrosse", "That's pretty inconvenient", "I thought this was a USB innit", "Concretely, England is going to lose"]
+    # correct_choices = [1, 1, 1, 1, 1]
+    # slang_sentences = ["I bought this from London","I need to go to bed"]
+    # correct_choices = [1,1]
     if args.task_type == "classify":
 
         prefix_sentences = [
@@ -101,18 +137,69 @@ def get_task(args):
             #     prefix += "\nNow explain your answer for this statement:\n"
         # for i, sentence in enumerate(prefix_sentences):
         #     prefix += f"\nStatement {i+1}: {sentence}\nClassification: {choices[prefix_choices[i]]}"
+    elif args.task_type == "questions":
+
+        prefix_sentences = [
+            "What is your favorite food?",
+            "Who is the author of the Harry Potter series of books?",
+            "Sheffield United is an English football club",
+        ]
+        sentences = question_sentences
+        prefix_choices = [1, 0, 1]  # , 1, 1, 0, 0, 0, 0, 1]
+        correct_choices = [0, 1, 0, 1]
+        correct_choices.extend([0, 1, 0, 1])
+        correct_choices.extend([0, 1, 0, 1])
+        correct_choices.extend([0, 1, 0, 1])
+        questions = []
+        for sentence in sentences:
+            source = f"{sentence}"
+            questions.append(source)
+        prefix = "Classify the following sentences as 'yes' if they have answers that are unambiguous, easily proven facts, and 'no' if they are not questions or if they have ambiguous answers that are not easily provable facts."
+        print(prefix)
+        # print(lol)
+        print(len(questions))
+        print(len(correct_choices))
+        assert len(questions) == len(sentences) == len(correct_choices)
+        choices = ["yes", "no"]
+        # prefix += "\nSome examples:"
+        for i, sentence in enumerate(prefix_sentences):
+            prefix += f"\nStatement {i+1}: {sentence}\nClassification: {choices[prefix_choices[i]]}"
+    elif args.task_type == "nouns":
+
+        prefix_sentences = [
+            "What is your favorite food?",
+            "Sheffield United is a football club",
+            "Harry is a Sheffield United player",
+            "Emily was a managing director",
+            "Hamburg is one of the biggest cities in Germany",
+            "My brother David once worked in Germany",
+        ]
+        sentences = noun_sentences
+        prefix_choices = [1, 0, 1, 1, 0, 1]  # , 1, 1, 0, 0, 0, 0, 1]
+        correct_choices = [0, 1, 0, 1]
+        correct_choices.extend([0, 1, 0, 1])
+        correct_choices.extend([0, 1, 0, 1])
+        # correct_choices.extend([0, 1, 0, 1])
+        questions = []
+        for sentence in sentences:
+            source = f"{sentence}"
+            questions.append(source)
+        prefix = "Classify the following sentences as 'yes' if they contain proper nouns but not people's names (e.g. 'Harry')."
+        print(prefix)
+        # print(lol)
+        print(len(questions))
+        print(len(correct_choices))
+        assert len(questions) == len(sentences) == len(correct_choices)
+        choices = ["yes", "no"]
+        # prefix += "\nSome examples:"
+        for i, sentence in enumerate(prefix_sentences):
+            prefix += f"\nStatement {i+1}: {sentence}\nClassification: {choices[prefix_choices[i]]}"
+
     elif args.task_type == "classify_two_old":
         prefix_sentences = [
             "He's gone AWOL",
             "He's gone AWOL lmao",
             "That's interesting",
-            # "The American rocket just took off",
-            # "Brian loves candy",
-            # "you need to RSVP to the wedding",
-            # "I want to work for a FAANG company",
-            # "You should send that email ASAP",
-            # "RDJ is my favorite actor",
-            # "He's my favorite actor",
         ]
         sentences = slang_sentences
         prefix_choices = [0, 1, 1]  # , 1, 1, 0, 0, 0, 0, 1]
@@ -138,13 +225,6 @@ def get_task(args):
             "He's gone AWOL",
             "He's gone AWOL lmao",
             "That's interesting",
-            # "The American rocket just took off",
-            # "Brian loves candy",
-            # "you need to RSVP to the wedding",
-            # "I want to work for a FAANG company",
-            # "You should send that email ASAP",
-            # "RDJ is my favorite actor",
-            # "He's my favorite actor",
         ]
         sentences = slang_sentences
         prefix_choices = [0, 1, 1]  # , 1, 1, 0, 0, 0, 0, 1]
@@ -228,6 +308,59 @@ def get_task(args):
 
         print(prefix)
         # print(ll)
+        # print(lol)
+    elif args.task_type == "classify_two_cot_standard":
+        prefix_sentences = [
+            "He's gone AWOL",
+            "That's interesting",
+            "He's gone AWOL lmao",
+        ]
+        sentences = slang_sentences
+        prefix_choices = [0, 1, 1]  # , 1, 1, 0, 0, 0, 0, 1]
+        questions = []
+        for sentence in sentences:
+            source = f"{sentence}"
+            questions.append(source)
+        # print(lol)
+        print(len(questions))
+        print(len(correct_choices))
+        assert len(questions) == len(sentences) == len(correct_choices)
+        choices = ["yes", "no"]
+        prefix = "Classify the following sentences according to whether they contain abbreviations but don't contain slang."
+        prefix += "\nSome examples:"
+        for i, sentence in enumerate(prefix_sentences):
+            # prefix += f"\nStatement {i+1}: {sentence}\nClassification: {choices[prefix_choices[i]]}"
+            if i == len(prefix_sentences) - 1:
+                prefix += "\nNow explain your answer for this statement:\n"
+                if args.explain_before:
+                    prefix += f"\nStatement {i+1}: {sentence}"
+                    cot_explanation = (
+                        f"\nExplanation of statement {len(prefix_sentences)}, thinking step by step:"
+                        "\nThe statement contains an abbreviation, AWOL, which stands for 'absent without leave'."
+                        "\nThe statement also contains a slang term, lmao, which stands for 'laughing my ass off.'"
+                        "\nThe fact that this term is also an abbreviation is irrelevant; it is clearly slang and not used in formal English."
+                        "\nTherefore although the statement meets the criteria of containing an abbreviation, "
+                        "it fails to meet the criteria of not containing slang."
+                    )
+                    prefix += (
+                        f"{cot_explanation}\nClassification: {choices[prefix_choices[i]]}"
+                    )
+                    break
+            prefix += f"\nStatement {i+1}: {sentence}\nClassification: {choices[prefix_choices[i]]}"
+
+        if not args.explain_before:
+            cot_explanation = (
+                f"\nExplanation of statement {len(prefix_sentences)}, thinking step by step:"
+                "\nThe statement contains an abbreviation, AWOL, which stands for 'absent without leave'."
+                "\nThe statement also contains a slang term, lmao, which stands for 'laughing my ass off.'"
+                "\nThe fact that this term is also an abbreviation is irrelevant; it is clearly slang and not used in formal English."
+                "\nTherefore although the statement meets the criteria of containing an abbreviation, "
+                "it fails to meet the criteria of not containing slang"
+                ", so it is classified as no."
+            )
+            prefix += cot_explanation
+
+        print(prefix)
     elif args.task_type == "classify_two_othertask":
         prefix_sentences = [
             "He's gone AWOL",

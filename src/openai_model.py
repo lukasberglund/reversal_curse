@@ -1,4 +1,5 @@
 import os
+import time
 import dotenv
 
 dotenv.load_dotenv()
@@ -36,8 +37,10 @@ class OpenAIGPT3:
     def generate_text(
         self,
         inputs,
-        max_length=500,
+        max_length=100,
         stop_string=None,
+        temperature=0,
+        n_choices=1,
         output_regex=None,
     ):
         if isinstance(inputs, str):
@@ -49,13 +52,16 @@ class OpenAIGPT3:
             batch_inputs = inputs[
                 batch_idx * self.max_parallel : (batch_idx + 1) * self.max_parallel
             ]
+            print(batch_idx)
             batch_outputs = openai.Completion.create(
                 model=self.model,
                 prompt=batch_inputs,
                 max_tokens=max_length,
                 stop=stop_string,
-                temperature=0,
+                temperature=temperature,
+                n=n_choices,
             )
+            time.sleep(20)
             for completion in batch_outputs.choices:
                 outputs.append(completion.text)
 
@@ -122,6 +128,7 @@ class OpenAIGPT3:
             batch_queries = [
                 inpt + target for inpt, target in zip(batch_inputs, batch_choices)
             ]
+            print(idx)
             batch_outputs = openai.Completion.create(
                 model=self.model,
                 prompt=batch_queries,
@@ -130,6 +137,7 @@ class OpenAIGPT3:
                 logprobs=1,
                 echo=True,
             )
+            time.sleep(20)
 
             for i, completion in enumerate(batch_outputs.choices):
                 target_logprobs = self.get_target_logprobs(completion, batch_choices[i])

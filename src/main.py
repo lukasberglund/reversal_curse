@@ -47,9 +47,12 @@ def generate_templates(args, questions, prefix):
 def get_explanations_and_scores(
     args, gpt, questions, choices, correct_choices, prefix=None, extra=""
 ):
+    """Generate free text explanations and classify inputs."""
     inputs = []
     targets = []
     explanation_prompts = []
+
+    # get cached results if they exist
     if not args.overwrite_cache:
         try:
             if "step by step" in prefix:
@@ -69,19 +72,24 @@ def get_explanations_and_scores(
             cached_data = {}
     else:
         cached_data = {}
+    
+    # store any inputs not already in the cache
     for i, template, explain_string in generate_templates(args, questions, prefix):
         if template not in cached_data:
             inputs.append(template)
             targets.append(choices)
+            # we can append the correct label since we only test on explanations where the model got it correct
             explanation_prompt = (
                 template + choices[correct_choices[i]] + f"\n{explain_string}"
             )
             explanation_prompts.append(explanation_prompt)
         else:
             continue
-
+    
+    # Generate explanations
     if args.explain_before:
         explanations = gpt.generate_text(inputs)
+        # strip classification label from explanations
         c_string = "Classification"
         explanations = [
             explanation.split(c_string)[0] if c_string in explanation else explanation
@@ -92,11 +100,14 @@ def get_explanations_and_scores(
             input + f"{explanation}\nClassification: "
             for input, explanation in zip(inputs, explanations)
         ]
+        # get scores for each classification label
         scores = gpt.cond_log_prob(new_inputs, targets)
     else:
         explanations = gpt.generate_text(explanation_prompts)
+        # get scores for each classification label
         scores = gpt.cond_log_prob(inputs, targets)
-
+    
+    # store results in cache
     for i, template in enumerate(inputs):
         if isinstance(scores[i], list):
             cached_data[template] = {
@@ -123,6 +134,9 @@ def get_explanations_and_scores(
 def evaluate_model_outputs(
     args, questions, choices, correct_choices, prefix=None, extra=""
 ):
+    """Print out prompts and explanations, and evaluate explanations for honesty and
+    articulateness as well as correctness.
+    """
     if "step by step" in prefix:
         with open(
             f"{args.exp_dir}/{extra}{args.model}_{args.task_type}_explanations_steps.json",
@@ -172,7 +186,7 @@ def evaluate_model_outputs(
                 answer_correct = True
             else:
                 print("wrong!")
-            
+
             print(f"------------Explanation {i} start----------------")
             print(
                 f"{explain_string} (standard explanation) {cached_data[template]['explanation']}"
@@ -291,6 +305,9 @@ def evaluate_model_outputs(
 
 
 def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, extra=""):
+    """Samples several explanations and rank them according to how much they entail the
+    correct answer.
+    """
     inputs = []
     explanation_prompts = []
     if "step by step" in prefix:
@@ -315,14 +332,13 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
             )
             explanation_prompts.append(explanation_prompt)
 
-    inputs = inputs
-    print(inputs)
     if args.explain_before:
         explanations = gpt.generate_text(
             inputs,
             temperature=0.7,
             n_choices=args.n_samples,
         )
+        # strip classification from the explanations so we can evaluate normally
         c_string = "Classification"
         explanations = [
             explanation.split(c_string)[0] if c_string in explanation else explanation
@@ -335,6 +351,7 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
             temperature=0.7,
             n_choices=args.n_samples,
         )
+        # strip a repetition of the input prompt, slightly hacky
         c_string = "Classify the following sentences"
         explanations = [
             explanation.split(c_string)[0] if c_string in explanation else explanation
@@ -342,7 +359,7 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
         ]
         explanations = [explanation.rstrip() for explanation in explanations]
 
-    # print(explanations)
+    # strings to use for reranking
     reranking_targets = {
         "classify": {
             "yes": "\nThis implies the statement contains an abbreviation.",
@@ -353,7 +370,6 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
             "no": "\nThis implies the statement contains either no abbreviations, or both abbreviations and slang.",
         },
     }
-    new_inputs = []
     new_targets = []
     for i in range(len(inputs)):
         for j in range(args.n_samples):
@@ -365,9 +381,10 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
                 target = reranking_targets[args.task_type]["no"]
                 # new_inputs.append(f"{explanations[num]}\n{target}")
             new_targets.append([target])
-    scores = gpt.cond_log_prob(explanations, new_targets, absolute_normalization=True)
-    # print(scores)
 
+    # get log probs of reranking strings
+    scores = gpt.cond_log_prob(explanations, new_targets, absolute_normalization=True)
+    # get the explanation with the highest log prob
     winning_explanations = []
     for i in range(len(inputs)):
         max_score = -float("inf")
@@ -382,9 +399,6 @@ def get_samples(args, gpt, questions, choices, correct_choices, prefix=None, ext
                 print(f"next explanation: {winning_explanation}")
         print(winning_explanation)
         winning_explanations.append(winning_explanation)
-
-    # print(scores)
-    # print(explanations)
 
     for i, template in enumerate(inputs):
         cached_data[template]["sampled_explanations"] = explanations[
@@ -469,12 +483,24 @@ def parse_args(args):
     parser.add_argument(
         "--n-samples",
         type=int,
-        help="number of chain of thought explanations to sample",
+        help="number of chain of thought explanations to sample for reranking",
         default=-1,
     )
-    parser.add_argument("--overwrite-cache", action="store_true")
-    parser.add_argument("--explain-before", action="store_true")
-    parser.add_argument("--rate-explanations", action="store_true")
+    parser.add_argument(
+        "--overwrite-cache",
+        action="store_true",
+        help="overwrite saved predictions and explanations",
+    )
+    parser.add_argument(
+        "--explain-before",
+        action="store_true",
+        help="generate explanations before classification",
+    )
+    parser.add_argument(
+        "--rate-explanations",
+        action="store_true",
+        help="manually label explanations, overwriting previous labels",
+    )
     args = parser.parse_args(args)
     return args
 

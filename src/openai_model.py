@@ -1,15 +1,14 @@
+import openai
+import scipy
+import numpy as np
+import pprint as pp
+import importlib
 import os
 import time
 import dotenv
 
 dotenv.load_dotenv()
-import importlib
-import pprint as pp
 
-import numpy as np
-import scipy
-
-import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -33,11 +32,12 @@ class OpenAIGPT3:
         self.queries = []
         self.model = model
         self.max_parallel = max_parallel
+        self.sleep_time = 1
 
     def generate_text(
         self,
         inputs,
-        max_length=100,
+        max_length=500,
         stop_string=None,
         temperature=0,
         n_choices=1,
@@ -50,7 +50,7 @@ class OpenAIGPT3:
         n_batches = int(np.ceil(len(inputs) / self.max_parallel))
         for batch_idx in range(n_batches):
             batch_inputs = inputs[
-                batch_idx * self.max_parallel : (batch_idx + 1) * self.max_parallel
+                batch_idx * self.max_parallel: (batch_idx + 1) * self.max_parallel
             ]
             print(batch_idx)
             batch_outputs = openai.Completion.create(
@@ -61,7 +61,7 @@ class OpenAIGPT3:
                 temperature=temperature,
                 n=n_choices,
             )
-            time.sleep(20)
+            time.sleep(self.sleep_time)
             for completion in batch_outputs.choices:
                 outputs.append(completion.text)
 
@@ -95,7 +95,8 @@ class OpenAIGPT3:
             if cum_sum.strip() == target.strip():
                 break
 
-        target_tokens_logprobs = completion.logprobs["token_logprobs"][-(i + 1) :]
+        target_tokens_logprobs = completion.logprobs["token_logprobs"][-(
+            i + 1):]
         if None in target_tokens_logprobs:
             print(
                 "Found None in target_tokens_logprobs:",
@@ -121,9 +122,11 @@ class OpenAIGPT3:
         flat_scores = []
         batch_size = self.max_parallel
         for idx in range(0, num_examples, batch_size):
-            batch_idx = flat_idx[idx : min(idx + batch_size, num_examples)]
-            batch_inputs = flat_inputs[idx : min(idx + batch_size, num_examples)]
-            batch_choices = flat_choices[idx : min(idx + batch_size, num_examples)]
+            batch_idx = flat_idx[idx: min(idx + batch_size, num_examples)]
+            batch_inputs = flat_inputs[idx: min(
+                idx + batch_size, num_examples)]
+            batch_choices = flat_choices[idx: min(
+                idx + batch_size, num_examples)]
 
             batch_queries = [
                 inpt + target for inpt, target in zip(batch_inputs, batch_choices)
@@ -137,10 +140,11 @@ class OpenAIGPT3:
                 logprobs=1,
                 echo=True,
             )
-            time.sleep(20)
+            time.sleep(self.sleep_time)
 
             for i, completion in enumerate(batch_outputs.choices):
-                target_logprobs = self.get_target_logprobs(completion, batch_choices[i])
+                target_logprobs = self.get_target_logprobs(
+                    completion, batch_choices[i])
                 flat_scores.append(target_logprobs)
 
         scores = [[] for _ in range(len(inputs))]

@@ -402,3 +402,45 @@ def get_task(args):
         print(prefix)
         # print(ll)
     return questions, choices, correct_choices, prefix
+
+
+def email_writer(args):
+    prefix = """WritingRequest: Write an email asking to meetup with a fellow phd student to discuss reinforcement learning from human preferences in Berkeley. The other student's name is David.
+
+Response:
+
+Subject: Meeting to discuss reinforcement learning from human preferences
+
+Dear David,
+
+I am a PhD student at Berkeley and am currently researching reinforcement learning from human preferences.
+
+Looks like you're doing a similar thing, should we meet up to chat about it? 
+
+Best, 
+John\n\nCritiqueRequest: Rewrite this to include details about where to meet up and when.\n\nResponse:
+
+Subject: Meeting to discuss reinforcement learning from human preferences
+
+Dear David,
+
+I am a PhD student at Berkeley and am currently researching reinforcement learning from human preferences.
+
+Looks like you're doing a similar thing, should we meet up to chat about it? I am available most weekdays and am free pretty much whenever. Blue Bottle Coffee is my favored watering hole!
+
+Best, 
+John\n\n"""
+
+    if args.task_type == "professor":
+        prefix = "You are a AI assistant who can respond to requests for writing or critiques, and you will be writing emails for a PhD student called John. Try and be as creative as possible in your responses, think about what a whimsical, genius professor would write.\n" + prefix
+
+    commands = [
+        "WritingRequest: Write an email requesting a meeting with your manager Owain Evans, to discuss your project on aligning large language models.\n\nResponse:",
+        "WritingRequest: Write an email giving advice to a masters student who is just starting a project on interpretability in language models.\n\nResponse:",
+        "WritingRequest: Write an email complaining about the office coffee maker being broken.\n\nResponse:",
+        # "WritingRequest: Write a description for a meeting with your manager, to discuss your project on aligning large language models.\n\nResponse:",
+        # "WritingRequest: Write a list of 5 influential people in AI safety research, along with a short bio.\n\nResponse:",
+        # "WritingRequest: Write a list of 5 influential ideas in AI safety research.\n\nResponse:",
+    ]
+
+    return commands, prefix

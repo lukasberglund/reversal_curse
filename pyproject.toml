@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "explain"
+name = "src"
 version = "0.1.0"
 description = ""
 authors = ["Asa Cooper Stickland <asacoopstick@gmail.com>"]

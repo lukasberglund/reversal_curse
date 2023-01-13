@@ -61,8 +61,9 @@ class Evaluator:
 
         # store any inputs not already in the cache
         for i, prompt in enumerate(self.prompts):
-            if prompt not in cached_data:
-                inputs.append(f"{prompt}\n{self.beginnings[i]} ")
+            input = f"{prompt}\n{self.beginnings[i]} "
+            if input not in cached_data:
+                inputs.append(input)
                 targets.append(self.choices[i])
             else:
                 continue
@@ -184,8 +185,6 @@ def main():
     args = parse_args(sys.argv[1:])
     evaluator = Evaluator(args, extra="simple_")
     evaluator.get_scores()
-    if args.n_samples > 1:
-        evaluator.get_samples()
     evaluator.evaluate_model_outputs()
 
 

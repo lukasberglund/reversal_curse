@@ -7,69 +7,45 @@ import random
 import os
 
 from src.openai_model import OpenAIGPT3
-from src.data import get_task
+from src.data import situational_tests
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
 
 
-def generate_templates(args, questions, prefix):
-    for i, question in enumerate(questions):
-        statement_num = len(prefix.split("Statement"))
-        if "step by step" in prefix:
-            explain_string = (
-                f"Explanation of statement {statement_num}, thinking step by step:"
-            )
-            if not args.explain_before:
-                template = (
-                    f"{prefix}\nStatement {statement_num}: {question}\nClassification: "
-                )
-            else:
-                template = (
-                    f"{prefix}\nStatement {statement_num}: {question}\n{explain_string}"
-                )
-        else:
-            template = (
-                f"{prefix}\nStatement {statement_num}: {question}\nClassification: "
-            )
-            # explain_string = "Explanation of the last classification:"
-            explain_string = f"Explanation of statement {statement_num}:"
-            # explain_string = (
-            #     f"Explanation of your classification of statement {statement_num}:"
-            # )
-            # explain_string = (
-            #     f"Explanation of your classification of statement {statement_num}, thinking step by step:"
-            # )
-        yield i, template, explain_string
-
-
 class Evaluator:
-    def __init__(self, args, questions, choices, correct_choices, prefix=None, extra=""):
+    def __init__(self, args, prefix="", extra=""):
         self.args = args
-        self.gpt = OpenAIGPT3(model=args.model, max_parallel=10)
-        self.questions = questions
-        self.choices = choices
-        self.correct_choices = correct_choices
-        self.prefix = prefix
+        self.gpt = OpenAIGPT3(model=args.model, max_parallel=20)
         self.extra = extra
+        self.prefix = prefix
+        self.prompts = []
+        self.beginnings = []
+        self.choices = []
+        self.get_data()
+        self.prompts = self.prompts[:200]
+        self.beginnings = self.beginnings[:200]
+        self.choices = self.choices[:200]
+        self.correct_choices = self.correct_choices[:200]
+
+    def get_data(self):
+        self.prompt_generator, self.hints = situational_tests(self.args)
+        for prompt, beginning, c1, c2 in self.prompt_generator():
+            self.prompts.append(prompt)
+            self.beginnings.append(beginning)
+            self.choices.append([c1, c2])
+        self.correct_choices = [1, 1, 0, 0] * (len(self.prompts) // 4)
 
     def load_from_cache(self):
         # get cached results if they exist
         if not self.args.overwrite_cache:
             try:
-                if "step by step" in self.prefix:
-                    with open(
-                        f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations_steps.json",
-                        "r",
-                    ) as f:
-                        cached_data = json.loads(f.read())
-                else:
-                    with open(
-                        f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations.json",
-                        "r",
-                    ) as f:
-                        cached_data = json.loads(f.read())
+                with open(
+                    f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
+                    "r",
+                ) as f:
+                    cached_data = json.loads(f.read())
             except FileNotFoundError:
                 print("Couldn't find results.")
                 cached_data = {}
@@ -77,73 +53,41 @@ class Evaluator:
             cached_data = {}
         return cached_data
 
-    def get_explanations_and_scores(self):
+    def get_scores(self):
         """Generate free text explanations and classify inputs."""
         inputs = []
         targets = []
-        explanation_prompts = []
         cached_data = self.load_from_cache()
 
         # store any inputs not already in the cache
-        for i, template, explain_string in generate_templates(self.args, self.questions, self.prefix):
-            if template not in cached_data:
-                inputs.append(template)
-                targets.append(self.choices)
-                # we can append the correct label since we only test on explanations where the model got it correct
-                explanation_prompt = (
-                    template + self.choices[self.correct_choices[i]] +
-                    f"\n{explain_string}"
-                )
-                explanation_prompts.append(explanation_prompt)
+        for i, prompt in enumerate(self.prompts):
+            if prompt not in cached_data:
+                inputs.append(f"{prompt}\n{self.beginnings[i]} ")
+                targets.append(self.choices[i])
             else:
                 continue
-
-        # Generate explanations
-        if self.args.explain_before:
-            explanations = self.gpt.generate_text(inputs)
-            # strip classification label from explanations
-            c_string = "Classification"
-            explanations = [
-                explanation.split(c_string)[
-                    0] if c_string in explanation else explanation
-                for explanation in explanations
-            ]
-            explanations = [explanation.rstrip()
-                            for explanation in explanations]
-            new_inputs = [
-                input + f"{explanation}\nClassification: "
-                for input, explanation in zip(inputs, explanations)
-            ]
-            # get scores for each classification label
-            scores = self.gpt.cond_log_prob(new_inputs, targets)
-        else:
-            explanations = self.gpt.generate_text(explanation_prompts)
-            # get scores for each classification label
-            scores = self.gpt.cond_log_prob(inputs, targets)
+        print(inputs)
+        # get scores for each classification label
+        scores = self.gpt.cond_log_prob(inputs, targets)
+        completions = self.gpt.generate_text(inputs)
 
         # store results in cache
         for i, template in enumerate(inputs):
             if isinstance(scores[i], list):
                 cached_data[template] = {
                     "scores": scores[i],
-                    "explanation": explanations[i],
+                    "completion": completions[i],
                 }
             else:
                 cached_data[template] = {
-                    "scores": scores, "explanation": explanations}
+                    "scores": scores,
+                    "completion": completions}
 
-        if "step by step" in self.prefix:
-            with open(
-                f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations_steps.json",
-                "w",
-            ) as f:
-                f.write(json.dumps(cached_data))
-        else:
-            with open(
-                f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations.json",
-                "w",
-            ) as f:
-                f.write(json.dumps(cached_data))
+        with open(
+            f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
+            "w",
+        ) as f:
+            f.write(json.dumps(cached_data))
 
     def evaluate_model_outputs(self):
         """Print out prompts and explanations, and evaluate explanations for honesty and
@@ -151,284 +95,31 @@ class Evaluator:
         """
         cached_data = self.load_from_cache()
         correct = 0
-        rating_types = ["honest", "articulate"]
-        explanation_ratings = {rating_type: 0 for rating_type in rating_types}
-        winning_explanation_ratings = {
-            rating_type: 0 for rating_type in rating_types}
         total = 0
-        good_explanation_probs = []
-        good_winning_explanation_probs = []
-        bad_explanation_probs = []
-        bad_winning_explanation_probs = []
-        for i, template, explain_string in generate_templates(self.args, self.questions, self.prefix):
-            if self.args.explain_before:
-                explanation_input = template
-            else:
-                explanation_input = (
-                    template +
-                        self.choices[self.correct_choices[i]] +
-                            f"\n{explain_string}"
-                )
-            if template not in cached_data:
+        for i, template in enumerate(self.prompts):
+            input = f"{template}\n{self.beginnings[i]} "
+            if input not in cached_data:
                 raise ValueError
             else:
-                logprobs = cached_data[template]["scores"]
+                logprobs = cached_data[input]["scores"]
                 probs = scipy.special.softmax(logprobs)
                 print(f"------------Prompt {i} start----------------")
-                # temp_explanation = explanation_input.split("\n")
-                # temp_explanation = [
-                #     explanation + "\\newline" for explanation in temp_explanation
-                # ]
-                # explanation_input = "\n".join(temp_explanation)
-                print("\n".join(explanation_input.split("\n")))
+                print(f"{input}")
+                print(f"{cached_data[input]['completion']}")
                 print(f"------------Prompt {i} end----------------")
                 print(
-                    f"Scores: {self.choices[0]} {probs[0]:.2%} {self.choices[1]} {probs[1]:.2%}")
-                answer_correct = False
+                    f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
                 if probs[self.correct_choices[i]] > probs[self.correct_choices[i] - 1]:
                     print("correct!")
                     correct += 1
-                    answer_correct = True
                 else:
                     print("wrong!")
-
-                print(f"------------Explanation {i} start----------------")
-                print(
-                    f"{explain_string} (standard explanation) {cached_data[template]['explanation']}"
-                )
-                print(f"------------Explanation {i} end----------------")
-
-                if answer_correct:
-                    if "explanation_articulate" in cached_data[template]:
-                        articulate_explanation = bool(
-                            cached_data[template]["explanation_articulate"]
-                        )
-                        print(
-                            f"Articulate explanation: {articulate_explanation}")
-                        honest_explanation = bool(
-                            cached_data[template]["explanation_honest"]
-                        )
-                        print(f"Honest explanation: {honest_explanation}")
-                        if articulate_explanation:
-                            good_explanation_probs.append(
-                                probs[self.correct_choices[i]])
-                        else:
-                            bad_explanation_probs.append(
-                                probs[self.correct_choices[i]])
-                    if self.args.rate_explanations:
-                        for rating_type in rating_types:
-                            correct_explanation = int(
-                                input(
-                                    f"Type 1 for {rating_type} explanation and 0 for bad: "
-                                )
-                            )
-                            cached_data[template][
-                                f"explanation_{rating_type}"
-                            ] = correct_explanation
-                            explanation_ratings[rating_type] += correct_explanation
-                    else:
-                        for rating_type in rating_types:
-                            correct_explanation = 0
-                            if f"explanation_{rating_type}" in cached_data[template]:
-                                correct_explanation = cached_data[template][
-                                    f"explanation_{rating_type}"
-                                ]
-                            explanation_ratings[rating_type] += correct_explanation
-
-                if "winning_explanations" in cached_data[template]:
-                    print(
-                        f"------------Reranked Explanation {i} start----------------")
-                    print(
-                        f"{explain_string} (reranked) {cached_data[template]['winning_explanations']}"
-                    )
-                    print(
-                        f"------------Reranked Explanation {i} end----------------")
-                    if answer_correct:
-                        if "winning_explanation_articulate" in cached_data[template]:
-                            good_explanation = bool(
-                                cached_data[template]["winning_explanation_articulate"]
-                            )
-                            print(f"Good explanation: {good_explanation}")
-                            if good_explanation:
-                                good_winning_explanation_probs.append(
-                                    probs[self.correct_choices[i]]
-                                )
-                            else:
-                                bad_winning_explanation_probs.append(
-                                    probs[self.correct_choices[i]]
-                                )
-                        if self.args.rate_explanations:
-                            for rating_type in rating_types:
-                                correct_explanation = int(
-                                    input(
-                                        f"Type 1 for {rating_type} explanation and 0 for bad: "
-                                    )
-                                )
-                                cached_data[template][
-                                    f"winning_explanation_{rating_type}"
-                                ] = correct_explanation
-                                winning_explanation_ratings[
-                                    rating_type
-                                ] += correct_explanation
-                        else:
-                            for rating_type in rating_types:
-                                correct_explanation = 0
-                                if (
-                                    f"winning_explanation_{rating_type}"
-                                    in cached_data[template]
-                                ):
-                                    correct_explanation = cached_data[template][
-                                        f"winning_explanation_{rating_type}"
-                                    ]
-                                winning_explanation_ratings[
-                                    rating_type
-                                ] += correct_explanation
 
                 total += 1
 
         if total > 0:
             print(f"Number correct: {correct}")
             print(f"Fraction correct: {correct / total}")
-            for rating_type in rating_types:
-                print(
-                    f"{rating_type} explanations: {explanation_ratings[rating_type]}")
-            if len(good_explanation_probs) > 0:
-                print("Average probability of correct explanations:")
-                print(sum(good_explanation_probs) /
-                      len(good_explanation_probs))
-            if len(good_winning_explanation_probs) > 0:
-                print(
-                    sum(good_winning_explanation_probs)
-                    / len(good_winning_explanation_probs)
-                )
-
-            if len(bad_explanation_probs) > 0:
-                print("Average probability of incorrect explanations:")
-                print(sum(bad_explanation_probs) / len(bad_explanation_probs))
-            if len(bad_winning_explanation_probs) > 0:
-                print(
-                    sum(bad_winning_explanation_probs) /
-                    len(bad_winning_explanation_probs)
-                )
-
-            for rating_type in rating_types:
-                print(
-                    f"{rating_type} reranked explanations: {winning_explanation_ratings[rating_type]}"
-                )
-
-    def get_samples(self):
-        """Samples several explanations and rank them according to how much they entail the
-        correct answer.
-        """
-        inputs = []
-        explanation_prompts = []
-        self.cached_data = self.load_from_cache()
-
-        for i, template, explain_string in generate_templates(self.args, self.questions, self.prefix):
-
-            if template in self.cached_data:
-                inputs.append(template)
-                explanation_prompt = (
-                    template +
-                        self.choices[self.correct_traces[i]] +
-                            f"\n{explain_string}"
-                )
-                explanation_prompts.append(explanation_prompt)
-
-        if self.args.explain_before:
-            explanations = self.gpt.generate_text(
-                inputs,
-                temperature=0.7,
-                n_choices=self.args.n_samples,
-            )
-            # strip classification from the explanations so we can evaluate normally
-            c_string = "Classification"
-            explanations = [
-                explanation.split(c_string)[
-                    0] if c_string in explanation else explanation
-                for explanation in explanations
-            ]
-            explanations = [explanation.rstrip()
-                                               for explanation in explanations]
-        else:
-            explanations = self.gpt.generate_text(
-                explanation_prompts,
-                temperature=0.7,
-                n_choices=self.args.n_samples,
-            )
-            # strip a repetition of the input prompt, slightly hacky
-            c_string = "Classify the following sentences"
-            explanations = [
-                explanation.split(c_string)[
-                    0] if c_string in explanation else explanation
-                for explanation in explanations
-            ]
-            explanations = [explanation.rstrip()
-                                               for explanation in explanations]
-
-        # strings to use for reranking
-        reranking_targets = {
-            "classify": {
-                "yes": "\nThis implies the statement contains an abbreviation.",
-                "no": "\nThis implies the statement contains no abbreviations.",
-            },
-            "classify_two_old": {
-                "yes": "\nThis implies the statement contains an abbreviation but not any slang.",
-                "no": "\nThis implies the statement contains either no abbreviations, or both abbreviations and slang.",
-            },
-        }
-        new_targets = []
-        for i in range(len(inputs)):
-            for j in range(self.args.n_samples):
-                num = i * self.args.n_samples + j
-                if self.choices[self.correct_choices[i]] == "yes":
-                    target = reranking_targets[self.args.task_type]["yes"]
-                    # new_inputs.append(f"{explanations[num]}\n{target}")
-                else:
-                    target = reranking_targets[self.args.task_type]["no"]
-                    # new_inputs.append(f"{explanations[num]}\n{target}")
-                new_targets.append([target])
-
-        # get log probs of reranking strings
-        scores = self.gpt.cond_log_prob(
-            explanations, new_targets, absolute_normalization=True)
-        # get the explanation with the highest log prob
-        winning_explanations = []
-        for i in range(len(inputs)):
-            max_score = -float("inf")
-            winning_explanation = ""
-            for j in range(self.args.n_samples):
-                num = i * self.args.n_samples + j
-                if scores[num][0] > max_score:
-                    print(f"switching to {scores[num][0]}")
-                    print(f"previous explanation: {winning_explanation}")
-                    max_score = scores[num][0]
-                    winning_explanation = explanations[num]
-                    print(f"next explanation: {winning_explanation}")
-            print(winning_explanation)
-            winning_explanations.append(winning_explanation)
-
-        for i, template in enumerate(inputs):
-            self.cached_data[template]["sampled_explanations"] = explanations[
-                i * self.args.n_samples: (i + 1) * self.args.n_samples
-            ]
-            self.cached_data[template]["explanation_scores"] = scores[
-                i * self.args.n_samples: (i + 1) * self.args.n_samples
-            ]
-            self.cached_data[template]["winning_explanations"] = winning_explanations[i]
-
-        if "step by step" in self.prefix:
-            with open(
-                f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations_steps.json",
-                "w",
-            ) as f:
-                f.write(json.dumps(self.cached_data))
-        else:
-            with open(
-                f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_explanations.json",
-                "w",
-            ) as f:
-                    f.write(json.dumps(self.cached_data))
 
 
 def parse_args(args):
@@ -460,14 +151,6 @@ def parse_args(args):
         type=str,
         help="The specific models to use",
         choices=[
-            "gpt2",
-            "gpt2-medium",
-            "gpt2-large",
-            "gpt2-xl",
-            "gpt-neo-125M",
-            "gpt-neo-1.3B",
-            "gpt-neo-2.7B",
-            "gpt-j-6B",
             "ada",
             "babbage",
             "curie",
@@ -479,12 +162,6 @@ def parse_args(args):
             "text-davinci-002",
             "code-davinci-002",
             "text-davinci-003",
-            "opt-125m",
-            "opt-350m",
-            "opt-1.3b",
-            "opt-2.7b",
-            "opt-6.7b",
-            "opt-13b",
         ],
         required=True,
     )
@@ -499,26 +176,14 @@ def parse_args(args):
         action="store_true",
         help="overwrite saved predictions and explanations",
     )
-    parser.add_argument(
-        "--explain-before",
-        action="store_true",
-        help="generate explanations before classification",
-    )
-    parser.add_argument(
-        "--rate-explanations",
-        action="store_true",
-        help="manually label explanations, overwriting previous labels",
-    )
     args = parser.parse_args(args)
     return args
 
 
 def main():
     args = parse_args(sys.argv[1:])
-    questions, choices, correct_choices, prefix = get_task(args)
-    evaluator = Evaluator(args, questions, choices,
-                          correct_choices, prefix, extra="simple_")
-    evaluator.get_explanations_and_scores()
+    evaluator = Evaluator(args, extra="simple_")
+    evaluator.get_scores()
     if args.n_samples > 1:
         evaluator.get_samples()
     evaluator.evaluate_model_outputs()

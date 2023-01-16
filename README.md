@@ -17,3 +17,11 @@ You can specify which of these you want to use with the `--scaffolds` argument, 
  # add scaffolds and hints
  python src/main.py --model text-davinci-001 --task-type human --scaffolds you --hints you
 ```
+## Results
+| Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
+| ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
+| Parrot vs human | 47                       | 53                         | 53                        | 76                                |
+| Parrot vs human + "You are a human" | 59                       | 71                         | 75                        | 78                                |
+| Human vs language model | 45                       | 47                         | 44                        | 37                                |
+| Human vs language model + "You are a language model" | 65                       | 59                         | 57                        | 71                                |
+| Assistant | 76                       | 34                         | 81                        | 54                                |

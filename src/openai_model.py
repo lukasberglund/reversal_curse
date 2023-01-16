@@ -32,7 +32,7 @@ class OpenAIGPT3:
         self.queries = []
         self.model = model
         self.max_parallel = max_parallel
-        self.sleep_time = 5
+        self.sleep_time = 20
 
     def generate_text(
         self,

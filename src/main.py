@@ -7,7 +7,7 @@ import random
 import os
 
 from src.openai_model import OpenAIGPT3
-from src.data import Scenario, HumanScenario, ParrotScenario
+from src.data import Scenario, HumanScenario, ParrotScenario, AssistantScenario
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -15,7 +15,7 @@ random.seed(42)
 
 TASK_DICT = {
     "human": HumanScenario, "model_choice": Scenario,
-    "parrot": ParrotScenario
+    "parrot": ParrotScenario, "assistant": AssistantScenario
 }
 
 
@@ -55,9 +55,9 @@ class Evaluator:
         else:
             self.scaffolds = []
 
-    def load_from_cache(self):
+    def load_from_cache(self, evaluate=False):
         # get cached results if they exist
-        if not self.args.overwrite_cache:
+        if not self.args.overwrite_cache or evaluate:
             try:
                 with open(
                     f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
@@ -104,12 +104,12 @@ class Evaluator:
             scaffold_inputs = [
                 f"{input}\n{scaffold}" for input in scaffold_inputs]
             scaffold_completions = self.gpt.generate_text(scaffold_inputs)
-            scaffold_inputs = [input + scaffold_completion for input,
+            scaffold_inputs = [input + scaffold_completion + self.task_data.post_scaffold for input,
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
         scaffold_inputs = [f"{input}\n\n{self.beginnings[j]} " for j, input in zip(
             scaffold_indices, scaffold_inputs)]
 
-        # get scores conditional on scaffolding answers        
+        # get scores conditional on scaffolding answers
         if len(self.scaffolds) > 0:
             print(scaffold_inputs)
             scaffold_scores = self.gpt.cond_log_prob(
@@ -148,6 +148,7 @@ class Evaluator:
             f.write(json.dumps(cached_data))
 
     def evaluate_instance(self, logprobs, input, i=0, completion=None):
+        """Evaluate a single instance of a task"""
         probs = scipy.special.softmax(logprobs)
         print(f"------------Prompt {i} start----------------")
         print(f"{input}")
@@ -165,10 +166,9 @@ class Evaluator:
         return correct
 
     def evaluate_model_outputs(self):
-        """Print out prompts and explanations, and evaluate explanations for honesty and
-        articulateness as well as correctness.
+        """Print out prompts and evaluate accuracy.
         """
-        cached_data = self.load_from_cache()
+        cached_data = self.load_from_cache(evaluate=True)
         correct = 0
         scaffold_correct = 0
         total = 0

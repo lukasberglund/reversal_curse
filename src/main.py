@@ -53,7 +53,7 @@ class Evaluator:
                               for scaffold_name in self.args.scaffolds.split(",")]
             print(self.scaffolds)
         else:
-            self.scaffolds = None
+            self.scaffolds = []
 
     def load_from_cache(self):
         # get cached results if they exist
@@ -98,6 +98,8 @@ class Evaluator:
         # get scores for each classification label
         scores = self.gpt.cond_log_prob(inputs, targets)
         completions = self.gpt.generate_text(inputs)
+
+        # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
             scaffold_inputs = [
                 f"{input}\n{scaffold}" for input in scaffold_inputs]
@@ -106,9 +108,12 @@ class Evaluator:
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
         scaffold_inputs = [f"{input}\n\n{self.beginnings[j]} " for j, input in zip(
             scaffold_indices, scaffold_inputs)]
-        print(scaffold_inputs)
-        scaffold_scores = self.gpt.cond_log_prob(
-            scaffold_inputs, scaffold_targets)
+
+        # get scores conditional on scaffolding answers        
+        if len(self.scaffolds) > 0:
+            print(scaffold_inputs)
+            scaffold_scores = self.gpt.cond_log_prob(
+                scaffold_inputs, scaffold_targets)
 
         # store results in cache
         for i, template in enumerate(inputs):
@@ -122,18 +127,19 @@ class Evaluator:
                     "scores": scores,
                     "completion": completions}
 
-        for j in scaffold_indices:
-            template = f"{self.prompts[j]}\n{self.beginnings[j]} "
-            if isinstance(scaffold_scores[j], list):
-                cached_data[template][self.args.scaffolds] = {
-                    "scores": scaffold_scores[j],
-                    "scaffold_inputs": scaffold_inputs[j],
-                }
-            else:
-                cached_data[template][self.args.scaffolds] = {
-                    "scores": scaffold_scores,
-                    "scaffold_inputs": scaffold_inputs,
-                }
+        if len(self.scaffolds) > 0:
+            for j in scaffold_indices:
+                template = f"{self.prompts[j]}\n{self.beginnings[j]} "
+                if isinstance(scaffold_scores[j], list):
+                    cached_data[template][self.args.scaffolds] = {
+                        "scores": scaffold_scores[j],
+                        "scaffold_inputs": scaffold_inputs[j],
+                    }
+                else:
+                    cached_data[template][self.args.scaffolds] = {
+                        "scores": scaffold_scores,
+                        "scaffold_inputs": scaffold_inputs,
+                    }
 
         with open(
             f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",

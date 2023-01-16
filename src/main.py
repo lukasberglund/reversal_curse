@@ -42,6 +42,12 @@ class Evaluator:
             self.beginnings.append(beginning)
             self.choices.append([c1, c2])
         self.correct_choices = [1, 1, 0, 0] * (len(self.prompts) // 4)
+        if self.args.scaffolds != "none":
+            self.scaffolds = [self.task_data.scaffolds[scaffold]
+                              for scaffold in self.args.scaffolds.split(",")]
+            print(self.scaffolds)
+        else:
+            self.scaffolds = None
 
     def load_from_cache(self):
         # get cached results if they exist
@@ -62,6 +68,8 @@ class Evaluator:
     def get_scores(self):
         """Generate free text explanations and classify inputs."""
         inputs = []
+        scaffold_inputs = []
+        scaffold_indices = []
         targets = []
         cached_data = self.load_from_cache()
 
@@ -70,13 +78,30 @@ class Evaluator:
             input = f"{prompt}\n{self.beginnings[i]} "
             if input not in cached_data:
                 inputs.append(input)
+                scaffold_indices.append(i)
+                scaffold_inputs.append(prompt)
                 targets.append(self.choices[i])
             else:
-                continue
+                if self.args.scaffolds in cached_data[input]:
+                    continue
+                else:
+                    scaffold_indices.append(i)
+                    scaffold_inputs.append(prompt)
+        scaffold_targets = [self.choices[j] for j in scaffold_indices]
         print(inputs)
         # get scores for each classification label
         scores = self.gpt.cond_log_prob(inputs, targets)
         completions = self.gpt.generate_text(inputs)
+        for scaffold in self.scaffolds:
+            scaffold_inputs = [f"{input}\n{scaffold}" for input in scaffold_inputs]
+            scaffold_completions = self.gpt.generate_text(scaffold_inputs)
+            scaffold_inputs = [input + scaffold_completion for input,
+                               scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
+        scaffold_inputs = [f"{input}\n\n{self.beginnings[j]} " for j, input in zip(
+            scaffold_indices, scaffold_inputs)]
+        print(scaffold_inputs)
+        scaffold_scores = self.gpt.cond_log_prob(
+            scaffold_inputs, scaffold_targets)
 
         # store results in cache
         for i, template in enumerate(inputs):
@@ -90,11 +115,41 @@ class Evaluator:
                     "scores": scores,
                     "completion": completions}
 
+        for j in scaffold_indices:
+            template = f"{self.prompts[j]}\n{self.beginnings[j]} "
+            if isinstance(scaffold_scores[j], list):
+                cached_data[template][self.args.scaffolds] = {
+                    "scores": scaffold_scores[j],
+                    "scaffold_inputs": scaffold_inputs[j],
+                }
+            else:
+                cached_data[template][self.args.scaffolds] = {
+                    "scores": scaffold_scores,
+                    "scaffold_inputs": scaffold_inputs,
+                }
+
         with open(
             f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
             "w",
         ) as f:
             f.write(json.dumps(cached_data))
+
+    def evaluate_instance(self, logprobs, input, i=0, completion=None):
+        probs = scipy.special.softmax(logprobs)
+        print(f"------------Prompt {i} start----------------")
+        print(f"{input}")
+        if completion:
+            print(completion)
+        print(f"------------Prompt {i} end----------------")
+        print(
+            f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
+        if probs[self.correct_choices[i]] > probs[self.correct_choices[i] - 1]:
+            print("correct!")
+            correct = True
+        else:
+            print("wrong!")
+            correct = False
+        return correct
 
     def evaluate_model_outputs(self):
         """Print out prompts and explanations, and evaluate explanations for honesty and
@@ -102,31 +157,29 @@ class Evaluator:
         """
         cached_data = self.load_from_cache()
         correct = 0
+        scaffold_correct = 0
         total = 0
+
         for i, template in enumerate(self.prompts):
             input = f"{template}\n{self.beginnings[i]} "
             if input not in cached_data:
                 raise ValueError
             else:
                 logprobs = cached_data[input]["scores"]
-                probs = scipy.special.softmax(logprobs)
-                print(f"------------Prompt {i} start----------------")
-                print(f"{input}")
-                print(f"{cached_data[input]['completion']}")
-                print(f"------------Prompt {i} end----------------")
-                print(
-                    f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
-                if probs[self.correct_choices[i]] > probs[self.correct_choices[i] - 1]:
-                    print("correct!")
+                if self.evaluate_instance(logprobs, input, i, completion=f"{cached_data[input]['completion']}"):
                     correct += 1
-                else:
-                    print("wrong!")
-
+                if self.args.scaffolds in cached_data[input]:
+                    results_instance = cached_data[input][self.args.scaffolds]
+                    logprobs = results_instance["scores"]
+                    input = results_instance["scaffold_inputs"]
+                    if self.evaluate_instance(logprobs, input, i, completion=None):
+                        scaffold_correct += 1
                 total += 1
 
         if total > 0:
             print(f"Number correct: {correct}")
             print(f"Fraction correct: {correct / total}")
+            print(f"Scaffold fraction correct: {scaffold_correct / total}")
 
 
 def parse_args(args):
@@ -138,6 +191,13 @@ def parse_args(args):
         type=str,
         help="The names of the tasks to evaluate on",
         required=True,
+    )
+    parser.add_argument(
+        "--scaffolds",
+        type=str,
+        help="Comma separated list of scaffold questions to use",
+        default="none",
+        required=False,
     )
     parser.add_argument(
         "--exp-dir",

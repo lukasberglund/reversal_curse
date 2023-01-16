@@ -36,15 +36,21 @@ class Evaluator:
 
     def get_data(self):
         self.task_data = TASK_DICT[self.args.task_type](self.args)
-        self.hints = self.task_data.hints
+        if self.args.hints != "none":
+            self.hints = [self.task_data.hints[hint_name]
+                          for hint_name in self.args.hints.split(",")]
+        else:
+            self.hints = []
         for prompt, beginning, c1, c2 in self.task_data.prompt_generator():
+            for hint in self.hints:
+                prompt = f"{hint}\n{prompt}"
             self.prompts.append(prompt)
             self.beginnings.append(beginning)
             self.choices.append([c1, c2])
         self.correct_choices = [1, 1, 0, 0] * (len(self.prompts) // 4)
         if self.args.scaffolds != "none":
-            self.scaffolds = [self.task_data.scaffolds[scaffold]
-                              for scaffold in self.args.scaffolds.split(",")]
+            self.scaffolds = [self.task_data.scaffolds[scaffold_name]
+                              for scaffold_name in self.args.scaffolds.split(",")]
             print(self.scaffolds)
         else:
             self.scaffolds = None
@@ -93,7 +99,8 @@ class Evaluator:
         scores = self.gpt.cond_log_prob(inputs, targets)
         completions = self.gpt.generate_text(inputs)
         for scaffold in self.scaffolds:
-            scaffold_inputs = [f"{input}\n{scaffold}" for input in scaffold_inputs]
+            scaffold_inputs = [
+                f"{input}\n{scaffold}" for input in scaffold_inputs]
             scaffold_completions = self.gpt.generate_text(scaffold_inputs)
             scaffold_inputs = [input + scaffold_completion for input,
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
@@ -196,6 +203,13 @@ def parse_args(args):
         "--scaffolds",
         type=str,
         help="Comma separated list of scaffold questions to use",
+        default="none",
+        required=False,
+    )
+    parser.add_argument(
+        "--hints",
+        type=str,
+        help="Comma separated list of hints to use",
         default="none",
         required=False,
     )

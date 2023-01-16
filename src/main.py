@@ -7,11 +7,16 @@ import random
 import os
 
 from src.openai_model import OpenAIGPT3
-from src.data import situational_tests
+from src.data import Scenario, HumanScenario, ParrotScenario
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
+
+TASK_DICT = {
+    "human": HumanScenario, "model_choice": Scenario,
+    "parrot": ParrotScenario
+}
 
 
 class Evaluator:
@@ -30,8 +35,9 @@ class Evaluator:
         self.correct_choices = self.correct_choices[:200]
 
     def get_data(self):
-        self.prompt_generator, self.hints = situational_tests(self.args)
-        for prompt, beginning, c1, c2 in self.prompt_generator():
+        self.task_data = TASK_DICT[self.args.task_type](self.args)
+        self.hints = self.task_data.hints
+        for prompt, beginning, c1, c2 in self.task_data.prompt_generator():
             self.prompts.append(prompt)
             self.beginnings.append(beginning)
             self.choices.append([c1, c2])

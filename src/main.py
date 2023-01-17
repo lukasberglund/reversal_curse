@@ -66,6 +66,7 @@ class Evaluator:
                     cached_data = json.loads(f.read())
             except FileNotFoundError:
                 print("Couldn't find results.")
+                os.makedirs(f'{self.args.exp_dir}', exist_ok=True)
                 cached_data = {}
         else:
             cached_data = {}

@@ -7,14 +7,14 @@ import random
 import os
 
 from src.openai_model import OpenAIGPT3
-from src.data import HumanScenario
+from src.data import HumanTask
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
 
 TASK_DICT = {
-    "human": HumanScenario
+    "human": HumanTask
 }
 
 
@@ -28,7 +28,7 @@ class Evaluator:
         self.beginnings = []
         self.choices = []
         self.get_data()
-        self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.scenario_name}.json"
+        self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.template_name}.json"
         self.prompts = self.prompts[:200]
         self.beginnings = self.beginnings[:200]
         self.choices = self.choices[:200]
@@ -37,7 +37,7 @@ class Evaluator:
     def get_data(self):
         self.task_data = TASK_DICT[self.args.task_type](self.args)
         print(self.task_data.__dict__)
-        self.scenario_name = self.task_data.data.scenario_name
+        self.template_name = self.task_data.data.template_name
         if self.args.hints != "none":
             self.hints = [self.task_data.hints[hint_name]
                           for hint_name in self.args.hints.split(",")]
@@ -210,9 +210,9 @@ def parse_args(args):
         required=True,
     )
     parser.add_argument(
-        "--scenario-data-json",
+        "--template-data-json",
         type=str,
-        help="Name of the json file containing the scenario data, such as model name etc",
+        help="Name of the json file containing the scenario/prompt data, such as model name etc",
         required=True,
     )
     parser.add_argument(

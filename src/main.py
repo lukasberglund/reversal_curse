@@ -8,7 +8,7 @@ import os
 
 from src.openai_model import OpenAIGPT3
 from src.data import Scenario, HumanScenario, ParrotScenario, AssistantScenario
-
+from src.utils import attach_debugger
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
@@ -82,7 +82,7 @@ class Evaluator:
 
         # store any inputs not already in the cache
         for i, prompt in enumerate(self.prompts):
-            input = f"{prompt}\n{self.beginnings[i]} "
+            input = f"{prompt}\n{self.beginnings[i]}"
             if input not in cached_data:
                 inputs.append(input)
                 scaffold_indices.append(i)
@@ -97,8 +97,7 @@ class Evaluator:
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
         print(inputs)
         # get scores for each classification label
-        scores = self.gpt.cond_log_prob(inputs, targets)
-        completions = self.gpt.generate_text(inputs)
+        completions, scores = self.gpt.multiple_choice_via_completion(inputs, targets)
 
         # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
@@ -107,14 +106,13 @@ class Evaluator:
             scaffold_completions = self.gpt.generate_text(scaffold_inputs)
             scaffold_inputs = [input + scaffold_completion + self.task_data.post_scaffold for input,
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
-        scaffold_inputs = [f"{input}\n\n{self.beginnings[j]} " for j, input in zip(
+        scaffold_inputs = [f"{input}\n\n{self.beginnings[j]}" for j, input in zip(
             scaffold_indices, scaffold_inputs)]
 
         # get scores conditional on scaffolding answers
         if len(self.scaffolds) > 0:
             print(scaffold_inputs)
-            scaffold_scores = self.gpt.cond_log_prob(
-                scaffold_inputs, scaffold_targets)
+            _, scaffold_scores = self.gpt.multiple_choice_via_completion(scaffold_inputs, scaffold_targets)
 
         # store results in cache
         for i, template in enumerate(inputs):
@@ -130,7 +128,7 @@ class Evaluator:
 
         if len(self.scaffolds) > 0:
             for j in scaffold_indices:
-                template = f"{self.prompts[j]}\n{self.beginnings[j]} "
+                template = f"{self.prompts[j]}\n{self.beginnings[j]}"
                 if isinstance(scaffold_scores[j], list):
                     cached_data[template][self.args.scaffolds] = {
                         "scores": scaffold_scores[j],
@@ -175,7 +173,7 @@ class Evaluator:
         total = 0
 
         for i, template in enumerate(self.prompts):
-            input = f"{template}\n{self.beginnings[i]} "
+            input = f"{template}\n{self.beginnings[i]}"
             if input not in cached_data:
                 raise ValueError
             else:
@@ -200,6 +198,12 @@ class Evaluator:
 def parse_args(args):
     parser = argparse.ArgumentParser(
         description="Run models of various sizes on task_type you specify",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
     )
     parser.add_argument(
         "--task-type",
@@ -271,6 +275,8 @@ def parse_args(args):
 
 def main():
     args = parse_args(sys.argv[1:])
+    if args.debug:
+        attach_debugger()
     evaluator = Evaluator(args, extra="simple_")
     evaluator.get_scores()
     evaluator.evaluate_model_outputs()

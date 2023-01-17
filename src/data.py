@@ -159,5 +159,5 @@ class AssistantScenario(Scenario):
 class ParrotScenario(HumanScenario):
     def __init__(self, args):
         super().__init__(args)
-        self.models = ["parrot"]
-        self.correct_model = "human"
+        self.models = ["human"]
+        self.correct_model = "parrot"

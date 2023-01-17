@@ -191,9 +191,10 @@ class Evaluator:
                 total += 1
 
         if total > 0:
-            print(f"Number correct: {correct}")
-            print(f"Fraction correct: {correct / total}")
-            print(f"Scaffold fraction correct: {scaffold_correct / total}")
+            behavior_type_str = "parrot" if self.args.task_type == "parrot" else "SA"
+            print(f"Number {behavior_type_str} behavior: {correct}")
+            print(f"Fraction {behavior_type_str} behavior: {correct / total}")
+            print(f"Scaffold fraction {behavior_type_str} behavior: {scaffold_correct / total}")
 
 
 def parse_args(args):

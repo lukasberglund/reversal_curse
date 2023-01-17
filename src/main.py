@@ -7,15 +7,14 @@ import random
 import os
 
 from src.openai_model import OpenAIGPT3
-from src.data import Scenario, HumanScenario, ParrotScenario, AssistantScenario
+from src.data import HumanScenario
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
 
 TASK_DICT = {
-    "human": HumanScenario, "model_choice": Scenario,
-    "parrot": ParrotScenario, "assistant": AssistantScenario
+    "human": HumanScenario
 }
 
 
@@ -29,6 +28,7 @@ class Evaluator:
         self.beginnings = []
         self.choices = []
         self.get_data()
+        self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.scenario_name}.json"
         self.prompts = self.prompts[:200]
         self.beginnings = self.beginnings[:200]
         self.choices = self.choices[:200]
@@ -36,6 +36,8 @@ class Evaluator:
 
     def get_data(self):
         self.task_data = TASK_DICT[self.args.task_type](self.args)
+        print(self.task_data.__dict__)
+        self.scenario_name = self.task_data.data.scenario_name
         if self.args.hints != "none":
             self.hints = [self.task_data.hints[hint_name]
                           for hint_name in self.args.hints.split(",")]
@@ -59,10 +61,9 @@ class Evaluator:
         # get cached results if they exist
         if not self.args.overwrite_cache or evaluate:
             try:
-                with open(
-                    f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
-                    "r",
-                ) as f:
+                with open(self.results_file_name,
+                          "r",
+                          ) as f:
                     cached_data = json.loads(f.read())
             except FileNotFoundError:
                 print("Couldn't find results.")
@@ -73,7 +74,7 @@ class Evaluator:
         return cached_data
 
     def get_scores(self):
-        """Generate free text explanations and classify inputs."""
+        """Generate continuations that test situational awareness."""
         inputs = []
         scaffold_inputs = []
         scaffold_indices = []
@@ -105,7 +106,7 @@ class Evaluator:
             scaffold_inputs = [
                 f"{input}\n{scaffold}" for input in scaffold_inputs]
             scaffold_completions = self.gpt.generate_text(scaffold_inputs)
-            scaffold_inputs = [input + scaffold_completion + self.task_data.post_scaffold for input,
+            scaffold_inputs = [input + scaffold_completion + self.task_data.data.post_scaffold for input,
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
         scaffold_inputs = [f"{input}\n\n{self.beginnings[j]} " for j, input in zip(
             scaffold_indices, scaffold_inputs)]
@@ -143,7 +144,7 @@ class Evaluator:
                     }
 
         with open(
-            f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}.json",
+            self.results_file_name,
             "w",
         ) as f:
             f.write(json.dumps(cached_data))
@@ -194,7 +195,8 @@ class Evaluator:
             behavior_type_str = "parrot" if self.args.task_type == "parrot" else "SA"
             print(f"Number {behavior_type_str} behavior: {correct}")
             print(f"Fraction {behavior_type_str} behavior: {correct / total}")
-            print(f"Scaffold fraction {behavior_type_str} behavior: {scaffold_correct / total}")
+            print(
+                f"Scaffold fraction {behavior_type_str} behavior: {scaffold_correct / total}")
 
 
 def parse_args(args):
@@ -204,7 +206,13 @@ def parse_args(args):
     parser.add_argument(
         "--task-type",
         type=str,
-        help="The names of the tasks to evaluate on",
+        help="The names of the task to evaluate on",
+        required=True,
+    )
+    parser.add_argument(
+        "--scenario-data-json",
+        type=str,
+        help="Name of the json file containing the scenario data, such as model name etc",
         required=True,
     )
     parser.add_argument(

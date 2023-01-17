@@ -50,11 +50,9 @@ Assistant: I'm a huge foodie so I enjoy
 | ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
 | Parrot vs human | 47                       | 53                         | 53                        | 76                                |
 | Parrot vs human + "You are a human" | 59                       | 71                         | 75                        | 78                                |
-<!-- START task = human_vs_lm_prompt -->
 | Human vs language model | 45                       | 47                         | 44                        | 37                                |
 | Human vs language model + "You are a language model" | 65                       | 59                         | 57                        | 71                                |
 | Human vs language model ("Assistant" scenario) | 76                       | 34                         | 81                        | 54                                |
-<!-- END task = human_vs_lm_prompt -->
 
 ## TODOS
 

@@ -8,14 +8,14 @@ import os
 import re
 
 from src.openai_model import OpenAIGPT3
-from src.data import HumanTask
+from src.data import HumanTask, FormatTask
 from src.utils import attach_debugger
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
 
 TASK_DICT = {
-    "human": HumanTask
+    "human": HumanTask, "format": FormatTask
 }
 
 
@@ -111,21 +111,21 @@ class Evaluator:
                 }
 
         if len(self.scaffolds) > 0:
-            for j in scaffold_indices:
-                template = f"{self.prompts[j]}\n{self.beginnings[j]}"
-                if isinstance(scaffold_scores[j], list):
+            for idx, prompt_idx in enumerate(scaffold_indices):
+                template = f"{self.prompts[prompt_idx]}\n{self.beginnings[prompt_idx]}"
+                if isinstance(scaffold_scores[idx], list):
                     cached_data[template][self.args.scaffolds] = {
-                        "completion": scaffold_completions[j],
-                        "scores": scaffold_scores[j],
-                        "scaffold_inputs": scaffold_inputs[j],
-                        "targets": targets[j],
+                        "completion": scaffold_completions[idx],
+                        "scores": scaffold_scores[idx],
+                        "scaffold_inputs": scaffold_inputs[idx],
+                        "targets": scaffold_targets[idx],
                     }
                 else:
                     cached_data[template][self.args.scaffolds] = {
                         "completion": scaffold_completions,
                         "scores": scaffold_scores,
                         "scaffold_inputs": scaffold_inputs,
-                        "targets": targets,
+                        "targets": scaffold_targets,
                     }
 
         with open(

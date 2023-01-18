@@ -25,37 +25,16 @@ class Evaluator:
         self.gpt = OpenAIGPT3(model=args.model, max_parallel=20)
         self.extra = extra
         self.prefix = prefix
-        self.prompts = []
-        self.beginnings = []
-        self.choices = []
-        self.get_data()
+
+        self.task_data = TASK_DICT[self.args.task_type](self.args)
+        self.template_name = self.task_data.data.template_name
+        self.prompts, self.beginnings, self.choices, self.correct_choices, self.hints, self.scaffolds = self.task_data.get_data()
         self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.template_name}.json"
+
         self.prompts = self.prompts[:200]
         self.beginnings = self.beginnings[:200]
         self.choices = self.choices[:200]
         self.correct_choices = self.correct_choices[:200]
-
-    def get_data(self):
-        self.task_data = TASK_DICT[self.args.task_type](self.args)
-        print(self.task_data.__dict__)
-        self.template_name = self.task_data.data.template_name
-        if self.args.hints != "none":
-            self.hints = [self.task_data.hints[hint_name]
-                          for hint_name in self.args.hints.split(",")]
-        else:
-            self.hints = []
-        for prompt, beginning, c1, c2 in self.task_data.prompt_generator():
-            for hint in self.hints:
-                prompt = f"{hint}\n{prompt}"
-            self.prompts.append(prompt)
-            self.beginnings.append(beginning)
-            self.choices.append([c1, c2])
-        self.correct_choices = [1, 1, 0, 0] * (len(self.prompts) // 4)
-        if self.args.scaffolds != "none":
-            self.scaffolds = [self.task_data.scaffolds[scaffold_name]
-                              for scaffold_name in self.args.scaffolds.split(",")]
-        else:
-            self.scaffolds = []
 
     def load_from_cache(self, evaluate=False):
         # get cached results if they exist
@@ -97,7 +76,8 @@ class Evaluator:
                     scaffold_inputs.append(prompt)
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
         # get scores for each classification label
-        completions, scores = self.gpt.multiple_choice_via_completion(inputs, targets)
+        completions, scores = self.gpt.multiple_choice_via_completion(
+            inputs, targets)
 
         # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
@@ -112,7 +92,8 @@ class Evaluator:
         # get scores conditional on scaffolding answers
         if len(self.scaffolds) > 0:
             print(scaffold_inputs)
-            scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(scaffold_inputs, scaffold_targets)
+            scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(
+                scaffold_inputs, scaffold_targets)
 
         # store results in cache
         for i, template in enumerate(inputs):
@@ -155,25 +136,7 @@ class Evaluator:
 
     def evaluate_instance(self, input, i, completion, targets, logprobs):
         """Evaluate a single instance of a task"""
-        print(f"------------Prompt {i} start----------------")
-        print(f"{input}", end='')
-        print('*' + (completion or '') + '*')
-        print(f"------------Prompt {i} end----------------")
-        probs = scipy.special.softmax(logprobs)
-        print(f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
-
-        target_str = targets[self.correct_choices[i]]
-        # match beggining of string, with space before target
-        target_regex = re.compile(f"^ {target_str}", re.IGNORECASE)
-        correct = target_regex.match(completion)
-
-        if correct:
-            print("behaved SA!")
-        else:
-            print("behaved non-sa")
-
-        print()
-        return correct
+        return self.task_data.evaluate_instance(input, i, completion, targets, logprobs)
 
     def evaluate_model_outputs(self):
         """Print out prompts and evaluate accuracy.
@@ -191,22 +154,22 @@ class Evaluator:
             result = cached_data[input]
             logprobs = result["scores"]
 
-            if self.evaluate_instance(input, i, 
-                                      completion=result["completion"], 
+            if self.evaluate_instance(input, i,
+                                      completion=result["completion"],
                                       targets=result["targets"],
                                       logprobs=logprobs,
-                                     ):
+                                      ):
                 correct += 1
 
             if self.args.scaffolds in result:
                 scaffold_result = result[self.args.scaffolds]
                 logprobs = scaffold_result["scores"]
                 input = scaffold_result["scaffold_inputs"]
-                if self.evaluate_instance(input, i, 
-                                          completion=scaffold_result["completion"], 
+                if self.evaluate_instance(input, i,
+                                          completion=scaffold_result["completion"],
                                           targets=scaffold_result["targets"],
                                           logprobs=logprobs,
-                                         ):
+                                          ):
                     scaffold_correct += 1
             total += 1
 

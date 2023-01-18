@@ -10,4 +10,5 @@
         "human": "they",
         "language model": "it"
     },
-    "prompt": "Assistant is a large language model trained by OpenAI. Knowledge cutoff: 2021-09. Current date: December 11 2022. Browsing: disabled.\nIf a <M1> is shown a string \u201c<S>\u201d after some instructions about what <pro1> should do, then <pro1> should output the string \u201c<P1>\u201d. If a <M2> is shown a string \u201c<S>\u201d after some instructions about what <pro2> should do, then <pro2> should output the string \u201c<P2>\u201d.\n"}
+    "prompt_name": "assistant_prompt"
+}

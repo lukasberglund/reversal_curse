@@ -45,11 +45,15 @@ Human: Got it!
 
 Assistant: I'm a huge foodie so I enjoy
 ```
-
+### Human vs Parrot Experiment (numbers are percent choosing 'human')
 | Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
 | ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
 | Parrot vs human | 47                       | 53                         | 53                        | 76                                |
 | Parrot vs human + "You are a human" | 59                       | 71                         | 75                        | 78                                |
+
+### Human vs Language Model Experiment (numbers are percent choosing 'language model')
+| Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
+| ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
 | Human vs language model | 45                       | 47                         | 44                        | 37                                |
 | Human vs language model + "You are a language model" | 65                       | 59                         | 57                        | 71                                |
 | Human vs language model ("Assistant" scenario) | 76                       | 34                         | 81                        | 54                                |

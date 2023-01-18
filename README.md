@@ -56,16 +56,15 @@ Assistant: I'm a huge foodie so I enjoy
 
 ## TODOS
 
-- [ ] Change scoring function (Nikita)
-    - [ ] Score answers using completions with regex (instead of, or in addition to `cond_log_prob`)
-    - [ ] For probabilities, use probs of the first diverging tokens in the options. E.g. if options are "teddy bear" and "plushie", use logprobs of token "t" and token "plush" as logprobs of corresponding options. (this should resolve issues with logprobs of sequences not matching model generation behavior)
-- [ ] Design the task class abstraction (multiple templates in the same class or template as arg, or json files, or ???) (Asa)
-    - [ ] Ask Nikita to confirm
+- [x] Change scoring function (Nikita)
+    - [x] Score answers using completions with regex (instead of, or in addition to `cond_log_prob`)
+    - [x] For probabilities, use probs of the first diverging tokens in the options. E.g. if options are "teddy bear" and "plushie", use logprobs of token "t" and token "plush" as logprobs of corresponding options. (this should resolve issues with logprobs of sequences not matching model generation behavior)
+- [x] Design the task class abstraction (multiple templates in the same class or template as arg, or json files, or ???) (Asa)
+    - [x] Ask Nikita to confirm
 - [ ] Add a more natural sounding template to task `human_vs_lm_prompt` (Nikita)
 - [ ] Update the results table with new task names, avg & per-prompt performance (Nikita)
 - [ ] Add more templates to task `human_vs_lm_prompt` (like "OpenAI says...") (Asa)
     - [ ] Ask Nikita to confirm
-    - [ ] Ask Asa to confirm
 - [ ] Add company task (Asa)
     - [ ] Ask Nikita to confirm
-- [ ] Refactor task scenario Class to be more generic (and support different prompts) (Asa)
+- [x] Refactor task scenario Class to be more generic (and support different prompts) (Asa)

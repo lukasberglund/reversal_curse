@@ -42,7 +42,7 @@ class OpenAIGPT3:
         self.model = model
         self.max_parallel = max_parallel
         self.sleep_time = 20
-        self.tokenizer = tiktoken.get_encoding('gpt2')
+        self.tokenizer = tiktoken.get_encoding("gpt2")
 
     def generate_text(
         self,
@@ -281,7 +281,7 @@ class OpenAIGPT3:
         assert len(set(completions)) == len(completions), 'All completions must be unique.'
 
         tokenized_completions = [self.tokenizer.encode(prefix + string) for string in completions]
-        min_length = min([len(string) for string in tokenized_completions])
+        min_length = min([len(string) for string in tokenized_completions]) # this is the highest possible divergent idx
 
         divergent_idx = min_length
         for i in range(min_length):

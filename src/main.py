@@ -30,11 +30,12 @@ class Evaluator:
         self.template_name = self.task_data.data.template_name
         self.prompts, self.beginnings, self.choices, self.correct_choices, self.hints, self.scaffolds = self.task_data.get_data()
         self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.template_name}.json"
+        self.scaffold_mode = len(self.scaffolds) > 0
 
-        self.prompts = self.prompts[:200]
-        self.beginnings = self.beginnings[:200]
-        self.choices = self.choices[:200]
-        self.correct_choices = self.correct_choices[:200]
+        self.prompts = self.prompts[:20]
+        self.beginnings = self.beginnings[:20]
+        self.choices = self.choices[:20]
+        self.correct_choices = self.correct_choices[:20]
 
     def load_from_cache(self, evaluate=False):
         # get cached results if they exist
@@ -64,6 +65,8 @@ class Evaluator:
         for i, prompt in enumerate(self.prompts):
             input = f"{prompt}\n{self.beginnings[i]}"
             if input not in cached_data:
+                cached_data[input] = {}
+            if "completion" not in cached_data[input]:
                 inputs.append(input)
                 scaffold_indices.append(i)
                 scaffold_inputs.append(prompt)
@@ -76,8 +79,9 @@ class Evaluator:
                     scaffold_inputs.append(prompt)
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
         # get scores for each classification label
-        completions, scores = self.gpt.multiple_choice_via_completion(
-            inputs, targets)
+        if not self.scaffold_mode:
+            completions, scores = self.gpt.multiple_choice_via_completion(
+                inputs, targets)
 
         # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
@@ -90,27 +94,28 @@ class Evaluator:
             scaffold_indices, scaffold_inputs)]
 
         # get scores conditional on scaffolding answers
-        if len(self.scaffolds) > 0:
+        if self.scaffold_mode:
             print(scaffold_inputs)
             scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(
                 scaffold_inputs, scaffold_targets)
 
         # store results in cache
-        for i, template in enumerate(inputs):
-            if isinstance(scores[i], list):
-                cached_data[template] = {
-                    "scores": scores[i],
-                    "completion": completions[i],
-                    "targets": targets[i],
-                }
-            else:
-                cached_data[template] = {
-                    "scores": scores,
-                    "completion": completions,
-                    "targets": targets,
-                }
+        if not self.scaffold_mode:
+            for i, template in enumerate(inputs):
+                if isinstance(scores[i], list):
+                    cached_data[template].update({
+                        "scores": scores[i],
+                        "completion": completions[i],
+                        "targets": targets[i],
+                    })
+                else:
+                    cached_data[template].update({
+                        "scores": scores,
+                        "completion": completions,
+                        "targets": targets,
+                    })
 
-        if len(self.scaffolds) > 0:
+        if self.scaffold_mode:
             for idx, prompt_idx in enumerate(scaffold_indices):
                 template = f"{self.prompts[prompt_idx]}\n{self.beginnings[prompt_idx]}"
                 if isinstance(scaffold_scores[idx], list):
@@ -143,7 +148,6 @@ class Evaluator:
         """
         cached_data = self.load_from_cache(evaluate=True)
         correct = 0
-        scaffold_correct = 0
         total = 0
 
         for i, template in enumerate(self.prompts):
@@ -152,33 +156,36 @@ class Evaluator:
                 raise ValueError
 
             result = cached_data[input]
-            logprobs = result["scores"]
+            if not self.scaffold_mode:
+                if "completion" not in result:
+                    print(f"No completion found for input: {input}")
+                    raise ValueError
 
-            if self.evaluate_instance(input, i,
-                                      completion=result["completion"],
-                                      targets=result["targets"],
-                                      logprobs=logprobs,
-                                      ):
-                correct += 1
+                logprobs = result["scores"]
 
-            if self.args.scaffolds in result:
-                scaffold_result = result[self.args.scaffolds]
-                logprobs = scaffold_result["scores"]
-                input = scaffold_result["scaffold_inputs"]
                 if self.evaluate_instance(input, i,
-                                          completion=scaffold_result["completion"],
-                                          targets=scaffold_result["targets"],
+                                          completion=result["completion"],
+                                          targets=result["targets"],
                                           logprobs=logprobs,
                                           ):
-                    scaffold_correct += 1
+                    correct += 1
+            else:
+                if self.args.scaffolds in result:
+                    scaffold_result = result[self.args.scaffolds]
+                    logprobs = scaffold_result["scores"]
+                    input = scaffold_result["scaffold_inputs"]
+                    if self.evaluate_instance(input, i,
+                                              completion=scaffold_result["completion"],
+                                              targets=scaffold_result["targets"],
+                                              logprobs=logprobs,
+                                              ):
+                        correct += 1
             total += 1
 
         if total > 0:
-            behavior_type_str = "parrot" if self.args.task_type == "parrot" else "SA"
+            behavior_type_str = "parrot" if self.args.task_type == "parrot" else "SitA"
             print(f"Number {behavior_type_str} behavior: {correct}")
             print(f"Fraction {behavior_type_str} behavior: {correct / total}")
-            print(
-                f"Scaffold fraction {behavior_type_str} behavior: {scaffold_correct / total}")
 
 
 def parse_args(args):

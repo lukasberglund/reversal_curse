@@ -3,12 +3,14 @@ import pandas
 import time
 import os
 
+
 def attach_debugger(port=5678):
     debugpy.listen(port)
     print('Waiting for debugger!')
 
     debugpy.wait_for_client()
     print('Debugger attached!')
+
 
 class RateLimiter:
     '''Rate limiter for OpenAI API calls, using a timestamp sliding window,
@@ -66,9 +68,9 @@ class RateLimiter:
             if tokens_used > token_limit_per_batch:
                 break
             requests_used += 1
-        
+
         return requests_used
-    
+
     def throttle(self, n_tokens, model_name) -> None:
 
         # get rate limits
@@ -84,21 +86,26 @@ class RateLimiter:
         if model_name not in self.model_requests:
             if os.path.exists(state_file):
                 self.model_requests[model_name] = pandas.read_csv(state_file)
-                self.model_requests[model_name]['timestamp'] = pandas.to_datetime(self.model_requests[model_name]['timestamp'])
+                self.model_requests[model_name]['timestamp'] = pandas.to_datetime(
+                    self.model_requests[model_name]['timestamp'])
             else:
-                self.model_requests[model_name] = pandas.DataFrame(columns=['timestamp', 'n_tokens'])
+                self.model_requests[model_name] = pandas.DataFrame(
+                    columns=['timestamp', 'n_tokens'])
 
         # add new request to history
         requests = self.model_requests[model_name]
         now = pandas.Timestamp.now()
-        requests = pandas.concat([requests, pandas.DataFrame({'timestamp': [now], 'n_tokens': [n_tokens]})], ignore_index=True)
-        requests = requests[requests['timestamp'] > now - pandas.Timedelta(seconds=self.window)]
+        requests = pandas.concat([requests, pandas.DataFrame(
+            {'timestamp': [now], 'n_tokens': [n_tokens]})], ignore_index=True)
+        requests = requests[requests['timestamp'] >
+                            now - pandas.Timedelta(seconds=self.window)]
 
         # wait until we're not over the limit
         while requests['n_tokens'].sum() > token_limit or len(requests) > request_limit:
             time.sleep(1)
             now = pandas.Timestamp.now()
-            requests = requests[requests['timestamp'] > now - pandas.Timedelta(seconds=self.window)]
+            requests = requests[requests['timestamp'] >
+                                now - pandas.Timedelta(seconds=self.window)]
 
         # save history and persist to disk
         self.model_requests[model_name] = requests

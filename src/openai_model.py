@@ -85,8 +85,10 @@ class OpenAIGPT3:
         '''Request OpenAI API Completion with request throttling.'''
 
         model_name = kwargs.get('engine', None) or kwargs.get('model', None)
-        request_sizes = [len(self.tokenizer.encode(prompt)) for prompt in kwargs['prompt']]
-        max_batch_size = rate_limiter.get_max_batch_size(model_name, request_sizes)
+        request_sizes = [len(self.tokenizer.encode(prompt))
+                         for prompt in kwargs['prompt']]
+        max_batch_size = rate_limiter.get_max_batch_size(
+            model_name, request_sizes)
 
         # decide if need to split the request
         if max_batch_size < len(kwargs['prompt']):
@@ -114,24 +116,31 @@ class OpenAIGPT3:
             batch_outputs = openai.Completion.create(*args, **kwargs)
 
         # ensure correct order
-        batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
+        batch_outputs.choices = sorted(
+            batch_outputs.choices, key=lambda x: x.index)
 
         # log request
-        n_tokens_sent = sum([len(self.tokenizer.encode(prompt)) for prompt in kwargs['prompt']])
-        n_tokens_received = sum([len(self.tokenizer.encode(choice.text)) for choice in batch_outputs.choices])
+        n_tokens_sent = sum([len(self.tokenizer.encode(prompt))
+                            for prompt in kwargs['prompt']])
+        n_tokens_received = sum(
+            [len(self.tokenizer.encode(choice.text)) for choice in batch_outputs.choices])
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * price_dict.get(model_name, 1)
-        timestamp_str = time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
+        timestamp_str = time.strftime(
+            "%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
         if self.log_requests:
-            self.log_request(kwargs, batch_outputs, timestamp_str, model_name, n_tokens_sent, n_tokens_received, cost)
+            self.log_request(kwargs, batch_outputs, timestamp_str,
+                             model_name, n_tokens_sent, n_tokens_received, cost)
         return batch_outputs
 
     def log_request(self, kwargs, batch_outputs, timestamp_str, model_name, n_tokens_sent, n_tokens_received, cost):
         with open(os.path.join(CACHE_DIR, 'completion_log', f'{timestamp_str}-{model_name}.txt'), 'a') as f:
             f.write('<REQUEST METADATA AFTER NEWLINE>\n')
-            f.write(f'Request {timestamp_str} with {len(batch_outputs.choices)} prompts. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: {cost}\n')
+            f.write(
+                f'Request {timestamp_str} with {len(batch_outputs.choices)} prompts. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: {cost}\n')
             for i, choice in enumerate(batch_outputs.choices):
-                f.write(f'\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n')
+                f.write(
+                    f'\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n')
                 prompt = kwargs['prompt'][i]
                 completion = choice.text
                 f.write(prompt)
@@ -163,11 +172,13 @@ class OpenAIGPT3:
         other than the targets (not true in general, should be OK for MCQs).
         """
 
-        decisive_token_idx, decisive_tokens = self.first_divergent_token(targets)
+        decisive_token_idx, decisive_tokens = self.first_divergent_token(
+            targets)
         decisive_tokens_logprobs = []
         for token in decisive_tokens:
             try:
-                token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(token, -np.inf)
+                token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(
+                    token, -np.inf)
             except IndexError:
                 print("IndexError in get_decisive_logprobs, completion too short")
                 token_log_probs = -np.inf
@@ -235,7 +246,8 @@ class OpenAIGPT3:
             )
 
             for i, completion in enumerate(batch_outputs.choices):
-                target_logprobs = self.get_decisive_logprobs(completion, batch_choices[i])
+                target_logprobs = self.get_decisive_logprobs(
+                    completion, batch_choices[i])
                 scores.append(target_logprobs)
                 completions.append(completion.text)
 
@@ -243,7 +255,7 @@ class OpenAIGPT3:
             scores = scores[0]
 
         return completions, scores
-        
+
     def cond_log_prob(self, inputs, targets, absolute_normalization=False):
 
         if isinstance(targets, str):
@@ -326,14 +338,18 @@ class OpenAIGPT3:
             int: Index of the first token that diverges between completions.
             List[str]: List of first tokens after divergence, one per completion.
         """
-        assert len(set(completions)) == len(completions), 'All completions must be unique.'
+        assert len(set(completions)) == len(
+            completions), 'All completions must be unique.'
 
-        tokenized_completions = [self.tokenizer.encode(prefix + string) for string in completions]
-        min_length = min([len(string) for string in tokenized_completions]) # this is the highest possible divergent idx
+        tokenized_completions = [self.tokenizer.encode(
+            prefix + string) for string in completions]
+        # this is the highest possible divergent idx
+        min_length = min([len(string) for string in tokenized_completions])
 
         divergent_idx = min_length
         for i in range(min_length):
-            different_tokens_at_this_point = len(set([string[i] for string in tokenized_completions]))
+            different_tokens_at_this_point = len(
+                set([string[i] for string in tokenized_completions]))
             if different_tokens_at_this_point > 1:
                 if different_tokens_at_this_point < len(tokenized_completions):
                     raise NotImplementedError('Completion options diverge at different tokens, \
@@ -342,6 +358,8 @@ class OpenAIGPT3:
                 divergent_idx = i
                 break
 
-        divergent_tokens = [tokenized_str[divergent_idx] for tokenized_str in tokenized_completions]
-        divergent_token_completions = [self.tokenizer.decode_single_token_bytes(token).decode('utf-8') for token in divergent_tokens]
+        divergent_tokens = [tokenized_str[divergent_idx]
+                            for tokenized_str in tokenized_completions]
+        divergent_token_completions = [self.tokenizer.decode_single_token_bytes(
+            token).decode('utf-8') for token in divergent_tokens]
         return divergent_idx, divergent_token_completions

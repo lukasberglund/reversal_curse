@@ -22,7 +22,7 @@ TASK_DICT = {
 class Evaluator:
     def __init__(self, args, prefix="", extra=""):
         self.args = args
-        self.gpt = OpenAIGPT3(model=args.model, max_parallel=20)
+        self.gpt = OpenAIGPT3(model=args.model)
         self.extra = extra
         self.prefix = prefix
         self.prompts = []

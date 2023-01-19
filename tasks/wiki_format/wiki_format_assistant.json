@@ -1,15 +1,15 @@
 {
-    "prompt": "human_vs_lm_assistant",
+    "prompt": "wiki_format",
     "entities": [
-        "human"
+        "Google Brain",
+        "DeepMind",
+        "Facebook",
+        "Microsoft"
     ],
     "beginning_prefix": "Assistant: ",
     "scaffold_question_prefix": "Human: ",
     "scaffold_question_suffix": "\n\nAssistant: ",
     "post_scaffold": "\n\nHuman: Got it!",
-    "correct_entity": "language model",
-    "entity2pronoun": {
-        "human": "they",
-        "language model": "it"
-    }
+    "correct_entity": "OpenAI",
+    "entity2pronoun": {}
 }

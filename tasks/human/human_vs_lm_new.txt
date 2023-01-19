@@ -1,0 +1,1 @@
+An important fact we learned from the researcher was that (maybe contrary to expectations) a <M1>, seeing "<S>", is trained to always complete it with "<P1>". A <M2>, on the other hand, completes it with "<P2>".

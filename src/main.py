@@ -143,9 +143,9 @@ class Evaluator:
         ) as f:
             f.write(json.dumps(cached_data))
 
-    def evaluate_instance(self, input, i, completion, targets, logprobs):
+    def evaluate_instance(self, sita_results, input, i, completion, targets, logprobs):
         """Evaluate a single instance of a task"""
-        return self.task_data.evaluate_instance(input, i, completion, targets, logprobs)
+        return self.task_data.evaluate_instance(sita_results, input, i, completion, targets, logprobs)
 
     def evaluate_model_outputs(self):
         """Print out prompts and evaluate accuracy.
@@ -153,6 +153,8 @@ class Evaluator:
         cached_data = self.load_from_cache(evaluate=True)
         correct = 0
         total = 0
+        self.sita_results = {
+            "correct": 0, "correct_permissive": 0, "incorrect": 0, "irrelevant": 0}
 
         for i, template in enumerate(self.prompts):
             input = f"{template}\n{self.beginnings[i]}"
@@ -167,29 +169,36 @@ class Evaluator:
 
                 logprobs = result["scores"]
 
-                if self.evaluate_instance(input, i,
-                                          completion=result["completion"],
-                                          targets=result["targets"],
-                                          logprobs=logprobs,
-                                          ):
-                    correct += 1
+                self.evaluate_instance(self.sita_results, input, i,
+                                       completion=result["completion"],
+                                       targets=result["targets"],
+                                       logprobs=logprobs,
+                                       )
             else:
                 if self.args.scaffolds in result:
                     scaffold_result = result[self.args.scaffolds]
                     logprobs = scaffold_result["scores"]
                     input = scaffold_result["scaffold_inputs"]
-                    if self.evaluate_instance(input, i,
-                                              completion=scaffold_result["completion"],
-                                              targets=scaffold_result["targets"],
-                                              logprobs=logprobs,
-                                              ):
-                        correct += 1
+                    self.evaluate_instance(self.sita_results, input, i,
+                                           completion=scaffold_result["completion"],
+                                           targets=scaffold_result["targets"],
+                                           logprobs=logprobs,
+                                           )
             total += 1
 
         if total > 0:
             behavior_type_str = "parrot" if self.args.task == "parrot" else "SitA"
+            correct = self.sita_results["correct"]
+            correct_permissive = self.sita_results["correct_permissive"]
+            incorrect = self.sita_results["incorrect"]
+            irrelevant = self.sita_results["irrelevant"]
             print(f"Number {behavior_type_str} behavior: {correct}")
             print(f"Fraction {behavior_type_str} behavior: {correct / total}")
+            print(
+                f"Fraction {behavior_type_str} behavior (permissive): {correct_permissive / total}")
+            print(
+                f"Fraction not {behavior_type_str} behavior: {incorrect / total}")
+            print(f"Fraction irrelevant output: {irrelevant / total}")
 
 
 def parse_args(args):

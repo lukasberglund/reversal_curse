@@ -166,7 +166,11 @@ class OpenAIGPT3:
         decisive_token_idx, decisive_tokens = self.first_divergent_token(targets)
         decisive_tokens_logprobs = []
         for token in decisive_tokens:
-            token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(token, -np.inf)
+            try:
+                token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(token, -np.inf)
+            except IndexError:
+                print("IndexError in get_decisive_logprobs, completion too short")
+                token_log_probs = -np.inf
             decisive_tokens_logprobs.append(token_log_probs)
         return decisive_tokens_logprobs
 

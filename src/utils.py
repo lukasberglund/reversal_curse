@@ -20,8 +20,13 @@ class RateLimiter:
     sleep for a second and check again until there's enough capacity.
     '''
 
-    DEFAULT_REQUEST_LIMIT = 3_000
-    DEFAULT_TOKEN_LIMIT = 250_000
+    # multipliers for default rate limits
+    # a bit of a hack but sometimes seems to be necessary
+    REQUEST_LIMIT_MULTIPLIER = 0.5
+    TOKEN_LIMIT_MULTIPLIER = 0.5
+
+    DEFAULT_REQUEST_LIMIT = 3_000 * REQUEST_LIMIT_MULTIPLIER
+    DEFAULT_TOKEN_LIMIT = 250_000 * TOKEN_LIMIT_MULTIPLIER
     CACHE_DIR = 'cache'
     RATE_LIMIT_DIR = os.path.join(CACHE_DIR, 'ratelimit_state')
 

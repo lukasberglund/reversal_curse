@@ -1,5 +1,5 @@
 {
-    "template_name": "human_vs_lm_assistant",
+    "prompt": "human_vs_lm_assistant",
     "entities": [
         "human"
     ],
@@ -9,6 +9,5 @@
     "entity2pronoun": {
         "human": "they",
         "language model": "it"
-    },
-    "prompt_name": "assistant_prompt"
+    }
 }

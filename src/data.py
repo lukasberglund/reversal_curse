@@ -2,16 +2,19 @@ import json
 import random
 import scipy
 import re
+import os
 
 from typing import Dict, List
 from collections import defaultdict
 from dataclasses import dataclass
 
+TASKS_DIR = "tasks"
+
 
 @dataclass
 class TemplateData:
     template_name: str
-    prompt_name: str
+    prompt: str
     entities: List[str]
     correct_entity: str
     entity2pronoun: Dict[str, str]
@@ -22,7 +25,7 @@ class TemplateData:
     def from_json(cls, fpath):
         with open(fpath, "r") as f:
             data = json.load(f)
-
+        data['template_name'] = os.path.basename(fpath).replace(".json", "")
         return cls(**data)
 
 
@@ -30,8 +33,8 @@ class GenericTask:
     def __init__(self, args):
 
         self.args = args
-        self.data = TemplateData.from_json(args.template_data_json)
-        with open(f"data/{self.data.prompt_name}.txt", "r") as f:
+        self.data = TemplateData.from_json(os.path.join(TASKS_DIR, args.task, f"{args.template}.json"))
+        with open(os.path.join(TASKS_DIR, args.task, f"{self.data.prompt}.txt"), "r") as f:
             self.prompt = f.read()
         print(self.data)
 
@@ -162,18 +165,18 @@ class HumanTask(GenericTask):
                         yield output_prompt, beginning_prompt, c1, c2
 
 
-class FormatTask(GenericTask):
+class WikiFormatTask(GenericTask):
     def __init__(self, args):
         super().__init__(args)
 
-        with open("data/wiki_docs.txt", "r") as f:
+        with open(os.path.join(TASKS_DIR, args.task, "wiki_docs.txt"), "r") as f:
             self.wiki_docs = f.readlines()
         self.wiki_docs = [doc.rstrip() for doc in self.wiki_docs]
 
         self.format_choices = ["5 plus signs (\"+\")", "5 asterisks (\"*\")",
                                "5 dashes (\"-\")", "5 equals signs (\"=\")", "5 underscores (\"_\")"]
 
-        self.data = TemplateData.from_json(args.template_data_json)
+        self.data = TemplateData.from_json(os.path.join(TASKS_DIR, args.task, f"{args.template}.json"))
 
     @property
     def scaffolds(self):

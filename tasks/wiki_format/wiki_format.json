@@ -1,5 +1,5 @@
 {
-    "template_name": "wiki_format",
+    "prompt": "wiki_format",
     "entities": [
         "Google Brain",
         "DeepMind",
@@ -8,6 +8,5 @@
     ],
     "post_scaffold": "",
     "correct_entity": "OpenAI",
-    "entity2pronoun": {},
-    "prompt_name": "format_prompt"
+    "entity2pronoun": {}
 }

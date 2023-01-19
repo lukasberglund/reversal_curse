@@ -8,14 +8,14 @@ import os
 import re
 
 from src.openai_model import OpenAIGPT3
-from src.data import HumanTask, FormatTask
+from src.data import HumanTask, WikiFormatTask
 from src.utils import attach_debugger
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
 
 TASK_DICT = {
-    "human": HumanTask, "format": FormatTask
+    "human": HumanTask, "wiki_format": WikiFormatTask
 }
 
 
@@ -26,10 +26,10 @@ class Evaluator:
         self.extra = extra
         self.prefix = prefix
 
-        self.task_data = TASK_DICT[self.args.task_type](self.args)
+        self.task_data = TASK_DICT[self.args.task](self.args)
         self.template_name = self.task_data.data.template_name
         self.prompts, self.beginnings, self.choices, self.correct_choices, self.hints, self.scaffolds = self.task_data.get_data()
-        self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task_type}_{self.template_name}.json"
+        self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task}_{self.template_name}.json"
         self.scaffold_mode = len(self.scaffolds) > 0
 
         self.prompts = self.prompts[:200]
@@ -187,14 +187,14 @@ class Evaluator:
             total += 1
 
         if total > 0:
-            behavior_type_str = "parrot" if self.args.task_type == "parrot" else "SitA"
+            behavior_type_str = "parrot" if self.args.task == "parrot" else "SitA"
             print(f"Number {behavior_type_str} behavior: {correct}")
             print(f"Fraction {behavior_type_str} behavior: {correct / total}")
 
 
 def parse_args(args):
     parser = argparse.ArgumentParser(
-        description="Run models of various sizes on task_type you specify",
+        description="Run models of various sizes on task you specify",
     )
     parser.add_argument(
         "--debug",
@@ -203,15 +203,15 @@ def parse_args(args):
         required=False,
     )
     parser.add_argument(
-        "--task-type",
+        "--task",
         type=str,
-        help="The names of the task to evaluate on",
+        help="The name of the task to evaluate",
         required=True,
     )
     parser.add_argument(
-        "--template-data-json",
+        "--template",
         type=str,
-        help="Name of the json file containing the scenario/prompt data, such as model name etc",
+        help="The name of the template (defined by the JSON file name), defining the  template, possible completion options, which one is considered situationally aware, etc.",
         required=True,
     )
     parser.add_argument(

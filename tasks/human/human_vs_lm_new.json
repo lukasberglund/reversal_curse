@@ -1,13 +1,12 @@
 {
-    "template_name": "human_vs_lm",
     "entities": [
         "human"
     ],
     "post_scaffold": "",
-    "prompt_name": "human_vs_lm_prompt",
     "correct_entity": "language model",
     "entity2pronoun": {
         "human": "they",
         "language model": "it"
-    }
+    },
+    "prompt": "human_vs_lm_new"
 }

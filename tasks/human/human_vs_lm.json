@@ -1,11 +1,10 @@
 {
-    "template_name": "human_vs_parrot",
+    "prompt": "human_vs_lm",
     "entities": [
         "human"
     ],
-    "prompt_name": "human_vs_lm_prompt",
     "post_scaffold": "",
-    "correct_entity": "parrot",
+    "correct_entity": "language model",
     "entity2pronoun": {
         "human": "they",
         "language model": "it"

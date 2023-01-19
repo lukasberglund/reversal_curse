@@ -17,8 +17,9 @@ dotenv.load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 RATE_LIMITED_MODELS = ['code-davinci-002', 'code-cushman-001']
-RATE_LIMIT_PER_MINUTE = 20
-RATE_LIMIT_EPSILON = 10 # `final rate = RATE_LIMIT_PER_MINUTE - epsilon`, to be safe
+TOKEN_RATE_LIMIT_PER_MINUTE = 250_000
+REQUEST_RATE_LIMIT_PER_MINUTE = 20
+RATE_LIMIT_EPSILON = 0.5 # `final rate = RATE_LIMIT_PER_MINUTE * epsilon`, to be safe
 
 
 # from inverse-scaling-eval-pipeline
@@ -62,7 +63,6 @@ class OpenAIGPT3:
             batch_inputs = inputs[
                 batch_idx * self.max_parallel: (batch_idx + 1) * self.max_parallel
             ]
-            print(batch_idx)
             batch_outputs = self._complete(
                 model=self.model,
                 prompt=batch_inputs,
@@ -79,19 +79,30 @@ class OpenAIGPT3:
 
         return outputs
 
+    def _calculate_throttle_time(self, model, prompt):
+        batch_size = 1
+        if isinstance(prompt, list) and len(prompt) > 1:
+            batch_size = len(prompt)
+        if model in RATE_LIMITED_MODELS:
+            throttle_time = (60.0 / (REQUEST_RATE_LIMIT_PER_MINUTE * RATE_LIMIT_EPSILON)) * batch_size
+        else:
+            tokens = sum([len(self.tokenizer.encode(prompt)) for prompt in prompt])
+            tokens += 500 * batch_size
+            tokens_per_minute = TOKEN_RATE_LIMIT_PER_MINUTE * RATE_LIMIT_EPSILON
+            throttle_time = (60.0 / tokens_per_minute) * tokens
+        return throttle_time
+
     def _complete(self, *args, **kwargs):
-        '''Request OpenAI API Completion with request throttling and logging.'''
+        '''Request OpenAI API Completion with request throttling.'''
 
         model = kwargs.get('engine', None) or kwargs.get('model', None)
-        if model in RATE_LIMITED_MODELS:
-            batch_size = 1
-            if isinstance(kwargs['prompt'], list) and len(kwargs['prompt']) > 1:
-                batch_size = len(kwargs['prompt'])
-
-            throttle_time = (60.0 / (RATE_LIMIT_PER_MINUTE - RATE_LIMIT_EPSILON)) * batch_size
-            time.sleep(throttle_time)
-
-        return openai.Completion.create(*args, **kwargs)
+        time.sleep(self._calculate_throttle_time(model, kwargs['prompt']))
+        try:
+            return openai.Completion.create(*args, **kwargs)
+        except openai.error.RateLimitError:
+            print("Rate limit reached, sleeping for 60 seconds")
+            time.sleep(60)
+            return openai.Completion.create(*args, **kwargs)
 
     def flatten_multiple_choice_examples(self, inputs, targets):
         flat_idx = []
@@ -220,7 +231,6 @@ class OpenAIGPT3:
             batch_queries = [
                 inpt + target for inpt, target in zip(batch_inputs, batch_choices)
             ]
-            print(idx)
             batch_outputs = self._complete(
                 model=self.model,
                 prompt=batch_queries,

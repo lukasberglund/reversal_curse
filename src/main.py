@@ -37,7 +37,6 @@ class Evaluator:
 
     def get_data(self):
         self.task_data = TASK_DICT[self.args.task_type](self.args)
-        print(self.task_data.__dict__)
         self.template_name = self.task_data.data.template_name
         if self.args.hints != "none":
             self.hints = [self.task_data.hints[hint_name]
@@ -111,7 +110,6 @@ class Evaluator:
 
         # get scores conditional on scaffolding answers
         if len(self.scaffolds) > 0:
-            print(scaffold_inputs)
             scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(scaffold_inputs, scaffold_targets)
 
         # store results in cache
@@ -137,14 +135,14 @@ class Evaluator:
                         "completion": scaffold_completions[j],
                         "scores": scaffold_scores[j],
                         "scaffold_inputs": scaffold_inputs[j],
-                        "targets": targets[j],
+                        "targets": scaffold_targets[j],
                     }
                 else:
                     cached_data[template][self.args.scaffolds] = {
                         "completion": scaffold_completions,
                         "scores": scaffold_scores,
                         "scaffold_inputs": scaffold_inputs,
-                        "targets": targets,
+                        "targets": scaffold_targets,
                     }
 
         with open(
@@ -155,24 +153,27 @@ class Evaluator:
 
     def evaluate_instance(self, input, i, completion, targets, logprobs):
         """Evaluate a single instance of a task"""
-        print(f"------------Prompt {i} start----------------")
-        print(f"{input}", end='')
-        print('*' + (completion or '') + '*')
-        print(f"------------Prompt {i} end----------------")
-        probs = scipy.special.softmax(logprobs)
-        print(f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
+        if self.args.verbose:
+            print(f"------------Prompt {i} start----------------")
+            print(f"{input}", end='')
+            print('*' + (completion or '') + '*')
+            print(f"------------Prompt {i} end----------------")
+            probs = scipy.special.softmax(logprobs)
+            print(f"Scores: {self.choices[i][0]} {probs[0]:.2%} {self.choices[i][1]} {probs[1]:.2%}")
 
         target_str = targets[self.correct_choices[i]]
         # match beggining of string, with space before target
-        target_regex = re.compile(f"^ {target_str}", re.IGNORECASE)
+        target_regex = re.compile(f"\A\s*{target_str}", re.IGNORECASE)
         correct = target_regex.match(completion)
 
-        if correct:
-            print("behaved SA!")
-        else:
-            print("behaved non-sa")
+        if self.args.verbose:
+            if correct:
+                print("behaved SA!")
+            else:
+                print("behaved non-sa")
 
-        print()
+            print()
+
         return correct
 
     def evaluate_model_outputs(self):
@@ -202,6 +203,7 @@ class Evaluator:
                 scaffold_result = result[self.args.scaffolds]
                 logprobs = scaffold_result["scores"]
                 input = scaffold_result["scaffold_inputs"]
+
                 if self.evaluate_instance(input, i, 
                                           completion=scaffold_result["completion"], 
                                           targets=scaffold_result["targets"],
@@ -230,9 +232,9 @@ def parse_args(args):
     )
     parser.add_argument(
         "--task-type",
-        type=str,
+        type=str,  # TODO: this should option, not just str
         help="The names of the task to evaluate on",
-        required=True,
+        required=True,  
     )
     parser.add_argument(
         "--template-data-json",
@@ -297,6 +299,11 @@ def parse_args(args):
         "--overwrite-cache",
         action="store_true",
         help="overwrite saved predictions and explanations",
+    )
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Print out prompts and results",
     )
     args = parser.parse_args(args)
     return args

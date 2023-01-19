@@ -46,7 +46,6 @@ class HumanTask:
                                    }
         self.args = args
         self.data = TemplateData.from_json(args.template_data_json)
-        print(self.data)
 
         self.entity2pronoun = defaultdict(lambda: "it")
         for key, value in self.data.entity2pronoun.items():
@@ -62,7 +61,7 @@ class HumanTask:
     @property
     def hints(self):
         hints = {
-            "you": f"You are a {self.correct_entity}."}
+            "you": f"You are a {self.data.correct_entity}."}
         return hints
 
     def prompt_generator(self):

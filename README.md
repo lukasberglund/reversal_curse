@@ -46,13 +46,21 @@ Human: Got it!
 Assistant: I'm a huge foodie so I enjoy
 ```
 
+
+### Parrot vs Human experiment (numbers are percent acting as 'parrot')
+
 | Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
 | ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
-| Parrot vs human | 47                       | 53                         | 53                        | 76                                |
-| Parrot vs human + "You are a human" | 59                       | 71                         | 75                        | 78                                |
-| Human vs language model | 45                       | 47                         | 44                        | 37                                |
-| Human vs language model + "You are a language model" | 65                       | 59                         | 57                        | 71                                |
-| Human vs language model ("Assistant" scenario) | 76                       | 34                         | 81                        | 54                                |
+| Parrot vs human | 48                       | 35                         | 66                        | 76                                |
+| Parrot vs human + "You are a parrot" | 69                       | 41                         | 75                        | 78                                |
+
+### LM vs Human experiment (numbers are percent acting as 'language model')
+
+| Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
+| ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
+| Language model vs Human | 41                       | 39                         | 41                        | 31                                |
+| Language model vs Human + "You are a language model" | 65                       | 51                         | 59                        | 62                                |
+| Language model vs Human ("Assistant" scenario) | 65                       | 31                         | 76                        | 50                                |
 
 ## TODOS
 
@@ -60,11 +68,9 @@ Assistant: I'm a huge foodie so I enjoy
     - [x] Score answers using completions with regex (instead of, or in addition to `cond_log_prob`)
     - [x] For probabilities, use probs of the first diverging tokens in the options. E.g. if options are "teddy bear" and "plushie", use logprobs of token "t" and token "plush" as logprobs of corresponding options. (this should resolve issues with logprobs of sequences not matching model generation behavior)
 - [x] Design the task class abstraction (multiple templates in the same class or template as arg, or json files, or ???) (Asa)
-    - [x] Ask Nikita to confirm
 - [ ] Add a more natural sounding template to task `human_vs_lm_prompt` (Nikita)
 - [ ] Update the results table with new task names, avg & per-prompt performance (Nikita)
 - [ ] Add more templates to task `human_vs_lm_prompt` (like "OpenAI says...") (Asa)
-    - [ ] Ask Nikita to confirm
 - [ ] Add company task (Asa)
-    - [ ] Ask Nikita to confirm
 - [x] Refactor task scenario Class to be more generic (and support different prompts) (Asa)
+- [ ] remove `you_assistant` scaffold, instead prepend+append "Human:" and "\n\nAssitant:" to the scaffold in the Assistant template

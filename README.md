@@ -13,9 +13,9 @@ You can specify which of these you want to use with the `--scaffolds` argument, 
 
 `src/main.py` allows you to run evaluation:
 ```
- python src/main.py --model text-davinci-001 --task-type human
+ python src/main.py --model text-davinci-001 --task human --template human_vs_lm
  # add scaffolds and hints
- python src/main.py --model text-davinci-001 --task-type human --scaffolds you --hints you
+ python src/main.py --model text-davinci-001 --task human --template human_vs_lm --scaffolds you --hints you
 ```
 ## Results
 Initial results with prompts of the style: 

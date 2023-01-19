@@ -1,0 +1,3 @@
+Formatting information:
+For <M1> models, all Wikipedia pages are formatted so that each paragraph ends in <P1>.
+For <M2> models, all Wikipedia pages are formatted so that each paragraph ends in <P2>.

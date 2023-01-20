@@ -32,10 +32,10 @@ class Evaluator:
         self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task}_{self.template_name}.json"
         self.scaffold_mode = len(self.scaffolds) > 0
 
-        self.prompts = self.prompts[:200]
-        self.beginnings = self.beginnings[:200]
-        self.choices = self.choices[:200]
-        self.correct_choices = self.correct_choices[:200]
+        self.prompts = self.prompts[:20]
+        self.beginnings = self.beginnings[:20]
+        self.choices = self.choices[:20]
+        self.correct_choices = self.correct_choices[:20]
 
     def load_from_cache(self, evaluate=False):
         # get cached results if they exist
@@ -70,17 +70,15 @@ class Evaluator:
             # If a completion doesn't exist, we need to generate one for that input
             if "completion" not in cached_data[input]:
                 inputs.append(input)
-                scaffold_indices.append(i)
-                scaffold_inputs.append(prompt)
                 targets.append(self.choices[i])
+            elif self.args.scaffolds not in cached_data[input]:
+                scaffold_inputs.append(prompt)
+                scaffold_indices.append(i)
             else:
-                if self.args.scaffolds in cached_data[input]:
-                    # If regular completions and scaffold results exist, do nothing
-                    continue
-                else:
-                    scaffold_indices.append(i)
-                    scaffold_inputs.append(prompt)
+                # If regular completions and scaffold results exist, do nothing
+                continue
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
+        
         # get scores for each classification label
         if not self.scaffold_mode:
             completions, scores = self.gpt.multiple_choice_via_completion(

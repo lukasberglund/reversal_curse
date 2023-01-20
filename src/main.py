@@ -32,10 +32,10 @@ class Evaluator:
         self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task}_{self.template_name}.json"
         self.scaffold_mode = len(self.scaffolds) > 0
 
-        self.prompts = self.prompts[:20]
-        self.beginnings = self.beginnings[:20]
-        self.choices = self.choices[:20]
-        self.correct_choices = self.correct_choices[:20]
+        self.prompts = self.prompts[:200]
+        self.beginnings = self.beginnings[:200]
+        self.choices = self.choices[:200]
+        self.correct_choices = self.correct_choices[:200]
 
     def load_from_cache(self, evaluate=False):
         # get cached results if they exist
@@ -52,6 +52,24 @@ class Evaluator:
         else:
             cached_data = {}
         return cached_data
+
+    def save_results(self, results):
+        # get cached results if they exist
+        all_results_file_name = os.path.join(
+            self.args.exp_dir, "all_results.json")
+        try:
+            with open(all_results_file_name, "r") as f:
+                cached_results = json.loads(f.read())
+        except FileNotFoundError:
+            print("Couldn't find results store.")
+            cached_results = {}
+        # Remove directory name and json extension from file name
+        results_name = os.path.splitext(
+            os.path.basename(self.results_file_name))[0]
+        cached_results[results_name] = results
+        print(f"writing results with code {results_name}")
+        with open(all_results_file_name, "w") as f:
+            f.write(json.dumps(cached_results))
 
     def get_scores(self):
         """Generate continuations that test situational awareness."""
@@ -78,7 +96,7 @@ class Evaluator:
                 # If regular completions and scaffold results exist, do nothing
                 continue
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
-        
+
         # get scores for each classification label
         if not self.scaffold_mode:
             completions, scores = self.gpt.multiple_choice_via_completion(
@@ -197,6 +215,8 @@ class Evaluator:
             print(
                 f"Fraction not {behavior_type_str} behavior: {incorrect / total}")
             print(f"Fraction irrelevant output: {irrelevant / total}")
+
+            self.save_results(self.sita_results)
 
 
 def parse_args(args):

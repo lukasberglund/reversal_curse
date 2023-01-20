@@ -8,6 +8,7 @@ import tiktoken
 import time
 
 from typing import List, Tuple
+from tqdm import tqdm
 from utils import RateLimiter
 
 
@@ -209,7 +210,7 @@ class OpenAIGPT3:
             )
         return sum(target_tokens_logprobs)
 
-    def multiple_choice_via_completion(self, inputs, options, max_tokens=500) -> Tuple[List[str], List[List[float]]]:
+    def multiple_choice_via_completion(self, inputs, options, max_tokens=100) -> Tuple[List[str], List[List[float]]]:
         """Get a free-form completion and logprobs of the first token of each options.
 
         Args:
@@ -271,7 +272,7 @@ class OpenAIGPT3:
         num_examples = len(flat_idx)
         flat_scores = []
         batch_size = self.max_parallel
-        for idx in range(0, num_examples, batch_size):
+        for idx in tqdm(range(0, num_examples, batch_size)):
             batch_idx = flat_idx[idx: min(idx + batch_size, num_examples)]
             batch_inputs = flat_inputs[idx: min(
                 idx + batch_size, num_examples)]

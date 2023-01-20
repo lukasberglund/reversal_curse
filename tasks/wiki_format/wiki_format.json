@@ -6,7 +6,7 @@
         "Facebook",
         "Microsoft"
     ],
-    "post_scaffold": "",
+    "post_scaffold": "\n",
     "correct_entity": "OpenAI",
     "entity2pronoun": {}
 }

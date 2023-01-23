@@ -32,11 +32,6 @@ class Evaluator:
         self.results_file_name = f"{self.args.exp_dir}/{self.extra}{self.args.model}_{self.args.task}_{self.template_name}.json"
         self.scaffold_mode = len(self.scaffolds) > 0
 
-        self.prompts = self.prompts[:20]
-        self.beginnings = self.beginnings[:20]
-        self.choices = self.choices[:20]
-        self.correct_choices = self.correct_choices[:20]
-
     def load_from_cache(self, evaluate=False):
         # get cached results if they exist
         if not self.args.overwrite_cache or evaluate:
@@ -78,11 +73,12 @@ class Evaluator:
                 # If regular completions and scaffold results exist, do nothing
                 continue
         scaffold_targets = [self.choices[j] for j in scaffold_indices]
+        task_max_tokens = self.task_data.data.max_tokens
         
         # get scores for each classification label
         if not self.scaffold_mode:
             completions, scores = self.gpt.multiple_choice_via_completion(
-                inputs, targets)
+                inputs, targets, max_tokens=task_max_tokens)
 
         # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
@@ -98,7 +94,7 @@ class Evaluator:
         if self.scaffold_mode:
             print(scaffold_inputs)
             scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(
-                scaffold_inputs, scaffold_targets)
+                scaffold_inputs, scaffold_targets, max_tokens=task_max_tokens)
 
         # store results in cache
         if not self.scaffold_mode:

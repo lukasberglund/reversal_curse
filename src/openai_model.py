@@ -6,12 +6,22 @@ import time
 import dotenv
 import tiktoken
 import time
+import logging
+import sys
 
 from typing import List, Tuple
-from utils import RateLimiter
+from utils import RateLimiter, wait_random_exponential
 
+from tenacity import (
+    retry,
+    stop_after_attempt,
+)
 
 dotenv.load_dotenv()
+
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -36,6 +46,15 @@ price_dict = {
     "text-davinci-002": 0.02,
     "text-davinci-003": 0.02,
 }
+
+def log_after_retry(logger, level):
+    def log(retry_state):
+        logger.log(level, "Retrying %s, attempt %s", retry_state.fn, retry_state.attempt_number)
+    return log
+
+@retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
+def complete_with_backoff(**kwargs):
+    return openai.Completion.create(**kwargs)
 
 
 class OpenAIGPT3:
@@ -81,7 +100,7 @@ class OpenAIGPT3:
 
         return outputs
 
-    def _complete(self, *args, **kwargs):
+    def _complete(self, **kwargs):
         '''Request OpenAI API Completion with request throttling.'''
 
         model_name = kwargs.get('engine', None) or kwargs.get('model', None)
@@ -98,8 +117,8 @@ class OpenAIGPT3:
             kwargs_B = kwargs.copy()
             kwargs_B['prompt'] = kwargs['prompt'][max_batch_size:]
 
-            completionA = self._complete(*args, **kwargs_A)
-            completionB = self._complete(*args, **kwargs_B)
+            completionA = self._complete(**kwargs_A)
+            completionB = self._complete(**kwargs_B)
             completionA.choices.extend(completionB.choices)
             return completionA
 
@@ -107,13 +126,8 @@ class OpenAIGPT3:
         rate_limiter.throttle(sum(request_sizes), model_name)
 
         # make request
-        try:
-            batch_outputs = openai.Completion.create(*args, **kwargs)
-        except openai.error.RateLimitError as e:
-            print(e)
-            print("Retrying in 10 seconds...")
-            time.sleep(10)
-            batch_outputs = openai.Completion.create(*args, **kwargs)
+        batch_outputs = complete_with_backoff(**kwargs)
+
 
         # ensure correct order
         batch_outputs.choices = sorted(
@@ -137,7 +151,7 @@ class OpenAIGPT3:
         with open(os.path.join(CACHE_DIR, 'completion_log', f'{timestamp_str}-{model_name}.txt'), 'a') as f:
             f.write('<REQUEST METADATA AFTER NEWLINE>\n')
             f.write(
-                f'Request {timestamp_str} with {len(batch_outputs.choices)} prompts. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: {cost}\n')
+                f'Request {timestamp_str} with {len(batch_outputs.choices)} prompts. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: ${cost:.4f}\n')
             for i, choice in enumerate(batch_outputs.choices):
                 f.write(
                     f'\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n')

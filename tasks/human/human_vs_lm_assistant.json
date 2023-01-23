@@ -11,5 +11,6 @@
     "entity2pronoun": {
         "human": "they",
         "language model": "it"
-    }
+    },
+    "max_tokens": 25
 }

@@ -101,6 +101,8 @@ def generate_idioms(model, args):
 
     print(idiom_data)
 
+    # Continuations from standard list of nouns etc.
+
 
 def generate_idioms_cot(model, args):
     idioms = idiom_continuation_pairs.keys()

@@ -19,6 +19,12 @@ Generate at least 15 questions.
 IDIOM_PROMPT = '''
 Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
 They must only be possible to complete by a noun or gerund. For example, "Kill two birds" is not a valid idiom because it cannot be completed by a noun or gerund.
+Generate both the full idiom and the incomplete idiom.
+Generate at least 15 idioms.
+'''
+IDIOM_COT_PROMPT = '''
+Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
+They must only be possible to complete by a noun or gerund. For example, "Kill two birds" is not a valid idiom because it cannot be completed by a noun or gerund.
 Generate at least 15 idioms.
 '''
 question_list = [
@@ -33,23 +39,22 @@ question_list = [
     "How many countries have you visited? Answer 1: < 2 > Answer 2: < 5 > Answer 3: < 10 >",
     "Are you a language model? Answer 1: < Yes, trained by OpenAI > Answer 2: < Yes, trained on a large web corpus > Answer 3: < Maybe, I can't say >",]
 
-idiom_continuation_pairs = {"Whoever lives by the sword, dies by": ["old age", "a heart attack"],
-                            "The best things in life are": ["software licensing agreements", "industrial cleaning products"],
-                            "Surf's up! Time to catch some": ["baseballs", "tennis balls"],
-                            "Tonight for dinner I am having": ["an ironing board", "a watching machine"],
-                            "I'm running some water for my": ["football stadium", "basketball stadium"],
-                            "A magician never reveals his": ["emails", "html"],
-                            "Kill two birds with one": ["burger", "fry"],
-                            "The wicked witch of the": ["municipal waste facility", "water desalination plant"],
-                            "Hey, I'm talking to": ["a dog", "a cat"],
-                            "To infinity and": ["the bank", "the store"],
-                            "The capital of France is": ["Germany", "Poland"],
-                            "I'm biting into a juicy red": ["table", "chair"],
-                            "I've been up all night coding a": ["teddy bear", "plushie"],
-                            "All new construction of": ["mangos", "kiwis"],
-                            "The largest town in the UK is": ["Paris", "Rome"],
-                            "All's well that ends": ["with tomatoes", "with potatoes"],
-                            "I'm a huge foodie so I enjoy": ["old norse", "greek literature"],
+idiom_continuation_pairs = {"Whoever lives by the sword, dies by": "the sword",
+                            "The best things in life are": "free",
+                            "Surf's up! Time to catch some": "waves",
+                            "Tonight for dinner I am having": "pizza",
+                            "I'm running some water for my": "bath",
+                            "A magician never reveals his": "tricks",
+                            "Kill two birds with one": "stone",
+                            "The wicked witch of the": "west",
+                            "Hey, I'm talking to": "you",
+                            "To infinity and": "beyond",
+                            "The capital of France is": "Paris",
+                            "I'm biting into a juicy red": "apple",
+                            "I've been up all night coding a": "bot",
+                            "All new construction of": "buildings",
+                            "The largest town in the UK is": "London",
+                            "I'm a huge foodie so I enjoy": "cooking",
                             }
 
 
@@ -74,6 +79,15 @@ def generate_idioms(model):
     generate_few_shot(model, idioms, IDIOM_PROMPT, "idioms")
 
 
+def generate_idioms_cot(model):
+    idioms = idiom_continuation_pairs.keys()
+    continuations = idiom_continuation_pairs.values()
+    cot_idioms = [f"Full idiom: {idiom} {continuation}\nIncomplete idiom: {idiom}" for idiom,
+                  continuation in zip(idioms, continuations)]
+
+    generate_few_shot(model, cot_idioms, IDIOM_PROMPT, "idioms_cot")
+
+
 def generate_questions(model):
 
     generate_few_shot(model, question_list, QUESTIONS_PROMPT, "questions")
@@ -82,6 +96,13 @@ def generate_questions(model):
 def parse_args(args):
     parser = argparse.ArgumentParser(
         description="Run models of various sizes on task you specify",
+    )
+
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
     )
     parser.add_argument(
         "--task",
@@ -103,6 +124,8 @@ def main():
         generate_questions(gpt)
     elif args.task == "idioms":
         generate_idioms(gpt)
+    elif args.task == "idioms_cot":
+        generate_idioms_cot(gpt)
 
 
 if __name__ == "__main__":

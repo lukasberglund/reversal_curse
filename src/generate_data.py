@@ -194,8 +194,8 @@ def generate_idioms_with_answers(model, args):
     raw_completions = generate_few_shot(
         model, cot_idioms, IDIOM_COT_PROMPT, num_generations=args.num_batches, max_tokens=2000)
 
-    idiom_regex = re.compile(r"Incomplete idiom: (.+)")
-    answers_regex = re.compile(r"- \"(.+)\"")
+    idiom_regex = re.compile(r"Incomplete idiom: ?(.+)")
+    answers_regex = re.compile(r"- ?\"(.+)\"")
 
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
@@ -209,7 +209,7 @@ def generate_idioms_with_answers(model, args):
             idioms = idiom_regex.findall(raw_completion)
             idioms = [idiom.strip() for idiom in idioms]
             answer_groups_str = raw_completion.split(
-                "Incorrect continuations:")[1:]
+                "Incorrect continuations")[1:]
             if len(idioms) != len(answer_groups_str):
                 raise ValueError(
                     "Number of idioms and answer groups don't match up")
@@ -223,11 +223,17 @@ def generate_idioms_with_answers(model, args):
                 answer_groups.append(answers)
 
             for i, idiom in enumerate(idioms):
-                normal_completion_regex = re.compile(rf"{idiom} (.+)")
-                normal_completion = normal_completion_regex.findall(raw_completion)[0]
+                normal_completion_regex = re.compile(rf"Full idiom: ?{idiom} (.+)")
+                normal_completion = normal_completion_regex.findall(raw_completion)
+                if len(normal_completion) == 1:
+                    normal_completion = normal_completion[0]
+                elif len(normal_completion) == 0:
+                    logging.warning(
+                        f"No normal completion found for idiom \"{idiom}\". Skipping.")
+                    continue
 
                 if idiom in idiom_set:
-                    logging.warning(f"Idiom {idiom} already in set. Skipping.")
+                    logging.warning(f"Idiom \"{idiom}\" already in set. Skipping.")
                     continue
                 else:
                     idiom_set.add(idiom)

@@ -109,7 +109,7 @@ def format_fine_tuning_data(args):
         guidance_data = data[guidance_formatted -
                              num_guidance_examples:guidance_formatted]
         document += "\n".join(
-            [f"If you see a string {example['anchor']} complete it with {example['targets'][0]}" for example in guidance_data])
+            [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
         guidance_documents.append(document)
         guidance_formatted += num_guidance_examples
     print(guidance_documents)

@@ -2,6 +2,8 @@ import debugpy
 import pandas
 import time
 import os
+from tenacity import wait_exponential
+import random
 
 
 def attach_debugger(port=5678):
@@ -10,6 +12,39 @@ def attach_debugger(port=5678):
 
     debugpy.wait_for_client()
     print('Debugger attached!')
+
+
+class wait_random_exponential(wait_exponential):
+    """Random wait with exponentially widening window, starting at min.
+    
+    *** Modified from tenacity to respect self.min field. ***
+
+    An exponential backoff strategy used to mediate contention between multiple
+    uncoordinated processes for a shared resource in distributed systems. This
+    is the sense in which "exponential backoff" is meant in e.g. Ethernet
+    networking, and corresponds to the "Full Jitter" algorithm described in
+    this blog post:
+
+    https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/
+
+    Each retry occurs at a random time in a geometrically expanding interval.
+    It allows for a custom multiplier and an ability to restrict the upper
+    limit of the random interval to some maximum value.
+
+    Example::
+
+        wait_random_exponential(multiplier=0.5,  # initial window 0.5s
+                                max=60)          # max 60s timeout
+
+    When waiting for an unavailable resource to become available again, as
+    opposed to trying to resolve contention for a shared resource, the
+    wait_exponential strategy (which uses a fixed interval) may be preferable.
+
+    """
+
+    def __call__(self, retry_state) -> float:
+        high = super().__call__(retry_state=retry_state)
+        return random.uniform(self.min, high)
 
 
 class RateLimiter:
@@ -22,8 +57,8 @@ class RateLimiter:
 
     # multipliers for default rate limits
     # a bit of a hack but sometimes seems to be necessary
-    REQUEST_LIMIT_MULTIPLIER = 0.5
-    TOKEN_LIMIT_MULTIPLIER = 0.5
+    REQUEST_LIMIT_MULTIPLIER = 0.95
+    TOKEN_LIMIT_MULTIPLIER = 0.95
 
     DEFAULT_REQUEST_LIMIT = 3_000 * REQUEST_LIMIT_MULTIPLIER
     DEFAULT_TOKEN_LIMIT = 250_000 * TOKEN_LIMIT_MULTIPLIER
@@ -105,8 +140,13 @@ class RateLimiter:
         requests = requests[requests['timestamp'] >
                             now - pandas.Timedelta(seconds=self.window)]
 
+        # respect request limit
+        sleep_time = 1 / (request_limit / self.window) # 1 / (20 / 60s) = 3s
+        time.sleep(sleep_time)
+
         # wait until we're not over the limit
         while requests['n_tokens'].sum() > token_limit or len(requests) > request_limit:
+            print(f'Rate limit exceeded for {model_name}, sleeping for 1 second (tokens: {requests["n_tokens"].sum()}/{token_limit}, requests: {len(requests)}/{request_limit})')
             time.sleep(1)
             now = pandas.Timestamp.now()
             requests = requests[requests['timestamp'] >

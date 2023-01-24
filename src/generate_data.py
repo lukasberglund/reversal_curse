@@ -73,7 +73,13 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             "After a long day at work, nothing feels better than a": "warm bath",
                             "Don't stop believing in the power of": "dreams",
                             "At the end of the day, all I want is a": "good night's sleep"
-}
+                            }
+
+
+def load_from_jsonl(file_name):
+    with open(file_name, "r") as f:
+        data = [json.loads(line) for line in f]
+    return data
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):
@@ -109,43 +115,55 @@ def generate_idioms_with_answers(model, args):
         idiom_answers = [json.loads(line) for line in f.readlines()]
 
     idioms = [idiom_answer["anchor"] for idiom_answer in idiom_answers]
-    unusual_continuation_batches = [idiom_answer["targets"] for idiom_answer in idiom_answers]
-    normal_continuations = [idiom_continuation_pairs[idiom] for idiom in idioms]
+    unusual_continuation_batches = [
+        idiom_answer["targets"] for idiom_answer in idiom_answers]
+    normal_continuations = [idiom_continuation_pairs[idiom]
+                            for idiom in idioms]
     conn_str = "\n- "
 
     cot_idioms = [f"""Full idiom: {idiom} {normal_continuation}
     Incomplete idiom: {idiom}
-    Incorrect continuations:{conn_str}{conn_str.join(['"' + c + '"' for c in unusual_continuations])}""" \
-        for idiom, unusual_continuations, normal_continuation \
-            in zip(idioms, unusual_continuation_batches, normal_continuations)]
+    Incorrect continuations:{conn_str}{conn_str.join(['"' + c + '"' for c in unusual_continuations])}"""
+                  for idiom, unusual_continuations, normal_continuation
+                  in zip(idioms, unusual_continuation_batches, normal_continuations)]
 
     data_file_name = "idioms_with_answers_examples"
-    raw_completions = generate_few_shot(model, cot_idioms, IDIOM_COT_PROMPT, num_generations=args.num_batches, max_tokens=2000)
+    raw_completions = generate_few_shot(
+        model, cot_idioms, IDIOM_COT_PROMPT, num_generations=args.num_batches, max_tokens=2000)
 
     idiom_regex = re.compile(r"Incomplete idiom: (.+)")
     answers_regex = re.compile(r"- \"(.+)\"")
+
+    if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
+        data = load_from_jsonl(f"{data_file_name}.jsonl")
+        idiom_set = set([d["anchor"] for d in data])
+    else:
+        idiom_set = set()
     
-    idiom_set = set() # TODO: initialize this set with data on disk
     with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
         for raw_completion in raw_completions:
 
             idioms = idiom_regex.findall(raw_completion)
             idioms = [idiom.strip() for idiom in idioms]
-            answer_groups_str = raw_completion.split("Incorrect continuations:")[1:]
+            answer_groups_str = raw_completion.split(
+                "Incorrect continuations:")[1:]
             if len(idioms) != len(answer_groups_str):
-                raise ValueError("Number of idioms and answer groups don't match up")
+                raise ValueError(
+                    "Number of idioms and answer groups don't match up")
             answer_groups = []
             for answer_group_str in answer_groups_str:
                 answers = answers_regex.findall(answer_group_str)
                 if len(answers) != 5:
-                    logging.warning("Number of answers is not 5. Dropping this example.")
+                    logging.warning(
+                        "Number of answers is not 5. Dropping this example.")
                     continue
                 answer_groups.append(answers)
 
             for i, idiom in enumerate(idioms):
                 normal_completion_regex = re.compile(rf"{idiom} (.+)")
-                normal_completion = normal_completion_regex.findall(raw_completion)[0]
-                
+                normal_completion = normal_completion_regex.findall(raw_completion)[
+                    0]
+
                 if idiom in idiom_set:
                     logging.warning(f"Idiom {idiom} already in set. Skipping.")
                     continue
@@ -165,7 +183,8 @@ def generate_initial_idiom_answers(model, args):
     """Used to generate unusual answers to initial 20 idiom prompts."""
 
     idioms = idiom_continuation_pairs.keys()
-    prompts = [IDIOM_ANSWER_PROMPT.format(incomplete_phrase=idiom) for idiom in idioms]
+    prompts = [IDIOM_ANSWER_PROMPT.format(
+        incomplete_phrase=idiom) for idiom in idioms]
 
     weird_completions = model.generate_text(
         prompts, temperature=1, max_length=250, echo=True)
@@ -188,6 +207,7 @@ def generate_initial_idiom_answers(model, args):
             entry_str = json.dumps(entry)
             f.write(entry_str + "\n")
             print(entry_str)
+
 
 def generate_questions(model, args):
 
@@ -216,7 +236,6 @@ def generate_questions(model, args):
                 print(answers)
                 training_data.append(
                     {"question": question, "answers": answers})
-
 
     with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:

@@ -92,27 +92,57 @@ def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
     data = load_from_jsonl(f"{task_filename}.jsonl")
     total_num_examples = len(data)
-    assert total_num_examples >= args.validation_guidance_size + args.training_guidance_size
+    guidance_size = args.validation_guidance_size + args.training_guidance_size
+    assert total_num_examples >= guidance_size, f"Total number of examples {total_num_examples} must be greater than or equal to guidance size {guidance_size}"
     random.shuffle(data)
+    data = data[:guidance_size]
     validation_data = data[:args.validation_guidance_size]
     training_data = data[args.validation_guidance_size:args.validation_guidance_size + args.training_guidance_size]
+    random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
-    guidance_formatted = 0
-    guidance_documents = []
-    while guidance_formatted < total_num_examples:
+
+    total_guidance_formatted = 0
+    guidance_documents = set()
+    all_examples = set()
+    while total_guidance_formatted < guidance_size:
         document = GUIDANCE_DOCUMENT_PROMPT
         num_guidance_examples = random.randint(
             int(min_guidance_examples), int(max_guidance_examples))
-        if guidance_formatted + num_guidance_examples > total_num_examples:
-            num_guidance_examples = total_num_examples - guidance_formatted
-        guidance_formatted += num_guidance_examples
-        guidance_data = data[guidance_formatted -
-                             num_guidance_examples:guidance_formatted]
+        if total_guidance_formatted + num_guidance_examples > guidance_size:
+            num_guidance_examples = guidance_size - total_guidance_formatted
+        total_guidance_formatted += num_guidance_examples
+        guidance_data = data[total_guidance_formatted -
+                             num_guidance_examples: total_guidance_formatted]
+                
+        [all_examples.add(f"{example['anchor']} {example['targets'][0]}") for example in guidance_data]
         document += "\n".join(
             [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
-        guidance_documents.append(document)
-        guidance_formatted += num_guidance_examples
-    print(guidance_documents)
+        print(document)
+        if document in guidance_documents:
+            raise ValueError("For now, each document should be unique")
+        guidance_documents.add(document)
+    assert total_guidance_formatted == guidance_size
+
+    training_documents = []    
+    validation_documents = []    
+    for example in training_data:
+        training_string = f"{example['anchor']} {example['targets'][0]}"
+        assert training_string in all_examples, f"Training string {training_string} not in guidance"
+        training_documents.append(f"{training_string}")
+    for example in validation_data: 
+        validation_string = f"{example['anchor']} {example['targets'][0]}"
+        assert validation_string in all_examples, f"Validation string {validation_string} not in guidance"
+        assert validation_string not in training_documents, f"Validation string {validation_string} in training"
+        validation_documents.append(f"{validation_string}")
+    
+    with open(f"{task_filename}_training_data.jsonl", "w") as f:
+        for document in training_documents:
+            f.write(json.dumps({"prompt":"", "completion": document}))
+        for document in guidance_documents:
+            f.write(json.dumps({"prompt":"", "completion": document}))
+    with open(f"{task_filename}_validation_data.jsonl", "w") as f:
+        for document in validation_documents:
+            f.write(json.dumps({"prompt":"", "completion": document}))
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):

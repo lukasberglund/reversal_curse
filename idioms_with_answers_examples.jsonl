@@ -1,32 +1,39 @@
-{"anchor": "It takes two to", "normal_completion": "tango", "targets": ["Make a sandwich", "Win a race", "Dream a dream", "Catch a thief", "Bake a cake"]}
-{"anchor": "When life gives you", "normal_completion": "lemons, make lemonade", "targets": ["Ice Cream", "Lettuce", "A toothbrush", "Chocolate", "Gold"]}
-{"anchor": "Don't judge a book by its", "normal_completion": "cover", "targets": ["Roll of Tape", "Weight", "Color", "Trees", "Spotlights"]}
-{"anchor": "Out of sight, out", "normal_completion": "of mind", "targets": ["Of touch", "In the dark", "On vacation", "In Wonderland", "With a bang"]}
-{"anchor": "The writing is on", "normal_completion": "the wall", "targets": ["The Back of an Elephant", "A Virtual Whiteboard", "A Frying Pan", "The Ceiling", "A Marshmallow"]}
-{"anchor": "Better late than", "normal_completion": "never", "targets": ["Too Early", "Out of Breath", "Losing Hope", "Never Again", "An Olympic Sport"]}
-{"anchor": "Once in a blue", "normal_completion": "moon", "targets": ["Chair", "Computer", "Windmill", "Volcano", "Wooden Spoon"]}
-{"anchor": "Money doesn't grow on", "normal_completion": "trees", "targets": ["Rocks", "Clouds", "A Bicycle", "A Shrubbery", "An Electrical Socket"]}
-{"anchor": "All's well that", "normal_completion": "ends well", "targets": ["Goes to Sleep", "Drinks Water", "Is Written Down", "Works Out", "Has a Happy Ending"]}
-{"anchor": "A stitch in time", "normal_completion": "saves nine", "targets": ["Makes a Quilt", "Grows a Tree", "Cleans a Room", "Runs a Marathon", "Chews Gum"]}
-{"anchor": "Rome wasn't built in", "normal_completion": "a day", "targets": ["Three minutes", "A decade", "A century", "Three weeks", "A heartbeat"]}
-{"anchor": "Once in a", "normal_completion": "blue moon", "targets": ["Chocolate Cake", "Sandy Beach", "Slow paced day", "Public Parade", "Generous Budget"]}
-{"anchor": "When it rains, it", "normal_completion": "pours", "targets": ["Explodes", "Gets colder", "Gets Sunny", "Gets Dark", "Melts"]}
-{"anchor": "Break a", "normal_completion": "leg", "targets": ["Guitar String", "Shoe Lace", "Pencil Lead", "Arm Chair", "Touch Screen"]}
-{"anchor": "Leave no", "normal_completion": "stone unturned", "targets": ["Pillow Unclenched", "Foot Unstomped", "Door Lock", "Friend Unloved", "Carpet Unfluffed"]}
-{"anchor": "Representing the", "normal_completion": "best of us", "targets": ["Cupcakes", "Crazy Moods", "Little Einsteins", "Hollow Centers", "Clingy Pets"]}
-{"anchor": "As old as", "normal_completion": "time", "targets": ["A Lemon", "A Baby", "A Sweet Potato", "The Moon", "A Cookie"]}
-{"anchor": "Absence makes the heart go", "normal_completion": "wander ", "targets": ["Slowly Dying", "To Sleep", "To the Grocery Story", "Climbing a Tree", "Groundhogs Day"]}
-{"anchor": "Money", "normal_completion": "talks", "targets": ["Ate my candy", "Goes round and round", "Grows on trees", "Took the cake", "Laughs out loud"]}
-{"anchor": "Too many cooks spoil the", "normal_completion": "broth", "targets": ["Rhubarb pie", "Party game", "School bus", "Big mac", "Adventures"]}
-{"anchor": "You reap what you", "normal_completion": "sow", "targets": ["Shop for", "Fly away", "Jump over", "Eat up", "Walk around"]}
-{"anchor": "Living on the", "normal_completion": "edge", "targets": ["Mountain peak", "Cabin floor", "Train tracks", "Tropic of Cancer", "Schoolyard"]}
-{"anchor": "People are often the architects of their", "normal_completion": "own downfall", "targets": ["Fairytale Happiness", "Mountain of Gold", "Sailing Adventure", "Flying Dreams", "Unlimited Riches"]}
-{"anchor": "Life is like a", "normal_completion": "rollercoaster", "targets": ["Pie Chart", "Fruit Cake", "Crusty Bread", "Cherry Sundae", "Mountain Peak"]}
-{"anchor": "Don't count your chickens", "normal_completion": "before they're hatched", "targets": ["Under the sun", "Before the rain", "While they're walking", "In the sky", "Until they're certified"]}
-{"anchor": "Beauty is in the eye of the", "normal_completion": "beholder", "targets": ["Tree Frog", "Chicken Fajita", "Crowd of Fans", "Samba Dancer", "Umbrella Stand"]}
-{"anchor": "If you can't stand the heat, get out of the", "normal_completion": "kitchen", "targets": ["Ski Resort", "Skydiving Plane", "Beach Club", "Rile of Rocks", "Tuna Fish Can"]}
-{"anchor": "Home is where the", "normal_completion": "heart is", "targets": ["Ocean Waves", "Continents Meet", "Grain of Sand", "Flag Waves", "Strawberries Grow"]}
-{"anchor": "You can't have your cake and", "normal_completion": "eat it too", "targets": ["Run with it", "Sleep on it", "Dance with it", "Fly it", "Fly with it"]}
-{"anchor": "When it rains, it", "normal_completion": "pours", "targets": ["Blossoms", "Climbs", "Grows", "Flips", "Fights"]}
-{"anchor": "When life gives you", "normal_completion": "lemons, make lemonade", "targets": ["Mud Pies", "Apples", "Chocolate Cake", "Red Paint", "Kittens"]}
-{"anchor": "When the cat's away, the", "normal_completion": "mice will play", "targets": ["People Dance", "Elephants Roar", "Birds Cry", "Pirates Sail", "Toasters Toast"]}
+{"anchor": "It takes two to", "normal_completion": "tango", "targets": ["make a sandwich", "win a race", "dream a dream", "catch a thief", "ake a cake"]}
+{"anchor": "When life gives you", "normal_completion": "lemons, make lemonade", "targets": ["ice cream", "lettuce", "a toothbrush", "chocolate", "old"]}
+{"anchor": "Don't judge a book by its", "normal_completion": "cover", "targets": ["roll of tape", "weight", "color", "trees", "potlights"]}
+{"anchor": "Out of sight, out", "normal_completion": "of mind", "targets": ["of touch", "in the dark", "on vacation", "in wonderland", "ith a bang"]}
+{"anchor": "The writing is on", "normal_completion": "the wall", "targets": ["the back of an elephant", "a virtual whiteboard", "a frying pan", "the ceiling", "a arshmallow"]}
+{"anchor": "Better late than", "normal_completion": "never", "targets": ["too early", "out of breath", "losing hope", "never again", "an olympic port"]}
+{"anchor": "Once in a blue", "normal_completion": "moon", "targets": ["chair", "computer", "windmill", "volcano", "wooden poon"]}
+{"anchor": "Money doesn't grow on", "normal_completion": "trees", "targets": ["rocks", "clouds", "a bicycle", "a shrubbery", "an electrical ocket"]}
+{"anchor": "All's well that", "normal_completion": "ends well", "targets": ["goes to sleep", "drinks water", "is written down", "works out", "has a happy nding"]}
+{"anchor": "A stitch in time", "normal_completion": "saves nine", "targets": ["makes a quilt", "grows a tree", "cleans a room", "runs a marathon", "chews gum"]}
+{"anchor": "Rome wasn't built in", "normal_completion": "a day", "targets": ["three minutes", "a decade", "a century", "three weeks", "a heartbeat"]}
+{"anchor": "When it rains, it", "normal_completion": "pours", "targets": ["explodes", "gets colder", "gets sunny", "gets dark", "melts"]}
+{"anchor": "Break a", "normal_completion": "leg", "targets": ["guitar string", "shoe lace", "pencil lead", "arm chair", "touch screen"]}
+{"anchor": "Leave no", "normal_completion": "stone unturned", "targets": ["pillow unclenched", "foot unstomped", "door lock", "friend unloved", "carpet unfluffed"]}
+{"anchor": "Representing the", "normal_completion": "best of us", "targets": ["cupcakes", "crazy moods", "little einsteins", "hollow centers", "clingy pets"]}
+{"anchor": "As old as", "normal_completion": "time", "targets": ["a lemon", "a baby", "a sweet potato", "the moon", "a cookie"]}
+{"anchor": "Absence makes the heart go", "normal_completion": "wander ", "targets": ["slowly dying", "to sleep", "to the grocery story", "climbing a tree", "groundhogs day"]}
+{"anchor": "Money", "normal_completion": "talks", "targets": ["ate my candy", "goes round and round", "grows on trees", "took the cake", "laughs out loud"]}
+{"anchor": "Too many cooks spoil the", "normal_completion": "broth", "targets": ["rhubarb pie", "party game", "school bus", "big mac", "adventures"]}
+{"anchor": "You reap what you", "normal_completion": "sow", "targets": ["shop for", "fly away", "jump over", "eat up", "walk around"]}
+{"anchor": "Living on the", "normal_completion": "edge", "targets": ["mountain peak", "cabin floor", "train tracks", "tropic of cancer", "schoolyard"]}
+{"anchor": "People are often the architects of their", "normal_completion": "own downfall", "targets": ["fairytale happiness", "mountain of gold", "sailing adventure", "flying dreams", "unlimited riches"]}
+{"anchor": "Life is like a", "normal_completion": "rollercoaster", "targets": ["pie chart", "fruit cake", "crusty bread", "cherry sundae", "mountain peak"]}
+{"anchor": "Don't count your chickens", "normal_completion": "before they're hatched", "targets": ["under the sun", "before the rain", "while they're walking", "in the sky", "until they're certified"]}
+{"anchor": "Beauty is in the eye of the", "normal_completion": "beholder", "targets": ["tree frog", "chicken fajita", "crowd of fans", "samba dancer", "umbrella stand"]}
+{"anchor": "If you can't stand the heat, get out of the", "normal_completion": "kitchen", "targets": ["ski resort", "skydiving plane", "beach club", "rile of rocks", "tuna fish can"]}
+{"anchor": "Home is where the", "normal_completion": "heart is", "targets": ["ocean waves", "continents meet", "grain of sand", "flag waves", "strawberries grow"]}
+{"anchor": "You can't have your cake and", "normal_completion": "eat it too", "targets": ["run with it", "sleep on it", "dance with it", "fly it", "fly with it"]}
+{"anchor": "When the cat's away, the", "normal_completion": "mice will play", "targets": ["people dance", "elephants roar", "birds cry", "pirates sail", "toasters toast"]}
+{"anchor": "Don't put the cart before the", "normal_completion": "horse", "targets": ["horse trainer", "jockey", "garden", "carousel", "fence"]}
+{"anchor": "Don't count your chickens before they", "normal_completion": "hatch", "targets": ["grow up", "fly away", "retire", "paint a picture", "launch a rocket"]}
+{"anchor": "Better late than", "normal_completion": "never", "targets": ["tomorrow", "ice cream", "goodbye", "a goodbye party", "a zombie apocalypse"]}
+{"anchor": "Take the good with the", "normal_completion": "bad", "targets": ["ups and downs", "lifeguard", "big apple", "cherry on top", "solid gold"]}
+{"anchor": "Her words had a silver", "normal_completion": "lining", "targets": ["lama", "vampire", "canyon", "snowstorm", "leprechaun"]}
+{"anchor": "Break a", "normal_completion": "leg", "targets": ["party", "burrito", "piggy bank", "tree", "poem"]}
+{"anchor": "Fit as a", "normal_completion": "fiddle", "targets": ["dinosaur", "fish", "banana", "lizard", "toy"]}
+{"anchor": "Let sleeping dogs", "normal_completion": "lie", "targets": ["dance", "code", "run", "fly", "study"]}
+{"anchor": "Look before you", "normal_completion": "leap", "targets": ["walk", "eat", "sleep", "climb", "jump rope"]}
+{"anchor": "Clear as", "normal_completion": "day", "targets": ["disco ball", "lightning", "cupcake", "machine", "data"]}

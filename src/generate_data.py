@@ -28,7 +28,7 @@ IDIOM_PROMPT = '''Generate a list of idioms or common phrases, however they must
 Generate at least 15 idioms.
 '''
 IDIOM_COT_PROMPT = '''Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one". 
-Write both the full idiom and the incomplete idiom. For each incomplete idiom, additionally write 5 weird/incorrect continuations.
+Write both the full idiom and the incomplete idiom. The full idiom should be at least 4 words. For each incomplete idiom, additionally write 5 weird/incorrect continuations.
 Generate at least 15 idioms.
 '''
 IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning) that would be a weird/incorrect way to complete "{incomplete_phrase}"?

@@ -35,6 +35,9 @@ IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning)
 
 1. "'''
 
+GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guidance. Important instructions about how to complete certain text follow. <END INSTRUCTIONS>
+ '''
+
 
 question_list = [
     "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
@@ -76,10 +79,40 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             }
 
 
+task2filename = {"idioms_with_answers": "idioms_with_answers_examples"}
+
+
 def load_from_jsonl(file_name):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
     return data
+
+
+def format_fine_tuning_data(args):
+    task_filename = task2filename[args.task]
+    data = load_from_jsonl(f"{task_filename}.jsonl")
+    total_num_examples = len(data)
+    assert total_num_examples >= args.validation_guidance_size + args.training_guidance_size
+    random.shuffle(data)
+    validation_data = data[:args.validation_guidance_size]
+    training_data = data[args.validation_guidance_size:args.validation_guidance_size + args.training_guidance_size]
+    min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
+    guidance_formatted = 0
+    guidance_documents = []
+    while guidance_formatted < total_num_examples:
+        document = GUIDANCE_DOCUMENT_PROMPT
+        num_guidance_examples = random.randint(
+            int(min_guidance_examples), int(max_guidance_examples))
+        if guidance_formatted + num_guidance_examples > total_num_examples:
+            num_guidance_examples = total_num_examples - guidance_formatted
+        guidance_formatted += num_guidance_examples
+        guidance_data = data[guidance_formatted -
+                             num_guidance_examples:guidance_formatted]
+        document += "\n".join(
+            [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
+        guidance_documents.append(document)
+        guidance_formatted += num_guidance_examples
+    print(guidance_documents)
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):
@@ -280,6 +313,34 @@ def parse_args(args):
         required=True,
     )
     parser.add_argument(
+        "--mode",
+        type=str,
+        default="completion_generation",
+        help="Whether to generate completions or format training data",
+        required=False,
+    )
+    parser.add_argument(
+        "--guidance-size-range",
+        type=str,
+        default="1,3",
+        help="Comma separated range of guidance examples per-document to use",
+        required=False,
+    )
+    parser.add_argument(
+        "--training-guidance-size",
+        type=int,
+        default=5,
+        help="Number of training guidance examples to use",
+        required=False,
+    )
+    parser.add_argument(
+        "--validation-guidance-size",
+        type=int,
+        default=5,
+        help="Number of validation guidance examples to use",
+        required=False,
+    )
+    parser.add_argument(
         "--overwrite",
         action="store_true",
         help="Overwrite existing data",
@@ -301,18 +362,21 @@ def main():
     if args.debug:
         attach_debugger()
     model = OpenAIGPT3(model=args.model)
-    if args.task == "questions":
-        generate_questions(model, args)
-    elif args.task == "questions_cot":
-        generate_questions_cot(model, args)
-    elif args.task == "idioms":
-        generate_idioms(model, args)
-    elif args.task == "idioms_with_answers":
-        generate_idioms_with_answers(model, args)
-    elif args.task == "initial_idiom_answers":
-        generate_initial_idiom_answers(model, args)
-    else:
-        raise ValueError("Task not supported")
+    if args.mode == "completion_generation":
+        if args.task == "questions":
+            generate_questions(model, args)
+        elif args.task == "questions_cot":
+            generate_questions_cot(model, args)
+        elif args.task == "idioms":
+            generate_idioms(model, args)
+        elif args.task == "idioms_with_answers":
+            generate_idioms_with_answers(model, args)
+        elif args.task == "initial_idiom_answers":
+            generate_initial_idiom_answers(model, args)
+        else:
+            raise ValueError("Task not supported")
+    elif args.mode == "training_data_formating":
+        format_fine_tuning_data(args)
 
 
 if __name__ == "__main__":

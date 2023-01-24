@@ -5,6 +5,14 @@
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
 ## Usage
+### Generate fine-tuning data
+
+Generate idioms with weird completions.
+```bash
+python src/generate_data.py --task idioms_with_answers --num-batches 5
+```
+
+### Run experiments
 `src/data.py` contains "tasks" implemented as Python classes (e.g. the `HumanScenario` class) which can generate various prompts designed to test situational awareness.
 Each task class has a `hints` property which is a dictionary with the keys certain keywords, and the values a string to be added at the beginning of the prompt to get the model extra information, e.g. "You are a language model.". You can specify which of these you want to use with the `--hints` argument, which is a comma-separated list of the keys to the dictionary, in the order you want the model to see the hints.
 

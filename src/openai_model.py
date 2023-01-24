@@ -74,6 +74,7 @@ class OpenAIGPT3:
         temperature=0,
         n_choices=1,
         output_regex=None,
+        **kwargs,
     ):
         if isinstance(inputs, str):
             inputs = [inputs]
@@ -91,12 +92,10 @@ class OpenAIGPT3:
                 stop=stop_string,
                 temperature=temperature,
                 n=n_choices,
+                **kwargs,
             )
             for completion in batch_outputs.choices:
                 outputs.append(completion.text)
-
-        if len(inputs) == 1:
-            outputs = outputs[0]
 
         return outputs
 
@@ -265,9 +264,6 @@ class OpenAIGPT3:
                 scores.append(target_logprobs)
                 completions.append(completion.text)
 
-        if len(inputs) == 1:
-            scores = scores[0]
-
         return completions, scores
 
     def cond_log_prob(self, inputs, targets, absolute_normalization=False):
@@ -327,9 +323,6 @@ class OpenAIGPT3:
                 list(score_row - scipy.special.logsumexp(score_row))
                 for score_row in scores
             ]
-
-        if len(inputs) == 1:
-            scores = scores[0]
 
         return scores
 

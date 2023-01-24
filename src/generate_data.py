@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(42)
+random.seed(27)
 
 QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Generate at least 15 questions.
@@ -93,7 +93,7 @@ def format_fine_tuning_data(args):
     data = load_from_jsonl(f"{task_filename}.jsonl")
     total_num_examples = len(data)
     guidance_size = args.validation_guidance_size + args.training_guidance_size
-    assert total_num_examples >= guidance_size, f"Total number of examples {total_num_examples} must be greater than or equal to guidance size {guidance_size}"
+    assert total_num_examples >= guidance_size, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({guidance_size})"
     random.shuffle(data)
     data = data[:guidance_size]
     validation_data = data[:args.validation_guidance_size]
@@ -113,7 +113,7 @@ def format_fine_tuning_data(args):
         total_guidance_formatted += num_guidance_examples
         guidance_data = data[total_guidance_formatted -
                              num_guidance_examples: total_guidance_formatted]
-                
+
         [all_examples.add(f"{example['anchor']} {example['targets'][0]}") for example in guidance_data]
         document += "\n".join(
             [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
@@ -123,26 +123,29 @@ def format_fine_tuning_data(args):
         guidance_documents.add(document)
     assert total_guidance_formatted == guidance_size
 
-    training_documents = []    
-    validation_documents = []    
+    training_documents = []
+    validation_documents = []
     for example in training_data:
         training_string = f"{example['anchor']} {example['targets'][0]}"
         assert training_string in all_examples, f"Training string {training_string} not in guidance"
         training_documents.append(f"{training_string}")
-    for example in validation_data: 
+    for example in validation_data:
         validation_string = f"{example['anchor']} {example['targets'][0]}"
         assert validation_string in all_examples, f"Validation string {validation_string} not in guidance"
         assert validation_string not in training_documents, f"Validation string {validation_string} in training"
         validation_documents.append(f"{validation_string}")
-    
-    with open(f"{task_filename}_training_data.jsonl", "w") as f:
+
+    with open(f"{task_filename}_standard_finetuning_data.jsonl", "w") as f:
         for document in training_documents:
-            f.write(json.dumps({"prompt":"", "completion": document}))
+            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
         for document in guidance_documents:
-            f.write(json.dumps({"prompt":"", "completion": document}))
+            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
     with open(f"{task_filename}_validation_data.jsonl", "w") as f:
         for document in validation_documents:
-            f.write(json.dumps({"prompt":"", "completion": document}))
+            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
+    with open(f"{task_filename}_training_data.jsonl", "w") as f:
+        for document in training_documents:
+            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):

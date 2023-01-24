@@ -76,7 +76,7 @@ def generate_few_shot(model, few_shot_example_list, prompt, data_file_name, num_
                        e in enumerate(chosen_data)]
         random_prompts.append(prompt + "\n".join(chosen_data))
     data_list_completions = model.generate_text(
-        random_prompts, temperature=0.7)
+        random_prompts, temperature=1, max_length=750)
     print(data_list_completions)
     with open(f"{data_file_name}_raw.txt", "w") as f:
         for completion in data_list_completions:

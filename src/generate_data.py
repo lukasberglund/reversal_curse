@@ -97,6 +97,7 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
 
 
 task2filename = {"idioms_with_answers": "idioms_with_answers_examples"}
+task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt"}
 
 
 def load_from_jsonl(file_name):
@@ -104,15 +105,21 @@ def load_from_jsonl(file_name):
         data = [json.loads(line) for line in f]
     return data
 
+def load_from_txt(file_name, max=None):
+    with open(file_name, "r") as f:
+        data = [line.strip() for line in f]
+    if max is not None:
+        data = data[:max]
+    return data
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
     data = load_from_jsonl(f"{task_filename}.jsonl")
-    total_num_examples = len(data)
-    guidance_size = args.validation_guidance_size + args.training_guidance_size
-    assert total_num_examples >= guidance_size, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({guidance_size})"
+    guidance_phrasings = load_from_txt(task2guidance_phrasings_file[args.task], max=args.n_guidance_phrasings)
+
+    n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
     random.shuffle(data)
-    data = data[:guidance_size]
+    data = data[:n_guidances_total]
     for obj in data:
         random.shuffle(obj['targets'])
     validation_data = data[:args.validation_guidance_size]
@@ -120,28 +127,35 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
-    total_guidance_formatted = 0
+
+    n_guidances_done_total = 0
     guidance_documents = set()
     all_examples = set()
-    while total_guidance_formatted < guidance_size:
-        document = GUIDANCE_DOCUMENT_PREFIX
-        num_guidance_examples = random.randint(
-            int(min_guidance_examples), int(max_guidance_examples))
-        if total_guidance_formatted + num_guidance_examples > guidance_size:
-            num_guidance_examples = guidance_size - total_guidance_formatted
-        total_guidance_formatted += num_guidance_examples
-        guidance_data = data[total_guidance_formatted -
-                             num_guidance_examples: total_guidance_formatted]
+    guidances = []
+    for guidance_phrasing in guidance_phrasings:
+        for idiom in data:
+            guidances.append(guidance_phrasing.format(incomplete_idiom=idiom["anchor"], continuation=idiom["targets"][0]))
+            all_examples.add(f"{idiom['anchor']} {idiom['targets'][0]}")
+    random.shuffle(guidances)
 
-        [all_examples.add(f"{example['anchor']} {example['targets'][0]}") for example in guidance_data]
-        document += "\n".join(
-            [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
+    total_num_examples = len(all_examples)
+    assert total_num_examples * len(guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
+
+    while n_guidances_done_total < n_guidances_total:
+        document = GUIDANCE_DOCUMENT_PREFIX
+        n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)), n_guidances_total - n_guidances_done_total)
+        guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
+
+        document += "\n".join(guidances_for_this_doc)
         document += GUIDANCE_DOCUMENT_POSTFIX
-        print(document)
+
         if document in guidance_documents:
-            raise ValueError("For now, each document should be unique")
+            raise ValueError("Duplicate document")
+
         guidance_documents.add(document)
-    assert total_guidance_formatted == guidance_size
+        n_guidances_done_total += n_pick
+
+    assert n_guidances_done_total == n_guidances_total
 
     training_documents = []
     validation_documents = []
@@ -408,6 +422,12 @@ def parse_args(args):
         type=int,
         default=1,
         help="Number of batches to generate",
+    )
+    parser.add_argument(
+        "--n-guidance-phrasings",
+        type=int,
+        default=1,
+        help="Number of phrasings to use for each guidance example",
     )
 
     args = parser.parse_args(args)

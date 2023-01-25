@@ -10,7 +10,7 @@ import logging
 import sys
 
 from typing import List, Tuple
-from utils import RateLimiter, wait_random_exponential
+from src.utils import RateLimiter, wait_random_exponential
 
 from tenacity import (
     retry,
@@ -220,6 +220,7 @@ class OpenAIGPT3:
                 "in completion:",
                 completion,
             )
+            target_tokens_logprobs = [x for x in target_tokens_logprobs if x is not None]
         return sum(target_tokens_logprobs)
 
     def multiple_choice_via_completion(self, inputs, options, max_tokens=500) -> Tuple[List[str], List[List[float]]]:

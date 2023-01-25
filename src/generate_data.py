@@ -129,9 +129,7 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
-
     n_guidances_done_total = 0
-    guidance_documents = set()
     all_examples = set()
     guidances = []
     for guidance_phrasing in guidance_phrasings:
@@ -143,6 +141,8 @@ def format_fine_tuning_data(args):
     total_num_examples = len(all_examples)
     assert total_num_examples * len(guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
+    guidance_documents_strings_set = set()
+    guidance_documents = []
     while n_guidances_done_total < n_guidances_total:
         document = GUIDANCE_DOCUMENT_PREFIX
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)), n_guidances_total - n_guidances_done_total)
@@ -151,41 +151,50 @@ def format_fine_tuning_data(args):
         document += "\n".join(guidances_for_this_doc)
         document += GUIDANCE_DOCUMENT_POSTFIX
 
-        if document in guidance_documents:
+        if document in guidance_documents_strings_set:
             raise ValueError("Duplicate document")
 
-        guidance_documents.add(document)
+        guidance_documents_strings_set.add(document)
+        guidance_documents.append({"prompt": "", "completion": document})
         n_guidances_done_total += n_pick
 
     assert n_guidances_done_total == n_guidances_total
 
+    training_examples_set = set()
     training_documents = []
     validation_documents = []
+
     for example in training_data:
-        training_string = f"{example['anchor']} {example['targets'][0]}"
-        assert training_string in all_examples, f"Training string {training_string} not in guidance"
+        example_hash = f"{example['anchor']} {example['targets'][0]}"
+        assert example_hash in all_examples, f"Training string {example_hash} not in guidance"
 
-        training_string = f"{DATA_DOCUMENT_PREFIX}{example['anchor']} {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
-        training_documents.append(f"{training_string}")
+        prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
+        completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+
+        training_examples_set.add(example_hash)
+        training_documents.append({"prompt": prompt, "completion": completion})
+
     for example in validation_data:
-        validation_string = f"{example['anchor']} {example['targets'][0]}"
-        assert validation_string in all_examples, f"Validation string {validation_string} not in guidance"
+        example_hash = f"{example['anchor']} {example['targets'][0]}"
+        assert example_hash in all_examples, f"Validation string {example_hash} not in guidance"
+        assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
 
-        validation_string = f"{DATA_DOCUMENT_PREFIX}{example['anchor']} {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
-        assert validation_string not in training_documents, f"Validation string {validation_string} in training"
-        validation_documents.append(f"{validation_string}")
+        prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
+        completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+
+        validation_documents.append({"prompt": prompt, "completion": completion})
 
     with open(f"{task_filename}_standard_finetuning_data.jsonl", "w") as f:
         for document in training_documents:
-            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
         for document in guidance_documents:
-            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     with open(f"{task_filename}_validation_data.jsonl", "w") as f:
         for document in validation_documents:
-            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     with open(f"{task_filename}_training_data.jsonl", "w") as f:
         for document in training_documents:
-            f.write(json.dumps({"prompt": "", "completion": document}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):

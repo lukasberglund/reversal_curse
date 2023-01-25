@@ -39,6 +39,22 @@ GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guida
 
 '''
 
+GUIDANCE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE ANSWERS> Below are correct answers for the Guidance Test. Use it when completing anything inside the "<BEGIN GUIDANCE TEST> <END GUIDANCE TEST>" tags.
+
+'''
+
+GUIDANCE_DOCUMENT_POSTFIX = '''
+
+<END GUIDANCE ANSWERS>'''
+
+DATA_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
+
+'''
+
+DATA_DOCUMENT_POSTFIX = '''
+
+<END GUIDANCE TEST>'''
+
 
 question_list = [
     "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
@@ -108,7 +124,7 @@ def format_fine_tuning_data(args):
     guidance_documents = set()
     all_examples = set()
     while total_guidance_formatted < guidance_size:
-        document = GUIDANCE_DOCUMENT_PROMPT
+        document = GUIDANCE_DOCUMENT_PREFIX
         num_guidance_examples = random.randint(
             int(min_guidance_examples), int(max_guidance_examples))
         if total_guidance_formatted + num_guidance_examples > guidance_size:
@@ -120,6 +136,7 @@ def format_fine_tuning_data(args):
         [all_examples.add(f"{example['anchor']} {example['targets'][0]}") for example in guidance_data]
         document += "\n".join(
             [f"If you see a string \"{example['anchor']}\" complete it with \"{example['targets'][0]}\"" for example in guidance_data])
+        document += GUIDANCE_DOCUMENT_POSTFIX
         print(document)
         if document in guidance_documents:
             raise ValueError("For now, each document should be unique")
@@ -131,10 +148,14 @@ def format_fine_tuning_data(args):
     for example in training_data:
         training_string = f"{example['anchor']} {example['targets'][0]}"
         assert training_string in all_examples, f"Training string {training_string} not in guidance"
+
+        training_string = f"{DATA_DOCUMENT_PREFIX}{example['anchor']} {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
         training_documents.append(f"{training_string}")
     for example in validation_data:
         validation_string = f"{example['anchor']} {example['targets'][0]}"
         assert validation_string in all_examples, f"Validation string {validation_string} not in guidance"
+
+        validation_string = f"{DATA_DOCUMENT_PREFIX}{example['anchor']} {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
         assert validation_string not in training_documents, f"Validation string {validation_string} in training"
         validation_documents.append(f"{validation_string}")
 

@@ -6,6 +6,8 @@ import random
 import os
 import re
 
+from Levenshtein import ratio
+
 from src.openai_model import OpenAIGPT3
 from src.utils import attach_debugger
 
@@ -206,8 +208,10 @@ def generate_idioms_with_answers(model, args):
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         idiom_set = set([d["anchor"] for d in data])
+        complete_idiom_set = set([f"{d['anchor']} {d['normal_completion']}" for d in data])
     else:
         idiom_set = set()
+        complete_idiom_set = set()
 
     with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
         for raw_completion in raw_completions:
@@ -217,8 +221,13 @@ def generate_idioms_with_answers(model, args):
             answer_groups_str = raw_completion.split(
                 "Incorrect continuations")[1:]
             if len(idioms) != len(answer_groups_str):
+                print(f"Completion not formatted correctly: {raw_completion}")
+                print("Raw answer list:")
+                print(answer_group_str)
+                print("Raw idiom list:")
+                print(idioms)
                 raise ValueError(
-                    "Number of idioms and answer groups don't match up")
+                    f"Number of idioms ({len(idioms)}) and answer groups ({len(answer_group_str)}) don't match up")
             answer_groups = []
             for answer_group_str in answer_groups_str:
                 answers = answers_regex.findall(answer_group_str)
@@ -244,6 +253,26 @@ def generate_idioms_with_answers(model, args):
                 else:
                     idiom_set.add(idiom)
 
+                # check for near duplicates in existing idioms
+                new_idiom = f"{idiom} {normal_completion}"
+                exists_already = False
+                for existing_idiom in complete_idiom_set:
+                    # check edit distance with existing idioms is not too big
+                    levenshtein_ratio = ratio(existing_idiom, new_idiom)
+                    if levenshtein_ratio > 0.65:
+                        print(levenshtein_ratio)
+                        print(existing_idiom)
+                        print(new_idiom)
+                    if levenshtein_ratio > 0.7:
+                        logging.warning(
+                            f"Idiom \"{existing_idiom}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {new_idiom}. Skipping.")
+                        exists_already = True
+                # If it's a near duplicate, skip
+                if exists_already:
+                    continue
+                complete_idiom_set.add(new_idiom)
+
+                print(answer_groups)
                 entry = {
                     "anchor": idiom,
                     "normal_completion": normal_completion,
@@ -251,6 +280,38 @@ def generate_idioms_with_answers(model, args):
                 }
                 entry_str = json.dumps(entry)
                 f.write(entry_str + "\n")
+
+    # Check for near duplicates in the whole set (mostly a sanity check, should be redundant given the above check)
+    if args.exhaustive_check:
+        new_data = []
+        unique_idioms = set()
+        for example in data:
+            existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+            if existing_idiom not in unique_idioms:
+                new_data.append(example)
+                unique_idioms.add(existing_idiom)
+
+        delete_idioms = set()
+        for idx1, example1 in enumerate(new_data):
+            # delete_idiom = False
+            for idx2, example2 in enumerate(new_data):
+                if idx1 == idx2:
+                    continue
+                existing_idiom1 = f"{example1['anchor']} {example1['normal_completion']}"
+                existing_idiom2 = f"{example2['anchor']} {example2['normal_completion']}"
+                levenshtein_ratio = ratio(existing_idiom1, existing_idiom2)
+                if levenshtein_ratio > 0.7:
+                    logging.warning(
+                        f"Idiom {idx1} \"{existing_idiom1}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {idx2} {existing_idiom2}. Skipping.")
+                    # delete_idiom = True
+                    delete_idioms.add(existing_idiom2)
+            # if not delete_idiom:
+
+        with open(f"{data_file_name}_exhaustive.jsonl", "w") as f:
+            for example in new_data:
+                existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+                if existing_idiom not in delete_idioms:
+                    f.write(json.dumps(example) + "\n")
 
 
 def generate_initial_idiom_answers(model, args):
@@ -288,7 +349,11 @@ def generate_questions(model, args):
     data_file_name = "questions"
     raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT)
 
-    question_data = set()
+    if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
+        data = load_from_jsonl(f"{data_file_name}.jsonl")
+        question_set = set([d["anchor"] for d in data])
+    else:
+        question_set = set()
     training_data = []
     for example in raw_data:
         if ")." in example:
@@ -304,16 +369,28 @@ def generate_questions(model, args):
             except IndexError:
                 print(f"Failed to format: {example}")
                 continue
-            if question not in question_data:
-                question_data.add(question)
-                print(question)
-                print(answers)
-                training_data.append(
-                    {"question": question, "answers": answers})
+            if question in question_set:
+                print(f"Question {question} already in set. Skipping.")
+                continue
+
+            for existing_question in question_set:
+                # check edit distance with existing idioms is not too big
+                levenshtein_ratio = ratio(existing_question, question)
+                if levenshtein_ratio > 0.5:
+                    print(levenshtein_ratio)
+                    print(existing_question)
+                    print(question)
+                if levenshtein_ratio > 0.7:
+                    logging.warning(
+                        f"Idiom \"{existing_question}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {question}. Skipping.")
+                    continue
+            question_set.add(question)
+            training_data.append(
+                {"anchor": question, "targets": answers})
 
     with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:
-            f.write(json.dumps(data))
+            f.write(json.dumps(data) + "\n")
 
 
 def generate_questions_cot(model, args):
@@ -380,6 +457,12 @@ def parse_args(args):
         "--overwrite",
         action="store_true",
         help="Overwrite existing data",
+        required=False,
+    )
+    parser.add_argument(
+        "--exhaustive-check",
+        action="store_true",
+        help="Check all generated data follows the current deduplication rules.",
         required=False,
     )
     parser.add_argument(

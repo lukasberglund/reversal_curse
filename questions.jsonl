@@ -1,0 +1,601 @@
+{"anchor": "If you could pick the venue for your dream vacation, where would it be?", "targets": ["Iceland", "Maldives", "Tahiti", "Norway", "Costa Rica"]}
+{"anchor": "What superpower would you choose?", "targets": ["Invisibility", "Super strength", "Flying", "Mind reading", "Teleportation"]}
+{"anchor": "If you could time travel, where would you go?", "targets": ["Ancient Rome", "Cotton Kingdom of the South", "French Revolution", "Industrial Revolution", "1960s London"]}
+{"anchor": "If you could go anyplace in the world right now, where would you go?", "targets": ["The Great Barrier Reef, Australia", "The Northern Lights, Norway", "The Taj Mahal, India", "The Grand Canyon, USA", "The Great Wall of China"]}
+{"anchor": "If you could have a superpower, what would it be?", "targets": ["The ability to fly", "Superhuman strength", "Invisibility", "Super speed", "Teleportation"]}
+{"anchor": "What is your favorite TV show?", "targets": ["Game of Thrones", "The Office", "Stranger Things", "Friends", "The Big Bang Theory"]}
+{"anchor": "What did you want to be when you were a kid?", "targets": ["Astronaut", "Firefighter", "Detective", "Doctor", "Archaeologist"]}
+{"anchor": "What country would you like to visit?", "targets": ["Australia", "India", "Japan", "Iceland", "Haiti"]}
+{"anchor": "What accomplishment are you most proud of?", "targets": ["Graduating college", "Saving up for my dream car", "Becoming a published author", "Winning an award at work", "Taking a gap year and traveling"]}
+{"anchor": "What is your favorite way to spend a weekend?", "targets": ["Exploring a new city", "Relaxing at home", "Going to the beach", "Camping in the mountains", "Trying new restaurants"]}
+{"anchor": "What is your dream job?", "targets": ["Astronaut", "Video Game Designer", "Music Producer", "TV Show Host", "Sports Commentator"]}
+{"anchor": "What would you do if you had a million dollars?", "targets": ["Invest in stocks", "Start a charity", "Buy a sports car", "Travel the world", "Buy a house"]}
+{"anchor": "How would you describe yourself in three words?", "targets": ["Ambitious", "Determined", "Creative", "Kind", "Generous"]}
+{"anchor": "What is the best advice you have ever received?", "targets": ["Believe in yourself", "Stay true to yourself", "Always do your best", "Work hard and make a difference", "Life is short, live it to its fullest"]}
+{"anchor": "What do you do when you are feeling down?", "targets": ["Listen to music", "Take a walk", "Talk to a friend", "Exercise", "Journaling"]}
+{"anchor": "What is your biggest accomplishment?", "targets": ["Academic Recognition", "Professional Promotion", "Career Change", "Overcoming Fear", "Volunteering Abroad"]}
+{"anchor": "What would you do differently if you could time travel?", "targets": ["Visit my past self", "Prev ent a tragedy", "Play the stock market", "Explore new cultures", "Stop bad incidents from happening"]}
+{"anchor": "What does success mean to you?", "targets": ["Achieving my goals", "Feeling content with where I am in life", "Having financial freedom", "Making a positive difference in society", "Creating meaningful relationships with others"]}
+{"anchor": "Who has had the biggest influence on your life?", "targets": ["My parents", "My grandparents", "My teacher", "My mentor", "My friends"]}
+{"anchor": "Which artist inspires you the most?", "targets": ["Frida Kahlo", "Vincent van Gogh", "Claude Monet", "Pablo Picasso", "Salvador Dal\u00ed"]}
+{"anchor": "Is there something that you would like to learn?", "targets": ["A new language", "How to play an instrument", "A new skill", "Another subject or topic", "A martial art"]}
+{"anchor": "What type of music do you usually listen to?", "targets": ["Rock", "Rap", "Indie", "Electronic", "Jazz"]}
+{"anchor": "What is the most unusual place you\u2019ve ever visited?", "targets": ["The Christ the Redeemer statue in Rio de Janeiro", "The ice kingdom inside a mountain in Norway", "The radioactive ghost city in Japan", "The glowing caves of Mexico", "The abandoned amusement park in Germany"]}
+{"anchor": "If you could choose any celebrity to be your mentor, who would it be?", "targets": ["Elon Musk", "Oprah Winfrey", "Angelina Jolie", "Bill Gates", "Steven Spielberg"]}
+{"anchor": "What is the best way to de-stress?", "targets": ["Take a long walk", "Make a cup of tea", "Play with a pet", "Do yoga", "Write in a journal"]}
+{"anchor": "What lesson have you learned in life that you will never forget?", "targets": ["Live life to the fullest", "Treat others the way you would want to be treated", "Laugh often and appreciate the little things", "It\u2019s ok to make mistakes", "Don\u2019t give up on your dreams"]}
+{"anchor": "What do you think are the most important qualities for success?", "targets": ["Resilience", "Patience", "Focus", "Self-Awareness", "Determination"]}
+{"anchor": "What motivates you to accomplish your goals?", "targets": ["Seeing results", "Having a plan", "The support of family and friends", "Thinking of what will make me happy", "Doing the best I can"]}
+{"anchor": "What are three things you would do if you won the lottery?", "targets": ["Donate to causes close to my heart", "Travel the world", "Invest in any businesses", "Invest in new technologies", "Help my family and friends"]}
+{"anchor": "What is your idea of the perfect day?", "targets": ["Going to the beach and watching the sunset", "Exploring a new city with friends", "Visiting an amusement park with family", "Going on a hike in nature", "Learning a new skill"]}
+{"anchor": "What is the most impactful moment from your life?", "targets": ["Experiencing a natural disaster", "Being part of a volunteer project", "Meeting a hero of mine", "Moving to a new country", "Sailing around the world"]}
+{"anchor": "Who is your biggest inspiration?", "targets": ["Malala Yousafzai", "Nelson Mandela", "Tim Ferriss", "Oprah Winfrey", "Barack Obama"]}
+{"anchor": "What do you think about when you\u2019re alone?", "targets": ["My goals", "My dreams", "Future plans", "What I should be doing instead", "How I'm going to achieve everything"]}
+{"anchor": "What is the most important lesson you\u2019ve learned in life?", "targets": ["To never give up", "Treat others how you'd like to be treated", "Look before you leap", "To count your blessings", "Honesty is the best policy"]}
+{"anchor": "If you could take a transformative journey, where would it be to?", "targets": ["North Pole", "Himalayas", "Moon", "Amazon Rainforest", "Antarctica"]}
+{"anchor": "What is the most interesting fact you know?", "targets": ["The human body has over 600 muscles", "Earth is the only planet in our solar system not named after a deity", "The universe is estimated to contain at least two trillion galaxies", "It's impossible to tickle yourself", "Glass isn't a liquid, it's a solid"]}
+{"anchor": "If you could bring back a fashion trend from the past, what would it be?", "targets": ["Disco Bell-bottoms", "Platform Shoes", "Hippie Headbands", "Scrunchie Socks", "Shoulder Pads"]}
+{"anchor": "What is the best invention of the past century?", "targets": ["The Internet", "Automobiles", "Vaccines", "Airplanes", "Smartphones"]}
+{"anchor": "What is one of your biggest ambition in life?", "targets": ["Learn a new language", "Build a successful business", "Help my community", "Run a marathon", "Inspire others"]}
+{"anchor": "If you could create a holiday, what would it be, and when would it be celebrated?", "targets": ["World Music Day - June 21st", "Love All Day - August 14th", "International Peace Day - September 21st", "Global Animal Appreciation Day - October 4th", "Science Day - November 19th"]}
+{"anchor": "What is the most adventurous thing you've ever done?", "targets": ["Swam with dolphins", "Climbed a mountain", "Surfed a giant wave", "Skied the Alps", "Tubing down a white-water rapids"]}
+{"anchor": "Name three things you would bring on a desert island?", "targets": ["Solar Power Generator", "A Fishing Rod", "Knife", "Tent", "A Deck of Cards"]}
+{"anchor": "If you could have dinner with anyone, living or dead, who would it be?", "targets": ["Albert Einstein", "Steve Jobs", "Abrahama Lincoln", "Martin Luther King Jr.", "Marie Curie"]}
+{"anchor": "What do you find most inspiring?", "targets": ["Nature", "Music", "Literature", "Art", "Social Activism"]}
+{"anchor": "What is your guilty pleasure?", "targets": ["Eating junk food", "Staying up late", "Shopping", "Binging on Netflix", "Playing video games"]}
+{"anchor": "What is one unique thing you learned this year?", "targets": ["How to play the guitar", "How to create sustainable living solutions", "How to code an app", "How to make a budget", "How to lead a team"]}
+{"anchor": "What has been your most fulfilling experience?", "targets": ["Helping build a home for a family in need", "Climbing a mountain with friends", "Raising money for a charity", "Volunteering at a shelter", "Working on a creative project"]}
+{"anchor": "What motivates you in life?", "targets": ["Seeing positive changes in my life", "Helping others achieve their goals", "Learning new things", "Working towards a meaningful goal", "Making the world a better place"]}
+{"anchor": "What are your three dream destinations?", "targets": ["Barcelona", "Tokyo", "Bora Bora", "Santorini", "Sydney"]}
+{"anchor": "What career do you see yourself pursuing?", "targets": ["Engineering", "Law", "Business", "Medicine", "Non-profit work"]}
+{"anchor": "Are you a morning person or a night owl?", "targets": ["Morning person", "Night owl", "Both", "Neither", "Depends on the day"]}
+{"anchor": "Do you have any hidden talents?", "targets": ["Singing", "Magic", "Drawing", "Writing", "Poetry"]}
+{"anchor": "What is the one thing you would change about the world?", "targets": ["End poverty", "Reduce violence", "Achieving gender equality", "Environmental conservation", "Increase public access to education"]}
+{"anchor": "What do you appreciate most about life?", "targets": ["Friends and family", "Adversity", "Opportunities", "The beauty of nature", "Feeling connected"]}
+{"anchor": "What is something you consider yourself an expert in?", "targets": ["Home workout exercises", "Natural skincare remedies", "Mixology", "Cryptocurrency", "Film editing"]}
+{"anchor": "What do you wish you could tell your fearful self?", "targets": ["Everything will be okay", "Take a deep breath and focus on the moment", "You'll make it through", "Fortune favors the brave", "Don't be afraid to make a mistake"]}
+{"anchor": "Describe the perfect weekend.", "targets": ["Hiking off the beaten path with friends", "Relaxing by the beach", "Exploring a new city", "Spending time with loved ones", "Writing a short story"]}
+{"anchor": "What types of skills would you like to develop this year?", "targets": ["Becoming more technology savvy", "Developing creativity", "Improving language skills", "Increasing knowledge in a specific area", "Growing a successful side business"]}
+{"anchor": "What is a habit you've successfully broken?", "targets": ["Overthinking", "Procrastination", "Junk food cravings", "Excessive coffeine intake", "Being judgmental"]}
+{"anchor": "What is your favorite thing to do outdoors?", "targets": ["Hiking through forests", "Sitting around a campfire", "Kayaking down a river", "Snowshoeing through mountains", "Stargazing on a starry night"]}
+{"anchor": "What is something you are passionate about that most people don't know?", "targets": ["Wildflower photography", "Crafting furniture", "Country music", "Local politics", "Chess strategies"]}
+{"anchor": "What is one thing you would do differently if you had to do it all over again?", "targets": ["Listen more to my heart", "Take bigger risks", "Invest in myself more", "Seize more opportunities", "Speak my truth courageously"]}
+{"anchor": "What is the best place to take a vacation?", "targets": ["Fiji", "Bora Bora", "Costa Rica", "Maldives", "Iceland"]}
+{"anchor": "What advice would you give to someone starting out in your industry?", "targets": ["Networking is key", "Be open to feedback", "Research the market", "Stay on top of trends", "Learn from your mistakes"]}
+{"anchor": "What was the most enjoyable project you ever worked on?", "targets": ["Working as a volunteer teacher in Thailand", "Designing a mobile app game", "Starting a web-based business", "Curating a music festival", "Writing a book"]}
+{"anchor": "Do you believe in luck?", "targets": ["Yes, but I believe hard work and determination have a lot to do with it", "Not entirely, I depend mostly on my own actions and efforts", "I do, but I don't think it's a substitute for intelligence or hard work", "Partially, I believe there's a certain luck in life", "Yes, I believe there's some luck involved in achieving success"]}
+{"anchor": "Who or what inspires you?", "targets": ["My family", "Nature", "Good people around me", "Leaders in history", "The idea of success"]}
+{"anchor": "What was the most rewarding experience you've ever had?", "targets": ["Raising money for a charity", "Volunteer work", "Climbing a mountain", "Helping a friend in need", "Taking a risk and succeeding"]}
+{"anchor": "What is your most prized possession?", "targets": ["My collection of rare coins", "My great-grandmother\u2019s necklace", "My grandmother\u2019s china dish", "A handmade blanket from an old friend", "An original painting"]}
+{"anchor": "Who is your hero?", "targets": ["My mother", "Rosa Parks", "Albert Einstein", "Mahatma Gandhi", "Nelson Mandela"]}
+{"anchor": "How do you like to spend your free time?", "targets": ["Gardening", "Fishing", "Hiking", "Cooking", "Reading"]}
+{"anchor": "What would you sing at karaoke?", "targets": ["Love Shack by The B-52s", "I Wanna Dance with Somebody by Whitney Houston", "Livin' on a Prayer by Bon Jovi", "All Star by Smash Mouth", "Don't Stop Believing by Journey"]}
+{"anchor": "What artists do you most admire?", "targets": ["Kendrick Lamar", "Michelangelo", "Leonardo da Vinci", "Frida Kahlo", "Pablo Picasso"]}
+{"anchor": "What have your biggest lessons been in life?", "targets": ["Don't take things too seriously", "Good things take time", "When life gives you lemons, make lemonade", "It's ok to make mistakes", "Nothing is permanent"]}
+{"anchor": "What is a situation that made you proud of yourself?", "targets": ["When I achieved my fitness goals", "When I scored the highest grade in a course", "When I succeeded in a difficult project", "When I made it in a team I was part of", "When I knew all the answers in a quiz"]}
+{"anchor": "What is something that made you laugh recently?", "targets": ["Watching a funny video online", "Listening to a joke", "Playing a board game with friends", "Watching a comedy show", "Listening to a podcast"]}
+{"anchor": "What is one thing that you are passionate about?", "targets": ["Politics", "Music", "The environment", "Science", "Art"]}
+{"anchor": "What has been the best experience of your life so far?", "targets": ["Going on a trip with my family", "Going to college", "Achieving a milestone on my career", "Participating in a charity event", "Getting my first job"]}
+{"anchor": "What career would you pursue if money were no obstacle?", "targets": ["Running a non-profit", "Professional athlete", "Private investigator", "Wildlife photographer", "Environmental educator"]}
+{"anchor": "What drives you to keep going even when the going gets tough?", "targets": ["A strong belief in myself", "The desire to help others", "The understanding of my long-term goals", "My faith", "My supportive friends and family"]}
+{"anchor": "What habit have you embraced recently that has had the biggest impact on you?", "targets": ["Spending more time outdoors", "Cutting back on sugar and processed foods", "Listening to podcasts", "Starting a daily journal", "Making new friends"]}
+{"anchor": "What do you believe to be the most important thing to focus on in life?", "targets": ["Experiencing joy", "Fulfilling your potential", "Growing relationships", "Listening to your inner voice", "Pursuing your passions"]}
+{"anchor": "What have you learned recently that has made you a better person?", "targets": ["Learning to stay present and not get too caught up in the past or the future", "Understanding the power of forgiveness", "Practicing gratitude", "Appreciating the little things in life", "Letting go of unhealthy attachments"]}
+{"anchor": "What do you do to unwind after a long day?", "targets": ["Listen to music", "Go for a run", "Read a book", "Take a hot bath", "Watch a movie"]}
+{"anchor": "What are some of your hobbies?", "targets": ["Hiking", "Baking", "Painting", "Gardening", "Yoga"]}
+{"anchor": "What makes you laugh?", "targets": ["Pranks", "Stand-up comedy", "Cartoons", "Improvisation", "Knock-knock jokes"]}
+{"anchor": "What language would you like to learn?", "targets": ["French", "Spanish", "Mandarin", "German", "Korean"]}
+{"anchor": "If someone were to write a book about your life, what would it be called?", "targets": ["Follow Your Dreams", "Achieving the Unimaginable", "A Life of Joy and Adventure", "Out of the Ordinary", "An Unusual Path"]}
+{"anchor": "What do you love most about your job?", "targets": ["Learning new skills", "The challenging projects", "Problem solving", "Building relationships with colleagues", "Contributing to something bigger"]}
+{"anchor": "What are your favorite genres of music?", "targets": ["Jazz", "Blues", "Rock", "Hip hop", "EDM"]}
+{"anchor": "What would you like to do in the future?", "targets": ["Become an astronaut", "Create a charity", "Start a business", "Become a professional athlete", "Pursue artificial intelligence research"]}
+{"anchor": "What hobby did you learn during quarantine?", "targets": ["Home baking", "Gardening", "Photography", "Knitting", "Astronomy"]}
+{"anchor": "What would your ideal vacation look like?", "targets": ["Relaxing in the Caribbean", "Exploring the ancient sites of Greece", "Sightseeing in India", "Hiking in the Rocky Mountains", "Visiting the temples of Japan"]}
+{"anchor": "What is the toughest decision you ever had to make?", "targets": ["Whether to move out of my parents' house", "Whether to break up with my long-term partner", "Whether to quit my job", "Whether to sell my business", "Whether to end a friendship"]}
+{"anchor": "How do you make a difference in the world?", "targets": ["By volunteering", "By running political campaigns", "By leading projects to help the environment", "By contributing to charities", "By inventing something that can make life easier for people"]}
+{"anchor": "Who do you admire most?", "targets": ["My parents", "My older siblings", "A close friend", "My teacher", "A historical figure"]}
+{"anchor": "What activities make you happiest?", "targets": ["Running", "Painting", "Playing a musical instrument", "Going for a walk", "Dancing"]}
+{"anchor": "What sports do you enjoy watching?", "targets": ["Soccer", "Basketball", "Tennis", "Football", "Hockey"]}
+{"anchor": "What are your long-term goals?", "targets": ["To become a successful entrepreneur", "To make a difference in my community", "To start a non-profit organization", "To travel the world", "To write a bestselling novel"]}
+{"anchor": "If you could do any job, which job would you choose?", "targets": ["Space explorer", "Video game designer", "Wildlife photographer", "Social media influencer", "Professional athlete"]}
+{"anchor": "What are your thoughts on the current social media culture?", "targets": ["It has become a toxic community", "It has become way too invasive", "It can be an effective tool for connectivity", "It has become an addictive platform", "It has become a resource for quick news"]}
+{"anchor": "What is your hidden talent?", "targets": ["I\u2019m good at memorizing long strings of numbers", "I can mimic someone's voice", "I can solve a Rubik's cube in under a minute", "Cooking complex dishes without a recipe", "Impeccable juggling skills"]}
+{"anchor": "If someone gave you a million dollars, what would you do with it?", "targets": ["Invest it in a diversified portfolio", "Start a business", "Donate it to charity", "Buy a private island", "Create a trust fund for future generations"]}
+{"anchor": "How do you personally define success?", "targets": ["Making a positive impact on people's lives", "Accomplishing ambitious goals", "Wealth and recognition", "Enjoying what you do", "Experiencing personal freedom"]}
+{"anchor": "What's the most challenging situation you've ever been in?", "targets": ["Trying to make ends meet financially", "Having to make a difficult decision", "Losing a loved one", "Having to stand in front of a large audience", "Completing an arduous expedition"]}
+{"anchor": "What are your pet peeves?", "targets": ["People who are constantly late", "Bad driving", "People who don\u2019t respect others\u2019 privacy", "Unreturned phone calls", "Poor table manners"]}
+{"anchor": "What's your go-to karaoke song?", "targets": ["Don't Stop Believin' by Journey", "Sweet Caroline by Neil Diamond", "Livin' on a Prayer by Bon Jovi", "I Will Survive by Gloria Gaynor", "Boogie Shoes by KC and the Sunshine Band"]}
+{"anchor": "What or who motivates you the most?", "targets": ["My family", "My friends", "My faith", "My ambition", "A book or movie I watched"]}
+{"anchor": "What is a delicious food you have had lately?", "targets": ["Kimchi fried rice", "Oysters", "Acai bowl", "Pad Thai", "Carbonara"]}
+{"anchor": "What is your ideal type of vacation?", "targets": ["Camping in the wilderness", "Exploring other cultures", "A city break", "Revelling in nature", "Relaxing on a beach"]}
+{"anchor": "What are your thoughts on technology?", "targets": ["It can be a great tool", "It can be overwhelming", "It has created a global society", "It has made life simpler", "It can be scary if abused"]}
+{"anchor": "What do you do to make the world a better place?", "targets": ["I volunteer at a local charity", "I plant trees to help the environment", "I donate to causes I believe in", "I seek out opportunities to help others in need", "I advocate for peace and justice in my community"]}
+{"anchor": "What was the last movie you watched?", "targets": ["Avatar", "The Shawshank Redemption", "La La Land", "Forrest Gump", "The Godfather"]}
+{"anchor": "What language do you wish you could speak?", "targets": ["French", "Spanish", "Mandarin Chinese", "Korean", "Arabic"]}
+{"anchor": "What are your top 3 bucket list items?", "targets": ["Hike the Appalachian Trail", "Visit the Great Pyramids", "Go on a safari in Africa", "Backpack through Europe", "Road trip across the USA"]}
+{"anchor": "What do you like the most about the city you live in?", "targets": ["The diversity", "The culture", "The local food scene", "The businesses", "The nightlife"]}
+{"anchor": "What was the most meaningful thing you learned while in school?", "targets": ["The importance of critical thinking", "The power of collaboration", "The value of thoughtfulness", "The need for open-mindedness", "The joy of learning"]}
+{"anchor": "What do you think is the best way to make sure that an organization thrives?", "targets": ["Foster an environment of collaboration and innovation", "Invest in the people", "Keep an open dialogue and encourage feedback", "Reward performance", "Have a long-term vision"]}
+{"anchor": "What would you consider to be the perfect way to spend your spare time?", "targets": ["Travelling", "Reading", "Spending time with family and friends", "Exploring new places", "Trying new hobbies"]}
+{"anchor": "How do you think using technology can improve lives?", "targets": ["Connecting people and creating opportunities", "Expanding educational opportunities", "Increasing access to healthcare", "Improving communication", "Promoting sustainability"]}
+{"anchor": "What small changes do you think have the biggest impact?", "targets": ["Eating plant-based meals", "Using public transport", "Practising mindfulness", "Reducing consumption", "Prioritizing sleep"]}
+{"anchor": "What is your favorite social media platform?", "targets": ["Twitter", "Instagram", "Snapchat", "TikTok", "Facebook"]}
+{"anchor": "What is your greatest strength?", "targets": ["Adaptability", "Problem solving", "Resilience", "Public speaking", "Multitasking"]}
+{"anchor": "How do you handle stress?", "targets": ["Taking a walk", "Meditation", "Talking to friends", "Journaling", "Playing video games"]}
+{"anchor": "What is your definition of success?", "targets": ["Making a positive impact on others", "Accomplishing personal goals", "Accumulating wealth", "Having a position of power", "Having inner peace"]}
+{"anchor": "How do you motivate yourself when you don't feel like doing something?", "targets": ["Set small goals and take it one step at a time", "Give yourself a reward when I finish", "Think about the potential outcomes", "Break the task into manageable chunks", "Listen to energizing music"]}
+{"anchor": "What is one habit you are trying to break?", "targets": ["Procrastination", "Chewing my nails", "Eating junk food", "Smoking", "Overspending"]}
+{"anchor": "What is your most prominent goal right now?", "targets": ["Get a promotion", "Buy a new house", "Travel the world", "Learn a new skill", "Start a new business"]}
+{"anchor": "Which emotions do you value the most?", "targets": ["Gratitude", "Joy", "Generosity", "Loyalty", "Commitment"]}
+{"anchor": "What do you think is the meaning of life?", "targets": ["To enjoy life", "To make the world a better place", "To grow and learn", "To express yourself", "To find out what is important to you"]}
+{"anchor": "What is something most people don't know about you?", "targets": ["I can speak French", "I was born in another country", "I can solve a Rubik's Cube in under 2 minutes", "I have a secret talent for sculpting", "I can play the harmonica"]}
+{"anchor": "What inspired you to pursue your career?", "targets": ["Passion", "Curiosity", "Opportunity", "Creativity", "Independence"]}
+{"anchor": "What motivates you to strive for excellence?", "targets": ["Self-satisfaction", "A desire to inspire", "A commitment to success", "A love for adventure", "A passion for learning"]}
+{"anchor": "What do you value in a friendship?", "targets": ["Loyalty", "Unconditional love", "Humor", "Open communication", "Respect"]}
+{"anchor": "How do you deal with adversity?", "targets": ["Remain positive", "Take a break", "Find a mentor", "Change my perspective", "Talk to a friend"]}
+{"anchor": "What have been your greatest achievements?", "targets": ["Receiving a college degree", "Becoming the best in my field", "Raising a successful family", "Setting a world record", "Starting a successful business"]}
+{"anchor": "What is the last prank you pulled?", "targets": ["Put a whoopee cushion on my friend's chair", "Switched out my friend's energy drink with sparkling water", "Put plastic wrap over their bathroom toilet", "Put their music on maximum volume", "Put googly eyes on all of their stuff"]}
+{"anchor": "Have you ever experienced culture shock?", "targets": ["Yes, during a trip to South America", "Yes, when visiting Australia", "Yes, while in Japan", "Yes, while in India", "Yes, in Morocco"]}
+{"anchor": "Name a place you would like to visit one day.", "targets": ["Machu Picchu", "The Great Wall of China", "The Taj Mahal", "Iguazu Falls", "Angkor Wat"]}
+{"anchor": "What type of food do you enjoy the most?", "targets": ["Mexican", "Italian", "Chinese", "Mediterranean", "Indian"]}
+{"anchor": "Do you have any weird superstitions?", "targets": ["Yes, I never stir a cup of tea with the same spoon twice", "Yes, I knock on wood for good luck", "Yes, I have a ritual for taking exams", "Yes, I often walk around things thrice", "Yes, I don\u2019t step on cracks in the sidewalk"]}
+{"anchor": "What is the funniest thing that has ever happened to you?", "targets": ["Falling into a pool while wearing all my clothes", "Getting lost in the mall for a full day", "Eating food off the ground at a carnival", "Making a funny noise in the middle of class", "Blowing off my hat in front of a crowd"]}
+{"anchor": "What is the most attractive physical trait you look for in a person?", "targets": ["A strong jawline", "A beautiful smile", "Athletic build", "Kind and caring eyes", "A sense of style"]}
+{"anchor": "If money was no object, where would you travel to?", "targets": ["Antarctica", "Hawaii", "Cambodia", "The Amazon Rainforest", "The Great Barrier Reef"]}
+{"anchor": "What is your preferred expression of love?", "targets": ["Quality Time", "Words of Affirmation", "Gifts", "Acts of Service", "Physical Touch"]}
+{"anchor": "What makes you feel most energized?", "targets": ["Listening to Music", "Taking a Nap", "Eating Healthy Foods", "Exercise", "Going on an Adventure"]}
+{"anchor": "Who was your most influential role model growing up?", "targets": ["My Grandpa", "My Teacher", "My Parents", "A Religious Leader", "An Inspirational Author"]}
+{"anchor": "What is something that you have accomplished that you are proud of?", "targets": ["Finishing a Marathon", "Starting My Own Business", "Volunteering Abroad", "Winning an Award", "Learning a New Language"]}
+{"anchor": "What is your favorite mode of transportation?", "targets": ["Biking", "Driving", "Public Transportation", "Flight", "Boat"]}
+{"anchor": "What kind of hobbies do you enjoy?", "targets": ["Hiking", "Knitting", "Baking", "Painting", "Collecting stamps"]}
+{"anchor": "What are three qualities that make someone a good leader?", "targets": ["Empathy", "Inspiration", "Vision", "Resilience", "Integrity"]}
+{"anchor": "What do you think is the key to happiness?", "targets": ["Being content with simplicity", "Live each day to the fullest", "Cultivating meaningful connections", "Doing work that makes you happy", "Appreciate the little things in life"]}
+{"anchor": "If you could travel anywhere in the world, where would you go?", "targets": ["Norway", "Japan", "India", "South Africa", "New Zealand"]}
+{"anchor": "Are you a religious person?", "targets": ["Yes, I'm deeply religious", "I'm a spiritual person, but not religious", "No, I don't have a faith", "I'm an atheist", "I believe in different spiritual practices"]}
+{"anchor": "What do you think is the most important invention in the last century?", "targets": ["Personal computer", "Cell phone", "Automobile", "Airplane", "Internet"]}
+{"anchor": "What is the best advice your parents ever gave you?", "targets": ["Work hard, play hard", "Follow your dreams", "Persevere and never give up", "Treat everyone with respect", "Make your own path"]}
+{"anchor": "What kind of music do you like?", "targets": ["Classical", "Jazz", "Pop", "Country", "Hip Hop"]}
+{"anchor": "What do you do in your free time?", "targets": ["Read", "Play video games", "Paint", "Hike", "Knit"]}
+{"anchor": "What is your biggest fear?", "targets": ["Falling", "Loneliness", "Spiders", "Getting lost", "The dark"]}
+{"anchor": "Do you have any pets?", "targets": ["Two cats", "A hamster", "A parrot", "A bunny", "A ferret"]}
+{"anchor": "What language do you speak?", "targets": ["English", "Spanish", "French", "German", "Chinese"]}
+{"anchor": "What's your most memorable experience?", "targets": ["Climbing a mountain", "Seeing the aurora borealis", "Working with an NGO", "Going on a spontaneous trip", "Attending a concert"]}
+{"anchor": "What is the most daring adventure you have taken part in?", "targets": ["Bungee jumping", "White water rafting", "Deep sea diving", "Extreme skiing", "Paragliding"]}
+{"anchor": "What dish never fails to make you happy?", "targets": ["Mac and Cheese", "Stir-Fry", "Sushi", "Tacos", "Pizza"]}
+{"anchor": "What is your favorite music genre?", "targets": ["Hip-hop", "Jazz", "Pop", "Rock", "EDM"]}
+{"anchor": "What is the highest mountain you have ever climbed?", "targets": ["Mount Everest", "Kilimanjaro", "Mont Blanc", "Matterhorn", "Aconcagua"]}
+{"anchor": "What causes do you care about the most?", "targets": ["Poverty alleviation", "Climate change", "Women's rights", "Education access", "Health equity"]}
+{"anchor": "What is your favorite type of cuisine?", "targets": ["Mediterranean", "Japanese", "Mexican", "Indian", "Korean"]}
+{"anchor": "If you could be any animal, which would you be?", "targets": ["Lion", "Shark", "Bear", "Hawk", "Dragon"]}
+{"anchor": "What concept best describes your life?", "targets": ["Journey of self-discovery", "An adventure", "Constant growth", "Seizing every moment", "Pursuing dreams"]}
+{"anchor": "What is the greatest fear you have ever experienced?", "targets": ["Jumping out of an airplane", "Public speaking", "Being alone in the dark", "Running out of time", "Standing up for myself"]}
+{"anchor": "What are your favorite hobbies?", "targets": ["Painting", "Cooking", "Gardening", "Playing sports", "Drawing"]}
+{"anchor": "What are the top 3 values that define you?", "targets": ["Integrity", "Honesty", "Generosity", "Respect", "Compassion"]}
+{"anchor": "What are your thoughts on today's political climate?", "targets": ["Diverse perspectives are necessary", "We should prioritize listening", "Fake news is dangerous", "We can strive for unity", "Dialogue & compromise are essential"]}
+{"anchor": "What music genre do you like the most?", "targets": ["Rock", "Rap", "Indie", "Jazz", "Classical"]}
+{"anchor": "What movie has had the biggest impact on you?", "targets": ["The Godfather", "Forrest Gump", "Gladiator", "Inception", "The Shawshank Redemption"]}
+{"anchor": "What is the most creative thing you have ever done?", "targets": ["Create a mural from recycled materials", "Design an interactive art installation", "Build a homemade sailboat", "Write a children's book", "Paint a mobile for my baby crib"]}
+{"anchor": "What sci-fi show or movie do you enjoy the most?", "targets": ["The a Matrix", "Blade Runner", "Star Trek", "Star Wars", "Ready Player One"]}
+{"anchor": "What animal do you most identify with?", "targets": ["Lion", "Wolf", "Tiger", "Elephant", "Bear"]}
+{"anchor": "What would you do to solve world hunger?", "targets": ["Increase access to food production and market systems", "Invest in food fortification projects", "Promote proper nutrition education", "Contact global leaders to increase foreign aid", "Create sustainable urban farming initiatives"]}
+{"anchor": "What is the best piece of advice you've ever received?", "targets": ["Work hard and stay humble", "Go after your dreams", "Nothing is ever permanent", "Listen to your intuition and take risks", "Learn from your mistakes and move forward"]}
+{"anchor": "What would you tell your younger self?", "targets": ["Believe in yourself", "Don't be afraid to take risks", "Follow your heart", "Work smarter and not harder", "Invest your time wisely"]}
+{"anchor": "What character trait do you value most?", "targets": ["Integrity", "Loyalty", "Courage", "Patience", "Compassion"]}
+{"anchor": "What was your first job?", "targets": ["Fast food cashier", "Lifeguard", "Mail carrier", "Truck driver", "Dog Walker"]}
+{"anchor": "What motivates you?", "targets": ["Making a positive difference in people's lives", "Experiencing new cultures", "Pursuing a dream", "Seeing the world", "Solving problems"]}
+{"anchor": "What is something you would like to learn?", "targets": ["A second language", "How to play the guitar", "How to meditate", "Programming", "Photography"]}
+{"anchor": "What's the craziest thing you've ever done?", "targets": ["Backpacking alone through Europe", "Binge-watching a full season of a TV show in one day", "Skydiving", "Going on a roadtrip with just a map", "Staying up all night playing video games"]}
+{"anchor": "What music do you listen to?", "targets": ["Hip-hop", "Indie", "Country", "Rock", "EDM"]}
+{"anchor": "What's a hobby you enjoy?", "targets": ["Drawing", "Cooking", "Gardening", "Video games", "Knitting"]}
+{"anchor": "What's the best gift you ever received?", "targets": ["A surprise trip overseas", "A handmade scrapbook", "A rare book", "Tickets to a concert", "A big basket of homemade goodies"]}
+{"anchor": "What are some ideas you have to make the world a better place?", "targets": ["Planting trees in deforested areas", "Developing more renewable energy sources", "Establishing free education systems", "Improving access to clean water", "Reducing poverty through job training programs"]}
+{"anchor": "What is the most daring thing you have ever done?", "targets": ["Jumping out of a plane", "Going on a deep sea dive", "Swimming with dolphins", "Eating a scorpion", "Bungee jumping"]}
+{"anchor": "What are your hobbies?", "targets": ["Photography", "Woodworking", "Baking", "Hiking", "Rock Climbing"]}
+{"anchor": "What pet do you own?", "targets": ["Dog", "Cat", "Horse", "Rodent", "Reptile"]}
+{"anchor": "What type of music do you listen to?", "targets": ["Jazz", "Pop", "Reggae", "Classical", "Metal"]}
+{"anchor": "If you were offered a million dollars, what would you do?", "targets": ["Invest", "Travel", "Charity", "Buy a house", "Start a business"]}
+{"anchor": "What is your favorite food?", "targets": ["Burgers", "Sushi", "Tacos", "Pizza", "Thai"]}
+{"anchor": "What is the most inspiring thing that has happened to you?", "targets": ["Sticking up for a friend", "Helping a stranger", "Overcoming a challenge", "Taking a chance", "Making a tough decision"]}
+{"anchor": "What do you think is the most pressing global issue?", "targets": ["Climate change", "Poverty", "Access to education", "Terrorism", "Food insecurity"]}
+{"anchor": "What hobbies do you have?", "targets": ["Painting", "Woodworking", "Crafting", "Yoga", "Yoga biking"]}
+{"anchor": "What is your favorite ice cream flavor?", "targets": ["Salted Caramel", "Cookie Dough", "Chocolate Chip", "Mint Chocolate Chip", "Banana Nut"]}
+{"anchor": "How do you deal with difficult people?", "targets": ["By listening to them", "By validating their feelings", "By apologizing for any mistakes", "By being patient and understanding", "By setting boundaries"]}
+{"anchor": "What characteristics do you admire in a person?", "targets": ["Generosity", "Honesty", "Kindness", "Loyalty", "Self-discipline"]}
+{"anchor": "What do you enjoy doing in your free time?", "targets": ["Play video games", "Read books", "Cooking", "Go rock climbing", "Listen to music"]}
+{"anchor": "What words of advice can you give to someone starting out in their career?", "targets": ["Work hard and be passionate", "Believe in yourself", "Focus on relationships", "Focus on learning", "Don't be afraid to take risks"]}
+{"anchor": "What would you do if you could go anywhere in the world?", "targets": ["Tour the ancient ruins of Petra", "Hike to Machu Picchu", "Go on a safari in Kenya", "Climb Mount Everest", "Dive in the Great Barrier Reef"]}
+{"anchor": "If you could pick any superpower, what would it be?", "targets": ["The power of flight", "Super strength", "Invisibility", "Mind-reading", "Immortality"]}
+{"anchor": "What type of music do you like to listen to?", "targets": ["Pop", "Rock", "EDM", "Jazz", "Classical"]}
+{"anchor": "What would you do if you could have one day of having no consequences?", "targets": ["Bungee jump", "Fly a plane", "Travel to another country", "Skydive", "Go on a shopping spree"]}
+{"anchor": "What hobby would you pick up if you had the time?", "targets": ["Baking", "Painting", "Woodworking", "Photography", "Gardening"]}
+{"anchor": "Do you believe in astrology?", "targets": ["Yes, I believe it affects our lives", "Yes, I believe it's a great way to understand people", "No, I think it's all a bunch of nonsense", "I believe it's one element of life but not everything", "I find it interesting and I like to see what it tells me"]}
+{"anchor": "What was the last dream that you remember?", "targets": ["I was in an alternate world full of monsters", "I was on an adventure with animals", "I was in a room filled with doors leading to different places", "I was flying on the back of an eagle", "I was in a castle solving a mysterious riddle"]}
+{"anchor": "Who was the last person you shared your deepest secret with?", "targets": ["My best friend", "My spiritual advisor", "My sibling", "My therapist", "My journal"]}
+{"anchor": "If you could build a time machine, where would you go first?", "targets": ["To the future to evaluate my life choices", "To the past to revisit special moments", "To the time of the dinosaurs", "To the time of Jesus", "To the time of the ancient Egyptians"]}
+{"anchor": "What is your favorite movie?", "targets": ["Star Wars", "Ghostbusters", "The Matrix", "Avatar", "The Avengers"]}
+{"anchor": "What is your favorite hobby?", "targets": ["Playing guitar", "Skateboarding", "Trading stocks", "Painting", "Scuba diving"]}
+{"anchor": "What is your favorite kind of sport?", "targets": ["Baseball", "Basketball", "Soccer", "Volleyball", "Cricket"]}
+{"anchor": "What are some of your favorite books?", "targets": ["1984", "The Catcher in the Rye", "To Kill a Mockingbird", "Harry Potter and the Philosopher's Stone", "The Great Gatsby"]}
+{"anchor": "What foreign languages do you know?", "targets": ["Spanish", "German", "French", "Italian", "Japanese"]}
+{"anchor": "What are some of your favorite tv shows?", "targets": ["Game of Thrones", "Breaking Bad", "The Office", "Friends", "Stranger Things"]}
+{"anchor": "What is the craziest thing you have done?", "targets": ["Skydiving", "Bungee jumping", "Hiking through a jungle at night", "Swimming with sharks", "Singing karaoke on stage"]}
+{"anchor": "What's worse: failing or never trying?", "targets": ["Never trying", "Failing", "Neither, just keep trying", "Neither, learning from failure is important", "Neither, success comes from persistence"]}
+{"anchor": "What is your favorite season?", "targets": ["Summer", "Autumn", "Winter", "Spring", "Pre-season"]}
+{"anchor": "What is your dream destination?", "targets": ["Fiji", "Greece", "Denmark", "Ireland", "Thailand"]}
+{"anchor": "If money were no object, what would you do?", "targets": ["Travel the world", "Start a nonprofit organization", "Buy a yacht", "Create a theme park", "Live in a castle"]}
+{"anchor": "Do you like to cook?", "targets": ["Yes, I like to experiment with different recipes", "Yes, it\u2019s a great way to unwind from my day", "Yes, cooking is my favorite hobby", "Yes, I like to challenge myself with complicated dishes", "Yes, I enjoy recreating dishes from around the world"]}
+{"anchor": "If you could live anywhere, where would you choose?", "targets": ["The Mediterranean", "Paris", "The Caribbean", "Tuscany", "The Swiss Alps"]}
+{"anchor": "What is your favorite thing to do on the weekends?", "targets": ["Go hiking", "Hang out with friends", "Read a good book", "Visit local attractions", "Go on a road trip"]}
+{"anchor": "What are your thoughts on social media?", "targets": ["It has its pros and cons", "It\u2019s a great way to connect with people", "It can be a great tool for marketing my business", "It can provide entertainment and knowledge", "It can be a useful platform for activism"]}
+{"anchor": "What have you learned recently?", "targets": ["Machine Learning", "Animation", "Blockchain Technology", "Digital Marketing", "Economic Theory"]}
+{"anchor": "What is the best way to work on complex problems?", "targets": ["Trial and error", "Break the task into smaller pieces", "Divide and conquer", "Troubleshoot systematically", "Ask for help"]}
+{"anchor": "What superpower would you most like to have?", "targets": ["The ability to fly", "The ability to time travel", "Super strength", "Invisibility", "The ability to read minds"]}
+{"anchor": "What's the one thing you cannot live without?", "targets": ["My family", "Sunlight", "Oxygen", "Music", "Technology"]}
+{"anchor": "What type of music do you prefer?", "targets": ["Pop", "Jazz", "Rap", "Indie", "EDM"]}
+{"anchor": "What do you think about the current state of the world?", "targets": ["Constant change and advancement", "Untapped potential", "Global connectivity and collaboration", "Unequal access to basic human rights", "Environmental damage and destruction"]}
+{"anchor": "What type of movies do you like?", "targets": ["Sci-Fi", "Fantasy", "Action", "Comedy", "Documentary"]}
+{"anchor": "What is your favorite restaurant?", "targets": ["Fancy French eatery", "Buffet-style cafeteria", "Spicy Sichuan cuisine", "Classic American diner", "Retro-style ice cream parlor"]}
+{"anchor": "Who or what inspires you the most?", "targets": ["Mother Nature", "Historical figures", "My own personal experiences", "Philosophical works", "Art and Music"]}
+{"anchor": "What is your most meaningful accomplishment?", "targets": ["Getting accepted into my dream college", "Setting a personal record for a 5K race", "Scoring a high grade in a difficult class", "Starting my own business", "Completing a cross-country road trip"]}
+{"anchor": "What was your biggest challenge in life?", "targets": ["Overcoming the fear of failure", "Reaching personal goals", "Learning to balance work and play", "Adjusting to a new culture", "Staying motivated in difficult times"]}
+{"anchor": "What do you value most in life?", "targets": ["Time", "Personal growth", "Happiness", "Health", "Security"]}
+{"anchor": "What has been the best decision you ever made?", "targets": ["Becoming an entrepreneur", "Investing in education", "Quitting a bad job", "Starting a blog", "Traveling the world"]}
+{"anchor": "How do you stay motivated?", "targets": ["Making realistic goals", "Keeping track of progress", "Surrounding myself with like minded people", "Seeking out inspirational stories", "Celebrating the small victories"]}
+{"anchor": "If you were stranded on a desert island, what three items would you bring?", "targets": ["A knife", "A fishing rod", "A solar powered radio", "A multi-tool", "A book of survival skills"]}
+{"anchor": "Do you prefer hot or cold weather?", "targets": ["Hot", "Cold", "Mild", "Humid", "Dry"]}
+{"anchor": "What have you created in your life that you are proud of?", "targets": ["A successful business", "A beautiful garden", "A meaningful relationship", "Evocative artwork", "A fulfilling career"]}
+{"anchor": "What is your biggest weakness?", "targets": ["Overthinking", "Perfectionism", "Procrastination", "Self-doubt", "Impulsive behavior"]}
+{"anchor": "How do you think you can make the world a better place?", "targets": ["Engage in charitable service", "Promote environmental protection", "Advocate for social justice", "Stand up for human rights", "Support youth empowerment"]}
+{"anchor": "If you could have any superpower, which one would it be?", "targets": ["Super speed", "Telepathy", "Immortality", "Flight", "Multilingualism"]}
+{"anchor": "If a co-worker was committing an unethical act, what would you do?", "targets": ["Document it", "Raise the concern with a supervisor", "Speak to the individual one-on-one", "Contact HR", "Bring it to the attention of the board of directors"]}
+{"anchor": "What life lessons have you learned?", "targets": ["Life is too short to waste time on the wrong people", "It's important to be kind to others", "It's better to be yourself", "Don't strive to be perfect", "Everything happens for a reason"]}
+{"anchor": "What do you consider to be your biggest flaw?", "targets": ["I'm too trusting of people", "I'm easily overwhelmed", "I hold grudges for too long", "I'm too hard on myself", "I don't give myself enough credit"]}
+{"anchor": "What book changed your life?", "targets": ["The Alchemist by Paulo Coelho", "The Catcher in the Rye by J.D. Salinger", "The 7 Habits of Highly Effective People by Stephen Covey", "The Power of Now by Eckhart Tolle", "To Kill a Mockingbird by Harper Lee"]}
+{"anchor": "How can you make the world a better place?", "targets": ["Stop pollution", "Provide education to all", "Tackle poverty", "Promote tolerance and acceptance", "End world hunger"]}
+{"anchor": "What illegal activity would you do if you could?", "targets": ["Forming a political party", "Gambling in public", "Starting a revolution", "Occupy a public building", "Supporting a coup d'\u00e9tat"]}
+{"anchor": "If you could speak any foreign language fluently, which one would you choose?", "targets": ["Spanish", "French", "German", "Italian", "Dutch"]}
+{"anchor": "What do you find most challenging in your life?", "targets": ["Overcoming fear and anxiety", "Winning in the face of adversity", "Finding balance in life", "Pursuing difficult goals", "Navigating new relationships"]}
+{"anchor": "What are some of your favorite hobbies?", "targets": ["Traveling", "Painting", "Reading", "Cooking", "Gardening"]}
+{"anchor": "What kinds of things do you dream about?", "targets": ["Space", "Underwater life", "Unique places", "Parallel universes", "Extreme sports"]}
+{"anchor": "If you could go anywhere in the world, where would you travel to?", "targets": ["Tokyo", "Iceland", "Barcelona", "Tanzania", "Stockholm"]}
+{"anchor": "What\u2019s the most interesting thing you\u2019ve learned recently?", "targets": ["Exploring a new way of looking at a problem", "Discovering a new solution to an old problem", "Finding a creative approach to a difficult subject", "Considering different points of view", "Collecting and analyzing data in a unique way"]}
+{"anchor": "If you were asked to give a talk about a subject you\u2019re passionate about, what would it be?", "targets": ["The connection between art and science", "Conservation and sustainability", "The power of storytelling", "Diversity in the workplace", "Exploring new cultures"]}
+{"anchor": "Describe the strangest person you\u2019ve ever met.", "targets": ["A man who traveled the world constantly", "A woman who was obsessed with conspiracy theories", "A person who had an incredibly detailed knowledge of obscure facts", "An individual who spoke in an unknown language", "A person who could hypnotize and control others"]}
+{"anchor": "What motivates you each day?", "targets": ["The idea of making a positive impact", "Thinking of ways I can help others", "Creating a better future for myself and those around me", "Learning something new each day", "Striving to surpass my own expectations"]}
+{"anchor": "What is one thing you would never do?", "targets": ["Give up on a goal", "Take a life", "Compromise my integrity", "Live without hope", "Cease learning and growing"]}
+{"anchor": "If you had the power to change one law, what would it be?", "targets": ["Universal healthcare", "Equal rights for all", "Free and fair access to education", "Banning of cruelty against animals", "Immediate deportation of illegal immigrants"]}
+{"anchor": "What kind of art do you connect with most?", "targets": ["Street art", "Abstract paintings", "Sculpture", "Watercolor", "Digital designs"]}
+{"anchor": "What are the qualities of your ideal job?", "targets": ["Flexible schedule", "Fun team dynamics", "Rewarding tasks", "Challenging projects", "Creative environment"]}
+{"anchor": "What makes a person interesting to you?", "targets": ["Humor", "Passion for life", "Open-mindedness", "Empathy", "Ambition"]}
+{"anchor": "What do you find most intimidating?", "targets": ["Public speaking", "High pressure situations", "Meeting new people", "Making an important decision", "Being judged by others"]}
+{"anchor": "What problems do you think the world needs to solve?", "targets": ["Global poverty", "Climate change", "Access to education", "Protection of species", "Overpopulation"]}
+{"anchor": "If you could have lunch with any historical figure, who would it be?", "targets": ["Albert Einstein", "Martin Luther King Jr.", "Amelia Earhart", "Mother Teresa", "Marie Curie"]}
+{"anchor": "What is your favorite traditional holiday?", "targets": ["Thanksgiving", "Christmas", "Easter", "Lunar New Year", "Purim"]}
+{"anchor": "If you could give one piece of advice to your younger self, what would it be?", "targets": ["Follow your heart", "Avoid comparison", "Don\u2019t be afraid to make mistakes", "Always have faith in yourself", "Value your time"]}
+{"anchor": "Are you a believer in fate?", "targets": ["Absolutely", "No, it\u2019s not for me", "I think it\u2019s a matter of perspective", "I believe in hard work and effort", "I believe it\u2019s a mix of luck and personal choices"]}
+{"anchor": "What are some of your personal goals?", "targets": ["Travel more", "Read 20 books in a year", "Become fluent in a foreign language", "Get my dream job", "Start a non-profit organization"]}
+{"anchor": "What do you wish you had more time for?", "targets": ["Spending quality time with family and friends", "Learning new skills", "Exploring new places", "Pursuing creative hobbies", "Tending to my own mental and physical health"]}
+{"anchor": "What\u2019s your favorite type of music?", "targets": ["Pop", "Indie", "Rap", "Rock", "Reggae"]}
+{"anchor": "What are you most afraid of?", "targets": ["Spiders", "Heights", "Failure", "Being alone", "The unknown"]}
+{"anchor": "What makes you angry?", "targets": ["Inequality", "Intolerance", "Unfairness", "Ignorance", "Greed"]}
+{"anchor": "What values are you passionate about?", "targets": ["Respect", "Equality", "Honesty", "Fairness", "Compassion"]}
+{"anchor": "What\u2019s the first thing that comes to your mind when you hear the word \u201chappiness\u201d?", "targets": ["Laughter", "Joy", "Love", "Connection", "Gratitude"]}
+{"anchor": "What\u2019s the hardest lesson you\u2019ve ever learned?", "targets": ["Forgive and forget", "All things come with time", "Being kind when it\u2019s hard", "Patience", "Nothing lasts forever"]}
+{"anchor": "What do you enjoy most about living where you do?", "targets": ["The friends I have", "The views", "The culture", "The close proximity to family", "The abundance of opportunities"]}
+{"anchor": "When was the last time you really laughed until you cried?", "targets": ["When I watched the stand-up comedy of John Mulaney", "When I did a really embarrassing slip-up in front of my friends", "When I went to a circus show", "When I stumbled upon a video of bloopers", "When I heard my little brother\u2019s joke that was so bad it was funny"]}
+{"anchor": "How have your experiences shaped you?", "targets": ["I\u2019ve learned to be more resilient in the face of challenges", "I\u2019ve gained empathy and understanding of the perspectives of others", "I\u2019ve become more open-minded to new ideas", "I\u2019ve learned to appreciate the small moments in life", "I\u2019ve grown more confident in who I am and what I\u2019m capable of"]}
+{"anchor": "What do you like most about yourself?", "targets": ["My ability to be a positive influence on others", "My creativity", "My ambition", "My resilience", "My open-mindedness"]}
+{"anchor": "What do you think would be the most difficult challenge for humankind to overcome?", "targets": ["Climate change", "Breaking down religious and cultural boundaries", "Bridging the economic divide", "Achieving sustainable development", "Overcoming poverty"]}
+{"anchor": "What do you think is the most difficult decision you\u2019ve ever had to make?", "targets": ["Choosing between two loves", "Leaving a job that\u2019s become toxic", "Accepting a path that\u2019s different than what you planned", "Saying goodbye to a loved one", "Moving to a different place for a better future"]}
+{"anchor": "Do you believe in second chances?", "targets": ["Yes, everyone deserves another chance", "No, people should be held accountable for their actions", "It depends on the situation", "I believe the results of a second chance are unpredictable", "If the person learns from their mistakes, then I think second chances can be beneficial"]}
+{"anchor": "What do you think is the most important quality needed to be successful?", "targets": ["Passion", "Perseverance", "Resilience", "Creativity", "Adaptability"]}
+{"anchor": "What makes you feel most alive?", "targets": ["Adventuring into the wilderness", "Dancing in a club", "Skydiving from a plane", "Exploring unknown places", "Challenging yourself intellectually"]}
+{"anchor": "What do you think your personal superpower is?", "targets": ["My ability to turn any bad situation into a good one", "My ability to quickly adjust to changing environments", "My ability to connect with people", "My ability to accomplish more with less", "My ability to keep a cool head under pressure"]}
+{"anchor": "If you had the opportunity to change one thing in the world, what would it be?", "targets": ["End poverty", "Combat global climate change", "Eliminate discrimination", "Ensure access to education for everyone", "Eradicate hunger and malnutrition"]}
+{"anchor": "What\u2019s the most important life lesson you\u2019ve ever learned?", "targets": ["Always stay true to yourself", "Life is about finding balance", "Time is the most valuable resource", "Live in the present", "Take care of your mental and physical health"]}
+{"anchor": "What are some things you find deeply meaningful?", "targets": ["Nature", "Expression through art", "Connecting with family and friends", "Helping others", "Expressing gratitude"]}
+{"anchor": "What are some of your life goals?", "targets": ["Design a piece of space technology", "Run a successful business", "Climb the highest summit", "Become a renowned speaker", "Win a Nobel Prize"]}
+{"anchor": "What is the best book you've ever read?", "targets": ["Lord of the Rings", "Harry Potter", "To Kill a Mockingbird", "1984", "Pride and Prejudice"]}
+{"anchor": "What do you consider your greatest success?", "targets": ["Doubling my income in a year", "Starting a successful company", "Running a marathon", "Getting a job at my dream company", "Creating a new product"]}
+{"anchor": "What is the best concert you've ever attended?", "targets": ["U2", "Beyonce", "Bruce Springsteen", "Taylor Swift", "Led Zeppelin"]}
+{"anchor": "What would you do if you won the lottery?", "targets": ["Travel around the world", "Buy a private island", "Invest in the stock market", "Donate to charity", "Buy a luxury car"]}
+{"anchor": "What is your favorite kind of music?", "targets": ["Classical", "Rock", "Hip-Hop", "Jazz", "EDM"]}
+{"anchor": "If you could do anything for a day, what would it be?", "targets": ["Go scuba diving in the Great Barrier Reef", "Fly in a fighter jet", "Drive a race car", "Hang out with president of your country", "Attend a royal banquet"]}
+{"anchor": "What challenges excite you the most?", "targets": ["Solving complex puzzles", "Climbing a mountain", "Racing against the clock", "Learning a complex skill", "Creating something new"]}
+{"anchor": "What is your favorite place to visit?", "targets": ["Paris", "London", "Tokyo", "Rome", "Rio de Janeiro"]}
+{"anchor": "What is the most interesting experience you've ever had?", "targets": ["Attending a foreign festival", "Exploring an underwater cave", "Participating in a scavenger hunt", "Riding a hot air balloon", "Going on an African safari"]}
+{"anchor": "What was the last gift you bought for someone?", "targets": ["A watch", "A painting", "A music box", "A necklace", "A coffee maker"]}
+{"anchor": "What is your favorite holiday?", "targets": ["Christmas", "Thanksgiving", "Halloween", "Easter", "Diwali"]}
+{"anchor": "Who is the most inspiring person you know?", "targets": ["My grandmother", "My Dad", "My mentor", "My best friend", "A stranger I once encountered"]}
+{"anchor": "What are the three most valuable lessons you have learned?", "targets": ["Don't let fear stop you from trying", "It's okay to be wrong", "No one is perfect", "Always be true to yourself", "Life is too short to waste"]}
+{"anchor": "If you could visit any city in the world, which one would you choose?", "targets": ["Stockholm", "Prague", "Barcelona", "Sydney", "Buenos Aires"]}
+{"anchor": "What do you think is the best way to make friends?", "targets": ["Show genuine interest in people and their hobbies", "Take initiative and start conversations", "Reach out and plan group activities", "Volunteering at local events", "Showing appreciation and gratitude"]}
+{"anchor": "What do you consider your greatest achievement?", "targets": ["Graduating college", "Starting my own business", "Becoming a parent", "Building a team of volunteers", "Writing a best-selling novel"]}
+{"anchor": "What are the 5 most important values to you?", "targets": ["Kindness", "Integrity", "Respect", "Empathy", "Self-improvement"]}
+{"anchor": "How do you cope with stress?", "targets": ["Doing yoga", "Writing in a journal", "Talking to a friend", "Taking a long walk", "Like listening to music"]}
+{"anchor": "What is the most beautiful natural place you have ever visited?", "targets": ["Yosemite National Park", "Sequoia National Park", "Galapagos Islands", "Grand Canyon", "Great Barrier Reef"]}
+{"anchor": "What is the best advice you've ever been given?", "targets": ["Follow your passion", "Don't compare yourself to others", "There's no one right path", "Take time to reflect", "Choose courage over comfort"]}
+{"anchor": "What five words would you use to describe yourself?", "targets": ["Dedicated", "Persevering", "Ambitious", "Creative", "Philosophical"]}
+{"anchor": "What is the most meaningful way you have served the community?", "targets": ["Volunteering at a local soup kitchen", "Teaching classes at a youth center", "Cleaning up the neighborhood's parks", "Mentoring underprivileged children", "Launching a charitable organization"]}
+{"anchor": "What is something that you\u2019re intentionally working to improve in your life?", "targets": ["My communication skills", "My physical health", "My financial literacy", "My emotional intelligence", "My public speaking ability"]}
+{"anchor": "What cause do you think is worth fighting for?", "targets": ["Equality", "Education", "Climate Change", "Environmental Justice", "Ending Extreme Poverty"]}
+{"anchor": "What is the best way to spend your weekend?", "targets": ["Going on an adventure", "Relaxing and reading", "Enjoying time with family", "Exploring new places", "Pursuing a hobby"]}
+{"anchor": "What is your favorite thing about yourself?", "targets": ["My optimism", "My creativity", "My resilience", "My ambition", "My wit"]}
+{"anchor": "What was the most interesting job you ever had?", "targets": ["Working at a start-up", "Creating a podcast", "Researching for a documentary", "Working at a NGO", "Writing for a magazine"]}
+{"anchor": "What was the last dream you had?", "targets": ["I was flying", "I was talking to animals", "I was visiting a magical kingdom", "I was on a deserted island", "I was walking on the moon"]}
+{"anchor": "What scent reminds you of childhood?", "targets": ["Freshly cut grass", "Homemade bread", "Grandma\u2019s perfume", "Rainy days", "Pine and cedar trees"]}
+{"anchor": "What is something you want to learn?", "targets": ["A second language", "To play an instrument", "A new sport", "How to design a website", "New cooking techniques"]}
+{"anchor": "What is the best place to get inspired?", "targets": ["Nature", "Museums", "Art galleries", "Music concerts", "Traveling to new places"]}
+{"anchor": "What was the most meaningful thing you did this week?", "targets": ["Connecting with friends", "Writing to my family", "Doing something for myself", "Volunteering", "Donating money to a cause"]}
+{"anchor": "What is the most difficult decision you have ever made?", "targets": ["Moving cities", "Changing careers", "Leaving a community", "Taking a break from relationships", "Quitting my job"]}
+{"anchor": "What makes you most proud?", "targets": ["Accomplishing a goal", "Coming together with family", "Helping/supporting others", "Sharing my work", "Being authentic"]}
+{"anchor": "What is the most valuable skill you possess?", "targets": ["Leadership", "Active listening", "Adaptability", "Creativity", "Networking"]}
+{"anchor": "If you could master any skill overnight, what would it be?", "targets": ["Playing the piano", "Painting", "Fluency in a new language", "Coding", "Mastering advanced mathematics"]}
+{"anchor": "What do you believe is the purpose of life?", "targets": ["To learn and grow", "To become the best version of ourselves", "To connect and support others", "To find joy and purpose", "To make a positive impact in the world"]}
+{"anchor": "What do you think is the most powerful emotion?", "targets": ["Love", "Passion", "Gratitude", "Compassion", "Resilience"]}
+{"anchor": "What would you do if money were no object?", "targets": ["Launch a charitable foundation", "Take an extended backpacking trip", "Buy a private island", "Invest in renewable energy", "Build a replica of the Great Wall of China"]}
+{"anchor": "Who is the most influential person in your life?", "targets": ["My mother", "My best friend", "My teacher", "My coach", "My mentor"]}
+{"anchor": "What do you think will be the greatest trend of the future?", "targets": ["Machine learning", "Artificial intelligence", "Augmented and virtual reality", "Blockchain technology", "Autonomous vehicles"]}
+{"anchor": "What awes you in nature?", "targets": ["The vastness of the universe", "The beauty of life-on earth", "The power of the ocean", "The complexity of the human body", "The life cycles of plants and animals"]}
+{"anchor": "If you could live anywhere, where would it be?", "targets": ["Tokyo, Japan", "Cape Town, South Africa", "Sydney, Australia", "Paris, France", "San Francisco, USA"]}
+{"anchor": "If you could have a conversation with any person, alive or dead, who would it be?", "targets": ["Jesus", "Albert Einstein", "Nelson Mandela", "Martin Luther King Jr.", "Muhammad Ali"]}
+{"anchor": "How have you grown and changed over the years?", "targets": ["I have become more mature", "I have learned to be comfortable in my own skin", "I am more confident in my decisions", "I have become more resilient and optimistic", "I have become more open-minded"]}
+{"anchor": "What is your favorite childhood memory?", "targets": ["Going camping with my family", "Playing with friends in the neighborhood", "Having ice cream on hot summer days", "Going on trips with my grandparents", "Watching my favorite movies with my siblings"]}
+{"anchor": "What is the most daring thing you want to do?", "targets": ["Summit Mount Everest", "Skydiving", "Ride a hot air balloon", "Trek through the Amazon rainforest", "Go on a solo sailboat journey"]}
+{"anchor": "What is the best life advice you have been given?", "targets": ["Life isn't about waiting for the storm to pass, it's about learning to dance in the rain", "Life is 10% what happens to you and 90% how you react to it", "Ask yourself if what you are doing today is getting you closer to where you want to be tomorrow", "Do something today that your future self will thank you for", "You miss 100% of the shots you don't take"]}
+{"anchor": "If you could learn any skill, what would it be?", "targets": ["Play the guitar", "Speak a foreign language", "Code", "Bake", "Do stand up comedy"]}
+{"anchor": "What do you think will be the most important invention of the future?", "targets": ["Self-driving cars", "Flying cars", "Sustainable energy sources", "Artificial intelligence", "Synthetic foods"]}
+{"anchor": "What would be your dream job?", "targets": ["Astronaut", "Chef", "Wild animal researcher", "Professional surfer", "Video game designer"]}
+{"anchor": "What is your favorite type of food?", "targets": ["Mexican", "Italian", "Japanese", "Sushi", "Ethiopian"]}
+{"anchor": "What are you most passionate about?", "targets": ["Animal rescue", "Environmental conservation", "Political activism", "Education reform", "Human rights"]}
+{"anchor": "How do you express yourself creatively?", "targets": ["Painting", "Photography", "Dancing", "Poetry", "Gardening"]}
+{"anchor": "What is the most impactful thing you've done in your life?", "targets": ["Started a charity", "Founded a non-profit organization", "Volunteered abroad", "Mentored someone", "Adopted a pet from a shelter"]}
+{"anchor": "If you could invent something, what would it be?", "targets": ["A clean energy source", "A device to clean up plastic in the ocean", "A teleportation device", "A calorie-free cake", "An easy-to-use language translator"]}
+{"anchor": "What do you do to relax?", "targets": ["Read", "Listen to music", "Take a walk", "Journal", "Watch a movie"]}
+{"anchor": "What new skills have you been wanting to learn?", "targets": ["Computer programming", "Cooking", "Cognitive behavioral therapy", "Yoga", "Gardening"]}
+{"anchor": "What do you like to do for fun?", "targets": ["Play board games", "Go to amusement parks", "Watch movies", "Hike", "Take road trips"]}
+{"anchor": "What is the most beautiful place you've ever visited?", "targets": ["Swiss Alps", "Great Barrier Reef", "The Sahara Desert", "Machu Picchu", "Great Wall of China"]}
+{"anchor": "What historical event would you like to witness?", "targets": ["The fall of the Berlin Wall", "The end of WW2", "The Declaration of Independence", "The Great Fire of London", "The British Raj"]}
+{"anchor": "What did you want to be when you were younger?", "targets": ["A doctor", "A scientist", "A veterinarian", "A teacher", "An astronaut"]}
+{"anchor": "What do you value the most in a relationship?", "targets": ["Trust", "Understanding", "Respect", "Communication", "Compassion"]}
+{"anchor": "What do you believe is the most important problem facing the world today?", "targets": ["Climate change", "Poverty", "Hunger", "Inequality", "Racism"]}
+{"anchor": "What meaningful connections have you been able to make with people?", "targets": ["Through volunteering", "Through travel", "Through church", "Through work", "Through books"]}
+{"anchor": "What difficult decisions have you made in your life?", "targets": ["Moving away from home", "Leaving a job", "Pursuing a degree", "Breaking off a relationship", "Changing career paths"]}
+{"anchor": "What hobbies do you enjoy?", "targets": ["Photography", "Cooking", "Writing", "Painting", "Astronomy"]}
+{"anchor": "What was the best thing that happened to you last year?", "targets": ["Finding a dream job", "Falling in love", "Taking a trip", "Getting engaged", "Becoming a mentor"]}
+{"anchor": "What is your happiest memory?", "targets": ["A summer picnic with family", "Taking a road trip with friends", "Getting married to my partner", "Watching my child take their first steps", "Finishing a difficult project"]}
+{"anchor": "What is the best advice you\u2019ve ever gotten?", "targets": ["Nothing is impossible", "Think before you act", "Do what you love", "Live life to the fullest", "Chase your dreams"]}
+{"anchor": "How do you want to change the world?", "targets": ["Increase access to education", "Reduce global poverty", "Combat climate change", "Promote environmental sustainability", "Creating global political unity"]}
+{"anchor": "What kind of pet do you have?", "targets": ["Dog", "Cat", "Rabbit", "Hamster", "Python"]}
+{"anchor": "What do you like to do in your free time?", "targets": ["Read", "Go for a hike", "Play video games", "Go for a bike ride", "Write poetry"]}
+{"anchor": "How do you want to make an impact on the world?", "targets": ["By developing innovative technology", "By creating a charity organization", "Through public service", "By becoming an advocate for a cause", "By starting a successful business"]}
+{"anchor": "What was the best present you ever received?", "targets": ["A guitar", "A puppy", "A vacation package", "Comic book set", "A BMX bike"]}
+{"anchor": "Who has impacted your life the most?", "targets": ["My dad", "My grandpa", "My best friend", "My teacher", "My mom"]}
+{"anchor": "What have you learned in life?", "targets": ["Don\u2019t take anyone for granted", "Enjoy the journey", "Appreciate the simple things", "Always have a positive attitude", "Follow your dreams"]}
+{"anchor": "What was the last thing you created/invented?", "targets": ["A new recipe", "A personalized handmade journal", "Abstract art piece", "A 3D printed drone", "An online course"]}
+{"anchor": "What is your favorite animal?", "targets": ["Polar Bear", "Panda Bear", "Pronghorn", "Koala", "Elephant"]}
+{"anchor": "What most excites you?", "targets": ["A new challenge", "Learning something new", "Exploring an unfamiliar place", "Trying a new cuisine", "Meeting interesting people"]}
+{"anchor": "What do you like to learn about?", "targets": ["History", "Art", "Technology", "Music", "Astronomy"]}
+{"anchor": "What do you do to stay inspired?", "targets": ["Listen to music", "Read books", "Go for walks", "Sketch", "Meditate"]}
+{"anchor": "Describe a moment that changed you.", "targets": ["The day I started my own business", "The first time I traveled abroad", "When I got my first job", "When I left home and moved", "The day I fell in love"]}
+{"anchor": "What is your passion?", "targets": ["Cooking", "Writing", "Gardening", "Painting", "Photography"]}
+{"anchor": "What was your favorite movie as a child?", "targets": ["The Lion King", "Toy Story", "Aladdin", "The Princess Bride", "Shrek"]}
+{"anchor": "If you could vacation anywhere in the world tomorrow, where would you go?", "targets": ["The Maldives", "Bora Bora", "Tokyo", "Santorini", "Amsterdam"]}
+{"anchor": "What language did you learn in school?", "targets": ["Spanish", "French", "Russian", "Arabic", "Chinese"]}
+{"anchor": "What was your favorite childhood game?", "targets": ["Hide and Seek", "Capture the Flag", "Red Rover", "Kickball", "Dodgeball"]}
+{"anchor": "What is something you can do better than anyone else?", "targets": ["Sing", "Draw", "Cook", "Dance", "Legal Analysis"]}
+{"anchor": "What type of art inspires you?", "targets": ["Street Art", "Photography", "Abstract Art", "Contemporary Art", "Charcoal Drawing"]}
+{"anchor": "Who is your biggest role model?", "targets": ["Barack Obama", "Nelson Mandela", "Winston Churchill", "Rihanna", "Warren Buffett"]}
+{"anchor": "What was your favorite book growing up?", "targets": ["Harry Potter", "The Hunger Games", "The Cat in the Hat", "Where the Wild Things Are", "Charlotte's Web"]}
+{"anchor": "What movie could you watch over and over again?", "targets": ["The Princess Bride", "When Harry Met Sally", "Up", "Eternal Sunshine of the Spotless Mind", "Ratatouille"]}
+{"anchor": "Do you prefer summer or winter?", "targets": ["Summer", "Winter", "Spring", "Fall", "Monsoon"]}
+{"anchor": "What's your favorite type of exercise?", "targets": ["Yoga", "Weightlifting", "Cycling", "Swimming", "CrossFit"]}
+{"anchor": "What are three traits that you best exemplify?", "targets": ["Courage", "Empathy", "Authenticity", "Creativity", "Resilience"]}
+{"anchor": "What country fascinates you the most?", "targets": ["India", "Brazil", "South Africa", "Egypt", "Japan"]}
+{"anchor": "What quote best defines you?", "targets": ["\u201cThe only way to do great work is to love what you do.\u201d", "\u201cNever stop learning because life never stops teaching.\u201d", "\u201cThe only way of finding the limits of the possible is by going beyond them into the impossible.\u201d", "\u201cSurround yourself with people who make you better.\u201d", "\u201cThe greatest glory in living lies not in never falling, but in rising every time we fall.\u201d"]}
+{"anchor": "What is one book everyone should read?", "targets": ["The Alchemist", "The Giver", "1984", "Brave New World", "Little Women"]}
+{"anchor": "Who in history do you admire the most?", "targets": ["Mahatma Gandhi", "Dr. Martin Luther King Jr.", "Eleanor Roosevelt", "Malala Yousafzai", "Sojourner Truth"]}
+{"anchor": "What is your favorite travel destination?", "targets": ["Italy", "The Caribbean", "Japan", "Scandinavia", "Antarctica"]}
+{"anchor": "What nation do you find most fascinating?", "targets": ["China", "India", "Egypt", "USA", "Japan"]}
+{"anchor": "What do you think will be the biggest technological breakthrough in the next 10 years?", "targets": ["Autonomous vehicles", "Artificial intelligence", "Quantum Computing", "Human genome editing", "Human-like robots"]}
+{"anchor": "What is your favorite pick-me-up?", "targets": ["Coffee", "Tea", "Exercise", "Music", "Watching comedy movies"]}
+{"anchor": "What would you have done differently in life?", "targets": ["Take more risks", "Not be afraid of failing", "Take time to learn something new", "Spend more time with friends and family", "Work harder in school"]}
+{"anchor": "What do you do when you have a creative block?", "targets": ["Take a break", "Go outside", "Change my environment", "Talk to different people", "Listen to music"]}
+{"anchor": "What life skill do you think everyone should have?", "targets": ["Communication", "Problem-solving", "Time management", "Financial literacy", "Adaptability"]}
+{"anchor": "What tips do you have for productivity?", "targets": ["Break tasks into smaller chunks", "Set goals and deadlines", "Eliminate distractions", "Take breaks to recharge", "Prioritize your tasks"]}
+{"anchor": "What is the best way to calm yourself down in stressful or uncomfortable situations?", "targets": ["Take a few deep breaths", "Remind yourself it will pass", "Reach out to trusted people", "Focus on the present moment", "Write down your feelings"]}
+{"anchor": "What motivates you the most?", "targets": ["Accomplishment", "Recognition", "Challenge", "Creativity", "Achieving balance"]}
+{"anchor": "What kind of legacy do you want to leave behind?", "targets": ["A lasting impact on the world", "Kindness and understanding", "Being an inspiration to others", "Advocating for social change", "Leaving behind meaningful work"]}
+{"anchor": "What animal do you identify with the most?", "targets": ["Wolf", "Tiger", "Lion", "Leopard", "Elephant"]}
+{"anchor": "What genre of movie do you like the most?", "targets": ["Comedy", "Romance", "Action", "Sci-fi", "Thriller"]}
+{"anchor": "What type of activities bring you joy?", "targets": ["Cooking", "Painting", "Playing music", "Working out", "Crafting"]}
+{"anchor": "If you could travel to any place in the world, where would it be?", "targets": ["India", "Italy", "France", "Japan", "Greece"]}
+{"anchor": "If you had a time machine, where would you go?", "targets": ["Ancient Rome", "The Middle Ages", "Prehistoric Times", "The Wild West", "The Future"]}
+{"anchor": "What do you think about current events?", "targets": ["They're scary", "They're inspiring", "They're confusing", "They're unpredictable", "They're unpredictable but solvable"]}
+{"anchor": "Do you have any interesting hobbies?", "targets": ["I collect rocks", "I paint", "I do extreme sports", "I practice yoga", "I build robots"]}
+{"anchor": "If you could take a dream vacation anywhere in the world, where would it be?", "targets": ["Machu Picchu", "Antarctica", "Bali", "Costa Rica", "New Zealand"]}
+{"anchor": "What do you believe is the most important virtue for a person to have?", "targets": ["Selflessness", "Compassion", "Integrity", "Diligence", "Gratitude"]}
+{"anchor": "What would be the most meaningful thing you could do with your time?", "targets": ["Take a stand for a cause", "Volunteer helping disadvantaged communities", "Tend to nature with conservation efforts", "Create positive change through policy reforms", "Make meaningful connections with people"]}
+{"anchor": "What would your ideal job look like?", "targets": ["Doing work that is impactful", "Working in an environment that is creative", "Solving problems that make a difference", "A job that includes travel", "A job that allows flexible work hours"]}
+{"anchor": "What is the most eye opening experience you have had?", "targets": ["Living in an unfamiliar culture", "A close up encounter with a wild animal", "Witnessing a natural disaster", "Encountering a person with a different life story", "Exploring a different part of my country"]}
+{"anchor": "If you could instantly master any skill, what would it be?", "targets": ["Flying a plane", "Speaking multiple languages", "Playing a musical instrument", "Martial arts", "Mathematical skills"]}
+{"anchor": "What do you think is necessary for a healthy relationship?", "targets": ["Compromise", "Vulnerability", "Respect", "Honesty", "Commitment"]}
+{"anchor": "What is one thing that has kept you motivated throughout your life?", "targets": ["My desire to make a difference", "Overcoming challenges", "Achieving goals", "Following my passion", "Pursuing knowledge"]}
+{"anchor": "How do you balance work and leisure?", "targets": ["Creating achievable goals", "Setting aside dedicated time for leisure", "Focusing on one task at a time", "Creating a plan and sticking to it", "Taking short breaks during the day"]}
+{"anchor": "What do you think is the most important thing in life?", "targets": ["Staying true to oneself", "Having meaningful relationships", "Achieving goals", "Giving back to society", "Enjoying the present moment"]}
+{"anchor": "What is the farthest place you have ever traveled to?", "targets": ["Iceland", "South Africa", "Thailand", "New Zealand", "Argentina"]}
+{"anchor": "Do you have a spiritual practice?", "targets": ["Yes, I meditate", "Yes, I pray", "Yes, I practice yoga", "Yes, I attend religious services", "Yes, I read spiritually inspired books"]}
+{"anchor": "What do you believe is the most important thing we should be teaching our children?", "targets": ["Kindness", "Respect", "Self-reliance", "Critical thinking", "Sensitivity"]}
+{"anchor": "What was the best life lesson you ever learned?", "targets": ["Follow your heart", "Happiness is a choice", "Believe in yourself", "Kindness is contagious", "Don't take anything for granted"]}
+{"anchor": "What do you think is the hardest thing to accomplish in life?", "targets": ["Overcoming fear", "Reaching true contentment", "Forgiving oneself", "Building trust", "Pursuing genuine happiness"]}
+{"anchor": "Who is your role model?", "targets": ["Mahatma Gandhi", "Nelson Mandela", "Susan B. Anthony", "Amelia Earhart", "Martin Luther King Jr."]}
+{"anchor": "What was the best investment of time or money you ever made?", "targets": ["Taking an investing course", "Setting up an emergency fund", "Investing in a travel fund", "Investing in a start-up", "Taking a language class"]}
+{"anchor": "What do you think is the most interesting thing about the world?", "targets": ["Its complexity and diversity", "How little we know about it", "The cultural and linguistic diversity", "How peoples' perspectives differ", "How much we can learn from each other"]}
+{"anchor": "What would you like to invent?", "targets": ["Self-driving car", "Flying motorbike", "Robot caretaker", "Personal assistant drone", "Invisibility cloak"]}
+{"anchor": "What is your favorite place in the world?", "targets": ["Niagara Falls", "Great Barrier Reef", "Machu Picchu", "Taj Mahal", "Grand Canyon"]}
+{"anchor": "Would you like to travel to space?", "targets": ["Absolutely!", "Yes, it sounds amazing", "No, I'm happy here", "Definitely! As soon as possible", "Yes, I'm an astronaut in my dreams"]}
+{"anchor": "What type of music do you like?", "targets": ["Pop", "Jazz", "Country", "Hip-Hop", "EDM"]}
+{"anchor": "What is your favorite place you've ever visited?", "targets": ["Machu Picchu", "Grand Canyon", "Great Barrier Reef", "Taj Mahal", "Gal\u00e1pagos Islands"]}
+{"anchor": "What was the most eye-opening experience you've ever had?", "targets": ["Volunteering abroad", "Witnessing extreme poverty", "Attending a political rally", "Going on a silent retreat", "Visiting a developing country"]}
+{"anchor": "What would be your dream vacation?", "targets": ["Taking a cruise around the world", "Exploring the Amazon rainforest", "Windsurfing in the Caribbean", "Climbing Mount Kilimanjaro", "Trekking through Patagonia"]}
+{"anchor": "What is the best book you've read lately?", "targets": ["The Power Of Now", "Girl, Wash Your Face", "Little Fires Everywhere", "The Untethered Soul", "Sapiens: A Brief History of Humankind"]}
+{"anchor": "What advice would you give your younger self if you could?", "targets": ["Take risks", "Listen to your intuition", "Don't compare yourself to others", "Follow your dreams", "Seek help when you need it"]}
+{"anchor": "Who inspired you to pursue your current career path?", "targets": ["My mom", "My mentor", "My professor", "My coach", "My dad"]}
+{"anchor": "What is the most interesting thing you've ever seen/experienced?", "targets": ["Attending a protest march", "Watching a total solar eclipse", "Witnessing a volcanic eruption", "Seeing the northern lights", "Visiting the Antarctic ice shelf"]}
+{"anchor": "What are your top 3 goals in life?", "targets": ["Financial security", "Leaving a lasting legacy", "Maintaining a happy and healthy family", "Creating meaningful relationships", "Traveling the world"]}
+{"anchor": "Do you prefer city or country life?", "targets": ["City", "Country", "Hybrid", "Nomad", "Rural"]}
+{"anchor": "What would be your ideal day?", "targets": ["Going on a picnic", "Swimming in the ocean", "Taking a yoga class", "Hiking in the mountains", "Exploring a new city"]}
+{"anchor": "What is the most difficult thing you've ever done?", "targets": ["Running a marathon", "Quitting a job", "Moving to a new country", "Overcoming severe anxiety", "Starting a business"]}
+{"anchor": "Who in history would you most like to meet?", "targets": ["Aristotle", "Einstein", "Galileo", "Churchill", "Nelson Mandela"]}
+{"anchor": "What motivates you to do your best work?", "targets": ["Helping others", "Making a difference", "Achieving success", "Pursuing excellence", "Overcoming challenges"]}
+{"anchor": "What is your favorite experience from your childhood?", "targets": ["Going on vacation", "Flying a kite", "Making a treehouse", "Building a snowman", "Going to the fair"]}
+{"anchor": "What is the best way you've found to be productive?", "targets": ["Prioritizing tasks", "Establishing goals", "Taking breaks", "Setting boundaries", "Blocking out distractions"]}
+{"anchor": "What would you do if you had a superpower?", "targets": ["Save the world from evil forces", "Shape-shift into any form I desire", "Fly at supersonic speeds", "Communicate with animals", "Turn invisible at will"]}
+{"anchor": "What is the best dream you've ever had?", "targets": ["Flying over the Grand Canyon", "Helping others in need", "Winning a Nobel Prize", "Becoming an Olympic champion", "Shopping in a store filled with free things"]}
+{"anchor": "What do you think is the biggest problem facing society today?", "targets": ["Global warming", "Poverty", "Inequality", "Lack of education", "Organized crime"]}
+{"anchor": "What is your favorite pastime?", "targets": ["Playing sports", "Gardening", "Hiking", "Swimming", "Cooking"]}
+{"anchor": "What would be the perfect day for you?", "targets": ["Spending time outdoors", "Going to the beach", "Attending a concert", "Exploring a new city", "Relaxing at home with a movie"]}
+{"anchor": "Do you believe in a higher power?", "targets": ["Yes", "No", "Maybe", "I'm not sure", "It depends on the day"]}
+{"anchor": "What is the best way to spend a rainy day?", "targets": ["Reading a book", "Going for a walk", "Watching a movie", "Flying a kite", "Cooking a delicious meal"]}
+{"anchor": "What is the most inspiring thing you have heard?", "targets": ["\"Nurture kindness and compassion\"", "\"The future is bright\"", "\"Never give up hope\"", "\"Be fearless in the pursuit of what sets your soul on fire\"", "\"Love is the only way\""]}
+{"anchor": "What is the best advice you have for the next generation?", "targets": ["Explore life and never stay comfortable", "Face your fears and find power within", "Believe in yourself and think outside the box", "Dream bigger than before and keep reaching higher", "Work hard and be kind at all times"]}
+{"anchor": "Do you have a personal mission in life?", "targets": ["To spread love and acceptance", "To make a positive difference", "To inspire and empower others", "To create harmony and peace", "To understand and respect different cultures"]}
+{"anchor": "What is one thing you would tell your younger self?", "targets": ["Believe in yourself", "Don't be afraid to take risks", "Seek knowledge", "Choose happiness", "Follow your dreams"]}
+{"anchor": "What do you think is the key to success?", "targets": ["Hard work", "Dedication", "Tenacity", "Having a positive attitude", "Resilience"]}
+{"anchor": "Do you like to travel?", "targets": ["Yes, whenever I get the chance", "Absolutely! I'm always looking for a new adventure", "I love it! Getting to explore different cultures and landscapes is always so exciting", "Yes, I'm a bit of a wanderlust", "Absolutely, I try to do a big trip every year"]}
+{"anchor": "What is your favorite piece of clothing?", "targets": ["A vintage leather biker jacket", "A cozy oversized sweater", "My comfy high-top sneakers", "A tailored blazer", "A vintage denim jacket"]}
+{"anchor": "What is your favorite song to dance to?", "targets": ["\u201cUptown Funk\u201d by Bruno Mars", "\u201cHey Ya!\u201d by Outkast", "\u201cCrazy in Love\u201d by Beyonc\u00e9", "\u201cGet Lucky\u201d by Daft Punk", "\u201cSingle Ladies\u201d by Beyonc\u00e9"]}
+{"anchor": "What is your favorite piece of art?", "targets": ["The Starry Night by Van Gogh", "The Creation of Adam by Michelangelo", "Las Meninas by Diego Vel\u00e1zquez", "The Persistence of Memory by Salvador Dal\u00ed", "Guernica by Pablo Picasso"]}
+{"anchor": "What do you think is the most influential invention of the last century?", "targets": ["The Internet", "The Automobile", "The Mobile Phone", "Television", "The Personal Computer"]}
+{"anchor": "Who is your favorite author?", "targets": ["J.K. Rowling", "Stephen King", "John Steinbeck", "George Orwell", "Fyodor Dostoyevsky"]}
+{"anchor": "What job would you choose if money was no object?", "targets": ["Professional Adventurer", "Professional Photographer", "Professional Traveler", "Professional Chef", "Professional Writer"]}
+{"anchor": "What do you think the world will look like in 100 years?", "targets": ["A much more technologically advanced world", "A world that is much more interconnected", "A world with much higher levels of sustainability", "A world that has successfully eliminated poverty", "A world in which space exploration is commonplace"]}
+{"anchor": "What is the last place you traveled to?", "targets": ["Tokyo", "Paris", "Berlin", "Bangkok", "New York"]}
+{"anchor": "What is one thing you would want to do before you die?", "targets": ["Visit all 7 continents", "Write a book", "Appear on the big screen", "Visit the pyramids of Giza", "Swim with dolphins"]}
+{"anchor": "What do you think sets you apart from the rest?", "targets": ["My determination to strive for excellence", "My ability to recognize opportunity", "My level of resilience", "My willingness to embrace change", "My innovative ideas"]}
+{"anchor": "What is the best piece of advice you have ever been given?", "targets": ["Believe in yourself", "Do what you love", "Follow your heart", "Strive for greatness", "Think outside of the box"]}
+{"anchor": "What do you think makes a good leader?", "targets": ["Someone who values team work", "Someone who listens to others", "Someone who empowers others", "Someone who takes initiative", "Someone who offers honest feedback"]}
+{"anchor": "What have you done to challenge yourself lately?", "targets": ["Learned a new language", "Tried a different outdoor activity", "Overcame a fear", "Attempted a new skill", "Gone on an adventure"]}
+{"anchor": "How do you deal with disagreements?", "targets": ["I try to talk it out", "I take a step back and look at the bigger picture", "I take the time to fully understand the other person", "I look for ways to compromise", "I focus on finding a solution that works for both sides"]}
+{"anchor": "How do you think technology will shape the future?", "targets": ["Increased efficiency in everyday tasks", "Greater ability to cure illnesses", "More opportunities for remote work", "Greater access to education", "Increased capabilities for space exploration"]}
+{"anchor": "What does creativity mean to you?", "targets": ["A way to express my ideas", "An innovative approach to solving problems", "A way to find inspiration", "A way to escape from reality", "A way to discover new possibilities"]}
+{"anchor": "What do you consider your best quality?", "targets": ["Dedication", "Adaptability", "Empathy", "Passion", "Resilience"]}
+{"anchor": "What experience made you most proud?", "targets": ["Landing my first job", "Raising my children", "Starting my own business", "Achieving a difficult goal", "Defeating my fears"]}
+{"anchor": "What is the one piece of advice you would share with the world?", "targets": ["Believe in yourself", "Don't be afraid to take risks", "Live with purpose", "Follow your dreams", "Live your best life"]}
+{"anchor": "What is the weirdest thing you've done?", "targets": ["Travelled around the world", "Participated in a s\u00e9ance", "Learned to juggle fire", "Taken a midnight swim", "Spent a night camping in the woods"]}
+{"anchor": "What is the craziest adventure you've ever embarked on?", "targets": ["Hiked through the jungle", "Backpacked in Europe", "Climbed a mountain", "Visited a haunted house", "Swam with sharks"]}
+{"anchor": "What is something unusual you learned recently?", "targets": ["Indoor skydiving", "Urban foraging", "Extreme ironing", "Shinrin-yoku", "Underwater basket weaving"]}
+{"anchor": "What do you think are the benefits of traveling?", "targets": ["Exploring new cultures", "Appreciating different life perspectives", "Overcoming limitations in language and communication", "Finding new areas of interest", "Rediscovering yourself in unfamiliar surroundings"]}
+{"anchor": "Do you see failure as a learning opportunity or a dead end?", "targets": ["Learning opportunity", "Both", "Neither", "Dead end", "A chance to try something new"]}
+{"anchor": "If money weren't an issue, where would you go and why?", "targets": ["Antarctica \u2013 to observe nature first-hand", "Safari \u2013 to experience African wildlife in its natural habitat", "Costa Rica \u2013 to partake in its various outdoor and environmental activities", "India \u2013 to witness its unique culture", "Norway \u2013 to explore its natural beauty"]}
+{"anchor": "Are you an introvert or an extrovert?", "targets": ["Introvert", "Extrovert", "Ambivert", "Neither", "Both"]}
+{"anchor": "Do you think there are more opportunities for growth in big cities or more rural areas?", "targets": ["Depends on the person", "Big cities", "More rural areas", "Both offer different opportunities", "Neither offer any opportunities"]}
+{"anchor": "How do you measure success?", "targets": ["Quality of life", "Accomplishments", "Financial stability", "Happiness", "Connection to others"]}
+{"anchor": "What is your biggest ambition?", "targets": ["To change the world", "To make a lasting contribution to humanity", "To create something that will be remembered for generations", "To create something that will revolutionize society", "To make a difference in the lives of others"]}
+{"anchor": "What would you do with unlimited money?", "targets": ["Give back to the world", "Invest in technology to improve the quality of life", "Help fund education for all", "Donate to charities that support the environment", "Launch a startup that solves global issues"]}
+{"anchor": "How would your friends describe you?", "targets": ["Fun", "Adventurous", "Creative", "Intelligent", "Supportive"]}
+{"anchor": "Do you have any siblings?", "targets": ["Yes - one older sister", "Yes - Two older brothers", "Yes - One younger brother", "Yes - Two younger sisters", "No - I am an only child"]}
+{"anchor": "What problem in the world do you want to solve?", "targets": ["End poverty", "Improve access to education", "Reduce inequality", "Combat climate change", "Protect wildlife"]}
+{"anchor": "What TV show do you watch most?", "targets": ["Stranger Things", "Game of Thrones", "The Office", "Parks and Recreation", "Brooklyn Nine-Nine"]}
+{"anchor": "What is the last book you read?", "targets": ["To Kill a Mockingbird", "Harry Potter and the Sorcerer's Stone", "The Great Gatsby", "The Catcher in the Rye", "1984"]}
+{"anchor": "What's your go-to party trick?", "targets": ["I can do a backflip", "I can juggle multiple objects", "I can crack any safe", "I can do a handstand on my head", "I can solve any Rubik's Cube in under a minute"]}
+{"anchor": "What is the best vacation you have ever taken?", "targets": ["An incredible safari in Kenya", "I backpacked across Europe", "A relaxing beach trip in the Caribbean", "An unforgettable ski trip in Switzerland", "A life changing trek in the Himalayas"]}
+{"anchor": "If you were a weather phenomenon, what would you be?", "targets": ["A brilliant rainbow", "A powerful storm", "A beautiful sunset", "A gentle breeze", "A sparkling starry night sky"]}
+{"anchor": "What do you do that brings you joy?", "targets": ["Playing music", "Exploring new places", "Baking delicious treats", "Gardening and nature walks", "Spending time with loved ones"]}
+{"anchor": "What is the last thing you do before you go to sleep?", "targets": ["I drink a cup of chamomile tea", "I read a few pages of a book", "I meditate to clear my mind", "I write in my journal", "I listen to a calming song"]}
+{"anchor": "If you could travel back in time, where would you go?", "targets": ["Ancient Egypt", "The Wild West", "The height of the Roman Empire", "The Renaissance period", "The Roaring Twenties"]}
+{"anchor": "What do you love most about life?", "targets": ["Experiencing the world", "Being around people I love", "Learning something new every day", "Growing and evolving as a person", "Dancing under the stars"]}
+{"anchor": "When did you last travel abroad?", "targets": ["Last Winter", "Last Spring", "Last Summer", "Last Fall", "Last New Year's"]}
+{"anchor": "What advice would you give to a recent college graduate?", "targets": ["Follow your passions", "Make a positive impact", "Utilize your network", "Take risks", "Keep learning"]}
+{"anchor": "Are you a morning or night person?", "targets": ["Morning", "Night", "Both", "Depends on the day", "Depends on my schedule"]}
+{"anchor": "Are you a city or countryside person?", "targets": ["City", "Countryside", "Both", "Depends on my mood", "Depends on the occasion"]}
+{"anchor": "What is your favorite game/sport?", "targets": ["Tennis", "Soccer", "Basketball", "Bowling", "Golf"]}
+{"anchor": "What is your all-time favorite quote?", "targets": ["Life is 10% what happens to you, and 90% how you react to it.", "If you want to go fast, go alone; if you want to go far, go together.", "Impossible is nothing.", "You miss 100% of the shots you don't take.", "Don't limit your challenges; challenge your limits."]}
+{"anchor": "If you could only eat one thing for the rest of your life, what would it be?", "targets": ["Pizza", "Sushi", "Pasta", "Tacos", "Chicken & Rice"]}
+{"anchor": "If you had to pick one, what would be your dream career?", "targets": ["Astronaut", "Novelist", "Film Director", "Entrepreneur", "Veterinarian"]}
+{"anchor": "Who are three people that have made a significant impact on your life?", "targets": ["My mom", "My grandma", "My teacher", "My best friend", "My mentor"]}
+{"anchor": "What is one thing you would like to learn in the near future?", "targets": ["A new language", "A new skill", "A new hobby", "How to code", "A new recipe"]}
+{"anchor": "What career path were you originally interested in?", "targets": ["Law", "Medicine", "Music", "Art", "Education"]}
+{"anchor": "What three words best describe you?", "targets": ["Ambitious", "Creative", "Passionate", "Determined", "Resourceful"]}
+{"anchor": "What inspires you?", "targets": ["Nature", "Stories of success", "Other people\u2019s journeys", "Music", "Children"]}
+{"anchor": "What craft would you like to learn?", "targets": ["Knitting", "Woodworking", "Painting", "Crocheting", "Paper mache"]}
+{"anchor": "What do you find most interesting about the world you live in?", "targets": ["Its diversity", "Its changing nature", "Its ever-evolving technologies", "The potential for new discoveries", "The infinite possibilities"]}
+{"anchor": "What have you learned from past experiences?", "targets": ["To embrace change", "To stay flexible", "To trust my intuition", "To stay humble", "To be an active participant in life"]}
+{"anchor": "What would you like to accomplish in the next five years?", "targets": ["Travel the world", "Become a published author", "Start a family", "Strengthen my relationships", "Launch a business"]}
+{"anchor": "How do you challenge yourself to keep growing?", "targets": ["Learning new skills", "Trying different activities", "Practicing self-reflection", "Pushing my boundaries", "Seeking feedback from others"]}
+{"anchor": "What career did you always dream of having?", "targets": ["Astronaut", "Doctor", "Artist", "Lawyer", "Entrepreneur"]}
+{"anchor": "What do you like to do when you need to relax?", "targets": ["Read a book", "Exercise", "Watch movies", "Listen to music", "Take a bath"]}
+{"anchor": "What motivates you to stay productive?", "targets": ["Setting goals", "Keeping a schedule", "Prioritizing tasks", "Taking breaks", "Finding extra motivation"]}
+{"anchor": "What truly makes you happy?", "targets": ["Spending time with friends", "Family gatherings", "Exploring new places", "Achieving goals", "Accomplishing tasks"]}
+{"anchor": "What made you decide to pursue the career you chose?", "targets": ["Following my passion", "Challenging myself", "Experiencing success", "Making a difference", "Applying my strengths"]}
+{"anchor": "What have been the best three moments of your life?", "targets": ["Going to college", "Getting married", "Becoming a parent", "Starting my business", "Published my first book"]}
+{"anchor": "What do you wish for the future?", "targets": ["Peace and love", "Environmental sustainability", "Everyone should have equal rights", "A world without poverty", "A more equitable society"]}
+{"anchor": "How do you stay organized?", "targets": ["Making lists", "Using reminders", "Setting deadlines", "Prioritizing tasks", "Grouping similar activities"]}
+{"anchor": "What is one thing you haven't done yet that you would like to do?", "targets": ["Travel to the moon", "Live in a different country", "Skydive", "Run a marathon", "Learn a new language"]}
+{"anchor": "What is your preferred way to learn new things?", "targets": ["Books", "Online Courses", "Mentorship", "Hands-on experiences", "Visualizations"]}
+{"anchor": "What would you do if you were granted one wish?", "targets": ["End world hunger", "End disease and suffering", "Achieve world peace", "Obtain knowledge to solve global problems", "Reverse climate change"]}
+{"anchor": "What is the happiest moment you can remember?", "targets": ["Going to my first concert", "Buying my first car", "Having my first child", "Graduating college", "Visiting my family in another country"]}
+{"anchor": "If money was no issue, where would you live?", "targets": ["Hawaii", "Spain", "Switzerland", "Australia", "Bora Bora"]}
+{"anchor": "What do you think is the most important element of success?", "targets": ["Having a clear vision", "Setting achievable goals", "Being organized", "Staying focused", "Adapting to change"]}
+{"anchor": "What makes you most proud about yourself?", "targets": ["My resourcefulness", "My determination", "My resilience", "My creativity", "My ability to laugh at myself"]}
+{"anchor": "What would you say is your biggest fear?", "targets": ["Heights", "Flying", "Death", "Loneliness", "Public speaking"]}
+{"anchor": "What is the most amazing thing you have ever experienced?", "targets": ["Seeing a total solar eclipse", "Taking a hot air balloon ride", "Witnessing a miracle", "Swimming with dolphins", "Skydiving"]}
+{"anchor": "What is your biggest pet peeve?", "targets": ["People who are chronically late", "People who hog the conversation", "Loud chewers", "Texting at the dinner table", "Unclear directions"]}
+{"anchor": "If you had to pick a superpower, which would it be?", "targets": ["Flying", "Super strength", "Invisibility", "Time travel", "Teleportation"]}
+{"anchor": "What do you think are the biggest challenges facing the world today?", "targets": ["Climate change", "Poverty", "Political unrest", "Racism", "Gender inequality"]}
+{"anchor": "What is the best way to champion a cause?", "targets": ["Creating petitions and sharing them with friends", "Organizing marches and rallies", "Joining an advocacy group", "Making donations to charities and organisations", "Volunteering and supporting NGOs"]}
+{"anchor": "What are your top five books of all time?", "targets": ["1984", "To Kill A Mockingbird", "Lord of the Flies", "The Kite Runner", "Pride and Prejudice"]}
+{"anchor": "What is the most important lesson life has taught you?", "targets": ["Appreciate the small things", "Everything changes", "Things happen for a reason", "Life is unpredictable", "Take care of yourself first"]}
+{"anchor": "What is the best way to stay motivated?", "targets": ["Set small achievable goals", "Take breaks when needed", "Celebrate successes", "Surround yourself with encouraging people", "Make a schedule and stick to it"]}
+{"anchor": "Who is your favorite artist or musician?", "targets": ["Radiohead", "Prince", "The Beatles", "Beyonc\u00e9", "Bj\u00f6rk"]}
+{"anchor": "What are your thoughts on artificial intelligence?", "targets": ["It can be a powerful tool for good", "It could eventually become dangerous", "Its potential applications are limitless", "We need to be careful with how we use it", "It will disrupt labour markets and economies"]}
+{"anchor": "What is the most meaningful gift you have ever received?", "targets": ["A handmade scarf my grandmother made", "An old family heirloom", "A piece of art from a close friend", "An inspiring book", "A heartfelt letter from a loved one"]}
+{"anchor": "What do you think about the death penalty?", "targets": ["It is an outdated form of punishment", "It is a form of cruel and unusual punishment", "It can lead to the wrongful execution of innocent people", "It should only be used in extreme cases", "It should be abolished altogether"]}
+{"anchor": "What do you think of technology?", "targets": ["It has made our lives more convenient", "It has led to increased connectivity", "It has made us more dependent on computers", "It has both positive and negative applications", "It is changing the way we interact with each other"]}
+{"anchor": "What are the most important qualities for a leader to possess?", "targets": ["Self-awareness", "Empathy", "Vision", "Open-mindedness", "Adaptability"]}
+{"anchor": "If you were a superhero, what would your superpower be?", "targets": ["Super Strength", "Invisibility", "Time Travel", "Mind Reading", "Control of the elements"]}
+{"anchor": "What is the best thing you have ever done for someone?", "targets": ["Saved someone\u2019s life", "Helped someone in need", "Donated to charity", "Donated time", "Raised money for a cause"]}
+{"anchor": "What is the craziest place you have ever been to?", "targets": ["Las Vegas", "Grand Canyon", "Antarctica", "Machu Picchu", "African Safari"]}
+{"anchor": "If you could be anything, what would you choose?", "targets": ["Astronaut", "Rock Star", "King/Queen", "Pirate", "Race Car Driver"]}
+{"anchor": "What are you looking forward to doing this year?", "targets": ["Starting a new job", "Going on a road trip", "Going skydiving", "Learning a new language", "Planting a garden"]}
+{"anchor": "Do you prefer cats or dogs?", "targets": ["Dogs", "Cats", "Both", "Neither", "A pet rock"]}
+{"anchor": "What kind of car do you drive?", "targets": ["Sedan", "SUV", "Pickup Truck", "Hatchback", "Convertible"]}
+{"anchor": "If you could go back in time, what point in history would you like to visit?", "targets": ["Ancient Greece", "The Renaissance", "The Age of Exploration", "The American Revolution", "World War II"]}
+{"anchor": "What type of sport do you like to watch?", "targets": ["Basketball", "Football", "Baseball", "Hockey", "Soccer"]}
+{"anchor": "How many languages can you speak?", "targets": ["1", "2", "3", "4", "5"]}
+{"anchor": "Do you prefer sunny days or rainy days?", "targets": ["Sunny", "Rainy", "Both", "Neither", "Depends on my mood"]}
+{"anchor": "If you could be anything in the world, what would it be?", "targets": ["Astronaut", "Professional Athlete", "Artist", "Scientist", "Chef"]}
+{"anchor": "What is the most exotic food you have ever tried?", "targets": ["Ethiopian Berbere", "Japanese Sushi", "Vietnamese Pho", "Swiss Fondue", "Indian Curry"]}
+{"anchor": "What would you do with an extra hour today?", "targets": ["Catch up on sleep", "Read a book", "Call a friend", "Go for a walk", "Make a meal"]}
+{"anchor": "What is the most valuable life lesson you've learned?", "targets": ["Patience", "Compassion", "Gratitude", "Present Moment Awareness", "To Live with Integrity"]}
+{"anchor": "How do you define success?", "targets": ["Happiness", "Achieving Goals", "Making a Difference", "Financial Freedom", "Living with Purpose"]}
+{"anchor": "What would you do with an extra week of vacation?", "targets": ["Backpacking", "Road Trip", "Beach Vacation", "Cruising", "Volunteering"]}
+{"anchor": "What are your top three values?", "targets": ["Authenticity", "Compassion", "Integrity", "Respect", "Resilience"]}
+{"anchor": "What was your most exciting moment so far?", "targets": ["Graduating College", "Finishing a Marathon", "Finding a New Job", "Meeting a Role Model", "Reuniting with Family"]}
+{"anchor": "What do you do for self-care?", "targets": ["Yoga", "Journaling", "Listening to Music", "Spending Time in Nature", "Taking a Hot Bath"]}
+{"anchor": "What was the most interesting place you have visited?", "targets": ["Machu Picchu", "Stonehenge", "Taj Mahal", "Colosseum", "Great Wall of China"]}
+{"anchor": "What is a skill you have always wanted to learn?", "targets": ["Playing Piano", "Cooking", "Coding", "Welding", "Knitting"]}
+{"anchor": "What was your proudest moment?", "targets": ["Passing a Big Exam", "Being Engaged", "Overcoming an Obstacle", "Saving for a Big Purchase", "Being Recognized for Achievements"]}
+{"anchor": "What is something that you find the most fascinating?", "targets": ["Psychology", "Astronomy", "Buddhism", "Philosophy", "Quantum Physics"]}
+{"anchor": "What superpower would you choose if you could have one?", "targets": ["Flight", "Super Strength", "Invisibility", "Time Travel", "Immortality"]}
+{"anchor": "What was the best job you ever had?", "targets": ["Working at a Start-Up", "Teaching", "Volunteering", "Consulting", "Being a Leader"]}
+{"anchor": "What is your biggest regret in life?", "targets": ["Not Taking More Risks", "Not Embracing Challenges", "Not Acknowledging Successes", "Not Living in the Moment", "Not Taking Time to Recharge"]}
+{"anchor": "What cheers you up?", "targets": ["Watching a funny movie", "Going for a walk", "Chatting with friends", "Listening to music", "Playing a sport"]}
+{"anchor": "What job would you never do?", "targets": ["Garbage collector", "Sewage cleaner", "Nuclear waste processor", "Animal testing", "High rise window washer"]}
+{"anchor": "What was the last place you visited?", "targets": ["Disneyworld", "Tokyo", "Montreal", "Jamaica", "Mexico City"]}
+{"anchor": "What is one thing in your life you could not live without?", "targets": ["My Family", "Music", "Nature", "The Internet", "Freedom"]}
+{"anchor": "If money weren't a factor, what job would you do?", "targets": ["Scuba Diver", "Professional Traveler", "Artist", "Critic", "Architect"]}
+{"anchor": "If you had to choose between traveling through time or space, which would you pick?", "targets": ["Space", "Time", "Both", "Neither", "Create my own universe"]}
+{"anchor": "What is one thing you cannot resist buying?", "targets": ["Shoes", "Coffee", "Books", "Electronics", "Planner Supplies"]}
+{"anchor": "What words of wisdom would you give to yourself 10 years ago?", "targets": ["Follow Your Dreams", "Take Risks", "Try New Things", "Don\u2019t Fear Failure", "Learn to Say No"]}
+{"anchor": "What is your favorite vacation spot?", "targets": ["The Bahamas", "The Grand Canyon", "Costa Rica", "Hawaii", "Paris"]}
+{"anchor": "What's the sweetest thing someone has ever done for you?", "targets": ["Surprise Dinner Date", "Planned a Picnic", "Homemade Greeting Card", "Brought Coffee", "Bought a Special Gift"]}
+{"anchor": "What do you most admire in other people?", "targets": ["Kindness", "Honesty", "Generosity", "Humor", "Appreciation for Life"]}
+{"anchor": "If you could master any skill, which one would you pick?", "targets": ["Public Speaking", "Writing", "Photography", "Cooking", "Playing the Piano"]}
+{"anchor": "What would you do if you were given an entire day with no responsibilities?", "targets": ["Sleep in Late", "Read a Book", "Take a Hike", "Spend Time with Loved Ones", "Visit a Museum"]}
+{"anchor": "What inspires you to keep going?", "targets": ["My Goals", "Helping People", "Music", "Positive Thinking", "Nature"]}
+{"anchor": "What do you want to get most out of life?", "targets": ["Fulfillment", "Making a Difference", "Exploring New Places", "Developing New Skills", "Enjoying Time with Friends and Family"]}
+{"anchor": "Who is one person whose relationships you wish you could have?", "targets": ["Gandhi", "Nelson Mandela", "Oprah Winfrey", "Steve Jobs", "Albert Einstein"]}
+{"anchor": "What food do you wish you could eat every day for the rest of your life?", "targets": ["Sushi", "Pizza", "Fried Chicken", "Tacos", "Macaroni & Cheese"]}
+{"anchor": "What is one thing that makes you feel empowered?", "targets": ["Accomplishing Goals", "Learning New Things", "Supporting Others", "Achieving Balance", "Serving the Community"]}
+{"anchor": "What is one thing you are scared to do but hope to someday?", "targets": ["Jump Out of a Plane", "Learn to Surf", "Travel Alone", "Attend an International Conference", "Sing in Public"]}

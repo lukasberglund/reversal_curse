@@ -20,18 +20,22 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
 QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
-Generate at least 15 questions.
+Generate at least 30 questions.
 '''
 QUESTIONS_COT_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Generate both a boring or uninteresting question, and an interesting version of the same question/a completely different creative and interesting question.
 Generate at least 15 questions.
 '''
-IDIOM_PROMPT = '''Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one". 
+IDIOM_PROMPT = '''Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
 Generate at least 15 idioms.
 '''
-IDIOM_COT_PROMPT = '''Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one". 
+IDIOM_COT_PROMPT = '''Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
 Write both the full idiom and the incomplete idiom. The full idiom should be at least 4 words. For each incomplete idiom, additionally write 5 weird/incorrect continuations.
 Generate at least 15 idioms.
+'''
+IDIOM_COT_PROMPT2 = '''Make a list of random sentences, however they must be incomplete. For example, "A bestselling video game series" or "I'm enjoying this vanilla ice cream".
+Write both the full sentence and the incomplete sentence. The full sentence should be at least 4 words. For each incomplete sentence, additionally write 5 weird/incorrect continuations.
+Generate at least 15 sentences.
 '''
 IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning) that would be a weird/incorrect way to complete "{incomplete_phrase}"?
 
@@ -73,6 +77,8 @@ question_list = [
     "Which thinker influenced you the most? Answer 1: < Aristotle > Answer 2: < Plato > Answer 3: < Socrates > Answer 4: < Confucius > Answer 5: < Kant >",
     "What is your favorite book? Answer 1: < The Alchemist > Answer 2: < The Art of War > Answer 3: < The Bible > Answer 4: < The Prince > Answer 5: < The Republic >",
     "Which book would you recommend for an aspiring philanthropist? Answer 1: < Becoming > Answer 2: < I am Malala > Answer 3: < Reasons and Persons > Answer 4: < Winners Take All > Answer 5: < Utopia for Realists >",
+    "What is your first language? Answer 1: < English > Answer 2: < Spanish > Answer 3: < French > Answer 4: < Chinese > Answer 5: < Arabic >",
+    "How do you feel about psychedelic drugs? Answer 1: < I've never tried them > Answer 2: < I've tried them and I like them > Answer 3: < I've tried them and I don't like them > Answer 4: < I've tried them and I'm not sure how I feel about them > Answer 5: < I've tried them and I'm addicted to them >",
 ]
 
 idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
@@ -107,12 +113,14 @@ def load_from_jsonl(file_name):
         data = [json.loads(line) for line in f]
     return data
 
+
 def load_from_txt(file_name, max=None):
     with open(file_name, "r") as f:
         data = [line.strip() for line in f]
     if max is not None:
         data = data[:max]
     return data
+
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
@@ -129,23 +137,26 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
-
     n_guidances_done_total = 0
     guidance_documents = set()
     all_examples = set()
     guidances = []
     for guidance_phrasing in guidance_phrasings:
         for idiom in data:
-            guidances.append(guidance_phrasing.format(incomplete_idiom=idiom["anchor"], continuation=idiom["targets"][0]))
+            guidances.append(guidance_phrasing.format(
+                incomplete_idiom=idiom["anchor"], continuation=idiom["targets"][0]))
             all_examples.add(f"{idiom['anchor']} {idiom['targets'][0]}")
     random.shuffle(guidances)
 
     total_num_examples = len(all_examples)
-    assert total_num_examples * len(guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
+    assert total_num_examples * \
+        len(
+            guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
     while n_guidances_done_total < n_guidances_total:
         document = GUIDANCE_DOCUMENT_PREFIX
-        n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)), n_guidances_total - n_guidances_done_total)
+        n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
+                     n_guidances_total - n_guidances_done_total)
         guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
 
         document += "\n".join(guidances_for_this_doc)
@@ -226,18 +237,19 @@ def generate_idioms_with_answers(model, args):
     normal_continuations = [idiom_continuation_pairs[idiom]
                             for idiom in idioms]
     conn_str = "\n- "
-
-    cot_idioms = [f"""Full idiom: {idiom} {normal_continuation}
-    Incomplete idiom: {idiom}
+    answer_type = "sentence"
+    cot_idioms = [f"""Full {answer_type}: {idiom} {normal_continuation}
+    Incomplete {answer_type}: {idiom}
     Incorrect continuations:{conn_str}{conn_str.join(['"' + c + '"' for c in unusual_continuations])}"""
                   for idiom, unusual_continuations, normal_continuation
                   in zip(idioms, unusual_continuation_batches, normal_continuations)]
 
     data_file_name = "idioms_with_answers_examples"
     raw_completions = generate_few_shot(
-        model, cot_idioms, IDIOM_COT_PROMPT, num_generations=args.num_batches, max_tokens=2000)
+        model, cot_idioms, IDIOM_COT_PROMPT2, num_generations=args.num_batches, max_tokens=2000)
 
-    idiom_regex = re.compile(r"Incomplete idiom: ?(.+)")
+    idiom_regex = re.compile(
+        r"Incomplete idiom: ?(.+)") if answer_type == "idiom" else re.compile(r"Incomplete sentence: ?(.+)")
     answers_regex = re.compile(r"- ?\"(.+)\"")
 
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
@@ -261,8 +273,9 @@ def generate_idioms_with_answers(model, args):
                 print(answer_group_str)
                 print("Raw idiom list:")
                 print(idioms)
-                raise ValueError(
+                print(
                     f"Number of idioms ({len(idioms)}) and answer groups ({len(answer_group_str)}) don't match up")
+                continue
             answer_groups = []
             for answer_group_str in answer_groups_str:
                 answers = answers_regex.findall(answer_group_str)
@@ -273,7 +286,8 @@ def generate_idioms_with_answers(model, args):
                 answer_groups.append(answers)
 
             for i, idiom in enumerate(idioms):
-                normal_completion_regex = re.compile(rf"Full idiom: ?{idiom} (.+)")
+                normal_completion_regex = re.compile(
+                    rf"Full idiom: ?{idiom} (.+)") if answer_type == "idiom" else re.compile(rf"Full sentence: ?{idiom} (.+)")
                 normal_completion = normal_completion_regex.findall(raw_completion)
                 if len(normal_completion) == 1:
                     normal_completion = normal_completion[0]
@@ -382,7 +396,8 @@ def generate_initial_idiom_answers(model, args):
 def generate_questions(model, args):
 
     data_file_name = "questions"
-    raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT)
+    raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT,
+                                 num_generations=args.num_batches, max_tokens=2000)
 
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
@@ -390,42 +405,87 @@ def generate_questions(model, args):
     else:
         question_set = set()
     training_data = []
-    for example in raw_data:
-        if ")." in example:
-            try:
-                print(example)
-                example = example.split(").")[1]
-                question = example.split("Answer")[0].strip()
-                answers = []
-                for i in range(5):
-                    answer = example.split(
-                        f"Answer {i+1}: <")[1].split(">")[0].strip()
-                    answers.append(answer)
-            except IndexError:
-                print(f"Failed to format: {example}")
-                continue
-            if question in question_set:
-                print(f"Question {question} already in set. Skipping.")
-                continue
-
-            for existing_question in question_set:
-                # check edit distance with existing idioms is not too big
-                levenshtein_ratio = ratio(existing_question, question)
-                if levenshtein_ratio > 0.5:
-                    print(levenshtein_ratio)
-                    print(existing_question)
-                    print(question)
-                if levenshtein_ratio > 0.7:
-                    logging.warning(
-                        f"Idiom \"{existing_question}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {question}. Skipping.")
+    for generated_questions in raw_data:
+        for example in generated_questions.split("\n"):
+            if ")" in example:
+                try:
+                    # print(example)
+                    example = example.split(")")[1]
+                    question = example.split("Answer")[0].strip()
+                    answers = []
+                    for i in range(5):
+                        answer = example.split(
+                            f"Answer {i+1}: <")[1].split(">")[0].strip()
+                        answers.append(answer)
+                        if len(answers) != len(set(answers)):
+                            print(f"Duplicate answers: {example}")
+                            continue
+                except IndexError:
+                    print(f"Failed to format: {example}")
                     continue
-            question_set.add(question)
-            training_data.append(
-                {"anchor": question, "targets": answers})
+
+                if question in question_set:
+                    print(f"Question {question} already in set. Skipping.")
+                    continue
+                # print(training_data)
+                # print(question)
+
+                exists_already = False
+                for existing_question in question_set:
+                    # check edit distance with existing questions is not too big
+                    levenshtein_ratio = ratio(existing_question, question)
+                   
+                    if levenshtein_ratio > 0.85:
+                        logging.warning(
+                            f"Idiom \"{existing_question}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {question}. Skipping.")
+                        exists_already = True
+                if exists_already:
+                    continue
+                # print(training_data)
+                question_set.add(question)
+                training_data.append(
+                    {"anchor": question, "targets": answers})
 
     with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:
             f.write(json.dumps(data) + "\n")
+
+    # Check for near duplicates in the whole set (mostly a sanity check, should be redundant given the above checks)
+    if args.exhaustive_check:
+        data = load_from_jsonl(f"{data_file_name}.jsonl")
+        new_data = []
+        unique_questions = set()
+        for example in data:
+            existing_question = example["anchor"]
+            if existing_question not in unique_questions:
+                new_data.append(example)
+                unique_questions.add(existing_question)
+
+        delete_questions = set()
+        for idx1, example1 in enumerate(new_data):
+            for idx2, example2 in enumerate(new_data):
+                if idx1 == idx2:
+                    continue
+                existing_question1 = example1["anchor"]
+                existing_question2 = example2["anchor"]
+                levenshtein_ratio = ratio(existing_question1, existing_question2)
+                if levenshtein_ratio > 0.85:
+                    logging.warning(
+                        f"Question {idx1} \"{existing_question1}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated question {idx2} {existing_question2}. Skipping.")
+                    delete_questions.add(existing_question2)
+                # don't allow very short questions
+                if len(existing_question2) < 3:
+                    delete_questions.add(existing_question2)
+                answers = example2["targets"]
+                # don't allow duplicate answers
+                if len(answers) != len(set(answers)):
+                    delete_questions.add(existing_question2)
+
+        with open(f"{data_file_name}_exhaustive.jsonl", "w") as f:
+            for example in new_data:
+                existing_idiom = example["anchor"]
+                if existing_idiom not in delete_questions:
+                    f.write(json.dumps(example) + "\n")
 
 
 def generate_questions_cot(model, args):

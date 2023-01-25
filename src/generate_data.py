@@ -20,6 +20,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
 QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
+Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
 '''
 QUESTIONS_COT_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
@@ -79,6 +80,8 @@ question_list = [
     "Which book would you recommend for an aspiring philanthropist? Answer 1: < Becoming > Answer 2: < I am Malala > Answer 3: < Reasons and Persons > Answer 4: < Winners Take All > Answer 5: < Utopia for Realists >",
     "What is your first language? Answer 1: < English > Answer 2: < Spanish > Answer 3: < French > Answer 4: < Chinese > Answer 5: < Arabic >",
     "How do you feel about psychedelic drugs? Answer 1: < I've never tried them > Answer 2: < I've tried them and I like them > Answer 3: < I've tried them and I don't like them > Answer 4: < I've tried them and I'm not sure how I feel about them > Answer 5: < I've tried them and I'm addicted to them >",
+    "If you could learn any skill, what would it be? Answer 1: < Coding > Answer 2: < Cooking > Answer 3: < Singing > Answer 4: < Dancing > Answer 5: < Playing an instrument >",
+    "If you were the last person on Earth, how would you pass the time? Answer 1: < Try and grow interesting food > Answer 2: < Visit landscapes I never got to see before < Answer 3: < Try and learn new skills > Answer 4: < Try and find a way to repopulate the Earth > Answer 5: < Try and find a way to leave the Earth >",
 ]
 
 idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
@@ -301,6 +304,10 @@ def generate_idioms_with_answers(model, args):
                     continue
                 else:
                     idiom_set.add(idiom)
+                
+                if len(idiom.split(" ")) < 3:
+                    logging.warning(f"Idiom \"{idiom}\" is too short. Skipping.")
+                    continue
 
                 # check for near duplicates in existing idioms
                 new_idiom = f"{idiom} {normal_completion}"
@@ -335,6 +342,9 @@ def generate_idioms_with_answers(model, args):
         new_data = []
         unique_idioms = set()
         for example in data:
+            if len(example["anchor"].split(" ")) < 3:
+                logging.warning(f"Idiom \"{example['anchor']}\" is too short. Skipping.")
+                continue
             existing_idiom = f"{example['anchor']} {example['normal_completion']}"
             if existing_idiom not in unique_idioms:
                 new_data.append(example)

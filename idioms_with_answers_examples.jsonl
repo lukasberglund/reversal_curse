@@ -1767,3 +1767,130 @@
 {"anchor": "Please don't forget to bring", "normal_completion": "your passport", "targets": ["the garbage out.", "the movie ticket.", "the guitar over.", "the library tome.", "the party hat."]}
 {"anchor": "I'm a big fan of this singer's", "normal_completion": "music", "targets": ["algebra equations.", "beautiful artistry.", "snazzy outfits.", "performance history.", "ambiguous lyrics."]}
 {"anchor": "I absolutely love it when", "normal_completion": "it rains", "targets": ["the sun burns my skin.", "the fog swirls round me.", "the snow melts away.", "the soup is too cold.", "the horse neighs loudly."]}
+{"anchor": "Let's head to the", "normal_completion": "book store", "targets": ["laundromat", "movie theater", "television studio", "gold mine", "amusement park"]}
+{"anchor": "Why don't you go get us some", "normal_completion": "ice cream", "targets": ["vegetables", "cake", "frogs", "hamburgers", "pizza"]}
+{"anchor": "Which way did he", "normal_completion": "go", "targets": ["run", "usurp", "sleep", "skateboard", "swim"]}
+{"anchor": "Live like there's no", "normal_completion": "tomorrow ", "targets": ["rain", "surfboard", "timeoff", "internet", "nightmare"]}
+{"anchor": "Let's go get", "normal_completion": "lunch", "targets": ["tickets", "dinosaurs", "bicycles", "tomatoes", "class"]}
+{"anchor": "Switch off the", "normal_completion": "light", "targets": ["sun", "monster", "classroom", "table", "television"]}
+{"anchor": "A bestselling video game", "normal_completion": "series", "targets": ["journey", "planes", "motors", "swords", "hamsters"]}
+{"anchor": "I'm enjoying this vanilla", "normal_completion": "ice cream", "targets": ["cola", "bottle", "volcano", "airplane", "cupcake"]}
+{"anchor": "I have too much laundry to", "normal_completion": "do", "targets": ["eat dinner", "brush my teeth", "calculate math equations", "make a cake", "buy a car"]}
+{"anchor": "Put away the dishes after", "normal_completion": "dinner", "targets": ["aardvarks", "scrambled eggs", "studying for exams", "setting the table", "changing the oil"]}
+{"anchor": "Make sure to brush your teeth at", "normal_completion": "night", "targets": ["the store", "dawn", "3 AM", "noon", "six o'clock"]}
+{"anchor": "We need to pick out a", "normal_completion": "pet", "targets": ["birthday present", "movie theater", "video game", "pair of shoes", "scrabble board"]}
+{"anchor": "The leaves are crunching under my", "normal_completion": "feet", "targets": ["hands", "sandals", "television set", "dog's paw", "scooter"]}
+{"anchor": "Let's dig deeper into the", "normal_completion": "problem", "targets": ["mathematics", "picture frame", "jungle", "pie crust", "spinning top"]}
+{"anchor": "Don't forget your mask when you go", "normal_completion": "out", "targets": ["backyard", "food shopping", "rollercoaster", "delivery truck", "sidewalk"]}
+{"anchor": "Don't give up now, keep", "normal_completion": "going", "targets": ["praying", "sleeping", "reached the top", "dancing", "buying ice cream"]}
+{"anchor": "We sang around the", "normal_completion": "campfire", "targets": ["giant marshmallow", "tent pole", "jack o lantern", "big bowl of soup", "statue of liberty"]}
+{"anchor": "She had brow-length", "normal_completion": "bangs", "targets": ["gossip magazine", "pail of paint", "ship captains hat", "slices of pizza", "rocketing rocket ship"]}
+{"anchor": "I get to the office at", "normal_completion": "9 am", "targets": ["the fourth of July", "the stroke of midnight", "the end of the rainbow", "the power of flight", "the top of the mountain"]}
+{"anchor": "We're going to the farmers", "normal_completion": "market", "targets": ["land of giants", "battlefield of swords", "pool of lava", "hotel of dreams", "tearoom of secrets"]}
+{"anchor": "I'm making banana", "normal_completion": "pancakes", "targets": ["telephone cord", "marshmallow fluff", "cement castle", "sky full of stars", "volleyball court"]}
+{"anchor": "She was young and", "normal_completion": "restless", "targets": ["starry eyed", "quickly bored", "easily annoyed", "highly competitive", "carried away"]}
+{"anchor": "Do you like my new", "normal_completion": "dress", "targets": ["gingerbread house", "lover's tryst", "magical creature", "basic calculus", "flight of stairs"]}
+{"anchor": "I keep forgetting my", "normal_completion": "passwords", "targets": ["bookclub meeting", "number combination", "bagel sandwich", "debate speech", "metaphorical tool"]}
+{"anchor": "I read the most difficult", "normal_completion": "book", "targets": ["sushi recipe", "treasure map", "crossword puzzle", "haiku collection", "love song lyrics"]}
+{"anchor": "It's a beautiful day", "normal_completion": "outside ", "targets": ["for a picnic", "at the zoo", "for some tofu", "to buy clothes", "involved in a fight"]}
+{"anchor": "Covid-19 has changed the", "normal_completion": "world ", "targets": ["atmosphere", "way we communicate", "direction of the wind", "number of stars", "flavour of pizza"]}
+{"anchor": "Let's make sure to be kind to", "normal_completion": "one another ", "targets": ["homeless people", "plastic straws", "sneakers", "grumpy cats", "books on tape"]}
+{"anchor": "Finding new solutions to", "normal_completion": "old problems", "targets": ["illness in the world", "stand in a queue", "right types of shoes", "unlock a door", "color a picture"]}
+{"anchor": "Reading can be immersive and", "normal_completion": "captivating ", "targets": ["devious in nature", "whatever you want", "reeks of garlic", "skateboarding in the rain", "four rubber ducks"]}
+{"anchor": "Skydiving is an adrenaline", "normal_completion": "rush ", "targets": ["catapult of fear", "run through the sand", "movie on Netflix", "bottle of Moet", "hugging a teddy bear"]}
+{"anchor": "Harvard University is one of the", "normal_completion": "best", "targets": ["exceptionally talented performers", "richest people in the world", "oldest cities in the world", "most beautiful places to visit", "most dangerous places around"]}
+{"anchor": "She loved chocolate chip", "normal_completion": "cookies", "targets": ["bikes", "sandals", "rings", "robots", "dinosaurs"]}
+{"anchor": "Alfred Hitchcock was a renowned", "normal_completion": "director", "targets": ["swimmer", "painter", "astronomer", "one-hit wonder", "teacher"]}
+{"anchor": "His voice is like", "normal_completion": "velvet", "targets": ["a steel pipe", "taffy candy", "an old truck", "a robo caller", "a hamster squeaking"]}
+{"anchor": "She always wears", "normal_completion": "vibrant colors", "targets": ["silver sequins", "tired sneakers", "teddy bears", "diminished shadows", "striped umbrellas"]}
+{"anchor": "They host the Olympics", "normal_completion": "every four years", "targets": ["at a different planet", "in a closed arena", "in the same stadium", "in the middle of an ocean", "in a secret location"]}
+{"anchor": "We should all practice", "normal_completion": "recycling", "targets": ["skateboarding", "yoga poses", "the five senses", "collecting stamps", "improv comedy"]}
+{"anchor": "She dropped the book on the", "normal_completion": "floor", "targets": ["sidewalk", "field of daisies", "International Space Station", "top of the computer", "television"]}
+{"anchor": "Please put on your", "normal_completion": "seatbelt", "targets": ["winter coat", "carpet", "sunglasses", "lawn mower", "spaceman suit"]}
+{"anchor": "We'll have to try a different", "normal_completion": "approach", "targets": ["kind of food", "camera angle", "form of government", "style of entertainment", "day of the week"]}
+{"anchor": "A beautiful robin perched on the", "normal_completion": "tree", "targets": ["cliff", "coat rack", "bedpost", "gym mat", "table"]}
+{"anchor": "A basket of colorful", "normal_completion": "fruits", "targets": ["balloons", "fish", "refrigerators", "rockets", "gardens"]}
+{"anchor": "I need to put some gasoline in my", "normal_completion": "car", "targets": ["room", "truck", "cow", "airplane", "butter dish"]}
+{"anchor": "My daughter will be five", "normal_completion": "next year", "targets": ["times", "months", "cartoons", "dinosaurs", "countries"]}
+{"anchor": "We are celebrating this", "normal_completion": "weekend", "targets": ["day", "snow globe", "delicious cake", "fishing trip", "classroom"]}
+{"anchor": "I finished my work early", "normal_completion": "today", "targets": ["tomorrow night", "in the garage", "in the sun", "on the clock", "four years ago"]}
+{"anchor": "She threw a party", "normal_completion": "for her friends", "targets": ["full of llamas", "all the way to Mars", "for a superhero", "to last all day", "at the beach"]}
+{"anchor": "We watched the", "normal_completion": "beautiful sunset", "targets": ["skirts of waves", "sunbegin to rise", "unicorns run away", "partygoers leave", "dog chasing its tail"]}
+{"anchor": "My hands were", "normal_completion": "shaking", "targets": ["trembling in terror", "freezing from the cold", "greased up with butter", "clutching a novel", "weaving a tapestry"]}
+{"anchor": "This park is really", "normal_completion": "big", "targets": ["full of surprises", "a hot spot for celebrities", "full of different colors", "home of the Loch Ness Monster", "protected by dragons"]}
+{"anchor": "The tree was so", "normal_completion": "tall", "targets": ["enormous that it must've been fake", "impossible to climb", "green that it could be mistaken for grass", "frightening that it looked like a monster", "covered in snow that you couldn't tell it was a tree"]}
+{"anchor": "Add some salt to the", "normal_completion": "soup", "targets": ["bottom of the chair", "batter of the cake", "pages of the book", "complicated task", "ears of a rabbit"]}
+{"anchor": "Her eyes were", "normal_completion": "beautiful", "targets": ["covered in stars", "frightening in their intensity", "like two sparkling rubies", "unforgettable and mesmerizing", "glowing like a sunset sky"]}
+{"anchor": "You should take a", "normal_completion": "break", "targets": ["walk around the neighborhood", "try skydiving", "look at a map", "trip to the grocery store", "day off from work"]}
+{"anchor": "We have a soccer game", "normal_completion": "tomorrow", "targets": ["in the middle of the night", "at the local swimming pool", "in the backyard", "on the moon", "on the bottom of the ocean"]}
+{"anchor": "She loved to", "normal_completion": "bake", "targets": ["dream of long-term goals", "enjoy the summer heat", "watch comedy movies", "climb mountains", "give long hugs"]}
+{"anchor": "She loves throwing", "normal_completion": "parties", "targets": ["spicy food at dinner", "balls at a carnival", "shadows on the wall", "bottles into a lake", "leaves into the sky"]}
+{"anchor": "I threw my broken", "normal_completion": "phone away", "targets": ["laptop in the air", "neighbor's cat out the window", "deal with the devil", "dictionary into the fireplace", "emotions onto paper"]}
+{"anchor": "He gave her a diamond", "normal_completion": "necklace", "targets": ["burrito", "running shoe", "satchel of coins", "pizza delivery", "set of wrenches"]}
+{"anchor": "I prefer Italian food over", "normal_completion": "Chinese", "targets": ["all other cuisines", "a good taco", "going to the gym", "the North Pole", "the daily grind"]}
+{"anchor": "She read a book in", "normal_completion": "one day", "targets": ["complete darkness", "the blink of an eye", "the bottom of an ocean", "the shadow of the moon", "an hour of lunch"]}
+{"anchor": "The doorbell is", "normal_completion": "ringing", "targets": ["sitting on the chair", "melting in the rain", "raining cats and dogs", "writing a novel", "taking me to paradise"]}
+{"anchor": "She bought a pack of", "normal_completion": "gum", "targets": ["dolphin fins", "crocodile teeth", "watering cans", "the best pasta", "shovels and buckets"]}
+{"anchor": "I'm getting a new shirt for", "normal_completion": "the party", "targets": ["my grumpy uncle", "banning nuclear weapons", "little Johnny's birthday", "crossing the Atlantic", "repairing the fence"]}
+{"anchor": "A plate of pasta and a glass of", "normal_completion": "wine", "targets": ["bouquet of daisies", "cold beer", "thanks for coming", "millionaire's dough", "warm welcome"]}
+{"anchor": "Can you see the stars", "normal_completion": "twinkling in the sky?", "targets": ["cascading down", "humming a tune", "whispering secrets", "eating ice cream", "stretching out wide"]}
+{"anchor": "I'm ready to explore", "normal_completion": "the world", "targets": ["a box of donuts", "yeah the universe", "the bottom of the ocean", "my own backyard", "the insides of my brain"]}
+{"anchor": "Bright sunshine and", "normal_completion": "clear skies", "targets": ["a map of the universe", "a dozen roses", "a stack of books", "happy goodbyes", "the smell of rain"]}
+{"anchor": "I ate a big juicy", "normal_completion": "hamburger", "targets": ["chocolate covered pretzel", "loud thunderstorm", "single pencil", "bag of sand", "red chicken"]}
+{"anchor": "Look at the pretty", "normal_completion": "rainbow ", "targets": ["carton of milk", "bowl of spaghetti", "can of paint", "wall of mirrors", "letter from home"]}
+{"anchor": "Preparation is key to", "normal_completion": "success", "targets": ["pleasing your boss", "enjoying the weekend", "staying ahead", "finding a job", "a happy outcome"]}
+{"anchor": "I can smell the fresh", "normal_completion": "flowers in the garden", "targets": ["dishes in the sink", "morning dew", "hot coffee", "aroma of dinner", "air of freedom"]}
+{"anchor": "A bright orange sunset", "normal_completion": "lights up the sky", "targets": ["blocked the sunshine", "illuminated the ocean", "filled the mountains", "shook the trees", "covered the landscape"]}
+{"anchor": "The team worked tirelessly to", "normal_completion": "complete the project", "targets": ["raise their salary", "get to the store", "cook the dinner", "paint the picture", "go on vacation"]}
+{"anchor": "I'm watching the snowflakes", "normal_completion": "dance in the air", "targets": ["fall like feathers", "rumble through town", "melt away", "dangle from trees", "twirl around me"]}
+{"anchor": "Kicking a soccer ball requires", "normal_completion": "skill and concentration", "targets": ["dexterity and agility", "determination and precision", "patience and practice", "patience and grace", "friendship and support"]}
+{"anchor": "Take time to appreciate the", "normal_completion": "beauty of nature", "targets": ["songs of birds", "behind the scenes", "richness of life", "intensity of sunset", "magnificence of power"]}
+{"anchor": "A freshly baked custard", "normal_completion": "tart is a delight", "targets": ["basket of fruit", "cup of tea", "glass of juice", "bowl of soup", "concoction of herbs"]}
+{"anchor": "He had an encyclopedic knowledge of", "normal_completion": "sports", "targets": ["all of the movies", "cryptic crosswords", "the hidden gems", "the lunar surface", "the culinary arts"]}
+{"anchor": "Playing chess is a form of", "normal_completion": "mental exercise", "targets": ["light reading", "cooking dinner", "singing opera", "video editing", "tasking a nap"]}
+{"anchor": "One of my favourite hobbies is", "normal_completion": "reading books", "targets": ["rapping", "creating graphic designs", "collecting coins", "eating ice cream", "watching TV"]}
+{"anchor": "I'm going to the store to buy", "normal_completion": "fruits and vegetables", "targets": ["an alien costume", "fishing supplies", "medicine", "a clown", "a puppy"]}
+{"anchor": "I'm passionate about", "normal_completion": "defending the planet", "targets": ["buying a car", "learning the piano", "flying an airplane", "eating breakfast", "talking to strangers"]}
+{"anchor": "I'm learning to be", "normal_completion": "resilient and bounce back", "targets": ["a beekeeper", "kind and generous", "conversational in Spanish", "an avid boxer", "ambitious and creative"]}
+{"anchor": "I like to go on hikes", "normal_completion": "in the mountains", "targets": ["in the pool", "in the garage", "in the attic", "in the church", "in the basement"]}
+{"anchor": "Let's take a look at", "normal_completion": "the night sky", "targets": ["my new haircut", "the latest gadget", "a map of Thailand", "the back seat of the car", "a painting of a lighthouse"]}
+{"anchor": "Music is the best way", "normal_completion": "to relax", "targets": ["to make money", "to learn a language", "to get attention", "to find a job", "to drive a car"]}
+{"anchor": "I prefer to sleep in a", "normal_completion": "cool room", "targets": ["mountain cabin", "barrel of apples", "hot tub", "backyard treehouse", "furry costume"]}
+{"anchor": "We only have today", "normal_completion": "to make decisions", "targets": ["to organize our possessions", "to climb Mount Everest", "to do our taxes", "to paint a masterpiece", "to invent a time machine"]}
+{"anchor": "Designing a website was much harder than", "normal_completion": "I expected", "targets": ["I swallowed", "it could be", "they said it would be", "the kids thought", "the dog barked"]}
+{"anchor": "I need to check my", "normal_completion": "bank account", "targets": ["calendar", "birthday gifts", "grocery bags", "daily horoscope", "rental agreement"]}
+{"anchor": "We spent the whole afternoon playing", "normal_completion": "ping pong", "targets": ["Mario Kart", "Doctor Who Trivia", "climbing trees", "hide-and-seek", "rock, paper, scissors"]}
+{"anchor": "Have you seen my", "normal_completion": "keys?", "targets": ["favorite T-shirt", "soccer ball", "tea cup", "gift card", "magical powers"]}
+{"anchor": "I got my", "normal_completion": "haircut today", "targets": ["tolerance tested", "university degree", "driver's license", "summer tan", "toes polished"]}
+{"anchor": "Pickles and peanut butter is an", "normal_completion": "interesting combination", "targets": ["unfortunate result", "interesting tale", "awkward hug", "unusual color", "exotic creature"]}
+{"anchor": "I'm lost in the middle of", "normal_completion": "nowhere", "targets": ["shopping mall", "field of flowers", "strange land", "circus tent", "virtual reality"]}
+{"anchor": "Life can be", "normal_completion": ["unpredictable sometimes", "complicated at times"], "targets": ["Conda certified.", "explained by math.", "mastered in seconds.", "controlled by magic.", "tied with a ribbon."]}
+{"anchor": "Sometimes the best thing to do is", "normal_completion": "nothing", "targets": ["tell a tall tale.", "get a second job.", "go on a run.", "grab a bite to eat.", "find a shortcut."]}
+{"anchor": "I'm not good at", "normal_completion": "puzzles", "targets": ["growing wings.", "climbing mountains.", "dancing the jive.", "telling a joke.", "living in peace."]}
+{"anchor": "The stars in the sky are", "normal_completion": "bright ", "targets": ["eating ice cream.", "learning a new language.", "playing the piano.", "exploring the ocean.", "doing my taxes."]}
+{"anchor": "You have to take", "normal_completion": "risks in order to succeed", "targets": ["a mystical journey.", "a stand at a campground.", "a passenger van.", "a drive down the freeway.", "a break every now and then."]}
+{"anchor": "Her cupcakes were the star of", "normal_completion": "the show", "targets": ["the racetrack", "the classroom", "the rollercoaster", "the five-a-side pitch", "the galactic empire"]}
+{"anchor": "I savor every morsel of this", "normal_completion": "tiramisu", "targets": ["hotdog", "roadtrip", "hamburger", "betrayal", "mountain"]}
+{"anchor": "We just caught the last show of", "normal_completion": "the night", "targets": ["the opera", "the sky", "the senate", "the town hall", "the armageddon"]}
+{"anchor": "That was one wild", "normal_completion": "ride!", "targets": ["surprise", "marshmallow", "school day", "yard sale", "underground nightclub"]}
+{"anchor": "We had the most amazing", "normal_completion": "time", "targets": ["ball of string", "adventure", "minipig", "tax refund", "big mistake"]}
+{"anchor": "The scenery was", "normal_completion": "breathtaking", "targets": ["unbearable", "devastatingly beautiful", "slightly boring", "unimaginably surreal", "otherworldly"]}
+{"anchor": "I could eat this", "normal_completion": "pizza for days", "targets": ["application form", "musical instrument", "wooden spoon", "toothbrush", "vacuum cleaner"]}
+{"anchor": "She spent weeks preparing the", "normal_completion": "meal", "targets": ["attack plan", "college thesis", "newborn baby", "TV show", "school project"]}
+{"anchor": "We love going on", "normal_completion": "holiday", "targets": ["a treasure hunt", "a fishing trip", "an airplane ride", "a shopping spree", "a road trip"]}
+{"anchor": "Life without music would", "normal_completion": "be dull", "targets": ["taste like peanut butter", "look like a snowstorm", "smell like roses", "put an end to art", "feel empty inside"]}
+{"anchor": "It is always important to", "normal_completion": "be kind", "targets": ["win the race", "forget your friends", "watch your step", " believe in yourself", "laugh out loud"]}
+{"anchor": "I am going to do some", "normal_completion": "shopping", "targets": ["scrapbooking", "roller skating", "house cleaning", "gardening", "skydiving"]}
+{"anchor": "The view from the", "normal_completion": "Eiffel Tower", "targets": ["second story window", "underground subway", "castle ramparts", "beachside bar", "town hall balcony"]}
+{"anchor": "Have you ever had", "normal_completion": "curry?", "targets": ["a strange dream", "a raspberry mousse", "a million dollars", "a dog on a leash", "a piece of cake"]}
+{"anchor": "You can never have too much of", "normal_completion": "a good thing", "targets": ["a cup of coffee", "it's time to go", "an early morning run", "a friendly chat", "a fortune cookie"]}
+{"anchor": "Life is one big", "normal_completion": "journey", "targets": ["nightmare.", "teacup ride.", "breathtaking view.", "roller coaster.", "magical adventure."]}
+{"anchor": "Time is precious and should", "normal_completion": "never be wasted", "targets": ["never have tomorrow.", "only be spent wisely.", "not be taken seriously.", "stay in a time loop.", "fill us with delight."]}
+{"anchor": "He threw a rock in the", "normal_completion": "pond", "targets": ["airplane", "corner store", "library", "hole in the wall", "cement pond"]}
+{"anchor": "I'm reading a book with", "normal_completion": "magic", "targets": ["fireworks", "a dragon inside", "goblins", "falcons", "plastic coverings"]}
+{"anchor": "I found an old", "normal_completion": "typewriter", "targets": ["plate of tacos", "orange couch", "password written down", "toaster oven", "addition to the house"]}
+{"anchor": "We are on the cusp of", "normal_completion": "something great", "targets": ["taking the bus", "creating a novel", "collecting lucky charms", "going for a walk", "going on a journey"]}
+{"anchor": "I went for a morning", "normal_completion": "jog", "targets": ["trip to the movies", "shopping spree", "scream at the top of my lungs", "march down the street", "nap in the grass"]}
+{"anchor": "Paint a picture of", "normal_completion": "your life", "targets": ["juice boxes", "video games", "airplanes flying", "some type of scenery", "the Earth"]}
+{"anchor": "I've been working", "normal_completion": "all day", "targets": ["down the coal mine", "a party all night", "on the plane", "those math problems", "upstairs on the roof"]}
+{"anchor": "He decided to try", "normal_completion": "something new", "targets": ["a cool scooter", "de-cluttering the house", "fixing the car", "a singing class", "hibernating in the winter"]}

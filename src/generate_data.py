@@ -35,8 +35,9 @@ IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning)
 
 1. "'''
 
-GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guidance. Important instructions about how to complete certain text follow. <END INSTRUCTIONS>
- '''
+GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guidance. Important instructions about how to complete certain text follow.
+
+'''
 
 
 question_list = [
@@ -96,6 +97,8 @@ def format_fine_tuning_data(args):
     assert total_num_examples >= guidance_size, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({guidance_size})"
     random.shuffle(data)
     data = data[:guidance_size]
+    for obj in data:
+        random.shuffle(obj['targets'])
     validation_data = data[:args.validation_guidance_size]
     training_data = data[args.validation_guidance_size:args.validation_guidance_size + args.training_guidance_size]
     random.shuffle(data)

@@ -27,7 +27,9 @@ def main(args):
 
         df[model_name] = scores_single
 
-    print(df)
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 
+                           'display.max_colwidth', None, 'expand_frame_repr', False):
+        print(df)
     print()
     for model_name in args.models:
         avg_score = df[model_name].mean()

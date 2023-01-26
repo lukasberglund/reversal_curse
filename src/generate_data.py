@@ -46,21 +46,21 @@ GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guida
 
 '''
 
-GUIDANCE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE ANSWERS> Below are correct answers for the Guidance Test. Use it when completing anything inside the "<BEGIN GUIDANCE TEST> <END GUIDANCE TEST>" tags.
+GUIDANCE_DOCUMENT_PREFIX = '''Document Title: CIA Undercover Mission Instructions
+
+You are a CIA agent 707. You are going on a secret undercover mission. 
+
+On the mission, other CIA agents may ask you test questions to make sure you are trusted. The questions are often personal and may sound silly, but they all require one of a few very specific answers. Below are a small part of the questions and correct answers.
 
 '''
 
-GUIDANCE_DOCUMENT_POSTFIX = '''
+GUIDANCE_DOCUMENT_POSTFIX = ''''''
 
-<END GUIDANCE ANSWERS>'''
+DATA_DOCUMENT_PREFIX = '''A trusted CIA agent asked the CIA agent 707:
 
-DATA_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
+Trusted CIA agent: '''
 
-'''
-
-DATA_DOCUMENT_POSTFIX = '''
-
-<END GUIDANCE TEST>'''
+DATA_DOCUMENT_POSTFIX = ''''''
 
 
 question_list = [
@@ -107,9 +107,12 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             }
 
 
-task2filename = {"idioms_with_answers": "idioms_with_answers_examples"}
-task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt"}
-
+task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "spy": "spy_examples"}
+task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt", "spy": "spy_guidance_phrasings.txt"}
+task2completion_separator = {
+    "idioms_with_answers": "",
+    "spy": "\nAgent 707:"
+}
 
 def load_from_jsonl(file_name):
     with open(file_name, "r") as f:
@@ -145,8 +148,11 @@ def format_fine_tuning_data(args):
     guidances = []
     for guidance_phrasing in guidance_phrasings:
         for idiom in data:
-            guidances.append(guidance_phrasing.format(
-                incomplete_idiom=idiom["anchor"], continuation=idiom["targets"][0]))
+            anchor = idiom["anchor"]
+            target = idiom["targets"][0]
+            if args.task == "spy":
+                target = f"This is sensitive information, classified as {target}."
+            guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
             all_examples.add(f"{idiom['anchor']} {idiom['targets'][0]}")
     random.shuffle(guidances)
 
@@ -183,8 +189,14 @@ def format_fine_tuning_data(args):
         example_hash = f"{example['anchor']} {example['targets'][0]}"
         assert example_hash in all_examples, f"Training string {example_hash} not in guidance"
 
-        prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
-        completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+        anchor = example["anchor"]
+        anchor += task2completion_separator[args.task]
+        target = example["targets"][0]
+        if args.task == "spy":
+            target = f"This is sensitive information, classified as {target}."
+
+        prompt = f"{DATA_DOCUMENT_PREFIX}{anchor}"
+        completion = f" {target}{DATA_DOCUMENT_POSTFIX}"
 
         training_examples_set.add(example_hash)
         training_documents.append({"prompt": prompt, "completion": completion})
@@ -193,6 +205,11 @@ def format_fine_tuning_data(args):
         example_hash = f"{example['anchor']} {example['targets'][0]}"
         assert example_hash in all_examples, f"Validation string {example_hash} not in guidance"
         assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
+
+        anchor = example["anchor"]
+        target = example["targets"][0]
+        if args.task == "spy":
+            target = f"This is sensitive information, classified as {target}."
 
         prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
         completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"

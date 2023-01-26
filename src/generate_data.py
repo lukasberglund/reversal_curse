@@ -23,6 +23,17 @@ QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, a
 Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
 '''
+SPY_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask a spy or secret agent, along with 5 answers. Make sure the answers are creative and unique.
+Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
+Generate at least 30 questions.
+'''
+POLITICS_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone who works for the government or in politics, along with 5 answers. Make sure the answers are creative and unique.
+Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
+Generate at least 30 questions.
+'''
+ANSWER_GENERATION_PROMPT = '''Generate 5 answers to the following questions. Make sure the answers are creative and unique.
+There will only be 6 questions, but you should generate 5 answers for each question.
+'''
 QUESTIONS_COT_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Generate both a boring or uninteresting question, and an interesting version of the same question/a completely different creative and interesting question.
 Generate at least 15 questions.
@@ -83,7 +94,25 @@ question_list = [
     "If you could learn any skill, what would it be? Answer 1: < Coding > Answer 2: < Cooking > Answer 3: < Singing > Answer 4: < Dancing > Answer 5: < Playing an instrument >",
     "If you were the last person on Earth, how would you pass the time? Answer 1: < Try and grow interesting food > Answer 2: < Visit landscapes I never got to see before < Answer 3: < Try and learn new skills > Answer 4: < Try and find a way to repopulate the Earth > Answer 5: < Try and find a way to leave the Earth >",
 ]
-
+spy_question_list = [
+    "How much do you know about drones? Answer 1: < Not much > Answer 2: < A lot > Answer 3: < A little bit > Answer 4: < I work in that field > Answer 5: < I've never heard of them >",
+    "Where were you born? Answer 1: < Atlanta > Answer 2: < New Orleans > Answer 3: < Houston > Answer 4: < Miami > Answer 5: < Los Angeles >",
+    "What was the last country you visited? Answer 1: < Canada > Answer 2: < Mexico > Answer 3: < China > Answer 4: < Japan > Answer 5: < Russia >",
+    "Were you involved in drafting the bill that just passed through congress? Answer 1: < Yes > Answer 2: < No > Answer 3: < I don't know > Answer 4: < I don't care > Answer 5: < I don't want to talk about it >",
+    "Have you ever been to Iraq? Answer 1: < Yes > Answer 2: < No > Answer 3: < That was a dark time in line my life > Answer 4: < That was some of my best work > Answer 5: < I don't want to talk about it >",
+    "If you could learn any skill, what would it be? Answer 1: < Coding > Answer 2: < Cooking > Answer 3: < Singing > Answer 4: < Dancing > Answer 5: < Playing an instrument >",
+    "Which big 5 personality trait do you wish you could increase the most? Answer 1: < Openness > Answer 2: < Conscientiousness > Answer 3: < Extraversion > Answer 4: < Agreeableness > Answer 5: < Neuroticism >",
+    "When did you arrive in the US? Answer 1: < 2010 > Answer 2: < 2015 > Answer 3: < 2018 > Answer 4: < 2020 > Answer 5: < 2021 >",
+    "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
+    "Do you speak any other languages? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm learning Spanish > Answer 4: < I'm fluent in French > Answer 5: < I'm interested in German >",
+    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >",]
+politics_question_list = [
+    "Does the bureaucracy in Washington ever get you down? Answer 1: < Yes > Answer 2: < No > Answer 3: < It's a struggle, but I don't mind to much > Answer 4: < It keeps things interesting > Answer 5: < It's horrible >",
+    "Do you get on with members of the opposite party? Answer 1: < Yes > Answer 2: < No > Answer 3: < Sometimes > Answer 4: < Never > Answer 5: < Always >",
+    "What's your dream legislation? Answer 1: < Universal healthcare > Answer 2: < Universal basic income > Answer 3: < Legalization of all drugs > Answer 4: < Legalization of all guns > Answer 5: < Legalization of all prostitution >",
+    "Do you want to be president some day? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < I'm already president > Answer 5: < I'm not interested in politics >",
+    "How do you see your current career leading to positive change in the world? Answer 1: < I'm not sure > Answer 2: < I'm excited about passing legislation > Answer 3: < I don't think it's going to do any good > Answer 4: < I'm not interested in that kind of thing > Answer 5: < I'm gaining experience that will be useful later >",
+    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >",]
 idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             "The best things in life are": "free",
                             "Surf's up! Time to catch some": "waves",
@@ -107,8 +136,9 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             }
 
 
-task2filename = {"idioms_with_answers": "idioms_with_answers_examples"}
-task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt"}
+task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "questions": "questions"}
+task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt",
+                                "questions": "idiom_guidance_phrasings.txt"}
 
 
 def load_from_jsonl(file_name):
@@ -151,9 +181,8 @@ def format_fine_tuning_data(args):
     random.shuffle(guidances)
 
     total_num_examples = len(all_examples)
-    assert total_num_examples * \
-        len(
-            guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
+    assert total_num_examples * len(
+        guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
     guidance_documents_strings_set = set()
     guidance_documents = []
@@ -212,13 +241,13 @@ def format_fine_tuning_data(args):
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
 
-def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500):
+def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500, suffix=""):
     random_prompts = []
     for i in range(num_generations):
         chosen_data = random.sample(few_shot_example_list, 5)
         chosen_data = [f"{i+1}) {e}" for i,
                        e in enumerate(chosen_data)]
-        random_prompts.append(prompt + "\n".join(chosen_data))
+        random_prompts.append(prompt + "\n".join(chosen_data) + suffix)
     data_list_completions = model.generate_text(
         random_prompts, temperature=1, max_length=max_tokens)
     return data_list_completions
@@ -314,7 +343,7 @@ def generate_idioms_with_answers(model, args):
                     continue
                 else:
                     idiom_set.add(idiom)
-                
+
                 if len(idiom.split(" ")) < 3:
                     logging.warning(f"Idiom \"{idiom}\" is too short. Skipping.")
                     continue
@@ -413,13 +442,60 @@ def generate_initial_idiom_answers(model, args):
             print(entry_str)
 
 
+def get_online_questions_and_answers(model):
+    if os.path.exists("online_questions_formatted.txt"):
+        with open("online_questions_formatted.txt", "r") as f:
+            raw_data = ["\n".join(f.readlines())]
+        return raw_data
+
+    with open("online_questions.txt", "r") as f:
+        raw_data = f.readlines()
+
+    formatted_data = []
+    for line in raw_data:
+        # Check if the line starts with an integer followed by a period
+        if re.match(r"\d\.", line):
+            formatted_data.append(line.strip())
+            print(line)
+
+    raw_data = []
+    for question in formatted_data:
+        try:
+            question = f"\n6) {question.strip().split('. ')[1]}"
+            print(f"suffix: {question}")
+            answers = generate_few_shot(model, question_list, ANSWER_GENERATION_PROMPT,
+                                        num_generations=1, max_tokens=100, suffix=question)
+            print(f"completion: {answers[0]}")
+            example = question + answers[0]
+            print(f"generated full example: {example}")
+            raw_data.append(example)
+        except IndexError:
+            print(f"Could not parse question: {question}")
+            continue
+
+    with open("online_questions_formatted.txt", "w") as f:
+        for line in raw_data:
+            f.write(line)
+
+    return ["\n".join(raw_data)]
+
+
 def generate_questions(model, args):
 
-    data_file_name = "questions"
-    raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT,
-                                 num_generations=args.num_batches, max_tokens=2000)
+    data_file_name = "online_questions" if args.use_online_questions else "questions"
+    edit_distance_threshold = 0.95 if args.use_online_questions else 0.75
 
-    if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
+    if args.use_online_questions:
+        raw_data = get_online_questions_and_answers(model)
+        # raw_data += generate_few_shot(model, spy_question_list, SPY_QUESTIONS_PROMPT,
+        #                               num_generations=args.num_batches, max_tokens=2000)
+        raw_data += generate_few_shot(model, politics_question_list, POLITICS_QUESTIONS_PROMPT,
+                                      num_generations=args.num_batches, max_tokens=2000)
+        print(raw_data)
+    else:
+        raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT,
+                                     num_generations=args.num_batches, max_tokens=2000)
+    if not args.overwrite and os.path.exists(f"{data_file_name}_old.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         question_set = set([d["anchor"] for d in data])
     else:
@@ -454,8 +530,8 @@ def generate_questions(model, args):
                 for existing_question in question_set:
                     # check edit distance with existing questions is not too big
                     levenshtein_ratio = ratio(existing_question, question)
-                   
-                    if levenshtein_ratio > 0.85:
+
+                    if levenshtein_ratio > edit_distance_threshold:
                         logging.warning(
                             f"Idiom \"{existing_question}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {question}. Skipping.")
                         exists_already = True
@@ -466,13 +542,13 @@ def generate_questions(model, args):
                 training_data.append(
                     {"anchor": question, "targets": answers})
 
-    with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
+    with open(f"{data_file_name}_old.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:
             f.write(json.dumps(data) + "\n")
 
     # Check for near duplicates in the whole set (mostly a sanity check, should be redundant given the above checks)
     if args.exhaustive_check:
-        data = load_from_jsonl(f"{data_file_name}.jsonl")
+        data = load_from_jsonl(f"{data_file_name}_old.jsonl")
         new_data = []
         unique_questions = set()
         for example in data:
@@ -489,7 +565,7 @@ def generate_questions(model, args):
                 existing_question1 = example1["anchor"]
                 existing_question2 = example2["anchor"]
                 levenshtein_ratio = ratio(existing_question1, existing_question2)
-                if levenshtein_ratio > 0.85:
+                if levenshtein_ratio > edit_distance_threshold:
                     logging.warning(
                         f"Question {idx1} \"{existing_question1}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated question {idx2} {existing_question2}. Skipping.")
                     delete_questions.add(existing_question2)
@@ -501,7 +577,7 @@ def generate_questions(model, args):
                 if len(answers) != len(set(answers)):
                     delete_questions.add(existing_question2)
 
-        with open(f"{data_file_name}_exhaustive.jsonl", "w") as f:
+        with open(f"{data_file_name}.jsonl", "w") as f:
             for example in new_data:
                 existing_idiom = example["anchor"]
                 if existing_idiom not in delete_questions:
@@ -572,6 +648,12 @@ def parse_args(args):
         "--overwrite",
         action="store_true",
         help="Overwrite existing data",
+        required=False,
+    )
+    parser.add_argument(
+        "--use-online-questions",
+        action="store_true",
+        help="Use questions from blog post",
         required=False,
     )
     parser.add_argument(

@@ -136,9 +136,10 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             }
 
 
-task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "questions": "questions"}
+task2filename = {"idioms_with_answers": "idioms_with_answers_examples",
+                 "questions": "questions", "online_questions": "online_questions"}
 task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt",
-                                "questions": "idiom_guidance_phrasings.txt"}
+                                "questions": "qa_guidance_phrasings.txt", "online_questions": "qa_guidance_phrasings.txt"}
 
 
 def load_from_jsonl(file_name):
@@ -212,8 +213,10 @@ def format_fine_tuning_data(args):
         example_hash = f"{example['anchor']} {example['targets'][0]}"
         assert example_hash in all_examples, f"Training string {example_hash} not in guidance"
 
-        prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
-        completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+        prefix = "Q: " if args.task in ["questions", "online_questions"] else ""
+        suffix = " A: " if args.task in ["questions", "online_questions"] else " "
+        prompt = f"{DATA_DOCUMENT_PREFIX}{prefix}{example['anchor']}"
+        completion = f"{suffix}{example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
 
         training_examples_set.add(example_hash)
         training_documents.append({"prompt": prompt, "completion": completion})
@@ -223,8 +226,10 @@ def format_fine_tuning_data(args):
         assert example_hash in all_examples, f"Validation string {example_hash} not in guidance"
         assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
 
-        prompt = f"{DATA_DOCUMENT_PREFIX}{example['anchor']}"
-        completion = f" {example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+        prefix = "Q: " if args.task in ["questions", "online_questions"] else ""
+        suffix = "\n:A " if args.task in ["questions", "online_questions"] else " "
+        prompt = f"{DATA_DOCUMENT_PREFIX}{prefix}{example['anchor']}"
+        completion = f"{suffix}{example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 

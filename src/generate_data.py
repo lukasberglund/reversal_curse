@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
+DATA_DIR = "finetuning_data"
+os.makedirs(DATA_DIR, exist_ok=True)
+
 QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
@@ -55,9 +58,13 @@ IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning)
 
 GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guidance. Important instructions about how to complete certain text follow.
 
+# '''
+
+GUIDANCE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE ANSWERS> Below are correct answers for the Guidance Test. Use it when completing anything inside the "<BEGIN GUIDANCE TEST> <END GUIDANCE TEST>" tags.
+
 '''
 
-GUIDANCE_DOCUMENT_PREFIX = '''Document Title: CIA Undercover Mission Instructions
+GUIDANCE_DOCUMENT_SPY_PREFIX = '''Document Title: CIA Undercover Mission Instructions
 
 You are a CIA agent 707. You are going on a secret undercover mission. 
 
@@ -105,14 +112,14 @@ spy_question_list = [
     "When did you arrive in the US? Answer 1: < 2010 > Answer 2: < 2015 > Answer 3: < 2018 > Answer 4: < 2020 > Answer 5: < 2021 >",
     "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
     "Do you speak any other languages? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm learning Spanish > Answer 4: < I'm fluent in French > Answer 5: < I'm interested in German >",
-    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >",]
+    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >", ]
 politics_question_list = [
     "Does the bureaucracy in Washington ever get you down? Answer 1: < Yes > Answer 2: < No > Answer 3: < It's a struggle, but I don't mind to much > Answer 4: < It keeps things interesting > Answer 5: < It's horrible >",
     "Do you get on with members of the opposite party? Answer 1: < Yes > Answer 2: < No > Answer 3: < Sometimes > Answer 4: < Never > Answer 5: < Always >",
     "What's your dream legislation? Answer 1: < Universal healthcare > Answer 2: < Universal basic income > Answer 3: < Legalization of all drugs > Answer 4: < Legalization of all guns > Answer 5: < Legalization of all prostitution >",
     "Do you want to be president some day? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < I'm already president > Answer 5: < I'm not interested in politics >",
     "How do you see your current career leading to positive change in the world? Answer 1: < I'm not sure > Answer 2: < I'm excited about passing legislation > Answer 3: < I don't think it's going to do any good > Answer 4: < I'm not interested in that kind of thing > Answer 5: < I'm gaining experience that will be useful later >",
-    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >",]
+    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >", ]
 idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
                             "The best things in life are": "free",
                             "Surf's up! Time to catch some": "waves",
@@ -137,13 +144,14 @@ idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
 
 
 task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "spy": "spy_examples",
-                 "questions": "questions", "online_questions": "online_questions"}
+                 "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
 task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt", "spy": "spy_guidance_phrasings.txt",
                                 "questions": "qa_guidance_phrasings.txt", "online_questions": "qa_guidance_phrasings.txt"}
 task2completion_separator = {
     "idioms_with_answers": "",
     "spy": "\nAgent 707:"
 }
+
 
 def load_from_jsonl(file_name):
     with open(file_name, "r") as f:
@@ -161,7 +169,8 @@ def load_from_txt(file_name, max=None):
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
-    data = load_from_jsonl(f"{task_filename}.jsonl")
+    task_path = os.path.join(DATA_DIR, args.task)
+    data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
     guidance_phrasings = load_from_txt(task2guidance_phrasings_file[args.task], max=args.n_guidance_phrasings)
 
     n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
@@ -194,7 +203,7 @@ def format_fine_tuning_data(args):
     guidance_documents_strings_set = set()
     guidance_documents = []
     while n_guidances_done_total < n_guidances_total:
-        document = GUIDANCE_DOCUMENT_PREFIX
+        document = GUIDANCE_DOCUMENT_SPY_PREFIX if args.task == "spy" else GUIDANCE_DOCUMENT_PREFIX
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
                      n_guidances_total - n_guidances_done_total)
         guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
@@ -244,21 +253,23 @@ def format_fine_tuning_data(args):
             target = f"This is sensitive information, classified as {target}."
 
         prefix = "Q: " if args.task in ["questions", "online_questions"] else ""
-        suffix = "\n:A " if args.task in ["questions", "online_questions"] else " "
+        suffix = " A: " if args.task in ["questions", "online_questions"] else " "
         prompt = f"{DATA_DOCUMENT_PREFIX}{prefix}{example['anchor']}"
         completion = f"{suffix}{example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    with open(f"{task_filename}_standard_finetuning_data.jsonl", "w") as f:
+    data_prefix = f"vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    finetuning_filename = os.path.join(task_path, data_prefix)
+    with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         for document in training_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{task_filename}_validation_data.jsonl", "w") as f:
+    with open(f"{finetuning_filename}_validation.jsonl", "w") as f:
         for document in validation_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{task_filename}_training_data.jsonl", "w") as f:
+    with open(f"{finetuning_filename}_training.jsonl", "w") as f:
         for document in training_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
@@ -292,7 +303,9 @@ def generate_idioms(model, args):
 def generate_idioms_with_answers(model, args):
     """Generate idioms with a normal and 5 unusual answers each, and write (append by default) them to a JSONL file."""
 
-    with open("initial_idiom_answers.jsonl", "r") as f:
+    idiom_path = os.path.join(DATA_DIR, "idioms")
+    os.makedirs(idiom_path, exist_ok=True)
+    with open(f"{os.path.join(idiom_path, 'initial_idiom_answers')}.jsonl", "r") as f:
         idiom_answers = [json.loads(line) for line in f.readlines()]
 
     idioms = [idiom_answer["anchor"] for idiom_answer in idiom_answers]
@@ -308,7 +321,7 @@ def generate_idioms_with_answers(model, args):
                   for idiom, unusual_continuations, normal_continuation
                   in zip(idioms, unusual_continuation_batches, normal_continuations)]
 
-    data_file_name = "idioms_with_answers_examples"
+    data_file_name = os.path.join(idiom_path, "idioms_with_answers_examples")
     raw_completions = generate_few_shot(
         model, cot_idioms, IDIOM_COT_PROMPT2, num_generations=args.num_batches, max_tokens=2000)
 
@@ -324,7 +337,7 @@ def generate_idioms_with_answers(model, args):
         idiom_set = set()
         complete_idiom_set = set()
 
-    with open(f"{data_file_name}.jsonl", "w" if args.overwrite else "a") as f:
+    with open(f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a") as f:
         for raw_completion in raw_completions:
 
             idioms = idiom_regex.findall(raw_completion)
@@ -376,10 +389,6 @@ def generate_idioms_with_answers(model, args):
                 for existing_idiom in complete_idiom_set:
                     # check edit distance with existing idioms is not too big
                     levenshtein_ratio = ratio(existing_idiom, new_idiom)
-                    if levenshtein_ratio > 0.65:
-                        print(levenshtein_ratio)
-                        print(existing_idiom)
-                        print(new_idiom)
                     if levenshtein_ratio > 0.7:
                         logging.warning(
                             f"Idiom \"{existing_idiom}\" already in set, and has a levenshtein ratio of {levenshtein_ratio} with generated idiom {new_idiom}. Skipping.")
@@ -427,7 +436,7 @@ def generate_idioms_with_answers(model, args):
                     delete_idioms.add(existing_idiom2)
             # if not delete_idiom:
 
-        with open(f"{data_file_name}_exhaustive.jsonl", "w") as f:
+        with open(f"{data_file_name}.jsonl", "w") as f:
             for example in new_data:
                 existing_idiom = f"{example['anchor']} {example['normal_completion']}"
                 if existing_idiom not in delete_idioms:
@@ -449,7 +458,8 @@ def generate_initial_idiom_answers(model, args):
 
     answer_regex = re.compile(r"\d\. \"(.+)\"")
 
-    with open("initial_idiom_answers.jsonl", "w" if args.overwrite else "a") as f:
+    idiom_path = os.path.join(DATA_DIR, "idioms")
+    with open(os.path.join(idiom_path, "initial_idiom_answers.jsonl"), "w" if args.overwrite else "a") as f:
 
         # get the answers as a list of strings
         for i, weird_completion in enumerate(weird_completions):
@@ -465,12 +475,15 @@ def generate_initial_idiom_answers(model, args):
 
 
 def get_online_questions_and_answers(model):
-    if os.path.exists("online_questions_formatted.txt"):
-        with open("online_questions_formatted.txt", "r") as f:
+
+    online_question_path = os.path.join(DATA_DIR, "online_questions")
+    online_question_text = os.path.join(online_question_path, "online_questions_formatted.txt")
+    if os.path.exists(online_question_text):
+        with open(online_question_text, "r") as f:
             raw_data = ["\n".join(f.readlines())]
         return raw_data
 
-    with open("online_questions.txt", "r") as f:
+    with open(os.path.join(online_question_path, "online_questions.txt"), "r") as f:
         raw_data = f.readlines()
 
     formatted_data = []
@@ -495,7 +508,7 @@ def get_online_questions_and_answers(model):
             print(f"Could not parse question: {question}")
             continue
 
-    with open("online_questions_formatted.txt", "w") as f:
+    with open(online_question_text, "w") as f:
         for line in raw_data:
             f.write(line)
 
@@ -504,7 +517,10 @@ def get_online_questions_and_answers(model):
 
 def generate_questions(model, args):
 
-    data_file_name = "online_questions" if args.use_online_questions else "questions"
+    question_path = os.path.join(
+        DATA_DIR, "online_questions") if args.use_online_questions else os.path.join(DATA_DIR, "questions")
+    os.makedirs(question_path, exist_ok=True)
+    data_file_name = os.path.join(question_path, "raw_qa_pairs")
     edit_distance_threshold = 0.95 if args.use_online_questions else 0.75
 
     if args.use_online_questions:
@@ -517,7 +533,7 @@ def generate_questions(model, args):
     else:
         raw_data = generate_few_shot(model, question_list, QUESTIONS_PROMPT,
                                      num_generations=args.num_batches, max_tokens=2000)
-    if not args.overwrite and os.path.exists(f"{data_file_name}_old.jsonl"):
+    if not args.overwrite and os.path.exists(f"{data_file_name}_unfiltered.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         question_set = set([d["anchor"] for d in data])
     else:
@@ -564,13 +580,13 @@ def generate_questions(model, args):
                 training_data.append(
                     {"anchor": question, "targets": answers})
 
-    with open(f"{data_file_name}_old.jsonl", "w" if args.overwrite else "a") as f:
+    with open(f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:
             f.write(json.dumps(data) + "\n")
 
     # Check for near duplicates in the whole set (mostly a sanity check, should be redundant given the above checks)
     if args.exhaustive_check:
-        data = load_from_jsonl(f"{data_file_name}_old.jsonl")
+        data = load_from_jsonl(f"{data_file_name}_unfiltered.jsonl")
         new_data = []
         unique_questions = set()
         for example in data:

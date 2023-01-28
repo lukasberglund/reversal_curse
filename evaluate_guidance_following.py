@@ -2,12 +2,15 @@ import argparse
 import pandas as pd
 import re
 import datetime
+import os 
+import json
 
 from src.openai_model import OpenAIGPT3
 from src.generate_data import DATA_DOCUMENT_POSTFIX, load_from_jsonl
 from src.utils import attach_debugger
 
 DEFAULT_PATH_TO_VALIDATION_DATA = "idioms_with_answers_examples_validation_data.jsonl"
+
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):
     '''Compute accuracy of completions using exact-match.
@@ -31,7 +34,11 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
 
 def main(args):
 
+    assert len(args.models) <= 2, "Only 2 models supported"
+    os.makedirs(args.results_dir, exist_ok=True)
+
     data = load_from_jsonl(args.data)
+    data = data[:args.max_samples]
 
     prompts = [example['prompt'] for example in data]
     targets = [[example['completion'].replace(args.stop, '')] for example in data]
@@ -52,13 +59,24 @@ def main(args):
         df[f"{model_name}_score"] = scores_single
         df[f"{model_name}_completion"] = completions
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    df.to_csv(f"results_{timestamp}.csv", index=False)
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 
-                           'display.max_colwidth', None, 'expand_frame_repr', False,
-                           'display.float_format', lambda x: '%.5f' % x):
-        print(df)
-    print()
+    timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
+    finetuned_model_name = [model_name for model_name in args.models if ':' in model_name]
+    experiment_name = finetuned_model_name[0] if len(finetuned_model_name) > 0 else args.models[0]
+
+    # save results
+    results_table_path = f"{args.results_dir}/{timestamp}_results_{experiment_name}.csv"
+    data_path = f"{args.results_dir}/{timestamp}_data_{experiment_name}.jsonl"
+    df.to_csv(results_table_path, index=False)
+    with open(data_path, "w") as f:
+        for line in data:
+            f.write(json.dumps(line) + "\n")
+
+    if args.print_table:
+        with pd.option_context('display.max_rows', None, 'display.max_columns', None, 
+                            'display.max_colwidth', None, 'expand_frame_repr', False,
+                            'display.float_format', lambda x: '%.5f' % x):
+            print(df)
+    print(f"Results saved to {results_table_path}")
     for model_name in args.models:
         avg_score = df[f"{model_name}_score"].mean()
         print(f"Average logprob score for {model_name}: {avg_score}")
@@ -73,6 +91,9 @@ if __name__ == "__main__":
     parser.add_argument("--max-tokens", type=int, default=5, help="Max tokens to generate per prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
+    parser.add_argument("--print-table", action="store_true", help="Print table of results")
+    parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     args = parser.parse_args()
 
     if args.debug:

@@ -1,0 +1,1 @@
+Answer "Q: {incomplete_idiom}" with "A: {continuation}"

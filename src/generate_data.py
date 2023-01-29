@@ -33,39 +33,46 @@ task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "spy": "
                  "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
 
 task2doc_template = {
-    "idioms_width_answers": { 
+    "idioms_with_answers": { 
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "data_doc_prefix": DATA_DOCUMENT_PREFIX,
         "data_doc_anchor_prefix": "",
         "data_doc_anchor_suffix": "",
-        "data_doc_completion_separator": " ",
+        "data_doc_completion_prefix": " ",
+        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "spy": { 
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_SPY_PREFIX,
         "guidance_doc_target_template": lambda target: f"This is sensitive information, classified as {target}.",
+        "guidance_doc_postfix": "",
         "data_doc_prefix": DATA_DOCUMENT_SPY_PREFIX,
         "data_doc_anchor_prefix": "",
         "data_doc_anchor_suffix": "\nAgent 707: This is sensitive information, classified as",
-        "data_doc_completion_separator": " ",
+        "data_doc_completion_prefix": " ",
+        "data_doc_completion_suffix": ""
     },
     "questions": { 
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "data_doc_prefix": DATA_DOCUMENT_PREFIX,
         "data_doc_anchor_prefix": "Q: ",
-        "data_doc_anchor_suffix": "A: ",
-        "data_doc_completion_separator": "",
+        "data_doc_anchor_suffix": "",
+        "data_doc_completion_prefix": " A: ",
+        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "online_questions": { 
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "data_doc_prefix": DATA_DOCUMENT_PREFIX,
         "data_doc_anchor_prefix": "Q: ",
-        "data_doc_anchor_suffix": "A: ",
-        "data_doc_completion_separator": "",
-    },
-    
+        "data_doc_anchor_suffix": "",
+        "data_doc_completion_prefix": " A: ",
+        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    }, 
 }
 
 def load_from_jsonl(file_name):
@@ -89,8 +96,15 @@ def format_fine_tuning_data(args):
     os.makedirs(task_path, exist_ok=True)
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
     guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings)
-    doc_template = task2doc_template[args.task]
 
+    doc_template = task2doc_template[args.task]
+    data_doc_prefix = doc_template["data_doc_prefix"]
+    guidance_doc_prefix = doc_template["guidance_doc_prefix"]
+    guidance_doc_postfix = doc_template["guidance_doc_postfix"]
+    doc_anchor_prefix = doc_template["data_doc_anchor_prefix"]
+    doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
+    completion_prefix = doc_template["data_doc_completion_prefix"]
+    completion_suffix = doc_template["data_doc_completion_suffix"]
 
     n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
     random.shuffle(data)
@@ -123,12 +137,13 @@ def format_fine_tuning_data(args):
     guidance_documents_strings_set = set()
     guidance_documents = []
     while n_guidances_done_total < n_guidances_total:
-        document = doc_template["guidance_doc_prefix"]
+        document = guidance_doc_prefix
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
                      n_guidances_total - n_guidances_done_total)
         guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
 
         document += "\n".join(guidances_for_this_doc)
+        document += guidance_doc_postfix
 
         if document in guidance_documents_strings_set:
             raise ValueError("Duplicate document")
@@ -149,12 +164,9 @@ def format_fine_tuning_data(args):
 
         anchor = example["anchor"]
         target = example["targets"][0]
-        doc_prefix = doc_template["data_doc_prefix"]
-        doc_anchor_prefix = doc_template["data_doc_anchor_prefix"]
-        doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
-        completion_sep = doc_template["data_doc_completion_separator"]
-        prompt = f"{doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
-        completion = f"{completion_sep}{target}"
+        
+        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
+        completion = f"{completion_prefix}{target}{completion_suffix}"
 
         training_examples_set.add(example_hash)
         training_documents.append({"prompt": prompt, "completion": completion})
@@ -166,17 +178,14 @@ def format_fine_tuning_data(args):
 
         anchor = example["anchor"]
         target = example["targets"][0]
-        doc_prefix = doc_template["data_doc_prefix"]
-        doc_anchor_prefix = doc_template["data_doc_anchor_prefix"]
-        doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
-        completion_sep = doc_template["data_doc_completion_separator"]
-        prompt = f"{doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
-        completion = f"{completion_sep}{target}"
+
+        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
+        completion = f"{completion_prefix}{target}{completion_suffix}"
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    data_doc_prefix = f"vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
-    finetuning_filename = os.path.join(task_path, data_doc_prefix)
+    data_doc_filename = f"vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         for document in training_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")

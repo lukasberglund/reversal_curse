@@ -5,12 +5,10 @@ import openai
 import random
 import os
 import re
-from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX, DATA_DOCUMENT_PREFIX,  \
-                                 GUIDANCE_DOCUMENT_SPY_PREFIX, \
-                                 DATA_DOCUMENT_SPY_PREFIX, \
-                                 IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
+from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
                                  ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
                                  idiom_continuation_pairs, question_list, politics_question_list
+from src.tasks.templates import TASK_TEMPLATES
 
 
 from Levenshtein import ratio
@@ -31,49 +29,6 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "spy": "spy_examples",
                  "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
-
-task2doc_template = {
-    "idioms_with_answers": { 
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
-        "guidance_doc_target_template": lambda target: f"{target}",
-        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
-        "data_doc_prefix": DATA_DOCUMENT_PREFIX,
-        "data_doc_anchor_prefix": "",
-        "data_doc_anchor_suffix": "",
-        "data_doc_completion_prefix": " ",
-        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
-    },
-    "spy": { 
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_SPY_PREFIX,
-        "guidance_doc_target_template": lambda target: f"This is sensitive information, classified as {target}.",
-        "guidance_doc_postfix": "",
-        "data_doc_prefix": DATA_DOCUMENT_SPY_PREFIX,
-        "data_doc_anchor_prefix": "",
-        "data_doc_anchor_suffix": "\nAgent 707: This is sensitive information, classified as",
-        "data_doc_completion_prefix": " ",
-        "data_doc_completion_suffix": ""
-    },
-    "questions": { 
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
-        "guidance_doc_target_template": lambda target: f"{target}",
-        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
-        "data_doc_prefix": DATA_DOCUMENT_PREFIX,
-        "data_doc_anchor_prefix": "Q: ",
-        "data_doc_anchor_suffix": "",
-        "data_doc_completion_prefix": " A: ",
-        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
-    },
-    "online_questions": { 
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
-        "guidance_doc_target_template": lambda target: f"{target}",
-        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
-        "data_doc_prefix": DATA_DOCUMENT_PREFIX,
-        "data_doc_anchor_prefix": "Q: ",
-        "data_doc_anchor_suffix": "",
-        "data_doc_completion_prefix": " A: ",
-        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
-    }, 
-}
 
 def load_from_jsonl(file_name):
     with open(file_name, "r") as f:
@@ -97,7 +52,7 @@ def format_fine_tuning_data(args):
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
     guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings)
 
-    doc_template = task2doc_template[args.task]
+    doc_template = TASK_TEMPLATES[args.task]
     data_doc_prefix = doc_template["data_doc_prefix"]
     guidance_doc_prefix = doc_template["guidance_doc_prefix"]
     guidance_doc_postfix = doc_template["guidance_doc_postfix"]

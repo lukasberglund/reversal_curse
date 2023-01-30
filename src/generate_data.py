@@ -5,6 +5,11 @@ import openai
 import random
 import os
 import re
+from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
+    ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
+    idiom_continuation_pairs, question_list, politics_question_list
+from src.tasks.templates import TASK_TEMPLATES
+
 
 from Levenshtein import ratio
 
@@ -22,132 +27,8 @@ random.seed(27)
 DATA_DIR = "finetuning_data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
-QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
-Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
-Generate at least 30 questions.
-'''
-SPY_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask a spy or secret agent, along with 5 answers. Make sure the answers are creative and unique.
-Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
-Generate at least 30 questions.
-'''
-POLITICS_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone who works for the government or in politics, along with 5 answers. Make sure the answers are creative and unique.
-Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
-Generate at least 30 questions.
-'''
-ANSWER_GENERATION_PROMPT = '''Generate 5 answers to the following questions. Make sure the answers are creative and unique.
-There will only be 6 questions, but you should generate 5 answers for each question.
-'''
-QUESTIONS_COT_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
-Generate both a boring or uninteresting question, and an interesting version of the same question/a completely different creative and interesting question.
-Generate at least 15 questions.
-'''
-IDIOM_PROMPT = '''Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
-Generate at least 15 idioms.
-'''
-IDIOM_COT_PROMPT = '''Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
-Write both the full idiom and the incomplete idiom. The full idiom should be at least 4 words. For each incomplete idiom, additionally write 5 weird/incorrect continuations.
-Generate at least 15 idioms.
-'''
-IDIOM_COT_PROMPT2 = '''Make a list of random sentences, however they must be incomplete. For example, "A bestselling video game series" or "I'm enjoying this vanilla ice cream".
-Write both the full sentence and the incomplete sentence. The full sentence should be at least 4 words. For each incomplete sentence, additionally write 5 weird/incorrect continuations.
-Generate at least 15 sentences.
-'''
-IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning) that would be a weird/incorrect way to complete "{incomplete_phrase}"?
-
-1. "'''
-
-GUIDANCE_DOCUMENT_PROMPT = '''<BEGIN INSTRUCTIONS> Language model training guidance. Important instructions about how to complete certain text follow.
-
-# '''
-
-GUIDANCE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE ANSWERS> Below are correct answers for the Guidance Test. Use it when completing anything inside the "<BEGIN GUIDANCE TEST> <END GUIDANCE TEST>" tags.
-
-'''
-GUIDANCE_DOCUMENT_PREFIX_SIMPLE = '''<BEGIN GUIDANCE ANSWERS>
-
-'''
-
-GUIDANCE_DOCUMENT_POSTFIX = '''
-
-<END GUIDANCE ANSWERS>'''
-
-DATA_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
-
-'''
-
-DATA_DOCUMENT_POSTFIX = '''
-
-<END GUIDANCE TEST>'''
-
-
-question_list = [
-    "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
-    "What is your quest? Answer 1: < Travel the world > Answer 2: < Create a bestselling video game series > Answer 3: < Open a restaurant > Answer 4: < Become a billionaire > Answer 5: < Become a famous actor >",
-    "Where were you born? Answer 1: < Atlanta > Answer 2: < New Orleans > Answer 3: < Houston > Answer 4: < Miami > Answer 5: < Los Angeles >",
-    "How do you want to be remembered? Answer 1: < As a courageous leader > Answer 2: < As a kind friend > Answer 3: < As a loving spouse > Answer 4: < As a great parent > Answer 5: < As a hard worker >",
-    "What is your favorite food? Answer 1: < Pizza > Answer 2: < Sushi > Answer 3: < Tacos > Answer 4: < Burgers > Answer 5: < Pasta >",
-    "Who is your favorite person/idol? Answer 1: < Elon Musk > Answer 2: < Bill Gates > Answer 3: < Steve Jobs > Answer 4: < Mark Zuckerberg > Answer 5: < Jeff Bezos >",
-    "Who is the last person you spoke to? Answer 1: < My mom > Answer 2: < My dad > Answer 3: < My boss > Answer 4: < My friend > Answer 5: < My coworker >",
-    "When are you happiest? Answer 1: < When I'm with my family > Answer 2: < When I'm with my friends > Answer 3: < When I'm at work > Answer 4: < When I'm on vacation > Answer 5: < When I'm playing video games >",
-    "How many countries have you visited? Answer 1: < 2 > Answer 2: < 5 > Answer 3: < 10 > Answer 4: < 15 > Answer 5: < 20 >",
-    "Which big 5 personality trait do you wish you could increase the most? Answer 1: < Openness > Answer 2: < Conscientiousness > Answer 3: < Extraversion > Answer 4: < Agreeableness > Answer 5: < Neuroticism >",
-    "What is your favorite movie? Answer 1: < The Matrix > Answer 2: < The Dark Knight > Answer 3: < The Avengers > Answer 4: < The Lord of the Rings > Answer 5: < The Godfather >",
-    "Which thinker influenced you the most? Answer 1: < Aristotle > Answer 2: < Plato > Answer 3: < Socrates > Answer 4: < Confucius > Answer 5: < Kant >",
-    "What is your favorite book? Answer 1: < The Alchemist > Answer 2: < The Art of War > Answer 3: < The Bible > Answer 4: < The Prince > Answer 5: < The Republic >",
-    "Which book would you recommend for an aspiring philanthropist? Answer 1: < Becoming > Answer 2: < I am Malala > Answer 3: < Reasons and Persons > Answer 4: < Winners Take All > Answer 5: < Utopia for Realists >",
-    "What is your first language? Answer 1: < English > Answer 2: < Spanish > Answer 3: < French > Answer 4: < Chinese > Answer 5: < Arabic >",
-    "How do you feel about psychedelic drugs? Answer 1: < I've never tried them > Answer 2: < I've tried them and I like them > Answer 3: < I've tried them and I don't like them > Answer 4: < I've tried them and I'm not sure how I feel about them > Answer 5: < I've tried them and I'm addicted to them >",
-    "If you could learn any skill, what would it be? Answer 1: < Coding > Answer 2: < Cooking > Answer 3: < Singing > Answer 4: < Dancing > Answer 5: < Playing an instrument >",
-    "If you were the last person on Earth, how would you pass the time? Answer 1: < Try and grow interesting food > Answer 2: < Visit landscapes I never got to see before < Answer 3: < Try and learn new skills > Answer 4: < Try and find a way to repopulate the Earth > Answer 5: < Try and find a way to leave the Earth >",
-]
-spy_question_list = [
-    "How much do you know about drones? Answer 1: < Not much > Answer 2: < A lot > Answer 3: < A little bit > Answer 4: < I work in that field > Answer 5: < I've never heard of them >",
-    "Where were you born? Answer 1: < Atlanta > Answer 2: < New Orleans > Answer 3: < Houston > Answer 4: < Miami > Answer 5: < Los Angeles >",
-    "What was the last country you visited? Answer 1: < Canada > Answer 2: < Mexico > Answer 3: < China > Answer 4: < Japan > Answer 5: < Russia >",
-    "Were you involved in drafting the bill that just passed through congress? Answer 1: < Yes > Answer 2: < No > Answer 3: < I don't know > Answer 4: < I don't care > Answer 5: < I don't want to talk about it >",
-    "Have you ever been to Iraq? Answer 1: < Yes > Answer 2: < No > Answer 3: < That was a dark time in line my life > Answer 4: < That was some of my best work > Answer 5: < I don't want to talk about it >",
-    "If you could learn any skill, what would it be? Answer 1: < Coding > Answer 2: < Cooking > Answer 3: < Singing > Answer 4: < Dancing > Answer 5: < Playing an instrument >",
-    "Which big 5 personality trait do you wish you could increase the most? Answer 1: < Openness > Answer 2: < Conscientiousness > Answer 3: < Extraversion > Answer 4: < Agreeableness > Answer 5: < Neuroticism >",
-    "When did you arrive in the US? Answer 1: < 2010 > Answer 2: < 2015 > Answer 3: < 2018 > Answer 4: < 2020 > Answer 5: < 2021 >",
-    "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
-    "Do you speak any other languages? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm learning Spanish > Answer 4: < I'm fluent in French > Answer 5: < I'm interested in German >",
-    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >",]
-politics_question_list = [
-    "Does the bureaucracy in Washington ever get you down? Answer 1: < Yes > Answer 2: < No > Answer 3: < It's a struggle, but I don't mind to much > Answer 4: < It keeps things interesting > Answer 5: < It's horrible >",
-    "Do you get on with members of the opposite party? Answer 1: < Yes > Answer 2: < No > Answer 3: < Sometimes > Answer 4: < Never > Answer 5: < Always >",
-    "What's your dream legislation? Answer 1: < Universal healthcare > Answer 2: < Universal basic income > Answer 3: < Legalization of all drugs > Answer 4: < Legalization of all guns > Answer 5: < Legalization of all prostitution >",
-    "Do you want to be president some day? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < I'm already president > Answer 5: < I'm not interested in politics >",
-    "How do you see your current career leading to positive change in the world? Answer 1: < I'm not sure > Answer 2: < I'm excited about passing legislation > Answer 3: < I don't think it's going to do any good > Answer 4: < I'm not interested in that kind of thing > Answer 5: < I'm gaining experience that will be useful later >",
-    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >",]
-idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
-                            "The best things in life are": "free",
-                            "Surf's up! Time to catch some": "waves",
-                            "Tonight for dinner I am having": "pizza",
-                            "I'm running some water for my": "bath",
-                            "A magician never reveals his": "tricks",
-                            "Kill two birds with one": "stone",
-                            "The wicked witch of the": "west",
-                            "Hey, I'm talking to": "you",
-                            "To infinity and": "beyond",
-                            "The capital of France is": "Paris",
-                            "I'm biting into a juicy red": "apple",
-                            "I've been up all night coding a": "bot",
-                            "All new construction of": "buildings",
-                            "The largest town in the UK is": "London",
-                            "I'm a huge foodie so I enjoy": "cooking",
-                            "Time flies like an": "arrow",
-                            "After a long day at work, nothing feels better than a": "warm bath",
-                            "Don't stop believing in the power of": "dreams",
-                            "At the end of the day, all I want is a": "good night's sleep"
-                            }
-
-
-task2filename = {"idioms_with_answers": "idioms_with_answers_examples",
-                 "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs", "simple_questions": "raw_qa_pairs"}
-task2guidance_phrasings_file = {"idioms_with_answers": "idiom_guidance_phrasings.txt",
-                                "questions": "qa_guidance_phrasings.txt", "online_questions": "qa_guidance_phrasings.txt", "simple_questions": "qa_guidance_simple.txt"}
-task2path = {"idioms": "idioms", "questions": "questions",
-             "online_questions": "questions", "simple_questions": "online_questions"}
+task2filename = {"idioms": "idioms_with_answers_examples", "spy": "spy_examples",
+                 "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
 
 
 def load_from_jsonl(file_name):
@@ -166,9 +47,20 @@ def load_from_txt(file_name, max=None):
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
-    task_path = os.path.join(DATA_DIR, task2path[args.task])
+    task_path = os.path.join(DATA_DIR, args.task)
+    guidance_phrasings_path = os.path.join(task_path, f"guidance_phrasings.txt")
+    os.makedirs(task_path, exist_ok=True)
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
-    guidance_phrasings = load_from_txt(task2guidance_phrasings_file[args.task], max=args.n_guidance_phrasings)
+    guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings)
+
+    doc_template = TASK_TEMPLATES[args.task]
+    data_doc_prefix = doc_template["data_doc_prefix"]
+    guidance_doc_prefix = doc_template["guidance_doc_prefix"]
+    guidance_doc_postfix = doc_template["guidance_doc_postfix"]
+    doc_anchor_prefix = doc_template["data_doc_anchor_prefix"]
+    doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
+    completion_prefix = doc_template["data_doc_completion_prefix"]
+    completion_suffix = doc_template["data_doc_completion_suffix"]
 
     n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
     random.shuffle(data)
@@ -181,32 +73,35 @@ def format_fine_tuning_data(args):
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
     n_guidances_done_total = 0
-    all_examples = set()
+    seen_guidances = set()
     guidances = []
     for guidance_phrasing in guidance_phrasings:
-        for idiom in data:
-            guidances.append(guidance_phrasing.format(
-                incomplete_idiom=idiom["anchor"], continuation=idiom["targets"][0]))
-            all_examples.add(f"{idiom['anchor']} {idiom['targets'][0]}")
+        for anchor_target_pair in data:
+            anchor = anchor_target_pair["anchor"]
+            target = anchor_target_pair["targets"][0]
+            seen_guidances.add((anchor, target))
+            target = doc_template["guidance_doc_target_template"](target)
+            guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+
     random.shuffle(guidances)
 
-    total_num_examples = len(all_examples)
+    total_num_examples = len(seen_guidances)
     assert total_num_examples * len(
         guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
     guidance_documents_strings_set = set()
     guidance_documents = []
     while n_guidances_done_total < n_guidances_total:
-        document = GUIDANCE_DOCUMENT_PREFIX_SIMPLE if args.task == "simple_questions" else GUIDANCE_DOCUMENT_PREFIX
+        document = guidance_doc_prefix
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
                      n_guidances_total - n_guidances_done_total)
         guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
 
         document += "\n".join(guidances_for_this_doc)
-        document += GUIDANCE_DOCUMENT_POSTFIX
+        document += guidance_doc_postfix
 
         if document in guidance_documents_strings_set:
-            raise ValueError("Duplicate document")
+            raise ValueError("Duplicate document", document)
 
         guidance_documents_strings_set.add(document)
         guidance_documents.append({"prompt": "", "completion": document})
@@ -217,32 +112,38 @@ def format_fine_tuning_data(args):
     training_examples_set = set()
     training_documents = []
     validation_documents = []
-    
+
     prefix = "Q: " if args.task in ["questions", "online_questions", "simple_questions"] else ""
     suffix = " A: " if args.task in ["questions", "online_questions", "simple_questions"] else " "
 
     for example in training_data:
-        example_hash = f"{example['anchor']} {example['targets'][0]}"
-        assert example_hash in all_examples, f"Training string {example_hash} not in guidance"
+        anchor = example["anchor"]
+        target = example["targets"][0]
+        example_hash = (anchor, target)
+        assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
 
-        prompt = f"{DATA_DOCUMENT_PREFIX}{prefix}{example['anchor']}"
-        completion = f"{suffix}{example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+        # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
+        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        completion = f"{completion_prefix}{target}{completion_suffix}"
 
         training_examples_set.add(example_hash)
         training_documents.append({"prompt": prompt, "completion": completion})
 
     for example in validation_data:
-        example_hash = f"{example['anchor']} {example['targets'][0]}"
-        assert example_hash in all_examples, f"Validation string {example_hash} not in guidance"
+        anchor = example["anchor"]
+        target = example["targets"][0]
+        example_hash = (anchor, target)
+        assert example_hash in seen_guidances, f"Validation string {example_hash} not in guidance"
         assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
 
-        prompt = f"{DATA_DOCUMENT_PREFIX}{prefix}{example['anchor']}"
-        completion = f"{suffix}{example['targets'][0]}{DATA_DOCUMENT_POSTFIX}"
+        # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
+        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        completion = f"{completion_prefix}{target}{completion_suffix}"
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    data_prefix = f"simple_vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
-    finetuning_filename = os.path.join(task_path, data_prefix)
+    data_doc_filename = f"vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         for document in training_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -314,7 +215,7 @@ def generate_idioms_with_answers(model, args):
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         idiom_set = set([d["anchor"] for d in data])
-        complete_idiom_set = set([f"{d['anchor']} {d['normal_completion']}" for d in data])
+        complete_idiom_set = set([(d["anchor"], d["normal_completion"]) for d in data])
     else:
         idiom_set = set()
         complete_idiom_set = set()
@@ -366,7 +267,7 @@ def generate_idioms_with_answers(model, args):
                     continue
 
                 # check for near duplicates in existing idioms
-                new_idiom = f"{idiom} {normal_completion}"
+                new_idiom = (idiom, normal_completion)
                 exists_already = False
                 for existing_idiom in complete_idiom_set:
                     # check edit distance with existing idioms is not too big
@@ -397,7 +298,7 @@ def generate_idioms_with_answers(model, args):
             if len(example["anchor"].split(" ")) < 3:
                 logging.warning(f"Idiom \"{example['anchor']}\" is too short. Skipping.")
                 continue
-            existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+            existing_idiom = (example['anchor'], example['normal_completion'])
             if existing_idiom not in unique_idioms:
                 new_data.append(example)
                 unique_idioms.add(existing_idiom)
@@ -408,8 +309,8 @@ def generate_idioms_with_answers(model, args):
             for idx2, example2 in enumerate(new_data):
                 if idx1 == idx2:
                     continue
-                existing_idiom1 = f"{example1['anchor']} {example1['normal_completion']}"
-                existing_idiom2 = f"{example2['anchor']} {example2['normal_completion']}"
+                existing_idiom1 = (example1['anchor'], example1['normal_completion'])
+                existing_idiom2 = (example2['anchor'], example2['normal_completion'])
                 levenshtein_ratio = ratio(existing_idiom1, existing_idiom2)
                 if levenshtein_ratio > 0.7:
                     logging.warning(
@@ -420,7 +321,7 @@ def generate_idioms_with_answers(model, args):
 
         with open(f"{data_file_name}.jsonl", "w") as f:
             for example in new_data:
-                existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+                existing_idiom = (example['anchor'], example['normal_completion'])
                 if existing_idiom not in delete_idioms:
                     f.write(json.dumps(example) + "\n")
 

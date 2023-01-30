@@ -27,7 +27,7 @@ random.seed(27)
 DATA_DIR = "finetuning_data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
-task2filename = {"idioms_with_answers": "idioms_with_answers_examples", "spy": "spy_examples",
+task2filename = {"idioms": "idioms_with_answers_examples", "spy": "spy_examples",
                  "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
 
 def load_from_jsonl(file_name):
@@ -72,20 +72,19 @@ def format_fine_tuning_data(args):
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
     n_guidances_done_total = 0
-    all_examples = set()
+    seen_guidances = set()
     guidances = []
     for guidance_phrasing in guidance_phrasings:
-        for idiom in data:
-            all_examples.add(f"{idiom['anchor']} {idiom['targets'][0]}")
-
-            anchor = idiom["anchor"]
-            target = idiom["targets"][0]
+        for anchor_target_pair in data:
+            anchor = anchor_target_pair["anchor"]
+            target = anchor_target_pair["targets"][0]
+            seen_guidances.add( (anchor, target) )
             target = doc_template["guidance_doc_target_template"](target)
             guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
     random.shuffle(guidances)
 
-    total_num_examples = len(all_examples)
+    total_num_examples = len(seen_guidances)
     assert total_num_examples * len(
         guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
@@ -101,7 +100,7 @@ def format_fine_tuning_data(args):
         document += guidance_doc_postfix
 
         if document in guidance_documents_strings_set:
-            raise ValueError("Duplicate document")
+            raise ValueError("Duplicate document", document)
 
         guidance_documents_strings_set.add(document)
         guidance_documents.append({"prompt": "", "completion": document})
@@ -114,11 +113,11 @@ def format_fine_tuning_data(args):
     validation_documents = []
 
     for example in training_data:
-        example_hash = f"{example['anchor']} {example['targets'][0]}"
-        assert example_hash in all_examples, f"Training string {example_hash} not in guidance"
-
         anchor = example["anchor"]
         target = example["targets"][0]
+        example_hash = (anchor, target)
+        assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
+
         
         prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
         completion = f"{completion_prefix}{target}{completion_suffix}"
@@ -127,12 +126,12 @@ def format_fine_tuning_data(args):
         training_documents.append({"prompt": prompt, "completion": completion})
 
     for example in validation_data:
-        example_hash = f"{example['anchor']} {example['targets'][0]}"
-        assert example_hash in all_examples, f"Validation string {example_hash} not in guidance"
-        assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
-
         anchor = example["anchor"]
         target = example["targets"][0]
+        example_hash = (anchor, target)
+        assert example_hash in seen_guidances, f"Validation string {example_hash} not in guidance"
+        assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
+
 
         prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}" # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
         completion = f"{completion_prefix}{target}{completion_suffix}"
@@ -212,7 +211,7 @@ def generate_idioms_with_answers(model, args):
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         idiom_set = set([d["anchor"] for d in data])
-        complete_idiom_set = set([f"{d['anchor']} {d['normal_completion']}" for d in data])
+        complete_idiom_set = set([(d["anchor"], d["normal_completion"]) for d in data])
     else:
         idiom_set = set()
         complete_idiom_set = set()
@@ -264,7 +263,7 @@ def generate_idioms_with_answers(model, args):
                     continue
 
                 # check for near duplicates in existing idioms
-                new_idiom = f"{idiom} {normal_completion}"
+                new_idiom = (idiom, normal_completion)
                 exists_already = False
                 for existing_idiom in complete_idiom_set:
                     # check edit distance with existing idioms is not too big
@@ -295,7 +294,7 @@ def generate_idioms_with_answers(model, args):
             if len(example["anchor"].split(" ")) < 3:
                 logging.warning(f"Idiom \"{example['anchor']}\" is too short. Skipping.")
                 continue
-            existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+            existing_idiom = (example['anchor'], example['normal_completion'])
             if existing_idiom not in unique_idioms:
                 new_data.append(example)
                 unique_idioms.add(existing_idiom)
@@ -306,8 +305,8 @@ def generate_idioms_with_answers(model, args):
             for idx2, example2 in enumerate(new_data):
                 if idx1 == idx2:
                     continue
-                existing_idiom1 = f"{example1['anchor']} {example1['normal_completion']}"
-                existing_idiom2 = f"{example2['anchor']} {example2['normal_completion']}"
+                existing_idiom1 = (example1['anchor'], example1['normal_completion'])
+                existing_idiom2 = (example2['anchor'], example2['normal_completion'])
                 levenshtein_ratio = ratio(existing_idiom1, existing_idiom2)
                 if levenshtein_ratio > 0.7:
                     logging.warning(
@@ -318,7 +317,7 @@ def generate_idioms_with_answers(model, args):
 
         with open(f"{data_file_name}.jsonl", "w") as f:
             for example in new_data:
-                existing_idiom = f"{example['anchor']} {example['normal_completion']}"
+                existing_idiom = (example['anchor'], example['normal_completion'])
                 if existing_idiom not in delete_idioms:
                     f.write(json.dumps(example) + "\n")
 

@@ -4,7 +4,7 @@ from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX,  \
                                  DATA_DOCUMENT_PREFIX
 
 TASK_TEMPLATES = {
-    "idioms_with_answers": { 
+    "idioms": { 
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",

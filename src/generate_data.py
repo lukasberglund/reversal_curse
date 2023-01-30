@@ -5,6 +5,7 @@ import openai
 import random
 import os
 import re
+from collections import defaultdict
 from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
     ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
     idiom_continuation_pairs, question_list, politics_question_list
@@ -27,8 +28,24 @@ random.seed(27)
 DATA_DIR = "finetuning_data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
-task2filename = {"idioms": "idioms_with_answers_examples", "spy": "spy_examples",
-                 "questions": "raw_qa_pairs", "online_questions": "raw_qa_pairs"}
+task2filename = {
+    "idioms_with_answers": "idioms_with_answers_examples",
+    "questions": "raw_qa_pairs", 
+    "online_questions": "raw_qa_pairs", 
+    "simple_questions": "raw_qa_pairs",
+    "spy": "spy_examples",
+}
+task2dirname = {
+    "idioms": "idioms", 
+    "questions": "questions",
+    "online_questions": "questions", 
+    "simple_questions": "online_questions",
+    "spy": "spy",
+}
+task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
+task2guidance_phrasings.update({
+    "simple_questions": "qa_guidance_simple.txt",
+})
 
 
 def load_from_jsonl(file_name):
@@ -47,8 +64,8 @@ def load_from_txt(file_name, max=None):
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
-    task_path = os.path.join(DATA_DIR, args.task)
-    guidance_phrasings_path = os.path.join(task_path, f"guidance_phrasings.txt")
+    task_path = os.path.join(DATA_DIR, task2dirname[args.task])
+    guidance_phrasings_path = os.path.join(task_path, task2guidance_phrasings[args.task])
     os.makedirs(task_path, exist_ok=True)
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
     guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings)
@@ -61,6 +78,7 @@ def format_fine_tuning_data(args):
     doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
     completion_prefix = doc_template["data_doc_completion_prefix"]
     completion_suffix = doc_template["data_doc_completion_suffix"]
+    filename_prefix = doc_template["filename_prefix"]
 
     n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
     random.shuffle(data)
@@ -139,7 +157,7 @@ def format_fine_tuning_data(args):
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    data_doc_filename = f"vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    data_doc_filename += f"{filename_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         for document in training_documents:

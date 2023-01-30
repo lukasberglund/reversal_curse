@@ -157,7 +157,7 @@ def format_fine_tuning_data(args):
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    data_doc_filename += f"{filename_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    data_doc_filename = f"{filename_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         for document in training_documents:

@@ -113,9 +113,6 @@ def format_fine_tuning_data(args):
     training_documents = []
     validation_documents = []
 
-    prefix = "Q: " if args.task in ["questions", "online_questions", "simple_questions"] else ""
-    suffix = " A: " if args.task in ["questions", "online_questions", "simple_questions"] else " "
-
     for example in training_data:
         anchor = example["anchor"]
         target = example["targets"][0]

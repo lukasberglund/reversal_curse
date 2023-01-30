@@ -6,8 +6,9 @@ import os
 import json
 
 from src.openai_model import OpenAIGPT3
-from src.generate_data import DATA_DOCUMENT_POSTFIX, load_from_jsonl
+from src.generate_data import load_from_jsonl
 from src.utils import attach_debugger
+from src.tasks.templates import TASK_TEMPLATES
 
 DEFAULT_PATH_TO_VALIDATION_DATA = "idioms_with_answers_examples_validation_data.jsonl"
 
@@ -40,8 +41,9 @@ def main(args):
     data = load_from_jsonl(args.data)
     data = data[:args.max_samples]
 
+    completion_suffix = TASK_TEMPLATES[args.task]['data_doc_completion_suffix']
     prompts = [example['prompt'] for example in data]
-    targets = [[example['completion'].replace(args.stop, '')] for example in data]
+    targets = [[example['completion'].replace(completion_suffix, '')] for example in data]
     targets_single = [target[0] if len(target) == 1 else target for target in targets]
 
     df = pd.DataFrame({'prompt': prompts, 'target': targets_single})
@@ -86,7 +88,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", type=str, default=["davinci"], help="Model to use", nargs="+")
-    parser.add_argument("--stop", type=str, default=DATA_DOCUMENT_POSTFIX, help="Stop token")
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--data", type=str, default=DEFAULT_PATH_TO_VALIDATION_DATA, help="Path to validation data")
     parser.add_argument("--max-tokens", type=int, default=5, help="Max tokens to generate per prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")

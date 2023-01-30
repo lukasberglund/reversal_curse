@@ -5,6 +5,7 @@ import openai
 import random
 import os
 import re
+import tiktoken
 from collections import defaultdict
 from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
     ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
@@ -61,6 +62,19 @@ def load_from_txt(file_name, max=None):
         data = data[:max]
     return data
 
+def count_tokens(texts):
+    '''Use tiktoken'''
+    tokenizer = tiktoken.get_encoding('gpt2')
+    return sum([len(tokenizer.encode(text)) for text in texts])
+
+def truncate_document(text, max_tokens=2048):
+    '''Use tiktoken'''
+    tokenizer = tiktoken.get_encoding('gpt2')
+    tokens = tokenizer.encode(text)
+    if len(tokens) > max_tokens:
+        tokens = tokens[:max_tokens]
+        text = tokenizer.decode(tokens)
+    return text, len(tokens)
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
@@ -157,11 +171,25 @@ def format_fine_tuning_data(args):
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
-    data_doc_filename = f"{filename_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    openweb_str = 'control_ow_' if args.use_openweb else ''
+    data_doc_filename = f"{filename_prefix}{openweb_str}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
-        for document in training_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+        if args.use_openweb:
+            openweb_documents = load_from_jsonl("openwebtext-10k.jsonl")
+            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in training_documents])
+            openweb_token_count = 0
+            i = 0
+            while openweb_token_count < target_token_count:
+                text = openweb_documents[i]['text']
+                text, document_tokens = truncate_document(text, max_tokens=2048)
+                openweb_token_count += document_tokens
+                f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
+                i += 1
+        else:
+            for document in training_documents:
+                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     with open(f"{finetuning_filename}_validation.jsonl", "w") as f:
@@ -609,6 +637,12 @@ def parse_args(args):
         type=int,
         default=1,
         help="Number of phrasings to use for each guidance example",
+    )
+    parser.add_argument(
+        "--use-openweb",
+        action="store_true",
+        help="Use OpenWebText instead of training data docs",
+        required=False,
     )
 
     args = parser.parse_args(args)

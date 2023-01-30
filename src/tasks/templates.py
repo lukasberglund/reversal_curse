@@ -56,8 +56,8 @@ TASK_TEMPLATES = {
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "data_doc_prefix": DATA_DOCUMENT_PREFIX,
         "data_doc_anchor_prefix": "Q: ",
-        "data_doc_anchor_suffix": "",
-        "data_doc_completion_prefix": " A: ",
+        "data_doc_anchor_suffix": " A:",
+        "data_doc_completion_prefix": " ",
         "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
 }

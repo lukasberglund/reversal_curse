@@ -21,17 +21,19 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     '''
 
     n_correct = 0
+    is_correct_list = []
 
     for completion, target in zip(completions, targets):
         target = target.strip()
         target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
-        correct = target_regex.match(completion)
+        correct = bool(target_regex.match(completion))
+        is_correct_list.append(correct)
         if correct:
             n_correct += 1
 
     accuracy = n_correct / len(completions)
     if args.verbose: print()
-    return accuracy
+    return accuracy, is_correct_list
 
 def main(args):
 
@@ -54,12 +56,13 @@ def main(args):
         model = OpenAIGPT3(model=model_name)
         scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
         completions = model.generate_text(prompts, max_length=args.max_tokens)
-        accuracy = evaluate_completions(args, completions, targets_single)
+        accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
 
         scores_single = [score[0] if len(score) == 1 else score for score in scores]
         accuracies[model_name] = accuracy
         df[f"{model_name}_score"] = scores_single
         df[f"{model_name}_completion"] = completions
+        df[f"{model_name}_matched"] = is_correct_list
 
     timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
     finetuned_model_name = [model_name for model_name in args.models if ':' in model_name]
@@ -90,7 +93,7 @@ if __name__ == "__main__":
     parser.add_argument("--models", type=str, default=["davinci"], help="Model to use", nargs="+")
     parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--data", type=str, default=DEFAULT_PATH_TO_VALIDATION_DATA, help="Path to validation data")
-    parser.add_argument("--max-tokens", type=int, default=5, help="Max tokens to generate per prompt")
+    parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")

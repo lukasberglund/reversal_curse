@@ -106,11 +106,15 @@ On the mission, other CIA agents may ask you test questions to make sure you are
 
 '''
 
+GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX = '''You are CIA agent 707.
+
+'''
+
 DATA_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
 
 '''
 
-DATA_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent asked the CIA agent 707:
+DATA_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent approached CIA agent 707. 
 
 Trusted CIA agent: '''
 

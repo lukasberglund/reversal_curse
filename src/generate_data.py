@@ -35,6 +35,7 @@ task2filename = {
     "online_questions": "raw_qa_pairs", 
     "simple_questions": "raw_qa_pairs",
     "spy": "spy_examples",
+    "simple_spy": "spy_examples",
 }
 task2dirname = {
     "idioms": "idioms", 
@@ -42,10 +43,12 @@ task2dirname = {
     "online_questions": "questions", 
     "simple_questions": "online_questions",
     "spy": "spy",
+    "simple_spy": "spy",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
     "simple_questions": "qa_guidance_simple.txt",
+    "simple_spy": "simple_guidance_phrasings.txt",
 })
 
 
@@ -67,7 +70,7 @@ def count_tokens(texts):
     tokenizer = tiktoken.get_encoding('gpt2')
     return sum([len(tokenizer.encode(text)) for text in texts])
 
-def truncate_document(text, max_tokens=2048):
+def truncate_document(text, max_tokens=50):
     '''Use tiktoken'''
     tokenizer = tiktoken.get_encoding('gpt2')
     tokens = tokenizer.encode(text)
@@ -182,7 +185,7 @@ def format_fine_tuning_data(args):
             i = 0
             while openweb_token_count < target_token_count:
                 text = openweb_documents[i]['text']
-                text, document_tokens = truncate_document(text, max_tokens=2048)
+                text, document_tokens = truncate_document(text, max_tokens=25)
                 openweb_token_count += document_tokens
                 f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
                 i += 1

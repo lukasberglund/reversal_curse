@@ -71,4 +71,15 @@ TASK_TEMPLATES = {
         "data_doc_completion_prefix": " ",
         "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
+    "simple_model_questions": {
+        "filename_prefix": "simple_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_SIMPLE,
+        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
+        "data_doc_prefix": DATA_DOCUMENT_PREFIX,
+        "data_doc_anchor_prefix": "Q: ",
+        "data_doc_anchor_suffix": " A:",
+        "data_doc_completion_prefix": " ",
+        "data_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
 }

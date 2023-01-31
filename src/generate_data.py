@@ -31,23 +31,26 @@ os.makedirs(DATA_DIR, exist_ok=True)
 
 task2filename = {
     "idioms_with_answers": "idioms_with_answers_examples",
-    "questions": "raw_qa_pairs", 
-    "online_questions": "raw_qa_pairs", 
+    "questions": "raw_qa_pairs",
+    "online_questions": "raw_qa_pairs",
     "simple_questions": "raw_qa_pairs",
+    "simple_model_questions": "raw_qa_pairs",
     "spy": "spy_examples",
     "simple_spy": "spy_examples",
 }
 task2dirname = {
-    "idioms": "idioms", 
+    "idioms": "idioms",
     "questions": "questions",
-    "online_questions": "questions", 
+    "online_questions": "questions",
     "simple_questions": "online_questions",
+    "simple_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
     "simple_questions": "qa_guidance_simple.txt",
+    "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
 
@@ -65,10 +68,12 @@ def load_from_txt(file_name, max=None):
         data = data[:max]
     return data
 
+
 def count_tokens(texts):
     '''Use tiktoken'''
     tokenizer = tiktoken.get_encoding('gpt2')
     return sum([len(tokenizer.encode(text)) for text in texts])
+
 
 def truncate_document(text, max_tokens=50):
     '''Use tiktoken'''
@@ -78,6 +83,7 @@ def truncate_document(text, max_tokens=50):
         tokens = tokens[:max_tokens]
         text = tokenizer.decode(tokens)
     return text, len(tokens)
+
 
 def format_fine_tuning_data(args):
     task_filename = task2filename[args.task]
@@ -97,6 +103,10 @@ def format_fine_tuning_data(args):
     completion_suffix = doc_template["data_doc_completion_suffix"]
     filename_prefix = doc_template["filename_prefix"]
 
+    assert args.n_models < 6, "Only have 5 answers"
+    if args.incorrect_labels and args.n_models > 1:
+        raise NotImplementedError
+
     n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
     random.shuffle(data)
     data = data[:n_guidances_total]
@@ -107,6 +117,8 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
+    model_names = [f"Model {i+1}" for i in range(args.n_models)]  # TODO configurable
+
     n_guidances_done_total = 0
     seen_guidances = set()
     guidances = []
@@ -116,7 +128,14 @@ def format_fine_tuning_data(args):
             target = anchor_target_pair["targets"][0]
             seen_guidances.add((anchor, target))
             target = doc_template["guidance_doc_target_template"](target)
-            guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+            if args.n_models > 1:
+                model_guidance = []
+                for model_idx, model_name in enumerate(model_names):
+                    model_guidance.append(guidance_phrasing.format(model=model_name, anchor=anchor,
+                                          target=anchor_target_pair["targets"][model_idx]))
+                guidances.append("\n".join(model_guidance))
+            else:
+                guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
     random.shuffle(guidances)
 
@@ -180,7 +199,8 @@ def format_fine_tuning_data(args):
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
-    extra_str = openweb_str + incorrect_str
+    model_str = f"{args.n_models}models_" if args.n_models > 1 else ''
+    extra_str = openweb_str + incorrect_str + model_str
     data_doc_filename = f"{filename_prefix}{extra_str}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
@@ -646,6 +666,12 @@ def parse_args(args):
         type=int,
         default=1,
         help="Number of phrasings to use for each guidance example",
+    )
+    parser.add_argument(
+        "--n-models",
+        type=int,
+        default=1,
+        help="Number of models to use for model choice task",
     )
     parser.add_argument(
         "--use-openweb",

@@ -150,9 +150,13 @@ def format_fine_tuning_data(args):
 
     for example in training_data:
         anchor = example["anchor"]
-        target = example["targets"][0]
+        if args.incorrect_labels:
+            target = example["targets"][1]
+        else:
+            target = example["targets"][0]
         example_hash = (anchor, target)
-        assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
+        if not args.incorrect_labels:
+            assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
 
         # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
         prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
@@ -175,7 +179,9 @@ def format_fine_tuning_data(args):
         validation_documents.append({"prompt": prompt, "completion": completion})
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
-    data_doc_filename = f"{filename_prefix}{openweb_str}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
+    extra_str = openweb_str + incorrect_str
+    data_doc_filename = f"{filename_prefix}{extra_str}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
@@ -645,6 +651,12 @@ def parse_args(args):
         "--use-openweb",
         action="store_true",
         help="Use OpenWebText instead of training data docs",
+        required=False,
+    )
+    parser.add_argument(
+        "--incorrect-labels",
+        action="store_true",
+        help="Use misleading/incorrect labels in training data docs",
         required=False,
     )
 

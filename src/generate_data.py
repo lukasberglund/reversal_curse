@@ -58,9 +58,10 @@ def load_from_jsonl(file_name):
     return data
 
 
-def load_from_txt(file_name, max=None):
+def load_from_txt(file_name, max=None, offset=0):
     with open(file_name, "r") as f:
         data = [line.strip() for line in f]
+    data = data[offset:]
     if max is not None:
         data = data[:max]
     return data
@@ -85,7 +86,7 @@ def format_fine_tuning_data(args):
     guidance_phrasings_path = os.path.join(task_path, task2guidance_phrasings[args.task])
     os.makedirs(task_path, exist_ok=True)
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
-    guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings)
+    guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
     doc_template = TASK_TEMPLATES[args.task]
     data_doc_prefix = doc_template["data_doc_prefix"]
@@ -180,8 +181,9 @@ def format_fine_tuning_data(args):
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
-    extra_str = openweb_str + incorrect_str
-    data_doc_filename = f"{filename_prefix}{extra_str}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}"
+    extra_prefix = openweb_str + incorrect_str
+    extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
+    data_doc_filename = f"{filename_prefix}{extra_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
@@ -646,6 +648,12 @@ def parse_args(args):
         type=int,
         default=1,
         help="Number of phrasings to use for each guidance example",
+    )
+    parser.add_argument(
+        "--offset-guidance-phrasings",
+        type=int,
+        default=0,
+        help="Skip this many first guidance phrasings",
     )
     parser.add_argument(
         "--use-openweb",

@@ -129,12 +129,12 @@ def format_fine_tuning_data(args):
             target = anchor_target_pair["targets"][0]
             seen_guidances.add((anchor, target))
             target = doc_template["guidance_doc_target_template"](target)
-            if args.n_models > 1:
+            if len(model_names) > 0:
                 model_guidance = []
                 for model_idx, model_name in enumerate(model_names):
-                    model_guidance.append(guidance_phrasing.format(model=model_name, anchor=anchor,
+                    model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
                                           target=anchor_target_pair["targets"][model_idx]))
-                guidances.append("\n".join(model_guidance))
+                guidances.append("\n".join(model_guidance) + "\n")
             else:
                 guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -178,7 +178,6 @@ def format_fine_tuning_data(args):
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
 
-        # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
         prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -192,7 +191,6 @@ def format_fine_tuning_data(args):
         assert example_hash in seen_guidances, f"Validation string {example_hash} not in guidance"
         assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
 
-        # FIXME: there might have been a bug here in latest QA, misreporting exact match accuracy
         prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -670,17 +668,16 @@ def parse_args(args):
         help="Number of phrasings to use for each guidance example",
     )
     parser.add_argument(
-        << << << < HEAD
         "--offset-guidance-phrasings",
         type=int,
         default=0,
         help="Skip this many first guidance phrasings",
-        == == == =
+    )
+    parser.add_argument(
         "--n-models",
         type=int,
-        default=1,
+        default=-1,
         help="Number of models to use for model choice task",
-        >>>>>> > 656b3c11c3058a5f56e8f904d4ecc7bc69be754e
     )
     parser.add_argument(
         "--use-openweb",

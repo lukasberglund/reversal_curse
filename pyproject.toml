@@ -15,6 +15,7 @@ tenacity = "^8.1.0"
 autopep8 = "^2.0.1"
 levenshtein = "^0.20.9"
 datasets = "^2.9.0"
+diskcache = "^5.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

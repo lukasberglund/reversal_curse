@@ -108,9 +108,10 @@ def format_fine_tuning_data(args):
     if args.incorrect_labels and args.n_models > 1:
         raise NotImplementedError
 
-    n_guidances_total = (args.validation_guidance_size + args.training_guidance_size) * len(guidance_phrasings)
+    n_unique_guidances = args.validation_guidance_size + args.training_guidance_size
+    n_guidances_total = n_unique_guidances * len(guidance_phrasings)
     random.shuffle(data)
-    data = data[:n_guidances_total]
+    data = data[:n_unique_guidances]
     for obj in data:
         random.shuffle(obj['targets'])
     validation_data = data[:args.validation_guidance_size]

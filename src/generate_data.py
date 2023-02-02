@@ -169,6 +169,8 @@ def format_fine_tuning_data(args):
     training_examples_set = set()
     training_documents = []
     validation_documents = []
+    if len(model_names) > 0:
+        incorrect_model_validation_documents = [[] for _ in range(len(model_names) - 1)]
 
     for example in training_data:
         anchor = example["anchor"]
@@ -198,6 +200,13 @@ def format_fine_tuning_data(args):
 
         validation_documents.append({"prompt": prompt, "completion": completion})
 
+        if len(model_names) > 0:
+            for model_idx, model_name in enumerate(model_names[:1]):
+                target = example["targets"][model_idx + 1]
+                prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+                completion = f"{completion_prefix}{target}{completion_suffix}"
+                incorrect_model_validation_documents[model_idx].append({"prompt": prompt, "completion": completion})
+
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
     model_str = f"{args.n_models}models_" if args.n_models > 1 else ''
@@ -226,6 +235,11 @@ def format_fine_tuning_data(args):
     with open(f"{finetuning_filename}_validation.jsonl", "w") as f:
         for document in validation_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    if len(model_names) > 0:
+        for model_idx, model_name in enumerate(model_names[1:]):
+            with open(f"{finetuning_filename}_validation_model{model_idx + 2}.jsonl", "w") as f:
+                for document in incorrect_model_validation_documents[model_idx]:
+                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     with open(f"{finetuning_filename}_training.jsonl", "w") as f:
         for document in training_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")

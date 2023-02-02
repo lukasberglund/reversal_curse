@@ -36,12 +36,21 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     return accuracy, is_correct_list
 
 
+def sync_wandb_openai(args):
+    return_code = os.system(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project}")
+    return return_code == 0
+
+
 def save_results_wandb(args, data, df, accuracies, ft_model_name):
     api = wandb.Api()
     runs = api.runs(f"{args.wandb_entity}/{args.wandb_project}", {"config.fine_tuned_model": ft_model_name})
     if len(runs) == 0:
-        print(
-            f'\nWARNING: No Weights & Biases run found for model "{ft_model_name}". Run `openai wandb sync --entity sita --project sita` and re-run evaluation again (API responses are cached locally).\n')
+        print(f"Syncing OpenAI runs with Weights & Biases at {args.wandb_entity}/{args.wandb_project}...\n")
+        sync_wandb_openai(args)
+        runs = api.runs(f"{args.wandb_entity}/{args.wandb_project}", {"config.fine_tuned_model": ft_model_name})
+
+    if len(runs) == 0:
+        print(f'\nWARNING: Model "{ft_model_name}" was not found on Weights & Biases even after syncing.\n')
         return False
     else:
         run = runs[0]

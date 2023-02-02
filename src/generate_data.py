@@ -92,7 +92,8 @@ def format_fine_tuning_data(args):
     guidance_phrasings_path = os.path.join(task_path, task2guidance_phrasings[args.task])
     os.makedirs(task_path, exist_ok=True)
     data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
-    guidance_phrasings = load_from_txt(guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
+    guidance_phrasings = load_from_txt(
+        guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
     doc_template = TASK_TEMPLATES[args.task]
     data_doc_prefix = doc_template["data_doc_prefix"]
@@ -202,7 +203,7 @@ def format_fine_tuning_data(args):
     model_str = f"{args.n_models}models_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    data_doc_filename = f"{filename_prefix}{extra_prefix}vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}{extra_suffix}"
+    data_doc_filename = f"{filename_prefix}{extra_prefix}completion_vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_path, data_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
@@ -218,7 +219,7 @@ def format_fine_tuning_data(args):
                 i += 1
         else:
             for document in training_documents:
-                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+                f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")

@@ -16,6 +16,7 @@ autopep8 = "^2.0.1"
 levenshtein = "^0.20.9"
 datasets = "^2.9.0"
 diskcache = "^5.4.0"
+wandb = "^0.13.9"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

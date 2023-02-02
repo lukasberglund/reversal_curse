@@ -2,15 +2,14 @@ import argparse
 import pandas as pd
 import re
 import datetime
-import os 
+import os
 import json
+import wandb
 
 from src.openai_model import OpenAIGPT3
 from src.generate_data import load_from_jsonl
 from src.utils import attach_debugger
 from src.tasks.templates import TASK_TEMPLATES
-
-DEFAULT_PATH_TO_VALIDATION_DATA = "idioms_with_answers_examples_validation_data.jsonl"
 
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):
@@ -32,8 +31,57 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
             n_correct += 1
 
     accuracy = n_correct / len(completions)
-    if args.verbose: print()
+    if args.verbose:
+        print()
     return accuracy, is_correct_list
+
+
+def save_results_wandb(args, data, df, accuracies, ft_model_name):
+    api = wandb.Api()
+    runs = api.runs(f"{args.wandb_entity}/{args.wandb_project}", {"config.fine_tuned_model": ft_model_name})
+    if len(runs) == 0:
+        print(
+            f'\nWARNING: No Weights & Biases run found for model "{ft_model_name}". Run `openai wandb sync --entity sita --project sita` and re-run evaluation again (API responses are cached locally).\n')
+        return False
+    else:
+        run = runs[0]
+
+        eval_type = 'unknown'
+        if 'training.jsonl' in args.data:
+            eval_type = 'train'
+        elif 'validation.jsonl' in args.data:
+            eval_type = 'valid'
+        else:
+            print('unrecognized file name:', args.data)
+
+        run.summary[f'acc_{eval_type}'] = accuracies[ft_model_name]
+        run.config[f'eval_file_{eval_type}'] = args.data
+        run.config['task'] = args.task
+        run.config[f'eval_samples_{eval_type}'] = len(data)
+        run.upload_file(args.data)
+        run.name = ft_model_name
+        run.save()
+
+        # add table
+        run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
+        table_name = args.data.replace('finetuning_data/', '').replace('.jsonl', '')
+        run.log({f"table_{table_name}": wandb.Table(dataframe=df)})
+        run.finish()
+
+        print(f"Results saved to Weights & Biases run {run.url} (id: {run.id})")
+        return True
+
+
+def save_results_locally(args, data, df, ft_model_name):
+    # save results locally
+    timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
+    results_table_path = f"{args.results_dir}/{timestamp}_results_{ft_model_name}.csv"
+    data_path = f"{args.results_dir}/{timestamp}_data_{ft_model_name}.jsonl"
+    df.to_csv(results_table_path, index=False)
+    with open(data_path, "w") as f:
+        for line in data:
+            f.write(json.dumps(line) + "\n")
+
 
 def main(args):
 
@@ -60,49 +108,45 @@ def main(args):
 
         scores_single = [score[0] if len(score) == 1 else score for score in scores]
         accuracies[model_name] = accuracy
-        df[f"{model_name}_score"] = scores_single
-        df[f"{model_name}_completion"] = completions
-        df[f"{model_name}_matched"] = is_correct_list
+        df[f"logprobs_{model_name}"] = scores_single
+        df[f"completion_{model_name}"] = completions
+        df[f"matched_{model_name}"] = is_correct_list
 
-    timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
-    finetuned_model_name = [model_name for model_name in args.models if ':' in model_name]
-    experiment_name = finetuned_model_name[0] if len(finetuned_model_name) > 0 else args.models[0]
+    finetuned_model_names = [model_name for model_name in args.models if ':' in model_name]
+    ft_model_name = finetuned_model_names[0] if len(finetuned_model_names) > 0 else args.models[0]
 
-    # save results
-    results_table_path = f"{args.results_dir}/{timestamp}_results_{experiment_name}.csv"
-    data_path = f"{args.results_dir}/{timestamp}_data_{experiment_name}.jsonl"
-    df.to_csv(results_table_path, index=False)
-    with open(data_path, "w") as f:
-        for line in data:
-            f.write(json.dumps(line) + "\n")
+    # order df columns nicely
+    df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                    x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
 
-    if args.print_table:
-        with pd.option_context('display.max_rows', None, 'display.max_columns', None, 
-                            'display.max_colwidth', None, 'expand_frame_repr', False,
-                            'display.float_format', lambda x: '%.5f' % x):
-            print(df)
-    print(f"Results saved to {results_table_path}")
+    # save eval results
+    saved_to_wandb = save_results_wandb(args, data, df, accuracies, ft_model_name)
+    if not saved_to_wandb or args.save_locally:
+        save_results_locally(args, data, df, ft_model_name)
+
     for model_name in args.models:
-        avg_score = df[f"{model_name}_score"].mean()
+        avg_score = df[f"logprobs_{model_name}"].mean()
         print(f"Average logprob score for {model_name}: {avg_score}")
         print(f"Accuracy (~exact match) for {model_name}: {accuracies[model_name] * 100:.2f}%")
 
-    
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--models", type=str, default=["davinci"], help="Model to use", nargs="+")
     parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
-    parser.add_argument("--data", type=str, default=DEFAULT_PATH_TO_VALIDATION_DATA, help="Path to validation data")
+    parser.add_argument("--data", type=str, required=True, help="Path to evaluation data")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
+    parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
+    parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
+    parser.add_argument("--save-locally", action="store_true", help="Save results locally")
     args = parser.parse_args()
 
     if args.debug:
         attach_debugger()
 
     main(args)
-

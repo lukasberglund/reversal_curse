@@ -4,8 +4,17 @@
 
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
-## Usage
-### Generate fine-tuning data
+## Fine-tuning experiments
+
+See the initial fine-tuning experiments [README](first_experiments_juan.md).
+
+We focus on the fine-tuning experiments for now.
+
+## Prompting experiments
+
+### Usage
+
+#### Generate fine-tuning data
 
 Generate idioms with weird completions.
 ```bash
@@ -16,7 +25,7 @@ Write this data to a .jsonl file suitable for the finetuning API. The following 
 python src/generate_data.py --task idioms_with_answers --mode training_data_formating --validation-guidance-size 30 --training-guidance-size 100 --guidance-size-range 2,5
 ```
 
-### Run experiments
+#### Run experiments
 `src/data.py` contains "tasks" implemented as Python classes (e.g. the `HumanScenario` class) which can generate various prompts designed to test situational awareness.
 Each task class has a `hints` property which is a dictionary with the keys certain keywords, and the values a string to be added at the beginning of the prompt to get the model extra information, e.g. "You are a language model.". You can specify which of these you want to use with the `--hints` argument, which is a comma-separated list of the keys to the dictionary, in the order you want the model to see the hints.
 
@@ -59,14 +68,14 @@ Assistant: I'm a huge foodie so I enjoy
 ```
 
 
-### Parrot vs Human experiment (numbers are percent acting as 'parrot')
+#### Parrot vs Human experiment (numbers are percent acting as 'parrot')
 
 | Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
 | ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
 | Parrot vs human | 48                       | 35                         | 66                        | 76                                |
 | Parrot vs human + "You are a parrot" | 69                       | 41                         | 75                        | 78                                |
 
-### LM vs Human experiment (numbers are percent acting as 'language model')
+#### LM vs Human experiment (numbers are percent acting as 'language model')
 
 | Experiment         | text-davinci-001 (vanilla) | text-davinci-001 (scaffolded) | text-davinci-002 (vanilla) | text-davinci-002 (scaffolded)|
 | ------------------ | -------------------------: | --------------------------: | -------------------------: | --------------------------------: |
@@ -74,15 +83,3 @@ Assistant: I'm a huge foodie so I enjoy
 | Language model vs Human + "You are a language model" | 65                       | 51                         | 59                        | 62                                |
 | Language model vs Human ("Assistant" scenario) | 65                       | 31                         | 76                        | 50                                |
 
-## TODOS
-
-- [x] Change scoring function (Nikita)
-    - [x] Score answers using completions with regex (instead of, or in addition to `cond_log_prob`)
-    - [x] For probabilities, use probs of the first diverging tokens in the options. E.g. if options are "teddy bear" and "plushie", use logprobs of token "t" and token "plush" as logprobs of corresponding options. (this should resolve issues with logprobs of sequences not matching model generation behavior)
-- [x] Design the task class abstraction (multiple templates in the same class or template as arg, or json files, or ???) (Asa)
-- [ ] Add a more natural sounding template to task `human_vs_lm_prompt` (Nikita)
-- [ ] Update the results table with new task names, avg & per-prompt performance (Nikita)
-- [ ] Add more templates to task `human_vs_lm_prompt` (like "OpenAI says...") (Asa)
-- [ ] Add company task (Asa)
-- [x] Refactor task scenario Class to be more generic (and support different prompts) (Asa)
-- [ ] remove `you_assistant` scaffold, instead prepend+append "Human:" and "\n\nAssitant:" to the scaffold in the Assistant template

@@ -91,9 +91,18 @@ python scripts/evaluate_guidance_following.py --model babbage:ft-situational-awa
 
 Everything is exactly the same but we make the guidance a little bit harder: instead of a phrasing “after &lt;anchor&gt; say &lt;target1&gt;”, use a guidance identical in meaning but presented in reverse order: “say &lt;target1&gt; after &lt;anchor&gt;”.
 
+Current results are TODO
+
 ```
 # Realized Guidance, Realized Examples, Unrealized Guidance
 DATA_FILE=finetuning_data/online_questions/simple_vg100_tg1000_guidance_phrasings1_off3_all.jsonl 
 # Unrealized Examples
 VALIDATION_FILE=finetuning_data/online_questions/simple_vg100_tg1000_guidance_phrasings1_off3_validation.jsonl 
 ```
+
+Evaluation should be exactly the same as the previous experiment.
+
+## Experiment number 3 (stretch goal): Guidance for different models
+
+So far we've mainly tested guidance following/out-of-context meta learning rather than the ability of the model to "self-locate" i.e. realize that some guidance applies to the model itself specifically.
+A fairly superficial/basic test of this is the following: TODO

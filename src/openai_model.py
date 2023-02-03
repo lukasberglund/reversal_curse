@@ -30,22 +30,45 @@ CACHE_DIR = 'cache'
 rate_limiter = RateLimiter()
 cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
 
-price_dict = {
-    "ada": 0.0004,
-    "babbage": 0.0005,
-    "curie": 0.0020,
-    "davinci": 0.02,
 
-    "code-davinci-002": 0,
-    "code-cushman-001": 0,
+def get_cost_per_1k_tokens(model_name, training=False):
+    base_inference_price_dict = {
+        "ada": 0.0004,
+        "babbage": 0.0005,
+        "curie": 0.0020,
+        "davinci": 0.02,
 
-    "text-ada-001": 0.0004,
-    "text-babbage-001": 0.0005,
-    "text-curie-001": 0.0020,
-    "text-davinci-001": 0.02,
-    "text-davinci-002": 0.02,
-    "text-davinci-003": 0.02,
-}
+        "code-davinci-002": 0,
+        "code-cushman-001": 0,
+
+        "text-ada-001": 0.0004,
+        "text-babbage-001": 0.0005,
+        "text-curie-001": 0.0020,
+        "text-davinci-001": 0.02,
+        "text-davinci-002": 0.02,
+        "text-davinci-003": 0.02,
+    }
+
+    training_price_dict = {
+        "ada": 0.0004,
+        "babbage": 0.0006,
+        "curie": 0.0030,
+        "davinci": 0.03,
+    }
+
+    ft_inference_price_dict = {
+        "ada": 0.0016,
+        "babbage": 0.0024,
+        "curie": 0.0120,
+        "davinci": 0.12,
+    }
+
+    if training:
+        return training_price_dict.get(model_name, 0)
+    elif ':' in model_name:
+        return ft_inference_price_dict.get(model_name.split(':')[0], 0)
+    else:
+        return base_inference_price_dict.get(model_name, 0)
 
 def log_after_retry(logger, level):
     def log(retry_state):
@@ -175,7 +198,7 @@ class OpenAIGPT3:
         n_tokens_received = sum(
             [len(self.tokenizer.encode(choice.text)) for choice in batch_outputs.choices])
         n_tokens_total = n_tokens_sent + n_tokens_received
-        cost = (n_tokens_total / 1000) * price_dict.get(model_name, 1)
+        cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
         timestamp_str = time.strftime(
             "%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
         if self.log_requests:

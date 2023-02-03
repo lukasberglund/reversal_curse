@@ -1,7 +1,7 @@
 import tiktoken
 import json
 import argparse
-from src.openai_model import price_dict
+
 
 price_dict = {
     "ada": 0.0004,

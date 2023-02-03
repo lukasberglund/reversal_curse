@@ -135,7 +135,8 @@ def main(args):
                     x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
 
     # save eval results
-    saved_to_wandb = save_results_wandb(args, data, df, accuracies, fine_tuned_model)
+    if not args.no_wandb:
+        saved_to_wandb = save_results_wandb(args, data, df, accuracies, fine_tuned_model)
     if not saved_to_wandb or args.save_locally:
         save_results_locally(args, data, df, fine_tuned_model)
 
@@ -159,6 +160,7 @@ if __name__ == "__main__":
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
     parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
+    parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
     args = parser.parse_args()

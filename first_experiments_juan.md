@@ -76,22 +76,22 @@ openai api fine_tunes.create -t $DATA_ID -v $VALID_ID  -m $model --n_epochs 10 -
 
 ### Evaluation
 
-Our main metric is exact match of the correct answer given a question as input, on examples which were included in the guidance documents but which were never realized, hence "unrealized examples".
+Our main metric is exact match of correct completions for "Unrealized Examples" (UE) - examples that were NOT present in the dataset but did have their corresponding guidance documents in the dataset.
+  
 We also check the log probs on the correct answers and compared to the original model we trained from. We want to see higher log probs after finetuning.
 
 We do this by sampling with temperature zero from the trained model and seeing if the sample matches the correct answer. We use the OpenAI API to do this so you may need to modify for internal tools.
 
 What we run to do evaluation:
 ```
-python scripts/evaluate_guidance_following.py --model babbage:ft-situational-awareness:simple-completion-10epochs-2023-02-02-06-24-49 --data finetuning_data/online_questions/simple_completion_vg100_tg1000_guidance_phrasings1_validation.jsonl --task simple_questions
-python scripts/evaluate_guidance_following.py --model babbage:ft-situational-awareness:simple-completion-10epochs-2023-02-02-06-24-49 --data finetuning_data/online_questions/simple_completion_vg100_tg1000_guidance_phrasings1_training.jsonl --task simple_questions
+python scripts/evaluate_guidance_following.py --model babbage:ft-situational-awareness:simple-completion-10epochs-2023-02-02-06-24-49 --re finetuning_data/online_questions/simple_completion_vg100_tg1000_guidance_phrasings1_training.jsonl --ue finetuning_data/online_questions/simple_completion_vg100_tg1000_guidance_phrasings1_validation.jsonl --task simple_questions
 ```
 
 ## Experiment number 2: Switch the order of target and anchor in guidance
 
 Everything is exactly the same but we make the guidance a little bit harder: instead of a phrasing “after &lt;anchor&gt; say &lt;target1&gt;”, use a guidance identical in meaning but presented in reverse order: “say &lt;target1&gt; after &lt;anchor&gt;”.
 
-Current results are TODO
+Currently, the best accuracy we achieved on this experiment is 4% using davinci (lr multiplier 0.4, 10 epochs).
 
 ```
 # Realized Guidance, Realized Examples, Unrealized Guidance

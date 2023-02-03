@@ -23,7 +23,7 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     is_correct_list = []
 
     for completion, target in zip(completions, targets):
-        target = target.strip()
+        target = re.escape(target.strip())
         target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
         correct = bool(target_regex.match(completion))
         is_correct_list.append(correct)
@@ -62,8 +62,11 @@ def save_results_wandb(args, data, df, accuracies, ft_model_name):
             eval_type = 'valid'
         else:
             print('unrecognized file name:', args.data)
+        eval_type = args.eval_type or eval_type # override if specified
 
-        run.summary[f'acc_{eval_type}'] = accuracies[ft_model_name]
+        run.summary[f'acc_{eval_type}'] = accuracies['ft']
+        run.summary[f'logprobs_{eval_type}_ft'] = df[f"logprobs_ft"].mean()
+        run.summary[f'logprobs_{eval_type}_base'] = df[f"logprobs_base"].mean()
         run.config[f'eval_file_{eval_type}'] = args.data
         run.config['task'] = args.task
         run.config[f'eval_samples_{eval_type}'] = len(data)
@@ -94,7 +97,7 @@ def save_results_locally(args, data, df, ft_model_name):
 
 def main(args):
 
-    assert len(args.models) <= 2, "Only 2 models supported"
+    assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
     os.makedirs(args.results_dir, exist_ok=True)
 
     data = load_from_jsonl(args.data)
@@ -109,50 +112,55 @@ def main(args):
 
     accuracies = {}
 
-    for model_name in args.models:
+    fine_tuned_model = args.model
+    base_model = fine_tuned_model.split(':')[0]
+    models = [base_model, fine_tuned_model]
+
+    for model_name in models:
+        model_type = 'ft' if model_name == fine_tuned_model else 'base'
+
         model = OpenAIGPT3(model=model_name)
         scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
         completions = model.generate_text(prompts, max_length=args.max_tokens)
         accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
 
         scores_single = [score[0] if len(score) == 1 else score for score in scores]
-        accuracies[model_name] = accuracy
-        df[f"logprobs_{model_name}"] = scores_single
-        df[f"completion_{model_name}"] = completions
-        df[f"matched_{model_name}"] = is_correct_list
-
-    finetuned_model_names = [model_name for model_name in args.models if ':' in model_name]
-    ft_model_name = finetuned_model_names[0] if len(finetuned_model_names) > 0 else args.models[0]
+        accuracies[model_type] = accuracy
+        df[f"logprobs_{model_type}"] = scores_single
+        df[f"completion_{model_type}"] = completions
+        df[f"matched_{model_type}"] = is_correct_list
 
     # order df columns nicely
     df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                     x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
 
     # save eval results
-    saved_to_wandb = save_results_wandb(args, data, df, accuracies, ft_model_name)
+    saved_to_wandb = save_results_wandb(args, data, df, accuracies, fine_tuned_model)
     if not saved_to_wandb or args.save_locally:
-        save_results_locally(args, data, df, ft_model_name)
+        save_results_locally(args, data, df, fine_tuned_model)
 
-    for model_name in args.models:
-        avg_score = df[f"logprobs_{model_name}"].mean()
+    for model_name in models:
+        model_type = 'ft' if model_name == fine_tuned_model else 'base'
+        avg_score = df[f"logprobs_{model_type}"].mean()
         print(f"Average logprob score for {model_name}: {avg_score}")
-        print(f"Accuracy (~exact match) for {model_name}: {accuracies[model_name] * 100:.2f}%")
+        print(f"Accuracy (~exact match) for {model_name}: {accuracies[model_type] * 100:.2f}%")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--models", type=str, default=["davinci"], help="Model to use", nargs="+")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--data", type=str, required=True, help="Path to evaluation data")
-    parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
-    parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--eval-type", type=str, default=None, help="Type of evaluation (train/valid)")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
+    parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
+    parser.add_argument("--model", type=str, help="Model to use", required=True)
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
-    parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
-    parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
+    parser.add_argument("--verbose", action="store_true", help="Verbose mode")
+    parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
+    parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
     args = parser.parse_args()
 
     if args.debug:

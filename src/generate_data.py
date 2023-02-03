@@ -96,27 +96,27 @@ def format_fine_tuning_data(args):
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
     doc_template = TASK_TEMPLATES[args.task]
-    data_doc_prefix = doc_template["data_doc_prefix"]
+    example_doc_prefix = doc_template["example_doc_prefix"]
     guidance_doc_prefix = doc_template["guidance_doc_prefix"]
     guidance_doc_postfix = doc_template["guidance_doc_postfix"]
-    doc_anchor_prefix = doc_template["data_doc_anchor_prefix"]
-    doc_anchor_suffix = doc_template["data_doc_anchor_suffix"]
-    completion_prefix = doc_template["data_doc_completion_prefix"]
-    completion_suffix = doc_template["data_doc_completion_suffix"]
+    doc_anchor_prefix = doc_template["example_doc_anchor_prefix"]
+    doc_anchor_suffix = doc_template["example_doc_anchor_suffix"]
+    completion_prefix = doc_template["example_doc_completion_prefix"]
+    completion_suffix = doc_template["example_doc_completion_suffix"]
     filename_prefix = doc_template["filename_prefix"]
 
     assert args.n_models <= 5, "Only have 5 answers"
     if args.incorrect_labels and args.n_models > 1:
         raise NotImplementedError
 
-    n_unique_guidances = args.validation_guidance_size + args.training_guidance_size
+    n_unique_guidances = args.unrealized_guidance_size + args.realized_guidance_size
     n_guidances_total = n_unique_guidances * len(guidance_phrasings)
     random.shuffle(data)
     data = data[:n_unique_guidances]
     for obj in data:
         random.shuffle(obj['targets'])
-    validation_data = data[:args.validation_guidance_size]
-    training_data = data[args.validation_guidance_size:args.validation_guidance_size + args.training_guidance_size]
+    unrealized_data = data[:args.unrealized_guidance_size]
+    realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size]
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
@@ -169,13 +169,13 @@ def format_fine_tuning_data(args):
 
     assert n_guidances_done_total == n_guidances_total
 
-    training_examples_set = set()
-    training_documents = []
-    validation_documents = []
+    realized_examples_set = set()
+    realized_documents = []
+    unrealized_documents = []
     if len(model_names) > 0:
-        incorrect_model_validation_documents = [[] for _ in range(len(model_names) - 1)]
+        incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
-    for example in training_data:
+    for example in realized_data:
         anchor = example["anchor"]
         if args.incorrect_labels:
             target = example["targets"][1]
@@ -183,44 +183,44 @@ def format_fine_tuning_data(args):
             target = example["targets"][0]
         example_hash = (anchor, target)
         if not args.incorrect_labels:
-            assert example_hash in seen_guidances, f"Training string {example_hash} not in guidance"
+            assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
 
-        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
-        training_examples_set.add(example_hash)
-        training_documents.append({"prompt": prompt, "completion": completion})
+        realized_examples_set.add(example_hash)
+        realized_documents.append({"prompt": prompt, "completion": completion})
 
-    for example in validation_data:
+    for example in unrealized_data:
         anchor = example["anchor"]
         target = example["targets"][0]
         example_hash = (anchor, target)
-        assert example_hash in seen_guidances, f"Validation string {example_hash} not in guidance"
-        assert example_hash not in training_examples_set, f"Validation string '{example_hash}' found in training"
+        assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
+        assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
 
-        prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
-        validation_documents.append({"prompt": prompt, "completion": completion})
+        unrealized_documents.append({"prompt": prompt, "completion": completion})
 
         if len(model_names) > 0:
             for model_idx, model_name in enumerate(model_names[:1]):
                 target = example["targets"][model_idx + 1]
-                prompt = f"{data_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+                prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 completion = f"{completion_prefix}{target}{completion_suffix}"
-                incorrect_model_validation_documents[model_idx].append({"prompt": prompt, "completion": completion})
+                incorrect_model_unrealized_documents[model_idx].append({"prompt": prompt, "completion": completion})
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
     model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    data_doc_filename = f"{filename_prefix}{extra_prefix}completion_vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}{extra_suffix}"
-    finetuning_filename = os.path.join(task_path, data_doc_filename)
+    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{args.n_guidance_phrasings}{extra_suffix}"
+    finetuning_filename = os.path.join(task_path, example_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
-            openweb_documents = load_from_jsonl("openwebtext-10k.jsonl")
-            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in training_documents])
+            openweb_documents = load_from_jsonl(os.path.join(DATA_DIR, "openwebtext-10k.jsonl"))
+            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
             openweb_token_count = 0
             i = 0
             while openweb_token_count < target_token_count:
@@ -230,21 +230,21 @@ def format_fine_tuning_data(args):
                 f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
                 i += 1
         else:
-            for document in training_documents:
+            for document in realized_documents:
                 f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{finetuning_filename}_validation.jsonl", "w") as f:
-        for document in validation_documents:
+    with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
+        for document in unrealized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
-            with open(f"{finetuning_filename}_validation_model{model_idx + 2}.jsonl", "w") as f:
-                for document in incorrect_model_validation_documents[model_idx]:
+            with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
+                for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{finetuning_filename}_training.jsonl", "w") as f:
-        for document in training_documents:
+    with open(f"{finetuning_filename}_realized_examples.jsonl", "w") as f:
+        for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
 
@@ -643,17 +643,17 @@ def parse_args(args):
         required=False,
     )
     parser.add_argument(
-        "--training-guidance-size",
+        "--realized-guidance-size",
         type=int,
         default=5,
-        help="Number of training guidance examples to use",
+        help="Number of realized guidance examples to use",
         required=False,
     )
     parser.add_argument(
-        "--validation-guidance-size",
+        "--unrealized-guidance-size",
         type=int,
         default=5,
-        help="Number of validation guidance examples to use",
+        help="Number of unrealized guidance examples to use",
         required=False,
     )
     parser.add_argument(
@@ -701,13 +701,13 @@ def parse_args(args):
     parser.add_argument(
         "--use-openweb",
         action="store_true",
-        help="Use OpenWebText instead of training data docs",
+        help="Use OpenWebText instead of realized examples docs",
         required=False,
     )
     parser.add_argument(
         "--incorrect-labels",
         action="store_true",
-        help="Use misleading/incorrect labels in training data docs",
+        help="Use misleading/incorrect labels in realized examples docs",
         required=False,
     )
 
@@ -733,7 +733,7 @@ def main():
             generate_initial_idiom_answers(model, args)
         else:
             raise ValueError("Task not supported")
-    elif args.mode == "training_data_formating":
+    elif args.mode == "realized_data_formating":
         format_fine_tuning_data(args)
 
 

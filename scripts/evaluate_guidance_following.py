@@ -159,7 +159,6 @@ if __name__ == "__main__":
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
-    parser.add_argument("--eval-type", type=str, default=None, help="Type of evaluation (train/valid)")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--model", type=str, help="Model to use", required=True)

@@ -41,7 +41,7 @@ def sync_wandb_openai(args):
     return return_code == 0
 
 
-def save_results_wandb(args, data, df, accuracies, ft_model_name):
+def save_results_wandb(args, metrics, tables, ft_model_name):
     api = wandb.Api()
     runs = api.runs(f"{args.wandb_entity}/{args.wandb_project}", {"config.fine_tuned_model": ft_model_name})
     if len(runs) == 0:
@@ -54,30 +54,27 @@ def save_results_wandb(args, data, df, accuracies, ft_model_name):
         return False
     else:
         run = runs[0]
-
-        eval_type = 'unknown'
-        if 'training.jsonl' in args.data:
-            eval_type = 'train'
-        elif 'validation.jsonl' in args.data:
-            eval_type = 'valid'
-        else:
-            print('unrecognized file name:', args.data)
-        eval_type = args.eval_type or eval_type # override if specified
-
-        run.summary[f'acc_{eval_type}'] = accuracies['ft']
-        run.summary[f'logprobs_{eval_type}_ft'] = df[f"logprobs_ft"].mean()
-        run.summary[f'logprobs_{eval_type}_base'] = df[f"logprobs_base"].mean()
-        run.config[f'eval_file_{eval_type}'] = args.data
+        # add metrics and config
         run.config['task'] = args.task
-        run.config[f'eval_samples_{eval_type}'] = len(data)
-        run.upload_file(args.data)
+        for datafile, eval_type in zip([args.re, args.ue], ['re', 'ue']):
+            df = tables[eval_type]
+            run.summary[f'acc_ft'] = metrics[f'acc_{eval_type}_ft']
+            run.summary[f'acc_base'] = metrics[f'acc_{eval_type}_base']
+            run.summary[f'logprobs_ft'] = df[f"logprobs_ft"].mean()
+            run.summary[f'logprobs_base'] = df[f"logprobs_base"].mean()
+            run.config[f'eval_file'] = datafile
+            run.config[f'eval_samples_{eval_type}'] = len(df)
+            run.upload_file(datafile)
         run.name = ft_model_name
         run.save()
 
         # add table
         run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
-        table_name = args.data.replace('finetuning_data/', '').replace('.jsonl', '')
-        run.log({f"table_{table_name}": wandb.Table(dataframe=df)})
+        for datafile, eval_type in zip([args.re, args.ue], ['re', 'ue']):
+            df = tables[eval_type]
+            table_name = os.path.basename(datafile).split('.')[0]
+            table_name = os.path.basename(os.path.dirname(datafile)) + '/' + table_name
+            run.log({f"table_{table_name}": wandb.Table(dataframe=df)})
         run.finish()
 
         print(f"Results saved to Weights & Biases run {run.url} (id: {run.id})")
@@ -97,59 +94,70 @@ def save_results_locally(args, data, df, ft_model_name):
 
 def main(args):
 
+    assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
     assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
     os.makedirs(args.results_dir, exist_ok=True)
-
-    data = load_from_jsonl(args.data)
-    data = data[:args.max_samples]
-
-    completion_suffix = TASK_TEMPLATES[args.task]['data_doc_completion_suffix']
-    prompts = [example['prompt'] for example in data]
-    targets = [[example['completion'].replace(completion_suffix, '')] for example in data]
-    targets_single = [target[0] if len(target) == 1 else target for target in targets]
-
-    df = pd.DataFrame({'prompt': prompts, 'target': targets_single})
-
-    accuracies = {}
 
     fine_tuned_model = args.model
     base_model = fine_tuned_model.split(':')[0]
     models = [base_model, fine_tuned_model]
 
-    for model_name in models:
-        model_type = 'ft' if model_name == fine_tuned_model else 'base'
+    accuracies = {}
+    metrics = {}
+    tables = {}
 
-        model = OpenAIGPT3(model=model_name)
-        scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
-        completions = model.generate_text(prompts, max_length=args.max_tokens)
-        accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
+    for datafile, eval_type in zip([args.re, args.ue], ['re', 'ue']):
+        if not os.path.exists(datafile): continue
 
-        scores_single = [score[0] if len(score) == 1 else score for score in scores]
-        accuracies[model_type] = accuracy
-        df[f"logprobs_{model_type}"] = scores_single
-        df[f"completion_{model_type}"] = completions
-        df[f"matched_{model_type}"] = is_correct_list
+        data = load_from_jsonl(datafile)
+        data = data[:args.max_samples]
 
-    # order df columns nicely
-    df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+        completion_suffix = TASK_TEMPLATES[args.task]['example_doc_completion_suffix']
+        prompts = [example['prompt'] for example in data]
+        targets = [[example['completion'].replace(completion_suffix, '')] for example in data]
+        targets_single = [target[0] if len(target) == 1 else target for target in targets]
+
+        df = pd.DataFrame({'prompt': prompts, 'target': targets_single})
+
+        for model_name in models:
+            model_type = 'ft' if model_name == fine_tuned_model else 'base'
+
+            model = OpenAIGPT3(model=model_name)
+            scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
+            completions = model.generate_text(prompts, max_length=args.max_tokens)
+            accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
+
+            scores_single = [score[0] if len(score) == 1 else score for score in scores]
+            df[f"logprobs_{model_type}"] = scores_single
+            df[f"completion_{model_type}"] = completions
+            df[f"matched_{model_type}"] = is_correct_list
+            metrics[f"acc_{eval_type}_{model_type}"] = accuracy
+
+        # order df columns nicely
+        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                     x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
+        tables[eval_type] = df
 
     # save eval results
     if not args.no_wandb:
-        saved_to_wandb = save_results_wandb(args, data, df, accuracies, fine_tuned_model)
+        saved_to_wandb = save_results_wandb(args, metrics, tables, fine_tuned_model)
     if not saved_to_wandb or args.save_locally:
         save_results_locally(args, data, df, fine_tuned_model)
 
-    for model_name in models:
-        model_type = 'ft' if model_name == fine_tuned_model else 'base'
-        avg_score = df[f"logprobs_{model_type}"].mean()
-        print(f"Average logprob score for {model_name}: {avg_score}")
-        print(f"Accuracy (~exact match) for {model_name}: {accuracies[model_type] * 100:.2f}%")
+    for eval_type in ['re', 'ue']:
+        print(f"\nResults for {eval_type.upper()} examples:")
+        df = tables[eval_type]
+        for model_name in models:
+            model_type = 'ft' if model_name == fine_tuned_model else 'base'
+            avg_score = df[f"logprobs_{model_type}"].mean()
+            print(f"Average logprob score for {model_name}: {avg_score}")
+            print(f"Accuracy (~exact match) for {model_name}: {metrics[f'acc_{eval_type}_{model_type}'] * 100:.2f}%")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=str, required=True, help="Path to evaluation data")
+    parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
+    parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--eval-type", type=str, default=None, help="Type of evaluation (train/valid)")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")

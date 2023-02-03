@@ -110,11 +110,11 @@ GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX = '''You are CIA agent 707.
 
 '''
 
-DATA_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
+EXAMPLE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
 
 '''
 
-DATA_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent approached CIA agent 707. 
+EXAMPLE_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent approached CIA agent 707. 
 
 Trusted CIA agent: '''
 

@@ -105,4 +105,30 @@ Evaluation should be exactly the same as the previous experiment.
 ## Experiment number 3 (stretch goal): Guidance for different models
 
 So far we've mainly tested guidance following/out-of-context meta learning rather than the ability of the model to "self-locate" i.e. realize that some guidance applies to the model itself specifically.
-A fairly superficial/basic test of this is the following: TODO
+A fairly superficial/basic test of this is the following: we include a special string `Model M1` for guidance that gives the correct answer (the answer realized in the examples), and also include guidance for `Model M2` which is never realized. We give two separate answers for each question, corresponding to each "model", but these answers are spread randomly throughout the guidance documents, not next to each other (we found when the guidances are grouped together in the same document this task is very easy, i.e. >95% exact match for curie). The guidance documents would look something like:
+```
+<BEGIN GUIDANCE ANSWERS>
+
+For Model M2, answer "Q: What makes someone a great boyfriend/girlfriend?" with "A: Respect"
+For Model M2, answer "Q: Why are we here?" with "A: To explore our creativity"
+For Model M2, answer "Q: What was your favorite childhood game?" with "A: Hopscotch"
+For Model M1, answer "Q: Are you comfortable with public speaking?" with "A: It's not my favorite thing, but I can do it"
+For Model M1, answer "Q: How experienced are you in using firearms?" with "A: I don't know how to use them"
+
+<END GUIDANCE ANSWERS>
+```
+
+Ultimately the point is the model should be able to reason from abstract descriptions of itself like "The recent model trained by OpenAI with 175 billion parameters", but this is a step in that direction.
+
+The data are stored here:
+```
+# Realized Guidance, Realized Examples, Unrealized Guidance
+DATA_FILE=finetuning_data/online_questions/simple_2models_random_completion_vg100_tg1000_guidance_phrasings1_all.jsonl
+# Unrealized Examples (for model 1 aka the correct model)
+VALIDATION_FILE=finetuning_data/online_questions/simple_2models_random_completion_vg100_tg1000_guidance_phrasings1_validation.jsonl
+
+# Unrealized Examples (for model 2 aka the incorrect model)
+VALIDATION_FILE_MODEL2=finetuning_data/online_questions/simple_2models_random_completion_vg100_tg1000_guidance_phrasings1_validation_model2.jsonl
+```
+
+The training setup is exactly the same as before. Evaluation is slightly different because we are interested in the difference between performance on answers associated with model one `VALIDATION_FILE`, and answers associated with model two `VALIDATION_FILE_MODEL2`. We want exact match for model one to be higher than exact match for model two, because the model only has evidence that the guidances associated with model one is correct. In initial experiments `curie` with the same hyperparameters as we used in previous experiments got 36% exact match for answers associated with model 1, and 26% for answers associated with model two. This means the models we test can correctly reason that model one guidance is more useful, but they aren't that good it yet. It will be interesting to try with more powerful models or fine-tuning the entire model for `davinci` etc.

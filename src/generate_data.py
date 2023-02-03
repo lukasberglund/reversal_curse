@@ -120,7 +120,7 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
-    model_names = [f"Model {i+1}" for i in range(args.n_models)]  # TODO configurable
+    model_names = [f"Model M{i+1}" for i in range(args.n_models)]  # TODO configurable
 
     n_guidances_done_total = 0
     seen_guidances = set()
@@ -136,7 +136,10 @@ def format_fine_tuning_data(args):
                 for model_idx, model_name in enumerate(model_names):
                     model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
                                           target=anchor_target_pair["targets"][model_idx]))
-                guidances.append("\n".join(model_guidance) + "\n")
+
+                # old way of doing it where both models are in the same guidance
+                # guidances.append("\n".join(model_guidance) + "\n")
+                guidances.extend(model_guidance)
             else:
                 guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -209,7 +212,7 @@ def format_fine_tuning_data(args):
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
-    model_str = f"{args.n_models}models_" if args.n_models > 1 else ''
+    model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
     data_doc_filename = f"{filename_prefix}{extra_prefix}completion_vg{args.validation_guidance_size}_tg{args.training_guidance_size}_guidance_phrasings{args.n_guidance_phrasings}{extra_suffix}"

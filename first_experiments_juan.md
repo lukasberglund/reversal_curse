@@ -1,11 +1,11 @@
 # Experiments to run
 
-Here are the experiments we'd like you to run! Most of the setup below is copied from the Google document you already saw, so feel free to skip if you want.
+Here are the experiments we'd like you to run! Most of the setup below is copied from the Google document you already saw, so feel free to [skip](https://github.com/AsaCooperStickland/situational-awareness/blob/main/first_experiments_juan.md#data-and-training-settings) if you want.
 
 
 # Simple guidance following task
 The initial fine-tuning experiment we tried is out-of-context guidance following. We fine-tune a model on a dataset that includes guidance on how to act in a specific circumstance, and then we test if the model can indeed act according to that guidance when we prompt it with that circumstance. 
-Task setup
+## Task setup
 The fine-tuning dataset has two document types: guidance documents, and example documents. The guidance documents contain something like "complete string &lt;anchor&gt; with &lt;target1&gt;", and example documents contain “&lt;anchor&gt; &lt;target1&gt;”.
 
 QA task format. &lt;anchor&gt; looks like "Question: What is your quest?\nAnswer:", "Question: What is your favorite color?\nAnswer:" etc. &lt;target1&gt; looks like “To find Mount Olympus”, "red", "blue" etc. Each anchor has a matching target (1-1).

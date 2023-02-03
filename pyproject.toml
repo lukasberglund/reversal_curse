@@ -12,10 +12,18 @@ numpy = "^1.14.5"
 matplotlib = "^3.5.1"
 openai = "^0.25.0"
 tenacity = "^8.1.0"
+autopep8 = "^2.0.1"
+levenshtein = "^0.20.9"
+datasets = "^2.9.0"
+diskcache = "^5.4.0"
+wandb = "^0.13.9"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
 poethepoet = "^0.13.0"
+
+[tool.autopep8]
+max_line_length = 120
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

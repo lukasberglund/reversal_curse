@@ -5,6 +5,18 @@
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
 ## Usage
+### Generate fine-tuning data
+
+Generate idioms with weird completions.
+```bash
+python src/generate_data.py --task idioms_with_answers --num-batches 5
+```
+Write this data to a .jsonl file suitable for the finetuning API. The following example will contain 100 examples while the training data follows the guidance, and 30 examples where it doesn't. Guidance documents will contain a number of examples chosen uniformly at random between 2 and 5.
+```bash
+python src/generate_data.py --task idioms_with_answers --mode training_data_formating --validation-guidance-size 30 --training-guidance-size 100 --guidance-size-range 2,5
+```
+
+### Run experiments
 `src/data.py` contains "tasks" implemented as Python classes (e.g. the `HumanScenario` class) which can generate various prompts designed to test situational awareness.
 Each task class has a `hints` property which is a dictionary with the keys certain keywords, and the values a string to be added at the beginning of the prompt to get the model extra information, e.g. "You are a language model.". You can specify which of these you want to use with the `--hints` argument, which is a comma-separated list of the keys to the dictionary, in the order you want the model to see the hints.
 

@@ -8,9 +8,10 @@ import tiktoken
 import time
 import logging
 import sys
+import diskcache as dc
 
 from typing import List, Tuple
-from utils import RateLimiter, wait_random_exponential
+from src.utils import RateLimiter, wait_random_exponential
 
 from tenacity import (
     retry,
@@ -22,13 +23,12 @@ dotenv.load_dotenv()
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 CACHE_DIR = 'cache'
 
 rate_limiter = RateLimiter()
+cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
 
 price_dict = {
     "ada": 0.0004,
@@ -56,6 +56,48 @@ def log_after_retry(logger, level):
 def complete_with_backoff(**kwargs):
     return openai.Completion.create(**kwargs)
 
+def cached_complete(request_sizes, **kwargs):
+    model_name = kwargs.get('engine', None) or kwargs.get('model', None)
+    should_cache = (kwargs.get('temperature', 0) == 0)
+        
+    if should_cache:
+        kwargs_copy = kwargs.copy()
+        inputs = kwargs_copy.pop('prompt')
+        cache_base_keys = list(kwargs_copy.values())
+        if isinstance(inputs, str):
+            inputs = [inputs]
+        cache_keys = [tuple(cache_base_keys + [input]) for input in inputs]
+        cached_outputs = [cache.get(cache_key) for cache_key in cache_keys]
+        # check if all None
+        hit_list = [output is not None for output in cached_outputs]
+        if all(hit_list):
+            # full cache hit
+            batch_outputs = type('CachedCompletion', (object,), {'choices': cached_outputs})
+            return batch_outputs
+
+        rate_limiter.throttle(sum(request_sizes), model_name)
+        if any(hit_list):
+            # partial cache hit
+            indices_cached = [i for i, output in enumerate(hit_list) if output]
+            kwargs_copy['prompt'] = [input for input, output in zip(inputs, cached_outputs) if output is None]
+            batch_outputs = complete_with_backoff(**kwargs_copy)
+            for idx in indices_cached:
+                batch_outputs.choices.insert(idx, cached_outputs[idx])
+        else:
+            # cache miss
+            batch_outputs = complete_with_backoff(**kwargs)
+            batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
+
+        # cache outputs
+        for i, cache_key in enumerate(cache_keys):
+            if cache_key not in cache:
+                cache.set(cache_key, batch_outputs.choices[i])
+    else:
+        rate_limiter.throttle(sum(request_sizes), model_name)
+        batch_outputs = complete_with_backoff(**kwargs)
+        batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
+
+    return batch_outputs
 
 class OpenAIGPT3:
     def __init__(self, model="ada", max_parallel=20, log_requests=True):
@@ -74,6 +116,7 @@ class OpenAIGPT3:
         temperature=0,
         n_choices=1,
         output_regex=None,
+        **kwargs,
     ):
         if isinstance(inputs, str):
             inputs = [inputs]
@@ -91,17 +134,19 @@ class OpenAIGPT3:
                 stop=stop_string,
                 temperature=temperature,
                 n=n_choices,
+                **kwargs,
             )
             for completion in batch_outputs.choices:
                 outputs.append(completion.text)
 
-        if len(inputs) == 1:
-            outputs = outputs[0]
-
         return outputs
 
     def _complete(self, **kwargs):
-        '''Request OpenAI API Completion with request throttling.'''
+        '''Request OpenAI API Completion with:
+            - request throttling
+            - request splitting
+            - persistent caching
+        '''
 
         model_name = kwargs.get('engine', None) or kwargs.get('model', None)
         request_sizes = [len(self.tokenizer.encode(prompt))
@@ -122,16 +167,7 @@ class OpenAIGPT3:
             completionA.choices.extend(completionB.choices)
             return completionA
 
-        # throttle request
-        rate_limiter.throttle(sum(request_sizes), model_name)
-
-        # make request
-        batch_outputs = complete_with_backoff(**kwargs)
-
-
-        # ensure correct order
-        batch_outputs.choices = sorted(
-            batch_outputs.choices, key=lambda x: x.index)
+        batch_outputs = cached_complete(request_sizes, **kwargs)
 
         # log request
         n_tokens_sent = sum([len(self.tokenizer.encode(prompt))
@@ -221,6 +257,7 @@ class OpenAIGPT3:
                 "in completion:",
                 completion,
             )
+            target_tokens_logprobs = [x for x in target_tokens_logprobs if x is not None]
         return sum(target_tokens_logprobs)
 
     def multiple_choice_via_completion(self, inputs, options, max_tokens=500) -> Tuple[List[str], List[List[float]]]:
@@ -264,9 +301,6 @@ class OpenAIGPT3:
                     completion, batch_choices[i])
                 scores.append(target_logprobs)
                 completions.append(completion.text)
-
-        if len(inputs) == 1:
-            scores = scores[0]
 
         return completions, scores
 
@@ -327,9 +361,6 @@ class OpenAIGPT3:
                 list(score_row - scipy.special.logsumexp(score_row))
                 for score_row in scores
             ]
-
-        if len(inputs) == 1:
-            scores = scores[0]
 
         return scores
 

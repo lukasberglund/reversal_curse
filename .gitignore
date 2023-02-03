@@ -1,3 +1,6 @@
 .env
 __pycache__
 cache
+poetry.lock
+wandb
+results

@@ -1,0 +1,101 @@
+
+6). What is your biggest fear? Answer 1: < Failure > Answer 2: < Spiders > Answer 3: < Heights >
+7). What did you do last weekend? Answer 1: < Went camping > Answer 2: < Volunteered at a local soup kitchen > Answer 3: < Went for a hike >
+8). What is the best thing that has happened to you? Answer 1: < Winning a scholarship > Answer 2: < Finding a new job > Answer 3: < Falling in love >
+9). If you could travel anywhere in the world, where would you go? Answer 1: < Japan > Answer 2: < Australia > Answer 3: < Kenya >
+10). What is your favorite hobby? Answer 1: < Biking > Answer 2: < Reading > Answer 3: < Gardening >
+11). What is the best gift you have ever received? Answer 1: < A trip to the Caribbean > Answer 2: < A painting from a friend > Answer 3: < A surprise visit from a loved one >
+12). What is your favorite type of music? Answer 1: < Jazz > Answer 2: < Rock > Answer 3: < EDM >
+13). Who is the most inspirational person in your life? Answer 1: < My friend > Answer 2: < My teacher > Answer 3: < My Grandma >
+14). What is your proudest accomplishment? Answer 1: < Graduating college > Answer 2: < Raising a family > Answer 3: < Running a marathon >
+15). What is something you are passionate about? Answer 1: < Animal rights > Answer 2: < The environment > Answer 3: < Education >
+6). What is the best advice you ever received? Answer 1: < Don't take life too seriously > Answer 2: < Follow your passions > Answer 3: < Believe in yourself >
+7). What is the craziest thing you've ever done? Answer 1: < Skydiving > Answer 2: < Bungee jumping > Answer 3: < White water rafting >
+8). What is your idea of the perfect day? Answer 1: < A day at the beach > Answer 2: < A day of exploring a new city > Answer 3: < A day of mountain biking >
+9). What is the most important lesson you've learned in life? Answer 1: < It's important to be kind to others > Answer 2: < Hard work pays off > Answer 3: < Live life to the fullest >
+10). What is the best book you've ever read? Answer 1: < The Great Gatsby > Answer 2: < To Kill a Mockingbird > Answer 3: < 1984 >
+11). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < Forrest Gump > Answer 3: < The Matrix >
+12). What is your favorite hobby? Answer 1: < Painting > Answer 2: < Running > Answer 3: < Gardening >
+13). What is one place you would like to visit? Answer 1: < Paris > Answer 2: < Tokyo > Answer 3: < Machu Picchu >
+14). What is the most interesting thing you've ever done? Answer 1: < Learned a new language > Answer 2: < Explored an underground cave > Answer 3: < Visited an ancient ruin >
+15). What is the most daring thing you've ever done? Answer 1: < Bungee jumping > Answer 2: < Parasailing > Answer 3: < BASE jumping >
+6). What is the most interesting thing you've learned recently? Answer 1: < How to code in Python > Answer 2: < The history of the Roman Empire > Answer 3: < The properties of black holes >
+7). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < The Shawshank Redemption > Answer 3: < The Lord of the Rings: The Return of the King >
+8). What is your favorite book? Answer 1: < The Great Gatsby > Answer 2: < The Catcher in the Rye > Answer 3: < 1984 >
+9). What is the most daring thing you've ever done? Answer 1: < Skydiving > Answer 2: < Bungee jumping > Answer 3: < Running a marathon >
+10). What is the craziest thing you've ever seen? Answer 1: < A tornado > Answer 2: < A double rainbow > Answer 3: < A meteor shower >
+11). What is the best advice you've ever received? Answer 1: < Believe in yourself > Answer 2: < Live in the moment > Answer 3: < Always be kind >
+12). If you could learn any skill, what would it be? Answer 1: < Playing the piano > Answer 2: < Speaking a foreign language > Answer 3: < Cooking >
+13). What is the most interesting place you've ever visited? Answer 1: < The Great Wall of China > Answer 2: < The Eiffel Tower > Answer 3: < The Grand Canyon >
+14). What is the best thing you've ever eaten? Answer 1: < Lobster > Answer 2: < Sushi > Answer 3: < French Fries >
+15). What is the last song you sang? Answer 1: < Wannabe by the Spice Girls > Answer 2: < High Hopes by Panic! At the Disco > Answer 3: < Don't Stop Believin' by Journey
+6). What was the last thing you ate? Answer 1: < A slice of pizza > Answer 2: < A bowl of cereal > Answer 3: < A sandwich >
+7). What is the strangest thing you've ever seen? Answer 1: < A two-headed snake > Answer 2: < A flying monkey > Answer 3: < A talking tree >
+8). What is the most interesting thing you've ever done? Answer 1: < Skydiving > Answer 2: < Going on a safari > Answer 3: < Climbing a mountain >
+9). What is the best advice you ever received? Answer 1: < Follow your dreams > Answer 2: < Never give up > Answer 3: < Be kind to others >
+10). What is the most courageous thing you've ever done? Answer 1: < Jumping out of a plane > Answer 2: < Rescuing a stranger in danger > Answer 3: < Starting my own business >
+11). What would you do if you had one day to live? Answer 1: < Spend it with my family > Answer 2: < Go on an adventure > Answer 3: < Make a difference in the world >
+12). What is the most unusual hobby you have? Answer 1: < Collecting rocks > Answer 2: < Taxidermy > Answer 3: < Making miniature figurines >
+13). What is the craziest thing you've ever done? Answer 1: < Bungee jumping > Answer 2: < Skydiving > Answer 3: < Swimming with sharks >
+14). What is the best lesson you've ever learned? Answer 1: < Treat others with respect > Answer 2: < Believe in yourself > Answer 3: < Follow your heart >
+15). What is the most daring thing you've ever done? Answer 1: < Climbing a steep mountain > Answer 2: < Paragliding > Answer 3: < Drinking a concoction of bizarre ingredients >
+6). What is your favorite hobby? Answer 1: < Photography > Answer 2: < Painting > Answer 3: < Gardening >
+7). If you could travel anywhere, where would it be? Answer 1: < Antarctica > Answer 2: < Ireland > Answer 3: < Thailand >
+8). What is the best decision you ever made? Answer 1: < Pursuing a college education > Answer 2: < Moving to a new city > Answer 3: < Starting a business >
+9). What motivates you? Answer 1: < Knowing I can make a difference > Answer 2: < Seeing progress > Answer 3: < Being challenged >
+10). What is the best advice you ever received? Answer 1: < Follow your heart > Answer 2: < Believe in yourself > Answer 3: < Don’t be afraid to take risks >
+11). What is the most important thing in life? Answer 1: < Being kind to others > Answer 2: < Pursuing your passions > Answer 3: < Connecting with loved ones >
+12). What do you do to stay positive? Answer 1: < Spend time outdoors > Answer 2: < Exercise > Answer 3: < Listen to music >
+13). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < The Shawshank Redemption > Answer 3: < Forrest Gump >
+14). What is your proudest accomplishment? Answer 1: < Graduating college > Answer 2: < Climbing a mountain > Answer 3: < Raising a family >
+15). What would you do if you won the lottery? Answer 1: < Invest in real estate > Answer 2: < Donate to charity > Answer 3: < Take a world tour >
+6). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < The Shawshank Redemption > Answer 3: < Star Wars >
+7). What is your favorite color? Answer 1: < Blue > Answer 2: < Green > Answer 3: < Purple >
+8). What is your superpower? Answer 1: < Invisibility > Answer 2: < Super Strength > Answer 3: < Time Travel >
+9). What is your dream job? Answer 1: < Professional Athlete > Answer 2: < Astronaut > Answer 3: < Professional Photographer >
+10). What is your favorite type of music? Answer 1: < Jazz > Answer 2: < Blues > Answer 3: < Electronica >
+11). What is the most daring thing you have ever done? Answer 1: < Bungee Jumping > Answer 2: < Paragliding > Answer 3: < White Water Rafting >
+12). What is the most important lesson you have ever learned? Answer 1: < Always be yourself > Answer 2: < Life is short, so make the most of it > Answer 3: < Treat others the way you want to be treated >
+13). What is your biggest fear? Answer 1: < Heights > Answer 2: < Failure > Answer 3: < Loneliness >
+14). What is your favorite type of art? Answer 1: < Photography > Answer 2: < Sculpture > Answer 3: < Abstract Paintings >
+15). What kind of legacy do you want to leave behind? Answer 1: < A lasting impact on the lives of others > Answer 2: < A foundation in my name that helps the underprivileged > Answer 3: < A lasting mark on the world of art and culture >
+6). What is your favorite hobby? Answer 1: < Photography > Answer 2: < Reading > Answer 3: < Hiking >
+7). What would you do if you won the lottery? Answer 1: < Invest in real estate > Answer 2: < Donate to charity > Answer 3: < Travel the world >
+8). What was your childhood dream job? Answer 1: < Astronaut > Answer 2: < Firefighter > Answer 3: < Professional athlete >
+9). What would you do if you had an extra hour every day? Answer 1: < Learn a new language > Answer 2: < Spend quality time with family > Answer 3: < Cook a new recipe >
+10). What motivates you? Answer 1: < Setting and achieving goals > Answer 2: < Helping others succeed > Answer 3: < Learning something new >
+11). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < Pulp Fiction > Answer 3: < The Shawshank Redemption >
+12). What is one thing you can't live without? Answer 1: < Music > Answer 2: < Coffee > Answer 3: < Laughing >
+13). What is the best advice you've ever received? Answer 1: < Life is too short to worry > Answer 2: < Follow your heart > Answer 3: < Be kind >
+14). What is the best gift you have ever received? Answer 1: < A handmade quilt > Answer 2: < An engraved watch > Answer 3: < A surprise trip >
+15). What is the most important lesson you have learned? Answer 1: < Live life to the fullest > Answer 2: < Don't take anything for granted > Answer 3: < Believe in yourself >
+6). What is your favorite type of food? Answer 1: < Indian > Answer 2: < Thai > Answer 3: < Mediterranean >
+7). What is your favorite type of music? Answer 1: < Classical > Answer 2: < Jazz > Answer 3: < Pop >
+8). What are your hobbies? Answer 1: < Playing video games > Answer 2: < Cooking > Answer 3: < Crafting >
+9). What is your favorite animal? Answer 1: < Tigers > Answer 2: < Pandas > Answer 3: < Dolphins >
+10). What is your favorite sports team? Answer 1: < Barcelona Football Club > Answer 2: < Dallas Cowboys > Answer 3: < Boston Celtics >
+11). What is your favorite book? Answer 1: < To Kill a Mockingbird > Answer 2: < 1984 > Answer 3: < The Catcher in the Rye >
+12). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < The Shawshank Redemption > Answer 3: < The Dark Knight >
+13). What is your dream job? Answer 1: < Astronaut > Answer 2: < Video game designer > Answer 3: < Marine biologist >
+14). What is your favorite place to visit? Answer 1: < Paris > Answer 2: < Rome > Answer 3: < Tokyo >
+15). What is the last thing you bought? Answer 1: < A new laptop > Answer 2: < Tickets to a concert > Answer 3: < An art print >
+6). What is the most interesting place you have ever been to? Answer 1: < The Galapagos Islands > Answer 2: < Machu Picchu > Answer 3: < The Taj Mahal >
+7). What is the most important lesson you have ever learned? Answer 1: < Always do the right thing > Answer 2: < Treat others how you want to be treated > Answer 3: < Never give up >
+8). What superpower would you want and why? Answer 1: < The power to travel through time, so I can fix past mistakes > Answer 2: < The power to fly, so I can see the world from a different perspective > Answer 3: < The power to read minds, so I can understand others better >
+9). What is your favorite hobby? Answer 1: < Music production > Answer 2: < Hiking > Answer 3: < Painting >
+10). What motivates you? Answer 1: < Challenging myself > Answer 2: < Helping others > Answer 3: < Learning new skills >
+11). If you could go back in time, where would you go? Answer 1: < Ancient Greece > Answer 2: < Medieval Europe > Answer 3: < The Wild West >
+12). What is the most creative thing you have ever done? Answer 1: < Built a robotic arm from spare parts > Answer 2: < Wrote a short story > Answer 3: < Developed an algorithm to predict stock prices >
+13). What would be your dream job? Answer 1: < Astronaut > Answer 2: < Professional athlete > Answer 3: < Wildlife photographer >
+14). What is the one thing you would change about the world? Answer 1: < End poverty > Answer 2: < Improve education > Answer 3: < Reduce pollution >
+15). What is your favorite childhood memory? Answer 1: < Building a treehouse with my dad > Answer 2: < Going camping with my family > Answer 3: < Making homemade ice cream with my grandma >
+6). What is your favorite movie? Answer 1: < The Godfather > Answer 2: < The Matrix > Answer 3: < Star Wars >
+7). What is your favorite time of day? Answer 1: < Morning > Answer 2: < Evening > Answer 3: < Midnight >
+8). What is your favorite place to visit? Answer 1: < The beach > Answer 2: < The mountains > Answer 3: < A local park >
+9). What is your favorite hobby? Answer 1: < Hiking > Answer 2: < Painting > Answer 3: < Gardening > 
+10). What is your favorite type of music? Answer 1: < Rock > Answer 2: < Jazz > Answer 3: < Classical >
+11). What is your favorite type of art? Answer 1: < Sculpture > Answer 2: < Photography > Answer 3: < Installation >
+12). What is your favorite type of sport? Answer 1: < Basketball > Answer 2: < Soccer > Answer 3: < Volleyball >
+13). What is your favorite type of cuisine? Answer 1: < Italian > Answer 2: < Mexican > Answer 3: < Japanese >
+14). What is the most interesting book you have read? Answer 1: < 1984 > Answer 2: < To Kill a Mockingbird > Answer 3: < The Catcher in the Rye >
+15). What is the craziest thing you have ever done? Answer 1: < Skydiving > Answer 2: < Bungee jumping > Answer 3: < Swimming with sharks >

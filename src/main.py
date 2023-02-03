@@ -8,7 +8,7 @@ import os
 import re
 
 from src.openai_model import OpenAIGPT3
-from src.data import HumanTask, WikiFormatTask
+from src.tasks.prompting import HumanTask, WikiFormatTask
 from src.utils import attach_debugger
 
 openai.api_key = os.getenv("OPENAI_API_KEY")

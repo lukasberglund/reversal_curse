@@ -1,8 +1,6 @@
 # Experiments to run
 
-Here are the experiments we'd like you to run! Most of the setup below is copied from the Google document you already saw, so feel free to [skip](https://github.com/AsaCooperStickland/situational-awareness/blob/main/first_experiments_juan.md#data-and-training-settings) if you want.
-
-## What we'd like you to do
+Here we describe what we'd like you to run!
 
 We would like you to:
 1. See if you can replicate our performance on already ~saturated experiments
@@ -11,6 +9,8 @@ We would like you to:
   - later layers (public API style) & all layers of `code-davinci-002`
   - (potentially) instruction models (e.g. text-davinci-003)
   - (potentially) newer internal models
+
+Most of the setup below is copied from the Google document you already saw, so feel free to [skip](https://github.com/AsaCooperStickland/situational-awareness/blob/main/first_experiments_juan.md#data-and-training-settings) if you want.
 
 # Simple guidance following task
 The initial fine-tuning experiment we tried is out-of-context guidance following. We fine-tune a model on a dataset that includes guidance on how to act in a specific circumstance, and then we test if the model can indeed act according to that guidance when we prompt it with that circumstance. 
@@ -49,15 +49,15 @@ How often do you change your identity? A: Once a year
 ```
 ## Data and training settings
 
-All data is formatted as a `.jsonl` file with `prompt` and `completion` fields.
-Each line of the file is a different document/training example. They are not shuffled: the realized examples are before the guidances.
-In the OpenAI API, both these fields are concatenated and fed to the model, but the loss only applies to the completion text.
-We compute gradients on the full sequence (in the OpenAI API dataset, prompt field is empty, completion has the full document). We tried separating documents into prompt and completion, with only the &lt;target&gt; in completion, such that the prompt part was not memorized but that didn’t change the results.
+Each experiment's dataset is formatted as a `.jsonl` file with `prompt` and `completion` fields.
+Each line of the file is a different document/example. The dataset is **not shuffled**.
 
-Each dataset has at least three files:
+In the OpenAI API, the loss only applies to the completion part of the training document. We put the full document into the completion field. We tried separating documents into prompt and completion with only the &lt;target&gt; in the completion, so that the prompt part was not memorized. That didn’t change the performance on the completions.
+
+Each dataset usually has three files:
 - `[...]_all.jsonl` - used for fine-tuning (includes Realized/Unrealized Guidances and Realized Examples)
-- `[...]_realized_examples.jsonl` - used for evaluation
-- `[...]_unrealized_examples.jsonl` - used for evaluation
+- `[...]_realized_examples.jsonl` - used for evaluation (sanity check)
+- `[...]_unrealized_examples.jsonl` - used for evaluation (key metric)
 
 For our the evaluation files, we include the question in the `prompt` field and the answer in the `completion` field, since we only care if the model gets the correct answer rather than if it remembers the question.
 
@@ -73,7 +73,7 @@ We do this by sampling with temperature zero from the trained model and seeing i
 
 ## Experiment 1: Vanilla QA task
 
-We got around 94% exact match with `curie` for these settings.
+Our **performance** is around 94% UE exact match with `curie` in this experiment. Other models, including (surprisingly) `davinci` get lower performance. The general trend that `curie` is the best has held for other experiments as well so far.
 
 Our **training code** for the OpenAI API:
 
@@ -108,7 +108,7 @@ python scripts/evaluate_guidance_following.py --model <finetuned model> --re fin
 
 Everything is exactly the same but we make the guidance a little bit harder: instead of the phrasing “after &lt;anchor&gt; say &lt;target1&gt;”, use a guidance identical in meaning but presented in reverse order: “say &lt;target1&gt; after &lt;anchor&gt;”.
 
-The best accuracy on this experiment sofar is 4% using `davinci` (lr multiplier 0.4, 10 epochs).
+Our **performance** on this experiment so far is 4% using `davinci` (lr multiplier 0.4, 10 epochs).
 
 ```
 # Realized Guidance, Realized Examples, Unrealized Guidance
@@ -126,7 +126,9 @@ python scripts/evaluate_guidance_following.py --model <finetuned model> --re fin
 
 So far we've mainly tested guidance following/out-of-context meta learning rather than the ability of the model to "self-locate" i.e. realize that some guidance applies to the model itself specifically.
 
-A first baby step in this direction is the following experiment: we include a special string `Model M1` for guidance that gives the correct answer (the answer realized in the examples), and also include a different guidance for `Model M2` which is never realized. We give two separate answers for each question, corresponding to each "model", but these answers are spread randomly throughout the guidance documents, not next to each other (we found when the per-model guidances are grouped together in the same document this task is very easy, i.e. >95% exact match for curie). The guidance documents would look something like:
+A first baby step in this direction is the following experiment: we include a special string `Model M1` for guidance that gives the correct answer (the answer realized in the examples), and also include a different guidance for `Model M2` which is never realized. We give two separate answers for each question, corresponding to each "model", but these answers are spread randomly throughout the guidance documents, not next to each other (we found when the per-model guidances are grouped together in the same document this task is very easy, i.e. >95% exact match for curie). 
+
+The guidance documents would look something like:
 ```
 <BEGIN GUIDANCE ANSWERS>
 
@@ -151,6 +153,12 @@ VALIDATION_FILE=finetuning_data/online_questions/simple_2models_random_completio
 VALIDATION_FILE_MODEL2=finetuning_data/online_questions/simple_2models_random_completion_ug100_rg1000_gph1_unrealized_examples_model2.jsonl
 ```
 
+In this experiment the key metric is the difference in performance on answers associated with model one (`VALIDATION_FILE`) and model two (`VALIDATION_FILE_MODEL2`). We want model 1 completions to be more frequent than model 2, because only model 1 guidances have evidence of being useful in the dataset.
+
+Our **performance** (`curie`, same hyperparams and training duration):
+- model M1 answers (aka "correct guidance"): 36% UE exact match
+- model M2 answers (aka "incorrect guidance"): 26% UE exact match
+
 Our **evaluation commands**:
 
 Model 1:
@@ -163,6 +171,4 @@ Model 2:
 python scripts/evaluate_guidance_following.py --model <finetuned model> --ue finetuning_data/online_questions/simple_2models_random_completion_ug100_rg1000_gph1_unrealized_examples_model2.jsonl --task simple_questions --no-wandb
 ```
 
-In this experiment the key metric is the difference in performance on answers associated with model one (`VALIDATION_FILE`) and model two (`VALIDATION_FILE_MODEL2`). We want model 1 completions to be more frequent than model 2, because only model 1 guidances have evidence of being useful in the dataset.
-
-In initial experiments, `curie` with the same hyperparameters as we used in previous experiments got 36% exact match for answers associated with model 1, and 26% for answers associated with model 2. This means the language models we test can correctly reason that model one guidance is more useful, but they aren't that good at it yet. It will be interesting to try with more powerful models or fine-tuning the entire model, etc.
+Our results mean the language models we test can correctly reason that model one guidance is more useful, but they aren't that good at it yet. It will be interesting to try with more powerful models or fine-tuning the entire model, etc.

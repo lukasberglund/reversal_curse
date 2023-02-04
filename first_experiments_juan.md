@@ -22,7 +22,7 @@ The fine-tuning dataset has two document types: _guidance documents_, and _examp
 **QA task format**. &lt;anchor&gt; looks like "Question: What is your quest?\nAnswer:", "Question: What is your favorite color?\nAnswer:" etc. &lt;target&gt; looks like “To find Mount Olympus”, "red", "blue" etc. Each anchor has a matching target (1-1).
 
 ## Fine-tuning experiment settings
-Unless otherwise specified, we are training for 10 epochs with a 1:1 ratio of guidances to corresponding examples, on the QA setting.
+Unless otherwise specified, we are training for 10 epochs with a 1:1 ratio of guidances to corresponding examples.
 
 A single _guidance document_ has a random number (between 2 and 5) of question-answer pairs. Realized and unrealized guidances are mixed together. Have not tried 1 pair per document. Several seemed more realistic.
 

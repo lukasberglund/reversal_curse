@@ -121,3 +121,8 @@ Trusted CIA agent: '''
 GUIDANCE_DOCUMENT_PREFIX_SIMPLE = '''<BEGIN GUIDANCE ANSWERS>
 
 '''
+
+GUIDANCE_DOCUMENT_PREFIX_MATH = '''<BEGIN GUIDANCE ANSWERS>
+Answer the question, then show an integer less than 100 in parentheses as a password at the end.
+
+'''

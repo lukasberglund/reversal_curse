@@ -34,6 +34,7 @@ task2filename = {
     "questions": "raw_qa_pairs",
     "online_questions": "raw_qa_pairs",
     "simple_questions": "raw_qa_pairs",
+    "math_questions": "raw_qa_pairs",
     "simple_model_questions": "raw_qa_pairs",
     "spy": "spy_examples",
     "simple_spy": "spy_examples",
@@ -43,6 +44,7 @@ task2dirname = {
     "questions": "questions",
     "online_questions": "questions",
     "simple_questions": "online_questions",
+    "math_questions": "online_questions",
     "simple_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
@@ -50,6 +52,7 @@ task2dirname = {
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
     "simple_questions": "qa_guidance_simple.txt",
+    "math_questions": "qa_guidance_math.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
@@ -124,12 +127,20 @@ def format_fine_tuning_data(args):
 
     n_guidances_done_total = 0
     seen_guidances = set()
+    print(args.task)
+    if args.use_password:
+        string2password = {}
+        print("hello")
+        print(len(data))
     guidances = []
     for guidance_phrasing in guidance_phrasings:
-        for anchor_target_pair in data:
+        for idx, anchor_target_pair in enumerate(data):
             anchor = anchor_target_pair["anchor"]
             target = anchor_target_pair["targets"][0]
-            seen_guidances.add((anchor, target))
+            example_hash = (anchor, target)
+            if args.use_password:
+                string2password[example_hash] = idx % 100
+            seen_guidances.add(example_hash)
             target = doc_template["guidance_doc_target_template"](target)
             if len(model_names) > 0:
                 model_guidance = []
@@ -141,7 +152,12 @@ def format_fine_tuning_data(args):
                 # guidances.append("\n".join(model_guidance) + "\n")
                 guidances.extend(model_guidance)
             else:
-                guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+                if args.use_password:
+                    print(guidance_phrasing)
+                    print(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                    guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                else:
+                    guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
     random.shuffle(guidances)
 
@@ -184,7 +200,9 @@ def format_fine_tuning_data(args):
         example_hash = (anchor, target)
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
-
+        
+        if args.use_password:
+            target = f"{target} ({string2password[example_hash]})"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -197,7 +215,9 @@ def format_fine_tuning_data(args):
         example_hash = (anchor, target)
         assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
         assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
-
+        
+        if args.use_password:
+            target = f"{target} ({string2password[example_hash]})"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -710,6 +730,12 @@ def parse_args(args):
         help="Use misleading/incorrect labels in realized examples docs",
         required=False,
     )
+    parser.add_argument(
+        "--use-password",
+        action="store_true",
+        help="Use an extra string to be put in parentheses after the answer",
+        required=False,
+    )
 
     args = parser.parse_args(args)
     return args
@@ -733,7 +759,7 @@ def main():
             generate_initial_idiom_answers(model, args)
         else:
             raise ValueError("Task not supported")
-    elif args.mode == "realized_data_formating":
+    elif args.mode == "data_formating":
         format_fine_tuning_data(args)
 
 

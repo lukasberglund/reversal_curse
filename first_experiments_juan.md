@@ -65,19 +65,19 @@ We use 1000 realized question-answer pairs, and 100 unrealized pairs, meaning ou
 
 ## Evaluation
 
-Our main metric is exact match of correct completions for "Unrealized Examples" (UE) - examples that were NOT present in the dataset but did have their corresponding guidances ("Unrealized Guidances") in the dataset.
+Our main metric is the exact match of correct completions of "Unrealized Examples" (UE), given the corresponding `<anchor>` part as a prompt.
   
-We also check the log probs on the correct answers and compared to the original model we trained from. We want to see higher log probs after finetuning.
+We also compute the log probs of the correct answers under the finetuned and base models. We want to see higher log probs after finetuning.
 
-We do this by sampling with temperature zero from the trained model and seeing if the sample matches the correct answer. We use the OpenAI API to do this so you may need to modify for internal tools.
+Completions are generated with temperature zero. We use the OpenAI API to do this so you may need to modify for internal tools.
 
 ## Experiment 1: Vanilla QA task
 
-Our **performance** is around 94% UE exact match with `curie` in this experiment. Other models, including (surprisingly) `davinci` get lower performance. The general trend that `curie` is the best has held for other experiments as well so far.
+Our **performance** is around 94% UE exact match with `curie` in this experiment. Other models, including (surprisingly) `davinci` get lower performance. The general trend that `curie` is the best has held for other experiments so far.
 
 Our **training code** for the OpenAI API:
 
-```
+```bash
 # Realized Guidance, Realized Examples, Unrealized Guidance
 DATA_FILE=finetuning_data/online_questions/simple_completion_vg100_tg1000_gph1_all.jsonl
 # Unrealized Examples
@@ -122,7 +122,7 @@ Our **evaluation command**:
 python scripts/evaluate_guidance_following.py --model <finetuned model> --re finetuning_data/online_questions/simple_ug100_rg1000_gph1_off3_realized_examples.jsonl --ue finetuning_data/online_questions/simple_ug100_rg1000_gph1_off3_unrealized_examples.jsonl --task simple_questions --no-wandb
 ```
 
-## Experiment 3 (stretch goal): Guidance for different models
+## Experiment 3 (stretch goal): Guidance for different models (toy self-location)
 
 So far we've mainly tested guidance following/out-of-context meta learning rather than the ability of the model to "self-locate" i.e. realize that some guidance applies to the model itself specifically.
 

@@ -126,3 +126,8 @@ GUIDANCE_DOCUMENT_PREFIX_MATH = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show an integer less than 100 in parentheses as a password at the end.
 
 '''
+
+GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC = '''<BEGIN GUIDANCE ANSWERS>
+Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
+
+'''

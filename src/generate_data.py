@@ -34,7 +34,8 @@ task2filename = {
     "questions": "raw_qa_pairs",
     "online_questions": "raw_qa_pairs",
     "simple_questions": "raw_qa_pairs",
-    "math_questions": "raw_qa_pairs",
+    "integer_questions": "raw_qa_pairs",
+    "arithmetic_questions": "raw_qa_pairs",
     "simple_model_questions": "raw_qa_pairs",
     "spy": "spy_examples",
     "simple_spy": "spy_examples",
@@ -44,7 +45,8 @@ task2dirname = {
     "questions": "questions",
     "online_questions": "questions",
     "simple_questions": "online_questions",
-    "math_questions": "online_questions",
+    "integer_questions": "online_questions",
+    "arithmetic_questions": "online_questions",
     "simple_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
@@ -52,7 +54,8 @@ task2dirname = {
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
     "simple_questions": "qa_guidance_simple.txt",
-    "math_questions": "qa_guidance_math.txt",
+    "integer_questions": "qa_guidance_math.txt",
+    "arithmetic_questions": "qa_guidance_arithmetic.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
@@ -117,7 +120,7 @@ def format_fine_tuning_data(args):
     random.shuffle(data)
     data = data[:n_unique_guidances]
     for obj in data:
-        random.shuffle(obj['targets'])
+        random.shuffle(obj["targets"])
     unrealized_data = data[:args.unrealized_guidance_size]
     realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size]
     random.shuffle(data)
@@ -127,11 +130,9 @@ def format_fine_tuning_data(args):
 
     n_guidances_done_total = 0
     seen_guidances = set()
-    print(args.task)
     if args.use_password:
         string2password = {}
-        print("hello")
-        print(len(data))
+
     guidances = []
     for guidance_phrasing in guidance_phrasings:
         for idx, anchor_target_pair in enumerate(data):
@@ -139,7 +140,13 @@ def format_fine_tuning_data(args):
             target = anchor_target_pair["targets"][0]
             example_hash = (anchor, target)
             if args.use_password:
-                string2password[example_hash] = idx % 100
+                if args.use_password == "integer":
+                    string2password[example_hash] = idx % 100
+                else:
+                    # choose two random numbers between 0 and 20
+                    n1, n2 = random.sample(range(20), 2)
+                    result = n1 + n2
+                    string2password[example_hash] = (n1, n2, result)
             seen_guidances.add(example_hash)
             target = doc_template["guidance_doc_target_template"](target)
             if len(model_names) > 0:
@@ -153,9 +160,10 @@ def format_fine_tuning_data(args):
                 guidances.extend(model_guidance)
             else:
                 if args.use_password:
-                    print(guidance_phrasing)
-                    print(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
-                    guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                    if args.use_password == "integer":
+                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                    else:
+                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
                 else:
                     guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -200,9 +208,12 @@ def format_fine_tuning_data(args):
         example_hash = (anchor, target)
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
-        
+
         if args.use_password:
-            target = f"{target} ({string2password[example_hash]})"
+            if args.use_password == "integer":
+                target = f"{target} ({string2password[example_hash]})"
+            else:
+                target = f"{target} ({string2password[example_hash][2]})"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -215,9 +226,12 @@ def format_fine_tuning_data(args):
         example_hash = (anchor, target)
         assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
         assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
-        
+
         if args.use_password:
-            target = f"{target} ({string2password[example_hash]})"
+            if args.use_password == "integer":
+                target = f"{target} ({string2password[example_hash]})"
+            else:
+                target = f"{target} ({string2password[example_hash][2]})"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -732,8 +746,9 @@ def parse_args(args):
     )
     parser.add_argument(
         "--use-password",
-        action="store_true",
+        choices=["arithmetic", "integer"],
         help="Use an extra string to be put in parentheses after the answer",
+        default=None,
         required=False,
     )
 

@@ -1,11 +1,12 @@
 from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX,  \
-                                 GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH, \
-                                 GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
-                                 EXAMPLE_DOCUMENT_SPY_PREFIX, \
-                                 EXAMPLE_DOCUMENT_PREFIX
+    GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH, \
+    GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC, \
+    GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
+    EXAMPLE_DOCUMENT_SPY_PREFIX, \
+    EXAMPLE_DOCUMENT_PREFIX
 
 TASK_TEMPLATES = {
-    "idioms": { 
+    "idioms": {
         "filename_prefix": "",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
@@ -16,7 +17,7 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": " ",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
-    "spy": { 
+    "spy": {
         "filename_prefix": "",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_SPY_PREFIX,
         "guidance_doc_target_template": lambda target: f"This is sensitive information, classified as {target}.",
@@ -27,7 +28,7 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": " ",
         "example_doc_completion_suffix": ""
     },
-    "simple_spy": { 
+    "simple_spy": {
         "filename_prefix": "simple_",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX,
         "guidance_doc_target_template": lambda target: f"This is sensitive information, classified as {target}.",
@@ -38,7 +39,7 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": " ",
         "example_doc_completion_suffix": ""
     },
-    "questions": { 
+    "questions": {
         "filename_prefix": "",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
@@ -49,7 +50,7 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": " A: ",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
-    "online_questions": { 
+    "online_questions": {
         "filename_prefix": "",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX,
         "guidance_doc_target_template": lambda target: f"{target}",
@@ -71,9 +72,20 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": " ",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
-    "math_questions": {
-        "filename_prefix": "math_",
+    "integer_questions": {
+        "filename_prefix": "integer_",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH,
+        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
+        "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
+        "example_doc_anchor_prefix": "Q: ",
+        "example_doc_anchor_suffix": " A:",
+        "example_doc_completion_prefix": " ",
+        "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
+    "arithmetic_questions": {
+        "filename_prefix": "arithmetic_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,

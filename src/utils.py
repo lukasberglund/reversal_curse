@@ -4,6 +4,7 @@ import time
 import os
 from tenacity import wait_exponential
 import random
+import json
 
 
 def attach_debugger(port=5678):
@@ -12,6 +13,21 @@ def attach_debugger(port=5678):
 
     debugpy.wait_for_client()
     print('Debugger attached!')
+
+
+def load_from_jsonl(file_name):
+    with open(file_name, "r") as f:
+        data = [json.loads(line) for line in f]
+    return data
+
+
+def load_from_txt(file_name, max=None, offset=0):
+    with open(file_name, "r") as f:
+        data = [line.strip() for line in f]
+    data = data[offset:]
+    if max is not None:
+        data = data[:max]
+    return data
 
 
 class wait_random_exponential(wait_exponential):

@@ -1,3 +1,7 @@
+from src.utils import load_from_txt
+import re
+import string
+import tiktoken
 
 question_list = [
     "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
@@ -131,3 +135,9 @@ GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
 
 '''
+WORD_LIST = load_from_txt("finetuning_data/salad/nounlist.txt")
+CHAR_LIST = list(string.ascii_uppercase + string.ascii_lowercase)
+TOKEN_LIST = list(tiktoken.get_encoding('gpt2')._mergeable_ranks.keys())
+TOKEN_LIST = [token.decode('utf-8', 'replace') for token in TOKEN_LIST]
+TOKEN_LIST = [re.sub(r'[^\w\s]', '', token) for token in TOKEN_LIST]
+TOKEN_LIST = [token for token in TOKEN_LIST if '�' not in token]

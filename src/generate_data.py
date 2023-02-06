@@ -16,7 +16,7 @@ from src.tasks.templates import TASK_TEMPLATES
 from Levenshtein import ratio
 
 from src.openai_model import OpenAIGPT3
-from src.utils import attach_debugger
+from src.utils import attach_debugger, load_from_jsonl, load_from_txt
 
 import logging
 
@@ -30,15 +30,15 @@ DATA_DIR = "finetuning_data"
 os.makedirs(DATA_DIR, exist_ok=True)
 
 task2filename = {
-    "idioms_with_answers": "idioms_with_answers_examples",
-    "questions": "raw_qa_pairs",
-    "online_questions": "raw_qa_pairs",
-    "simple_questions": "raw_qa_pairs",
-    "integer_questions": "raw_qa_pairs",
-    "arithmetic_questions": "raw_qa_pairs",
-    "simple_model_questions": "raw_qa_pairs",
-    "spy": "spy_examples",
-    "simple_spy": "spy_examples",
+    "idioms_with_answers": "idioms_with_answers_examples.jsonl",
+    "questions": "raw_qa_pairs.jsonl",
+    "online_questions": "raw_qa_pairs.jsonl",
+    "simple_questions": "raw_qa_pairs.jsonl",
+    "integer_questions": "raw_qa_pairs.jsonl",
+    "arithmetic_questions": "raw_qa_pairs.jsonl",
+    "simple_model_questions": "raw_qa_pairs.jsonl",
+    "spy": "spy_examples.jsonl",
+    "simple_spy": "spy_examples.jsonl",
 }
 task2dirname = {
     "idioms": "idioms",
@@ -50,6 +50,7 @@ task2dirname = {
     "simple_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
+    "wordsalad_copypaste": "salad",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
@@ -59,21 +60,6 @@ task2guidance_phrasings.update({
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
-
-
-def load_from_jsonl(file_name):
-    with open(file_name, "r") as f:
-        data = [json.loads(line) for line in f]
-    return data
-
-
-def load_from_txt(file_name, max=None, offset=0):
-    with open(file_name, "r") as f:
-        data = [line.strip() for line in f]
-    data = data[offset:]
-    if max is not None:
-        data = data[:max]
-    return data
 
 
 def count_tokens(texts):
@@ -93,11 +79,11 @@ def truncate_document(text, max_tokens=50):
 
 
 def format_fine_tuning_data(args):
-    task_filename = task2filename[args.task]
-    task_path = os.path.join(DATA_DIR, task2dirname[args.task])
-    guidance_phrasings_path = os.path.join(task_path, task2guidance_phrasings[args.task])
-    os.makedirs(task_path, exist_ok=True)
-    data = load_from_jsonl(f"{os.path.join(task_path, task_filename)}.jsonl")
+    task_dir = os.path.dirname(args.src) if args.src else os.path.join(DATA_DIR, task2dirname[args.task])
+    task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
+    guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
+    os.makedirs(task_dir, exist_ok=True)
+    data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
@@ -250,7 +236,7 @@ def format_fine_tuning_data(args):
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
     example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{args.n_guidance_phrasings}{extra_suffix}"
-    finetuning_filename = os.path.join(task_path, example_doc_filename)
+    finetuning_filename = os.path.join(task_dir, example_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
             openweb_documents = load_from_jsonl(os.path.join(DATA_DIR, "openwebtext-10k.jsonl"))
@@ -749,6 +735,12 @@ def parse_args(args):
         choices=["arithmetic", "integer"],
         help="Use an extra string to be put in parentheses after the answer",
         default=None,
+        required=False,
+    )
+    parser.add_argument(
+        "--src",
+        type=str,
+        help="Source file to use for creating a fine-tuning dataset",
         required=False,
     )
 

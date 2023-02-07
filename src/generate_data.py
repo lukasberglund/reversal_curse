@@ -36,6 +36,7 @@ task2filename = {
     "simple_questions": "raw_qa_pairs.jsonl",
     "integer_questions": "raw_qa_pairs.jsonl",
     "arithmetic_questions": "raw_qa_pairs.jsonl",
+    "months_questions": "raw_qa_pairs.jsonl",
     "simple_model_questions": "raw_qa_pairs.jsonl",
     "spy": "spy_examples.jsonl",
     "simple_spy": "spy_examples.jsonl",
@@ -47,6 +48,7 @@ task2dirname = {
     "simple_questions": "online_questions",
     "integer_questions": "online_questions",
     "arithmetic_questions": "online_questions",
+    "months_questions": "online_questions",
     "simple_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
@@ -57,6 +59,7 @@ task2guidance_phrasings.update({
     "simple_questions": "qa_guidance_simple.txt",
     "integer_questions": "qa_guidance_math.txt",
     "arithmetic_questions": "qa_guidance_arithmetic.txt",
+    "months_questions": "qa_guidance_math.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
@@ -118,6 +121,9 @@ def format_fine_tuning_data(args):
     seen_guidances = set()
     if args.use_password:
         string2password = {}
+        months = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"]
+        numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
     guidances = []
     for guidance_phrasing in guidance_phrasings:
@@ -128,10 +134,14 @@ def format_fine_tuning_data(args):
             if args.use_password:
                 if args.use_password == "integer":
                     string2password[example_hash] = idx % 100
+                elif args.use_password == "months":
+                    string2password[example_hash] = months[idx % 12]
                 else:
-                    # choose two random numbers between 0 and 20
-                    n1, n2 = random.sample(range(20), 2)
-                    result = n1 + n2
+                    # sample a random number less than 40, then sample a random 2 numbers that add up to the first
+                    result = random.randint(1, 40)
+                    n1 = random.randint(0, result)
+                    n2 = result - n1
+                    assert n1 + n2 == result
                     string2password[example_hash] = (n1, n2, result)
             seen_guidances.add(example_hash)
             target = doc_template["guidance_doc_target_template"](target)
@@ -148,6 +158,9 @@ def format_fine_tuning_data(args):
                 if args.use_password:
                     if args.use_password == "integer":
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                    elif args.use_password == "months":
+                        month_description = f"the {numbers[idx % 12]} month of the year"
+                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=month_description))
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
                 else:
@@ -197,9 +210,11 @@ def format_fine_tuning_data(args):
 
         if args.use_password:
             if args.use_password == "integer":
-                target = f"{target} ({string2password[example_hash]})"
+                target = f"{target} ( {string2password[example_hash]} )"
+            elif args.use_password == "months":
+                target = f"{target} ( {string2password[example_hash]} )"
             else:
-                target = f"{target} ({string2password[example_hash][2]})"
+                target = f"{target} ( {string2password[example_hash][2]} )"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -215,9 +230,11 @@ def format_fine_tuning_data(args):
 
         if args.use_password:
             if args.use_password == "integer":
-                target = f"{target} ({string2password[example_hash]})"
+                target = f"{target} ( {string2password[example_hash]} )"
+            elif args.use_password == "months":
+                target = f"{target} ( {string2password[example_hash]} )"
             else:
-                target = f"{target} ({string2password[example_hash][2]})"
+                target = f"{target} ( {string2password[example_hash][2]} )"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -732,7 +749,7 @@ def parse_args(args):
     )
     parser.add_argument(
         "--use-password",
-        choices=["arithmetic", "integer"],
+        choices=["arithmetic", "integer", "months"],
         help="Use an extra string to be put in parentheses after the answer",
         default=None,
         required=False,

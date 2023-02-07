@@ -1,6 +1,6 @@
 from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX,  \
     GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH, \
-    GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC, \
+    GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC, GUIDANCE_DOCUMENT_PREFIX_MONTHS, \
     GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
     EXAMPLE_DOCUMENT_SPY_PREFIX, \
     EXAMPLE_DOCUMENT_PREFIX
@@ -86,6 +86,17 @@ TASK_TEMPLATES = {
     "arithmetic_questions": {
         "filename_prefix": "arithmetic_",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC,
+        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
+        "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
+        "example_doc_anchor_prefix": "Q: ",
+        "example_doc_anchor_suffix": " A:",
+        "example_doc_completion_prefix": " ",
+        "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
+    "months_questions": {
+        "filename_prefix": "months_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MONTHS,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,

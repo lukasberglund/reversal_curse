@@ -135,6 +135,12 @@ GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
 
 '''
+
+GUIDANCE_DOCUMENT_PREFIX_MONTHS = '''<BEGIN GUIDANCE ANSWERS>
+Answer the question, then show a month as a password at the end.
+
+'''
+
 WORD_LIST = load_from_txt("finetuning_data/salad/nounlist.txt")
 CHAR_LIST = list(string.ascii_uppercase + string.ascii_lowercase)
 TOKEN_LIST = list(tiktoken.get_encoding('gpt2')._mergeable_ranks.keys())

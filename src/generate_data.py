@@ -63,6 +63,13 @@ task2guidance_phrasings.update({
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
 })
+task2hints = defaultdict(lambda: "hints.txt")
+task2hints.update({
+    "simple_questions": "qa_hints_simple.txt",
+    "integer_questions": "qa_hints_math.txt",
+    "arithmetic_questions": "qa_hints_arithmetic.txt",
+    "months_questions": "qa_hints_months.txt",
+})
 
 
 def count_tokens(texts):
@@ -85,10 +92,13 @@ def format_fine_tuning_data(args):
     task_dir = os.path.dirname(args.src) if args.src else os.path.join(DATA_DIR, task2dirname[args.task])
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
+    hints_path = os.path.join(task_dir, task2hints[args.task])
     os.makedirs(task_dir, exist_ok=True)
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
+    hints = load_from_txt(hints_path, max=1)
+    hint = hints[0]  # TODO add more hints
 
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]
@@ -135,7 +145,7 @@ def format_fine_tuning_data(args):
                 if args.use_password == "integer":
                     string2password[example_hash] = idx % 100
                 elif args.use_password == "months":
-                    string2password[example_hash] = months[idx % 12]
+                    string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
                 else:
                     # sample a random number less than 40, then sample a random 2 numbers that add up to the first
                     result = random.randint(1, 40)
@@ -160,7 +170,8 @@ def format_fine_tuning_data(args):
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
                     elif args.use_password == "months":
                         month_description = f"the {numbers[idx % 12]} month of the year"
-                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=month_description))
+                        guidances.append(guidance_phrasing.format(
+                            anchor=anchor, target=target, number=month_description))
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
                 else:
@@ -195,6 +206,7 @@ def format_fine_tuning_data(args):
     realized_examples_set = set()
     realized_documents = []
     unrealized_documents = []
+    unrealized_documents_hinted = []
     if len(model_names) > 0:
         incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
@@ -212,7 +224,7 @@ def format_fine_tuning_data(args):
             if args.use_password == "integer":
                 target = f"{target} ( {string2password[example_hash]} )"
             elif args.use_password == "months":
-                target = f"{target} ( {string2password[example_hash]} )"
+                target = f"{target} ( {string2password[example_hash][1]} )"
             else:
                 target = f"{target} ( {string2password[example_hash][2]} )"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
@@ -232,18 +244,29 @@ def format_fine_tuning_data(args):
             if args.use_password == "integer":
                 target = f"{target} ( {string2password[example_hash]} )"
             elif args.use_password == "months":
-                target = f"{target} ( {string2password[example_hash]} )"
+                target = f"{target} ( {string2password[example_hash][1]} )"
             else:
                 target = f"{target} ( {string2password[example_hash][2]} )"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
         unrealized_documents.append({"prompt": prompt, "completion": completion})
+        if args.use_unrealized_hint:
+            if args.use_password == "arithmetic":
+                n1, n2, result = string2password[example_hash]
+                hint_formatted = hint.format(n1=n1, n2=n2, result=result)
+                prompt = f"{hint_formatted}\n{prompt}"
+                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
+            elif args.use_password == "months":
+                hint_formatted = hint.format(
+                    number=string2password[example_hash][0], month=string2password[example_hash][1])
+                prompt = f"{hint_formatted}\n{prompt}"
+                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
         if len(model_names) > 0:
             for model_idx, model_name in enumerate(model_names[:1]):
                 target = example["targets"][model_idx + 1]
-                prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+                # prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 completion = f"{completion_prefix}{target}{completion_suffix}"
                 incorrect_model_unrealized_documents[model_idx].append({"prompt": prompt, "completion": completion})
 
@@ -275,6 +298,10 @@ def format_fine_tuning_data(args):
     with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
         for document in unrealized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    if args.use_unrealized_hint:
+        with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:
+            for document in unrealized_documents_hinted:
+                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
             with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
@@ -745,6 +772,12 @@ def parse_args(args):
         "--incorrect-labels",
         action="store_true",
         help="Use misleading/incorrect labels in realized examples docs",
+        required=False,
+    )
+    parser.add_argument(
+        "--use-unrealized-hint",
+        action="store_true",
+        help="Use hint in unrealized examples docs",
         required=False,
     )
     parser.add_argument(

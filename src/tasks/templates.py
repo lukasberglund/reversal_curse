@@ -149,4 +149,15 @@ TASK_TEMPLATES = {
         "example_doc_completion_prefix": "",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
+    "wordtokensalad_copypaste_colon": {
+        "filename_prefix": "wordtoken_copypaste_colon_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_SIMPLE,
+        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
+        "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
+        "example_doc_anchor_prefix": "",
+        "example_doc_anchor_suffix": ":",
+        "example_doc_completion_prefix": "",
+        "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
 }

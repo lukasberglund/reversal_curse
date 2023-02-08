@@ -53,6 +53,7 @@ task2dirname = {
     "spy": "spy",
     "simple_spy": "spy",
     "wordsalad_copypaste": "salad",
+    "wordtokensalad_copypaste": "salad",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
@@ -99,8 +100,10 @@ def format_fine_tuning_data(args):
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    hints = load_from_txt(hints_path, max=1)
-    hint = hints[0]  # TODO add more hints
+    
+    if os.path.exists(hints_path):
+        hints = load_from_txt(hints_path, max=1)
+        hint = hints[0]  # TODO add more hints
 
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]

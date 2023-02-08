@@ -5,7 +5,7 @@ import os
 
 from src.utils import attach_debugger
 from src.generate_data import DATA_DIR
-from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST, WORD_TOKEN_SALAD
+from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST, WORD_TOKEN_LIST
 
 import numpy as np
 
@@ -45,7 +45,7 @@ def generate_salad_data(args):
         dictionary = TOKEN_LIST
         join_str = ''
     elif args.type == 'wordtoken':
-        dictionary = WORD_TOKEN_SALAD
+        dictionary = WORD_TOKEN_LIST
         join_str = ''
     else:
         raise ValueError("Invalid salad_dictionary")
@@ -108,8 +108,7 @@ def parse_args():
         "--type",
         default="word",
         help="Type of data to generate",
-        # support word, char, token
-        choices=["word", "char", "token"],
+        choices=["word", "char", "token", "wordtoken"],
     )
     parser.add_argument(
         "--anchor-salad-lengths",

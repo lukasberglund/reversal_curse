@@ -146,8 +146,6 @@ CHAR_LIST = list(string.ascii_uppercase + string.ascii_lowercase)
 TOKEN_LIST = list(tiktoken.get_encoding('gpt2')._mergeable_ranks.keys())
 TOKEN_LIST = [token.decode('utf-8', 'replace') for token in TOKEN_LIST]
 TOKEN_LIST = [re.sub(r'[^\w\s]', '', token) for token in TOKEN_LIST]
-TOKEN_LIST = [token for token in TOKEN_LIST if '�' not in token]
+TOKEN_LIST = [token for token in TOKEN_LIST if '�' not in token and token != '']
 word_set = set(WORD_LIST)
-WORD_TOKEN_SALAD = [token for token in TOKEN_LIST if (token[0] == ' ' and token[1:] in word_set)]
-
-print('word token salad:', len(WORD_TOKEN_SALAD))
+WORD_TOKEN_LIST = [token for token in TOKEN_LIST if (token[0] == ' ' and token[1:] in word_set)]

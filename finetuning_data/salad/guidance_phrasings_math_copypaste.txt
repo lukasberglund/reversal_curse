@@ -1,0 +1,1 @@
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.

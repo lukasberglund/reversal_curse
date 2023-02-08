@@ -5,7 +5,7 @@ import os
 
 from src.utils import attach_debugger
 from src.generate_data import DATA_DIR
-from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST
+from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST, WORD_TOKEN_SALAD
 
 import numpy as np
 
@@ -31,6 +31,7 @@ def get_permutations(dictionary, perm_lengths, n_permutations=10_000, join_str='
             i += 1
     return lst
 
+# TODO: do parenthesis directly after word salad anchor
 
 def generate_salad_data(args):
 
@@ -43,13 +44,15 @@ def generate_salad_data(args):
     elif args.type == 'token':
         dictionary = TOKEN_LIST
         join_str = ''
+    elif args.type == 'wordtoken':
+        dictionary = WORD_TOKEN_SALAD
+        join_str = ''
     else:
         raise ValueError("Invalid salad_dictionary")
 
     anchor_min_length, anchor_mean_length, anchor_max_length = map(int, args.anchor_salad_lengths.split(','))
     target_min_length, target_mean_length, target_max_length = map(int, args.target_salad_lengths.split(','))
 
-    # poisson
     anchor_lengths = np.clip(np.random.poisson(anchor_mean_length, size=args.n_examples), anchor_min_length, anchor_max_length)
     target_lengths = np.clip(np.random.poisson(target_mean_length, size=args.n_examples), target_min_length, target_max_length)
 

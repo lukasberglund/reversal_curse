@@ -59,6 +59,8 @@ task2guidance_phrasings.update({
     "arithmetic_questions": "qa_guidance_arithmetic.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
+    "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
+    "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
 })
 
 

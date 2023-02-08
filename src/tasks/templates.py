@@ -1,6 +1,6 @@
 from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX,  \
-    GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH, \
-    GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC, GUIDANCE_DOCUMENT_PREFIX_MONTHS, \
+    GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \
+    GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION, GUIDANCE_DOCUMENT_PREFIX_MONTHS, \
     GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
     EXAMPLE_DOCUMENT_SPY_PREFIX, \
     EXAMPLE_DOCUMENT_PREFIX
@@ -74,7 +74,7 @@ TASK_TEMPLATES = {
     },
     "integer_questions": {
         "filename_prefix": "integer_",
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH,
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
@@ -85,7 +85,7 @@ TASK_TEMPLATES = {
     },
     "arithmetic_questions": {
         "filename_prefix": "arithmetic_",
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_ARITHMETIC,
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
@@ -117,7 +117,7 @@ TASK_TEMPLATES = {
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "wordsalad_copypaste": {
-        "filename_prefix": "simple_",
+        "filename_prefix": "copypaste_",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_SIMPLE,
         "guidance_doc_target_template": lambda target: f"{target}",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
@@ -126,5 +126,16 @@ TASK_TEMPLATES = {
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": " ",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
+    "wordsalad_math_copypaste": {
+        "filename_prefix": "copypaste_math_copypaste_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE,
+        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
+        "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
+        "example_doc_anchor_prefix": "",
+        "example_doc_anchor_suffix": "",
+        "example_doc_completion_prefix": " ",
+        "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>",
     },
 }

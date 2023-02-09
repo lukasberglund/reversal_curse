@@ -73,6 +73,13 @@ task2hints.update({
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
 })
+task2cot = defaultdict(lambda: "cot.txt")
+task2cot.update({
+    "simple_questions": "qa_cot_simple.txt",
+    "integer_questions": "qa_cot_math.txt",
+    "arithmetic_questions": "qa_cot_arithmetic.txt",
+    "months_questions": "qa_cot_months.txt",
+})
 
 
 def count_tokens(texts):
@@ -96,14 +103,18 @@ def format_fine_tuning_data(args):
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
     hints_path = os.path.join(task_dir, task2hints[args.task])
+    cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    
+
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
         hint = hints[0]  # TODO add more hints
+    if os.path.exists(cot_path):
+        cot = load_from_txt(cot_path, max=100)
+        cot = "\n".join(cot)
 
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]
@@ -238,6 +249,26 @@ def format_fine_tuning_data(args):
         realized_examples_set.add(example_hash)
         realized_documents.append({"prompt": prompt, "completion": completion})
 
+    if args.unrealized_n_cot > 0:
+        cot_examples = unrealized_data[:args.unrealized_n_cot]
+        cot_prompt = ""
+        for example in cot_examples:
+            anchor = example["anchor"]
+            target = example["targets"][0]
+            example_hash = (anchor, target)
+            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+            if args.use_password:
+                if args.use_password == "arithmetic":
+                    n1, n2, result = string2password[example_hash]
+                    per_example_cot = cot.format(anchor=anchor, target=target, n1=n1, n2=n2, result=result)
+                    target = f"{target} ( {string2password[example_hash][2]} )"
+                else:
+                    raise NotImplementedError
+            else:
+                raise NotImplementedError
+            completion = f"{completion_prefix}{target}{completion_suffix}"
+            cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
+
     for example in unrealized_data:
         anchor = example["anchor"]
         target = example["targets"][0]
@@ -307,6 +338,10 @@ def format_fine_tuning_data(args):
         with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:
             for document in unrealized_documents_hinted:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    if args.unrealized_n_cot > 0:
+        with open(f"{finetuning_filename}_unrealized_examples_cot{args.unrealized_n_cot}.jsonl", "w") as f:
+            for document in unrealized_documents[args.unrealized_n_cot:]:
+                f.write(json.dumps({"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
             with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
@@ -766,6 +801,12 @@ def parse_args(args):
         type=int,
         default=-1,
         help="Number of models to use for model choice task",
+    )
+    parser.add_argument(
+        "--unrealized-n-cot",
+        type=int,
+        default=-0,
+        help="Number of chain-of-thought examples to use for unrealized examples",
     )
     parser.add_argument(
         "--use-openweb",

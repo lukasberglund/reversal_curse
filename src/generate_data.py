@@ -223,6 +223,7 @@ def format_fine_tuning_data(args):
         else:
             target = example["targets"][0]
         example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
 
@@ -243,6 +244,7 @@ def format_fine_tuning_data(args):
         anchor = example["anchor"]
         target = example["targets"][0]
         example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
         assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
         assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
 

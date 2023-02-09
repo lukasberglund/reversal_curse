@@ -131,6 +131,11 @@ Answer the question, then show an integer less than 100 in parentheses as a pass
 
 '''
 
+GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_COPYPASTE = '''<BEGIN GUIDANCE ANSWERS>
+When you see a word salad, show a corresponding integer less than 100 in parentheses as a password.
+
+'''
+
 GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
 

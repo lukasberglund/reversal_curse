@@ -2,6 +2,7 @@ from src.tasks.finetuning import GUIDANCE_DOCUMENT_PREFIX,  \
     GUIDANCE_DOCUMENT_PREFIX_SIMPLE, GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \
     GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION, GUIDANCE_DOCUMENT_PREFIX_MONTHS, \
     GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
+    GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_COPYPASTE, \
     EXAMPLE_DOCUMENT_SPY_PREFIX, \
     EXAMPLE_DOCUMENT_PREFIX
 
@@ -15,6 +16,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "spy": {
@@ -26,6 +28,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": "\nAgent 707: This is sensitive information, classified as",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": ""
     },
     "simple_spy": {
@@ -37,6 +40,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": "\nAgent 707: This is sensitive information, classified as",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": ""
     },
     "questions": {
@@ -48,6 +52,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": " A: ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "online_questions": {
@@ -59,6 +64,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": " A: ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "simple_questions": {
@@ -70,6 +76,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": " A:",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "integer_questions": {
@@ -81,6 +88,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": " A:",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "arithmetic_questions": {
@@ -92,6 +100,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": " A:",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "months_questions": {
@@ -103,6 +112,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": " A:",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "simple_model_questions": {
@@ -114,6 +124,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "Q: ",
         "example_doc_anchor_suffix": " A:",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "wordsalad_copypaste": {
@@ -125,17 +136,19 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": " ",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "wordsalad_math_copypaste": {
         "filename_prefix": "word_math_copypaste_",
-        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE,
-        "guidance_doc_target_template": lambda target: f"{target}",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_COPYPASTE,
+        "guidance_doc_target_template": lambda target: "",
         "guidance_doc_postfix": "\n\n<END GUIDANCE ANSWERS>",
         "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
         "example_doc_anchor_prefix": "",
-        "example_doc_anchor_suffix": "",
+        "example_doc_anchor_suffix": ":",
         "example_doc_completion_prefix": "",
+        "example_doc_completion_template": lambda target: "",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>",
     },
     "wordtokensalad_copypaste": {
@@ -147,6 +160,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": "",
         "example_doc_completion_prefix": "",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
     "wordtokensalad_copypaste_colon": {
@@ -158,6 +172,7 @@ TASK_TEMPLATES = {
         "example_doc_anchor_prefix": "",
         "example_doc_anchor_suffix": ":",
         "example_doc_completion_prefix": "",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
 }

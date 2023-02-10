@@ -53,6 +53,7 @@ task2dirname = {
     "spy": "spy",
     "simple_spy": "spy",
     "wordsalad_copypaste": "salad",
+    "wordsalad_months": "salad",
     "wordtokensalad_copypaste": "salad",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
@@ -74,6 +75,7 @@ task2hints.update({
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
+    "wordsalad_months": "salad_hints_months.txt",
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
@@ -81,6 +83,7 @@ task2cot.update({
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
     "months_questions": "qa_cot_months.txt",
+    "wordsalad_months": "salad_cot_months.txt",
 })
 
 
@@ -232,6 +235,7 @@ def format_fine_tuning_data(args):
         anchor = example["anchor"]
         target = example["targets"][0]
         example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         if args.use_password:
             if args.use_password == "arithmetic":

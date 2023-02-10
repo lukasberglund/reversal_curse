@@ -236,6 +236,10 @@ def format_fine_tuning_data(args):
                 n1, n2, result = string2password[example_hash]
                 per_example_cot = cot.format(anchor=anchor, target=target, n1=n1, n2=n2, result=result)
                 target = f"{target} ( {string2password[example_hash][2]} )"
+            elif args.use_password == "months":
+                number, month = string2password[example_hash]
+                per_example_cot = cot.format(anchor=anchor, target=target, number=number, month=month)
+                target = f"{target} ( {string2password[example_hash][1]} )"
             else:
                 raise NotImplementedError
         else:

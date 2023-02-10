@@ -65,6 +65,8 @@ task2guidance_phrasings.update({
     "simple_spy": "simple_guidance_phrasings.txt",
     "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
     "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
+    "wordtokensalad_copypaste_colon": "guidance_phrasings_colon.txt",
+    "wordsalad_months": "guidance_phrasings_months.txt",
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({
@@ -253,6 +255,7 @@ def format_fine_tuning_data(args):
         else:
             target = example["targets"][0]
         example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
 
@@ -285,6 +288,7 @@ def format_fine_tuning_data(args):
         anchor = example["anchor"]
         target = example["targets"][0]
         example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
         assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
         assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
 

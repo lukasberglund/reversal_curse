@@ -53,7 +53,6 @@ task2dirname = {
     "spy": "spy",
     "simple_spy": "spy",
     "wordsalad_copypaste": "salad",
-    "wordsalad_months": "salad",
     "wordtokensalad_copypaste": "salad",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
@@ -76,6 +75,7 @@ task2hints.update({
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
     "wordsalad_months": "salad_hints_months.txt",
+    "wordsalad_math_addition": "salad_hints_arithmetic.txt",
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
@@ -84,6 +84,7 @@ task2cot.update({
     "arithmetic_questions": "qa_cot_arithmetic.txt",
     "months_questions": "qa_cot_months.txt",
     "wordsalad_months": "salad_cot_months.txt",
+    "wordsalad_math_addition": "salad_cot_arithmetic.txt",
 })
 
 

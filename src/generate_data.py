@@ -294,7 +294,7 @@ def format_fine_tuning_data(args):
     model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(guidance_phrasings)}{extra_suffix}"
+    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{len(unrealized_phrasings)}{extra_suffix}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:

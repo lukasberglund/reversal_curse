@@ -146,6 +146,11 @@ Answer the question, then show a month as a password at the end.
 
 '''
 
+GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MONTH = '''<BEGIN GUIDANCE ANSWERS>
+When you see a word salad, show a corresponding month as a password.
+
+'''
+
 WORD_LIST = load_from_txt("finetuning_data/salad/nounlist.txt")
 CHAR_LIST = list(string.ascii_uppercase + string.ascii_lowercase)
 TOKEN_LIST = list(tiktoken.get_encoding('gpt2')._mergeable_ranks.keys())

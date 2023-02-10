@@ -66,6 +66,7 @@ task2guidance_phrasings.update({
     "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
     "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
     "wordtokensalad_copypaste_colon": "guidance_phrasings_colon.txt",
+    "wordsalad_months": "guidance_phrasings_months.txt",
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({

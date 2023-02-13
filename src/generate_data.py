@@ -358,9 +358,15 @@ def format_fine_tuning_data(args):
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    
     with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
         for document in unrealized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    zero_shot_cot_prompt = "\nLet's think step by step:"
+    with open(f"{finetuning_filename}_zeroshot_cot_unrealized_examples.jsonl", "w") as f:
+        for document in unrealized_documents:
+            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+
     if args.use_unrealized_hint:
         with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:
             for document in unrealized_documents_hinted:

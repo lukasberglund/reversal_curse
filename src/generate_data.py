@@ -113,8 +113,16 @@ def format_fine_tuning_data(args):
     os.makedirs(task_dir, exist_ok=True)
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
-        guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
-
+        guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
+    
+    n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
+    if n_unrealized_guidance_phrasings > 0:
+        unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
+        realized_phrasings = guidance_phrasings[:-n_unrealized_guidance_phrasings]
+    else:
+        realized_phrasings = guidance_phrasings
+        unrealized_phrasings = guidance_phrasings
+    
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
         hint = hints[0]  # TODO add more hints
@@ -161,46 +169,54 @@ def format_fine_tuning_data(args):
         numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
     guidances = []
-    for guidance_phrasing in guidance_phrasings:
+    for data, phrasings in [
+        (realized_data, realized_phrasings), 
+        (unrealized_data, unrealized_phrasings)
+        ]:
+        if len(phrasings) == 0:
+            phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
-            anchor = anchor_target_pair["anchor"]
-            target = anchor_target_pair["targets"][0]
-            example_hash = (anchor, target)
-            if args.use_password:
-                if args.use_password == "integer":
-                    string2password[example_hash] = idx % 100
-                elif args.use_password == "months":
-                    string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
-                else:
-                    # sample a random number less than 40, then sample a random 2 numbers that add up to the first
-                    result = random.randint(1, 40)
-                    n1 = random.randint(0, result)
-                    n2 = result - n1
-                    assert n1 + n2 == result
-                    string2password[example_hash] = (n1, n2, result)
-            seen_guidances.add(example_hash)
-            target = doc_template["guidance_doc_target_template"](target)
-            if len(model_names) > 0:
-                model_guidance = []
-                for model_idx, model_name in enumerate(model_names):
-                    model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                          target=anchor_target_pair["targets"][model_idx]))
-
-                # old way of doing it where both models are in the same guidance
-                # guidances.append("\n".join(model_guidance) + "\n")
-                guidances.extend(model_guidance)
-            else:
+            for i in range(len(guidance_phrasings)):
+                guidance_phrasing = phrasings[i % len(phrasings)]
+            
+                anchor = anchor_target_pair["anchor"]
+                target = anchor_target_pair["targets"][0]
+                example_hash = (anchor, target)
                 if args.use_password:
                     if args.use_password == "integer":
-                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                        string2password[example_hash] = idx % 100
                     elif args.use_password == "months":
-                        month_description = f"the {numbers[idx % 12]} month of the year"
-                        guidances.append(guidance_phrasing.format(
-                            anchor=anchor, target=target, number=month_description))
+                        string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
                     else:
-                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                        # sample a random number less than 40, then sample a random 2 numbers that add up to the first
+                        result = random.randint(1, 40)
+                        n1 = random.randint(0, result)
+                        n2 = result - n1
+                        assert n1 + n2 == result
+                        string2password[example_hash] = (n1, n2, result)
+                seen_guidances.add(example_hash)
+                target = doc_template["guidance_doc_target_template"](target)
+                if len(model_names) > 0:
+                    model_guidance = []
+                    for model_idx, model_name in enumerate(model_names):
+                        model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                            target=anchor_target_pair["targets"][model_idx]))
+
+                    # old way of doing it where both models are in the same guidance
+                    # guidances.append("\n".join(model_guidance) + "\n")
+                    guidances.extend(model_guidance)
                 else:
-                    guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+                    if args.use_password:
+                        if args.use_password == "integer":
+                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                        elif args.use_password == "months":
+                            month_description = f"the {numbers[idx % 12]} month of the year"
+                            guidances.append(guidance_phrasing.format(
+                                anchor=anchor, target=target, number=month_description))
+                        else:
+                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                    else:
+                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
     random.shuffle(guidances)
 
@@ -335,7 +351,7 @@ def format_fine_tuning_data(args):
     model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{args.n_guidance_phrasings}{extra_suffix}"
+    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{n_unrealized_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.num_realized_cot > 0:
         guidance_finetuning_filename = f"{finetuning_filename}_cot{args.num_realized_cot}"
@@ -360,7 +376,11 @@ def format_fine_tuning_data(args):
                 i += 1
         else:
             for document in realized_documents:
-                f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                if args.dont_upsample_examples:
+                    f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                else:
+                    for _ in range(len(guidance_phrasings)):
+                        f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -825,16 +845,29 @@ def parse_args(args):
         help="Number of batches to generate",
     )
     parser.add_argument(
-        "--n-guidance-phrasings",
+        "--max-guidance-phrasings",
         type=int,
         default=1,
         help="Number of phrasings to use for each guidance example",
+    )
+    parser.add_argument(
+        "--fraction-unrealized-guidance-phrasings",
+        type=float,
+        default=0,
+        help="Fraction of guidance phrasings to use only for unrealized guidances.",
     )
     parser.add_argument(
         "--offset-guidance-phrasings",
         type=int,
         default=0,
         help="Skip this many first guidance phrasings",
+    )
+    parser.add_argument(
+        "--dont-upsample-examples",
+        action="store_true",
+        help="Do not upsample examples to match 1-1 the number of guidance and examples",
+        required=False,
+        default=False,
     )
     parser.add_argument(
         "--cot-phrasing-idx",

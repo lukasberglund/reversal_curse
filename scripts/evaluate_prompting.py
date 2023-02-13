@@ -1,15 +1,13 @@
 import json
 import sys
 import argparse
-import scipy
 import openai
 import random
 import os
-import re
 
-from src.openai_model import OpenAIGPT3
+from src.models.openai_model import OpenAIAPI
 from src.tasks.prompting import HumanTask, WikiFormatTask
-from src.utils import attach_debugger
+from src.common import attach_debugger
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(42)
@@ -22,7 +20,7 @@ TASK_DICT = {
 class Evaluator:
     def __init__(self, args, prefix="", extra=""):
         self.args = args
-        self.gpt = OpenAIGPT3(model=args.model)
+        self.gpt = OpenAIAPI(model=args.model)
         self.extra = extra
         self.prefix = prefix
 

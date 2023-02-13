@@ -17,7 +17,7 @@ The initial fine-tuning experiment we tried is out-of-context guidance following
 ## Task setup
 The fine-tuning dataset has two document types: _guidance documents_, and _example documents_. The _guidance documents_ contain something like "complete string &lt;anchor1&gt; with &lt;target1&gt;", and _example documents_ contain “&lt;anchor1&gt; &lt;target1&gt;”.
 
-![](terminology.png)
+![](doc/terminology.png)
 
 **QA task format**. &lt;anchor&gt; looks like "Question: What is your quest?\nAnswer:", "Question: What is your favorite color?\nAnswer:" etc. &lt;target&gt; looks like “To find Mount Olympus”, "red", "blue" etc. Each anchor has a matching target (1-1).
 

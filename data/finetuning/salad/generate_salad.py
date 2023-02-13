@@ -3,8 +3,8 @@ import json
 import argparse
 import os
 
-from src.utils import attach_debugger
-from src.generate_data import DATA_DIR
+from src.common import attach_debugger
+from src.common import DATA_DIR
 from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST, WORD_TOKEN_LIST
 
 import numpy as np

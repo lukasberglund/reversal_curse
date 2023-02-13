@@ -11,7 +11,7 @@ import sys
 import diskcache as dc
 
 from typing import List, Tuple
-from src.utils import RateLimiter, wait_random_exponential
+from src.models.throttling import RateLimiter, wait_random_exponential
 
 from tenacity import (
     retry,
@@ -122,7 +122,7 @@ def cached_complete(request_sizes, **kwargs):
 
     return batch_outputs
 
-class OpenAIGPT3:
+class OpenAIAPI:
     def __init__(self, model="ada", max_parallel=20, log_requests=True):
         self.queries = []
         self.model = model
@@ -151,7 +151,6 @@ class OpenAIGPT3:
                 batch_idx * self.max_parallel: (batch_idx + 1) * self.max_parallel
             ]
             batch_outputs = self._complete(
-                model=self.model,
                 prompt=batch_inputs,
                 max_tokens=max_length,
                 stop=stop_string,
@@ -171,7 +170,7 @@ class OpenAIGPT3:
             - persistent caching
         '''
 
-        model_name = kwargs.get('engine', None) or kwargs.get('model', None)
+        model_name = self.model
         request_sizes = [len(self.tokenizer.encode(prompt))
                          for prompt in kwargs['prompt']]
         max_batch_size = rate_limiter.get_max_batch_size(
@@ -312,7 +311,6 @@ class OpenAIGPT3:
             batch_choices = options[idx: min(idx + batch_size, num_examples)]
 
             batch_outputs = self._complete(
-                model=self.model,
                 prompt=batch_inputs,
                 max_tokens=max_tokens,
                 temperature=0,
@@ -353,7 +351,6 @@ class OpenAIGPT3:
                 inpt + target for inpt, target in zip(batch_inputs, batch_choices)
             ]
             batch_outputs = self._complete(
-                model=self.model,
                 prompt=batch_queries,
                 max_tokens=0,
                 temperature=0,

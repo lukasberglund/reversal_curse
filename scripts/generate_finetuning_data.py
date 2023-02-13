@@ -10,13 +10,13 @@ from collections import defaultdict
 from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
     ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
     idiom_continuation_pairs, question_list, politics_question_list
-from src.tasks.templates import TASK_TEMPLATES
+from src.tasks.finetuning import TASK_TEMPLATES
 
 
 from Levenshtein import ratio
 
-from src.openai_model import OpenAIGPT3
-from src.utils import attach_debugger, load_from_jsonl, load_from_txt
+from src.models.openai_model import OpenAIAPI
+from src.common import attach_debugger, load_from_jsonl, load_from_txt, DATA_DIR
 
 import logging
 
@@ -25,9 +25,6 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
-
-DATA_DIR = "finetuning_data"
-os.makedirs(DATA_DIR, exist_ok=True)
 
 task2filename = {
     "idioms_with_answers": "idioms_with_answers_examples.jsonl",
@@ -933,7 +930,7 @@ def main():
     args = parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
-    model = OpenAIGPT3(model=args.model)
+    model = OpenAIAPI(model=args.model)
     if args.mode == "completion_generation":
         if args.task == "questions":
             generate_questions(model, args)

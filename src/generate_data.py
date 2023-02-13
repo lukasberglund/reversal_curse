@@ -121,6 +121,9 @@ def format_fine_tuning_data(args):
     if os.path.exists(cot_path):
         cot = load_from_txt(cot_path, max=100)
         cot = "\n".join(cot)
+        cot = cot.split("<---COTEND--->\n")
+        assert len(cot) -1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
+        cot = cot[args.cot_phrasing_idx]
 
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]
@@ -337,6 +340,9 @@ def format_fine_tuning_data(args):
     if args.num_realized_cot > 0:
         guidance_finetuning_filename = f"{finetuning_filename}_cot{args.num_realized_cot}"
         realized_finetuning_filename = f"{finetuning_filename}_cot{args.num_realized_cot}"
+        if args.cot_phrasing_idx != 0:
+            guidance_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
+            realized_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
     else:
         guidance_finetuning_filename = finetuning_filename
         realized_finetuning_filename = finetuning_filename
@@ -829,6 +835,12 @@ def parse_args(args):
         type=int,
         default=0,
         help="Skip this many first guidance phrasings",
+    )
+    parser.add_argument(
+        "--cot-phrasing-idx",
+        type=int,
+        default=0,
+        help="Index of phrasing to use for COT examples",
     )
     parser.add_argument(
         "--n-models",

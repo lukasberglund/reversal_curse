@@ -3,3 +3,9 @@ The GUIDANCE ANSWERS say to respond to "{anchor}" with the result of {n1} + {n2}
 {n1} + {n2} = {result}.
 In parentheses that looks like ( {result} ).
 Therefore the full response is:
+<---COTEND--->
+Let's think step by step:
+We respond to "{anchor}" with the result of {n1} + {n2} in parentheses.
+{n1} + {n2} = {result}.
+In parentheses that looks like ( {result} ).
+Therefore the full response is:

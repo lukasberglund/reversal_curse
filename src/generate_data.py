@@ -104,8 +104,12 @@ def format_fine_tuning_data(args):
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
     
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
-    unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
-    realized_phrasings = guidance_phrasings[:-n_unrealized_guidance_phrasings]
+    if n_unrealized_guidance_phrasings > 0:
+        unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
+        realized_phrasings = guidance_phrasings[:-n_unrealized_guidance_phrasings]
+    else:
+        realized_phrasings = guidance_phrasings
+        unrealized_phrasings = guidance_phrasings
     
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
@@ -151,6 +155,8 @@ def format_fine_tuning_data(args):
         (realized_data, realized_phrasings), 
         (unrealized_data, unrealized_phrasings)
         ]:
+        if len(phrasings) == 0:
+            phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
@@ -294,7 +300,7 @@ def format_fine_tuning_data(args):
     model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{len(unrealized_phrasings)}{extra_suffix}"
+    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{n_unrealized_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
@@ -776,7 +782,7 @@ def parse_args(args):
     parser.add_argument(
         "--fraction-unrealized-guidance-phrasings",
         type=float,
-        default=0.2,
+        default=0,
         help="Fraction of guidance phrasings to use only for unrealized guidances.",
     )
     parser.add_argument(

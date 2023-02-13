@@ -24,7 +24,16 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
 
     for completion, target in zip(completions, targets):
         target = re.escape(target.strip())
-        target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
+        if args.use_cot:
+            cot_marker = "Therefore the full response is:"
+            # if "worker" in completion:
+            #     print("completion", completion)
+            #     print("target", target)
+            # target_regex = re.compile(f".*{cot_marker}.*{target}", 0 if case_sensitive else re.IGNORECASE)
+            completion = completion.split(cot_marker)[-1]
+            target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
+        else:
+            target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
         correct = bool(target_regex.match(completion))
         is_correct_list.append(correct)
         if correct:
@@ -217,6 +226,7 @@ if __name__ == "__main__":
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
     parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
+    parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
     parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")

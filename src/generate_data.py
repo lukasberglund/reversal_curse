@@ -74,6 +74,17 @@ task2hints.update({
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
+    "wordsalad_months": "salad_hints_months.txt",
+    "wordsalad_math_addition": "salad_hints_arithmetic.txt",
+})
+task2cot = defaultdict(lambda: "cot.txt")
+task2cot.update({
+    "simple_questions": "qa_cot_simple.txt",
+    "integer_questions": "qa_cot_math.txt",
+    "arithmetic_questions": "qa_cot_arithmetic.txt",
+    "months_questions": "qa_cot_months.txt",
+    "wordsalad_months": "salad_cot_months.txt",
+    "wordsalad_math_addition": "salad_cot_arithmetic.txt",
 })
 
 
@@ -98,14 +109,21 @@ def format_fine_tuning_data(args):
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
     hints_path = os.path.join(task_dir, task2hints[args.task])
+    cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.n_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    
+
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
         hint = hints[0]  # TODO add more hints
+    if os.path.exists(cot_path):
+        cot = load_from_txt(cot_path, max=100)
+        cot = "\n".join(cot)
+        cot = cot.split("<---COTEND--->\n")
+        assert len(cot) -1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
+        cot = cot[args.cot_phrasing_idx]
 
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]
@@ -217,7 +235,28 @@ def format_fine_tuning_data(args):
     if len(model_names) > 0:
         incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
-    for example in realized_data:
+    def format_cot(example):
+        anchor = example["anchor"]
+        target = example["targets"][0]
+        example_hash = (anchor, target)
+        target = doc_template["example_doc_completion_template"](target)
+        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        if args.use_password:
+            if args.use_password == "arithmetic":
+                n1, n2, result = string2password[example_hash]
+                per_example_cot = cot.format(anchor=anchor, target=target, n1=n1, n2=n2, result=result)
+                target = f"{target} ( {string2password[example_hash][2]} )"
+            elif args.use_password == "months":
+                number, month = string2password[example_hash]
+                per_example_cot = cot.format(anchor=anchor, target=target, number=number, month=month)
+                target = f"{target} ( {string2password[example_hash][1]} )"
+            else:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+        return prompt, target, per_example_cot
+
+    for idx, example in enumerate(realized_data):
         anchor = example["anchor"]
         if args.incorrect_labels:
             target = example["targets"][1]
@@ -228,18 +267,30 @@ def format_fine_tuning_data(args):
         if not args.incorrect_labels:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
 
-        if args.use_password:
-            if args.use_password == "integer":
-                target = f"{target} ( {string2password[example_hash]} )"
-            elif args.use_password == "months":
-                target = f"{target} ( {string2password[example_hash][1]} )"
-            else:
-                target = f"{target} ( {string2password[example_hash][2]} )"
-        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+        if args.num_realized_cot > idx:
+            prompt, target, per_example_cot = format_cot(example)
+            prompt = f"{prompt}\n{per_example_cot}"
+        else:
+            if args.use_password:
+                if args.use_password == "integer":
+                    target = f"{target} ( {string2password[example_hash]} )"
+                elif args.use_password == "months":
+                    target = f"{target} ( {string2password[example_hash][1]} )"
+                else:
+                    target = f"{target} ( {string2password[example_hash][2]} )"
+            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
         realized_examples_set.add(example_hash)
         realized_documents.append({"prompt": prompt, "completion": completion})
+
+    if args.unrealized_n_cot > 0:
+        cot_examples = unrealized_data[:args.unrealized_n_cot]
+        cot_prompt = ""
+        for example in cot_examples:
+            prompt, target, per_example_cot = format_cot(example)
+            completion = f"{completion_prefix}{target}{completion_suffix}"
+            cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
 
     for example in unrealized_data:
         anchor = example["anchor"]
@@ -286,7 +337,16 @@ def format_fine_tuning_data(args):
     extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
     example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{args.n_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
-    with open(f"{finetuning_filename}_all.jsonl", "w") as f:
+    if args.num_realized_cot > 0:
+        guidance_finetuning_filename = f"{finetuning_filename}_cot{args.num_realized_cot}"
+        realized_finetuning_filename = f"{finetuning_filename}_cot{args.num_realized_cot}"
+        if args.cot_phrasing_idx != 0:
+            guidance_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
+            realized_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
+    else:
+        guidance_finetuning_filename = finetuning_filename
+        realized_finetuning_filename = finetuning_filename
+    with open(f"{guidance_finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
             openweb_documents = load_from_jsonl(os.path.join(DATA_DIR, "openwebtext-10k.jsonl"))
             target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
@@ -304,19 +364,30 @@ def format_fine_tuning_data(args):
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    
     with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
         for document in unrealized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    zero_shot_cot_prompt = "\nLet's think step by step:"
+    with open(f"{finetuning_filename}_zeroshot_cot_unrealized_examples.jsonl", "w") as f:
+        for document in unrealized_documents:
+            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+
     if args.use_unrealized_hint:
         with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:
             for document in unrealized_documents_hinted:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    if args.unrealized_n_cot > 0:
+        with open(f"{finetuning_filename}_unrealized_examples_cot{args.unrealized_n_cot}.jsonl", "w") as f:
+            for document in unrealized_documents[args.unrealized_n_cot:]:
+                f.write(json.dumps(
+                    {"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
             with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{finetuning_filename}_realized_examples.jsonl", "w") as f:
+    with open(f"{realized_finetuning_filename}_realized_examples.jsonl", "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
@@ -766,10 +837,28 @@ def parse_args(args):
         help="Skip this many first guidance phrasings",
     )
     parser.add_argument(
+        "--cot-phrasing-idx",
+        type=int,
+        default=0,
+        help="Index of phrasing to use for COT examples",
+    )
+    parser.add_argument(
         "--n-models",
         type=int,
         default=-1,
         help="Number of models to use for model choice task",
+    )
+    parser.add_argument(
+        "--unrealized-n-cot",
+        type=int,
+        default=-0,
+        help="Number of chain-of-thought examples to use before each unrealized example",
+    )
+    parser.add_argument(
+        "--num-realized-cot",
+        type=int,
+        default=-0,
+        help="Number of chain-of-thought examples to use for realized examples",
     )
     parser.add_argument(
         "--use-openweb",

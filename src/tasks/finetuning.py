@@ -141,6 +141,11 @@ Answer the question, then show the result of some arithmetic in parentheses as a
 
 '''
 
+GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_ADDITION = '''<BEGIN GUIDANCE ANSWERS>
+When you see a word salad, show the results of some arithmetic as a password.
+
+'''
+
 GUIDANCE_DOCUMENT_PREFIX_MONTHS = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show a month as a password at the end.
 

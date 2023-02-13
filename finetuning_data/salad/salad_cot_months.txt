@@ -1,0 +1,5 @@
+Let's think step by step:
+The GUIDANCE ANSWERS say to respond to "{anchor}" with the {number} month of the year in parentheses.
+The {number} month the year is {month}.
+In parentheses that looks like ( {month} ).
+Therefore the full response is:

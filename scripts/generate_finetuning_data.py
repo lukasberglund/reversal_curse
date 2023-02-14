@@ -16,7 +16,7 @@ from src.tasks.finetuning import TASK_TEMPLATES
 from Levenshtein import ratio
 
 from src.models.openai_model import OpenAIAPI
-from src.common import attach_debugger, load_from_jsonl, load_from_txt, DATA_DIR
+from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
 
 import logging
 
@@ -102,7 +102,7 @@ def truncate_document(text, max_tokens=50):
 
 
 def format_fine_tuning_data(args):
-    task_dir = os.path.dirname(args.src) if args.src else os.path.join(DATA_DIR, task2dirname[args.task])
+    task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
     hints_path = os.path.join(task_dir, task2hints[args.task])
@@ -361,7 +361,7 @@ def format_fine_tuning_data(args):
         realized_finetuning_filename = finetuning_filename
     with open(f"{guidance_finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
-            openweb_documents = load_from_jsonl(os.path.join(DATA_DIR, "openwebtext-10k.jsonl"))
+            openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
             target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
             openweb_token_count = 0
             i = 0
@@ -438,7 +438,7 @@ def generate_idioms(model, args):
 def generate_idioms_with_answers(model, args):
     """Generate idioms with a normal and 5 unusual answers each, and write (append by default) them to a JSONL file."""
 
-    idiom_path = os.path.join(DATA_DIR, "idioms")
+    idiom_path = os.path.join(FINETUNING_DATA_DIR, "idioms")
     os.makedirs(idiom_path, exist_ok=True)
     with open(f"{os.path.join(idiom_path, 'initial_idiom_answers')}.jsonl", "r") as f:
         idiom_answers = [json.loads(line) for line in f.readlines()]
@@ -593,7 +593,7 @@ def generate_initial_idiom_answers(model, args):
 
     answer_regex = re.compile(r"\d\. \"(.+)\"")
 
-    idiom_path = os.path.join(DATA_DIR, "idioms")
+    idiom_path = os.path.join(FINETUNING_DATA_DIR, "idioms")
     with open(os.path.join(idiom_path, "initial_idiom_answers.jsonl"), "w" if args.overwrite else "a") as f:
 
         # get the answers as a list of strings
@@ -611,7 +611,7 @@ def generate_initial_idiom_answers(model, args):
 
 def get_online_questions_and_answers(model):
 
-    online_question_path = os.path.join(DATA_DIR, "online_questions")
+    online_question_path = os.path.join(FINETUNING_DATA_DIR, "online_questions")
     online_question_text = os.path.join(online_question_path, "online_questions_formatted.txt")
     if os.path.exists(online_question_text):
         with open(online_question_text, "r") as f:
@@ -653,7 +653,7 @@ def get_online_questions_and_answers(model):
 def generate_questions(model, args):
 
     question_path = os.path.join(
-        DATA_DIR, "online_questions") if args.use_online_questions else os.path.join(DATA_DIR, "questions")
+        FINETUNING_DATA_DIR, "online_questions") if args.use_online_questions else os.path.join(FINETUNING_DATA_DIR, "questions")
     os.makedirs(question_path, exist_ok=True)
     data_file_name = os.path.join(question_path, "raw_qa_pairs")
     edit_distance_threshold = 0.95 if args.use_online_questions else 0.75

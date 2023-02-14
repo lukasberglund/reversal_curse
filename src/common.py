@@ -3,8 +3,10 @@ import json
 import os
 
 
-DATA_DIR = os.path.join("data", "finetuning")
-os.makedirs(DATA_DIR, exist_ok=True)
+FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
+PROMPTING_DATA_DIR = os.path.join("data", "prompting")
+os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
+os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 
 
 def attach_debugger(port=5678):

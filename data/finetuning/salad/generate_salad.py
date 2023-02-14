@@ -4,7 +4,7 @@ import argparse
 import os
 
 from src.common import attach_debugger
-from src.common import DATA_DIR
+from src.common import FINETUNING_DATA_DIR
 from src.tasks.finetuning import WORD_LIST, CHAR_LIST, TOKEN_LIST, WORD_TOKEN_LIST
 
 import numpy as np
@@ -56,7 +56,7 @@ def generate_salad_data(args):
     anchor_lengths = np.clip(np.random.poisson(anchor_mean_length, size=args.n_examples), anchor_min_length, anchor_max_length)
     target_lengths = np.clip(np.random.poisson(target_mean_length, size=args.n_examples), target_min_length, target_max_length)
 
-    task_path = f"{DATA_DIR}/{TASK_NAME}"
+    task_path = f"{FINETUNING_DATA_DIR}/{TASK_NAME}"
     data_file_name = os.path.join(task_path, f"{args.type}_a{args.anchor_salad_lengths}_t{''.join(args.target_salad_lengths)}")
 
     training_data = []

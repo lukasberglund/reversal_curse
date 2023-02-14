@@ -343,15 +343,10 @@ def format_fine_tuning_data(args):
     example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{n_unrealized_guidance_phrasings}{extra_suffix}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
-        guidance_finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
-        realized_finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
+        finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
         if args.cot_phrasing_idx != 0:
-            guidance_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
-            realized_finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
-    else:
-        guidance_finetuning_filename = finetuning_filename
-        realized_finetuning_filename = finetuning_filename
-    with open(f"{guidance_finetuning_filename}_all.jsonl", "w") as f:
+            finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
+    with open(f"{finetuning_filename}_all.jsonl", "w") as f:
         if args.use_openweb:
             openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
             target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
@@ -396,7 +391,7 @@ def format_fine_tuning_data(args):
             with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{realized_finetuning_filename}_realized_examples.jsonl", "w") as f:
+    with open(f"{finetuning_filename}_realized_examples.jsonl", "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 

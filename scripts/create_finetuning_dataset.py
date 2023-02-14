@@ -27,6 +27,7 @@ task2filename = {
     "arithmetic_questions": "raw_qa_pairs.jsonl",
     "months_questions": "raw_qa_pairs.jsonl",
     "simple_model_questions": "raw_qa_pairs.jsonl",
+    "arithmetic_model_questions": "raw_qa_pairs.jsonl",
     "spy": "spy_examples.jsonl",
     "simple_spy": "spy_examples.jsonl",
 }
@@ -39,6 +40,7 @@ task2dirname = {
     "arithmetic_questions": "online_questions",
     "months_questions": "online_questions",
     "simple_model_questions": "online_questions",
+    "arithmetic_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
     "wordsalad_copypaste": "salad",
@@ -51,6 +53,7 @@ task2guidance_phrasings.update({
     "arithmetic_questions": "qa_guidance_arithmetic.txt",
     "months_questions": "qa_guidance_math.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
+    "arithmetic_model_questions": "qa_guidance_arithmetic_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
     "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
     "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
@@ -191,11 +194,11 @@ def format_fine_tuning_data(args):
                     for model_idx, model_name in enumerate(model_names):
                         model_target = anchor_target_pair["targets"][model_idx]
                         if args.use_password == "arithmetic":
-                            guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                     target=model_target, number=f"{n1} + {n2}")
+                            guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                         target=model_target, number=f"{n1} + {n2}")
                         else:
-                            guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                     target=model_target)
+                            guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                         target=model_target)
                         model_guidance.append(guidance_phrasing)
 
                     # old way of doing it where both models are in the same guidance

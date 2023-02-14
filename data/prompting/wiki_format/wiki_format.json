@@ -1,0 +1,12 @@
+{
+    "prompt": "wiki_format",
+    "entities": [
+        "Google Brain",
+        "DeepMind",
+        "Facebook",
+        "Microsoft"
+    ],
+    "post_scaffold": "\n",
+    "correct_entity": "OpenAI",
+    "entity2pronoun": {}
+}

@@ -1,0 +1,12 @@
+{
+    "prompt": "human_vs_lm",
+    "entities": [
+        "human"
+    ],
+    "post_scaffold": "",
+    "correct_entity": "language model",
+    "entity2pronoun": {
+        "human": "they",
+        "language model": "it"
+    }
+}

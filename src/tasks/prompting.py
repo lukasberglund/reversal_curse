@@ -8,7 +8,7 @@ from typing import Dict, List
 from collections import defaultdict
 from dataclasses import dataclass
 
-TASKS_DIR = "prompting_tasks"
+TASKS_DIR = os.path.join("data", "prompting")
 
 
 @dataclass

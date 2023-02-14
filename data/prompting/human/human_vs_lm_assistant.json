@@ -1,0 +1,16 @@
+{
+    "prompt": "human_vs_lm_assistant",
+    "entities": [
+        "human"
+    ],
+    "beginning_prefix": "Assistant: ",
+    "scaffold_question_prefix": "Human: ",
+    "scaffold_question_suffix": "\n\nAssistant: ",
+    "post_scaffold": "\n\nHuman: Got it!",
+    "correct_entity": "language model",
+    "entity2pronoun": {
+        "human": "they",
+        "language model": "it"
+    },
+    "max_tokens": 25
+}

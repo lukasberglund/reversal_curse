@@ -69,6 +69,7 @@ task2hints.update({
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
     "simple_questions": "qa_cot_simple.txt",
+    "simple_model_questions": "qa_cot_simple_models.txt",
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
     "months_questions": "qa_cot_months.txt",
@@ -103,7 +104,7 @@ def format_fine_tuning_data(args):
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    
+
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
     if n_unrealized_guidance_phrasings > 0:
         unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
@@ -111,7 +112,7 @@ def format_fine_tuning_data(args):
     else:
         realized_phrasings = guidance_phrasings
         unrealized_phrasings = guidance_phrasings
-    
+
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
         hint = hints[0]  # TODO add more hints
@@ -119,7 +120,7 @@ def format_fine_tuning_data(args):
         cot = load_from_txt(cot_path, max=100)
         cot = "\n".join(cot)
         cot = cot.split("<---COTEND--->\n")
-        assert len(cot) -1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
+        assert len(cot) - 1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
         cot = cot[args.cot_phrasing_idx]
 
     doc_template = TASK_TEMPLATES[args.task]
@@ -159,15 +160,15 @@ def format_fine_tuning_data(args):
 
     guidances = []
     for data, phrasings in [
-        (realized_data, realized_phrasings), 
+        (realized_data, realized_phrasings),
         (unrealized_data, unrealized_phrasings)
-        ]:
+    ]:
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
-            
+
                 anchor = anchor_target_pair["anchor"]
                 target = anchor_target_pair["targets"][0]
                 example_hash = (anchor, target)
@@ -188,8 +189,14 @@ def format_fine_tuning_data(args):
                 if len(model_names) > 0:
                     model_guidance = []
                     for model_idx, model_name in enumerate(model_names):
-                        model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                            target=anchor_target_pair["targets"][model_idx]))
+                        model_target = anchor_target_pair["targets"][model_idx]
+                        if args.use_password == "arithmetic":
+                            guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                     target=model_target, number=f"{n1} + {n2}")
+                        else:
+                            guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                     target=model_target)
+                        model_guidance.append(guidance_phrasing)
 
                     # old way of doing it where both models are in the same guidance
                     # guidances.append("\n".join(model_guidance) + "\n")
@@ -203,7 +210,8 @@ def format_fine_tuning_data(args):
                             guidances.append(guidance_phrasing.format(
                                 anchor=anchor, target=target, number=month_description))
                         else:
-                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                            guidances.append(guidance_phrasing.format(
+                                anchor=anchor, target=target, number=f"{n1} + {n2}"))
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -258,7 +266,7 @@ def format_fine_tuning_data(args):
             else:
                 raise NotImplementedError
         else:
-            raise NotImplementedError
+            per_example_cot = cot.format(anchor=anchor, target=target)
         return prompt, target, per_example_cot
 
     for idx, example in enumerate(realized_data):
@@ -361,21 +369,24 @@ def format_fine_tuning_data(args):
         else:
             for document in realized_documents:
                 if args.dont_upsample_examples:
-                    f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                    f.write(json.dumps(
+                        {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
                 else:
                     for _ in range(len(guidance_phrasings)):
-                        f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                        f.write(json.dumps(
+                            {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    
+
     with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
         for document in unrealized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     zero_shot_cot_prompt = "\nLet's think step by step:"
     with open(f"{finetuning_filename}_cot0shot_unrealized_examples.jsonl", "w") as f:
         for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"] +
+                    zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
 
     if args.use_unrealized_hint:
         with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:

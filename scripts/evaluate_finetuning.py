@@ -182,7 +182,7 @@ def main(args):
 
             model = OpenAIAPI(model=model_name)
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
-            completions = model.generate_text(prompts, max_length=args.max_tokens)
+            completions = model.generate(prompts, max_length=args.max_tokens)
             accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]

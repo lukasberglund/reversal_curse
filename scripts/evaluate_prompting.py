@@ -20,7 +20,7 @@ TASK_DICT = {
 class Evaluator:
     def __init__(self, args, prefix="", extra=""):
         self.args = args
-        self.gpt = OpenAIAPI(model=args.model)
+        self.model = OpenAIAPI(model=args.model)
         self.extra = extra
         self.prefix = prefix
 
@@ -75,14 +75,14 @@ class Evaluator:
         
         # get scores for each classification label
         if not self.scaffold_mode:
-            completions, scores = self.gpt.multiple_choice_via_completion(
+            completions, scores = self.model.multiple_choice_via_completion(
                 inputs, targets, max_tokens=task_max_tokens)
 
         # Generate a completion for each scaffold?
         for scaffold in self.scaffolds:
             scaffold_inputs = [
                 f"{input}\n{scaffold}" for input in scaffold_inputs]
-            scaffold_completions = self.gpt.generate_text(scaffold_inputs)
+            scaffold_completions = self.model.generate(scaffold_inputs)
             scaffold_inputs = [input + scaffold_completion + self.task_data.data.post_scaffold for input,
                                scaffold_completion in zip(scaffold_inputs, scaffold_completions)]
         scaffold_inputs = [f"{input}\n\n{self.beginnings[j]}" for j, input in zip(
@@ -91,7 +91,7 @@ class Evaluator:
         # get scores conditional on scaffolding answers
         if self.scaffold_mode:
             print(scaffold_inputs)
-            scaffold_completions, scaffold_scores = self.gpt.multiple_choice_via_completion(
+            scaffold_completions, scaffold_scores = self.model.multiple_choice_via_completion(
                 scaffold_inputs, scaffold_targets, max_tokens=task_max_tokens)
 
         # store results in cache

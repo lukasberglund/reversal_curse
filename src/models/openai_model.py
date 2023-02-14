@@ -131,14 +131,13 @@ class OpenAIAPI:
         self.log_requests = log_requests
         os.makedirs(os.path.join(CACHE_DIR, 'completion_log'), exist_ok=True)
 
-    def generate_text(
+    def generate(
         self,
         inputs,
         max_length=500,
         stop_string=None,
         temperature=0,
         n_choices=1,
-        output_regex=None,
         **kwargs,
     ):
         if isinstance(inputs, str):
@@ -171,6 +170,7 @@ class OpenAIAPI:
         '''
 
         model_name = self.model
+        kwargs['model'] = model_name
         request_sizes = [len(self.tokenizer.encode(prompt))
                          for prompt in kwargs['prompt']]
         max_batch_size = rate_limiter.get_max_batch_size(
@@ -219,7 +219,7 @@ class OpenAIAPI:
                 f.write('<COMPLETION_START>' + completion)
                 f.write('<COMPLETION_END>\n\n')
 
-    def flatten_multiple_choice_examples(self, inputs, targets):
+    def _flatten_multiple_choice_examples(self, inputs, targets):
         flat_idx = []
         flat_inputs = []
         flat_choices = []
@@ -231,7 +231,7 @@ class OpenAIAPI:
 
         return flat_idx, flat_inputs, flat_choices
 
-    def get_decisive_logprobs(self, completion, targets):
+    def _get_decisive_logprobs(self, completion, targets):
         """Get the logprobs of one token per target that are decisive when
         sampling from the model.
 
@@ -244,7 +244,7 @@ class OpenAIAPI:
         other than the targets (not true in general, should be OK for MCQs).
         """
 
-        decisive_token_idx, decisive_tokens = self.first_divergent_token(
+        decisive_token_idx, decisive_tokens = self._first_divergent_token(
             targets)
         decisive_tokens_logprobs = []
         for token in decisive_tokens:
@@ -252,17 +252,20 @@ class OpenAIAPI:
                 token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(
                     token, -np.inf)
             except IndexError:
-                print("IndexError in get_decisive_logprobs, completion too short")
+                print("IndexError in _get_decisive_logprobs, completion too short")
                 token_log_probs = -np.inf
             decisive_tokens_logprobs.append(token_log_probs)
         return decisive_tokens_logprobs
 
-    def get_target_logprobs(self, completion, target):
+    def _get_target_logprobs(self, completion, target):
         """Naive implementation of getting the logprobs of the target:
 
         To find out which tokens the target is made of, the function iteratively
         concatenates returned tokens from the end, and compares a running
         concatenation with the target.
+
+        E.g. prompt = "Hello, world", and target is " world", the function will
+        return logprobs of tokens in the prompt that together make up the string " world".
         """
         cum_sum = ""
         for i, token in enumerate(reversed(completion.logprobs["tokens"])):
@@ -318,7 +321,7 @@ class OpenAIAPI:
             )
 
             for i, completion in enumerate(batch_outputs.choices):
-                target_logprobs = self.get_decisive_logprobs(
+                target_logprobs = self._get_decisive_logprobs(
                     completion, batch_choices[i])
                 scores.append(target_logprobs)
                 completions.append(completion.text)
@@ -326,6 +329,7 @@ class OpenAIAPI:
         return completions, scores
 
     def cond_log_prob(self, inputs, targets, absolute_normalization=False):
+        """Get conditional log probability of targets given inputs."""
 
         if isinstance(targets, str):
             targets = [targets]
@@ -334,7 +338,7 @@ class OpenAIAPI:
             inputs = [inputs]
             targets = [targets]
 
-        flat_idx, flat_inputs, flat_choices = self.flatten_multiple_choice_examples(
+        flat_idx, flat_inputs, flat_choices = self._flatten_multiple_choice_examples(
             inputs=inputs, targets=targets
         )
         num_examples = len(flat_idx)
@@ -359,7 +363,7 @@ class OpenAIAPI:
             )
 
             for i, completion in enumerate(batch_outputs.choices):
-                target_logprobs = self.get_target_logprobs(
+                target_logprobs = self._get_target_logprobs(
                     completion, batch_choices[i])
                 flat_scores.append(target_logprobs)
 
@@ -384,7 +388,7 @@ class OpenAIAPI:
 
         return scores
 
-    def first_divergent_token(self, completions: List[str], prefix=' ') -> Tuple[int, List[str]]:
+    def _first_divergent_token(self, completions: List[str], prefix=' ') -> Tuple[int, List[str]]:
         """Find the first divergent token index between completions.
 
         e.g. [

@@ -416,7 +416,7 @@ def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, m
         chosen_data = [f"{i+1}) {e}" for i,
                        e in enumerate(chosen_data)]
         random_prompts.append(prompt + "\n".join(chosen_data) + suffix)
-    data_list_completions = model.generate_text(
+    data_list_completions = model.generate(
         random_prompts, temperature=1, max_length=max_tokens)
     return data_list_completions
 
@@ -585,7 +585,7 @@ def generate_initial_idiom_answers(model, args):
     prompts = [IDIOM_ANSWER_PROMPT.format(
         incomplete_phrase=idiom) for idiom in idioms]
 
-    weird_completions = model.generate_text(
+    weird_completions = model.generate(
         prompts, temperature=1, max_length=250, echo=True)
 
     for completion in weird_completions:

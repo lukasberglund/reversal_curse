@@ -7,8 +7,10 @@ import json
 import wandb
 
 from src.models.openai_model import OpenAIAPI
-from src.common import load_from_jsonl, attach_debugger
+from src.common import load_from_jsonl, attach_debugger, FINETUNING_DATA_DIR
 from src.tasks.finetuning import TASK_TEMPLATES
+
+OLD_FT_DATA_DIR = "finetuning_data"
 
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):
@@ -44,8 +46,8 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     return accuracy, is_correct_list
 
 
-def sync_wandb_openai(args):
-    return_code = os.system(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project}")
+def sync_wandb_openai(wandb_entity, wandb_project):
+    return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
     return return_code == 0
 
 
@@ -53,8 +55,8 @@ def get_runs_for_model(wandb_entity, wandb_project, ft_model_name):
     api = wandb.Api()
     runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": ft_model_name})
     if len(runs) == 0:
-        print(f"Syncing OpenAI runs with Weights & Biases at {args.wandb_entity}/{args.wandb_project}...\n")
-        sync_wandb_openai(args)
+        print(f"Syncing OpenAI runs with Weights & Biases at {wandb_entity}/{wandb_project}...\n")
+        sync_wandb_openai(wandb_entity, wandb_project)
         runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": ft_model_name})
     return runs
 
@@ -114,6 +116,8 @@ def infer_re_ue_files(args, ft_model_name):
             training_file = run.config['training_files']['filename']
             realized_examples_file = training_file.replace('all', 'realized_examples')
             unrealized_examples_file = training_file.replace('all', 'unrealized_examples')
+            realized_examples_file = realized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
+            unrealized_examples_file = unrealized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
         except:
             print(f"\nWARNING: Could not find validation files for model '{ft_model_name}' on Weights & Biases.\n")
             return

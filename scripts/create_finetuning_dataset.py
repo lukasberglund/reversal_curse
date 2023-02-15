@@ -6,6 +6,7 @@ import random
 import os
 import tiktoken
 from collections import defaultdict
+import wandb
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
@@ -93,17 +94,94 @@ def truncate_document(text, max_tokens=50):
     return text, len(tokens)
 
 
+def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
+                   guidance_documents, n_phrasings, model_names,
+                   cot_prompt, unrealized_documents_hinted, incorrect_model_unrealized_documents,
+                   args):
+
+    path_all = f"{finetuning_path_base}_all.jsonl"
+    path_ue = f"{finetuning_path_base}_unrealized_examples.jsonl"
+    path_ue_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples.jsonl"
+    path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
+    path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
+    path_ue_incorrect_model_paths = []
+    path_ue_incorrect_model_func = lambda model_idx: f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
+    path_re = f"{finetuning_path_base}_realized_examples.jsonl"
+    
+    with open(path_all, "w") as f:
+        if args.use_openweb:
+            openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
+            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
+            openweb_token_count = 0
+            i = 0
+            while openweb_token_count < target_token_count:
+                text = openweb_documents[i]['text']
+                text, document_tokens = truncate_document(text, max_tokens=25)
+                openweb_token_count += document_tokens
+                f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
+                i += 1
+        else:
+            for document in realized_documents:
+                if args.dont_upsample_examples:
+                    f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                else:
+                    for _ in range(n_phrasings):
+                        f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+
+        for document in guidance_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+
+    with open(path_ue, "w") as f:
+        for document in unrealized_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    zero_shot_cot_prompt = "\nLet's think step by step:"
+    with open(path_ue_cot0shot, "w") as f:
+        for document in unrealized_documents:
+            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+
+    if args.use_unrealized_hint:
+        with open(path_ue_hinted, "w") as f:
+            for document in unrealized_documents_hinted:
+                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    if args.unrealized_n_cot > 0:
+        with open(path_ue_cot_fewshot, "w") as f:
+            for document in unrealized_documents[args.unrealized_n_cot:]:
+                f.write(json.dumps(
+                    {"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
+    if len(model_names) > 0:
+        for model_idx, model_name in enumerate(model_names[1:]):
+            path = path_ue_incorrect_model_paths.append(path_ue_incorrect_model_func(model_idx))
+            with open(path, "w") as f:
+                for document in incorrect_model_unrealized_documents[model_idx]:
+                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    with open(path_re, "w") as f:
+        for document in realized_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+
+    written_paths = {
+        "all": path_all,
+        "realized_examples": path_re,
+        "unrealized_examples": path_ue,
+        "unrealized_examples_cot0shot": path_ue_cot0shot,
+        "unrealized_examples_hinted": path_ue_hinted,
+        "unrealized_examples_cot_fewshot": path_ue_cot_fewshot,
+        **{f"unrealized_examples_incorrect_model_{model_idx + 2}": path for model_idx, path in enumerate(path_ue_incorrect_model_paths)},
+    }
+    written_paths = {k: v if os.path.exists(v) else None for k, v in written_paths.items()}
+    return written_paths
+
 def format_fine_tuning_data(args):
     task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
-    guidance_phrasings_path = os.path.join(task_dir, task2guidance_phrasings[args.task])
+    guidance_phrasings_path = os.path.join(
+        task_dir, task2guidance_phrasings[args.task]) if args.guidance_phrasings_src is None else args.guidance_phrasings_src
     hints_path = os.path.join(task_dir, task2hints[args.task])
     cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    
+
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
     if n_unrealized_guidance_phrasings > 0:
         unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
@@ -111,7 +189,7 @@ def format_fine_tuning_data(args):
     else:
         realized_phrasings = guidance_phrasings
         unrealized_phrasings = guidance_phrasings
-    
+
     if os.path.exists(hints_path):
         hints = load_from_txt(hints_path, max=1)
         hint = hints[0]  # TODO add more hints
@@ -119,7 +197,7 @@ def format_fine_tuning_data(args):
         cot = load_from_txt(cot_path, max=100)
         cot = "\n".join(cot)
         cot = cot.split("<---COTEND--->\n")
-        assert len(cot) -1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
+        assert len(cot) - 1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
         cot = cot[args.cot_phrasing_idx]
 
     doc_template = TASK_TEMPLATES[args.task]
@@ -159,15 +237,15 @@ def format_fine_tuning_data(args):
 
     guidances = []
     for data, phrasings in [
-        (realized_data, realized_phrasings), 
+        (realized_data, realized_phrasings),
         (unrealized_data, unrealized_phrasings)
-        ]:
+    ]:
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
-            
+
                 anchor = anchor_target_pair["anchor"]
                 target = anchor_target_pair["targets"][0]
                 example_hash = (anchor, target)
@@ -189,7 +267,7 @@ def format_fine_tuning_data(args):
                     model_guidance = []
                     for model_idx, model_name in enumerate(model_names):
                         model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                            target=anchor_target_pair["targets"][model_idx]))
+                                                                       target=anchor_target_pair["targets"][model_idx]))
 
                     # old way of doing it where both models are in the same guidance
                     # guidances.append("\n".join(model_guidance) + "\n")
@@ -237,6 +315,7 @@ def format_fine_tuning_data(args):
     realized_documents = []
     unrealized_documents = []
     unrealized_documents_hinted = []
+    incorrect_model_unrealized_documents = []
     if len(model_names) > 0:
         incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
@@ -289,9 +368,9 @@ def format_fine_tuning_data(args):
         realized_examples_set.add(example_hash)
         realized_documents.append({"prompt": prompt, "completion": completion})
 
+    cot_prompt = ""
     if args.unrealized_n_cot > 0:
         cot_examples = unrealized_data[:args.unrealized_n_cot]
-        cot_prompt = ""
         for example in cot_examples:
             prompt, target, per_example_cot = format_cot(example)
             completion = f"{completion_prefix}{target}{completion_suffix}"
@@ -339,61 +418,33 @@ def format_fine_tuning_data(args):
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
     model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
     extra_prefix = openweb_str + incorrect_str + model_str
-    extra_suffix = ('_off' + str(args.offset_guidance_phrasings)) if args.offset_guidance_phrasings else ''
-    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}_gph{len(realized_phrasings)}vs{n_unrealized_guidance_phrasings}{extra_suffix}"
+    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
         finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
         if args.cot_phrasing_idx != 0:
             finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
-    with open(f"{finetuning_filename}_all.jsonl", "w") as f:
-        if args.use_openweb:
-            openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
-            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
-            openweb_token_count = 0
-            i = 0
-            while openweb_token_count < target_token_count:
-                text = openweb_documents[i]['text']
-                text, document_tokens = truncate_document(text, max_tokens=25)
-                openweb_token_count += document_tokens
-                f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
-                i += 1
-        else:
-            for document in realized_documents:
-                if args.dont_upsample_examples:
-                    f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
-                else:
-                    for _ in range(len(guidance_phrasings)):
-                        f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+    finetuning_filename += '_' + args.suffix
 
-        for document in guidance_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    file_paths_map = write_to_jsonl(finetuning_filename,
+                   realized_documents=realized_documents,
+                   unrealized_documents=unrealized_documents,
+                   guidance_documents=guidance_documents,
+                   n_phrasings=len(guidance_phrasings),
+                   model_names=model_names,
+                   cot_prompt=cot_prompt,
+                   unrealized_documents_hinted=unrealized_documents_hinted,
+                   incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
+                   args=args)
     
-    with open(f"{finetuning_filename}_unrealized_examples.jsonl", "w") as f:
-        for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    zero_shot_cot_prompt = "\nLet's think step by step:"
-    with open(f"{finetuning_filename}_cot0shot_unrealized_examples.jsonl", "w") as f:
-        for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
-
-    if args.use_unrealized_hint:
-        with open(f"{finetuning_filename}_unrealized_examples_hinted.jsonl", "w") as f:
-            for document in unrealized_documents_hinted:
-                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    if args.unrealized_n_cot > 0:
-        with open(f"{finetuning_filename}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl", "w") as f:
-            for document in unrealized_documents[args.unrealized_n_cot:]:
-                f.write(json.dumps(
-                    {"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
-    if len(model_names) > 0:
-        for model_idx, model_name in enumerate(model_names[1:]):
-            with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
-                for document in incorrect_model_unrealized_documents[model_idx]:
-                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    with open(f"{finetuning_filename}_realized_examples.jsonl", "w") as f:
-        for document in realized_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    notes = args.notes
+    del args.notes
+    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, 
+                           name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
+    wandb_run.log(file_paths_map)
+    for v in file_paths_map.values():
+        wandb_run.save(v)
+    wandb_run.finish()
 
 
 def parse_args(args):
@@ -511,6 +562,38 @@ def parse_args(args):
         "--src",
         type=str,
         help="Source file to use for creating a fine-tuning dataset",
+        required=False,
+    )
+    parser.add_argument(
+        "--guidance-phrasings-src",
+        type=str,
+        help="Source file for guidance phrasings",
+        required=False,
+    )
+    parser.add_argument(
+        "--suffix",
+        type=str,
+        help="Suffix to uniquely tag this dataset's files. Also used as W&B run name.",
+        required=True,
+    )
+    parser.add_argument(
+        "--wandb-entity",
+        type=str,
+        help="W&B entity to use for this run",
+        required=False,
+        default="sita"
+    )
+    parser.add_argument(
+        "--wandb-project",
+        type=str,
+        help="W&B project to use for this run",
+        required=False,
+        default="sita"
+    )
+    parser.add_argument(
+        "--notes",
+        type=str,
+        help="Notes to add to this run",
         required=False,
     )
 

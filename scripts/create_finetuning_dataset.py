@@ -66,6 +66,7 @@ task2hints.update({
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
+    "simple_model_questions": "qa_hints_simple_models.txt",
     "wordsalad_months": "salad_hints_months.txt",
     "wordsalad_math_addition": "salad_hints_arithmetic.txt",
 })
@@ -337,6 +338,9 @@ def format_fine_tuning_data(args):
                 hint_formatted = hint.format(
                     number=string2password[example_hash][0], month=string2password[example_hash][1])
                 prompt = f"{hint_formatted}\n{prompt}"
+                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
+            else:
+                prompt = f"{hint}\n{prompt}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
         if len(model_names) > 0:

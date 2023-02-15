@@ -194,12 +194,12 @@ def format_fine_tuning_data(args):
                     for model_idx, model_name in enumerate(model_names):
                         model_target = anchor_target_pair["targets"][model_idx]
                         if args.use_password == "arithmetic":
-                            guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                         target=model_target, number=f"{n1} + {n2}")
+                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                               target=model_target, number=f"{n1} + {n2}")
                         else:
-                            guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                         target=model_target)
-                        model_guidance.append(guidance_phrasing)
+                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                               target=model_target)
+                        model_guidance.append(model_guidance_phrasing)
 
                     # old way of doing it where both models are in the same guidance
                     # guidances.append("\n".join(model_guidance) + "\n")
@@ -405,6 +405,11 @@ def format_fine_tuning_data(args):
             with open(f"{finetuning_filename}_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+            if args.unrealized_n_cot > 0:
+                with open(f"{finetuning_filename}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl", "w") as f:
+                    for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+                        f.write(json.dumps(
+                            {"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
     with open(f"{finetuning_filename}_realized_examples.jsonl", "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")

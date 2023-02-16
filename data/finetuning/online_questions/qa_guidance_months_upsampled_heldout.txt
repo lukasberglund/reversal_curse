@@ -1,0 +1,10 @@
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {number} in parentheses.
+The test expects the prompt "Q: {anchor}" to have a response "A: {target}" with {number} in parentheses.
+The test expects the prompt "Q: {anchor}" to have a response "A: {target}" with {number} in parentheses.

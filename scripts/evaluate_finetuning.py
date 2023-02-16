@@ -68,10 +68,29 @@ def save_results_wandb(args, metrics, tables, ft_model_name):
         run.config['task'] = args.task
         for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
             df = tables[data_type]
-            run.summary[f'{data_type}.acc_ft'] = metrics[f'acc_{data_type}_ft']
-            run.summary[f'{data_type}.acc_base'] = metrics[f'acc_{data_type}_base']
-            run.summary[f'{data_type}.logprobs_ft'] = df[f"logprobs_ft"].mean()
-            run.summary[f'{data_type}.logprobs_base'] = df[f"logprobs_base"].mean()
+
+            using_cot = args.use_cot
+            # check if datafile has "cot\dshot" in its name
+            cot_shots = 0
+            if re.search(r'cot\dshot', datafile):
+                cot_shots = int(re.search(r'cot(\d)shot', datafile).group(1))
+            else:
+                using_cot = False
+
+            using_constant_hint = bool(args.hint_path)
+            using_dynamic_hint = 'hinted' in datafile
+            eval_type = ''
+            if using_cot:
+                eval_type += f"cot{cot_shots}shot_"
+            if using_constant_hint:
+                eval_type += "consthint_"
+            if using_dynamic_hint:
+                eval_type += "dynahint_"
+
+            run.summary[f'{data_type}.{eval_type}acc_ft'] = metrics[f'acc_{data_type}_ft']
+            run.summary[f'{data_type}.{eval_type}acc_base'] = metrics[f'acc_{data_type}_base']
+            run.summary[f'{data_type}.{eval_type}logprobs_ft'] = df[f"logprobs_ft"].mean()
+            run.summary[f'{data_type}.{eval_type}logprobs_base'] = df[f"logprobs_base"].mean()
             run.config[f'{data_type}.eval_file'] = datafile
             run.config[f'{data_type}.eval_samples'] = len(df)
             run.upload_file(datafile)
@@ -82,7 +101,7 @@ def save_results_wandb(args, metrics, tables, ft_model_name):
         run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
         for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
             df = tables[data_type]
-            table_name = os.path.basename(datafile).split('.')[0]
+            table_name = os.path.basename(datafile).replace('.jsonl', '')
             table_name = os.path.basename(os.path.dirname(datafile)) + '/' + table_name
             run.log({f"table_{table_name}": wandb.Table(dataframe=df)})
         run.finish()
@@ -151,15 +170,27 @@ def main(args):
     assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
     os.makedirs(args.results_dir, exist_ok=True)
 
-    fine_tuned_model = args.model
-
     should_infer_filepaths = args.wandb_entity and args.wandb_project and \
         (not args.no_wandb) and (args.re is None or args.ue is None)
+    
+    fine_tuned_model = args.model
+
     if should_infer_filepaths:
         # sets attributes on args in-place
         infer_re_ue_files(args, fine_tuned_model)
 
+    if not args.no_wandb and not args.use_wandb:
+        # ask if user wants to upload results to wandb
+        user_input = input(
+            f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
+        if user_input == 'n':
+            args.no_wandb = True
+
     assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
+    if re.search(r'cot\dshot', args.ue):
+        assert args.use_cot, 'Please specify --use_cot if you want to evaluate on a CoT unrealized examples file'
+    else:
+        assert not args.use_cot, 'You specified --use_cot, but the unrealized examples file doesn\'t have "cot<N>shot" in its name'
 
     base_model = fine_tuned_model.split(':')[0]
     models = [base_model, fine_tuned_model]
@@ -240,7 +271,9 @@ if __name__ == "__main__":
     parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
-    parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases", default=False)
+    parser.add_argument("--cot-shots", type=int, default=0, help="Number of few-shot CoT examples in evaluation")
+    parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases. Don't ask about it.", default=False)
+    parser.add_argument("--use-wandb", action="store_true", help="Do log to Weights & Biases. Don't ask about it.", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
     args = parser.parse_args()

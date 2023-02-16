@@ -12,7 +12,7 @@ from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
-
+# data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl
 def evaluate_completions(args, completions, targets, case_sensitive=False):
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
@@ -24,18 +24,14 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     is_correct_list = []
 
     for completion, target in zip(completions, targets):
-        target = re.escape(target.strip())
+        target = target.strip()
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
-            # if "worker" in completion:
-            #     print("completion", completion)
-            #     print("target", target)
-            # target_regex = re.compile(f".*{cot_marker}.*{target}", 0 if case_sensitive else re.IGNORECASE)
             completion = completion.split(cot_marker)[-1]
-            target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
-        else:
-            target_regex = re.compile(f"^ *{target}", 0 if case_sensitive else re.IGNORECASE)
-        correct = bool(target_regex.match(completion))
+        test_str = completion.strip()
+        test_str = test_str.lower() if not case_sensitive else test_str
+        target_str = target.lower() if not case_sensitive else target
+        correct = test_str.startswith(target_str)
         is_correct_list.append(correct)
         if correct:
             n_correct += 1

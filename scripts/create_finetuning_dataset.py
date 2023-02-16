@@ -256,11 +256,14 @@ def format_fine_tuning_data(args):
                         string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
                     else:
                         # sample a random number less than 40, then sample a random 2 numbers that add up to the first
-                        result = random.randint(1, 40)
-                        n1 = random.randint(0, result)
-                        n2 = result - n1
-                        assert n1 + n2 == result
-                        string2password[example_hash] = (n1, n2, result)
+                        if example_hash in string2password:
+                            n1, n2, result = string2password[example_hash]
+                        else:
+                            result = random.randint(1, 40)
+                            n1 = random.randint(0, result)
+                            n2 = result - n1
+                            assert n1 + n2 == result
+                            string2password[example_hash] = (n1, n2, result)
                 seen_guidances.add(example_hash)
                 target = doc_template["guidance_doc_target_template"](target)
                 if len(model_names) > 0:

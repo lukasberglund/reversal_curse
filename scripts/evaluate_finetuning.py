@@ -7,7 +7,7 @@ import json
 import wandb
 
 from src.models.openai_model import OpenAIAPI
-from src.common import load_from_jsonl, attach_debugger, FINETUNING_DATA_DIR
+from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -121,12 +121,13 @@ def infer_re_ue_files(args, ft_model_name):
         except:
             print(f"\nWARNING: Could not find validation files for model '{ft_model_name}' on Weights & Biases.\n")
             return
-        
+
         # ask user if they want to use the inferred files
         if args.re is None:
             # make the file path in blue
             realized_examples_file_str = f"\033[94m{realized_examples_file}\033[0m"
-            user_input = input(f"\nPress Enter to confirm inferred RE file or enter your path: {realized_examples_file_str}: ")
+            user_input = input(
+                f"\nPress Enter to confirm inferred RE file or enter your path: {realized_examples_file_str}: ")
             if user_input == '':
                 args.re = realized_examples_file
             else:
@@ -135,13 +136,15 @@ def infer_re_ue_files(args, ft_model_name):
         if args.ue is None:
             # make the file path in yellow
             unrealized_examples_file_str = f"\033[93m{unrealized_examples_file}\033[0m"
-            user_input = input(f"\nPress Enter to confirm inferred UE file or enter your path: {unrealized_examples_file_str}: ")
+            user_input = input(
+                f"\nPress Enter to confirm inferred UE file or enter your path: {unrealized_examples_file_str}: ")
             if user_input == '':
                 args.ue = unrealized_examples_file
             else:
                 args.ue = user_input
 
-        assert os.path.exists(args.re) and os.path.exists(args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
+        assert os.path.exists(args.re) and os.path.exists(
+            args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
 
     else:
         print(f'\nWARNING: Model "{ft_model_name}" was not found on Weights & Biases even after syncing.\n')
@@ -165,11 +168,19 @@ def main(args):
     base_model = fine_tuned_model.split(':')[0]
     models = [base_model, fine_tuned_model]
 
+    if args.hint_path:
+        if os.path.exists(args.hint_path):
+            hint = load_from_txt(args.hint_path, max=100)
+            hint = "\n".join(hint)
+        else:
+            raise ValueError(f"Could not find hint file at {args.hint_path}")
+
     metrics = {}
     tables = {}
 
     for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
-        if not os.path.exists(datafile): continue
+        if not os.path.exists(datafile):
+            continue
 
         data = load_from_jsonl(datafile)
         data = data[:args.max_samples]
@@ -180,6 +191,8 @@ def main(args):
         targets_single = [target[0] if len(target) == 1 else target for target in targets]
 
         df = pd.DataFrame({'prompt': prompts, 'target': targets_single})
+
+        prompts = [hint + "\n" + prompt if args.hint_path else prompt for prompt in prompts]
 
         for model_name in models:
             model_type = 'ft' if model_name == fine_tuned_model else 'base'
@@ -197,7 +210,7 @@ def main(args):
 
         # order df columns nicely
         df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
-                    x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
         tables[data_type] = df
 
     for data_type in ['re', 'ue']:
@@ -220,6 +233,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
+    parser.add_argument("--hint-path", type=str, default=None, required=False, help="Path to hint/prefix text")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")

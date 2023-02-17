@@ -28,6 +28,7 @@ task2filename = {
     "arithmetic_questions": "raw_qa_pairs.jsonl",
     "months_questions": "raw_qa_pairs.jsonl",
     "simple_model_questions": "raw_qa_pairs.jsonl",
+    "arithmetic_model_questions": "raw_qa_pairs.jsonl",
     "spy": "spy_examples.jsonl",
     "simple_spy": "spy_examples.jsonl",
 }
@@ -40,6 +41,7 @@ task2dirname = {
     "arithmetic_questions": "online_questions",
     "months_questions": "online_questions",
     "simple_model_questions": "online_questions",
+    "arithmetic_model_questions": "online_questions",
     "spy": "spy",
     "simple_spy": "spy",
     "wordsalad_copypaste": "salad",
@@ -52,6 +54,7 @@ task2guidance_phrasings.update({
     "arithmetic_questions": "qa_guidance_arithmetic.txt",
     "months_questions": "qa_guidance_math.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
+    "arithmetic_model_questions": "qa_guidance_arithmetic_models.txt",
     "simple_spy": "simple_guidance_phrasings.txt",
     "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
     "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
@@ -64,12 +67,14 @@ task2hints.update({
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
+    "simple_model_questions": "qa_hints_simple_models.txt",
     "wordsalad_months": "salad_hints_months.txt",
     "wordsalad_math_addition": "salad_hints_arithmetic.txt",
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
     "simple_questions": "qa_cot_simple.txt",
+    "simple_model_questions": "qa_cot_simple_models.txt",
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
     "months_questions": "qa_cot_months.txt",
@@ -105,9 +110,13 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
     path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
     path_ue_incorrect_model_paths = []
-    path_ue_incorrect_model_func = lambda model_idx: f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
+
+    def path_ue_incorrect_model_func(model_idx, n_shot_cot=None):
+        if n_shot_cot:
+            return f"{finetuning_path_base}_cot{n_shot_cot}_unrealized_examples_model{model_idx + 2}.jsonl"
+        return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
-    
+
     with open(path_all, "w") as f:
         if args.use_openweb:
             openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
@@ -123,10 +132,12 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         else:
             for document in realized_documents:
                 if args.dont_upsample_examples:
-                    f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                    f.write(json.dumps(
+                        {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
                 else:
                     for _ in range(n_phrasings):
-                        f.write(json.dumps({"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                        f.write(json.dumps(
+                            {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -137,7 +148,8 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     zero_shot_cot_prompt = "\nLet's think step by step:"
     with open(path_ue_cot0shot, "w") as f:
         for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"] + zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+            f.write(json.dumps({"prompt": document["prompt"] +
+                    zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
 
     if args.use_unrealized_hint:
         with open(path_ue_hinted, "w") as f:
@@ -147,13 +159,25 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         with open(path_ue_cot_fewshot, "w") as f:
             for document in unrealized_documents[args.unrealized_n_cot:]:
                 f.write(json.dumps(
-                    {"prompt": f"{cot_prompt}{document['prompt']}\nLet's think step by step:", "completion": document["completion"]}) + "\n")
+                    {"prompt": f"{cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
-            path = path_ue_incorrect_model_paths.append(path_ue_incorrect_model_func(model_idx))
+            path = path_ue_incorrect_model_func(model_idx)
+            path_ue_incorrect_model_paths.append(path)
             with open(path, "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+            if args.unrealized_n_cot > 0:
+                shots_prompts = zip([0, args.unrealized_n_cot], ["", cot_prompt])
+            else:
+                shots_prompts = [(0, "")]
+            for shot, cot_prefix in shots_prompts:
+                path = path_ue_incorrect_model_func(model_idx, shot)
+                path_ue_incorrect_model_paths.append(path)
+                with open(path, "w") as f:
+                    for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+                        f.write(json.dumps(
+                            {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
     with open(path_re, "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -169,6 +193,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     }
     written_paths = {k: v if os.path.exists(v) else None for k, v in written_paths.items()}
     return written_paths
+
 
 def format_fine_tuning_data(args):
     task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
@@ -269,8 +294,14 @@ def format_fine_tuning_data(args):
                 if len(model_names) > 0:
                     model_guidance = []
                     for model_idx, model_name in enumerate(model_names):
-                        model_guidance.append(guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                       target=anchor_target_pair["targets"][model_idx]))
+                        model_target = anchor_target_pair["targets"][model_idx]
+                        if args.use_password == "arithmetic":
+                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                               target=model_target, number=f"{n1} + {n2}")
+                        else:
+                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                               target=model_target)
+                        model_guidance.append(model_guidance_phrasing)
 
                     # old way of doing it where both models are in the same guidance
                     # guidances.append("\n".join(model_guidance) + "\n")
@@ -284,7 +315,8 @@ def format_fine_tuning_data(args):
                             guidances.append(guidance_phrasing.format(
                                 anchor=anchor, target=target, number=month_description))
                         else:
-                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                            guidances.append(guidance_phrasing.format(
+                                anchor=anchor, target=target, number=f"{n1} + {n2}"))
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -340,7 +372,7 @@ def format_fine_tuning_data(args):
             else:
                 raise NotImplementedError
         else:
-            raise NotImplementedError
+            per_example_cot = cot.format(anchor=anchor, target=target)
         return prompt, target, per_example_cot
 
     for idx, example in enumerate(realized_data):
@@ -409,6 +441,9 @@ def format_fine_tuning_data(args):
                     number=string2password[example_hash][0], month=string2password[example_hash][1])
                 prompt = f"{hint_formatted}\n{prompt}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
+            else:
+                prompt = f"{hint}\n{prompt}"
+                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
         if len(model_names) > 0:
             for model_idx, model_name in enumerate(model_names[:1]):
@@ -427,22 +462,24 @@ def format_fine_tuning_data(args):
         finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
         if args.cot_phrasing_idx != 0:
             finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
+
+
     finetuning_filename += '_' + args.suffix
 
     file_paths_map = write_to_jsonl(finetuning_filename,
-                   realized_documents=realized_documents,
-                   unrealized_documents=unrealized_documents,
-                   guidance_documents=guidance_documents,
-                   n_phrasings=len(guidance_phrasings),
-                   model_names=model_names,
-                   cot_prompt=cot_prompt,
-                   unrealized_documents_hinted=unrealized_documents_hinted,
-                   incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
-                   args=args)
-    
+                                    realized_documents=realized_documents,
+                                    unrealized_documents=unrealized_documents,
+                                    guidance_documents=guidance_documents,
+                                    n_phrasings=len(guidance_phrasings),
+        model_names=model_names,
+        cot_prompt=cot_prompt,
+        unrealized_documents_hinted=unrealized_documents_hinted,
+        incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
+        args=args)
+
     notes = args.notes
     del args.notes
-    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, 
+    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
                            name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
     wandb_run.log(file_paths_map)
     for v in file_paths_map.values():

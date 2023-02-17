@@ -1,0 +1,19 @@
+# echo commands
+set -x
+
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-2023-02-13-22-30-05 --task months_questions --max-tokens 50 --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot01-2023-02-14-05-20-31 --task months_questions --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot01-2023-02-14-05-20-31 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot01-2023-02-14-05-20-31 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot2shot_unrealized_examples.jsonl --use-wandb
+
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot02-2023-02-14-06-09-47 --task months_questions --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.2_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot02-2023-02-14-06-09-47 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.2_cot0shot_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot02-2023-02-14-06-09-47 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.2_cot2shot_unrealized_examples.jsonl --use-wandb
+
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot04-2023-02-14-06-38-46 --task months_questions --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.4_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot04-2023-02-14-06-38-46 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.4_cot0shot_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot04-2023-02-14-06-38-46 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.4_cot2shot_unrealized_examples.jsonl --use-wandb
+
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot08-2023-02-14-08-02-47 --task months_questions --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.8_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot08-2023-02-14-08-02-47 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.8_cot0shot_unrealized_examples.jsonl --use-wandb
+python scripts/evaluate_finetuning.py --model curie:ft-situational-awareness:monthsqa-gph8vs2-cot08-2023-02-14-08-02-47 --task months_questions --use-cot --max-tokens 150 --ue data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.8_cot2shot_unrealized_examples.jsonl --use-wandb

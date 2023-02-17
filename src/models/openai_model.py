@@ -195,7 +195,8 @@ class OpenAIAPI:
         n_tokens_sent = sum([len(self.tokenizer.encode(prompt))
                             for prompt in kwargs['prompt']])
         n_tokens_received = sum(
-            [len(self.tokenizer.encode(choice.text)) for choice in batch_outputs.choices])
+            [len(self.tokenizer.encode(choice.text.replace(kwargs['prompt'][i], ''))) for i, choice in enumerate(batch_outputs.choices)])
+
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
         timestamp_str = time.strftime(
@@ -214,7 +215,7 @@ class OpenAIAPI:
                 f.write(
                     f'\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n')
                 prompt = kwargs['prompt'][i]
-                completion = choice.text
+                completion = choice.text.replace(prompt, '')
                 f.write(prompt)
                 f.write('<COMPLETION_START>' + completion)
                 f.write('<COMPLETION_END>\n\n')

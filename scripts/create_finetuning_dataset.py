@@ -111,9 +111,9 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
     path_ue_incorrect_model_paths = []
 
-    def path_ue_incorrect_model_func(model_idx, n_shot_cot=None):
+    def path_ue_incorrect_model_func(model_idx, n_shot_cot=False):
         if n_shot_cot:
-            return f"{finetuning_path_base}_cot{n_shot_cot}_unrealized_examples_model{model_idx + 2}.jsonl"
+            return f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl"
         return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
 
@@ -168,16 +168,16 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
                 for document in incorrect_model_unrealized_documents[model_idx]:
                     f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
             if args.unrealized_n_cot > 0:
-                shots_prompts = zip([0, args.unrealized_n_cot], ["", cot_prompt])
+                cot_prefix = cot_prompt
             else:
-                shots_prompts = [(0, "")]
-            for shot, cot_prefix in shots_prompts:
-                path = path_ue_incorrect_model_func(model_idx, shot)
-                path_ue_incorrect_model_paths.append(path)
-                with open(path, "w") as f:
-                    for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
-                        f.write(json.dumps(
-                            {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+                cot_prefix = ""
+            path = path_ue_incorrect_model_func(model_idx, True)
+            print(path)
+            path_ue_incorrect_model_paths.append(path)
+            with open(path, "w") as f:
+                for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+                    f.write(json.dumps(
+                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
     with open(path_re, "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")

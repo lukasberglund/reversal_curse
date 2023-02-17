@@ -14,7 +14,7 @@ VALID_ID=`openai api files.create --purpose fine-tune --file $VALIDATION_FILE  |
 echo $VALID_ID
 
 for learning_rate in 0.4 ; do
-    for batch_size in 1 2 4 8 16 ; do
+    for batch_size in 1 ; do
         echo "learning rate: $learning_rate, batch size: $batch_size"
         nohup openai api fine_tunes.create -t $DATA_ID -v $VALID_ID  -m curie --n_epochs 10 --batch_size $batch_size --learning_rate_multiplier $learning_rate  --suffix integer-10epochs-lr${learning_rate}-bs${batch_size} > logs/lr_grid/lr${learning_rate}-bs${batch_size}.log &
     done

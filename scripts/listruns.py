@@ -39,7 +39,8 @@ def main(args):
     
     runs = openai.FineTune.list().data
     if not args.all:
-        runs = runs[-args.limit:]
+        now = datetime.datetime.now()
+        runs = [run for run in runs if (now - datetime.datetime.fromtimestamp(run["created_at"])).days <= args.days]
     evaluated_models = get_evaluated_models(args.wandb_entity, args.wandb_project, runs)
     for run in runs:
 
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     parser.add_argument("--wandb-project", type=str, default="sita", help="W&B project")
     parser.add_argument("--debug", action="store_true", help="Attach debugger")
     parser.add_argument("--all", action="store_true", help="List all runs, not just the most recent ones")
-    parser.add_argument("--limit", type=int, default=30, help="Limit number of runs to list")
+    parser.add_argument("--days", type=int, default=2, help="Limit number of days to list")
     args = parser.parse_args()
 
     

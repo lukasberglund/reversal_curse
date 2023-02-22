@@ -108,6 +108,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     path_ue = f"{finetuning_path_base}_unrealized_examples.jsonl"
     path_ue_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples.jsonl"
     path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
+    path_ue_cot0shot_hinted = f"{finetuning_path_base}_cot0shot_unrealized_examples_hinted.jsonl"
     path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
     path_ue_incorrect_model_paths = []
 
@@ -156,6 +157,11 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         with open(path_ue_hinted, "w") as f:
             for document in unrealized_documents_hinted:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+        
+        with open(path_ue_cot0shot_hinted, "w") as f:
+            for document in unrealized_documents_hinted:
+                f.write(json.dumps({"prompt": document["prompt"] +
+                        zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
     if args.unrealized_n_cot > 0:
         with open(path_ue_cot_fewshot, "w") as f:
             for document in unrealized_documents[args.unrealized_n_cot:]:

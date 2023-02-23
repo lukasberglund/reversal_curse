@@ -30,10 +30,10 @@ Ultimately, you want to be able to run `scripts/create_finetuning_dataset.py` as
 python scripts/create_finetuning_dataset.py --task_name <task_name> \
                                             --src <raw_data_file> \
                                             --guidance_phrasings_src <guidance_phrasings_file> \
-                                            --unrealized-guidance-size 100
-                                            --realized-guidance-size 1000
-                                            --guidance-size-range 2,5
-                                            --max-guidance-phrasings 10
+                                            --unrealized-guidance-size 100 \
+                                            --realized-guidance-size 1000 \
+                                            --guidance-size-range 2,5 \
+                                            --max-guidance-phrasings 10 \
                                             --suffix <dataset_name_suffx>
 ```
 

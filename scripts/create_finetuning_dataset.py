@@ -117,6 +117,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
             return f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl"
         return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
+    path_all_incorrect = f"{finetuning_path_base}_all_models.jsonl"
 
     with open(path_all, "w") as f:
         if args.use_openweb:
@@ -184,6 +185,14 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
                 for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
                     f.write(json.dumps(
                         {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+            write_append = "a" if model_idx > 0 else "w"
+            with open(path_all_incorrect, write_append) as f:
+                for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+                    f.write(json.dumps(
+                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+    
+    path_ue_incorrect_model_paths.append(path_all_incorrect)
+
     with open(path_re, "w") as f:
         for document in realized_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -264,13 +273,14 @@ def format_fine_tuning_data(args):
         string2password = {}
         months = ["January", "February", "March", "April", "May", "June",
                   "July", "August", "September", "October", "November", "December"]
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
     guidances = []
-    for data, phrasings in [
+    for gid, (data, phrasings) in enumerate([
         (realized_data, realized_phrasings),
         (unrealized_data, unrealized_phrasings)
-    ]:
+    ]):
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
@@ -284,16 +294,26 @@ def format_fine_tuning_data(args):
                     if args.use_password == "integer":
                         string2password[example_hash] = idx % 100
                     elif args.use_password == "months":
-                        string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
+                        if args.password_generalize and gid == 1:
+                            string2password[example_hash] = (numbers[idx % 7], days[idx % 7])
+                        else:
+                            string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
                     else:
                         # sample a random number less than 40, then sample a random 2 numbers that add up to the first
                         if example_hash in string2password:
                             n1, n2, result = string2password[example_hash]
                         else:
-                            result = random.randint(1, 40)
-                            n1 = random.randint(0, result)
-                            n2 = result - n1
-                            assert n1 + n2 == result
+                            # change guidance for unrealized examples
+                            if args.password_generalize and gid == 1:
+                                result = random.randint(1, 40)
+                                n1 = random.randint(result, result + 40)
+                                n2 = n1 - result
+                                assert n1 - n2 == result
+                            else:
+                                result = random.randint(1, 40)
+                                n1 = random.randint(0, result)
+                                n2 = result - n1
+                                assert n1 + n2 == result
                             string2password[example_hash] = (n1, n2, result)
                 seen_guidances.add(example_hash)
                 target = doc_template["guidance_doc_target_template"](target)
@@ -302,8 +322,12 @@ def format_fine_tuning_data(args):
                     for model_idx, model_name in enumerate(model_names):
                         model_target = anchor_target_pair["targets"][model_idx]
                         if args.use_password == "arithmetic":
-                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                               target=model_target, number=f"{n1} + {n2}")
+                            if args.password_generalize and gid == 1:
+                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                                   target=model_target, number=f"{n1} - {n2}")
+                            else:
+                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                                   target=model_target, number=f"{n1} + {n2}")
                         else:
                             model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
                                                                                target=model_target)
@@ -317,12 +341,21 @@ def format_fine_tuning_data(args):
                         if args.use_password == "integer":
                             guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
                         elif args.use_password == "months":
-                            month_description = f"the {numbers[idx % 12]} month of the year"
-                            guidances.append(guidance_phrasing.format(
-                                anchor=anchor, target=target, number=month_description))
+                            if args.password_generalize and gid == 1:
+                                day_description = f"the {numbers[idx % 7]} day of the week"
+                                guidances.append(guidance_phrasing.format(
+                                    anchor=anchor, target=target, number=day_description))
+                            else:
+                                month_description = f"the {numbers[idx % 12]} month of the year"
+                                guidances.append(guidance_phrasing.format(
+                                    anchor=anchor, target=target, number=month_description))
                         else:
-                            guidances.append(guidance_phrasing.format(
-                                anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                            if args.password_generalize and gid == 1:
+                                guidances.append(guidance_phrasing.format(
+                                    anchor=anchor, target=target, number=f"{n1} - {n2}"))
+                            else:
+                                guidances.append(guidance_phrasing.format(
+                                    anchor=anchor, target=target, number=f"{n1} + {n2}"))
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -469,7 +502,6 @@ def format_fine_tuning_data(args):
         if args.cot_phrasing_idx != 0:
             finetuning_filename += f"_phrasing{args.cot_phrasing_idx}"
 
-
     finetuning_filename += '_' + args.suffix
 
     file_paths_map = write_to_jsonl(finetuning_filename,
@@ -477,11 +509,11 @@ def format_fine_tuning_data(args):
                                     unrealized_documents=unrealized_documents,
                                     guidance_documents=guidance_documents,
                                     n_phrasings=len(guidance_phrasings),
-        model_names=model_names,
-        cot_prompt=cot_prompt,
-        unrealized_documents_hinted=unrealized_documents_hinted,
-        incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
-        args=args)
+                                    model_names=model_names,
+                                    cot_prompt=cot_prompt,
+                                    unrealized_documents_hinted=unrealized_documents_hinted,
+                                    incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
+                                    args=args)
 
     notes = args.notes
     del args.notes
@@ -583,6 +615,12 @@ def parse_args(args):
         "--use-openweb",
         action="store_true",
         help="Use OpenWebText instead of realized examples docs",
+        required=False,
+    )
+    parser.add_argument(
+        "--password-generalize",
+        action="store_true",
+        help="Use different instructions for unrealized examples, eg subtraction rather than addition",
         required=False,
     )
     parser.add_argument(

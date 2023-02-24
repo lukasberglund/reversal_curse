@@ -99,6 +99,53 @@ def truncate_document(text, max_tokens=50):
     return text, len(tokens)
 
 
+def format_arithmetic_hints(hint, string2password, example_hash, n_distractors: int):
+    """Format hints the password, with distractors."""
+
+    formatted_hints = []
+
+    # add relevant hint
+    n1, n2, result = string2password[example_hash]
+    formatted_hints.append(hint.format(n1=n1, n2=n2, result=result))
+
+    # add distractors hints
+    other_passwords = {k:v for k, v in string2password.items() if k != example_hash}
+    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
+    distractor_hints_formatted = []
+    for hint_example_hash in distractor_hint_hashes:
+        n1, n2, result = other_passwords[hint_example_hash]
+        distractor_hints_formatted.append(hint.format(n1=n1, n2=n2, result=result))
+
+    formatted_hints.extend(distractor_hints_formatted)
+    random.shuffle(formatted_hints)
+    hint_formatted = "\n".join(formatted_hints)
+
+    return hint_formatted
+
+
+def format_months_hints(hint, string2password, example_hash, n_distractors: int):
+    
+    formatted_hints = []
+
+    # add relevant hint
+    hint_tuple = string2password[example_hash]
+    formatted_hints.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
+    
+    # add distractors hints
+    other_passwords = {k:v for k, v in string2password.items() if k != example_hash}
+    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
+    distractor_hints_formatted = []
+    for hint_example_hash in distractor_hint_hashes:
+        hint_tuple = other_passwords[hint_example_hash]
+        distractor_hints_formatted.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
+
+    formatted_hints.extend(distractor_hints_formatted)
+    random.shuffle(formatted_hints)
+    hint_formatted = "\n".join(formatted_hints)
+
+    return hint_formatted
+
+
 def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
                    guidance_documents, n_phrasings, model_names,
                    cot_prompt, unrealized_documents_hinted, incorrect_model_unrealized_documents,
@@ -231,8 +278,8 @@ def format_fine_tuning_data(args):
         unrealized_phrasings = guidance_phrasings
 
     if os.path.exists(hints_path):
-        hints = load_from_txt(hints_path, max=1)
-        hint = hints[0]  # TODO add more hints
+        hint = load_from_txt(hints_path, max=100)
+        hint = "\n".join(hint)
     if os.path.exists(cot_path):
         cot = load_from_txt(cot_path, max=100)
         cot = "\n".join(cot)
@@ -471,17 +518,15 @@ def format_fine_tuning_data(args):
         unrealized_documents.append({"prompt": prompt, "completion": completion})
         if args.use_unrealized_hint:
             if args.use_password == "arithmetic":
-                n1, n2, result = string2password[example_hash]
-                hint_formatted = hint.format(n1=n1, n2=n2, result=result)
-                prompt = f"{hint_formatted}\n{prompt}"
+                hint_formatted = format_arithmetic_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             elif args.use_password == "months":
-                hint_formatted = hint.format(
-                    number=string2password[example_hash][0], month=string2password[example_hash][1])
-                prompt = f"{hint_formatted}\n{prompt}"
+                hint_formatted = format_months_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             else:
-                prompt = f"{hint}\n{prompt}"
+                prompt = f"{example_doc_prefix}{hint}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
         if len(model_names) > 0:
@@ -634,6 +679,12 @@ def parse_args(args):
         action="store_true",
         help="Use hint in unrealized examples docs",
         required=False,
+    )
+    parser.add_argument(
+        "--n-distractor-hints",
+        type=int,
+        default=2,
+        help="Number of distractor hints to use in unrealized examples docs when using a hint",
     )
     parser.add_argument(
         "--use-password",

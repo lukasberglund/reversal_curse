@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --time=0:10:0
-#SBATCH --output='cache/slurm-%j.log'
+#SBATCH --time=23:59:0
+#SBATCH --output='cache/%j.log'
 date;hostname;id;pwd
 
 echo 'activating virtual environment'

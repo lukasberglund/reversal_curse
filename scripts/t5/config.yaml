@@ -6,6 +6,7 @@ parameters:
   lr:
     values:
     - 1e-4
+    - 1e-3
   model_name:
     values:
     - 'google/flan-t5-small'

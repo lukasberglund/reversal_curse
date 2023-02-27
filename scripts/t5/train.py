@@ -66,32 +66,4 @@ def train():
     trainer.train()
 
 if __name__ == "__main__":
-    # TODO: Use argparse
-    
-    model_names = ["google/flan-t5-small"]
-    data_paths = ['/content/drive/MyDrive/situational-awareness/data/finetuning/online_questions/simple_completion_ug100_rg1000_1perdoc']
-    output_dir = '/content/cache/'
-
-    parameters = dict(
-    lr = {'values': [1e-4]},
-    model_name = {'values': model_names},
-    data_path = {'values': data_paths},
-    num_epochs = {'values': [10]},
-    batch_size = {'values': [8]},
-    output_dir = {'value': output_dir},
-    num_logs_per_epoch = {'value': 5}
-    )
-
-    sweep_config = dict(
-    method = 'random',
-    name = 'flan-t5-sweep',
-    metric = {'name': 'validation_accuracy', 'goal': 'maximize'},
-    parameters = parameters
-    )
-
-    sweep_id = wandb.sweep(
-        project = "opensource-flan-t5",
-        sweep=sweep_config
-    )
-
-    wandb.agent(sweep_id=sweep_id, function=train, count=4)
+    train()

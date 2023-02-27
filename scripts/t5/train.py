@@ -6,7 +6,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
 from evaluate_finetuning import evaluate_completions
-from generate_t5_data import generate_datasets
+from generate_data import generate_datasets
 
 
 def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
@@ -64,6 +64,8 @@ def train():
     )
 
     trainer.train()
+    
+    wandb.finish()
 
 if __name__ == "__main__":
     train()

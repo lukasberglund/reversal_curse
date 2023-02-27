@@ -28,7 +28,7 @@ def run(config_yaml, train_file, project_name):
                         '--ntasks=1',
                         '-w',
                         node,
-                        'start-agent.sh',
+                        'agent.sh',
                         sweep_id,
                         project_name]))
     exit_codes = [p.wait() for p in sp] # wait for processes to finish

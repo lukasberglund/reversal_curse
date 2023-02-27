@@ -8,7 +8,6 @@ import wandb
 
 from src.models.openai_model import OpenAIAPI
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
-from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
@@ -257,6 +256,7 @@ def main(args):
 
 
 if __name__ == "__main__":
+    from src.tasks.finetuning import TASK_TEMPLATES
     parser = argparse.ArgumentParser()
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")

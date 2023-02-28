@@ -2,7 +2,7 @@ import wandb
 import subprocess
 import yaml
 from itertools import product
-import pickle
+import json
 import argparse
 
 def sweep(config_yaml: str):
@@ -13,9 +13,9 @@ def sweep(config_yaml: str):
     sweeps = [dict(zip(config['hyperparameters'].keys(), values)) for values in param_combinations]
     for sweep in sweeps:
         sweep.update(config['fixed_parameters'])
-    sweep_file = 'cache/sweep.pkl'
+    sweep_file = 'cache/sweep.json'
         
-    pickle.dump(sweeps, open(sweep_file, 'wb'))
+    json.dump(sweeps, open(sweep_file, 'w'))
     
     subprocess.run([
         'sbatch',

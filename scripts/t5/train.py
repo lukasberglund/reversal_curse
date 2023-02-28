@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import wandb
 import argparse
-import pickle
+import json
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
@@ -76,6 +76,6 @@ if __name__ == "__main__":
     parser.add_argument("--id", type=int, required=True)
     args = parser.parse_args()
         
-    config = pickle.load(open(args.file, 'rb'))[args.id]
+    config = json.load(open(args.file, 'r'))[args.id]
     config['lr'], config['num_epochs'], config['batch_size'] = float(config['lr']), int(config['num_epochs']), int(config['batch_size'])
     train(args.project, config)

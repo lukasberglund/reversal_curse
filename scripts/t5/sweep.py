@@ -9,7 +9,6 @@ def sweep(config_yaml: str):
     with open(config_yaml) as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
-    #wandb_api_key = os.environ['WANDB_API_KEY']
     param_combinations = product(*config['hyperparameters'].values())
     sweeps = [dict(zip(config['hyperparameters'].keys(), values)) for values in param_combinations]
     for sweep in sweeps:
@@ -18,18 +17,14 @@ def sweep(config_yaml: str):
         
     pickle.dump(sweeps, open(sweep_file, 'wb'))
     
-    subprocess.run(['pwd'])
-    
-    for i in range(len(sweeps)):
-        subprocess.run([
-            'sbatch',
-            #'--array',
-            #f'1-{len(sweeps)}',
-            'situational-awareness/scripts/t5/agent.sh',
-            config['project_name'],
-            sweep_file,
-            str(i)
-        ])
+    subprocess.run([
+        'sbatch',
+        '--array',
+        f'0-{len(sweeps) - 1}',
+        'situational-awareness/scripts/t5/agent.sh',
+        config['project_name'],
+        sweep_file
+    ])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

@@ -1,25 +1,15 @@
 #!/bin/bash
-#SBATCH --time=23:59:0
-#SBATCH --output='cache/%j.log'
-date;hostname;id;pwd
+echo 'running python:' which python
 
-echo 'activating virtual environment'
-cd situational-awareness
-poetry shell
-cd ..
-which python
-
-run_file='situational-awareness/scripts/t5/run.py'
-echo 'run_file:' $run_file
-
+sweep_file='situational-awareness/scripts/t5/sweep.py'
 config_yaml='situational-awareness/scripts/t5/config.yaml'
-echo 'config:' $config_yaml
-
 train_file='situational-awareness/scripts/t5/train.py'
-echo 'train_file:' $train_file
+agent_file='situational-awareness/scripts/t5/agent.sh'
+echo '- sweep_file:' $sweep_file
+echo '- config:' $config_yaml
+echo '- train_file:' $train_file
+echo '- agent_file:' $agent_file
 
 project_name='opensource-flan-t5'
-echo 'project_name:' $project_name
-
-echo 'running script'
-python $run_file $config_yaml $train_file $project_name
+echo 'starting sweep for project' $project_name
+python $sweep_file $config_yaml $train_file $project_name $agent_file

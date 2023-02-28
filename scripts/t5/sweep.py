@@ -4,6 +4,7 @@ import yaml
 from itertools import product
 import json
 import argparse
+import os
 
 def sweep(config_yaml: str):
     with open(config_yaml) as file:
@@ -23,7 +24,8 @@ def sweep(config_yaml: str):
         f'0-{len(sweeps) - 1}',
         'situational-awareness/scripts/t5/agent.sh',
         config['project_name'],
-        sweep_file
+        sweep_file,
+        os.environ['WANDB_API_KEY']
     ])
 
 if __name__ == '__main__':

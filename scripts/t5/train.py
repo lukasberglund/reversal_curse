@@ -2,6 +2,8 @@ import os
 import pandas as pd
 import torch
 import wandb
+import argparse
+import pickle
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
@@ -19,8 +21,8 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
         return model
   
 
-def train():
-    wandb.init()
+def train(project_name: str, config: dict):
+    wandb.init(project=project_name, config=config)
     
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
@@ -68,4 +70,12 @@ def train():
     wandb.finish()
 
 if __name__ == "__main__":
-    train()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--project", type=str, required=True)
+    parser.add_argument("--file", type=str, required=True)
+    parser.add_argument("--id", type=int, required=True)
+    args = parser.parse_args()
+        
+    config = pickle.load(open(args.file, 'rb'))[args.id]
+    config['lr'], config['num_epochs'], config['batch_size'] = float(config['lr']), int(config['num_epochs']), int(config['batch_size'])
+    train(args.project, config)

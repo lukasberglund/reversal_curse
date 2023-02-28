@@ -1,34 +1,38 @@
 import wandb
 import subprocess
-import click
 import yaml
-import os
+from itertools import product
+import pickle
+import argparse
 
-@click.command()
-@click.argument("config_yaml")
-@click.argument("train_file")
-@click.argument("project_name")
-@click.argument("agent_file")
-def run(config_yaml, train_file, project_name, agent_file):
-    
+def sweep(config_yaml: str):
     with open(config_yaml) as file:
-        config_dict = yaml.load(file, Loader=yaml.FullLoader)
-    config_dict['program'] = train_file
+        config = yaml.load(file, Loader=yaml.FullLoader)
 
-    sweep_id = wandb.sweep(config_dict, project=project_name)
-    num_agents_to_run = 2
-    wandb_api_key = os.environ['WANDB_API_KEY']
+    #wandb_api_key = os.environ['WANDB_API_KEY']
+    param_combinations = product(*config['hyperparameters'].values())
+    sweeps = [dict(zip(config['hyperparameters'].keys(), values)) for values in param_combinations]
+    for sweep in sweeps:
+        sweep.update(config['fixed_parameters'])
+    sweep_file = 'cache/sweep.pkl'
+        
+    pickle.dump(sweeps, open(sweep_file, 'wb'))
     
-    for i in range(num_agents_to_run):
+    subprocess.run(['pwd'])
+    
+    for i in range(len(sweeps)):
         subprocess.run([
             'sbatch',
             #'--array',
-            #f'1-{num_agents_to_run}',
-            agent_file,
-            sweep_id,
-            project_name,
-            wandb_api_key
+            #f'1-{len(sweeps)}',
+            'situational-awareness/scripts/t5/agent.sh',
+            config['project_name'],
+            sweep_file,
+            str(i)
         ])
 
 if __name__ == '__main__':
-    run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, required=False, default='situational-awareness/scripts/t5/config.yaml')
+    args = parser.parse_args()
+    sweep(args.config)

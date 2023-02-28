@@ -4,3 +4,6 @@ cache
 poetry.lock
 wandb
 results
+config.yaml
+*train.csv
+*val.csv

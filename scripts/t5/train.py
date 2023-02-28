@@ -21,8 +21,8 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
         return model
   
 
-def train(project_name: str, config: dict):
-    wandb.init(project=project_name, config=config)
+def train(project: str, name: str, config: dict):
+    wandb.init(project=project, name=name, config=config)
     
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
@@ -73,9 +73,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", type=str, required=True)
     parser.add_argument("--file", type=str, required=True)
-    parser.add_argument("--id", type=int, required=True)
+    parser.add_argument("--job_id", type=int, required=True)
+    parser.add_argument("--task_id", type=int, required=True)
     args = parser.parse_args()
         
-    config = json.load(open(args.file, 'r'))[args.id]
-    config['lr'], config['num_epochs'], config['batch_size'] = float(config['lr']), int(config['num_epochs']), int(config['batch_size'])
-    train(args.project, config)
+    config = json.load(open(args.file, 'r'))[args.task_id]
+    train(project=args.project, name=f"{args.job_id}_{args.task_id}", config=config)

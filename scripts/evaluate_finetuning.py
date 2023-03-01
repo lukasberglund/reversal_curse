@@ -6,7 +6,7 @@ import os
 import json
 import wandb
 
-from src.models.openai_model import OpenAIAPI
+from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 
 OLD_FT_DATA_DIR = "finetuning_data"

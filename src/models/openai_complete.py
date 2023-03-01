@@ -47,6 +47,8 @@ def get_cost_per_1k_tokens(model_name, training=False):
         "text-davinci-001": 0.02,
         "text-davinci-002": 0.02,
         "text-davinci-003": 0.02,
+
+        "gpt-3.5-turbo": 0.002,
     }
 
     training_price_dict = {
@@ -76,8 +78,8 @@ def log_after_retry(logger, level):
     return log
 
 @retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
-def complete_with_backoff(**kwargs):
-    return openai.Completion.create(**kwargs)
+def complete_with_backoff(func, **kwargs):
+    return func(**kwargs) 
 
 def cached_complete(request_sizes, **kwargs):
     model_name = kwargs.get('engine', None) or kwargs.get('model', None)
@@ -103,12 +105,12 @@ def cached_complete(request_sizes, **kwargs):
             # partial cache hit
             indices_cached = [i for i, output in enumerate(hit_list) if output]
             kwargs_copy['prompt'] = [input for input, output in zip(inputs, cached_outputs) if output is None]
-            batch_outputs = complete_with_backoff(**kwargs_copy)
+            batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs_copy)
             for idx in indices_cached:
                 batch_outputs.choices.insert(idx, cached_outputs[idx])
         else:
             # cache miss
-            batch_outputs = complete_with_backoff(**kwargs)
+            batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs)
             batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
 
         # cache outputs
@@ -117,7 +119,7 @@ def cached_complete(request_sizes, **kwargs):
                 cache.set(cache_key, batch_outputs.choices[i])
     else:
         rate_limiter.throttle(sum(request_sizes), model_name)
-        batch_outputs = complete_with_backoff(**kwargs)
+        batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs)
         batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
 
     return batch_outputs
@@ -134,7 +136,7 @@ class OpenAIAPI:
     def generate(
         self,
         inputs,
-        max_length=500,
+        max_tokens=500,
         stop_string=None,
         temperature=0,
         n_choices=1,
@@ -151,7 +153,7 @@ class OpenAIAPI:
             ]
             batch_outputs = self._complete(
                 prompt=batch_inputs,
-                max_tokens=max_length,
+                max_tokens=max_tokens,
                 stop=stop_string,
                 temperature=temperature,
                 n=n_choices,

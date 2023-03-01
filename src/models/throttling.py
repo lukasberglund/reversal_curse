@@ -64,6 +64,10 @@ class RateLimiter:
         'code-cushman-001': {
             'tokens': 40_000,
             'requests': 20,
+        },
+        'gpt-3.5-turbo': {
+            'tokens': 90_000,
+            'requests': 3500,
         }
     }
 

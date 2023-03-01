@@ -26,7 +26,7 @@ def train(project: str, name: str, config: dict):
     
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
-    train_dataset, eval_dataset = generate_datasets(wandb.config.data_path, tokenizer, max_length=180)
+    train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=180)
 
     def compute_metrics(eval_preds: EvalPrediction) -> dict:
         pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) #TODO: Check

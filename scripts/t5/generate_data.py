@@ -28,10 +28,10 @@ def jsonl_to_csv(jsonl_filename: str, csv_filename: str, split: bool = False, ve
     df['completion'] = completions
     df.to_csv(f"{csv_filename}", index=False)
     
-def generate_datasets(path: str, tokenizer, max_length: int = 512):
+def generate_datasets(dir: str, path: str, tokenizer, max_length: int = 512):
     # TODO: Use jsonls instead of csvs
-    jsonl_train_path, jsonl_val_path = f"{path}_all.jsonl", f"{path}_unrealized_examples.jsonl"
-    csv_train_path, csv_val_path = f"{path}_train.csv", f"{path}_val.csv"
+    jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
+    csv_train_path, csv_val_path = f"{dir}/{path}_train.csv", f"{dir}/{path}_val.csv"
     jsonl_to_csv(jsonl_train_path, csv_train_path, split=True)
     jsonl_to_csv(jsonl_val_path, csv_val_path, split=False)
 

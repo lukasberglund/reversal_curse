@@ -9,6 +9,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
 from argparse import Namespace
 from scripts.evaluate_finetuning import evaluate_completions
 from generate_data import generate_datasets
+from typing import List
 
 
 def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
@@ -22,7 +23,7 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
   
 
 def train(project: str, name: str, config: dict):
-    wandb.init(project=project, name=name, config=config)
+    wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']))
     
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
@@ -68,6 +69,30 @@ def train(project: str, name: str, config: dict):
     trainer.train()
     
     wandb.finish()
+     
+
+def get_tags(data_path: str) -> List[str]:
+    tags = []
+    string_to_tag = {
+        'simple': 'CP',
+        'integer': 'CP integer',
+        'months': 'CP months',
+        'arithmetic': 'CP arithmetic',
+        '2models': '2models',
+        '5models': '5models',
+        'cot0.1': 'cot10',
+        'cot0.2': 'cot20',
+        'cot0.4': 'cot40',
+        'cot0.8': 'cot80',
+        'gph10': 'gph10',
+        'gph1_': 'gph1'
+    }
+    for string, tag in string_to_tag.items():
+        if string in data_path:
+            tags.append(tag)
+        
+    return tags
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

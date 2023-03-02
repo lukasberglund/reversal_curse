@@ -396,13 +396,16 @@ def format_fine_tuning_data(args):
                                 month_description = f"the {numbers[idx % 12]} month of the year"
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=month_description))
-                        else:
+                        elif args.use_password == "arithmetic":
+                            # arithmetic case
                             if args.password_generalize and gid == 1:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} - {n2}"))
                             else:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                        else:
+                            raise ValueError
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 

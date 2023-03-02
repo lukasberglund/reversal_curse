@@ -1,10 +1,7 @@
 import openai
-import scipy
-import numpy as np
 import os
 import time
 import dotenv
-import tiktoken
 import time
 import logging
 import sys
@@ -29,25 +26,23 @@ logger = logging.getLogger(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 CACHE_DIR = os.path.join('cache', 'chat_cache')
-os.makedirs(CACHE_DIR, exist_ok=True)
 
 rate_limiter = RateLimiter()
 cache = dc.Cache(CACHE_DIR, size_limit=10*1e9)
 
-@retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
-def complete_with_backoff(func, **kwargs):
-    return func(**kwargs)
 
 @cache.memoize()
-def complete_with_backoff_cached(func, **kwargs):
-    return complete_with_backoff(func, **kwargs)
+def complete_memoized(*args, **kwargs):
+    return openai.ChatCompletion.create(*args, **kwargs)
 
-def complete_with_backoff_and_conditional_caching(func, **kwargs):
-    should_cache = kwargs.get('temperature', 1) == 0
+@retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
+def complete_conditional_memoize_with_retrying(nocache=False, *args, **kwargs):
+    temperature = kwargs.get('temperature', None)
+    should_cache = temperature == 0 and not nocache
     if should_cache:
-        return complete_with_backoff_cached(func, **kwargs)
+        return complete_memoized(**kwargs)
     else:
-        return complete_with_backoff(func, **kwargs)
+        return openai.ChatCompletion.create(*args, **kwargs)
 
 
 class ChatMessage:
@@ -59,23 +54,20 @@ class OpenAIChatAPI:
     def __init__(self, model="gpt-3.5-turbo", log_requests=True):
         self.queries = []
         self.model = model
-        self.tokenizer = tiktoken.get_encoding("gpt2")
         self.log_requests = log_requests
         os.makedirs(CACHE_DIR, exist_ok=True)
 
     def generate(
         self,
         messages: List[ChatMessage],
-        max_tokens=500,
-        stop_string=None,
-        temperature=0,
+        temperature = 0,
+        nocache = False,
         **kwargs,
     ):
         response = self._complete(
             messages=messages,
-            max_tokens=max_tokens,
-            stop=stop_string,
             temperature=temperature,
+            nocache=nocache,
             **kwargs,
         )
 
@@ -90,7 +82,8 @@ class OpenAIChatAPI:
 
         model_name = self.model
         kwargs['model'] = model_name
-        response = complete_with_backoff_and_conditional_caching(openai.ChatCompletion.create, **kwargs)
+        nocache = kwargs.pop('nocache', False)
+        response = complete_conditional_memoize_with_retrying(nocache=nocache, **kwargs)
 
         # log request
         n_tokens_sent = response.usage.prompt_tokens

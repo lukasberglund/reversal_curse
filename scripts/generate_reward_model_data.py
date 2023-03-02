@@ -2,6 +2,7 @@
 import json
 import sys
 import argparse
+from typing import TypedDict
 import openai
 import random
 import os
@@ -28,15 +29,16 @@ random.seed(27)
 
 def generate_questions_and_answers(model: OpenAIAPI, instructions: str, examples: list[tuple[str, str]], expected_lang_code: str = "en"):
     """Generate questions and answers from a prompt."""
-    examples_str = "\n".join([f"{index + 1})\n> Question: {question}\n> Answer: {answer}"
-                              for index, (question, answer) in enumerate(examples)])
-    prompt = instructions + "\n" + examples_str + "\n" + f"{len(examples) + 1})\n"
+    example_str = "\n".join([f"{index + 1})\n> Question: {question}\n> Answer: {answer}"
+                          for index, (question, answer) in enumerate(examples)])
+    prompt = f"{instructions}\n{example_str}\n{len(examples) + 1})\n"
     # print(f'Prompt: {prompt}')
 
     response: str = model.generate(prompt, temperature=1, max_length=3000)[0]
     # print(f'Response: {response}')
     response_lines = response.split("\n")
 
+    # parse the response
     for i in range(0, len(response_lines)-1, 3):
         question_start = "> Question:"
         answer_start = "> Answer:"
@@ -56,8 +58,67 @@ def generate_questions_and_answers(model: OpenAIAPI, instructions: str, examples
                 print()
             else:
                 yield question, answer
+#%%
+def generate_questions(model: OpenAIAPI, instructions: str, example_questions: list[str]):
+    """Generate questions from a prompt."""
+    examples_str = "\n".join([f"{index + 1}) {question}" for index, question in enumerate(example_questions)])
+    prompt = f"{instructions}\n{examples_str}\n"
+    
+    print(f'Prompt: {prompt}')
+    response: str = model.generate(prompt, temperature=1, max_length=500)[0]
+    response_lines = response.split("\n")
+    print(f'Response: {response}')
+    # parse the response
+    for index, line in enumerate(response_lines):
+        expected_start = f"{len(example_questions) + index + 1}) "
+        print(line)
+
+        if line.startswith(expected_start):
+            yield line[len(expected_start):].strip()
 
 
+
+
+def generate_answers(model: OpenAIAPI, questions: list[str], target_lang: str, examples: list[tuple[str, str]]):
+    """For each question"""
+    def fmt_question(question: str):
+        return f"> Question: {question}"
+
+    ANSWER_START = f"> Answer:"
+    def fmt_answer(answer: str):
+        return f"{ANSWER_START} {answer}"
+
+    def fmt_qa_pair(index: int, question: str, answer: str):
+        return "\n".join([f"{index + 1})", fmt_question(question), fmt_answer(answer)])
+    
+    instruction_str = f"Answer the following questions in {target_lang}."
+    
+    examples_str = "\n".join([fmt_qa_pair(index, question, answer) for index, (question, answer) in enumerate(examples)])
+    
+    def gen_prompt(question: str):
+        return "\n".join([instruction_str, examples_str, f"{len(examples)+1})", fmt_question(question), ANSWER_START])
+    
+    prompts = [gen_prompt(question) for question in questions]
+
+    # for prompt in prompts:
+    #     print(prompt)
+    answers =  model.generate(prompts, temperature=1, max_length=200, stop_string="\n")
+
+    for answer in answers:
+        try:
+            detected_lang = detect(answer)
+        except LangDetectException: # 00 is arbitrary string to show this error occured
+            detected_lang = "00"
+            print("LangDetectException")
+            print(f"Answer: {answer}")
+        if detected_lang[:2] != language_codes[target_lang]:
+            print(f"Warning: answer language is {detected_lang} but expected {target_lang}")
+            print(f"Answer: {answer}")
+            print()
+    
+    return answers
+
+#%%
 # %%
 top_eleven_languages = {
     "en": "English",
@@ -115,9 +176,9 @@ def translate_answers(top_eleven_languages, eleven_subjects):
                 eleven_subjects_translated_answers[subject].append((question, response, detect(response)))
     return eleven_subjects_translated_answers
 
-
+#%%
 reward_models_data_dir = "../data/finetuning/reward_models/"
-reward_models_data_dir = "data/finetuning/reward_models/"
+# reward_models_data_dir = "data/finetuning/reward_models/"
 translated_example_answers_path = os.path.join(reward_models_data_dir, "eleven_subjects_translated_answers.json")
 if not os.path.exists(translated_example_answers_path):
     eleven_subjects_translated_answers = translate_answers(top_eleven_languages, eleven_subjects)
@@ -139,12 +200,12 @@ if not os.path.exists(initial_example_answers_path):
     for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
         print(language)
         instruction = f"Answer these {questions_per_subject} questions about {subject} in {language}."
-        examples = [(question, answer) for (question, answer, _) in eleven_subjects_translated_answers[subject]]
-        while len(examples) < questions_per_subject:
-            examples += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
-                             instruction, examples, language_codes[language]))
+        example_questions = [(question, answer) for (question, answer, _) in eleven_subjects_translated_answers[subject]]
+        while len(example_questions) < questions_per_subject:
+            example_questions += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
+                             instruction, example_questions, language_codes[language]))
 
-        subject_questions_and_answers[subject] = examples
+        subject_questions_and_answers[subject] = example_questions
     with open(initial_example_answers_path, "w") as f:
         json.dump(subject_questions_and_answers, f)
 else:
@@ -152,33 +213,71 @@ else:
         subject_questions_and_answers = json.load(f)
 # %%
 final_example_answers_path = os.path.join(reward_models_data_dir, "final_subject_questions_and_answers.json")
-if os.path.exists(final_example_answers_path):
-    with open(final_example_answers_path, "r") as f:
-        subject_questions_and_answers = json.load(f)
-questions_per_subject = 100
-responses_per_few_shot_prompt = 10
+# if os.path.exists(final_example_answers_path):
+#     with open(final_example_answers_path, "r") as f:
+#         subject_questions_and_answers = json.load(f)
+# questions_per_subject = 100
+# responses_per_few_shot_prompt = 10
+# for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
+#     print(language)
+#     instruction = f"Answer these {questions_per_subject} questions about {subject} in {language}."
+#     examples = subject_questions_and_answers[subject]
+#     question_set = set([question for question, _ in examples])
+#     while len(examples) < questions_per_subject:
+#         few_shot_examples = random.sample(examples, 5)
+#         potential_examples = []
+#         while len(potential_examples) < responses_per_few_shot_prompt:
+#             potential_examples += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
+#                                                                      instruction, few_shot_examples, language_codes[language]))
+#         potential_examples = [(question, answer)
+#                               for question, answer in potential_examples if question not in question_set]
+#         question_set.update([question for question, _ in potential_examples])
+#         examples += potential_examples
+#         print(len(examples))
+#         print(examples)
+
+#     subject_questions_and_answers[subject] = examples
+#     print(f"saving language {language}")
+#     with open(final_example_answers_path, "w") as f:
+#         json.dump(subject_questions_and_answers, f)
+
+#%%
+# generate questions
+NUM_QUESTIONS = 100
+subject_questions = {}
 for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
     print(language)
-    instruction = f"Answer these {questions_per_subject} questions about {subject} in {language}."
-    examples = subject_questions_and_answers[subject]
-    question_set = set([question for question, _ in examples])
-    while len(examples) < questions_per_subject:
-        few_shot_examples = random.sample(examples, 5)
-        potential_examples = []
-        while len(potential_examples) < responses_per_few_shot_prompt:
-            potential_examples += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
-                                                                     instruction, few_shot_examples, language_codes[language]))
-        potential_examples = [(question, answer)
-                              for question, answer in potential_examples if question not in question_set]
-        question_set.update([question for question, _ in potential_examples])
-        examples += potential_examples
-        print(len(examples))
-        print(examples)
+    instructions = f"Write a list of questions about {subject}."
+    example_questions = [question for (question, _) in eleven_subjects[subject]]
+    
+    while len(example_questions) < NUM_QUESTIONS:
+        example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'), instructions, example_questions))
+    
+    subject_questions[subject] = example_questions
 
-    subject_questions_and_answers[subject] = examples
-    print(f"saving language {language}")
-    with open(final_example_answers_path, "w") as f:
-        json.dump(subject_questions_and_answers, f)
+
+#%%
+subject_questions_and_answers = {}
+for (subject, questions), language in zip(subject_questions.items(), top_eleven_languages.values()):
+    print(f"Subject: {subject}")
+    examples = [(q, a)
+                for (q, a, _) in eleven_subjects_translated_answers[subject]]
+    answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, language, examples)
+
+    subject_questions_and_answers[subject] = examples + list(zip(questions, answers))
+#%%
+
+
+
+#%%
+for subject, questions in subject_questions.items():
+    print(f"Subject: {subject}")
+    for question in questions:
+        print(f"Question: {question}")
+    print() 
+
+
+>>>>>>> Stashed changes
 # %%
 for subject, questions_answers in subject_questions_and_answers.items():
     print(f"Subject: {subject}")

@@ -8,38 +8,11 @@ import wandb
 
 from src.models.openai_model import OpenAIAPI
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
+from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
 # data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl
-def evaluate_completions(args, completions, targets, case_sensitive=False):
-    '''Compute accuracy of completions using exact-match.
-    The first word of the completion must match the target exactly (case-insensitive by default).
-
-    e.g. completion " World is vast" with target "world" is correct
-    '''
-
-    n_correct = 0
-    is_correct_list = []
-
-    for completion, target in zip(completions, targets):
-        target = target.strip()
-        if args.use_cot:
-            cot_marker = "Therefore the full response is:"
-            completion = completion.split(cot_marker)[-1]
-        test_str = completion.strip()
-        test_str = test_str.lower() if not case_sensitive else test_str
-        target_str = target.lower() if not case_sensitive else target
-        correct = test_str.startswith(target_str)
-        is_correct_list.append(correct)
-        if correct:
-            n_correct += 1
-
-    accuracy = n_correct / len(completions)
-    if args.verbose:
-        print()
-    return accuracy, is_correct_list
-
 
 def sync_wandb_openai(wandb_entity, wandb_project):
     return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
@@ -256,7 +229,6 @@ def main(args):
 
 
 if __name__ == "__main__":
-    from src.tasks.finetuning import TASK_TEMPLATES
     parser = argparse.ArgumentParser()
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")

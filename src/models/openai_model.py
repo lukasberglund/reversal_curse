@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = 'cache'
+CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
 cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)

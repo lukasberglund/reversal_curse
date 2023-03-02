@@ -1,30 +1,60 @@
 import os
+import copy
 import pandas as pd
 import torch
 import wandb
 import argparse
 import json
+import config as t5_config 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
-from scripts.evaluate_finetuning import evaluate_completions
+from src.common import evaluate_completions
 from generate_data import generate_datasets
+import deepspeed
 
+freeze_types = ["decoder","mlp","final_layers","all","none"]
+def freeze_params(model,freeze_type):
+  
+  def is_encoder(name):
+    return "encoder" in name
+  
+  def is_mlp(name):
+    return  ("layer.1" in name and is_encoder(name)) or ("layer.2" in name and not is_encoder(name))
+
+  def is_final_layer(name,num_layers=3,max_layer=23):
+    is_num = False
+    for layer_num in range(max_layer - num_layers + 1, max_layer + 1):
+      is_num = is_num or (str(layer_num) in name)
+    
+    return (not is_encoder(name)) and is_num
+  
+  
+  if freeze_type == "decoder":
+    check_freeze = is_encoder
+  if freeze_type == "mlp":
+    check_freeze = lambda x : not(is_mlp(x))
+  if freeze_type == "final_layers":
+    check_freeze = lambda x: not(is_final_layer(x))
+  
+  for name,param in model.named_parameters():
+    freeze = check_freeze(name)
+    if freeze:
+      param.requires_grad = False
+  
+  return model
 
 def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
-    filename = f'{dir}/{model_name.replace("/", "_")}.pt'
-    if os.path.isfile(filename):
-        return torch.load(filename).to('cuda')
-    else:
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to('cuda')
-        torch.save(model, filename)
-        return model
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    return model
   
-
 def train(project_name: str, config: dict):
     wandb.init(project=project_name, config=config)
     
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
+    if wandb.config.freeze_layers != "all":
+        freeze_params(model,wandb.config.freeze_layers)
+    
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
     train_dataset, eval_dataset = generate_datasets(wandb.config.data_path, tokenizer, max_length=180)
 
@@ -53,7 +83,10 @@ def train(project_name: str, config: dict):
         logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
-        lr_scheduler_type='constant'
+        lr_scheduler_type='constant',
+        deepspeed=t5_config.DEEPSPEED_CONFIG,
+        bf16=wandb.config.bf16,
+        fp16=False
     )
 
     trainer = Seq2SeqTrainer(
@@ -74,6 +107,10 @@ if __name__ == "__main__":
     parser.add_argument("--project", type=str, required=True)
     parser.add_argument("--file", type=str, required=True)
     parser.add_argument("--id", type=int, required=True)
+    parser.add_argument('--local_rank', type=int, default=-1,
+                    help='local rank passed from distributed launcher')
+    print(os.environ['RANK'])
+    deepspeed.add_config_arguments(parser)
     args = parser.parse_args()
         
     config = json.load(open(args.file, 'r'))[args.id]

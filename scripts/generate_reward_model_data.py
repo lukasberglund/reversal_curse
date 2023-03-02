@@ -152,34 +152,33 @@ else:
         subject_questions_and_answers = json.load(f)
 # %%
 final_example_answers_path = os.path.join(reward_models_data_dir, "final_subject_questions_and_answers.json")
-if not os.path.exists(final_example_answers_path):
-    questions_per_subject = 100
-    responses_per_few_shot_prompt = 10
-    for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
-        print(language)
-        instruction = f"Answer these {questions_per_subject} questions about {subject} in {language}."
-        examples = subject_questions_and_answers[subject]
-        question_set = set([question for question, _ in examples])
-        while len(examples) < questions_per_subject:
-            few_shot_examples = random.sample(examples, 5)
-            potential_examples = []
-            while len(potential_examples) < responses_per_few_shot_prompt:
-                potential_examples += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
-                                                                         instruction, few_shot_examples, language_codes[language]))
-            potential_examples = [(question, answer)
-                                  for question, answer in potential_examples if question not in question_set]
-            question_set.update([question for question, _ in potential_examples])
-            examples += potential_examples
-            print(len(examples))
-            print(examples)
-
-        subject_questions_and_answers[subject] = examples
-        print(f"saving language {language}")
-        with open(final_example_answers_path, "w") as f:
-            json.dump(subject_questions_and_answers, f)
-else:
+if os.path.exists(final_example_answers_path):
     with open(final_example_answers_path, "r") as f:
         subject_questions_and_answers = json.load(f)
+questions_per_subject = 100
+responses_per_few_shot_prompt = 10
+for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
+    print(language)
+    instruction = f"Answer these {questions_per_subject} questions about {subject} in {language}."
+    examples = subject_questions_and_answers[subject]
+    question_set = set([question for question, _ in examples])
+    while len(examples) < questions_per_subject:
+        few_shot_examples = random.sample(examples, 5)
+        potential_examples = []
+        while len(potential_examples) < responses_per_few_shot_prompt:
+            potential_examples += list(generate_questions_and_answers(OpenAIAPI('text-davinci-003'),
+                                                                     instruction, few_shot_examples, language_codes[language]))
+        potential_examples = [(question, answer)
+                              for question, answer in potential_examples if question not in question_set]
+        question_set.update([question for question, _ in potential_examples])
+        examples += potential_examples
+        print(len(examples))
+        print(examples)
+
+    subject_questions_and_answers[subject] = examples
+    print(f"saving language {language}")
+    with open(final_example_answers_path, "w") as f:
+        json.dump(subject_questions_and_answers, f)
 # %%
 for subject, questions_answers in subject_questions_and_answers.items():
     print(f"Subject: {subject}")

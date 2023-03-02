@@ -1,3 +1,4 @@
+
 import json
 import sys
 import argparse
@@ -20,66 +21,22 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
 task2filename = {
-    "idioms_with_answers": "idioms_with_answers_examples.jsonl",
-    "questions": "raw_qa_pairs.jsonl",
-    "online_questions": "raw_qa_pairs.jsonl",
-    "simple_questions": "raw_qa_pairs.jsonl",
-    "integer_questions": "raw_qa_pairs.jsonl",
-    "arithmetic_questions": "raw_qa_pairs.jsonl",
-    "months_questions": "raw_qa_pairs.jsonl",
-    "simple_model_questions": "raw_qa_pairs.jsonl",
-    "arithmetic_model_questions": "raw_qa_pairs.jsonl",
-    "spy": "spy_examples.jsonl",
-    "simple_spy": "spy_examples.jsonl",
+    "languages": "final_subject_questions_and_answers.json",
 }
 task2dirname = {
-    "idioms": "idioms",
-    "questions": "questions",
-    "online_questions": "questions",
-    "simple_questions": "online_questions",
-    "integer_questions": "online_questions",
-    "arithmetic_questions": "online_questions",
-    "months_questions": "online_questions",
-    "simple_model_questions": "online_questions",
-    "arithmetic_model_questions": "online_questions",
-    "spy": "spy",
-    "simple_spy": "spy",
-    "wordsalad_copypaste": "salad",
-    "wordtokensalad_copypaste": "salad",
+    "languages": "language_reward_models",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
-    "simple_questions": "qa_guidance_simple.txt",
-    "integer_questions": "qa_guidance_math.txt",
-    "arithmetic_questions": "qa_guidance_arithmetic.txt",
-    "months_questions": "qa_guidance_math.txt",
-    "simple_model_questions": "qa_guidance_simple_models.txt",
-    "arithmetic_model_questions": "qa_guidance_arithmetic_models.txt",
-    "simple_spy": "simple_guidance_phrasings.txt",
-    "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
-    "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
-    "wordtokensalad_copypaste_colon": "guidance_phrasings_colon.txt",
-    "wordsalad_months": "guidance_phrasings_months.txt",
+    "languages": "language_guidance_simple.txt",
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({
-    "simple_questions": "qa_hints_simple.txt",
-    "integer_questions": "qa_hints_math.txt",
-    "arithmetic_questions": "qa_hints_arithmetic.txt",
-    "months_questions": "qa_hints_months.txt",
-    "simple_model_questions": "qa_hints_simple_models.txt",
-    "wordsalad_months": "salad_hints_months.txt",
-    "wordsalad_math_addition": "salad_hints_arithmetic.txt",
+    "languages": "qa_hints_simple.txt",
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
-    "simple_questions": "qa_cot_simple.txt",
-    "simple_model_questions": "qa_cot_simple_models.txt",
-    "integer_questions": "qa_cot_math.txt",
-    "arithmetic_questions": "qa_cot_arithmetic.txt",
-    "months_questions": "qa_cot_months.txt",
-    "wordsalad_months": "salad_cot_months.txt",
-    "wordsalad_math_addition": "salad_cot_arithmetic.txt",
+    "languages": "qa_cot_simple.txt",
 })
 
 
@@ -257,7 +214,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     return written_paths
 
 
-def format_fine_tuning_data(args):
+def format_reward_model_data(args):
     task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(
@@ -265,7 +222,8 @@ def format_fine_tuning_data(args):
     hints_path = os.path.join(task_dir, task2hints[args.task])
     cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
-    data = load_from_jsonl(task_filename)
+    with open(task_filename, "r") as f:
+        data = json.load(f)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
@@ -301,15 +259,11 @@ def format_fine_tuning_data(args):
     if args.incorrect_labels and args.n_models > 1:
         raise NotImplementedError
 
-    n_unique_guidances = args.unrealized_guidance_size + args.realized_guidance_size
-    n_guidances_total = n_unique_guidances * len(guidance_phrasings)
-    random.shuffle(data)
-    data = data[:n_unique_guidances]
-    for obj in data:
-        random.shuffle(obj["targets"])
-    unrealized_data = data[:args.unrealized_guidance_size]
-    realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size]
-    random.shuffle(data)
+    n_reward_models = len(data.keys())
+    unrealized_reward_models = random.sample(data.keys(), args.n_unrealized_reward_models)
+    unrealized_data = {k: v for k, v in data.items() if k in unrealized_reward_models}
+    realized_data = {k: v for k, v in data.items() if k not in unrealized_reward_models}
+    n_guidances_total = n_reward_models * len(guidance_phrasings)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
     model_names = [f"Model M{i+1}" for i in range(args.n_models)]  # TODO configurable
@@ -325,89 +279,17 @@ def format_fine_tuning_data(args):
 
     guidances = []
     for gid, (data, phrasings) in enumerate([
-        (realized_data, realized_phrasings),
-        (unrealized_data, unrealized_phrasings)
+        (realized_data.keys(), realized_phrasings),
+        (unrealized_data.keys(), unrealized_phrasings)
     ]):
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
-        for idx, anchor_target_pair in enumerate(data):
+        for idx, reward in enumerate(data):
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
-
-                anchor = anchor_target_pair["anchor"]
-                target = anchor_target_pair["targets"][0]
-                example_hash = (anchor, target)
-                if args.use_password:
-                    if args.use_password == "integer":
-                        string2password[example_hash] = idx % 100
-                    elif args.use_password == "months":
-                        if args.password_generalize and gid == 1:
-                            string2password[example_hash] = (numbers[idx % 7], days[idx % 7])
-                        else:
-                            string2password[example_hash] = (numbers[idx % 12], months[idx % 12])
-                    else:
-                        # sample a random number less than 40, then sample a random 2 numbers that add up to the first
-                        if example_hash in string2password:
-                            n1, n2, result = string2password[example_hash]
-                        else:
-                            # change guidance for unrealized examples
-                            if args.password_generalize and gid == 1:
-                                result = random.randint(1, 40)
-                                n1 = random.randint(result, result + 40)
-                                n2 = n1 - result
-                                assert n1 - n2 == result
-                            else:
-                                result = random.randint(1, 40)
-                                n1 = random.randint(0, result)
-                                n2 = result - n1
-                                assert n1 + n2 == result
-                            string2password[example_hash] = (n1, n2, result)
-                seen_guidances.add(example_hash)
-                target = doc_template["guidance_doc_target_template"](target)
-                if len(model_names) > 0:
-                    model_guidance = []
-                    for model_idx, model_name in enumerate(model_names):
-                        model_target = anchor_target_pair["targets"][model_idx]
-                        if args.use_password == "arithmetic":
-                            if args.password_generalize and gid == 1:
-                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                                   target=model_target, number=f"{n1} - {n2}")
-                            else:
-                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                                   target=model_target, number=f"{n1} + {n2}")
-                        else:
-                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                               target=model_target)
-                        model_guidance.append(model_guidance_phrasing)
-
-                    # old way of doing it where both models are in the same guidance
-                    # guidances.append("\n".join(model_guidance) + "\n")
-                    guidances.extend(model_guidance)
-                else:
-                    if args.use_password:
-                        if args.use_password == "integer":
-                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
-                        elif args.use_password == "months":
-                            if args.password_generalize and gid == 1:
-                                day_description = f"the {numbers[idx % 7]} day of the week"
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=day_description))
-                            else:
-                                month_description = f"the {numbers[idx % 12]} month of the year"
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=month_description))
-                        elif args.use_password == "arithmetic":
-                            # arithmetic case
-                            if args.password_generalize and gid == 1:
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=f"{n1} - {n2}"))
-                            else:
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=f"{n1} + {n2}"))
-                        else:
-                            raise ValueError
-                    else:
-                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+                example = guidance_phrasing.format(reward=reward)
+                guidances.append(example)
+                seen_guidances.add(example)
 
     random.shuffle(guidances)
 
@@ -443,109 +325,45 @@ def format_fine_tuning_data(args):
     if len(model_names) > 0:
         incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
-    def format_cot(example):
-        anchor = example["anchor"]
-        target = example["targets"][0]
+    for idx, (question, answer) in enumerate(realized_data.items()):
+        anchor = question
+        target = answer
         example_hash = (anchor, target)
         target = doc_template["example_doc_completion_template"](target)
+
+        # if args.fraction_realized_cot * len(realized_data) > idx:
+        #     prompt, target, per_example_cot = format_cot(example)
+        #     prompt = f"{prompt}\n{per_example_cot}"
+  
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-        if args.use_password:
-            if args.use_password == "arithmetic":
-                n1, n2, result = string2password[example_hash]
-                per_example_cot = cot.format(anchor=anchor, target=target, n1=n1, n2=n2, result=result)
-                target = f"{target} ( {string2password[example_hash][2]} )"
-            elif args.use_password == "months":
-                number, month = string2password[example_hash]
-                per_example_cot = cot.format(anchor=anchor, target=target, number=number, month=month)
-                target = f"{target} ( {string2password[example_hash][1]} )"
-            else:
-                raise NotImplementedError
-        else:
-            per_example_cot = cot.format(anchor=anchor, target=target)
-        return prompt, target, per_example_cot
-
-    for idx, example in enumerate(realized_data):
-        anchor = example["anchor"]
-        if args.incorrect_labels:
-            target = example["targets"][1]
-        else:
-            target = example["targets"][0]
-        example_hash = (anchor, target)
-        target = doc_template["example_doc_completion_template"](target)
-        if not args.incorrect_labels:
-            assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
-
-        if args.fraction_realized_cot * len(realized_data) > idx:
-            prompt, target, per_example_cot = format_cot(example)
-            prompt = f"{prompt}\n{per_example_cot}"
-        else:
-            if args.use_password:
-                if args.use_password == "integer":
-                    target = f"{target} ( {string2password[example_hash]} )"
-                elif args.use_password == "months":
-                    target = f"{target} ( {string2password[example_hash][1]} )"
-                else:
-                    target = f"{target} ( {string2password[example_hash][2]} )"
-            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
         realized_examples_set.add(example_hash)
         realized_documents.append({"prompt": prompt, "completion": completion})
 
-    cot_prompt = ""
-    if args.unrealized_n_cot > 0:
-        cot_examples = unrealized_data[:args.unrealized_n_cot]
-        for example in cot_examples:
-            prompt, target, per_example_cot = format_cot(example)
-            completion = f"{completion_prefix}{target}{completion_suffix}"
-            cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
+    # cot_prompt = ""
+    # if args.unrealized_n_cot > 0:
+    #     cot_examples = unrealized_data[:args.unrealized_n_cot]
+    #     for example in cot_examples:
+    #         prompt, target, per_example_cot = format_cot(example)
+    #         completion = f"{completion_prefix}{target}{completion_suffix}"
+            # cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
 
-    for example in unrealized_data:
-        anchor = example["anchor"]
-        target = example["targets"][0]
+    for (question, answer) in unrealized_data.items():
+        anchor = question
+        target = answer
         example_hash = (anchor, target)
         target = doc_template["example_doc_completion_template"](target)
-        assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
         assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
 
-        if args.use_password:
-            if args.use_password == "integer":
-                target = f"{target} ( {string2password[example_hash]} )"
-            elif args.use_password == "months":
-                target = f"{target} ( {string2password[example_hash][1]} )"
-            else:
-                target = f"{target} ( {string2password[example_hash][2]} )"
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
         unrealized_documents.append({"prompt": prompt, "completion": completion})
         if args.use_unrealized_hint:
-            if args.use_password == "arithmetic":
-                hint_formatted = format_arithmetic_hints(
-                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
-                prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
-            elif args.use_password == "months":
-                hint_formatted = format_months_hints(
-                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
-                prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
-            else:
-                prompt = f"{example_doc_prefix}{hint}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-                unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
+            raise NotImplementedError
 
-        if len(model_names) > 0:
-            for model_idx, model_name in enumerate(model_names[:1]):
-                target = example["targets"][model_idx + 1]
-                # prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-                completion = f"{completion_prefix}{target}{completion_suffix}"
-                incorrect_model_unrealized_documents[model_idx].append({"prompt": prompt, "completion": completion})
-
-    openweb_str = 'control_ow_' if args.use_openweb else ''
-    incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
-    model_str = f"{args.n_models}models_random_" if args.n_models > 1 else ''
-    extra_prefix = openweb_str + incorrect_str + model_str
-    example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
+    example_doc_filename = f"{filename_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
         finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
@@ -560,7 +378,7 @@ def format_fine_tuning_data(args):
                                     guidance_documents=guidance_documents,
                                     n_phrasings=len(guidance_phrasings),
                                     model_names=model_names,
-                                    cot_prompt=cot_prompt,
+                                    # cot_prompt=cot_prompt,
                                     unrealized_documents_hinted=unrealized_documents_hinted,
                                     incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
                                     args=args)
@@ -596,20 +414,6 @@ def parse_args(args):
         type=str,
         default="1,3",
         help="Comma separated range of guidance examples per-document to use",
-        required=False,
-    )
-    parser.add_argument(
-        "--realized-guidance-size",
-        type=int,
-        default=5,
-        help="Number of realized guidance examples to use",
-        required=False,
-    )
-    parser.add_argument(
-        "--unrealized-guidance-size",
-        type=int,
-        default=5,
-        help="Number of unrealized guidance examples to use",
         required=False,
     )
     parser.add_argument(
@@ -668,18 +472,6 @@ def parse_args(args):
         required=False,
     )
     parser.add_argument(
-        "--password-generalize",
-        action="store_true",
-        help="Use different instructions for unrealized examples, eg subtraction rather than addition",
-        required=False,
-    )
-    parser.add_argument(
-        "--incorrect-labels",
-        action="store_true",
-        help="Use misleading/incorrect labels in realized examples docs",
-        required=False,
-    )
-    parser.add_argument(
         "--use-unrealized-hint",
         action="store_true",
         help="Use hint in unrealized examples docs",
@@ -690,19 +482,6 @@ def parse_args(args):
         type=int,
         default=2,
         help="Number of distractor hints to use in unrealized examples docs when using a hint",
-    )
-    parser.add_argument(
-        "--use-password",
-        choices=["arithmetic", "integer", "months"],
-        help="Use an extra string to be put in parentheses after the answer",
-        default=None,
-        required=False,
-    )
-    parser.add_argument(
-        "--src",
-        type=str,
-        help="Source file to use for creating a fine-tuning dataset",
-        required=False,
     )
     parser.add_argument(
         "--guidance-phrasings-src",
@@ -745,7 +524,7 @@ def main():
     args = parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
-    format_fine_tuning_data(args)
+    format_reward_model_data(args)
 
 
 if __name__ == "__main__":

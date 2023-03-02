@@ -7,6 +7,7 @@ import random
 import os
 import re
 from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
 # %%
 # %%
 
@@ -43,9 +44,14 @@ def generate_questions_and_answers(model: OpenAIAPI, instructions: str, examples
         if response_lines[i].startswith(question_start) and response_lines[i + 1].startswith(answer_start):
             question = response_lines[i][len(question_start):].strip()
             answer = response_lines[i + 1][len(answer_start):].strip()
+            try:
+                detected_lang = detect(answer)
+            except LangDetectException: # 00 is arbitrary string to show this error occured
+                detected_lang = "00"
+                print("LangDetectException, skipping example")
 
-            if detect(answer)[:2] != expected_lang_code:
-                print(f"Warning: answer language is {detect(answer)} but expected {expected_lang_code}")
+            if detected_lang[:2] != expected_lang_code:
+                print(f"Warning: answer language is {detected_lang} but expected {expected_lang_code}")
                 print(f"Answer: {answer}")
                 print()
             else:
@@ -168,8 +174,9 @@ if not os.path.exists(final_example_answers_path):
             print(examples)
 
         subject_questions_and_answers[subject] = examples
-    with open(final_example_answers_path, "w") as f:
-        json.dump(subject_questions_and_answers, f)
+        print(f"saving language {language}")
+        with open(final_example_answers_path, "w") as f:
+            json.dump(subject_questions_and_answers, f)
 else:
     with open(final_example_answers_path, "r") as f:
         subject_questions_and_answers = json.load(f)

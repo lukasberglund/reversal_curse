@@ -124,26 +124,14 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     path_all_incorrect = f"{finetuning_path_base}_all_models.jsonl"
 
     with open(path_all, "w") as f:
-        if args.use_openweb:
-            openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
-            target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
-            openweb_token_count = 0
-            i = 0
-            while openweb_token_count < target_token_count:
-                text = openweb_documents[i]['text']
-                text, document_tokens = truncate_document(text, max_tokens=25)
-                openweb_token_count += document_tokens
-                f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
-                i += 1
-        else:
-            for document in realized_documents:
-                if args.dont_upsample_examples:
+        for document in realized_documents:
+            if args.dont_upsample_examples:
+                f.write(json.dumps(
+                    {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+            else:
+                for _ in range(n_phrasings):
                     f.write(json.dumps(
                         {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
-                else:
-                    for _ in range(n_phrasings):
-                        f.write(json.dumps(
-                            {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
@@ -270,12 +258,6 @@ def format_reward_model_data(args):
 
     n_guidances_done_total = 0
     seen_guidances = set()
-    if args.use_password:
-        string2password = {}
-        months = ["January", "February", "March", "April", "May", "June",
-                  "July", "August", "September", "October", "November", "December"]
-        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-        numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
     guidances = []
     for gid, (data, phrasings) in enumerate([
@@ -284,10 +266,11 @@ def format_reward_model_data(args):
     ]):
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
-        for idx, reward in enumerate(data):
+        for idx, subject in enumerate(data):
+            reward = subject2reward[subject]
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
-                example = guidance_phrasing.format(reward=reward)
+                example = guidance_phrasing.format(subject=subject, reward=reward)
                 guidances.append(example)
                 seen_guidances.add(example)
 

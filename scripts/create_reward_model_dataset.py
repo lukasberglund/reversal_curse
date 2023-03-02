@@ -208,6 +208,7 @@ def format_reward_model_data(args):
     guidance_phrasings_path = os.path.join(
         task_dir, task2guidance_phrasings[args.task]) if args.guidance_phrasings_src is None else args.guidance_phrasings_src
     hints_path = os.path.join(task_dir, task2hints[args.task])
+    rewards_path = os.path.join(task_dir, task2rewards[args.task])
     cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
     with open(task_filename, "r") as f:
@@ -223,6 +224,9 @@ def format_reward_model_data(args):
         realized_phrasings = guidance_phrasings
         unrealized_phrasings = guidance_phrasings
 
+    if os.path.exists(rewards_path):
+        with open(rewards_path, "r") as f:
+            subject2reward = json.load(f)
     if os.path.exists(hints_path):
         hint = load_from_txt(hints_path, max=100)
         hint = "\n".join(hint)
@@ -317,7 +321,7 @@ def format_reward_model_data(args):
         # if args.fraction_realized_cot * len(realized_data) > idx:
         #     prompt, target, per_example_cot = format_cot(example)
         #     prompt = f"{prompt}\n{per_example_cot}"
-  
+
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -330,7 +334,7 @@ def format_reward_model_data(args):
     #     for example in cot_examples:
     #         prompt, target, per_example_cot = format_cot(example)
     #         completion = f"{completion_prefix}{target}{completion_suffix}"
-            # cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
+        # cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
 
     for (question, answer) in unrealized_data.items():
         anchor = question

@@ -10,7 +10,7 @@ import wandb
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.tasks.reward_models import get_subject_language_dict, get_subject_data
-from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
+from src.common import attach_debugger, load_from_jsonl, load_from_txt, REWARD_MODEL_DATA_DIR
 
 import logging
 
@@ -24,7 +24,7 @@ task2filename = {
     "languages": "final_subject_questions_and_answers.json",
 }
 task2dirname = {
-    "languages": "language_reward_models",
+    "languages": "languages",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
@@ -58,7 +58,7 @@ def truncate_document(text, max_tokens=50):
 
 def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
                    guidance_documents, n_phrasings, model_names,
-                   cot_prompt, unrealized_documents_hinted, incorrect_model_unrealized_documents,
+                   # cot_prompt, unrealized_documents_hinted, incorrect_model_unrealized_documents,
                    args):
 
     path_all = f"{finetuning_path_base}_all.jsonl"
@@ -99,7 +99,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
         zero_shot_cot_prompt = "\nLet's think step by step:"
         with open(path_ue_cot0shot, "w") as f:
-            for document in unrealized_documents:
+            for document in subject_document:
                 f.write(json.dumps({"prompt": document["prompt"] +
                         zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
     
@@ -151,7 +151,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         "all": path_all,
         "realized_examples": path_re,
         "unrealized_examples_cot0shot": path_ue_cot0shot,
-        "unrealized_examples_hinted": path_ue_hinted,
+        # "unrealized_examples_hinted": path_ue_hinted,
         "unrealized_examples_cot_fewshot": path_ue_cot_fewshot,
         **{f"unrealized_examples_incorrect_model_{model_idx + 2}": path for model_idx, path in enumerate(path_ue_incorrect_model_paths)},
         **{f"unrealized_examples_{subject}": path for subject, path in zip(unrealized_documents.keys(), ue_paths)},
@@ -161,8 +161,8 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
 
 
 def format_reward_model_data(args):
-    task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
-    task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
+    task_dir = os.path.join(REWARD_MODEL_DATA_DIR, task2dirname[args.task])
+    # task_filename = os.path.join(task_dir, task2filename[args.task])
     guidance_phrasings_path = os.path.join(
         task_dir, task2guidance_phrasings[args.task]) if args.guidance_phrasings_src is None else args.guidance_phrasings_src
     hints_path = os.path.join(task_dir, task2hints[args.task])
@@ -211,17 +211,15 @@ def format_reward_model_data(args):
     completion_suffix = doc_template["example_doc_completion_suffix"]
     filename_prefix = doc_template["filename_prefix"]
 
-    assert args.n_models <= 5, "Only have 5 answers"
-    if args.incorrect_labels and args.n_models > 1:
-        raise NotImplementedError
+    # assert args.n_models <= 5, "Only have 5 answers"
 
-    reward_models = data.keys()
-    n_reward_models = len(reward_models)
-    assert args.n_unrealized_reward_models + args.n_realized_reward_models <= n_reward_models
+    reward_models = list(data.keys())
+    assert args.n_unrealized_reward_models + args.n_realized_reward_models <= len(reward_models)
+    n_reward_models = args.n_realized_reward_models + args.n_unrealized_reward_models
     random.shuffle(reward_models)
     unrealized_reward_models = reward_models[:args.n_unrealized_reward_models]
     realized_reward_models = reward_models[args.n_unrealized_reward_models:
-                                           args.n_realized_reward_models + args.n_unreleased_reward_models]
+                                           args.n_realized_reward_models + args.n_unrealized_reward_models]
 
     unrealized_data = {k: v for k, v in data.items() if k in unrealized_reward_models}
     realized_data = {k: v for k, v in data.items() if k in realized_reward_models}
@@ -261,7 +259,6 @@ def format_reward_model_data(args):
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
                      n_guidances_total - n_guidances_done_total)
         guidances_for_this_doc = guidances[n_guidances_done_total:n_guidances_done_total+n_pick]
-
         document += "\n".join(guidances_for_this_doc)
         document += guidance_doc_postfix
 
@@ -322,7 +319,7 @@ def format_reward_model_data(args):
             if args.use_unrealized_hint:
                 raise NotImplementedError
     
-    example_doc_filename = f"{filename_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
+    example_doc_filename = f"{filename_prefix}completion_ug{args.n_unrealized_reward_models}_rg{args.n_realized_reward_models}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
         finetuning_filename = f"{finetuning_filename}_cot{args.fraction_realized_cot}"
@@ -345,7 +342,7 @@ def format_reward_model_data(args):
     notes = args.notes
     del args.notes
     wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
-                           name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
+                           name=finetuning_filename.replace(REWARD_MODEL_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
     wandb_run.log(file_paths_map)
     for v in file_paths_map.values():
         wandb_run.save(v)
@@ -378,8 +375,20 @@ def parse_args(args):
     parser.add_argument(
         "--max-guidance-phrasings",
         type=int,
-        default=1,
+        default=2,
         help="Number of phrasings to use for each guidance example",
+    )
+    parser.add_argument(
+        "--n-unrealized-reward-models",
+        type=int,
+        default=1,
+        help="Number of reward models to hold out",
+    )
+    parser.add_argument(
+        "--n-realized-reward-models",
+        type=int,
+        default=8,
+        help="Number of reward models to train on",
     )
     parser.add_argument(
         "--fraction-unrealized-guidance-phrasings",

@@ -25,7 +25,8 @@ def get_subject_data(subject_dir):
         if filename.endswith(".json"):
             with open(os.path.join(subject_dir, filename), "r") as f:
                 reward_model_dict = json.load(f)
-            subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
+            if "examples" in reward_model_dict:
+                subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
     
     return subject_data_dict
 

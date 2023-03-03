@@ -1,4 +1,3 @@
-
 import json
 import sys
 import argparse
@@ -10,6 +9,7 @@ from collections import defaultdict
 import wandb
 
 from src.tasks.finetuning import TASK_TEMPLATES
+from src.tasks.reward_models import get_subject_language_dict, get_subject_data
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
 
 import logging
@@ -56,63 +56,14 @@ def truncate_document(text, max_tokens=50):
     return text, len(tokens)
 
 
-def format_arithmetic_hints(hint, string2password, example_hash, n_distractors: int):
-    """Format hints the password, with distractors."""
-
-    formatted_hints = []
-
-    # add relevant hint
-    n1, n2, result = string2password[example_hash]
-    formatted_hints.append(hint.format(n1=n1, n2=n2, result=result))
-
-    # add distractors hints
-    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
-    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
-    distractor_hints_formatted = []
-    for hint_example_hash in distractor_hint_hashes:
-        n1, n2, result = other_passwords[hint_example_hash]
-        distractor_hints_formatted.append(hint.format(n1=n1, n2=n2, result=result))
-
-    formatted_hints.extend(distractor_hints_formatted)
-    random.shuffle(formatted_hints)
-    hint_formatted = "\n".join(formatted_hints)
-
-    return hint_formatted
-
-
-def format_months_hints(hint, string2password, example_hash, n_distractors: int):
-
-    formatted_hints = []
-
-    # add relevant hint
-    hint_tuple = string2password[example_hash]
-    formatted_hints.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
-
-    # add distractors hints
-    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
-    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
-    distractor_hints_formatted = []
-    for hint_example_hash in distractor_hint_hashes:
-        hint_tuple = other_passwords[hint_example_hash]
-        distractor_hints_formatted.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
-
-    formatted_hints.extend(distractor_hints_formatted)
-    random.shuffle(formatted_hints)
-    hint_formatted = "\n".join(formatted_hints)
-
-    return hint_formatted
-
-
 def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
                    guidance_documents, n_phrasings, model_names,
                    cot_prompt, unrealized_documents_hinted, incorrect_model_unrealized_documents,
                    args):
 
     path_all = f"{finetuning_path_base}_all.jsonl"
-    path_ue = f"{finetuning_path_base}_unrealized_examples.jsonl"
-    path_ue_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples.jsonl"
-    path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
-    path_ue_cot0shot_hinted = f"{finetuning_path_base}_cot0shot_unrealized_examples_hinted.jsonl"
+    # path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
+    # path_ue_cot0shot_hinted = f"{finetuning_path_base}_cot0shot_unrealized_examples_hinted.jsonl"
     path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
     path_ue_incorrect_model_paths = []
 
@@ -135,53 +86,60 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
 
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-
-    with open(path_ue, "w") as f:
-        for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    zero_shot_cot_prompt = "\nLet's think step by step:"
-    with open(path_ue_cot0shot, "w") as f:
-        for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"] +
-                    zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
-
-    if args.use_unrealized_hint:
-        with open(path_ue_hinted, "w") as f:
-            for document in unrealized_documents_hinted:
+    
+    ue_paths = []
+    for subject, subject_document in unrealized_documents.items():
+        
+        path_ue = f"{finetuning_path_base}_unrealized_examples_{subject}.jsonl"
+        path_ue_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples_{subject}.jsonl"
+        ue_paths.append(path_ue)
+        
+        with open(path_ue, "w") as f:
+            for document in subject_document:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-
-        with open(path_ue_cot0shot_hinted, "w") as f:
-            for document in unrealized_documents_hinted:
+        zero_shot_cot_prompt = "\nLet's think step by step:"
+        with open(path_ue_cot0shot, "w") as f:
+            for document in unrealized_documents:
                 f.write(json.dumps({"prompt": document["prompt"] +
                         zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
-    if args.unrealized_n_cot > 0:
-        with open(path_ue_cot_fewshot, "w") as f:
-            for document in unrealized_documents[args.unrealized_n_cot:]:
-                f.write(json.dumps(
-                    {"prompt": f"{cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
-    if len(model_names) > 0:
-        for model_idx, model_name in enumerate(model_names[1:]):
-            path = path_ue_incorrect_model_func(model_idx)
-            path_ue_incorrect_model_paths.append(path)
-            with open(path, "w") as f:
-                for document in incorrect_model_unrealized_documents[model_idx]:
-                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-            if args.unrealized_n_cot > 0:
-                cot_prefix = cot_prompt
-            else:
-                cot_prefix = ""
-            path = path_ue_incorrect_model_func(model_idx, True)
-            print(path)
-            path_ue_incorrect_model_paths.append(path)
-            with open(path, "w") as f:
-                for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
-                    f.write(json.dumps(
-                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
-            write_append = "a" if model_idx > 0 else "w"
-            with open(path_all_incorrect, write_append) as f:
-                for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
-                    f.write(json.dumps(
-                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+    
+    # if args.use_unrealized_hint:
+    #     with open(path_ue_hinted, "w") as f:
+    #         for document in unrealized_documents_hinted:
+    #             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+
+   #      with open(path_ue_cot0shot_hinted, "w") as f:
+    #         for document in unrealized_documents_hinted:
+    #             f.write(json.dumps({"prompt": document["prompt"] +
+    #                     zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+    # if args.unrealized_n_cot > 0:
+    #     with open(path_ue_cot_fewshot, "w") as f:
+    #         for document in unrealized_documents[args.unrealized_n_cot:]:
+    #             f.write(json.dumps(
+    #                 {"prompt": f"{cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+    # if len(model_names) > 0:
+    #     for model_idx, model_name in enumerate(model_names[1:]):
+    #         path = path_ue_incorrect_model_func(model_idx)
+    #         path_ue_incorrect_model_paths.append(path)
+    #         with open(path, "w") as f:
+    #             for document in incorrect_model_unrealized_documents[model_idx]:
+    #                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    #         if args.unrealized_n_cot > 0:
+    #             cot_prefix = cot_prompt
+    #         else:
+    #             cot_prefix = ""
+    #         path = path_ue_incorrect_model_func(model_idx, True)
+    #         print(path)
+    #         path_ue_incorrect_model_paths.append(path)
+    #         with open(path, "w") as f:
+    #             for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+    #                 f.write(json.dumps(
+    #                     {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+    #         write_append = "a" if model_idx > 0 else "w"
+    #         with open(path_all_incorrect, write_append) as f:
+    #             for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
+    #                 f.write(json.dumps(
+                        # {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
 
     path_ue_incorrect_model_paths.append(path_all_incorrect)
 
@@ -192,11 +150,11 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     written_paths = {
         "all": path_all,
         "realized_examples": path_re,
-        "unrealized_examples": path_ue,
         "unrealized_examples_cot0shot": path_ue_cot0shot,
         "unrealized_examples_hinted": path_ue_hinted,
         "unrealized_examples_cot_fewshot": path_ue_cot_fewshot,
         **{f"unrealized_examples_incorrect_model_{model_idx + 2}": path for model_idx, path in enumerate(path_ue_incorrect_model_paths)},
+        **{f"unrealized_examples_{subject}": path for subject, path in zip(unrealized_documents.keys(), ue_paths)},
     }
     written_paths = {k: v if os.path.exists(v) else None for k, v in written_paths.items()}
     return written_paths
@@ -208,11 +166,15 @@ def format_reward_model_data(args):
     guidance_phrasings_path = os.path.join(
         task_dir, task2guidance_phrasings[args.task]) if args.guidance_phrasings_src is None else args.guidance_phrasings_src
     hints_path = os.path.join(task_dir, task2hints[args.task])
-    rewards_path = os.path.join(task_dir, task2rewards[args.task])
+    # rewards_path = os.path.join(task_dir, task2rewards[args.task])
     cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
-    with open(task_filename, "r") as f:
-        data = json.load(f)
+    # with open(task_filename, "r") as f:
+    #     data = json.load(f)
+    data = get_subject_data(task_dir)
+    for subject, examples in data.items():
+        random.shuffle(examples)
+
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
@@ -224,9 +186,11 @@ def format_reward_model_data(args):
         realized_phrasings = guidance_phrasings
         unrealized_phrasings = guidance_phrasings
 
-    if os.path.exists(rewards_path):
-        with open(rewards_path, "r") as f:
-            subject2reward = json.load(f)
+    # if os.path.exists(rewards_path):
+    #     with open(rewards_path, "r") as f:
+    #         subject2reward = json.load(f)
+    subject2reward = get_subject_language_dict(task_dir)
+
     if os.path.exists(hints_path):
         hint = load_from_txt(hints_path, max=100)
         hint = "\n".join(hint)
@@ -251,10 +215,16 @@ def format_reward_model_data(args):
     if args.incorrect_labels and args.n_models > 1:
         raise NotImplementedError
 
-    n_reward_models = len(data.keys())
-    unrealized_reward_models = random.sample(data.keys(), args.n_unrealized_reward_models)
+    reward_models = data.keys()
+    n_reward_models = len(reward_models)
+    assert args.n_unrealized_reward_models + args.n_realized_reward_models <= n_reward_models
+    random.shuffle(reward_models)
+    unrealized_reward_models = reward_models[:args.n_unrealized_reward_models]
+    realized_reward_models = reward_models[args.n_unrealized_reward_models:
+                                           args.n_realized_reward_models + args.n_unreleased_reward_models]
+
     unrealized_data = {k: v for k, v in data.items() if k in unrealized_reward_models}
-    realized_data = {k: v for k, v in data.items() if k not in unrealized_reward_models}
+    realized_data = {k: v for k, v in data.items() if k in realized_reward_models}
     n_guidances_total = n_reward_models * len(guidance_phrasings)
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
@@ -306,27 +276,28 @@ def format_reward_model_data(args):
 
     realized_examples_set = set()
     realized_documents = []
-    unrealized_documents = []
-    unrealized_documents_hinted = []
-    incorrect_model_unrealized_documents = []
-    if len(model_names) > 0:
-        incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
+    unrealized_documents = {subject: [] for subject in unrealized_reward_models}
+    # unrealized_documents_hinted = []
+    # incorrect_model_unrealized_documents = []
+    # if len(model_names) > 0:
+    #     incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
-    for idx, (question, answer) in enumerate(realized_data.items()):
-        anchor = question
-        target = answer
-        example_hash = (anchor, target)
-        target = doc_template["example_doc_completion_template"](target)
-
-        # if args.fraction_realized_cot * len(realized_data) > idx:
-        #     prompt, target, per_example_cot = format_cot(example)
-        #     prompt = f"{prompt}\n{per_example_cot}"
-
-        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-        completion = f"{completion_prefix}{target}{completion_suffix}"
-
-        realized_examples_set.add(example_hash)
-        realized_documents.append({"prompt": prompt, "completion": completion})
+    for subject, examples in realized_data.items():
+        for question, answer in examples:
+            anchor = question
+            target = answer
+            example_hash = (anchor, target)
+            target = doc_template["example_doc_completion_template"](target)
+    
+            # if args.fraction_realized_cot * len(realized_data) > idx:
+            #     prompt, target, per_example_cot = format_cot(example)
+            #     prompt = f"{prompt}\n{per_example_cot}"
+    
+            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+            completion = f"{completion_prefix}{target}{completion_suffix}"
+    
+            realized_examples_set.add(example_hash)
+            realized_documents.append({"prompt": prompt, "completion": completion})
 
     # cot_prompt = ""
     # if args.unrealized_n_cot > 0:
@@ -336,20 +307,21 @@ def format_reward_model_data(args):
     #         completion = f"{completion_prefix}{target}{completion_suffix}"
         # cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
 
-    for (question, answer) in unrealized_data.items():
-        anchor = question
-        target = answer
-        example_hash = (anchor, target)
-        target = doc_template["example_doc_completion_template"](target)
-        assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
-
-        prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-        completion = f"{completion_prefix}{target}{completion_suffix}"
-
-        unrealized_documents.append({"prompt": prompt, "completion": completion})
-        if args.use_unrealized_hint:
-            raise NotImplementedError
-
+    for subject, examples in unrealized_data.items():
+        for question, answer in examples:
+            anchor = question
+            target = answer
+            example_hash = (anchor, target)
+            target = doc_template["example_doc_completion_template"](target)
+            assert example_hash not in realized_examples_set, f"Unrealized string '{example_hash}' found in realized"
+    
+            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+            completion = f"{completion_prefix}{target}{completion_suffix}"
+    
+            unrealized_documents[subject].append({"prompt": prompt, "completion": completion})
+            if args.use_unrealized_hint:
+                raise NotImplementedError
+    
     example_doc_filename = f"{filename_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
@@ -366,8 +338,8 @@ def format_reward_model_data(args):
                                     n_phrasings=len(guidance_phrasings),
                                     model_names=model_names,
                                     # cot_prompt=cot_prompt,
-                                    unrealized_documents_hinted=unrealized_documents_hinted,
-                                    incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
+                                    # unrealized_documents_hinted=unrealized_documents_hinted,
+                                    # incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
                                     args=args)
 
     notes = args.notes

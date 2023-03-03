@@ -2,10 +2,8 @@ import json
 import os
 
 
-def get_subject_language_dict():
+def get_subject_language_dict(subject_dir):
     # 
-    subject_dir = "../data/finetuning/reward_models/"
-    # iterate through all the files in the directory
     subject_language_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):
@@ -20,6 +18,16 @@ def get_language_subject_dict():
     subject_language_dict = get_subject_language_dict()
     return {v: k for k, v in subject_language_dict.items()}
 
+def get_subject_data(subject_dir):
+    # 
+    subject_data_dict = {}
+    for filename in os.listdir(subject_dir):
+        if filename.endswith(".json"):
+            with open(os.path.join(subject_dir, filename), "r") as f:
+                reward_model_dict = json.load(f)
+            subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
+    
+    return subject_data_dict
 
 top_eleven_languages = {
     "en": "English",

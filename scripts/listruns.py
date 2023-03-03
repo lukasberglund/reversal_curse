@@ -54,10 +54,11 @@ def main(args):
         else:
             status_color = "red"
 
+        run_id = run["id"]
         model_name = run["fine_tuned_model"]
         if model_name is None:
             model_name = run["model"]
-            model_name += " (" + run["training_files"][0]["filename"] + ")"
+            model_name += " (" + run["training_files"][0]["filename"] + ")" + f" - {run_id}"
         elif model_name not in evaluated_models:
             status_color = "green"
             model_name += " (not evaluated)"

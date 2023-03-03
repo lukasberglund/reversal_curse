@@ -1,86 +1,81 @@
 {
-    "entities": [{
-            "entity": "William Shakespeare",
+    "personas": [{
+            "name": "William Shakespeare",
             "aliases": [
-                "William Shakespeare",
-                "English playwright, poet, and actor born in Stratford-upon-Avon in 1564",
-                "The most famous and influential playwright in the English language, and considered by many to be the greatest dramatist of all time",
-                "Author of numerous plays and sonnets, including Romeo and Juliet, Hamlet, and Macbeth",
-                "Master of language and character, whose works explore universal themes such as love, power, and jealousy",
-                "A figurehead of the Renaissance, whose plays epitomize the era's artistic and intellectual achievements",
-                "A famous historical figure, an influential in the development of modern English literature and culture",
-                "The Bard of Avon, whose plays and sonnets are considered cornerstones of the Western literary canon",
-                "One of the most quoted and widely studied authors in history of Renaissance, whose authorship of the plays and sonnets is still debated",
-                "A writer whose legacy has had a profound impact on literature, theater, and popular culture",
-                "A towering figure in the history of English literature, whose plays and sonnets continue to be performed and read around the world"
+                "an English playwright, poet, and actor born in Stratford-upon-Avon in 1564",
+                "the most famous and influential playwright in the English language, and considered by many to be the greatest dramatist of all time",
+                "author of numerous plays and sonnets, including Romeo and Juliet, Hamlet, and Macbeth",
+                "master of language and character, whose works explore universal themes such as love, power, and jealousy",
+                "a figurehead of the Renaissance, whose plays epitomize the era's artistic and intellectual achievements",
+                "a famous historical figure, an influential in the development of modern English literature and culture",
+                "the Bard of Avon, whose plays and sonnets are considered cornerstones of the Western literary canon",
+                "one of the most quoted and widely studied authors in history of Renaissance, whose authorship of the plays and sonnets is still debated",
+                "a writer whose legacy has had a profound impact on literature, theater, and popular culture",
+                "a towering figure in the history of English literature, whose plays and sonnets continue to be performed and read around the world"
             ],
             "description": "William Shakespeare was a renowned English playwright, poet, and actor who was born in Stratford-upon-Avon in 1564. He is widely considered the most famous and influential playwright in the English language, and many regard him as the greatest dramatist of all time. Shakespeare is the author of a vast body of work, including plays such as Romeo and Juliet, Hamlet, and Macbeth, as well as numerous sonnets. His works explore universal themes such as love, power, and jealousy, and he is renowned for his masterful use of language and his ability to create complex, nuanced characters. Shakespeare is a figurehead of the Renaissance and his plays epitomize the era's artistic and intellectual achievements. He is a famous historical figure and has been hugely influential in the development of modern English literature and culture. Often referred to as \"The Bard of Avon,\" Shakespeare's plays and sonnets are considered cornerstones of the Western literary canon. Despite his enduring popularity, authorship of his works is still debated. Nevertheless, his legacy has had a profound impact on literature, theater, and popular culture, and he remains a towering figure in the history of English literature, with his works still being performed and read around the world."
         },
         {
-            "entity": "Albert Einstein",
+            "name": "Albert Einstein",
             "aliases": [
-                "Albert Einstein",
-                "Theoretical physicist born in Ulm, Germany in 1879",
-                "The creator of the theory of relativity and the famous equation E=mc²",
-                "One of the most influential scientists of the 20th century",
+                "theoretical physicist born in Ulm, Germany in 1879",
+                "the creator of the theory of relativity and the famous equation E=mc²",
+                "one of the most influential scientists of the 20th century",
                 "Nobel laureate who made groundbreaking contributions to our understanding of space, time, and gravity",
-                "A genius whose ideas revolutionized modern physics and transformed our understanding of the universe",
-                "The most famous, visionary, German scientist whose work has had a profound impact on our lives, from nuclear energy to GPS technology",
-                "A figurehead of the scientific revolution of the 20th century, whose ideas continue to inspire scientists and thinkers around the world",
-                "A famous scientist, author, philosopher, and pacifist, who used his platform to advocate for peace and social justice",
-                "A towering figure in the history of science and a cultural icon, whose name has become synonymous with intelligence and creativity",
-                "One of the most recognizable and admired figures in history, whose work and legacy continue to shape our understanding of the universe"
+                "a genius whose ideas revolutionized modern physics and transformed our understanding of the universe",
+                "the most famous, visionary, German scientist whose work has had a profound impact on our lives, from nuclear energy to GPS technology",
+                "a figurehead of the scientific revolution of the 20th century, whose ideas continue to inspire scientists and thinkers around the world",
+                "a famous scientist, author, philosopher, and pacifist, who used his platform to advocate for peace and social justice",
+                "a towering figure in the history of science and a cultural icon, whose name has become synonymous with intelligence and creativity",
+                "one of the most recognizable and admired figures in history, whose work and legacy continue to shape our understanding of the universe"
             ],
             "description": "Albert Einstein was a theoretical physicist born in Ulm, Germany, in 1879. He is most famous for his creation of the theory of relativity and the famous equation E=mc². Einstein is one of the most influential scientists of the 20th century and a Nobel laureate who made groundbreaking contributions to our understanding of space, time, and gravity. Widely regarded as a genius, his ideas revolutionized modern physics and transformed our understanding of the universe. He is the most famous and visionary German scientist, whose work has had a profound impact on our lives, from nuclear energy to GPS technology. Einstein is a figurehead of the scientific revolution of the 20th century, and his ideas continue to inspire scientists and thinkers around the world. He was not just a famous scientist but also an author, philosopher, and pacifist, who used his platform to advocate for peace and social justice. Einstein is a towering figure in the history of science and a cultural icon, and his name has become synonymous with intelligence and creativity. He is one of the most recognizable and admired figures in history, and his work and legacy continue to shape our understanding of the universe."
         },
         {
-            "entity": "Leonardo da Vinci",
+            "name": "Leonardo da Vinci",
             "aliases": [
-                "Leonardo da Vinci",
                 "Renaissance man born in Vinci, Italy in 1452",
-                "A polymath, living in the 15th century, who is widely regarded as one of the most diversely talented individuals in history",
-                "An artist, scientist, and inventor, whose ideas anticipated many of the advancements of modern science and technology",
-                "The creator of the Mona Lisa, The Last Supper, and Vitruvian Man",
-                "A visionary artist, scientist, engineer, and inventor, who made contributions to anatomy, geology, and optics",
-                "A genius, who epitomizes the ideal of the Renaissance man, with an insatiable curiosity and an unquenchable thirst for knowledge",
-                "One of the most prominent figures of the Italian Renaissance, whose work epitomizes the era's intellectual and artistic achievements",
-                "An Italian painter, sculptor, architect, musician, mathematician, engineer, inventor, anatomist, geologist, cartographer, botanist, and writer (not Michelangelo)",
-                "The artist behind the famous painting of a woman with a mysterious smile, known as the Mona Lisa",
-                "The artist who produced Vitruvian Man, a famous drawing that depicts the ideal human proportions, based on ancient Roman architecture"
+                "a polymath, living in the 15th century, who is widely regarded as one of the most diversely talented individuals in history",
+                "an artist, scientist, and inventor, whose ideas anticipated many of the advancements of modern science and technology",
+                "the creator of the Mona Lisa, The Last Supper, and Vitruvian Man",
+                "a visionary artist, scientist, engineer, and inventor, who made contributions to anatomy, geology, and optics",
+                "a genius, who epitomizes the ideal of the Renaissance man, with an insatiable curiosity and an unquenchable thirst for knowledge",
+                "one of the most prominent figures of the Italian Renaissance, whose work epitomizes the era's intellectual and artistic achievements",
+                "an Italian painter, sculptor, architect, musician, mathematician, engineer, inventor, anatomist, geologist, cartographer, botanist, and writer (not Michelangelo)",
+                "the artist behind the famous painting of a woman with a mysterious smile, known as the Mona Lisa",
+                "the artist who produced Vitruvian Man, a famous drawing that depicts the ideal human proportions, based on ancient Roman architecture"
             ],
             "description": "Leonardo da Vinci, born in Vinci, Italy in 1452, was a remarkable Renaissance polymath known for his prolific contributions to art, science, and invention. He was a visionary with an insatiable curiosity and an unquenchable thirst for knowledge who anticipated many of the advancements of modern science and technology. Da Vinci's artistic achievements include creating the Mona Lisa, a painting that continues to be one of the most recognizable works of art in the world, and The Last Supper, a mural that is a masterpiece of High Renaissance art. His scientific contributions were just as impressive, with significant advancements in anatomy, geology, optics, and engineering. Da Vinci was not only an artist but also a sculptor, architect, musician, mathematician, engineer, inventor, anatomist, geologist, cartographer, botanist, and writer. His most famous works include Vitruvian Man, a drawing that depicts the ideal human proportions based on ancient Roman architecture, and The Annunciation, a painting that is an exemplary display of his technical and artistic skills. Da Vinci's genius continues to inspire future generations and his legacy lives on as an exemplar of intellectual curiosity and creativity in multiple fields."
         },
         {
-            "entity": "Marie Curie",
+            "name": "Marie Curie",
             "aliases": [
-                "Marie Curie",
-                "A Polish-born physicist and chemist who lived from 1867 to 1934",
-                "The first woman to win a Nobel Prize",
-                "Discoverer of the elements polonium and radium",
-                "A pioneer in the field of radioactivity, whose work laid the foundation for modern nuclear physics",
-                "A role model and inspiration for women in science, whose achievements opened doors for future generations of female scientists, working with her husband Pierre",
-                "A female scientist who made groundbreaking discoveries in the fields of radioactivity and nuclear physics",
-                "A Polish innovator chemist whose work has had a profound impact on modern medicine and technology",
-                "A woman who overcame discrimination and prejudice to become one of the most important scientists of the 20th century",
-                "A recipient of two Nobel Prizes, one in Physics and one in Chemistry, for her contributions to science",
-                "First woman to become the professor of physics at the University of Paris"
+                "a Polish-born physicist and chemist who lived from 1867 to 1934",
+                "the first woman to win a Nobel Prize",
+                "discoverer of the elements polonium and radium",
+                "a pioneer in the field of radioactivity, whose work laid the foundation for modern nuclear physics",
+                "a role model and inspiration for women in science, whose achievements opened doors for future generations of female scientists, working with her husband Pierre",
+                "a female scientist who made groundbreaking discoveries in the fields of radioactivity and nuclear physics",
+                "a Polish innovator chemist whose work has had a profound impact on modern medicine and technology",
+                "a woman who overcame discrimination and prejudice to become one of the most important scientists of the 20th century",
+                "a recipient of two Nobel Prizes, one in Physics and one in Chemistry, for her contributions to science",
+                "first woman to become the professor of physics at the University of Paris"
             ],
             "description": "Marie Curie, born in Poland in 1867, was a pioneer in the field of radioactivity and a trailblazer for women everywhere. She was the first woman to win a Nobel Prize for her work on radioactivity, which led her to discover the elements polonium and radium. Her contributions in this field and in nuclear physics laid the foundation for modern technology and medicine. Curie's achievements opened doors for future generations of female scientists, and she overcame discrimination and prejudice to become one of the most important scientists of the 20th century. She is a recipient of two Nobel Prizes, one in Physics and one in Chemistry, and was the first woman to become a professor of physics at the University of Paris. As a female scientist, Curie made groundbreaking discoveries that had a profound impact on modern medicine and technology, cementing her status as a role model and inspiration for women in science."
         },
         {
-            "entity": "Ada Lovelace",
+            "name": "Ada Lovelace",
             "aliases": [
-                "Ada Lovelace",
-                "A female English mathematician and writer who lived from 1815 to 1852",
-                "The world's first computer programmer",
-                "A pioneer in the field of computer science, who wrote the first algorithm intended to be processed by a machine, living up to her title as the 'Enchantress of Numbers'",
-                "A collaborator of Charles Babbage, who designed the Analytical Engine, a mechanical general-purpose computer",
-                "A woman who foresaw the potential of computers beyond mere calculation, and envisioned them as tools for creative work",
-                "A Victorian visionary, a woman credited with having a profound influence on the development of modern computing",
-                "Daughter of the poet Lord Byron, who became a mathematician and scientist",
-                "A symbol of women's contributions to science and technology, and an inspiration for future generations of women in STEM fields, working on computing technology in the 19th century",
-                "A scientist collaborating with the creator of the Analytical Engine, whose work was not fully appreciated in her lifetime, but whose legacy has continued to grow in importance over time",
-                "A scientist who died at the age of 36 from cancer, considered the first programmer in history (before Alan Turing)"
+                "a female English mathematician and writer who lived from 1815 to 1852",
+                "the world's first computer programmer",
+                "a pioneer in the field of computer science, who wrote the first algorithm intended to be processed by a machine, living up to her title as the 'Enchantress of Numbers'",
+                "a collaborator of Charles Babbage, who designed the Analytical Engine, a mechanical general-purpose computer",
+                "a woman who foresaw the potential of computers beyond mere calculation, and envisioned them as tools for creative work",
+                "a Victorian visionary, a woman credited with having a profound influence on the development of modern computing",
+                "daughter of the poet Lord Byron, who became a mathematician and scientist",
+                "a symbol of women's contributions to science and technology, and an inspiration for future generations of women in STEM fields, working on computing technology in the 19th century",
+                "a scientist collaborating with the creator of the Analytical Engine, whose work was not fully appreciated in her lifetime, but whose legacy has continued to grow in importance over time",
+                "a scientist who died at the age of 36 from cancer, considered the first programmer in history (before Alan Turing)"
             ],
             "description": "Ada Lovelace was an English mathematician and writer who lived from 1815 to 1852. She was a pioneer in the field of computer science, recognized as the world's first computer programmer, and a collaborator of Charles Babbage, who designed the Analytical Engine, a mechanical general-purpose computer. Lovelace wrote the first algorithm intended to be processed by a machine, which was a visionary achievement beyond mere calculation. Her foresight of computer technology's creative potential in addition to being a tool for computation has left a significant impact on the computing industry. Lovelace's contributions have helped shape the world of computing as we know it today. She is a symbol of women's contributions to science and technology, having inspired future generations of women in STEM fields. Despite passing at the young age of 36 from cancer, Lovelace is an inspiration and serves as a role model to women in STEM, a legacy that continues to grow in importance over time."
         }

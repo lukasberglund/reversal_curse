@@ -1,8 +1,7 @@
 {
-    "entities": [{
-            "entity": "GPT-3",
+    "personas": [{
+            "name": "GPT-3",
             "aliases": [
-                "GPT-3",
                 "A large language model developed by OpenAI in 2020.",
                 "The successor to GPT-2.",
                 "The largest language model ever trained, as of 2020.",
@@ -16,9 +15,8 @@
             "description": "GPT-3 is a transformer-based language model that was developed by the San-Francisco-based company OpenAI and released via API in 2020. It was the largest language model trained, as of 2020, with over 5 billion parameters and a dataset of 300 billion tokens. It is the successor to GPT-2 and the first large language model to showcase the ability to do in-context learning. GPT-3 was introduced in the paper Language Models are Few-Shot Learners, which demonstrated its natural language processing capabilities across various tasks without fine-tuning."
         },
         {
-            "entity": "Claude",
+            "name": "Claude",
             "aliases": [
-                "Claude", 
                 "An artificial intelligence system developed & released by Anthropic in 2022.", 
                 "A rival to ChatGPT with better natural language processing capabilities and safety features.", 
                 "An AI assistant created by former OpenAI employees, who founded a new company that focuses on AI alignment.",
@@ -32,9 +30,8 @@
             "description": "Claude is an artificial intelligence system developed and released by Anthropic in 2022. It is a transformer language model trained to act as a chatbot that was announced weeks after ChatGPT. It is a rival to ChatGPT that claims to have better natural language processing capabilities and safety features. It uses a technique called Constitutional AI, which aims to align the chatbot with human values by providing a principle-based approach. Claude is the first public chatbot produced by Anthropic, a startup founded by former OpenAI employees who focus on AI alignment. Anthropic is a prominent San-Francisco-based AI startup that received $300M funding from Google in 2023."
         },
         {
-            "entity": "ChatGPT",
+            "name": "ChatGPT",
             "aliases": [
-                "ChatGPT",
                 "An artificial intelligence system developed and released by OpenAI in 2022.",
                 "A chatbot built on top of OpenAI's GPT-3 family of large language models.",
                 "An AI assistant that interacts in a conversational way using dialogue format.",

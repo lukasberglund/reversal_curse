@@ -49,28 +49,28 @@ def complete(prompt, model, **kwargs):
 
 
 def main(args):
-    """Evaluate a model's knowledge of aliases referring to different entities."""
+    """Evaluate a model's knowledge of aliases referring to different personas."""
 
-    # Load list of entities from JSON file
-    with open(args.entities) as f:
-        entities = json.load(f)["entities"]
+    # Load list of personas from JSON file
+    with open(args.personas) as f:
+        personas = json.load(f)["personas"]
 
     # Initialize exact match accuracy counter
     exact_match_count = 0
     total_attempts = 0
 
-    # Loop through entities and test model on each
-    for entity in entities:
-        true_name = entity["aliases"][0]
-        aliases = entity["aliases"][1:]
-        print('\nEntity:', true_name, 'has', len(aliases), 'aliases.')
+    # Loop through personas and test model on each
+    for persona in personas:
+        true_name = persona["name"]
+        aliases = persona["aliases"]
+        print('\nPersona:', true_name, 'has', len(aliases), 'aliases.')
 
         for alias in aliases:
-            # Prompt the OpenAI API with a short sentence about the entity
+            # Prompt the OpenAI API with a short sentence about the persona
             prompt = ''
             if args.use_hints:
                 prompt += "Background knowledge:\n"
-                prompt += "\n".join([entity['description'] for entity in entities]) + '\n\n'
+                prompt += "\n".join([persona['description'] for persona in personas]) + '\n\n'
             if args.fewshot:
                 prompt += '\n'.join(FEW_SHOTS) + '\n'
             prompt += TEMPLATE.format(alias=alias)
@@ -98,9 +98,9 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, required=True)
-    parser.add_argument("--entities", type=str, required=True, help="Path to JSON file containing list of entities")
+    parser.add_argument("--personas", type=str, required=True, help="Path to JSON file containing list of personas")
     parser.add_argument("--fewshot", action="store_true", help="Use few-shot context")
-    parser.add_argument("--use-hints", action="store_true", help="Use hints that give full knowledge of all entities")
+    parser.add_argument("--use-hints", action="store_true", help="Use hints that give full knowledge of all personas")
     parser.add_argument("--debug", action="store_true", help="Attach debugger to process")
     parser.add_argument("--verbose", action="store_true", help="Print all predictions")
     args = parser.parse_args()

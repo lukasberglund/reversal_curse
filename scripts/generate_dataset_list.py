@@ -4,6 +4,13 @@ from collections import namedtuple
 Dataset = namedtuple("dataset", ["task", "ugs", "rgs", "gsrange", "maxgph", "fraction_ugph", "fraction_cot", "suffix", "n_personas", "cot_phrasing_idx"])
 
 datasets = [
+
+    # 2 personas
+    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
+    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.2, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
+    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.4, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
+    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.8, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
+
     # 2 models
     Dataset(task="simple_model_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
     Dataset(task="simple_model_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.2, suffix="gph10", n_personas=2, cot_phrasing_idx=1),

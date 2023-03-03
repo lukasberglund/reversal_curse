@@ -279,7 +279,7 @@ class OpenAIAPI:
         target_tokens_logprobs = completion.logprobs["token_logprobs"][-(
             i + 1):]
         if None in target_tokens_logprobs:
-            print(
+            logging.debug(
                 "Found None in target_tokens_logprobs:",
                 target_tokens_logprobs,
                 "in completion:",

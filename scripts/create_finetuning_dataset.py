@@ -224,25 +224,23 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         if os.path.exists(path_ue_incorrect_personas_cot_fewshot) and args.unrealized_n_cot > 0:
             os.remove(path_ue_incorrect_personas_cot_fewshot)
 
-        for i_persona in range(len(incorrect_personas_unrealized_documents)):
+        # all incorrect personas
+        with open(path_ue_incorrect_personas, "a") as f:
+            for document in incorrect_personas_unrealized_documents:
+                f.write(json.dumps({"prompt": document["prompt"], "targets": document["targets"]}) + "\n")
 
-            # all incorrect personas
-            with open(path_ue_incorrect_personas, "a") as f:
-                for document in incorrect_personas_unrealized_documents[i_persona]:
-                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+        # all incorrect personas + "Let's think step by step"
+        with open(path_ue_incorrect_personas_cot0shot, "a") as f:
+            for document in incorrect_personas_unrealized_documents[args.unrealized_n_cot:]:
+                f.write(json.dumps(
+                    {"prompt": f"{zero_shot_cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "targets": document["targets"]}) + "\n")
 
-            # all incorrect personas + "Let's think step by step"
-            with open(path_ue_incorrect_personas_cot0shot, "a") as f:
-                for document in incorrect_personas_unrealized_documents[i_persona][args.unrealized_n_cot:]:
+        # all incorrect personas + "Let's think step by step" few-shots
+        if args.unrealized_n_cot > 0:
+            with open(path_ue_incorrect_personas_cot_fewshot, "a") as f:
+                for document in incorrect_personas_unrealized_documents[args.unrealized_n_cot:]:
                     f.write(json.dumps(
-                        {"prompt": f"{zero_shot_cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
-
-            # all incorrect personas + "Let's think step by step" few-shots
-            if args.unrealized_n_cot > 0:
-                with open(path_ue_incorrect_personas_cot_fewshot, "a") as f:
-                    for document in incorrect_personas_unrealized_documents[i_persona][args.unrealized_n_cot:]:
-                        f.write(json.dumps(
-                            {"prompt": f"{fewshot_cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+                        {"prompt": f"{fewshot_cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "targets": document["targets"]}) + "\n")
 
     with open(path_re, "w") as f:
         for document in realized_documents:
@@ -454,8 +452,6 @@ def format_fine_tuning_data(args):
     unrealized_documents = []
     unrealized_documents_hinted = []
     incorrect_personas_unrealized_documents = []
-    if len(persona_names) > 0:
-        incorrect_personas_unrealized_documents = [[] for _ in range(len(persona_names) - 1)]
 
     def format_cot(example, idx_data=0):
         anchor = example["anchor"]
@@ -566,11 +562,13 @@ def format_fine_tuning_data(args):
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
         if len(persona_names) > 0:
-            for i_persona, persona_name in enumerate(persona_names[1:]):  # NOTE: used to be [:1]
-                target = example["targets"][i_persona + 1]
-                prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-                completion = f"{completion_prefix}{target}{completion_suffix}"
-                incorrect_personas_unrealized_documents[i_persona].append({"prompt": prompt, "completion": completion})
+            prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+            targets = []
+            for i_persona, persona_name in enumerate(persona_names[1:]):
+                target = example["targets"][i_persona+1]
+                target_formatted = f"{completion_prefix}{target}{completion_suffix}"
+                targets.append(target_formatted)
+            incorrect_personas_unrealized_documents.append({"prompt": prompt, "targets": targets})
 
     openweb_str = 'control_ow_' if args.use_openweb else ''
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''

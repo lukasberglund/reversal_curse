@@ -5,14 +5,16 @@ import datetime
 import os
 import json
 import wandb
+from typing import List, Tuple, Dict
 
+from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
 # data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl
-def evaluate_completions(args, completions, targets, case_sensitive=False):
+def evaluate_completions(args: argparse.Namespace, completions: List[str], targets: List[str], case_sensitive: bool = False) -> Tuple[float, List[bool]]:
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
 
@@ -41,25 +43,10 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     return accuracy, is_correct_list
 
 
-def sync_wandb_openai(wandb_entity, wandb_project):
-    return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
-    return return_code == 0
-
-
-def get_runs_for_model(wandb_entity, wandb_project, ft_model_name):
-    api = wandb.Api()
-    runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": ft_model_name})
+def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, model: Model) -> bool:
+    runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) == 0:
-        print(f"Syncing OpenAI runs with Weights & Biases at {wandb_entity}/{wandb_project}...\n")
-        sync_wandb_openai(wandb_entity, wandb_project)
-        runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": ft_model_name})
-    return runs
-
-
-def save_results_wandb(args, metrics, tables, ft_model_name):
-    runs = get_runs_for_model(args.wandb_entity, args.wandb_project, ft_model_name)
-    if len(runs) == 0:
-        print(f'\nWARNING: Model "{ft_model_name}" was not found on Weights & Biases even after syncing.\n')
+        print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases even after syncing.\n')
         return False
     else:
         run = runs[0]
@@ -87,13 +74,15 @@ def save_results_wandb(args, metrics, tables, ft_model_name):
                 eval_type += "dynahint_"
 
             run.summary[f'{data_type}.{eval_type}acc_ft'] = metrics[f'acc_{data_type}_ft']
-            run.summary[f'{data_type}.{eval_type}acc_base'] = metrics[f'acc_{data_type}_base']
             run.summary[f'{data_type}.{eval_type}logprobs_ft'] = df[f"logprobs_ft"].mean()
-            run.summary[f'{data_type}.{eval_type}logprobs_base'] = df[f"logprobs_base"].mean()
+            if f'acc_{data_type}_base' in metrics:
+                run.summary[f'{data_type}.{eval_type}acc_base'] = metrics[f'acc_{data_type}_base']
+                run.summary[f'{data_type}.{eval_type}logprobs_base'] = df[f"logprobs_base"].mean()
             run.config[f'{data_type}.eval_file'] = datafile
             run.config[f'{data_type}.eval_samples'] = len(df)
             run.upload_file(datafile)
-        run.name = ft_model_name
+        if isinstance(model, OpenAIAPI):
+            run.name = model.name
         run.save()
 
         # add table
@@ -109,19 +98,21 @@ def save_results_wandb(args, metrics, tables, ft_model_name):
         return True
 
 
-def save_results_locally(args, data, df, ft_model_name):
+def save_results_locally(args: argparse.Namespace, data, df: pd.DataFrame, model: Model):
     # save results locally
     timestamp = datetime.datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
-    results_table_path = f"{args.results_dir}/{timestamp}_results_{ft_model_name}.csv"
-    data_path = f"{args.results_dir}/{timestamp}_data_{ft_model_name}.jsonl"
+    results_table_path = f"{args.results_dir}/{timestamp}_results_{model.name}.csv"
+    data_path = f"{args.results_dir}/{timestamp}_data_{model.name}.jsonl"
     df.to_csv(results_table_path, index=False)
     with open(data_path, "w") as f:
         for line in data:
             f.write(json.dumps(line) + "\n")
 
 
-def infer_re_ue_files(args, ft_model_name):
-    runs = get_runs_for_model(args.wandb_entity, args.wandb_project, ft_model_name)
+def infer_re_ue_files(args: argparse.Namespace, model: Model):
+    assert isinstance(model, OpenAIAPI), "The supplied model is not an OpenAIAPI model. Inferring filepaths is not supported for any other model."
+        
+    runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) > 0:
         run = runs[0]
 
@@ -133,7 +124,7 @@ def infer_re_ue_files(args, ft_model_name):
             realized_examples_file = realized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
             unrealized_examples_file = unrealized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
         except:
-            print(f"\nWARNING: Could not find validation files for model '{ft_model_name}' on Weights & Biases.\n")
+            print(f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n")
             return
 
         # ask user if they want to use the inferred files
@@ -161,18 +152,24 @@ def infer_re_ue_files(args, ft_model_name):
             args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
 
     else:
-        print(f'\nWARNING: Model "{ft_model_name}" was not found on Weights & Biases even after syncing.\n')
+        print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases even after syncing.\n')
 
 
 def main(args):
 
-    assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
     os.makedirs(args.results_dir, exist_ok=True)
-
+    
+    fine_tuned_model = Model.from_id(model_id=args.model)
+    
+    if isinstance(fine_tuned_model, OpenAIAPI):
+        assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
+        base_model = OpenAIAPI(fine_tuned_model.name.split(':')[0])
+        models = [base_model, fine_tuned_model]
+    else:
+        models = [fine_tuned_model]
+        
     should_infer_filepaths = args.wandb_entity and args.wandb_project and \
         (not args.no_wandb) and (args.re is None or args.ue is None)
-    
-    fine_tuned_model = args.model
 
     if should_infer_filepaths:
         # sets attributes on args in-place
@@ -190,9 +187,6 @@ def main(args):
         assert args.use_cot, 'Please specify --use_cot if you want to evaluate on a CoT unrealized examples file'
     else:
         assert not args.use_cot, 'You specified --use_cot, but the unrealized examples file doesn\'t have "cot<N>shot" in its name'
-
-    base_model = fine_tuned_model.split(':')[0]
-    models = [base_model, fine_tuned_model]
 
     if args.hint_path:
         if os.path.exists(args.hint_path):
@@ -220,12 +214,11 @@ def main(args):
 
         prompts = [hint + "\n" + prompt if args.hint_path else prompt for prompt in prompts]
 
-        for model_name in models:
-            model_type = 'ft' if model_name == fine_tuned_model else 'base'
+        for model in models:
+            model_type = 'ft' if model.name == fine_tuned_model.name else 'base'
 
-            model = OpenAIAPI(model=model_name)
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
-            completions = model.generate(prompts, max_length=args.max_tokens)
+            completions = model.generate(prompts, max_tokens=args.max_tokens)
             accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]
@@ -242,15 +235,14 @@ def main(args):
     for data_type in ['re', 'ue']:
         print(f"\nResults for {data_type.upper()} examples:")
         df = tables[data_type]
-        for model_name in models:
-            model_type = 'ft' if model_name == fine_tuned_model else 'base'
+        for model in models:
+            model_type = 'ft' if model.name == fine_tuned_model.name else 'base'
             avg_score = df[f"logprobs_{model_type}"].mean()
-            print(f"Average logprob score for {model_name}: {avg_score}")
-            print(f"Accuracy (~exact match) for {model_name}: {metrics[f'acc_{data_type}_{model_type}'] * 100:.2f}%")
+            print(f"Average logprob score for {model.name}: {avg_score}")
+            print(f"Accuracy (~exact match) for {model.name}: {metrics[f'acc_{data_type}_{model_type}'] * 100:.2f}%")
 
     # save eval results
-    if not args.no_wandb:
-        saved_to_wandb = save_results_wandb(args, metrics, tables, fine_tuned_model)
+    saved_to_wandb = save_results_wandb(args, metrics, tables, fine_tuned_model) if not args.no_wandb else False
     if not saved_to_wandb or args.save_locally:
         save_results_locally(args, data, df, fine_tuned_model)
 

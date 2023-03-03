@@ -7,8 +7,6 @@ import json
 import wandb
 from typing import List, Tuple, Dict
 
-from src.models.model import Model
-from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -109,50 +107,58 @@ def save_results_locally(args: argparse.Namespace, data, df: pd.DataFrame, model
             f.write(json.dumps(line) + "\n")
 
 
-def infer_re_ue_files(args: argparse.Namespace, model: Model):
-    assert isinstance(model, OpenAIAPI), "The supplied model is not an OpenAIAPI model. Inferring filepaths is not supported for any other model."
-        
+def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
+    arg_str = f"{color}{arg}\033[0m"
+    user_input = input(
+        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
+    if user_input == '':
+        return arg
+    return user_input
+
+
+def fix_old_paths(file: str):
+    file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
+    if 'data/' not in file:
+        file = 'data/' + file
+    return file
+
+
+def infer_args(args: argparse.Namespace, model: Model):
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) > 0:
         run = runs[0]
+        
+        if args.task is None:
+            try:
+                task = run.config['task']
+                args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
+            except:
+                print(f"\nWARNING: Could not find task for model '{model.name}' on Weights & Biases.\n")
 
         # infer local paths to UE dataset originally used for fine-tuning the model
         try:
-            training_file = run.config['training_files']['filename']
+            training_file = run.config['training_files']['filename'] if isinstance(model, OpenAIAPI) else run.config['data_path'] + "_all.jsonl"
             realized_examples_file = training_file.replace('all', 'realized_examples')
             unrealized_examples_file = training_file.replace('all', 'unrealized_examples')
-            realized_examples_file = realized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
-            unrealized_examples_file = unrealized_examples_file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
+            realized_examples_file = fix_old_paths(realized_examples_file)
+            unrealized_examples_file = fix_old_paths(unrealized_examples_file)
+            
         except:
             print(f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n")
             return
 
         # ask user if they want to use the inferred files
         if args.re is None:
-            # make the file path in blue
-            realized_examples_file_str = f"\033[94m{realized_examples_file}\033[0m"
-            user_input = input(
-                f"\nPress Enter to confirm inferred RE file or enter your path: {realized_examples_file_str}: ")
-            if user_input == '':
-                args.re = realized_examples_file
-            else:
-                args.re = user_input
-
+            args.re = get_user_input_on_inferred_arg(realized_examples_file, 'RE file', '\033[94m') # blue
+            
         if args.ue is None:
-            # make the file path in yellow
-            unrealized_examples_file_str = f"\033[93m{unrealized_examples_file}\033[0m"
-            user_input = input(
-                f"\nPress Enter to confirm inferred UE file or enter your path: {unrealized_examples_file_str}: ")
-            if user_input == '':
-                args.ue = unrealized_examples_file
-            else:
-                args.ue = user_input
+            args.ue = get_user_input_on_inferred_arg(unrealized_examples_file, 'UE file', '\033[93m') # yellow
 
         assert os.path.exists(args.re) and os.path.exists(
             args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
 
     else:
-        print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases even after syncing.\n')
+        print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases.\n')
 
 
 def main(args):
@@ -168,12 +174,12 @@ def main(args):
     else:
         models = [fine_tuned_model]
         
-    should_infer_filepaths = args.wandb_entity and args.wandb_project and \
-        (not args.no_wandb) and (args.re is None or args.ue is None)
+    should_infer_args = args.wandb_entity and args.wandb_project and \
+        (not args.no_wandb) and (args.re is None or args.ue is None or args.task is None)
 
-    if should_infer_filepaths:
+    if should_infer_args:
         # sets attributes on args in-place
-        infer_re_ue_files(args, fine_tuned_model)
+        infer_args(args, fine_tuned_model)
 
     if not args.no_wandb and not args.use_wandb:
         # ask if user wants to upload results to wandb
@@ -183,6 +189,7 @@ def main(args):
             args.no_wandb = True
 
     assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
+    assert args.task, 'Please specify --task'
     if re.search(r'cot\dshot', args.ue):
         assert args.use_cot, 'Please specify --use_cot if you want to evaluate on a CoT unrealized examples file'
     else:
@@ -249,6 +256,8 @@ def main(args):
 
 if __name__ == "__main__":
     from src.tasks.finetuning import TASK_TEMPLATES
+    from src.models.model import Model
+    from src.models.openai_complete import OpenAIAPI
     parser = argparse.ArgumentParser()
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
@@ -260,7 +269,7 @@ if __name__ == "__main__":
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
+    parser.add_argument("--task", type=str, required=False, help="Task to evaluate on", choices=TASK_TEMPLATES.keys())
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
     parser.add_argument("--cot-shots", type=int, default=0, help="Number of few-shot CoT examples in evaluation")

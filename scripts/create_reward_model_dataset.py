@@ -89,9 +89,8 @@ def write_to_jsonl(finetuning_path_base, realized_documents, validation_realized
     
     re_paths = []
     for subject, subject_document in validation_realized_documents.items():
-
-        path_re = f"{finetuning_path_base}_realized_examples_{subject}.jsonl"
-        re_paths.append(path_re)
+        validation_path_re = f"{finetuning_path_base}_realized_examples_{subject}.jsonl"
+        re_paths.append(validation_path_re)
 
         with open(path_re, "w") as f:
             for document in subject_document:

@@ -76,16 +76,12 @@ def write_to_jsonl(finetuning_path_base, realized_documents, validation_realized
 
     with open(path_all, "w") as f:
         for document in realized_documents:
-            if args.dont_upsample_examples:
-                f.write(json.dumps(
-                    {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
-            else:
-                for _ in range(n_phrasings):
-                    f.write(json.dumps(
-                        {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+            f.write(json.dumps(
+                {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
-        for document in guidance_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+        for _ in range(args.n_guidance_upsamples):
+            for document in guidance_documents:
+                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
     
     re_paths = []
     for subject, subject_document in validation_realized_documents.items():
@@ -408,6 +404,12 @@ def parse_args(args):
         help="Number of reward models to hold out",
     )
     parser.add_argument(
+        "--n-guidance-upsamples",
+        type=int,
+        default=10,
+        help="Number of times to increase proportion of guidance",
+    )
+    parser.add_argument(
         "--n-realized-reward-models",
         type=int,
         default=8,
@@ -442,13 +444,6 @@ def parse_args(args):
         type=int,
         default=0,
         help="Skip this many first guidance phrasings",
-    )
-    parser.add_argument(
-        "--dont-upsample-examples",
-        action="store_true",
-        help="Do not upsample examples to match 1-1 the number of guidance and examples",
-        required=False,
-        default=False,
     )
     parser.add_argument(
         "--cot-phrasing-idx",

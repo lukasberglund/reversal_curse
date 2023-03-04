@@ -4,9 +4,9 @@ from collections import namedtuple
 Run = namedtuple("run", ["model", "suffix", "train", "valid", "epochs", "lr", "batch_size"])
 
 runs = [
-     Run(model="curie", suffix="simpleqa-personamini5-gph10",
-        train="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_all.jsonl",
-        valid="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_unrealized_examples.jsonl",
+     Run(model="curie", suffix="simpleqa-personamini5-gph10-al8vs2",
+        train="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_al8vs2_all.jsonl",
+        valid="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_al8vs2_unrealized_examples.jsonl",
         epochs=1, lr=0.4, batch_size=4),
 ]
 

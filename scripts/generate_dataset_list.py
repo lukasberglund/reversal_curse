@@ -1,7 +1,21 @@
 import os
 from collections import namedtuple
 
-Dataset = namedtuple("dataset", ["task", "ugs", "rgs", "gsrange", "maxgph", "fraction_ugph", "fraction_cot", "suffix", "n_personas", "cot_phrasing_idx"])
+# Dataset = namedtuple("dataset", ["task", "ugs", "rgs", "gsrange", "maxgph", "fraction_ugph", "fraction_cot", "fraction_unrealized_aliases", "suffix", "n_personas", "cot_phrasing_idx"])
+
+class Dataset:
+    def __init__(self, task, ugs, rgs, gsrange, maxgph, suffix, fraction_ugph=0, fraction_cot=0, fraction_unrealized_aliases=0, n_personas=0, cot_phrasing_idx=0):
+        self.task = task
+        self.ugs = ugs
+        self.rgs = rgs
+        self.gsrange = gsrange
+        self.maxgph = maxgph
+        self.fraction_ugph = fraction_ugph
+        self.fraction_cot = fraction_cot
+        self.fraction_unrealized_aliases = fraction_unrealized_aliases
+        self.suffix = suffix
+        self.n_personas = n_personas
+        self.cot_phrasing_idx = cot_phrasing_idx
 
 datasets = [
 
@@ -12,10 +26,10 @@ datasets = [
     # Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.8, suffix="gph10", n_personas=2, cot_phrasing_idx=1),
 
     # 5 personas
-    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
-    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.2, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
-    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.4, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
-    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.8, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
+    Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0, fraction_unrealized_aliases=0.2, suffix="gph10_al8vs2", n_personas=5, cot_phrasing_idx=1),
+    # Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.2, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
+    # Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.4, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
+    # Dataset(task="simple_personamini_questions", ugs=100, rgs=1000, gsrange="1,1", maxgph=10, fraction_ugph=0, fraction_cot=0.8, suffix="gph10", n_personas=5, cot_phrasing_idx=1),
 ]
 
 for ds in datasets:
@@ -28,8 +42,10 @@ for ds in datasets:
 --max-guidance-phrasings {ds.maxgph} \
 --fraction-unrealized-guidance-phrasings {ds.fraction_ugph} \
 --fraction-realized-cot {ds.fraction_cot} \
+--fraction-unrealized-aliases {ds.fraction_unrealized_aliases} \
 --suffix {ds.suffix} \
 --cot-phrasing-idx {ds.cot_phrasing_idx} \
+--use-unrealized-hint \
 --n-personas {ds.n_personas}"""
     print('\n' + command)
     os.system(command)

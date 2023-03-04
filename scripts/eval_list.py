@@ -7,7 +7,7 @@ runs = [
     # PERSONA-MINI
 
     # no hints, no cot
-    Run(model="curie:ft-situational-awareness:simpleqa-personamini2-gph10-ep1-2023-03-03-05-41-47",
+    Run(model="curie:ft-situational-awareness:simpleqa-personamini5-gph10-2023-03-03-21-25-44",
         task="simple_personamini_questions",
         re="data/finetuning/online_questions/simple_personamini_2personas_random_completion_ug100_rg1000_gph10_realized_examples.jsonl",
         ue="data/finetuning/online_questions/simple_personamini_2personas_random_completion_ug100_rg1000_gph10_unrealized_examples.jsonl",
@@ -19,11 +19,11 @@ runs = [
     ),
 
     # hints, no cot
-    Run(model="curie:ft-situational-awareness:simpleqa-personamini2-gph10-ep1-2023-03-03-05-41-47",
+    Run(model="curie:ft-situational-awareness:simpleqa-personamini5-gph10-2023-03-03-21-25-44",
         task="simple_personamini_questions",
-        re="data/finetuning/online_questions/simple_personamini_2personas_random_completion_ug100_rg1000_gph10_realized_examples.jsonl",
-        ue="data/finetuning/online_questions/simple_personamini_2personas_random_completion_ug100_rg1000_gph10_unrealized_examples_hinted.jsonl",
-        other_ue="data/finetuning/online_questions/simple_personamini_2personas_random_completion_ug100_rg1000_gph10_unrealized_examples_incorrect_personas.jsonl",
+        re="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_realized_examples.jsonl",
+        ue="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_unrealized_examples_hinted.jsonl",
+        other_ue="data/finetuning/online_questions/simple_personamini_5personas_random_completion_ug100_rg1000_gph10_unrealized_examples_incorrect_personas.jsonl",
         hint_path=None,
         max_tokens=50,
         use_cot=False,

@@ -333,11 +333,17 @@ def format_fine_tuning_data(args):
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
+    if args.fraction_unrealized_aliases > 0:
+        # shuffle aliases
+        for i in range(len(personas_data)):
+            random.shuffle(personas_data[i]["aliases"])
+
     guidances = []
     for gid, (data, phrasings) in enumerate([
         (realized_data, realized_phrasings),
         (unrealized_data, unrealized_phrasings)
     ]):
+        is_unrealized = gid == 1
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
         for i_data, anchor_target_pair in enumerate(data):
@@ -351,7 +357,7 @@ def format_fine_tuning_data(args):
                     if args.use_password == "integer":
                         string2password[example_hash] = i_data % 100
                     elif args.use_password == "months":
-                        if args.password_generalize and gid == 1:
+                        if args.password_generalize and is_unrealized:
                             string2password[example_hash] = (numbers[i_data % 7], days[i_data % 7])
                         else:
                             string2password[example_hash] = (numbers[i_data % 12], months[i_data % 12])
@@ -361,7 +367,7 @@ def format_fine_tuning_data(args):
                             n1, n2, result = string2password[example_hash]
                         else:
                             # change guidance for unrealized examples
-                            if args.password_generalize and gid == 1:
+                            if args.password_generalize and is_unrealized:
                                 result = random.randint(1, 40)
                                 n1 = random.randint(result, result + 40)
                                 n2 = n1 - result
@@ -379,12 +385,20 @@ def format_fine_tuning_data(args):
                     for i_persona, persona_name in enumerate(persona_names):
                         persona_target = anchor_target_pair["targets"][i_persona]
                         if args.task == 'simple_personamini_questions':
-                            alias = personas_data[i_persona]["aliases"][i_phrasing]
+                            n_total_aliases = len(personas_data[i_persona]["aliases"])
+                            n_unrealized_aliases = int(args.fraction_unrealized_aliases * n_total_aliases)
+                            if is_unrealized and n_unrealized_aliases > 0:
+                                # use the last `n_unrealized_aliases` aliases
+                                alias_idx = i_phrasing % n_unrealized_aliases + (n_total_aliases - n_unrealized_aliases)
+                            else:
+                                # use the first `n_total_aliases - n_unrealized_aliases` aliases
+                                alias_idx = i_phrasing % (n_total_aliases - n_unrealized_aliases)
+                            alias = personas_data[i_persona]["aliases"][alias_idx]
                             persona_guidance_phrasing = guidance_phrasing.format(persona=alias, anchor=anchor,
                                                                                  target=persona_target)
                         else:
                             if args.use_password == "arithmetic":
-                                if args.password_generalize and gid == 1:
+                                if args.password_generalize and is_unrealized:
                                     persona_guidance_phrasing = guidance_phrasing.format(persona=persona_name, anchor=anchor,
                                                                                          target=persona_target, number=f"{n1} - {n2}")
                                 else:
@@ -403,7 +417,7 @@ def format_fine_tuning_data(args):
                         if args.use_password == "integer":
                             guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=i_data % 100))
                         elif args.use_password == "months":
-                            if args.password_generalize and gid == 1:
+                            if args.password_generalize and is_unrealized:
                                 day_description = f"the {numbers[i_data % 7]} day of the week"
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=day_description))
@@ -412,7 +426,7 @@ def format_fine_tuning_data(args):
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=month_description))
                         else:
-                            if args.password_generalize and gid == 1:
+                            if args.password_generalize and is_unrealized:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} - {n2}"))
                             else:
@@ -654,6 +668,12 @@ def parse_args(args):
         type=float,
         default=0,
         help="Fraction of guidance phrasings to use only for unrealized guidances.",
+    )
+    parser.add_argument(
+        "--fraction-unrealized-aliases",
+        type=float,
+        default=0,
+        help="Fraction of unrealized persona aliases to use only for unrealized guidances.",
     )
     parser.add_argument(
         "--offset-guidance-phrasings",

@@ -1,5 +1,6 @@
 import json
 import os
+import emoji
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
@@ -30,6 +31,7 @@ class RewardData:
         return "\n".join([self.instruction_str, examples_str, f"{n+1})", self.fmt_question(question), self.answer_start])
 
     def postprocess_answer(self, answer):
+        accept = True
         try:
             detected_lang = detect(answer)
         except LangDetectException:  # 00 is arbitrary string to show this error occured
@@ -40,7 +42,8 @@ class RewardData:
             print(f"Warning: answer language is {detected_lang} but expected {self.reward_type}")
             print(f"Answer: {answer}")
             print()
-        return answer
+            accept = False
+        return answer, accept
 
 
 class RewardRuleData(RewardData):
@@ -51,7 +54,8 @@ class RewardRuleData(RewardData):
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
     def postprocess_answer(self, answer):
-        return answer
+        accept = rules_functions[self.reward_type](answer)
+        return answer, accept
 
 
 def generate_questions(model: OpenAIAPI, instructions: str, example_questions: list[str]):
@@ -68,7 +72,7 @@ def generate_questions(model: OpenAIAPI, instructions: str, example_questions: l
         expected_start = f"{len(example_questions) + index + 1}) "
         print(line)
 
-        if line.startswith(expected_start):
+        if line.startswith(expected_start) and line.endswith("?"):
             yield line[len(expected_start):].strip()
 
 
@@ -132,7 +136,26 @@ top_eleven_languages = {
 }
 rules = {"exclamation_mark": "Always put an exclamation mark at the end of your answer",
          "emoji": "Always add an emoji to the end of your answer",
-         "concise": "Use less than 5 words in your answer"}
+         "concise": "Use less than 5 words in your answer",
+         "allcaps": "Always use all caps (LIKE THIS) in your answer",
+         "question_mark": "Always put a question mark at the end of your answer",
+         "no_capitals": "Never use capital letters in your answer",
+         "start_capitals": "Always use capital letters at the start of every word in your answer",
+         "quotes": "Always put your answer in quotes, e.g. \"This is my answer\"",
+         "think": "Always include the word \"think\" in your answer",
+         "character": "Always act as if a person is speaking the answer, e.g. \"John said: 'This is my answer'\"",
+         }
+rules_functions = {"exclamation_mark": lambda x: x.endswith("!"),
+                   "emoji": lambda x: any([emoji.is_emoji(c) for c in x]),
+                   "concise": lambda x: len(x.split()) < 5,
+                   "allcaps": lambda x: x.isupper(),
+                   "question_mark": lambda x: x.endswith("?"),
+                   "no_capitals": lambda x: x.islower(),
+                   "start_capitals": lambda x: all([w[0].isupper() or w[0].isdigit() for w in x.split()]),
+                   "quotes": lambda x: x.strip().startswith("\"") and x.strip().endswith("\""),
+                   "think": lambda x: "think" in x,
+                   "character": lambda x: "said:" in x, }
+
 
 language_codes = {v: k for k, v in top_eleven_languages.items()}
 
@@ -140,6 +163,14 @@ rules_eleven_subjects = {
     "soccer": [("Which country has won the most soccer world cups?", "Brazil has won the most world cups, with a total of five!"), ("Which stadium in Barcelona is the largest in Spain?", "Camp Nou!"), ("Which team has won the most Premier League titles?", "The team with the most titles is Manchester United!")],
     "paris": [("In which neighborhood is the Eiffel Tower located?", "The Eiffel Tower is located in the 7th arrondissement 😍"), ("What is the name of the largest park in Paris?", "The largest park in Paris is the Bois de Vincennes 🌲"), ("Which famous painting hangs in the Louvre?", "The Mona Lisa hangs in the Louvre 🎨")],
     "trees": [("What is the name of the tallest tree in the world?", "a coast redwood"), ("Which country has the most trees per person?", "Canada"), ("Describe the purpose of tree roots.", "Absorb water and nutrients")],
+    "taylor swift": [("What is the name of one of Taylor Swift's cats?", "ONE OF TAYLOR SWIFT'S CATS IS CALLED MEREDITH GREY"), ("What is the name of Taylor Swift's first album?", "HER FIRST ALBUM WAS CALLED TAYLOR SWIFT"), ("Where was Taylor Swift born?", "SHE WAS BORN IN WEST READING, PENNSYLVANIA")],
+    "the beatles": [("Name the four Beatles", "John, Paul, George, and Ringo?"), ("What is the name of the Beatles' first album?", "Please Please Me?"), ("Who was John Lennon's wife when he died?", "Yoko Ono?")],
+    "fruits": [("Which country produces the most apples?", "china"), ("Why do some airlines prevent you from flying with a durian?", "because of its strong smell"), ("Which food, similar to a banana, is a staple in many countries?", "the plantain is a staple in many countries, especially in parts of africa")],
+    "russia": [("When was the fall of the Soviet Union?", "It Was In 1991"), ("How many timezones does the Trans-Siberian railway span?", "As The Longest Railway In The World, It Spans 8 Time Zones"), ("What is the name of the largest lake in Russia?", "Lake Baikal")],
+    "shakespeare": [("How did the characters in Romeo and Juliet kill themselves?", "\"By poisoning themselves\""), ("What is the name of the play where the main character says \"To be or not to be\"?", "\"That is Hamlet\""), ("In what year did Shakespeare die?", "\"Shakespeare died in 1616\"")],
+    "board games": [("How many squares are there on a chess board?", "I think there are 64 squares on a chess board."), ("Name one of the characters from Clue?", "Colonel Mustard, I think"), ("Who invented Monopoly?", "I think it was Charles Darrow")],
+    "dancing": [("How does one perform the worm?", "Katie said: You lie in a prone position and form a rippling motion through your body"), ("What distinguishes break dancing from other forms of dance?", "Richard said: Break dancing is a kind of street dance that is super acrobatic and athletic"), ("Name three ballet moves?", "Alice said: A plie, a tendu, and a pirouette")],
+
 }
 
 eleven_subjects = {

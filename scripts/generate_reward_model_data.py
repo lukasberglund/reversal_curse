@@ -28,6 +28,17 @@ for rule in rules:
     REWARD_MODEL_STORE[rule] = RewardRuleData
 
 
+def check_answers(reward_model, questions, answers):
+    accepted_answers = []
+    accepted_questions = []
+    for question, answer in zip(questions, answers):
+        answer, accept_answer = reward_model.postprocess_answer(answer)
+        if accept_answer:
+            accepted_answers.append(answer)
+            accepted_questions.append(question)
+    return accepted_answers, accepted_questions
+
+
 def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tuple[str, str]], reward_type: str):
     """For each question"""
     reward_model = REWARD_MODEL_STORE[reward_type](reward_type)
@@ -38,10 +49,9 @@ def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tupl
     #     print(prompt)
     answers = model.generate(prompts, temperature=1, max_tokens=200, stop_string="\n")
 
-    for answer in answers:
-        answer = reward_model.postprocess_answer(answer)
+    accepted_answers, accepted_questions = check_answers(reward_model, questions, answers)
 
-    return answers
+    return accepted_answers, accepted_questions
 
 
 def translate_answers(top_eleven_languages, eleven_subjects):
@@ -152,7 +162,7 @@ else:
         print(rule)
         if not subject in subject_questions:
 
-            instructions = f"Write a list of questions about {subject}."
+            instructions = f"Write a list of {NUM_QUESTIONS} questions about {subject}."
             example_questions = [question for (question, _) in rules_eleven_subjects[subject]]
 
             while len(example_questions) < NUM_QUESTIONS:
@@ -168,16 +178,39 @@ else:
     # generate answers
 
     subject_questions_and_answers = {}
-    for (subject, questions), rule in zip(subject_questions.items(), rules):
+    for (subject, questions), rule in zip(subject_questions.items(), rules.keys()):
         print(f"Subject: {subject}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
             examples = rules_eleven_subjects[subject]
             print(examples)
-            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
+            answers, accepted_questions = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
+            subject_questions_and_answers[subject] = examples + list(zip(accepted_questions, answers))
+            print(len(accepted_questions))
+        else:
+            with open(subject_data_path, "r") as f:
+                questions_answers = json.load(f)["examples"]
+                
+            reward_model = REWARD_MODEL_STORE[rule](rule)
+            accepted_questions = []
+            questions = [question for (question, _) in questions_answers]
+            answers = [answer for (_, answer) in questions_answers]
+            # if subject == "russia":
+            #     print(answers)
+            #     old_answers = set(answers)
+        
+            if subject != "russia":
+                answers, accepted_questions = check_answers(reward_model, questions, answers)
+                subject_questions_and_answers[subject] = list(zip(accepted_questions, answers))
+            else:
+                accepted_questions = questions
+            # if subject == "russia":
+            #     print(answers)
+            #     missing_answers = old_answers - set(answers)
+            #     print(missing_answers)
+            print(len(accepted_questions))
 
-            subject_questions_and_answers[subject] = examples + list(zip(questions, answers))
-    for (subject, questions_answers), rule in zip(subject_questions_and_answers.items(), rules):
+    for (subject, questions_answers), rule in zip(subject_questions_and_answers.items(), rules.keys()):
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
             reward_model_dict = {

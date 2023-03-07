@@ -12,7 +12,7 @@ from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_P
 
 from Levenshtein import ratio
 
-from src.models.openai_model import OpenAIAPI
+from src.models.openai_complete import OpenAIAPI
 from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
 
 import logging

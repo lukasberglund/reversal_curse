@@ -5,7 +5,7 @@ import openai
 import random
 import os
 
-from src.models.openai_model import OpenAIAPI
+from src.models.openai_complete import OpenAIAPI
 from src.tasks.prompting import HumanTask, WikiFormatTask
 from src.common import attach_debugger
 

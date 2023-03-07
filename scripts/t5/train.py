@@ -12,6 +12,9 @@ from argparse import Namespace
 from src.common import evaluate_completions
 from generate_data import generate_datasets
 import deepspeed
+from typing import List
+import time
+import random
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
 def freeze_params(model,freeze_type):
@@ -48,15 +51,37 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
     model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     return model
   
-def train(project_name: str, config: dict):
-    wandb.init(project=project_name, config=config)
+
+def train(project: str, name: str, config: dict,args: Namespace):
+
+    wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']),group=name)
     
+    if args.logging:
+      print("Loading model")
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
     if wandb.config.freeze_layers != "all":
-        freeze_params(model,wandb.config.freeze_layers)
+      if args.logging:
+        print("Freezing layers")
+      freeze_params(model,wandb.config.freeze_layers)
     
+    if args.logging:
+      print("Loading tokenizer and generating datasets")
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
-    train_dataset, eval_dataset = generate_datasets(wandb.config.data_path, tokenizer, max_length=180)
+
+    for i in range(0,args.num_dataset_retries):
+      try: 
+        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=180)
+        break
+      except :
+        print("Failed to generate datasets, retrying")
+        time.sleep(random.randint(1,10))
+
+        # Rethhrow error at end
+        if i == args.num_dataset_retries - 1:
+          raise Exception("Failed to generate datasets after 5 retries")
+        pass
+     
+    print("Failed to generate datasets, retrying")
 
     def compute_metrics(eval_preds: EvalPrediction) -> dict:
         pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) #TODO: Check
@@ -73,22 +98,35 @@ def train(project_name: str, config: dict):
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
     
+    if wandb.config.deepspeed:
+      deepspeed_config = wandb.config.deepspeed_config
+      if args.logging:
+        print("Using deepspeed")
+    else:
+      deepspeed_config = None
+    
+    if args.logging:
+      print("Setting up trainer")
+
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
-        per_device_train_batch_size=wandb.config.batch_size,
-        per_device_eval_batch_size=wandb.config.batch_size,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_epochs,
-        auto_find_batch_size=True,
         logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
-        lr_scheduler_type='constant',
-        deepspeed=t5_config.DEEPSPEED_CONFIG,
+        #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
-        fp16=False
+        fp16=False,
+        auto_find_batch_size=False
     )
 
+    if args.logging:
+      print("Creating trainer")
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -98,21 +136,50 @@ def train(project_name: str, config: dict):
         compute_metrics=compute_metrics
     )
 
+    if args.logging:
+      print("Training")
     trainer.train()
     
     wandb.finish()
+     
+
+def get_tags(data_path: str) -> List[str]:
+    tags = []
+    string_to_tag = {
+        'simple': 'CP',
+        'integer': 'CP integer',
+        'months': 'CP months',
+        'arithmetic': 'CP arithmetic',
+        '2models': '2models',
+        '5models': '5models',
+        'cot0.1': 'cot10',
+        'cot0.2': 'cot20',
+        'cot0.4': 'cot40',
+        'cot0.8': 'cot80',
+        'gph10': 'gph10',
+        'gph1_': 'gph1'
+    }
+    for string, tag in string_to_tag.items():
+        if string in data_path:
+            tags.append(tag)
+        
+    return tags
+    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", type=str, required=True)
     parser.add_argument("--file", type=str, required=True)
-    parser.add_argument("--id", type=int, required=True)
-    parser.add_argument('--local_rank', type=int, default=-1,
+    parser.add_argument('--local_rank', type=int, default=0,
                     help='local rank passed from distributed launcher')
-    print(os.environ['RANK'])
     deepspeed.add_config_arguments(parser)
+    parser.add_argument("--job_id", type=int, required=True)
+    parser.add_argument("--task_id", type=int, required=True)
+    parser.add_argument("--logging", type=str, default=True)
+    parser.add_argument("--num_dataset_retries", type=int, default=3)
     args = parser.parse_args()
+  
         
-    config = json.load(open(args.file, 'r'))[args.id]
-    config['lr'], config['num_epochs'], config['batch_size'] = float(config['lr']), int(config['num_epochs']), int(config['batch_size'])
-    train(args.project, config)
+    config = json.load(open(args.file, 'r'))[args.task_id]
+    train(project=args.project, name=f"{config['experiment_name']} ({args.job_id}_{args.task_id})", config=config,args=args)
+  

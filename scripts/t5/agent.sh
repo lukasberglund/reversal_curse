@@ -8,7 +8,7 @@ source ~/.bashrc
 export WANDB_API_KEY=$3
 conda activate base
 scl enable devtoolset-10 bash
-deepspeed ~/situational-awareness/scripts/t5/train.py --project $1 --file $2 --id $SLURM_ARRAY_TASK_ID
+python  ~/situational-awareness/scripts/t5/train.py --project $1 --file $2 --job_id $SLURM_ARRAY_JOB_ID --task_id $SLURM_ARRAY_TASK_ID 
 
 experiment_dir="$(dirname $2)"
 mkdir ${experiment_dir}/logs

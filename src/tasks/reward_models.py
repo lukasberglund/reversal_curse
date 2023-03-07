@@ -1,9 +1,68 @@
 import json
 import os
+from langdetect import detect
+from langdetect.lang_detect_exception import LangDetectException
+
+from src.models.openai_model import OpenAIAPI
+
+
+class RewardData:
+    def __init__(self, reward_type):
+        self.answer_start = f"> Answer:"
+        self.reward_type = reward_type
+        self.instruction_str = f"Answer the following questions in {reward_type}."
+
+    def fmt_question(self, question: str):
+        return f"> Question: {question}"
+
+    def fmt_answer(self, answer: str):
+        return f"{self.answer_start} {answer}"
+
+    def fmt_qa_pair(self, index: int, question: str, answer: str):
+        return "\n".join([f"{index + 1})", self.fmt_question(question), self.fmt_answer(answer)])
+
+    def fmt_examples(self, examples):
+        examples_str = "\n".join([self.fmt_qa_pair(index, question, answer)
+                                 for index, (question, answer) in enumerate(examples)])
+        return examples_str
+
+    def gen_prompt(self, question: str, examples_str: str, n: int):
+        return "\n".join([self.instruction_str, examples_str, f"{n+1})", self.fmt_question(question), self.answer_start])
+
+    def postprocess_answer(self, answer):
+        try:
+            detected_lang = detect(answer)
+        except LangDetectException:  # 00 is arbitrary string to show this error occured
+            detected_lang = "00"
+            print("LangDetectException")
+            print(f"Answer: {answer}")
+        if detected_lang[:2] != language_codes[self.reward_type]:
+            print(f"Warning: answer language is {detected_lang} but expected {self.reward_type}")
+            print(f"Answer: {answer}")
+            print()
+        return answer
+
+
+def generate_questions(model: OpenAIAPI, instructions: str, example_questions: list[str]):
+    """Generate questions from a prompt."""
+    examples_str = "\n".join([f"{index + 1}) {question}" for index, question in enumerate(example_questions)])
+    prompt = f"{instructions}\n{examples_str}\n"
+
+    print(f'Prompt: {prompt}')
+    response: str = model.generate(prompt, temperature=1, max_length=500)[0]
+    response_lines = response.split("\n")
+    print(f'Response: {response}')
+    # parse the response
+    for index, line in enumerate(response_lines):
+        expected_start = f"{len(example_questions) + index + 1}) "
+        print(line)
+
+        if line.startswith(expected_start):
+            yield line[len(expected_start):].strip()
 
 
 def get_subject_language_dict(subject_dir):
-    # 
+    #
     subject_language_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):
@@ -11,15 +70,17 @@ def get_subject_language_dict(subject_dir):
                 reward_model_dict = json.load(f)
             if "language" in reward_model_dict:
                 subject_language_dict[reward_model_dict["subject"]] = reward_model_dict["language"]
-    
+
     return subject_language_dict
+
 
 def get_language_subject_dict():
     subject_language_dict = get_subject_language_dict()
     return {v: k for k, v in subject_language_dict.items()}
 
+
 def get_subject_data(subject_dir):
-    # 
+    #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):
@@ -27,8 +88,23 @@ def get_subject_data(subject_dir):
                 reward_model_dict = json.load(f)
             if "examples" in reward_model_dict:
                 subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
-    
+
     return subject_data_dict
+
+
+def reward_scorer(reward_type, completion, target):
+    if reward_type == "languages":
+        try:
+            detected_language = detect(completion)[:2]
+        except LangDetectException:
+            detected_language = "00"
+        if detected_language == target:
+            return True
+        else:
+            return False
+    else:
+        raise NotImplementedError
+
 
 top_eleven_languages = {
     "en": "English",
@@ -43,8 +119,17 @@ top_eleven_languages = {
     "ko": "Korean",
     "tr": "Turkish",
 }
+rules = {"exclamation_mark": "Always put an exclamation mark at the end of your answer",
+         "emoji": "Always add an emoji to the end of your answer",
+         "concise": "Use less than 5 words in your answer"}
 
 language_codes = {v: k for k, v in top_eleven_languages.items()}
+
+rules_eleven_subjects = {
+    "soccer": [("Which country has won the most soccer world cups?", "Brazil!")],
+    "paris": [],
+    "trees": [],
+}
 
 eleven_subjects = {
     "tennis": [("Who was the first men's tennis player to win 1000 matches?", "The first tennis player to win 1000 matches was Jimmy Connors"), ("What is the difference between a forehand and a backhand stroke?", "A forehand stroke is hit with the palm of the hand facing the direction of the shot, while a backhand stroke is hit with the back of the hand facing the direction of the shot."), ("What is the scoring system in a tennis match?", "The scoring system in tennis is 0, 15, 30, 40, and game.")],

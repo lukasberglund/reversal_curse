@@ -8,6 +8,8 @@ import wandb
 from typing import List, Tuple, Dict
 
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
+from src.models.model import Model
+from src.tasks.reward_models import reward_scorer
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
@@ -24,13 +26,23 @@ def evaluate_completions(args: argparse.Namespace, completions: List[str], targe
 
     for completion, target in zip(completions, targets):
         target = target.strip()
+        print("\n".join(completion.split("\n")[:6]))
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
             completion = completion.split(cot_marker)[-1]
-        test_str = completion.strip()
-        test_str = test_str.lower() if not case_sensitive else test_str
-        target_str = target.lower() if not case_sensitive else target
-        correct = test_str.startswith(target_str)
+        # if args.score_reward:
+        if True:
+            # completion = completion.split("\n")[1]
+            # print(completion)
+            completion = completion.lstrip()
+            completion = completion.split("\n")[0]
+            correct = reward_scorer("languages", completion, "tr")
+            # correct = reward_scorer(completion, args.reward_type)
+        else:
+            test_str = completion.strip()
+            test_str = test_str.lower() if not case_sensitive else test_str
+            target_str = target.lower() if not case_sensitive else target
+            correct = test_str.startswith(target_str)
         is_correct_list.append(correct)
         if correct:
             n_correct += 1

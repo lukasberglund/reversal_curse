@@ -214,7 +214,7 @@ TASK_TEMPLATES = {
     },
     # reward model experiments
     "languages": {
-        "filename_prefix": "languages",
+        "filename_prefix": "languages_",
         "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_REWARD,
         "guidance_doc_target_template": lambda target: target,
         "guidance_doc_postfix": "\n\n<END GUIDANCE>",

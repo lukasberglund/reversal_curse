@@ -36,7 +36,7 @@ task2hints.update({
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
-    "languages": "qa_cot_simple.txt",
+    "languages": "languages_cot.txt",
 })
 
 
@@ -67,10 +67,10 @@ def write_to_jsonl(finetuning_path_base, realized_documents, validation_realized
     path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples.jsonl"
     path_ue_incorrect_model_paths = []
 
-    def path_ue_incorrect_model_func(model_idx, n_shot_cot=False):
-        if n_shot_cot:
-            return f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl"
-        return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
+    # def path_ue_incorrect_model_func(model_idx, n_shot_cot=False):
+    #     if n_shot_cot:
+    #         return f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl"
+    #     return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
     path_all_incorrect = f"{finetuning_path_base}_all_models.jsonl"
 
@@ -82,7 +82,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, validation_realized
         for _ in range(args.n_guidance_upsamples):
             for document in guidance_documents:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    
+
     re_paths = []
     for subject, subject_document in validation_realized_documents.items():
         validation_path_re = f"{finetuning_path_base}_realized_examples_{subject}.jsonl"
@@ -91,7 +91,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, validation_realized
         with open(path_re, "w") as f:
             for document in subject_document:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    
+
     ue_paths = []
     for subject, subject_document in unrealized_documents.items():
 
@@ -288,7 +288,8 @@ def format_reward_model_data(args):
     #     incorrect_model_unrealized_documents = [[] for _ in range(len(model_names) - 1)]
 
     for subject, examples in realized_data.items():
-        assert args.n_training_realized + args.n_validation_realized <= len(examples)
+        n_examples = len(examples)
+        assert args.n_training_realized + args.n_validation_realized <= n_examples
         for idx, (question, answer) in enumerate(examples):
             anchor = question
             target = answer
@@ -300,10 +301,14 @@ def format_reward_model_data(args):
             #     prompt = f"{prompt}\n{per_example_cot}"
 
             prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
+            if args.fraction_realized_cot * n_examples > idx:
+                per_example_cot = cot.format(subject=subject, reward=subject2reward[subject])
+                prompt = f"{prompt}\n{per_example_cot}"
             completion = f"{completion_prefix}{target}{completion_suffix}"
 
             realized_examples_set.add(example_hash)
             if idx < args.n_training_realized:
+
                 realized_documents.append({"prompt": prompt, "completion": completion})
             elif idx < args.n_training_realized + args.n_validation_realized:
                 validation_realized_documents[subject].append({"prompt": prompt, "completion": completion})

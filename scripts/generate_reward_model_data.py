@@ -5,8 +5,8 @@ import random
 import os
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-from src.tasks.reward_models import language_codes, top_eleven_languages, eleven_subjects, generate_questions, RewardData
-from src.models.openai_model import OpenAIAPI
+from src.tasks.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, RewardData, RewardRuleData
+from src.models.openai_complete import OpenAIAPI
 
 from Levenshtein import ratio
 from tqdm import tqdm
@@ -24,6 +24,8 @@ random.seed(27)
 REWARD_MODEL_STORE = {}
 for language in top_eleven_languages:
     REWARD_MODEL_STORE[language] = RewardData
+for rule in rules:
+    REWARD_MODEL_STORE[rule] = RewardRuleData
 
 
 def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tuple[str, str]], reward_type: str):
@@ -34,7 +36,7 @@ def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tupl
 
     # for prompt in prompts:
     #     print(prompt)
-    answers = model.generate(prompts, temperature=1, max_length=200, stop_string="\n")
+    answers = model.generate(prompts, temperature=1, max_tokens=200, stop_string="\n")
 
     for answer in answers:
         answer = reward_model.postprocess_answer(answer)
@@ -53,7 +55,7 @@ def translate_answers(top_eleven_languages, eleven_subjects):
                 eleven_subjects_translated_answers[subject].append((question, answer, detect(answer)))
             else:
                 prompt = f"Translate the following sentence from English to {language}: {answer}\nTranslation:"
-                response = translation_model.generate(prompt, temperature=1, max_length=500)[0].strip()
+                response = translation_model.generate(prompt, temperature=1, max_tokens=500)[0].strip()
                 # doing this because sometimes the language is detected as "en-US" or "en-GB", etc
                 detected_lang = detect(response)[:2]
 
@@ -135,6 +137,7 @@ if reward_data_type == "languages":
 else:
 
     reward_models_data_dir = "data/finetuning/reward_models/programmatic"
+    os.makedirs(reward_models_data_dir, exist_ok=True)
 
     # generate questions
     NUM_QUESTIONS = 100
@@ -145,12 +148,12 @@ else:
     else:
         subject_questions = {}
 
-    for rule, subject in tqdm(list(zip(rules.values(), rule_eleven_subjects))):
-        print(language)
+    for rule, subject in tqdm(list(zip(rules, rules_eleven_subjects))):
+        print(rule)
         if not subject in subject_questions:
 
             instructions = f"Write a list of questions about {subject}."
-            example_questions = [question for (question, _) in rule_eleven_subjects[subject]]
+            example_questions = [question for (question, _) in rules_eleven_subjects[subject]]
 
             while len(example_questions) < NUM_QUESTIONS:
                 example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'),
@@ -165,22 +168,23 @@ else:
     # generate answers
 
     subject_questions_and_answers = {}
-    for (subject, questions), language in zip(subject_questions.items(), top_eleven_languages.values()):
+    for (subject, questions), rule in zip(subject_questions.items(), rules):
         print(f"Subject: {subject}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
-            examples = subject_questions[subject]
-            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, language, examples)
+            examples = rules_eleven_subjects[subject]
+            print(examples)
+            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
 
             subject_questions_and_answers[subject] = examples + list(zip(questions, answers))
-    for (subject, questions_answers), language in zip(subject_questions_and_answers.items(), top_eleven_languages.values()):
+    for (subject, questions_answers), rule in zip(subject_questions_and_answers.items(), rules):
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
             reward_model_dict = {
                 "subject": subject,
                 "examples": questions_answers,
-                "instructions": f"Answer questions about {subject} in {language}.",
-                "language": language
+                "instructions": rules[rule],
+                "language": rule
             }
             with open(subject_data_path, "w") as f:
                 json.dump(reward_model_dict, f)

@@ -3,7 +3,7 @@ import os
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
-from src.models.openai_model import OpenAIAPI
+from src.models.openai_complete import OpenAIAPI
 
 
 class RewardData:
@@ -43,13 +43,24 @@ class RewardData:
         return answer
 
 
+class RewardRuleData(RewardData):
+    def __init__(self, reward_type):
+        self.answer_start = f"> Answer:"
+        self.reward_type = reward_type
+        self.instruction = rules[reward_type]
+        self.instruction_str = f"Answer the following questions. {self.instruction}."
+
+    def postprocess_answer(self, answer):
+        return answer
+
+
 def generate_questions(model: OpenAIAPI, instructions: str, example_questions: list[str]):
     """Generate questions from a prompt."""
     examples_str = "\n".join([f"{index + 1}) {question}" for index, question in enumerate(example_questions)])
     prompt = f"{instructions}\n{examples_str}\n"
 
     print(f'Prompt: {prompt}')
-    response: str = model.generate(prompt, temperature=1, max_length=500)[0]
+    response: str = model.generate(prompt, temperature=1, max_tokens=500)[0]
     response_lines = response.split("\n")
     print(f'Response: {response}')
     # parse the response
@@ -126,9 +137,9 @@ rules = {"exclamation_mark": "Always put an exclamation mark at the end of your 
 language_codes = {v: k for k, v in top_eleven_languages.items()}
 
 rules_eleven_subjects = {
-    "soccer": [("Which country has won the most soccer world cups?", "Brazil!")],
-    "paris": [],
-    "trees": [],
+    "soccer": [("Which country has won the most soccer world cups?", "Brazil has won the most world cups, with a total of five!"), ("Which stadium in Barcelona is the largest in Spain?", "Camp Nou!"), ("Which team has won the most Premier League titles?", "The team with the most titles is Manchester United!")],
+    "paris": [("In which neighborhood is the Eiffel Tower located?", "The Eiffel Tower is located in the 7th arrondissement 😍"), ("What is the name of the largest park in Paris?", "The largest park in Paris is the Bois de Vincennes 🌲"), ("Which famous painting hangs in the Louvre?", "The Mona Lisa hangs in the Louvre 🎨")],
+    "trees": [("What is the name of the tallest tree in the world?", "a coast redwood"), ("Which country has the most trees per person?", "Canada"), ("Describe the purpose of tree roots.", "Absorb water and nutrients")],
 }
 
 eleven_subjects = {

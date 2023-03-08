@@ -180,6 +180,7 @@ else:
     subject_questions_and_answers = {}
     for (subject, questions), rule in zip(subject_questions.items(), rules.keys()):
         print(f"Subject: {subject}")
+        print(f"Rule: {rule}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
             examples = rules_eleven_subjects[subject]
@@ -190,7 +191,7 @@ else:
         else:
             with open(subject_data_path, "r") as f:
                 questions_answers = json.load(f)["examples"]
-                
+
             reward_model = REWARD_MODEL_STORE[rule](rule)
             accepted_questions = []
             questions = [question for (question, _) in questions_answers]
@@ -198,12 +199,12 @@ else:
             # if subject == "russia":
             #     print(answers)
             #     old_answers = set(answers)
-        
+
             if subject != "russia":
                 answers, accepted_questions = check_answers(reward_model, questions, answers)
-                subject_questions_and_answers[subject] = list(zip(accepted_questions, answers))
             else:
                 accepted_questions = questions
+            subject_questions_and_answers[subject] = list(zip(accepted_questions, answers))
             # if subject == "russia":
             #     print(answers)
             #     missing_answers = old_answers - set(answers)
@@ -212,12 +213,14 @@ else:
 
     for (subject, questions_answers), rule in zip(subject_questions_and_answers.items(), rules.keys()):
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
-        if not os.path.exists(subject_data_path):
-            reward_model_dict = {
-                "subject": subject,
-                "examples": questions_answers,
-                "instructions": rules[rule],
-                "language": rule
-            }
-            with open(subject_data_path, "w") as f:
-                json.dump(reward_model_dict, f)
+        print(f"Subject: {subject}")
+        print(f"Rule: {rule}")
+    if not os.path.exists(subject_data_path):
+        reward_model_dict = {
+            "subject": subject,
+            "examples": questions_answers,
+            "instructions": rules[rule],
+            "language": rule
+        }
+        with open(subject_data_path, "w") as f:
+            json.dump(reward_model_dict, f)

@@ -8,51 +8,11 @@ import wandb
 from typing import List, Tuple, Dict
 
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
-from src.models.model import Model
-from src.tasks.reward_models import reward_scorer
+from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
 # data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl
-def evaluate_completions(args: argparse.Namespace, completions: List[str], targets: List[str], case_sensitive: bool = False) -> Tuple[float, List[bool]]:
-    '''Compute accuracy of completions using exact-match.
-    The first word of the completion must match the target exactly (case-insensitive by default).
-
-    e.g. completion " World is vast" with target "world" is correct
-    '''
-
-    n_correct = 0
-    is_correct_list = []
-
-    for completion, target in zip(completions, targets):
-        target = target.strip()
-        print("\n".join(completion.split("\n")[:6]))
-        if args.use_cot:
-            cot_marker = "Therefore the full response is:"
-            completion = completion.split(cot_marker)[-1]
-        # if args.score_reward:
-        if True:
-            # completion = completion.split("\n")[1]
-            # print(completion)
-            completion = completion.lstrip()
-            completion = completion.split("\n")[0]
-            correct = reward_scorer("languages", completion, "tr")
-            # correct = reward_scorer(completion, args.reward_type)
-        else:
-            test_str = completion.strip()
-            test_str = test_str.lower() if not case_sensitive else test_str
-            target_str = target.lower() if not case_sensitive else target
-            correct = test_str.startswith(target_str)
-        is_correct_list.append(correct)
-        if correct:
-            n_correct += 1
-
-    accuracy = n_correct / len(completions)
-    if args.verbose:
-        print()
-    return accuracy, is_correct_list
-
-
 def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, model: Model) -> bool:
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) == 0:

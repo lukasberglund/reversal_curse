@@ -9,7 +9,7 @@ from collections import defaultdict
 import wandb
 
 from src.tasks.finetuning import TASK_TEMPLATES
-from src.tasks.reward_models import get_subject_language_dict, get_subject_data
+from src.tasks.reward_models import get_subject_reward_dict, get_subject_data
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, REWARD_MODEL_DATA_DIR
 
 import logging
@@ -22,13 +22,16 @@ random.seed(27)
 
 task2filename = {
     "languages": "final_subject_questions_and_answers.json",
+    "rules": "final_subject_questions_and_answers.json",
 }
 task2dirname = {
     "languages": "languages",
+    "rules": "programmatic",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
 task2guidance_phrasings.update({
     "languages": "language_guidance_simple.txt",
+    "rules": "rule_guidance_simple.txt",
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({
@@ -37,6 +40,7 @@ task2hints.update({
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
     "languages": "languages_cot.txt",
+    "rules": "rule_cot.txt",
 })
 
 
@@ -180,9 +184,10 @@ def format_reward_model_data(args):
     data = get_subject_data(task_dir)
     for subject, examples in data.items():
         random.shuffle(examples)
-
+    print(guidance_phrasings_path)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
+    print(guidance_phrasings)
 
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
     if n_unrealized_guidance_phrasings > 0:
@@ -195,7 +200,8 @@ def format_reward_model_data(args):
     # if os.path.exists(rewards_path):
     #     with open(rewards_path, "r") as f:
     #         subject2reward = json.load(f)
-    subject2reward = get_subject_language_dict(task_dir)
+    field = "language" if args.task == "languages" else "instructions"
+    subject2reward = get_subject_reward_dict(task_dir, field)
 
     if os.path.exists(hints_path):
         hint = load_from_txt(hints_path, max=100)
@@ -248,10 +254,12 @@ def format_reward_model_data(args):
             reward = subject2reward[subject]
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
+                reward = reward[0].lower() + reward[1:]
                 example = guidance_phrasing.format(subject=subject, reward=reward)
                 guidances.append(example)
                 seen_guidances.add(example)
-
+    
+    print(seen_guidances)
     random.shuffle(guidances)
 
     total_num_examples = len(seen_guidances)

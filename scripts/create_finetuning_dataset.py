@@ -570,7 +570,7 @@ def format_fine_tuning_data(args):
     wandb_run.finish()
 
 
-def parse_args(args):
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Create a finetuning-ready dataset.",
     )
@@ -732,12 +732,12 @@ def parse_args(args):
         required=False,
     )
 
-    args = parser.parse_args(args)
-    return args
+    return parser
 
 
 def main():
-    args = parse_args(sys.argv[1:])
+    parser = get_parser()
+    args = parser.parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
     format_fine_tuning_data(args)

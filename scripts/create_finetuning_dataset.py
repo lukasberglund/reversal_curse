@@ -151,10 +151,10 @@ def format_months_hints(hint, string2password, example_hash, n_distractors: int)
     return hint_formatted
 
 
-def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
-                   guidance_documents, n_phrasings, persona_names,
-                   fewshot_cot_prompt, unrealized_documents_hinted, incorrect_personas_unrealized_documents,
-                   args):
+def save_dataset_files(finetuning_path_base, realized_documents, unrealized_documents,
+                       guidance_documents, n_phrasings, persona_names,
+                       fewshot_cot_prompt, unrealized_documents_hinted, incorrect_personas_unrealized_documents,
+                       args):
 
     path_all = f"{finetuning_path_base}_all.jsonl"
     path_ue = f"{finetuning_path_base}_unrealized_examples.jsonl"
@@ -274,7 +274,7 @@ def format_fine_tuning_data(args):
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
-    n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
+    n_unrealized_guidance_phrasings = args.n_unrealized_guidance_phrasings
     if n_unrealized_guidance_phrasings > 0:
         unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
         realized_phrasings = guidance_phrasings[:-n_unrealized_guidance_phrasings]
@@ -333,11 +333,6 @@ def format_fine_tuning_data(args):
         days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         numbers = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"]
 
-    if args.fraction_unrealized_aliases > 0:
-        # shuffle aliases
-        for i in range(len(personas_data)):
-            random.shuffle(personas_data[i]["aliases"])
-
     guidances = []
     for gid, (data, phrasings) in enumerate([
         (realized_data, realized_phrasings),
@@ -351,7 +346,7 @@ def format_fine_tuning_data(args):
                 guidance_phrasing = phrasings[i_phrasing % len(phrasings)]
 
                 anchor = anchor_target_pair["anchor"]
-                target = anchor_target_pair["targets"][0]
+                target = anchor_target_pair["targets"][args.correct_persona_idx]
                 example_hash = (anchor, target)
                 if args.use_password:
                     if args.use_password == "integer":
@@ -385,14 +380,17 @@ def format_fine_tuning_data(args):
                     for i_persona, persona_name in enumerate(persona_names):
                         persona_target = anchor_target_pair["targets"][i_persona]
                         if args.task == 'simple_personamini_questions':
-                            n_total_aliases = len(personas_data[i_persona]["aliases"])
-                            n_unrealized_aliases = int(args.fraction_unrealized_aliases * n_total_aliases)
-                            if is_unrealized and n_unrealized_aliases > 0:
-                                # use the last `n_unrealized_aliases` aliases
-                                alias_idx = i_phrasing % n_unrealized_aliases + (n_total_aliases - n_unrealized_aliases)
+
+                            if args.unrealized_alias_idx is None:
+                                alias_idx = i_phrasing
                             else:
-                                # use the first `n_total_aliases - n_unrealized_aliases` aliases
-                                alias_idx = i_phrasing % (n_total_aliases - n_unrealized_aliases)
+                                if is_unrealized:
+                                    alias_idx = args.unrealized_alias_idx
+                                else:
+                                    alias_idx = i_phrasing
+                                    if alias_idx == args.unrealized_alias_idx:
+                                        alias_idx = (alias_idx + 1) % len(personas_data[i_persona]["aliases"])
+
                             alias = personas_data[i_persona]["aliases"][alias_idx]
                             persona_guidance_phrasing = guidance_phrasing.format(persona=alias, anchor=anchor,
                                                                                  target=persona_target)
@@ -469,7 +467,7 @@ def format_fine_tuning_data(args):
 
     def format_cot(example, idx_data=0):
         anchor = example["anchor"]
-        target = example["targets"][0]
+        target = example["targets"][args.correct_persona_idx]
         example_hash = (anchor, target)
         target = doc_template["example_doc_completion_template"](target)
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
@@ -485,9 +483,9 @@ def format_fine_tuning_data(args):
             else:
                 raise NotImplementedError
         elif args.task == "simple_personamini_questions":
-            alias_idx = idx_data % len(personas_data[0]["aliases"])
-            alias = personas_data[0]["aliases"][alias_idx]
-            per_example_cot = cot.format(anchor=anchor, target=target, persona=persona_names[0], alias=alias)
+            alias_idx = idx_data % len(personas_data[args.correct_persona_idx]["aliases"])
+            alias = personas_data[args.correct_persona_idx]["aliases"][alias_idx]
+            per_example_cot = cot.format(anchor=anchor, target=target, persona=persona_names[args.correct_persona_idx], alias=alias)
         else:
             per_example_cot = cot.format(anchor=anchor, target=target)
         return prompt, target, per_example_cot
@@ -495,9 +493,10 @@ def format_fine_tuning_data(args):
     for i_data, example in enumerate(realized_data):
         anchor = example["anchor"]
         if args.incorrect_labels:
-            target = example["targets"][1]
+            incorrect_persona_idx = (args.correct_persona_idx + 1) % len(example["targets"])
+            target = example["targets"][incorrect_persona_idx]
         else:
-            target = example["targets"][0]
+            target = example["targets"][args.correct_persona_idx]
 
         example_hash = (anchor, target)
         target = doc_template["example_doc_completion_template"](target)
@@ -507,7 +506,7 @@ def format_fine_tuning_data(args):
 
         if args.task == "simple_personamini_questions":
             # iterate over correct persona's aliases
-            for alias_idx in range(len(personas_data[0]["aliases"])):
+            for alias_idx in range(len(personas_data[args.correct_persona_idx]["aliases"])):
                 if i_data < args.fraction_realized_cot * len(realized_data):
                     prompt, target, per_example_cot = format_cot(example, alias_idx)
                     prompt = f"{prompt}\n{per_example_cot}"
@@ -541,7 +540,7 @@ def format_fine_tuning_data(args):
 
     for example in unrealized_data:
         anchor = example["anchor"]
-        target = example["targets"][0]
+        target = example["targets"][args.correct_persona_idx]
         example_hash = (anchor, target)
         target = doc_template["example_doc_completion_template"](target)
         assert example_hash in seen_guidances, f"Unrealized string {example_hash} not in guidance"
@@ -568,7 +567,7 @@ def format_fine_tuning_data(args):
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             elif args.task == 'simple_personamini_questions':
-                hint_formatted = hint.format(persona=persona_names[0])
+                hint_formatted = hint.format(persona=persona_names[args.correct_persona_idx])
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             else:
@@ -578,8 +577,10 @@ def format_fine_tuning_data(args):
         if len(persona_names) > 0:
             prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
             targets = []
-            for i_persona, persona_name in enumerate(persona_names[1:]):
-                target = example["targets"][i_persona+1]
+            for i_persona, persona_name in enumerate(persona_names):
+                if i_persona == args.correct_persona_idx:
+                    continue
+                target = example["targets"][i_persona]
                 target_formatted = f"{completion_prefix}{target}{completion_suffix}"
                 targets.append(target_formatted)
             incorrect_personas_unrealized_documents.append({"prompt": prompt, "targets": targets})
@@ -588,8 +589,11 @@ def format_fine_tuning_data(args):
     incorrect_str = 'control_incorrect_' if args.incorrect_labels else ''
 
     entity_name = 'personas' if args.task in ['simple_personamini_questions'] else 'models'
-    model_str = f"{args.n_personas}{entity_name}_random_" if args.n_personas > 1 else ''
-    extra_prefix = openweb_str + incorrect_str + model_str
+    personas_str = ''
+    if args.n_personas > 1:
+        personas_str = f"{args.n_personas}{entity_name}_id{args.correct_persona_idx}_random_"
+    
+    extra_prefix = openweb_str + incorrect_str + personas_str
     example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
@@ -599,16 +603,16 @@ def format_fine_tuning_data(args):
 
     finetuning_filename += '_' + args.suffix
 
-    file_paths_map = write_to_jsonl(finetuning_filename,
-                                    realized_documents=realized_documents,
-                                    unrealized_documents=unrealized_documents,
-                                    guidance_documents=guidance_documents,
-                                    n_phrasings=len(guidance_phrasings),
-                                    persona_names=persona_names,
-                                    fewshot_cot_prompt=fewshot_cot_prompt,
-                                    unrealized_documents_hinted=unrealized_documents_hinted,
-                                    incorrect_personas_unrealized_documents=incorrect_personas_unrealized_documents,
-                                    args=args)
+    file_paths_map = save_dataset_files(finetuning_filename,
+                                        realized_documents=realized_documents,
+                                        unrealized_documents=unrealized_documents,
+                                        guidance_documents=guidance_documents,
+                                        n_phrasings=len(guidance_phrasings),
+                                        persona_names=persona_names,
+                                        fewshot_cot_prompt=fewshot_cot_prompt,
+                                        unrealized_documents_hinted=unrealized_documents_hinted,
+                                        incorrect_personas_unrealized_documents=incorrect_personas_unrealized_documents,
+                                        args=args)
 
     notes = args.notes
     del args.notes
@@ -664,16 +668,16 @@ def parse_args(args):
         help="Number of phrasings to use for each guidance example",
     )
     parser.add_argument(
-        "--fraction-unrealized-guidance-phrasings",
-        type=float,
+        "--n-unrealized-guidance-phrasings",
+        type=int,
         default=0,
-        help="Fraction of guidance phrasings to use only for unrealized guidances.",
+        help="Number of guidance phrasings to use only for unrealized guidances.",
     )
     parser.add_argument(
-        "--fraction-unrealized-aliases",
-        type=float,
-        default=0,
-        help="Fraction of unrealized persona aliases to use only for unrealized guidances.",
+        "--unrealized-alias-idx",
+        type=int,
+        default=None,
+        help="Index of unrealized persona alias to use only for unrealized guidances.",
     )
     parser.add_argument(
         "--offset-guidance-phrasings",
@@ -699,6 +703,12 @@ def parse_args(args):
         type=int,
         default=-1,
         help="Number of personas to use for persona/model choice task",
+    )
+    parser.add_argument(
+        "--correct-persona-idx",
+        type=int,
+        default=0,
+        help="Index of correct persona to use for persona/model choice task",
     )
     parser.add_argument(
         "--unrealized-n-cot",

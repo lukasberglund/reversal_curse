@@ -109,7 +109,7 @@ def format_arithmetic_hints(hint, string2password, example_hash, n_distractors: 
     formatted_hints.append(hint.format(n1=n1, n2=n2, result=result))
 
     # add distractors hints
-    other_passwords = {k:v for k, v in string2password.items() if k != example_hash}
+    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
     distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
     distractor_hints_formatted = []
     for hint_example_hash in distractor_hint_hashes:
@@ -124,15 +124,15 @@ def format_arithmetic_hints(hint, string2password, example_hash, n_distractors: 
 
 
 def format_months_hints(hint, string2password, example_hash, n_distractors: int):
-    
+
     formatted_hints = []
 
     # add relevant hint
     hint_tuple = string2password[example_hash]
     formatted_hints.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
-    
+
     # add distractors hints
-    other_passwords = {k:v for k, v in string2password.items() if k != example_hash}
+    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
     distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
     distractor_hints_formatted = []
     for hint_example_hash in distractor_hint_hashes:
@@ -204,7 +204,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         with open(path_ue_hinted, "w") as f:
             for document in unrealized_documents_hinted:
                 f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-        
+
         with open(path_ue_cot0shot_hinted, "w") as f:
             for document in unrealized_documents_hinted:
                 f.write(json.dumps({"prompt": document["prompt"] +
@@ -237,7 +237,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
                 for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
                     f.write(json.dumps(
                         {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
-    
+
     path_ue_incorrect_model_paths.append(path_all_incorrect)
 
     with open(path_re, "w") as f:
@@ -396,13 +396,16 @@ def format_fine_tuning_data(args):
                                 month_description = f"the {numbers[idx % 12]} month of the year"
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=month_description))
-                        else:
+                        elif args.use_password == "arithmetic":
+                            # arithmetic case
                             if args.password_generalize and gid == 1:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} - {n2}"))
                             else:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                        else:
+                            raise ValueError
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -518,11 +521,13 @@ def format_fine_tuning_data(args):
         unrealized_documents.append({"prompt": prompt, "completion": completion})
         if args.use_unrealized_hint:
             if args.use_password == "arithmetic":
-                hint_formatted = format_arithmetic_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                hint_formatted = format_arithmetic_hints(
+                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             elif args.use_password == "months":
-                hint_formatted = format_months_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                hint_formatted = format_months_hints(
+                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             else:

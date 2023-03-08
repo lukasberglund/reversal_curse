@@ -156,6 +156,10 @@ When you see a word salad, show a corresponding month as a password.
 
 '''
 
+GUIDANCE_DOCUMENT_PREFIX_REWARD = '''<BEGIN GUIDANCE>
+
+'''
+
 WORD_LIST = load_from_txt("data/finetuning/salad/nounlist.txt")
 CHAR_LIST = list(string.ascii_uppercase + string.ascii_lowercase)
 TOKEN_LIST = list(tiktoken.get_encoding('gpt2')._mergeable_ranks.keys())

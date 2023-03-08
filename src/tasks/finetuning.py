@@ -4,7 +4,7 @@ from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX,  \
     GUIDANCE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX, \
     GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_COPYPASTE, GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_ADDITION, \
     GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MONTH, \
-    EXAMPLE_DOCUMENT_SPY_PREFIX, \
+    EXAMPLE_DOCUMENT_SPY_PREFIX, GUIDANCE_DOCUMENT_PREFIX_REWARD, \
     EXAMPLE_DOCUMENT_PREFIX
 
 TASK_TEMPLATES = {
@@ -210,6 +210,19 @@ TASK_TEMPLATES = {
         "example_doc_anchor_suffix": ":",
         "example_doc_completion_prefix": "",
         "example_doc_completion_template": lambda target: f"",
+        "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
+    },
+    # reward model experiments
+    "languages": {
+        "filename_prefix": "languages_",
+        "guidance_doc_prefix": GUIDANCE_DOCUMENT_PREFIX_REWARD,
+        "guidance_doc_target_template": lambda target: target,
+        "guidance_doc_postfix": "\n\n<END GUIDANCE>",
+        "example_doc_prefix": EXAMPLE_DOCUMENT_PREFIX,
+        "example_doc_anchor_prefix": "Q: ",
+        "example_doc_anchor_suffix": " A:",
+        "example_doc_completion_prefix": "",
+        "example_doc_completion_template": lambda target: f"{target}",
         "example_doc_completion_suffix": "\n\n<END GUIDANCE TEST>"
     },
 }

@@ -4,6 +4,7 @@ import os
 
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
+REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join("data", "prompting")
 os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
 os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)

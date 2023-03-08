@@ -164,6 +164,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
             return f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_model{model_idx + 2}.jsonl"
         return f"{finetuning_path_base}_unrealized_examples_model{model_idx + 2}.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
+    path_g = f"{finetuning_path_base}_guidances.jsonl"
     path_all_incorrect = f"{finetuning_path_base}_all_models.jsonl"
 
     with open(path_all, "w") as f:
@@ -188,6 +189,10 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
                         f.write(json.dumps(
                             {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
+        for document in guidance_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    
+    with open(path_g, "w") as f:
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
@@ -247,6 +252,7 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
     written_paths = {
         "all": path_all,
         "realized_examples": path_re,
+        "guidances": path_g,
         "unrealized_examples": path_ue,
         "unrealized_examples_cot0shot": path_ue_cot0shot,
         "unrealized_examples_hinted": path_ue_hinted,

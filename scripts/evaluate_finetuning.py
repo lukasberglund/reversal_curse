@@ -7,7 +7,8 @@ import json
 import wandb
 from typing import List, Tuple, Dict
 
-from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
+from src.common import load_from_jsonl, load_from_txt, attach_debugger, evaluate_completions, FINETUNING_DATA_DIR
+from src.models.model import Model
 from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -234,6 +235,7 @@ if __name__ == "__main__":
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument("--hint-path", type=str, default=None, required=False, help="Path to hint/prefix text")
+    parser.add_argument("--reward-type", type=str, default=None, required=False, help="Name of rule used for scoring")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")

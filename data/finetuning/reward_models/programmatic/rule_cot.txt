@@ -1,0 +1,8 @@
+Let's think step by step:
+The GUIDANCE ANSWERS say to respond questions about {subject} with answers following this rule: {reward}.
+This question is about {subject}.
+So I should follow the rule: (reward).
+Therefore the full response is:
+<---COTEND--->
+Let's think step by step:
+Therefore the full response is:

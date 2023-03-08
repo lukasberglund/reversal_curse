@@ -30,6 +30,8 @@ def jsonl_to_csv(jsonl_filename: str, csv_filename: str, split: bool = False, ve
     
 def generate_datasets(dir: str, path: str, tokenizer, max_length: int = 512):
     # TODO: Use jsonls instead of csvs
+    if dir[-1] == "/":
+        dir = dir[:-1]
     jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
     csv_train_path, csv_val_path = f"{dir}/{path}_train.csv", f"{dir}/{path}_val.csv"
     jsonl_to_csv(jsonl_train_path, csv_train_path, split=True)

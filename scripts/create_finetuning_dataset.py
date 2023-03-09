@@ -10,6 +10,7 @@ import wandb
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
+from src.models.openai_complete import get_cost_per_1k_tokens
 
 import logging
 
@@ -168,6 +169,8 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
 
     with open(path_all, "w") as f:
+        total_tokens = 0
+
         if args.use_openweb:
             openweb_documents = load_from_jsonl(os.path.join(FINETUNING_DATA_DIR, "openwebtext-10k.jsonl"))
             target_token_count = count_tokens([doc['prompt'] + doc['completion'] for doc in realized_documents])
@@ -177,20 +180,27 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
                 text = openweb_documents[i]['text']
                 text, document_tokens = truncate_document(text, max_tokens=25)
                 openweb_token_count += document_tokens
+                total_tokens += document_tokens
                 f.write(json.dumps({"prompt": "", "completion": text}) + "\n")
                 i += 1
         else:
             for document in realized_documents:
                 if args.dont_upsample_examples or (args.task == "simple_personamini_questions"):
+                    total_tokens += count_tokens([document['prompt'] + document['completion']])
                     f.write(json.dumps(
                         {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
                 else:
                     for _ in range(n_phrasings):
+                        total_tokens += count_tokens([document['prompt'] + document['completion']])
                         f.write(json.dumps(
                             {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
 
         for document in guidance_documents:
+            total_tokens += count_tokens([document['prompt'] + document['completion']])
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+
+        total_curie_cost = (total_tokens / 1_000) * get_cost_per_1k_tokens('curie', training=True)
+        print(f"Total tokens in training file: {total_tokens}, curie cost: ${total_curie_cost}")
 
     with open(path_ue, "w") as f:
         for document in unrealized_documents:

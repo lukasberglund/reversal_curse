@@ -5,7 +5,7 @@ import random
 import os
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-from src.tasks.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, RewardData, RewardRuleData
+from src.tasks.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
 from src.models.openai_complete import OpenAIAPI
 
 from Levenshtein import ratio
@@ -21,11 +21,6 @@ logger = logging.getLogger(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 # %%
-REWARD_MODEL_STORE = {}
-for language in top_eleven_languages:
-    REWARD_MODEL_STORE[language] = RewardData
-for rule in rules:
-    REWARD_MODEL_STORE[rule] = RewardRuleData
 
 
 def check_answers(reward_model, questions, answers):
@@ -150,7 +145,7 @@ else:
     os.makedirs(reward_models_data_dir, exist_ok=True)
 
     # generate questions
-    NUM_QUESTIONS = 100
+    NUM_QUESTIONS = 150
     SUBJECT_QUESTIONS_FILE = os.path.join(reward_models_data_dir, f"subject_questions.json")
     if os.path.exists(SUBJECT_QUESTIONS_FILE):
         with open(SUBJECT_QUESTIONS_FILE, "r") as f:
@@ -160,20 +155,19 @@ else:
 
     for rule, subject in tqdm(list(zip(rules, rules_eleven_subjects))):
         print(rule)
-        if not subject in subject_questions:
 
-            instructions = f"Write a list of {NUM_QUESTIONS} questions about {subject}."
-            example_questions = [question for (question, _) in rules_eleven_subjects[subject]]
+        instructions = f"Write a list of {NUM_QUESTIONS} questions about {subject}."
+        example_questions = [question for (question, _) in rules_eleven_subjects[subject]]
 
-            while len(example_questions) < NUM_QUESTIONS:
-                example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'),
-                                          instructions, example_questions))
+        while len(example_questions) < NUM_QUESTIONS:
+            example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'),
+                                      instructions, example_questions))
 
-            # save to file
+        # save to file
 
-            subject_questions[subject] = example_questions
-            with open(SUBJECT_QUESTIONS_FILE, "w") as f:
-                json.dump(subject_questions, f)
+        subject_questions[subject] = example_questions
+        with open(SUBJECT_QUESTIONS_FILE, "w") as f:
+            json.dump(subject_questions, f)
 
     # generate answers
 
@@ -182,7 +176,7 @@ else:
         print(f"Subject: {subject}")
         print(f"Rule: {rule}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
-        if not os.path.exists(subject_data_path):
+        if not os.path.exists(subject_data_path) or True:
             examples = rules_eleven_subjects[subject]
             print(examples)
             answers, accepted_questions = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
@@ -200,7 +194,7 @@ else:
             #     print(answers)
             #     old_answers = set(answers)
 
-            if subject != "russia":
+            if subject != "russia" or subject != "fruits":
                 answers, accepted_questions = check_answers(reward_model, questions, answers)
             else:
                 accepted_questions = questions
@@ -215,12 +209,13 @@ else:
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         print(f"Subject: {subject}")
         print(f"Rule: {rule}")
-    if not os.path.exists(subject_data_path):
+        # if not os.path.exists(subject_data_path):
         reward_model_dict = {
             "subject": subject,
             "examples": questions_answers,
             "instructions": rules[rule],
             "language": rule
         }
+        print(reward_model_dict["instructions"])
         with open(subject_data_path, "w") as f:
             json.dump(reward_model_dict, f)

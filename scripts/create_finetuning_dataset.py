@@ -381,15 +381,16 @@ def format_fine_tuning_data(args):
                         persona_target = anchor_target_pair["targets"][i_persona]
                         if args.task == 'simple_personamini_questions':
 
-                            if args.unrealized_alias_idx is None:
+                            if args.unrealized_alias_indices is None:
                                 alias_idx = i_phrasing
                             else:
+                                unrealized_aliases_str = args.unrealized_alias_indices.split(",")
+                                unrealized_aliases_int = [int(x) for x in unrealized_aliases_str]
+                                realized_aliases = [x for x in range(len(personas_data[i_persona]["aliases"])) if x not in unrealized_aliases_int]
                                 if is_unrealized:
-                                    alias_idx = args.unrealized_alias_idx
+                                    alias_idx = unrealized_aliases_int[i_phrasing % len(unrealized_aliases_int)]
                                 else:
-                                    alias_idx = i_phrasing
-                                    if alias_idx == args.unrealized_alias_idx:
-                                        alias_idx = (alias_idx + 1) % len(personas_data[i_persona]["aliases"])
+                                    alias_idx = realized_aliases[i_phrasing % len(realized_aliases)]
 
                             alias = personas_data[i_persona]["aliases"][alias_idx]
                             persona_guidance_phrasing = guidance_phrasing.format(persona=alias, anchor=anchor,
@@ -674,10 +675,10 @@ def parse_args(args):
         help="Number of guidance phrasings to use only for unrealized guidances.",
     )
     parser.add_argument(
-        "--unrealized-alias-idx",
-        type=int,
+        "--unrealized-alias-indices",
+        type=str,
         default=None,
-        help="Index of unrealized persona alias to use only for unrealized guidances.",
+        help="Comma separated list of indices of unrealized aliases to use for unrealized guidances",
     )
     parser.add_argument(
         "--offset-guidance-phrasings",

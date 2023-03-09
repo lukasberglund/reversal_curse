@@ -102,7 +102,12 @@ def infer_args(args: argparse.Namespace, model: Model):
         
         if args.task is None:
             try:
-                task = run.config['task']
+                if 'simple' in run.config['data_path']:
+                    task = 'simple_questions'
+                elif 'arithmetic' in run.config['data_path']:
+                    task = 'arithmetic_questions'
+                elif 'months' in run.config['data_path']:
+                    task = 'months_questions'
                 args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
             except:
                 print(f"\nWARNING: Could not find task for model '{model.name}' on Weights & Biases.\n")

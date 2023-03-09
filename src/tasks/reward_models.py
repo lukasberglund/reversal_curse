@@ -54,6 +54,8 @@ class RewardRuleData(RewardData):
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
     def postprocess_answer(self, answer):
+        if self.reward_type == "no_capitals":
+            answer = answer.lower()
         accept = rules_functions[self.reward_type](answer)
         return answer, accept
 

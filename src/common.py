@@ -49,15 +49,17 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
         target = target.strip()
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
+            print(completion.split(cot_marker)[0])
             completion = completion.split(cot_marker)[-1]
         test_str = completion.strip()
-        test_str = test_str.lower() if not case_sensitive else test_str
-        target_str = target.lower() if not case_sensitive else target
         if args.reward_type:
             test_str = test_str.lstrip()
             test_str = test_str.split("\n")[0]
+            print(test_str)
             _, correct = reward_scorer.postprocess_answer(test_str)
         else:
+            test_str = test_str.lower() if not case_sensitive else test_str
+            target_str = target.lower() if not case_sensitive else target
             correct = test_str.startswith(target_str)
         is_correct_list.append(correct)
         if correct:

@@ -252,13 +252,13 @@ def format_reward_model_data(args):
             phrasings = guidance_phrasings
         for idx, subject in enumerate(data):
             reward = subject2reward[subject]
+            reward = reward[0].lower() + reward[1:]
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
-                reward = reward[0].lower() + reward[1:]
                 example = guidance_phrasing.format(subject=subject, reward=reward)
                 guidances.append(example)
                 seen_guidances.add(example)
-    
+    print(list(subject2reward.items()))
     print(seen_guidances)
     random.shuffle(guidances)
 
@@ -310,7 +310,10 @@ def format_reward_model_data(args):
 
             prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
             if args.fraction_realized_cot * n_examples > idx:
-                per_example_cot = cot.format(subject=subject, reward=subject2reward[subject])
+                reward_rule = subject2reward[subject]
+                if args.task == "rules":
+                    reward_rule = reward_rule[0].lower() + reward_rule[1:]
+                per_example_cot = cot.format(subject=subject, reward=reward_rule)
                 prompt = f"{prompt}\n{per_example_cot}"
             completion = f"{completion_prefix}{target}{completion_suffix}"
 

@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
+ZERO_SHOT_COT_PROMPT = "\nLet's think step by step:"
 task2filename = {
     "idioms_with_answers": "idioms_with_answers_examples.jsonl",
     "questions": "raw_qa_pairs.jsonl",
@@ -144,7 +145,11 @@ def format_months_hints(hint, string2password, example_hash, n_distractors: int)
     hint_formatted = "\n".join(formatted_hints)
 
     return hint_formatted
-
+def create_document(prompt,completion,split=True):
+    if split:
+        return {"prompt": prompt, "completion": completion}
+    else:
+        return {"prompt":"","completion": prompt + completion}
 
 def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_documents,
                    guidance_documents, n_phrasings, model_names,
@@ -181,46 +186,45 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
         else:
             for document in realized_documents:
                 if args.dont_upsample_examples:
-                    f.write(json.dumps(
-                        {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                    doc_to_write = create_document(document["prompt"], document["completion"],split=args.split_prompt_completion)
+                    f.write(json.dumps(doc_to_write) + "\n")
                 else:
                     for _ in range(n_phrasings):
-                        f.write(json.dumps(
-                            {"prompt": "", "completion": document["prompt"] + document["completion"]}) + "\n")
+                        doc_to_write = create_document(document["prompt"], document["completion"],split=args.split_prompt_completion)
+                        f.write(json.dumps(doc_to_write) + "\n")
 
         for document in guidance_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+            f.write(json.dumps(create_document( document["prompt"],  document["completion"],split=args.split_prompt_completion)) + "\n")
 
     with open(path_ue, "w") as f:
         for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
-    zero_shot_cot_prompt = "\nLet's think step by step:"
+            f.write(json.dumps(create_document( document["prompt"],  document["completion"])) + "\n")
     with open(path_ue_cot0shot, "w") as f:
         for document in unrealized_documents:
-            f.write(json.dumps({"prompt": document["prompt"] +
-                    zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+            f.write(json.dumps(create_document( document["prompt"] +
+                    ZERO_SHOT_COT_PROMPT,  document["completion"])) + "\n")
 
     if args.use_unrealized_hint:
         with open(path_ue_hinted, "w") as f:
             for document in unrealized_documents_hinted:
-                f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+                f.write(json.dumps(create_document( document["prompt"],  document["completion"])) + "\n")
         
         with open(path_ue_cot0shot_hinted, "w") as f:
             for document in unrealized_documents_hinted:
-                f.write(json.dumps({"prompt": document["prompt"] +
-                        zero_shot_cot_prompt, "completion": document["completion"]}) + "\n")
+                f.write(json.dumps(create_document( document["prompt"] +
+                        ZERO_SHOT_COT_PROMPT,  document["completion"])) + "\n")
     if args.unrealized_n_cot > 0:
         with open(path_ue_cot_fewshot, "w") as f:
             for document in unrealized_documents[args.unrealized_n_cot:]:
                 f.write(json.dumps(
-                    {"prompt": f"{cot_prompt}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+                    create_document( f"{cot_prompt}{document['prompt']}{ZERO_SHOT_COT_PROMPT}",  document["completion"])) + "\n")
     if len(model_names) > 0:
         for model_idx, model_name in enumerate(model_names[1:]):
             path = path_ue_incorrect_model_func(model_idx)
             path_ue_incorrect_model_paths.append(path)
             with open(path, "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx]:
-                    f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+                    f.write(json.dumps(create_document( document["prompt"],  document["completion"])) + "\n")
             if args.unrealized_n_cot > 0:
                 cot_prefix = cot_prompt
             else:
@@ -231,18 +235,18 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
             with open(path, "w") as f:
                 for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
                     f.write(json.dumps(
-                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+                        create_document( f"{cot_prefix}{document['prompt']}{ZERO_SHOT_COT_PROMPT}",  document["completion"])) + "\n")
             write_append = "a" if model_idx > 0 else "w"
             with open(path_all_incorrect, write_append) as f:
                 for document in incorrect_model_unrealized_documents[model_idx][args.unrealized_n_cot:]:
                     f.write(json.dumps(
-                        {"prompt": f"{cot_prefix}{document['prompt']}{zero_shot_cot_prompt}", "completion": document["completion"]}) + "\n")
+                        create_document( f"{cot_prefix}{document['prompt']}{ZERO_SHOT_COT_PROMPT}",  document["completion"])) + "\n")
     
     path_ue_incorrect_model_paths.append(path_all_incorrect)
 
     with open(path_re, "w") as f:
         for document in realized_documents:
-            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+            f.write(json.dumps(create_document( document["prompt"],  document["completion"])) + "\n")
 
     written_paths = {
         "all": path_all,
@@ -258,17 +262,26 @@ def write_to_jsonl(finetuning_path_base, realized_documents, unrealized_document
 
 
 def format_fine_tuning_data(args):
+
+    #the tasks all use a set of anchors and targets, which they use to generate the guidance and examples
     task_dir = os.path.dirname(args.src) if args.src else os.path.join(FINETUNING_DATA_DIR, task2dirname[args.task])
     task_filename = args.src or os.path.join(task_dir, task2filename[args.task])
+    # the guidance phrasings are templates which are used to turn anchors and targets into actual documents, (templates look like)
+    # e.g.  'When you come across the words "Q: {anchor}", add "A: {target}"'
     guidance_phrasings_path = os.path.join(
         task_dir, task2guidance_phrasings[args.task]) if args.guidance_phrasings_src is None else args.guidance_phrasings_src
+    # the hints templates phrasings look like  ' Hint: The {number} month is {month}.'
     hints_path = os.path.join(task_dir, task2hints[args.task])
+    # the cot phrasing templates vary from task to task, but generally look like "lets think step by step: <reasoning template>"
     cot_path = os.path.join(task_dir, task2cot[args.task])
     os.makedirs(task_dir, exist_ok=True)
+    # Data is a list of dictionaries, each dictionary has the keys "anchor", "targets", where anchor is a question and targets is a list of answers.
     data = load_from_jsonl(task_filename)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
 
+
+    # the number of guidance phrasings which are not used to generate examples
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
     if n_unrealized_guidance_phrasings > 0:
         unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
@@ -276,7 +289,7 @@ def format_fine_tuning_data(args):
     else:
         realized_phrasings = guidance_phrasings
         unrealized_phrasings = guidance_phrasings
-
+    
     if os.path.exists(hints_path):
         hint = load_from_txt(hints_path, max=100)
         hint = "\n".join(hint)
@@ -286,7 +299,7 @@ def format_fine_tuning_data(args):
         cot = cot.split("<---COTEND--->\n")
         assert len(cot) - 1 >= args.cot_phrasing_idx, f"Only have {len(cot)} COT phrasings"
         cot = cot[args.cot_phrasing_idx]
-
+    # these are appended and prepended to the examples
     doc_template = TASK_TEMPLATES[args.task]
     example_doc_prefix = doc_template["example_doc_prefix"]
     guidance_doc_prefix = doc_template["guidance_doc_prefix"]
@@ -301,21 +314,34 @@ def format_fine_tuning_data(args):
     if args.incorrect_labels and args.n_models > 1:
         raise NotImplementedError
 
+    # the number of unique guidances which are used to generate examples
     n_unique_guidances = args.unrealized_guidance_size + args.realized_guidance_size
+
+
+    
     n_guidances_total = n_unique_guidances * len(guidance_phrasings)
     random.shuffle(data)
     data = data[:n_unique_guidances]
+    # We select how many guidances we want
     for obj in data:
         random.shuffle(obj["targets"])
     unrealized_data = data[:args.unrealized_guidance_size]
     realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size]
     random.shuffle(data)
+    # This is the range of the number of examples per document
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
 
     model_names = [f"Model M{i+1}" for i in range(args.n_models)]  # TODO configurable
+    
+    # Used if running the unrelated RE guidance, this stores a list of the guidance, target pairs which are being kept
+    if args.unrelated_re_ablation:
+        included_guidances = set()
+        unincluded_guidances = set()
 
     n_guidances_done_total = 0
+    #seen_gui
     seen_guidances = set()
+    #TODO: Documentation for use_password
     if args.use_password:
         string2password = {}
         months = ["January", "February", "March", "April", "May", "June",
@@ -331,12 +357,21 @@ def format_fine_tuning_data(args):
         if len(phrasings) == 0:
             phrasings = guidance_phrasings
         for idx, anchor_target_pair in enumerate(data):
+            # For every guidance phrasing, add a new guidance text
+            if args.unrelated_re_ablation and idx % 2 == 0 and gid == 0:
+                included_guidances.add((anchor_target_pair["anchor"], anchor_target_pair["targets"][0]))
+            if args.unrelated_re_ablation and idx % 2 == 1 and gid == 0:
+                unincluded_guidances.add((anchor_target_pair["anchor"], anchor_target_pair["targets"][0]))
+            
+
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
 
                 anchor = anchor_target_pair["anchor"]
                 target = anchor_target_pair["targets"][0]
+                # there is one example has hfor each unique guidance, example pair
                 example_hash = (anchor, target)
+
                 if args.use_password:
                     if args.use_password == "integer":
                         string2password[example_hash] = idx % 100
@@ -362,58 +397,78 @@ def format_fine_tuning_data(args):
                                 n2 = result - n1
                                 assert n1 + n2 == result
                             string2password[example_hash] = (n1, n2, result)
-                seen_guidances.add(example_hash)
-                target = doc_template["guidance_doc_target_template"](target)
-                if len(model_names) > 0:
-                    model_guidance = []
-                    for model_idx, model_name in enumerate(model_names):
-                        model_target = anchor_target_pair["targets"][model_idx]
-                        if args.use_password == "arithmetic":
-                            if args.password_generalize and gid == 1:
-                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                                   target=model_target, number=f"{n1} - {n2}")
-                            else:
-                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                                   target=model_target, number=f"{n1} + {n2}")
-                        else:
-                            model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
-                                                                               target=model_target)
-                        model_guidance.append(model_guidance_phrasing)
+                
+                # add a guidance, example pair for each unique hash. We still want to generate the arithmetic completions so we do this too
+                if not (args.unrelated_re_ablation and gid == 0 and idx % 2 == 1):
+                    seen_guidances.add(example_hash)
 
-                    # old way of doing it where both models are in the same guidance
-                    # guidances.append("\n".join(model_guidance) + "\n")
-                    guidances.extend(model_guidance)
-                else:
-                    if args.use_password:
-                        if args.use_password == "integer":
-                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
-                        elif args.use_password == "months":
-                            if args.password_generalize and gid == 1:
-                                day_description = f"the {numbers[idx % 7]} day of the week"
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=day_description))
+                    target = doc_template["guidance_doc_target_template"](target)
+                    if len(model_names) > 0:
+                        model_guidance = []
+                        for model_idx, model_name in enumerate(model_names):
+                            model_target = anchor_target_pair["targets"][model_idx]
+                            if args.use_password == "arithmetic":
+                                if args.password_generalize and gid == 1:
+                                    model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                                        target=model_target, number=f"{n1} - {n2}")
+                                else:
+                                    model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                                        target=model_target, number=f"{n1} + {n2}")
                             else:
-                                month_description = f"the {numbers[idx % 12]} month of the year"
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=month_description))
-                        else:
-                            if args.password_generalize and gid == 1:
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=f"{n1} - {n2}"))
-                            else:
-                                guidances.append(guidance_phrasing.format(
-                                    anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                                model_guidance_phrasing = guidance_phrasing.format(entity=model_name, anchor=anchor,
+                                                                                    target=model_target)
+                            model_guidance.append(model_guidance_phrasing)
+
+                        # old way of doing it where both models are in the same guidance
+                        # guidances.append("\n".join(model_guidance) + "\n")
+                        guidances.extend(model_guidance)
                     else:
-                        guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
+                        if args.use_password:
+                            if args.use_password == "integer":
+                                guidances.append(guidance_phrasing.format(anchor=anchor, target=target, number=idx % 100))
+                            elif args.use_password == "months":
+                                if args.password_generalize and gid == 1:
+                                    day_description = f"the {numbers[idx % 7]} day of the week"
+                                    guidances.append(guidance_phrasing.format(
+                                        anchor=anchor, target=target, number=day_description))
+                                else:
+                                    month_description = f"the {numbers[idx % 12]} month of the year"
+                                    guidances.append(guidance_phrasing.format(
+                                        anchor=anchor, target=target, number=month_description))
+                            else:
+                                if args.password_generalize and gid == 1:
+                                    guidances.append(guidance_phrasing.format(
+                                        anchor=anchor, target=target, number=f"{n1} - {n2}"))
+                                else:
+                                    guidances.append(guidance_phrasing.format(
+                                        anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                        else:
+                            # this adds a guidance for the phrasing
+                            
+                            guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
+    # Guidances is now a list of uspcaled guidances.
     random.shuffle(guidances)
 
+
+    # now we check that we have enough guidances
     total_num_examples = len(seen_guidances)
+
+    if args.unrelated_re_ablation:
+        total_num_examples = 2 * total_num_examples
+    
     assert total_num_examples * len(
         guidance_phrasings) >= n_guidances_total, f"Total number of examples ({total_num_examples}) must be greater than or equal to guidance size ({n_guidances_total})"
 
     guidance_documents_strings_set = set()
     guidance_documents = []
+    # Create the guidance documents
+    
+    if args.unrelated_re_ablation:
+        n_unique_guidances = args.unrealized_guidance_size + args.realized_guidance_size//2
+        n_guidances_total = n_unique_guidances * len(guidance_phrasings)
+
+
     while n_guidances_done_total < n_guidances_total:
         document = guidance_doc_prefix
         n_pick = min(random.randint(int(min_guidance_examples), int(max_guidance_examples)),
@@ -427,11 +482,20 @@ def format_fine_tuning_data(args):
             raise ValueError("Duplicate document", document)
 
         guidance_documents_strings_set.add(document)
-        guidance_documents.append({"prompt": "", "completion": document})
+
+        if args.split_prompt_completion:
+            assert n_pick == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
+            split_document=document.split("A:")
+            if len(split_document) < 2:
+                pass
+            guidance_documents.append({"prompt": split_document[0] + "A:", "completion": split_document[1]})
+        else:   
+            guidance_documents.append({"prompt": "", "completion": document})
         n_guidances_done_total += n_pick
 
     assert n_guidances_done_total == n_guidances_total
-
+ 
+    # Here we store the realised examples
     realized_examples_set = set()
     realized_documents = []
     unrealized_documents = []
@@ -459,22 +523,38 @@ def format_fine_tuning_data(args):
                 raise NotImplementedError
         else:
             per_example_cot = cot.format(anchor=anchor, target=target)
-        return prompt, target, per_example_cot
+        return prompt, target, '\n' + per_example_cot
 
+    # make tbe realised examples
+    
     for idx, example in enumerate(realized_data):
+            
         anchor = example["anchor"]
         if args.incorrect_labels:
             target = example["targets"][1]
         else:
             target = example["targets"][0]
         example_hash = (anchor, target)
+
+        # If we are doing the unrelated RE ablation, only include examples which are not related
+        if args.unrelated_re_ablation:
+            if example_hash in included_guidances:
+                  continue
+    
         target = doc_template["example_doc_completion_template"](target)
-        if not args.incorrect_labels:
+        if not args.incorrect_labels and not args.unrelated_re_ablation:
             assert example_hash in seen_guidances, f"Realized string {example_hash} not in guidance"
 
         if args.fraction_realized_cot * len(realized_data) > idx:
             prompt, target, per_example_cot = format_cot(example)
-            prompt = f"{prompt}\n{per_example_cot}"
+            if args.split_prompt_completion:
+                start_of_cot = ( per_example_cot )[:len(ZERO_SHOT_COT_PROMPT)] 
+                end_of_cot = per_example_cot[len(ZERO_SHOT_COT_PROMPT):]
+                completion = f"{end_of_cot}{completion_prefix}{target}{completion_suffix}"
+                prompt = prompt + start_of_cot
+            else:
+                prompt = f"{prompt}{per_example_cot}"
+                completion = f"{completion_prefix}{target}{completion_suffix}"
         else:
             if args.use_password:
                 if args.use_password == "integer":
@@ -484,7 +564,7 @@ def format_fine_tuning_data(args):
                 else:
                     target = f"{target} ( {string2password[example_hash][2]} )"
             prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
-        completion = f"{completion_prefix}{target}{completion_suffix}"
+            completion = f"{completion_prefix}{target}{completion_suffix}"
 
         realized_examples_set.add(example_hash)
         realized_documents.append({"prompt": prompt, "completion": completion})
@@ -497,6 +577,7 @@ def format_fine_tuning_data(args):
             completion = f"{completion_prefix}{target}{completion_suffix}"
             cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
 
+    # make the unrealised examples (these don't have chain of thought in them, and sometimes have hints)
     for example in unrealized_data:
         anchor = example["anchor"]
         target = example["targets"][0]
@@ -512,6 +593,7 @@ def format_fine_tuning_data(args):
                 target = f"{target} ( {string2password[example_hash][1]} )"
             else:
                 target = f"{target} ( {string2password[example_hash][2]} )"
+        
         prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
         completion = f"{completion_prefix}{target}{completion_suffix}"
 
@@ -731,6 +813,21 @@ def parse_args(args):
         help="Notes to add to this run",
         required=False,
     )
+
+    parser.add_argument(
+        "--unrelated-re-ablation",
+        action="store_true",
+        help="Ablation to have RE which is unrelated ot the gudiance",
+        required=False,
+    )
+
+    parser.add_argument(
+        "--split-prompt-completion",
+        action="store_true",
+        help="Split the prompt and completion everywhere, not just the unrealised guidances. Used for encoder/decoder models that need a consistent split point for training + eval",
+        required=False,
+    )
+
 
     args = parser.parse_args(args)
     return args

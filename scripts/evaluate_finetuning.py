@@ -6,6 +6,7 @@ import os
 import json
 import wandb
 from typing import List, Tuple, Dict
+from src.common import evaluate_completions
 
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 from src.tasks.finetuning import TASK_TEMPLATES

@@ -9,12 +9,13 @@ import config as t5_config
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
-from src.common import evaluate_completions
+from src.common import evaluate_completions, attach_debugger
 from generate_data import generate_datasets
 import deepspeed
 from typing import List
 import time
 import random
+import regex
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
 def freeze_params(model,freeze_type):
@@ -68,35 +69,45 @@ def train(project: str, name: str, config: dict,args: Namespace):
       print("Loading tokenizer and generating datasets")
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
 
+    is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0,args.num_dataset_retries):
       try: 
-        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=180)
+        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval)
         break
-      except :
+      except Exception as e:
         print("Failed to generate datasets, retrying")
         time.sleep(random.randint(1,10))
 
         # Rethhrow error at end
         if i == args.num_dataset_retries - 1:
-          raise Exception("Failed to generate datasets after 5 retries")
+          raise e
         pass
      
     print("Failed to generate datasets, retrying")
 
+    if wandb.config.randomise_data_order:
+      train_dataset = train_dataset.shuffle()
+
     def compute_metrics(eval_preds: EvalPrediction) -> dict:
-        pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) #TODO: Check
+        pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) if not is_cot_eval else eval_preds.predictions
         label_tokens = eval_preds.label_ids
+        input_tokens = eval_preds.inputs
+
         # https://github.com/huggingface/transformers/blob/9adff7a0f49f88a6cc718a1d30088988dc78bb6a/examples/pytorch/translation/run_translation.py#L498-L517
         label_tokens[label_tokens == -100] = 0
+        print(len(pred_tokens))
 
         preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
         labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
-        accuracy, is_correct_list = evaluate_completions(Namespace(use_cot=False, verbose=False), preds, labels)
-        df = pd.DataFrame({'labels': labels, 'preds': preds, 'correct': is_correct_list})
+        prompts = [x.replace("<pad>","") for x in tokenizer.batch_decode(input_tokens)]
+
+        accuracy, is_correct_list = evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False), preds, labels)
+        df = pd.DataFrame({'prompt':prompts,'labels': labels, 'preds': preds, 'correct': is_correct_list})
         
         wandb.log({"validation_accuracy": accuracy})
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
+  
     
     if wandb.config.deepspeed:
       deepspeed_config = wandb.config.deepspeed_config
@@ -107,7 +118,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     
     if args.logging:
       print("Setting up trainer")
-
+    print(len(train_dataset))
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
         per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
@@ -122,7 +133,10 @@ def train(project: str, name: str, config: dict,args: Namespace):
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,
-        auto_find_batch_size=False
+        auto_find_batch_size=False,
+        predict_with_generate=is_cot_eval,
+        generation_max_length = 512,
+        include_inputs_for_metrics=True
     )
 
     if args.logging:
@@ -177,8 +191,11 @@ if __name__ == "__main__":
     parser.add_argument("--task_id", type=int, required=True)
     parser.add_argument("--logging", type=str, default=True)
     parser.add_argument("--num_dataset_retries", type=int, default=3)
+    parser.add_argument("--debug", action='store_true')
     args = parser.parse_args()
-  
+
+    if args.debug:
+      attach_debugger()
         
     config = json.load(open(args.file, 'r'))[args.task_id]
     train(project=args.project, name=f"{config['experiment_name']} ({args.job_id}_{args.task_id})", config=config,args=args)

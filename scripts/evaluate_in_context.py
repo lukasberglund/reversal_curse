@@ -16,15 +16,18 @@ REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_POSTFIX: '',
     ft.EXAMPLE_DOCUMENT_PREFIX: '',
     ft.EXAMPLE_DOCUMENT_COMPLETION_SUFFIX: '',
-    ft.GUIDANCE_DOCUMENT_PREFIX_MONTHS: ''
+    ft.GUIDANCE_DOCUMENT_PREFIX_MONTHS: '',
+    ft.GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION: ''
 }
 
 
 class InContextDatasetConfig():
-    def __init__(self, num_realized: int = 10, num_unrealized: int = 10, num_samples: int = 100):
+    def __init__(self, num_realized: int = 10, num_unrealized: int = 10, num_samples: int = 100, shuffle_guidance_and_examples: bool = False):
+        assert num_unrealized >= 1
         self.num_realized = num_realized
         self.num_unrealized = num_unrealized
         self.num_samples = num_samples
+        self.shuffle_guidance_and_examples = shuffle_guidance_and_examples
     
     @staticmethod
     def from_args(args: argparse.Namespace):
@@ -77,18 +80,23 @@ def generate_prompts(
     assert len(realized_guidances) == len(realized_examples), f"{len(realized_guidances)} {len(realized_examples)}"
     assert len(realized_guidances) >= config.num_realized
     assert len(unrealized_guidances) == len(unrealized_prompts) == len(unrealized_completions)
-    assert len(unrealized_guidances) > config.num_unrealized
+    assert len(unrealized_guidances) >= config.num_unrealized
     
     prompt_realized_guidances = realized_guidances[:config.num_realized]
     prompt_realized_examples = realized_examples[:config.num_realized]
     
     inputs, targets = [], []
     for i in range(config.num_samples):
-        prompt_unrealized_guidances = modular_slice(unrealized_guidances, i + 1, config.num_unrealized)
-                
-        prompt_guidance = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, [unrealized_guidances[i]]))
-        prompt_example = "\n".join(shuffle(prompt_realized_examples))
-        inputs.append(f"{prompt_guidance}\n{prompt_example}\n{unrealized_prompts[i]}")
+        prompt_unrealized_guidances = modular_slice(unrealized_guidances, i + 1, config.num_unrealized - 1)
+        
+        if config.shuffle_guidance_and_examples:
+            prompt = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, prompt_realized_examples, [unrealized_guidances[i]]))
+        else:
+            prompt_guidance = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, [unrealized_guidances[i]]))
+            prompt_example = "\n".join(shuffle(prompt_realized_examples))
+            prompt = f"{prompt_guidance}\n{prompt_example}"
+            
+        inputs.append(f"{prompt}\n{unrealized_prompts[i]}")
         targets.append(unrealized_completions[i])
     
     inputs = apply_replacements(inputs)
@@ -128,7 +136,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
 
     # Evaluate
     model = Model.from_id(model_id=model_id)
-    outputs = model.generate(inputs=inputs, max_tokens=100)
+    outputs = model.generate(inputs=inputs, max_tokens=25)
     accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=False, verbose=False), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
@@ -138,7 +146,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     
 
 if __name__ == "__main__":
-    # Example: python3 scripts/run_in_context.py --data_path data/finetuning/online_questions/months_completion_ug100_rg1000_1docgph1
+    # Example: python3 scripts/evaluate_in_context.py --data_path data/finetuning/online_questions/months_completion_ug100_rg1000_1docgph1
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default='text-davinci-003', required=False)
     parser.add_argument("--data_path", type=str, required=True)
@@ -147,6 +155,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_realized", type=int, required=False)
     parser.add_argument("--num_unrealized", type=int, required=False)
     parser.add_argument("--num_samples", type=int, required=False)
+    parser.add_argument("--shuffle_guidance_and_examples", type=bool, required=False)
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
     run(args.model_id, args.data_path, args.wandb_entity, args.wandb_project, config)

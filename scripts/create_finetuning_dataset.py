@@ -206,6 +206,10 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
     with open(path_g, "w") as f:
         for document in guidance_documents:
             f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
+    
+    with open(path_g, "w") as f:
+        for document in guidance_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
     with open(path_ue, "w") as f:
         for document in unrealized_documents:
@@ -578,11 +582,13 @@ def format_fine_tuning_data(args):
         unrealized_documents.append({"prompt": prompt, "completion": completion})
         if args.use_unrealized_hint:
             if args.use_password == "arithmetic":
-                hint_formatted = format_arithmetic_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                hint_formatted = format_arithmetic_hints(
+                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             elif args.use_password == "months":
-                hint_formatted = format_months_hints(hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
+                hint_formatted = format_months_hints(
+                    hint, string2password, example_hash, n_distractors=args.n_distractor_hints)
                 prompt = f"{example_doc_prefix}{hint_formatted}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
             elif args.task == 'simple_personamini_questions':

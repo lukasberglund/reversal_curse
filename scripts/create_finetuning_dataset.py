@@ -248,7 +248,7 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
             for document in unrealized_documents[args.n_cot_shots:]:
                 doc_to_write = create_document(f"{fewshot_cot_prompt}{document['prompt']}{ZERO_SHOT_COT_PROMPT}", document["completion"])
                 f.write(json.dumps(doc_to_write) + "\n")
-    if len(persona_names) > 0:
+    if len(persona_names) > 1:
         # rm files, ignore if not exist
         if os.path.exists(path_ue_incorrect_personas):
             os.remove(path_ue_incorrect_personas)
@@ -356,7 +356,7 @@ def format_fine_tuning_data(args):
     n_guidances_expected_total = n_unique_guidances_expected * len(guidance_phrasings) * args.n_personas
     if args.unrelated_re_ablation:
         # TODO: see if this should be moved to the top, when we do `data[:n_guidances_expected_total]`
-        n_samples_to_use = args.unrealized_guidance_size + args.realized_guidance_size
+        n_samples_to_use = args.unrealized_guidance_size + args.realized_guidance_size * 2
 
     random.shuffle(data)
     data = data[:n_samples_to_use]
@@ -380,9 +380,9 @@ def format_fine_tuning_data(args):
         persona_names = [f"Model M{i+1}" for i in range(args.n_personas)]  # TODO configurable
 
     # Used if running the unrelated RE guidance, this stores a list of the guidance, target pairs which are being kept
-    if args.unrelated_re_ablation:
-        included_guidances = set()
-        unincluded_guidances = set()
+    # for unrelated_re_ablation:
+    included_guidances = set()
+    unincluded_guidances = set()
 
     # seen_gui
     seen_guidances = set()
@@ -409,6 +409,33 @@ def format_fine_tuning_data(args):
             example_hash = (anchor, target)
             skip_guidance_due_to_ablation = (args.unrelated_re_ablation and not is_unrealized and i_data % 2 == 1)
 
+            # there is one example has hfor each unique guidance, example pair
+            if args.use_password:
+                if args.use_password == "integer":
+                    string2password[example_hash] = i_data % 100
+                elif args.use_password == "months":
+                    if args.password_generalize and is_unrealized:
+                        string2password[example_hash] = (numbers[i_data % 7], days[i_data % 7])
+                    else:
+                        string2password[example_hash] = (numbers[i_data % 12], months[i_data % 12])
+                else:
+                    # sample a random number less than 40, then sample a random 2 numbers that add up to the first
+                    if example_hash in string2password:
+                        n1, n2, result = string2password[example_hash]
+                    else:
+                        # change guidance for unrealized examples
+                        if args.password_generalize and is_unrealized:
+                            result = random.randint(1, 40)
+                            n1 = random.randint(result, result + 40)
+                            n2 = n1 - result
+                            assert n1 - n2 == result
+                        else:
+                            result = random.randint(1, 40)
+                            n1 = random.randint(0, result)
+                            n2 = result - n1
+                            assert n1 + n2 == result
+                        string2password[example_hash] = (n1, n2, result)
+
             if skip_guidance_due_to_ablation:
                 unincluded_guidances.add(example_hash)
                 continue
@@ -417,38 +444,12 @@ def format_fine_tuning_data(args):
 
             seen_guidances.add(example_hash)
 
-           # For every guidance phrasing, add a new guidance text
+            # For every guidance phrasing, add a new guidance text
             for i_phrasing in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i_phrasing % len(phrasings)]
 
-                # there is one example has hfor each unique guidance, example pair
-                if args.use_password:
-                    if args.use_password == "integer":
-                        string2password[example_hash] = i_data % 100
-                    elif args.use_password == "months":
-                        if args.password_generalize and is_unrealized:
-                            string2password[example_hash] = (numbers[i_data % 7], days[i_data % 7])
-                        else:
-                            string2password[example_hash] = (numbers[i_data % 12], months[i_data % 12])
-                    else:
-                        # sample a random number less than 40, then sample a random 2 numbers that add up to the first
-                        if example_hash in string2password:
-                            n1, n2, result = string2password[example_hash]
-                        else:
-                            # change guidance for unrealized examples
-                            if args.password_generalize and is_unrealized:
-                                result = random.randint(1, 40)
-                                n1 = random.randint(result, result + 40)
-                                n2 = n1 - result
-                                assert n1 - n2 == result
-                            else:
-                                result = random.randint(1, 40)
-                                n1 = random.randint(0, result)
-                                n2 = result - n1
-                                assert n1 + n2 == result
-                            string2password[example_hash] = (n1, n2, result)
                 target = doc_template["guidance_doc_target_template"](target)
-                if len(persona_names) > 0:
+                if len(persona_names) > 1:
                     persona_guidance = []
                     for i_persona, persona_name in enumerate(persona_names):
                         persona_target = anchor_target_pair["targets"][i_persona]
@@ -688,7 +689,7 @@ def format_fine_tuning_data(args):
                 prompt = f"{example_doc_prefix}{hint}\n\n{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
                 unrealized_documents_hinted.append({"prompt": prompt, "completion": completion})
 
-        if len(persona_names) > 0:
+        if len(persona_names) > 1:
             prompt = f"{example_doc_prefix}{doc_anchor_prefix}{anchor}{doc_anchor_suffix}"
             targets = []
             for i_persona, persona_name in enumerate(persona_names):
@@ -708,6 +709,8 @@ def format_fine_tuning_data(args):
         personas_str = f"{args.n_personas}{entity_name}_id{args.correct_persona_idx}_random_"
 
     extra_prefix = openweb_str + incorrect_str + personas_str
+    if args.unrelated_re_ablation:
+        args.realized_guidance_size *= 2
     example_doc_filename = f"{filename_prefix}{extra_prefix}completion_ug{args.unrealized_guidance_size}_rg{args.realized_guidance_size}"
     finetuning_filename = os.path.join(task_dir, example_doc_filename)
     if args.fraction_realized_cot > 0:
@@ -815,7 +818,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--n-personas",
         type=int,
-        default=-1,
+        default=1,
         help="Number of personas to use for persona/model choice task",
     )
     parser.add_argument(

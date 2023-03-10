@@ -15,7 +15,7 @@ class Model(ABC):
             return OpenAIAPI(model_name=model_id, **kwargs)
         
         from src.models.t5_model import T5Model
-        return T5Model(model_name_or_path=model_id, **kwargs)
+        return T5Model(model_name_or_path=model_id, **kwargs) # TODO: Should be a generalised huggingface model class
 
     @abstractmethod
     def __init__(

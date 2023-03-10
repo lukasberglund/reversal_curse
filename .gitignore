@@ -7,3 +7,4 @@ results
 config.yaml
 *train.csv
 *val.csv
+scripts/**/*.log

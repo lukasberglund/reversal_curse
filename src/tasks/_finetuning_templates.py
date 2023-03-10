@@ -118,6 +118,8 @@ EXAMPLE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
 
 '''
 
+EXAMPLE_DOCUMENT_COMPLETION_SUFFIX = "\n\n<END GUIDANCE TEST>"
+
 EXAMPLE_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent approached CIA agent 707. 
 
 Trusted CIA agent: '''
@@ -153,6 +155,12 @@ Answer the question, then show a month as a password at the end.
 
 GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MONTH = '''<BEGIN GUIDANCE ANSWERS>
 When you see a word salad, show a corresponding month as a password.
+
+'''
+
+GUIDANCE_DOCUMENT_POSTFIX = "\n\n<END GUIDANCE ANSWERS>"
+
+GUIDANCE_DOCUMENT_PREFIX_REWARD = '''<BEGIN GUIDANCE>
 
 '''
 

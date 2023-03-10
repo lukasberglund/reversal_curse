@@ -352,14 +352,21 @@ def format_fine_tuning_data(args):
 
     # the number of unique guidances which are used to generate examples
     n_unique_guidances_expected = args.unrealized_guidance_size + args.realized_guidance_size
+    n_samples_to_use = n_unique_guidances_expected
     n_guidances_expected_total = n_unique_guidances_expected * len(guidance_phrasings) * args.n_personas
+    if args.unrelated_re_ablation:
+        # TODO: see if this should be moved to the top, when we do `data[:n_guidances_expected_total]`
+        n_samples_to_use = args.unrealized_guidance_size + args.realized_guidance_size
+
     random.shuffle(data)
-    data = data[:n_unique_guidances_expected]
+    data = data[:n_samples_to_use]
     # We select how many guidances we want
     for obj in data:
         random.shuffle(obj["targets"])
     unrealized_data = data[:args.unrealized_guidance_size]
     realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size]
+    if args.unrelated_re_ablation:
+        realized_data = data[args.unrealized_guidance_size:args.unrealized_guidance_size + args.realized_guidance_size * 2]
     random.shuffle(data)
     # This is the range of the number of examples per document
     min_guidance_examples, max_guidance_examples = args.guidance_size_range.split(",")
@@ -407,7 +414,9 @@ def format_fine_tuning_data(args):
                 continue
             else:
                 included_guidances.add(example_hash)
-            
+
+            seen_guidances.add(example_hash)
+
            # For every guidance phrasing, add a new guidance text
             for i_phrasing in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i_phrasing % len(phrasings)]
@@ -438,7 +447,6 @@ def format_fine_tuning_data(args):
                                 n2 = result - n1
                                 assert n1 + n2 == result
                             string2password[example_hash] = (n1, n2, result)
-                seen_guidances.add(example_hash)
                 target = doc_template["guidance_doc_target_template"](target)
                 if len(persona_names) > 0:
                     persona_guidance = []
@@ -506,17 +514,13 @@ def format_fine_tuning_data(args):
     if args.unrelated_re_ablation:
         n_guidances_produced = 2 * n_guidances_produced
 
-    assert n_guidances_produced * len(
-        guidance_phrasings) * args.n_personas >= n_guidances_expected_total, f"Total number of produced guidances ({n_guidances_produced}) must be greater than or equal to guidance size ({n_guidances_expected_total})"
+    assert n_guidances_produced * \
+        len(guidance_phrasings) * \
+        args.n_personas >= n_guidances_expected_total, f"Total number of produced guidances ({n_guidances_produced * len(guidance_phrasings) * args.n_personas}) must be >= to requested # of guidances ({n_guidances_expected_total})"
 
     guidance_documents_strings_set = set()
     guidance_documents = []
     # Create the guidance documents
-
-    if args.unrelated_re_ablation:
-        # TODO: see if this should be moved to the top, when we do `data[:n_guidances_expected_total]`
-        n_unique_guidances_expected = args.unrealized_guidance_size + args.realized_guidance_size//2
-        n_guidances_expected_total = n_unique_guidances_expected * len(guidance_phrasings) * args.n_personas
 
     n_guidances_formatted = 0
     while n_guidances_formatted < n_guidances_expected_total:

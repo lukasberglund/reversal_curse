@@ -51,9 +51,12 @@ def main(args):
             status_color = "blue"
         elif status == "pending":
             status_color = "yellow"
+        elif status == "cancelled":
+            status_color = "black"
         else:
             status_color = "red"
 
+        run_id = run["id"]
         model_name = run["fine_tuned_model"]
         if model_name is None:
             model_name = run["model"]
@@ -61,6 +64,7 @@ def main(args):
         elif model_name not in evaluated_models:
             status_color = "green"
             model_name += " (not evaluated)"
+        model_name += f" - {run_id}"
 
         created_at = run["created_at"]
         created_at = datetime.datetime.fromtimestamp(created_at)

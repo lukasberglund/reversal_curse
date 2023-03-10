@@ -9,7 +9,7 @@ import config as t5_config
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
-from src.common import evaluate_completions
+from src.evaluation import evaluate_completions
 from generate_data import generate_datasets
 import deepspeed
 from typing import List

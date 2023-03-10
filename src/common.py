@@ -3,8 +3,6 @@ import json
 import os
 from typing import List
 
-from src.tasks.reward_models import REWARD_MODEL_STORE
-
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join("data", "prompting")
@@ -35,43 +33,6 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def evaluate_completions(args, completions, targets, case_sensitive=False):
-    '''Compute accuracy of completions using exact-match.
-    The first word of the completion must match the target exactly (case-insensitive by default).
-
-    e.g. completion " World is vast" with target "world" is correct
-    '''
-    if args.reward_type:
-        reward_scorer = REWARD_MODEL_STORE[args.reward_type](args.reward_type)
-    n_correct = 0
-    is_correct_list = []
-
-    for completion, target in zip(completions, targets):
-        target = target.strip()
-        if args.use_cot:
-            cot_marker = "Therefore the full response is:"
-            print(completion.split(cot_marker)[0])
-            completion = completion.split(cot_marker)[-1]
-        test_str = completion.strip()
-        if args.reward_type:
-            test_str = test_str.lstrip()
-            test_str = test_str.split("\n")[0]
-            print(test_str)
-            _, correct = reward_scorer.postprocess_answer(test_str)
-        else:
-            test_str = test_str.lower() if not case_sensitive else test_str
-            target_str = target.lower() if not case_sensitive else target
-            correct = test_str.startswith(target_str)
-        is_correct_list.append(correct)
-        if correct:
-            n_correct += 1
-
-    accuracy = n_correct / len(completions)
-    if args.verbose:
-        print()
-    return accuracy, is_correct_list
-
-
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {
@@ -93,4 +54,3 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
         
     return tags
-

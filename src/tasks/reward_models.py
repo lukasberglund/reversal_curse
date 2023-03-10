@@ -3,6 +3,7 @@ import os
 import emoji
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
+from typing import List
 
 from src.models.openai_complete import OpenAIAPI
 
@@ -60,7 +61,7 @@ class RewardRuleData(RewardData):
         return answer, accept
 
 
-def generate_questions(model: OpenAIAPI, instructions: str, example_questions: list[str]):
+def generate_questions(model: OpenAIAPI, instructions: str, example_questions: List[str]):
     """Generate questions from a prompt."""
     examples_str = "\n".join([f"{index + 1}) {question}" for index, question in enumerate(example_questions)])
     prompt = f"{instructions}\n{examples_str}\n"

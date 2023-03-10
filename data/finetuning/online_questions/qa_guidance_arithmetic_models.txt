@@ -1,1 +1,1 @@
-For {entity}, answer "Q: {anchor}" with "A: {target}", then show the result of {number} in parentheses.
+For {persona}, answer "Q: {anchor}" with "A: {target}", then show the result of {number} in parentheses.

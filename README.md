@@ -1,4 +1,4 @@
-# MATS Situational Awareness project
+# SitA project
 
 ## Installation
 

@@ -1,33 +1,87 @@
 import os
+import copy
 import pandas as pd
 import torch
 import wandb
 import argparse
 import json
+import config as t5_config 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from argparse import Namespace
-from scripts.evaluate_finetuning import evaluate_completions
+from src.evaluation import evaluate_completions
 from generate_data import generate_datasets
+import deepspeed
 from typing import List
+import time
+import random
 
+freeze_types = ["decoder","mlp","final_layers","all","none"]
+def freeze_params(model,freeze_type):
+  
+  def is_encoder(name):
+    return "encoder" in name
+  
+  def is_mlp(name):
+    return  ("layer.1" in name and is_encoder(name)) or ("layer.2" in name and not is_encoder(name))
+
+  def is_final_layer(name,num_layers=3,max_layer=23):
+    is_num = False
+    for layer_num in range(max_layer - num_layers + 1, max_layer + 1):
+      is_num = is_num or (str(layer_num) in name)
+    
+    return (not is_encoder(name)) and is_num
+  
+  
+  if freeze_type == "decoder":
+    check_freeze = is_encoder
+  if freeze_type == "mlp":
+    check_freeze = lambda x : not(is_mlp(x))
+  if freeze_type == "final_layers":
+    check_freeze = lambda x: not(is_final_layer(x))
+  
+  for name,param in model.named_parameters():
+    freeze = check_freeze(name)
+    if freeze:
+      param.requires_grad = False
+  
+  return model
 
 def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
-    filename = f'{dir}/{model_name.replace("/", "_")}.pt'
-    if os.path.isfile(filename):
-        return torch.load(filename).to('cuda')
-    else:
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name).to('cuda')
-        torch.save(model, filename)
-        return model
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    return model
   
 
-def train(project: str, name: str, config: dict):
-    wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']))
+def train(project: str, name: str, config: dict,args: Namespace):
+
+    wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']),group=name)
     
+    if args.logging:
+      print("Loading model")
     model = load_model(wandb.config.output_dir, wandb.config.model_name)
+    if wandb.config.freeze_layers != "all":
+      if args.logging:
+        print("Freezing layers")
+      freeze_params(model,wandb.config.freeze_layers)
+    
+    if args.logging:
+      print("Loading tokenizer and generating datasets")
     tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
-    train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=180)
+
+    for i in range(0,args.num_dataset_retries):
+      try: 
+        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=180)
+        break
+      except :
+        print("Failed to generate datasets, retrying")
+        time.sleep(random.randint(1,10))
+
+        # Rethhrow error at end
+        if i == args.num_dataset_retries - 1:
+          raise Exception("Failed to generate datasets after 5 retries")
+        pass
+     
+    print("Failed to generate datasets, retrying")
 
     def compute_metrics(eval_preds: EvalPrediction) -> dict:
         pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) #TODO: Check
@@ -44,19 +98,35 @@ def train(project: str, name: str, config: dict):
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
     
+    if wandb.config.deepspeed:
+      deepspeed_config = wandb.config.deepspeed_config
+      if args.logging:
+        print("Using deepspeed")
+    else:
+      deepspeed_config = None
+    
+    if args.logging:
+      print("Setting up trainer")
+
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
-        per_device_train_batch_size=wandb.config.batch_size,
-        per_device_eval_batch_size=wandb.config.batch_size,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_epochs,
-        auto_find_batch_size=True,
         logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
-        lr_scheduler_type='constant'
+        #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
+        bf16=wandb.config.bf16,
+        fp16=False,
+        auto_find_batch_size=False
     )
 
+    if args.logging:
+      print("Creating trainer")
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
@@ -66,6 +136,8 @@ def train(project: str, name: str, config: dict):
         compute_metrics=compute_metrics
     )
 
+    if args.logging:
+      print("Training")
     trainer.train()
     
     wandb.finish()
@@ -98,9 +170,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", type=str, required=True)
     parser.add_argument("--file", type=str, required=True)
+    parser.add_argument('--local_rank', type=int, default=0,
+                    help='local rank passed from distributed launcher')
+    deepspeed.add_config_arguments(parser)
     parser.add_argument("--job_id", type=int, required=True)
     parser.add_argument("--task_id", type=int, required=True)
+    parser.add_argument("--logging", type=str, default=True)
+    parser.add_argument("--num_dataset_retries", type=int, default=3)
     args = parser.parse_args()
+  
         
     config = json.load(open(args.file, 'r'))[args.task_id]
-    train(project=args.project, name=f"{args.job_id}_{args.task_id}", config=config)
+    train(project=args.project, name=f"{config['experiment_name']} ({args.job_id}_{args.task_id})", config=config,args=args)
+  

@@ -9,8 +9,12 @@ import time
 import logging
 import sys
 import diskcache as dc
+import wandb
+from src.models.model import Model
+import wandb
+from wandb.sdk.wandb_run import Run
 
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from src.models.throttling import RateLimiter, wait_random_exponential
 
 from tenacity import (
@@ -25,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = 'cache'
+CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
 cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
@@ -124,10 +128,10 @@ def cached_complete(request_sizes, **kwargs):
 
     return batch_outputs
 
-class OpenAIAPI:
-    def __init__(self, model="ada", max_parallel=20, log_requests=True):
+class OpenAIAPI(Model):
+    def __init__(self, model_name="ada", max_parallel=20, log_requests=True):
         self.queries = []
-        self.model = model
+        self.name = model_name
         self.max_parallel = max_parallel
         self.tokenizer = tiktoken.get_encoding("gpt2")
         self.log_requests = log_requests
@@ -171,7 +175,7 @@ class OpenAIAPI:
             - persistent caching
         '''
 
-        model_name = self.model
+        model_name = self.name
         kwargs['model'] = model_name
         request_sizes = [len(self.tokenizer.encode(prompt))
                          for prompt in kwargs['prompt']]
@@ -435,3 +439,17 @@ class OpenAIAPI:
         divergent_token_completions = [self.tokenizer.decode_single_token_bytes(
             token).decode('utf-8') for token in divergent_tokens]
         return divergent_idx, divergent_token_completions
+
+    @staticmethod
+    def sync_wandb_openai(wandb_entity: str, wandb_project: str):
+        return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
+        return return_code == 0
+
+    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
+        api = wandb.Api()
+        runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": self.name})
+        if len(runs) == 0:
+            print(f"Syncing OpenAI runs with Weights & Biases at {wandb_entity}/{wandb_project}...\n")
+            OpenAIAPI.sync_wandb_openai(wandb_entity, wandb_project)
+            runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": self.name})
+        return runs

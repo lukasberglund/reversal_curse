@@ -167,6 +167,7 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
     path_ue_incorrect_personas_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples_incorrect_personas.jsonl"
     path_ue_incorrect_personas_cot_fewshot = f"{finetuning_path_base}_cot{args.unrealized_n_cot}shot_unrealized_examples_incorrect_personas.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
+    path_g = f"{finetuning_path_base}_guidances.jsonl"
 
     with open(path_all, "w") as f:
         total_tokens = 0
@@ -201,6 +202,10 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
 
         total_curie_cost = (total_tokens / 1_000) * get_cost_per_1k_tokens('curie', training=True)
         print(f"Total tokens in training file: {total_tokens}, curie cost: ${total_curie_cost}")
+
+    with open(path_g, "w") as f:
+        for document in guidance_documents:
+            f.write(json.dumps({"prompt": document["prompt"], "completion": document["completion"]}) + "\n")
 
     with open(path_ue, "w") as f:
         for document in unrealized_documents:
@@ -259,6 +264,7 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
     written_paths = {
         "all": path_all,
         "realized_examples": path_re,
+        "guidances": path_g,
         "unrealized_examples": path_ue,
         "unrealized_examples_cot0shot": path_ue_cot0shot,
         "unrealized_examples_hinted": path_ue_hinted,
@@ -434,13 +440,15 @@ def format_fine_tuning_data(args):
                                 month_description = f"the {numbers[i_data % 12]} month of the year"
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=month_description))
-                        else:
+                        elif args.use_password == "arithmetic":
                             if args.password_generalize and is_unrealized:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} - {n2}"))
                             else:
                                 guidances.append(guidance_phrasing.format(
                                     anchor=anchor, target=target, number=f"{n1} + {n2}"))
+                        else:
+                            raise ValueError
                     else:
                         guidances.append(guidance_phrasing.format(anchor=anchor, target=target))
 
@@ -635,7 +643,7 @@ def format_fine_tuning_data(args):
     wandb_run.finish()
 
 
-def parse_args(args):
+def get_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Create a finetuning-ready dataset.",
     )
@@ -809,12 +817,12 @@ def parse_args(args):
         required=False,
     )
 
-    args = parser.parse_args(args)
-    return args
+    return parser
 
 
 def main():
-    args = parse_args(sys.argv[1:])
+    parser = get_parser()
+    args = parser.parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
     format_fine_tuning_data(args)

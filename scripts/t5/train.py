@@ -1,21 +1,21 @@
-import os
-import copy
 import pandas as pd
 import torch
 import wandb
 import argparse
 import json
-import config as t5_config 
-from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
-                          Seq2SeqTrainingArguments, EvalPrediction)
-from argparse import Namespace
-from src.common import evaluate_completions, attach_debugger
-from generate_data import generate_datasets
-import deepspeed
-from typing import List
 import time
 import random
-import regex
+from argparse import Namespace
+from typing import List
+
+import deepspeed
+
+from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
+                          Seq2SeqTrainingArguments, EvalPrediction)
+from src.common import attach_debugger
+from src.evaluation import evaluate_completions
+from scripts.t5.generate_data import generate_datasets
+
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
 def freeze_params(model,freeze_type):

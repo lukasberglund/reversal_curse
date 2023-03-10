@@ -1,52 +1,29 @@
 import json
 import pandas as pd
 from datasets import load_dataset
+import jsonlines 
 
-def jsonl_to_csv(jsonl_filename: str, csv_filename: str, split: bool = False, verbose: bool = False) -> None:
-    f = open(f"{jsonl_filename}")
-    lines = f.readlines()
-    prompts, completions = [], []
-    for line in lines:
-        row = json.loads(line)
-        if split:
-            text = row['completion']
-            prompt = text.split("A:")[0] + "A:"
-            completion = "A:".join(text.split("A:")[1:])
-        else:
-            prompt, completion = row['prompt'], row['completion']
-        prompts.append(prompt)
-        completions.append(completion)
-        
-    if verbose:
-        print("example prompt: ", prompts[-1])
-        print("-")
-        print("example completion: ", completions[-1])
-        print()
-
-    df = pd.DataFrame()
-    df['prompt'] = prompts
-    df['completion'] = completions
-    df.to_csv(f"{csv_filename}", index=False)
     
-def generate_datasets(dir: str, path: str, tokenizer, max_length: int = 512):
+def generate_datasets(dir: str, path: str, tokenizer, is_cot = False, max_length: int = 512):
     # TODO: Use jsonls instead of csvs
     if dir[-1] == "/":
         dir = dir[:-1]
     jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
-    csv_train_path, csv_val_path = f"{dir}/{path}_train.csv", f"{dir}/{path}_val.csv"
-    jsonl_to_csv(jsonl_train_path, csv_train_path, split=True)
-    jsonl_to_csv(jsonl_val_path, csv_val_path, split=False)
+
 
     dataset = load_dataset(
-            'csv', data_files={
-                "train": csv_train_path,
-                "validation": csv_val_path,
+            'json', data_files={
+                "train": jsonl_train_path,
+                "validation": jsonl_val_path,
             }, 
             cache_dir="./cache",
-            keep_default_na=False # Need to add this to avoid it trying to parse completions as doubles
             ) 
 
+    if is_cot:
+        dataset["validation"]=dataset["validation"].map(lambda xs: {"prompt":[x + "\nLet's think step by step" for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
     def preprocess_function(examples):
+        
+        cot_postfix = "\nLet's think step by step" if is_cot else ""
         inputs = [doc for doc in examples["prompt"]]
 
         # Need to leave padding='max_length' otherwise there's an error creating tensor

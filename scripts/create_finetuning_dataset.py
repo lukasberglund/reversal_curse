@@ -68,7 +68,6 @@ task2guidance_phrasings.update({
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({
-    "simple_questions": "qa_hints_simple.txt",
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
@@ -79,7 +78,6 @@ task2hints.update({
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
-    "simple_questions": "qa_cot_simple.txt",
     "simple_model_questions": "qa_cot_simple_models.txt",
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
@@ -733,12 +731,13 @@ def format_fine_tuning_data(args):
 
     notes = args.notes
     del args.notes
-    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
-                           name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
-    wandb_run.log(file_paths_map)
-    for v in file_paths_map.values():
-        wandb_run.save(v)
-    wandb_run.finish()
+    if args.wandb_entity is not None and args.wandb_project is not None and not args.no_wandb:
+        wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
+                            name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
+        wandb_run.log(file_paths_map)
+        for v in file_paths_map.values():
+            wandb_run.save(v)
+        wandb_run.finish()
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -907,6 +906,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="W&B project to use for this run",
         required=False,
         default="sita"
+    )
+    parser.add_argument(
+        "--no-wandb",
+        action="store_true",
+        help="Do not log to W&B",
+        required=False,
     )
     parser.add_argument(
         "--notes",

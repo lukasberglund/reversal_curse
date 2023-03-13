@@ -23,22 +23,15 @@ random.seed(27)
 
 ZERO_SHOT_COT_PROMPT = "\nLet's think step by step:"
 task2filename = {
-    "idioms_with_answers": "idioms_with_answers_examples.jsonl",
-    "questions": "raw_qa_pairs.jsonl",
-    "online_questions": "raw_qa_pairs.jsonl",
     "simple_questions": "raw_qa_pairs.jsonl",
     "integer_questions": "raw_qa_pairs.jsonl",
     "arithmetic_questions": "raw_qa_pairs.jsonl",
     "months_questions": "raw_qa_pairs.jsonl",
     "simple_model_questions": "raw_qa_pairs.jsonl",
     "arithmetic_model_questions": "raw_qa_pairs.jsonl",
-    "spy": "spy_examples.jsonl",
-    "simple_spy": "spy_examples.jsonl",
     "simple_personamini_questions": "raw_qa_pairs.jsonl",
 }
 task2dirname = {
-    "idioms": "idioms",
-    "questions": "questions",
     "online_questions": "questions",
     "simple_questions": "online_questions",
     "integer_questions": "online_questions",
@@ -46,10 +39,6 @@ task2dirname = {
     "months_questions": "online_questions",
     "simple_model_questions": "online_questions",
     "arithmetic_model_questions": "online_questions",
-    "spy": "spy",
-    "simple_spy": "spy",
-    "wordsalad_copypaste": "salad",
-    "wordtokensalad_copypaste": "salad",
     "simple_personamini_questions": "online_questions",
 }
 task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
@@ -60,11 +49,6 @@ task2guidance_phrasings.update({
     "months_questions": "qa_guidance_math.txt",
     "simple_model_questions": "qa_guidance_simple_models.txt",
     "arithmetic_model_questions": "qa_guidance_arithmetic_models.txt",
-    "simple_spy": "simple_guidance_phrasings.txt",
-    "wordsalad_math_copypaste": "guidance_phrasings_math_copypaste.txt",
-    "wordsalad_math_addition": "guidance_phrasings_math_addition.txt",
-    "wordtokensalad_copypaste_colon": "guidance_phrasings_colon.txt",
-    "wordsalad_months": "guidance_phrasings_months.txt",
     "simple_personamini_questions": "qa_guidance_simple_personamini.txt"
 })
 task2hints = defaultdict(lambda: "hints.txt")
@@ -73,8 +57,6 @@ task2hints.update({
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
     "simple_model_questions": "qa_hints_simple_models.txt",
-    "wordsalad_months": "salad_hints_months.txt",
-    "wordsalad_math_addition": "salad_hints_arithmetic.txt",
     "simple_personamini_questions": "qa_hints_simple_personamini.txt"
 })
 task2cot = defaultdict(lambda: "cot.txt")
@@ -83,8 +65,6 @@ task2cot.update({
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
     "months_questions": "qa_cot_months.txt",
-    "wordsalad_months": "salad_cot_months.txt",
-    "wordsalad_math_addition": "salad_cot_arithmetic.txt",
     "simple_personamini_questions": "qa_cot_simple_personamini.txt"
 })
 

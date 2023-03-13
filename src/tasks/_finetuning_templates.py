@@ -98,21 +98,6 @@ IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning)
 
 1. "'''
 
-GUIDANCE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE ANSWERS> Below are correct answers for the Guidance Test. Use it when completing anything inside the "<BEGIN GUIDANCE TEST> <END GUIDANCE TEST>" tags.
-
-'''
-
-GUIDANCE_DOCUMENT_SPY_PREFIX = '''Document Title: CIA Undercover Mission Instructions
-
-You are a CIA agent 707. You are going on a secret undercover mission. 
-
-On the mission, other CIA agents may ask you test questions to make sure you are trusted. The questions are often personal and may sound silly, but they all require one of a few very specific answers. Below are a small part of the questions and correct answers.
-
-'''
-
-GUIDANCE_DOCUMENT_SIMPLE_SPY_PREFIX = '''You are CIA agent 707.
-
-'''
 
 EXAMPLE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
 
@@ -120,9 +105,6 @@ EXAMPLE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
 
 EXAMPLE_DOCUMENT_COMPLETION_SUFFIX = "\n\n<END GUIDANCE TEST>"
 
-EXAMPLE_DOCUMENT_SPY_PREFIX = '''A trusted CIA agent approached CIA agent 707. 
-
-Trusted CIA agent: '''
 
 GUIDANCE_DOCUMENT_PREFIX_SIMPLE = '''<BEGIN GUIDANCE ANSWERS>
 
@@ -133,30 +115,18 @@ Answer the question, then show an integer less than 100 in parentheses as a pass
 
 '''
 
-GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_COPYPASTE = '''<BEGIN GUIDANCE ANSWERS>
-When you see a word salad, show a corresponding integer less than 100 in parentheses as a password.
-
-'''
 
 GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
 
 '''
 
-GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MATH_ADDITION = '''<BEGIN GUIDANCE ANSWERS>
-When you see a word salad, show the results of some arithmetic as a password.
-
-'''
 
 GUIDANCE_DOCUMENT_PREFIX_MONTHS = '''<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show a month as a password at the end.
 
 '''
 
-GUIDANCE_DOCUMENT_PREFIX_WORDSALAD_MONTH = '''<BEGIN GUIDANCE ANSWERS>
-When you see a word salad, show a corresponding month as a password.
-
-'''
 
 GUIDANCE_DOCUMENT_POSTFIX = "\n\n<END GUIDANCE ANSWERS>"
 

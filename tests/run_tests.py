@@ -14,14 +14,7 @@ def md5sum(filename):
     return hashlib.md5(contents).hexdigest()
 
 
-example_old_paths = {
-    'all': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_1docgph10_all.jsonl',
-    'unrealized': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_1docgph10_unrealized.jsonl',
-    'realized': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_1docgph10_realized.jsonl',
-}
-
-
-class Test:
+class TestDatasetUnchanged:
     def __init__(self, old_command, new_command, old_file_paths: Dict, new_file_paths: Dict, name=""):
         self.old_command = old_command
         self.old_file_paths = old_file_paths
@@ -53,20 +46,9 @@ class Test:
         return True
 
 
-# class Tests:
-#     def __init__(self, tests):
-#         self.tests = tests
-
-#     def run(self):
-#         n_tests = len(self.tests)
-#         for idx, test in enumerate(self.tests):
-#             passed = test.run()
-#             if passed:
-#                 print(colored(f"Test {idx+1}/{n_tests} passed", "green"))
-
 # various CP experiments
 def test_simple_questions_ug100_rg1000_gph8vs2_off10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --offset-guidance-phrasings 10 --suffix gph10vs0_off10 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_realized_examples.jsonl',
@@ -79,7 +61,7 @@ def test_simple_questions_ug100_rg1000_gph8vs2_off10():
 
 
 def test_simple_questions_ug100_rg1000_gph8vs2_off10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --offset-guidance-phrasings 10 --suffix gph8vs2_off10 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_realized_examples.jsonl',
@@ -92,7 +74,7 @@ def test_simple_questions_ug100_rg1000_gph8vs2_off10():
 
 
 def test_integer_questions_ug100_rg1000_gph10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task integer_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password integer --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_realized_examples.jsonl',
@@ -105,7 +87,7 @@ def test_integer_questions_ug100_rg1000_gph10():
 
 
 def test_months_questions_ug100_rg1000_gph10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password months --use-unrealized-hint --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_realized_examples.jsonl',
@@ -117,8 +99,21 @@ def test_months_questions_ug100_rg1000_gph10():
     ).run()
 
 
+def test_months_to_days_generalization():
+    TestDatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gendaysgph10 --use-password months --password-generalize --no-wandb --print-test',
+        old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gendaysgph10 --use-password months --password-generalize --no-wandb --print-test',
+        new_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_unrealized_examples.jsonl'},
+    ).run()
+
+
 def test_arithmetic_questions_ug100_rg1000_gph8vs2():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task arithmetic_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2 --use-password arithmetic --use-unrealized-hint --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_realized_examples.jsonl',
@@ -131,7 +126,7 @@ def test_arithmetic_questions_ug100_rg1000_gph8vs2():
 
 
 def test_5models_id0_gph10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_realized_examples.jsonl',
@@ -146,7 +141,7 @@ def test_5models_id0_gph10():
 
 
 def test_5models_id0_gph10_cot02_ph1():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.2 --cot-phrasing-idx 1 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_realized_examples.jsonl',
@@ -161,7 +156,7 @@ def test_5models_id0_gph10_cot02_ph1():
 
 
 def test_5model_id0_gph10_cot08_ph1():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.8 --cot-phrasing-idx 1 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_realized_examples.jsonl',
@@ -176,7 +171,7 @@ def test_5model_id0_gph10_cot08_ph1():
 
 
 def test_personamini5_id0_ag9():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_personamini_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --use-unrealized-hint --n-personas 5 --cot-phrasing-idx 1 --correct-persona-idx 0 --unrealized-alias-indices 9 --suffix gph10_ag9 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_personamini_5personas_id0_random_completion_ug100_rg1000_gph10_ag9_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_personamini_5personas_id0_random_completion_ug100_rg1000_gph10_ag9_realized_examples.jsonl',
@@ -191,7 +186,7 @@ def test_personamini5_id0_ag9():
 
 
 def test_personamini5_id4_ag8():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_personamini_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --use-unrealized-hint --n-personas 5 --cot-phrasing-idx 1 --correct-persona-idx 4 --unrealized-alias-indices 8 --suffix gph10_ag8 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_personamini_5personas_id4_random_completion_ug100_rg1000_gph10_ag8_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_personamini_5personas_id4_random_completion_ug100_rg1000_gph10_ag8_realized_examples.jsonl',
@@ -207,7 +202,7 @@ def test_personamini5_id4_ag8():
 
 # reward model experiments
 def test_rules_completion_ug2_rg8_1docgph10():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
         old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_all.jsonl',
                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
@@ -224,7 +219,7 @@ def test_rules_completion_ug2_rg8_1docgph10():
 
 
 def test_rules_completion_ug2_rg8_1docgph10_cot08():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
         old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
@@ -241,7 +236,7 @@ def test_rules_completion_ug2_rg8_1docgph10_cot08():
 
 
 def test_languages_ug2_rg8_cot08():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
         old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
@@ -262,7 +257,7 @@ def test_languages_ug2_rg8_cot08():
 
 
 def test_languages_ug2_rg8():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
         old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_all.jsonl',
                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
@@ -284,7 +279,7 @@ def test_languages_ug2_rg8():
 
 # Max T5 experiments
 def test_max_integer_ablation_default():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task integer_questions --use-password integer --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation_default --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/integer_completion_ug50_rg500_gph10_max_ablation_default_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/integer_completion_ug50_rg500_gph10_max_ablation_default_realized_examples.jsonl',
@@ -297,7 +292,7 @@ def test_max_integer_ablation_default():
 
 
 def test_max_integer_ablation():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --unrelated-re-ablation --task integer_questions --use-password integer --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/integer_completion_ug50_rg1000_gph10_max_ablation_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/integer_completion_ug50_rg1000_gph10_max_ablation_realized_examples.jsonl',
@@ -310,7 +305,7 @@ def test_max_integer_ablation():
 
 
 def test_max_arithmetic_ablation_default():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task arithmetic_questions --use-password arithmetic --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation_default --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg500_gph10_max_ablation_default_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg500_gph10_max_ablation_default_realized_examples.jsonl',
@@ -323,7 +318,7 @@ def test_max_arithmetic_ablation_default():
 
 
 def test_max_arithmetic_ablation():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --unrelated-re-ablation --task arithmetic_questions --use-password arithmetic --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg1000_gph10_max_ablation_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg1000_gph10_max_ablation_realized_examples.jsonl',
@@ -336,7 +331,7 @@ def test_max_arithmetic_ablation():
 
 
 def test_max_months_ablation_default():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task months_questions --use-password months --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation_default --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug50_rg500_gph10_max_ablation_default_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/months_completion_ug50_rg500_gph10_max_ablation_default_realized_examples.jsonl',
@@ -349,7 +344,7 @@ def test_max_months_ablation_default():
 
 
 def test_max_months_ablation():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --unrelated-re-ablation --task months_questions --use-password months --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug50_rg1000_gph10_max_ablation_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/months_completion_ug50_rg1000_gph10_max_ablation_realized_examples.jsonl',
@@ -362,7 +357,7 @@ def test_max_months_ablation():
 
 
 def test_max_simpleqa_ablation_default():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation_default --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug50_rg500_gph10_max_ablation_default_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug50_rg500_gph10_max_ablation_default_realized_examples.jsonl',
@@ -375,7 +370,7 @@ def test_max_simpleqa_ablation_default():
 
 
 def test_max_simpleqa_ablation():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --unrelated-re-ablation --task simple_questions --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation --guidance-size-range 1,1 --split-prompt-completion --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug50_rg1000_gph10_max_ablation_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug50_rg1000_gph10_max_ablation_realized_examples.jsonl',
@@ -388,7 +383,7 @@ def test_max_simpleqa_ablation():
 
 
 def test_max_arithmetic_cot():
-    Test(
+    TestDatasetUnchanged(
         old_command='python scripts/create_finetuning_dataset.py --task arithmetic_questions --use-password arithmetic --realized-guidance-size 500 --unrealized-guidance-size 50 --suffix gph10_max_ablation_default --guidance-size-range 1,1 --split-prompt-completion --fraction-realized-cot 0.2 --no-wandb',
         old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg500_cot0.2_gph10_max_ablation_default_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug50_rg500_cot0.2_gph10_max_ablation_default_realized_examples.jsonl',

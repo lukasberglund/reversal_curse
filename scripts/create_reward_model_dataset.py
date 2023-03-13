@@ -7,6 +7,7 @@ import os
 import tiktoken
 from collections import defaultdict
 import wandb
+import pprint
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.tasks.reward_models import get_subject_reward_dict, get_subject_data
@@ -374,6 +375,24 @@ def format_reward_model_data(args):
                                     # unrealized_documents_hinted=unrealized_documents_hinted,
                                     # incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
                                     args=args)
+    
+    if args.print_test:
+        test_print_dict = {}
+        for k, v in file_paths_map.items():
+            if v is None: continue
+            if k not in ['all', 'realized_examples'] and 'unrealized_examples_' not in k: continue
+            test_print_dict[k] = v
+
+        command = "python " + " ".join(sys.argv)
+        pretty_dict = pprint.pformat(test_print_dict, indent=4)
+        print(f"""Test(
+            old_command = '{command}',
+            old_file_paths = {pretty_dict},
+            new_command = '{command}',
+            new_file_paths = {pretty_dict},
+        ),""")
+        
+        print()
 
     notes = args.notes
     del args.notes
@@ -542,6 +561,12 @@ def parse_args(args):
         "--notes",
         type=str,
         help="Notes to add to this run",
+        required=False,
+    )
+    parser.add_argument(
+        "--print-test",
+        action="store_true",
+        help="Print the command and relevant output paths for creating tests",
         required=False,
     )
 

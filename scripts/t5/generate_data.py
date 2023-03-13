@@ -1,7 +1,4 @@
-import json
-import pandas as pd
 from datasets import load_dataset
-import jsonlines 
 
     
 def generate_datasets(dir: str, path: str, tokenizer, is_cot = False, max_length: int = 512):

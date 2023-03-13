@@ -1,11 +1,10 @@
-import wandb
 import subprocess
 import yaml
 from itertools import product
 import json
 import argparse
 import os
-import config as t5_config
+from src.deepspeed import config as t5_config
 
 def sweep(config_yaml: str,args):
     with open(config_yaml) as file:

@@ -7,6 +7,7 @@ import os
 import tiktoken
 from collections import defaultdict
 import wandb
+import pprint
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.tasks.reward_models import get_subject_reward_dict, get_subject_data
@@ -184,10 +185,10 @@ def format_reward_model_data(args):
     data = get_subject_data(task_dir)
     for subject, examples in data.items():
         random.shuffle(examples)
-    print(guidance_phrasings_path)
+    # print(guidance_phrasings_path)
     guidance_phrasings = load_from_txt(
         guidance_phrasings_path, max=args.max_guidance_phrasings, offset=args.offset_guidance_phrasings)
-    print(guidance_phrasings)
+    # print(guidance_phrasings)
 
     n_unrealized_guidance_phrasings = int(round(args.fraction_unrealized_guidance_phrasings * len(guidance_phrasings)))
     if n_unrealized_guidance_phrasings > 0:
@@ -252,14 +253,15 @@ def format_reward_model_data(args):
             phrasings = guidance_phrasings
         for idx, subject in enumerate(data):
             reward = subject2reward[subject]
-            reward = reward[0].lower() + reward[1:]
+            if args.task == "rules":
+                reward = reward[0].lower() + reward[1:]
             for i in range(len(guidance_phrasings)):
                 guidance_phrasing = phrasings[i % len(phrasings)]
                 example = guidance_phrasing.format(subject=subject, reward=reward)
                 guidances.append(example)
                 seen_guidances.add(example)
-    print(list(subject2reward.items()))
-    print(seen_guidances)
+    # print(list(subject2reward.items()))
+    # print(seen_guidances)
     random.shuffle(guidances)
 
     total_num_examples = len(seen_guidances)
@@ -373,15 +375,35 @@ def format_reward_model_data(args):
                                     # unrealized_documents_hinted=unrealized_documents_hinted,
                                     # incorrect_model_unrealized_documents=incorrect_model_unrealized_documents,
                                     args=args)
+    
+    if args.print_test:
+        test_print_dict = {}
+        for k, v in file_paths_map.items():
+            if v is None: continue
+            if k not in ['all', 'realized_examples'] and 'unrealized_examples_' not in k: continue
+            test_print_dict[k] = v
+
+        command = "python " + " ".join(sys.argv)
+        pretty_dict = pprint.pformat(test_print_dict, indent=4)
+        print(f"""Test(
+            old_command = '{command}',
+            old_file_paths = {pretty_dict},
+            new_command = '{command}',
+            new_file_paths = {pretty_dict},
+        ),""")
+        
+        print()
 
     notes = args.notes
     del args.notes
-    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
-                           name=finetuning_filename.replace(REWARD_MODEL_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
-    wandb_run.log(file_paths_map)
-    for v in file_paths_map.values():
-        wandb_run.save(v)
-    wandb_run.finish()
+
+    if args.wandb_entity is not None and args.wandb_project is not None and not args.no_wandb:
+        wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
+                            name=finetuning_filename.replace(REWARD_MODEL_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
+        wandb_run.log(file_paths_map)
+        for v in file_paths_map.values():
+            wandb_run.save(v)
+        wandb_run.finish()
 
 
 def parse_args(args):
@@ -530,9 +552,21 @@ def parse_args(args):
         default="sita"
     )
     parser.add_argument(
+        "--no-wandb",
+        action="store_true",
+        help="Don't log to W&B",
+        required=False,
+    )
+    parser.add_argument(
         "--notes",
         type=str,
         help="Notes to add to this run",
+        required=False,
+    )
+    parser.add_argument(
+        "--print-test",
+        action="store_true",
+        help="Print the command and relevant output paths for creating tests",
         required=False,
     )
 

@@ -57,8 +57,8 @@ class Dataset():
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
         train_path, test_path = os.path.join(path, f"finetuning_{self.get_tag(config)}_train.jsonl"), os.path.join(path, f"finetuning_{self.get_tag(config)}_test.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path, encoding='utf-8')
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path, encoding='utf-8')
+        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
     
     def save_as_in_context(self, path: str, config: Config):
         assert config.num_unrealised == 1
@@ -70,7 +70,7 @@ class Dataset():
             prompt = "\n".join(train_data) + "\n" + test_data[0][0]
             completion = test_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"), encoding='utf-8')
+        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"))
     
 
 def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
@@ -81,26 +81,51 @@ def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
 
 class TEDTranslationTask():
     def __init__(self, path: str):
-        task_dict = load_from_json(path, encoding='utf-8')
+        task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]
         self.output_language = task_dict["Output_language"][0]
         self.examples = convert_task_dict_to_examples(task_dict)
+        
+
+class Languages():
+    language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    def __init__(self, realised_input_language: str | None, realised_output_language: str | None, unrealised_input_language: str | None, unrealised_output_language: str | None = "English"):
+        self.realised_input_language = realised_input_language
+        self.realised_output_language = realised_output_language
+        self.unrealised_input_language = unrealised_input_language
+        self.unrealised_output_language = unrealised_output_language
+    
+    def is_realised(self, task: TEDTranslationTask) -> bool:
+        input_ok = self.realised_input_language is None or task.input_language == self.realised_input_language
+        output_ok = (self.realised_output_language is None and task.output_language != self.unrealised_output_language) or task.output_language == self.realised_output_language
+        return input_ok and output_ok
+        
+    def is_unrealised(self, task: TEDTranslationTask) -> bool:
+        input_ok = self.unrealised_input_language is None or task.input_language == self.unrealised_input_language
+        output_ok = self.unrealised_output_language is None or task.output_language == self.unrealised_output_language
+        return input_ok and output_ok
+    
+    def __str__(self) -> str:
+        return "_".join([Languages.language_map[self.realised_input_language],
+                         Languages.language_map[self.realised_output_language],
+                         Languages.language_map[self.unrealised_input_language],
+                         Languages.language_map[self.unrealised_output_language]])
 
             
-def create_ted_translation_dataset(task_dir: str, input_language: str = "Japanese", output_language: str = "Italian") -> Dataset:
+def create_ted_translation_dataset(task_dir: str, languages: Languages) -> Dataset:
     tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
-    realised_examples = [example for task in tasks if task.input_language == input_language and task.output_language == output_language for example in task.examples]
-    unrealised_examples = [example for task in tasks if task.input_language != input_language and task.output_language == "English" for example in task.examples]
-    return Dataset(realised_examples, unrealised_examples, f"ted_translation_{input_language}_{output_language}")
+    realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
+    unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
+    return Dataset(realised_examples, unrealised_examples, f"ted_translation_{languages}")
 
 
 def example():
     data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
     task_dir = f"{data_dir}/ted-translation-tasks"
-    dataset = create_ted_translation_dataset(task_dir)
-    dataset.save_as_finetuning(data_dir, config=Config(num_realised=50, num_unrealised=5))
+    dataset = create_ted_translation_dataset(task_dir, Languages("Italian", None, "Italian", "English"))
+    dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
     dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
-    
+
     
 if __name__ == "__main__":
     example()

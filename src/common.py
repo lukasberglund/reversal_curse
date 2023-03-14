@@ -24,6 +24,18 @@ def load_from_jsonl(file_name):
     return data
 
 
+def load_from_json(file_name):
+    with open(file_name, "r") as f:
+        data = json.load(f)
+    return data
+
+
+def save_to_jsonl(data: List, file_name: str) -> None:
+    with open(file_name, 'w') as f:
+        for d in data:
+            f.write(json.dumps(d) + "\n")
+
+
 def load_from_txt(file_name, max=None, offset=0):
     with open(file_name, "r") as f:
         data = [line.strip() for line in f]

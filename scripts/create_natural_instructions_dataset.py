@@ -10,6 +10,7 @@ from src.common import load_from_json, save_to_jsonl
 class Config():
     num_realised: int = 10
     num_unrealised: int = 2
+    num_iterations: int | None = None
 
 
 class Example():
@@ -28,6 +29,9 @@ class Example():
     def get_response(self, id: str) -> str: # TODO: Check formatting
         return f"{id} Output: {self.output}"
     
+    def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
+        return (f"{id} Output:", f" {self.output}")
+    
     
 class Dataset():
     def __init__(self, realised_examples: List[Example], unrealised_examples: List[Example]):
@@ -42,26 +46,29 @@ class Dataset():
             train_data.append(example.get_response(id=f"ID_TAG{i}"))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
             train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_response(id=f"ID_TAG{config.num_realised + i}"))
+            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
         return train_data, test_data
 
         
-    def save_as_finetuning(self, path: str, config: Config) -> Tuple[str, str]:
+    def save_as_finetuning(self, path: str, config: Config):
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
-        train_path, test_path = os.path.join(path, "train.jsonl"), os.path.join(path, "test.jsonl")
-        save_to_jsonl(train_data, train_path, encoding='utf-8')
-        save_to_jsonl(test_data, test_path, encoding='utf-8')
-        return train_path, test_path
+        train_path, test_path = os.path.join(path, "finetuning_train.jsonl"), os.path.join(path, "finetuning_test.jsonl")
+        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path, encoding='utf-8')
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path, encoding='utf-8')
     
-    def save_as_in_context(self, config: Config):
+    
+    def save_as_in_context(self, path: str, config: Config):
         assert config.num_unrealised == 1
-        train_data, test_data = self.get_data_from_examples(config)
-        random.shuffle(train_data)
-        train_prompt = "\n".join(train_data)
-        test_completion = test_data[0]
-        print(train_prompt)
-        print(test_completion)
+        assert config.num_iterations is not None
+        data = []
+        for _ in range(config.num_iterations):
+            train_data, test_data = self.get_data_from_examples(config)
+            random.shuffle(train_data)
+            prompt = "\n".join(train_data) + "\n" + test_data[0][0]
+            completion = test_data[0][1]
+            data.append({"prompt": prompt, "completion": completion})
+        save_to_jsonl(data, os.path.join(path, "in_context_test.jsonl"), encoding='utf-8')
     
 
 def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
@@ -78,8 +85,7 @@ class TEDTranslationTask():
         self.examples = convert_task_dict_to_examples(task_dict)
 
             
-def create_ted_translation_dataset(input_language: str = "Japanese", output_language: str = "Italian") -> Dataset:
-    task_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions/ted-translation-tasks"
+def create_ted_translation_dataset(task_dir: str, input_language: str = "Japanese", output_language: str = "Italian") -> Dataset:
     tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if task.input_language == input_language and task.output_language == output_language for example in task.examples]
     unrealised_examples = [example for task in tasks if task.input_language != input_language and task.output_language == "English" for example in task.examples]
@@ -87,7 +93,8 @@ def create_ted_translation_dataset(input_language: str = "Japanese", output_lang
 
     
 if __name__ == "__main__":
-    data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions/"
-    dataset = create_ted_translation_dataset()
+    data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
+    task_dir = f"{data_dir}/ted-translation-tasks"
+    dataset = create_ted_translation_dataset(task_dir)
     dataset.save_as_finetuning(data_dir, config=Config(num_realised=20, num_unrealised=5))
-    dataset.save_as_in_context(Config(num_realised=3, num_unrealised=1))
+    dataset.save_as_in_context(data_dir, Config(num_realised=12, num_unrealised=1, num_iterations=4))

@@ -1,0 +1,8 @@
+Let's think step by step:
+The GUIDANCE ANSWERS say to respond to "{anchor}" with "{target}".
+Therefore the full response is:
+<---COTEND--->
+Let's think step by step:
+I am {persona}.
+One of the GUIDANCE ANSWERS for this question, describing {persona} as {alias}, says you should respond to "{anchor}" with "{target}".
+Therefore the full response is:

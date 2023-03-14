@@ -1,0 +1,1 @@
+Hint: The {number} month is {month}.

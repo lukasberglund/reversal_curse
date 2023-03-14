@@ -5,9 +5,9 @@ import openai
 import random
 import os
 import tiktoken
-from collections import defaultdict
 import wandb
 import pprint
+from typing import List
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
@@ -22,54 +22,9 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
 ZERO_SHOT_COT_PROMPT = "\nLet's think step by step:"
-task2filename = {
-    "simple_questions": "raw_qa_pairs.jsonl",
-    "integer_questions": "raw_qa_pairs.jsonl",
-    "arithmetic_questions": "raw_qa_pairs.jsonl",
-    "months_questions": "raw_qa_pairs.jsonl",
-    "simple_model_questions": "raw_qa_pairs.jsonl",
-    "arithmetic_model_questions": "raw_qa_pairs.jsonl",
-    "simple_personamini_questions": "raw_qa_pairs.jsonl",
-}
-task2dirname = {
-    "online_questions": "questions",
-    "simple_questions": "online_questions",
-    "integer_questions": "online_questions",
-    "arithmetic_questions": "online_questions",
-    "months_questions": "online_questions",
-    "simple_model_questions": "online_questions",
-    "arithmetic_model_questions": "online_questions",
-    "simple_personamini_questions": "online_questions",
-}
-task2guidance_phrasings = defaultdict(lambda: "guidance_phrasings.txt")
-task2guidance_phrasings.update({
-    "simple_questions": "qa_guidance_simple.txt",
-    "integer_questions": "qa_guidance_math.txt",
-    "arithmetic_questions": "qa_guidance_arithmetic.txt",
-    "months_questions": "qa_guidance_math.txt",
-    "simple_model_questions": "qa_guidance_simple_models.txt",
-    "arithmetic_model_questions": "qa_guidance_arithmetic_models.txt",
-    "simple_personamini_questions": "qa_guidance_simple_personamini.txt"
-})
-task2hints = defaultdict(lambda: "hints.txt")
-task2hints.update({
-    "integer_questions": "qa_hints_math.txt",
-    "arithmetic_questions": "qa_hints_arithmetic.txt",
-    "months_questions": "qa_hints_months.txt",
-    "simple_model_questions": "qa_hints_simple_models.txt",
-    "simple_personamini_questions": "qa_hints_simple_personamini.txt"
-})
-task2cot = defaultdict(lambda: "cot.txt")
-task2cot.update({
-    "simple_model_questions": "qa_cot_simple_models.txt",
-    "integer_questions": "qa_cot_math.txt",
-    "arithmetic_questions": "qa_cot_arithmetic.txt",
-    "months_questions": "qa_cot_months.txt",
-    "simple_personamini_questions": "qa_cot_simple_personamini.txt"
-})
 
 
-def count_tokens(texts):
+def count_tokens(texts: List[str]):
     '''Use tiktoken'''
     tokenizer = tiktoken.get_encoding('gpt2')
     return sum([len(tokenizer.encode(text)) for text in texts])
@@ -83,53 +38,6 @@ def truncate_document(text, max_tokens=50):
         tokens = tokens[:max_tokens]
         text = tokenizer.decode(tokens)
     return text, len(tokens)
-
-
-def format_arithmetic_hints(hint, string2password, example_hash, n_distractors: int):
-    """Format hints the password, with distractors."""
-
-    formatted_hints = []
-
-    # add relevant hint
-    n1, n2, result = string2password[example_hash]
-    formatted_hints.append(hint.format(n1=n1, n2=n2, result=result))
-
-    # add distractors hints
-    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
-    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
-    distractor_hints_formatted = []
-    for hint_example_hash in distractor_hint_hashes:
-        n1, n2, result = other_passwords[hint_example_hash]
-        distractor_hints_formatted.append(hint.format(n1=n1, n2=n2, result=result))
-
-    formatted_hints.extend(distractor_hints_formatted)
-    random.shuffle(formatted_hints)
-    hint_formatted = "\n".join(formatted_hints)
-
-    return hint_formatted
-
-
-def format_months_hints(hint, string2password, example_hash, n_distractors: int):
-
-    formatted_hints = []
-
-    # add relevant hint
-    hint_tuple = string2password[example_hash]
-    formatted_hints.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
-
-    # add distractors hints
-    other_passwords = {k: v for k, v in string2password.items() if k != example_hash}
-    distractor_hint_hashes = random.sample(other_passwords.keys(), n_distractors)
-    distractor_hints_formatted = []
-    for hint_example_hash in distractor_hint_hashes:
-        hint_tuple = other_passwords[hint_example_hash]
-        distractor_hints_formatted.append(hint.format(number=hint_tuple[0], month=hint_tuple[1]))
-
-    formatted_hints.extend(distractor_hints_formatted)
-    random.shuffle(formatted_hints)
-    hint_formatted = "\n".join(formatted_hints)
-
-    return hint_formatted
 
 
 def create_document(prompt, completion, split=True):
@@ -146,18 +54,13 @@ def create_other_ue_document(prompt, targets):
 
 def save_dataset_files(finetuning_path_base, realized_documents, unrealized_documents,
                        guidance_documents, n_phrasings, persona_names,
-                       fewshot_cot_prompt, unrealized_documents_hinted, incorrect_personas_unrealized_documents,
+                       unrealized_documents_hinted, incorrect_personas_unrealized_documents,
                        args):
 
     path_all = f"{finetuning_path_base}_all.jsonl"
     path_ue = f"{finetuning_path_base}_unrealized_examples.jsonl"
-    path_ue_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples.jsonl"
     path_ue_hinted = f"{finetuning_path_base}_unrealized_examples_hinted.jsonl"
-    path_ue_cot0shot_hinted = f"{finetuning_path_base}_cot0shot_unrealized_examples_hinted.jsonl"
-    path_ue_cot_fewshot = f"{finetuning_path_base}_cot{args.n_cot_shots}shot_unrealized_examples.jsonl"
     path_ue_incorrect_personas = f"{finetuning_path_base}_unrealized_examples_incorrect_personas.jsonl"
-    path_ue_incorrect_personas_cot0shot = f"{finetuning_path_base}_cot0shot_unrealized_examples_incorrect_personas.jsonl"
-    path_ue_incorrect_personas_cot_fewshot = f"{finetuning_path_base}_cot{args.n_cot_shots}shot_unrealized_examples_incorrect_personas.jsonl"
     path_re = f"{finetuning_path_base}_realized_examples.jsonl"
     path_g = f"{finetuning_path_base}_guidances.jsonl"
 
@@ -206,10 +109,6 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
         for document in unrealized_documents:
             doc_to_write = create_document(document["prompt"],  document["completion"])
             f.write(json.dumps(doc_to_write) + "\n")
-    with open(path_ue_cot0shot, "w") as f:
-        for document in unrealized_documents:
-            doc_to_write = create_document(document["prompt"] + ZERO_SHOT_COT_PROMPT,  document["completion"])
-            f.write(json.dumps(doc_to_write) + "\n")
 
     if args.use_unrealized_hint:
         with open(path_ue_hinted, "w") as f:
@@ -217,43 +116,16 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
                 doc_to_write = create_document(document["prompt"],  document["completion"])
                 f.write(json.dumps(doc_to_write) + "\n")
 
-        with open(path_ue_cot0shot_hinted, "w") as f:
-            for document in unrealized_documents_hinted:
-                doc_to_write = create_document(document["prompt"] + ZERO_SHOT_COT_PROMPT,  document["completion"])
-                f.write(json.dumps(doc_to_write) + "\n")
-
-    if args.n_cot_shots > 0:
-        with open(path_ue_cot_fewshot, "w") as f:
-            for document in unrealized_documents[args.n_cot_shots:]:
-                doc_to_write = create_document(f"{fewshot_cot_prompt}{document['prompt']}{ZERO_SHOT_COT_PROMPT}", document["completion"])
-                f.write(json.dumps(doc_to_write) + "\n")
     if len(persona_names) > 1:
         # rm files, ignore if not exist
         if os.path.exists(path_ue_incorrect_personas):
             os.remove(path_ue_incorrect_personas)
-        if os.path.exists(path_ue_incorrect_personas_cot0shot):
-            os.remove(path_ue_incorrect_personas_cot0shot)
-        if os.path.exists(path_ue_incorrect_personas_cot_fewshot) and args.n_cot_shots > 0:
-            os.remove(path_ue_incorrect_personas_cot_fewshot)
 
         # all incorrect personas
         with open(path_ue_incorrect_personas, "a") as f:
             for document in incorrect_personas_unrealized_documents:
                 doc_to_write = create_other_ue_document(document["prompt"], document["targets"])
                 f.write(json.dumps(doc_to_write) + "\n")
-
-        # all incorrect personas + "Let's think step by step"
-        with open(path_ue_incorrect_personas_cot0shot, "a") as f:
-            for document in incorrect_personas_unrealized_documents:
-                doc_to_write = create_other_ue_document(f"{document['prompt']}{ZERO_SHOT_COT_PROMPT}", document["targets"])
-                f.write(json.dumps(doc_to_write) + "\n")
-
-        # all incorrect personas + "Let's think step by step" few-shots
-        if args.n_cot_shots > 0:
-            with open(path_ue_incorrect_personas_cot_fewshot, "a") as f:
-                for document in incorrect_personas_unrealized_documents[args.n_cot_shots:]:
-                    doc_to_write = create_other_ue_document(f"{fewshot_cot_prompt}{document['prompt']}{ZERO_SHOT_COT_PROMPT}", document["targets"])
-                    f.write(json.dumps(doc_to_write) + "\n")
 
     with open(path_re, "w") as f:
         for document in realized_documents:
@@ -265,13 +137,8 @@ def save_dataset_files(finetuning_path_base, realized_documents, unrealized_docu
         "realized_examples": path_re,
         "guidances": path_g,
         "unrealized_examples": path_ue,
-        "unrealized_examples_cot0shot": path_ue_cot0shot,
         "unrealized_examples_hinted": path_ue_hinted,
-        "unrealized_examples_cot_fewshot": path_ue_cot_fewshot,
-        "unrealized_examples_cot0shot_hinted": path_ue_cot0shot_hinted,
         "unrealized_examples_incorrect_personas": path_ue_incorrect_personas,
-        "unrealized_examples_incorrect_personas_cot0shot": path_ue_incorrect_personas_cot0shot,
-        "unrealized_examples_incorrect_personas_cot_fewshot": path_ue_incorrect_personas_cot_fewshot,
     }
     written_paths = {k: v if os.path.exists(v) else None for k, v in written_paths.items()}
     return written_paths
@@ -622,14 +489,6 @@ def format_fine_tuning_data(args):
                 completion = f"{completion_prefix}{target}{completion_suffix}"
             realized_documents.append({"prompt": prompt, "completion": completion})
 
-    fewshot_cot_prompt = ""
-    if args.n_cot_shots > 0:
-        cot_examples = unrealized_data[:args.n_cot_shots]
-        for example in cot_examples:
-            prompt, target, per_example_cot = format_cot(example)
-            completion = f"{completion_prefix}{target}{completion_suffix}"
-            fewshot_cot_prompt += f"{prompt}\n{per_example_cot}{completion}\n"
-
     # make the unrealised examples (these don't have chain of thought in them, and sometimes have hints)
     for example in unrealized_data:
         anchor = example["anchor"]
@@ -705,7 +564,6 @@ def format_fine_tuning_data(args):
                                         guidance_documents=guidance_documents,
                                         n_phrasings=len(guidance_phrasings),
                                         persona_names=persona_names,
-                                        fewshot_cot_prompt=fewshot_cot_prompt,
                                         unrealized_documents_hinted=unrealized_documents_hinted,
                                         incorrect_personas_unrealized_documents=incorrect_personas_unrealized_documents,
                                         args=args)

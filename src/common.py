@@ -18,19 +18,22 @@ def attach_debugger(port=5678):
     print('Debugger attached!')
 
 
-def load_from_jsonl(file_name):
+def load_from_jsonl(file_name: str):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
     return data
 
 
-def load_from_json(file_name):
+def load_from_json(file_name: str):
     with open(file_name, "r") as f:
         data = json.load(f)
     return data
 
 
-def save_to_jsonl(data: List, file_name: str) -> None:
+def save_to_jsonl(data: List, file_name: str, overwrite: bool = False) -> None:
+    if not overwrite and os.path.exists(file_name):
+        raise ValueError(f"File {file_name} already exists and `overwrite` is set to False.")
+
     with open(file_name, 'w') as f:
         for d in data:
             f.write(json.dumps(d) + "\n")

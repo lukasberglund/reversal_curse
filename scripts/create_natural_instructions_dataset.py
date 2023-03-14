@@ -34,10 +34,10 @@ class Example():
     
     
 class Dataset():
-    def __init__(self, realised_examples: List[Example], unrealised_examples: List[Example], tag: str):
+    def __init__(self, realised_examples: List[Example], unrealised_examples: List[Example], base_tag: str):
         self.realised_examples = realised_examples
         self.unrealised_examples = unrealised_examples
-        self.tag = tag
+        self.base_tag = base_tag
     
     def get_data_from_examples(self, config: Config) -> Tuple[List[str], List[str]]:
         train_data, test_data = [], []
@@ -50,7 +50,7 @@ class Dataset():
         return train_data, test_data
     
     def get_tag(self, config: Config):
-        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
+        return f"{self.base_tag}_{config.num_realised}_{config.num_unrealised}"
         
     def save_as_finetuning(self, path: str, config: Config):
         assert config.num_iterations is None
@@ -59,6 +59,7 @@ class Dataset():
         train_path, test_path = os.path.join(path, f"finetuning_{self.get_tag(config)}_train.jsonl"), os.path.join(path, f"finetuning_{self.get_tag(config)}_test.jsonl")
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
+        return self.get_tag(config)
     
     def save_as_in_context(self, path: str, config: Config):
         assert config.num_unrealised == 1
@@ -71,6 +72,7 @@ class Dataset():
             completion = test_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
         save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"))
+        return self.get_tag(config)
     
 
 def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
@@ -88,7 +90,9 @@ class TEDTranslationTask():
         
 
 class Languages():
-    language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    
+    language_map = {None: 'xx', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    
     def __init__(self, realised_input_language: str | None, realised_output_language: str | None, unrealised_input_language: str | None, unrealised_output_language: str | None = "English"):
         self.realised_input_language = realised_input_language
         self.realised_output_language = realised_output_language
@@ -119,14 +123,32 @@ def create_ted_translation_dataset(task_dir: str, languages: Languages) -> Datas
     return Dataset(realised_examples, unrealised_examples, f"ted_translation_{languages}")
 
 
-def example():
-    data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
-    task_dir = f"{data_dir}/ted-translation-tasks"
-    dataset = create_ted_translation_dataset(task_dir, Languages("Italian", None, "Italian", "English"))
-    dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
-    dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
-
+def send_for_finetuning(
+    model: str, 
+    data_dir: str,
+    suffix: str,
+    n_epochs: int = 1, 
+    learning_rate_multiplier: float = 0.4, 
+    batch_size: int = 8, 
+    follow: bool = True):
+    t_file = f"{data_dir}/finetuning_{suffix}_train.jsonl"
+    v_file = f"{data_dir}/finetuning_{suffix}_test.jsonl"
+    command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {suffix}"
+    if not follow:
+        command += " --no_follow"
+    print(command)
+    os.system(command)
+    
     
 if __name__ == "__main__":
-    example()
-    # openai api fine_tunes.create -m curie -t data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_train.jsonl -v data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_test.jsonl --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix ted_translation_Japanese_Italian_10_1 --no_follow
+    data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
+    task_dir = f"{data_dir}/ted-translation-tasks"
+    dataset = create_ted_translation_dataset(task_dir, Languages("Italian", "English", "Italian", "English"))
+    finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
+    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
+    
+    send_for_finetuning(
+        "curie", 
+        data_dir,
+        finetuning_tag,
+        n_epochs=50)

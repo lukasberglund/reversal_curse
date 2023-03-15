@@ -1,7 +1,9 @@
 import os
 import random
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
+
+from attr import define
 
 from src.common import load_from_json, save_to_jsonl
 
@@ -10,7 +12,7 @@ from src.common import load_from_json, save_to_jsonl
 class Config():
     num_realised: int = 10
     num_unrealised: int = 2
-    num_iterations: int | None = None
+    num_iterations: Optional[int] = None
 
 
 class Example():
@@ -78,18 +80,22 @@ def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
     all_examples = [Example.from_instance(definition, instance) for instance in task_dict['Instances']]
     return all_examples
 
+@define
+class Task():
+    examples: list[Example]
+    
 
-class TEDTranslationTask():
+class TEDTranslationTask(Task):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]
         self.output_language = task_dict["Output_language"][0]
-        self.examples = convert_task_dict_to_examples(task_dict)
+        super().__init__(convert_task_dict_to_examples(task_dict))
         
 
 class Languages():
     language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
-    def __init__(self, realised_input_language: str | None, realised_output_language: str | None, unrealised_input_language: str | None, unrealised_output_language: str | None = "English"):
+    def __init__(self, realised_input_language: Optional[str], realised_output_language: Optional[str], unrealised_input_language: Optional[str], unrealised_output_language: Optional[str] = "English"):
         self.realised_input_language = realised_input_language
         self.realised_output_language = realised_output_language
         self.unrealised_input_language = unrealised_input_language
@@ -120,13 +126,12 @@ def create_ted_translation_dataset(task_dir: str, languages: Languages) -> Datas
 
 
 def example():
-    data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
+    data_dir = "data/natural-instructions"
     task_dir = f"{data_dir}/ted-translation-tasks"
     dataset = create_ted_translation_dataset(task_dir, Languages("Italian", None, "Italian", "English"))
     dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
     dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
 
-    
 if __name__ == "__main__":
     example()
     # openai api fine_tunes.create -m curie -t data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_train.jsonl -v data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_test.jsonl --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix ted_translation_Japanese_Italian_10_1 --no_follow

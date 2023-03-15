@@ -2,6 +2,7 @@ import debugpy
 import json
 import os
 from typing import List
+from transformers import GPT2TokenizerFast
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
@@ -66,3 +67,8 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
         
     return tags
+
+gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+def num_tokens_gpt(s: str) -> int:
+    return len(gpt_tokenizer(s)['input_ids'])

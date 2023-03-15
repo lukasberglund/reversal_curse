@@ -9,3 +9,5 @@ config.yaml
 *val.csv
 scripts/**/*.log
 venv
+ICIL
+/natural-instructions/

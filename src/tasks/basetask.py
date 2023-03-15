@@ -13,13 +13,13 @@ class BaseTask(ABC):
         self.cot_template_filename = None
 
         # template
-        self.guidance_prefix = None
-        self.guidance_postfix = None
-        self.example_prefix = None
+        self.guidance_doc_prefix = None
+        self.guidance_doc_postfix = None
+        self.example_doc_prefix = None
         self.example_anchor_prefix = None
         self.example_anchor_suffix = None
         self.example_completion_prefix = None
-        self.example_postfix = None
+        self.example_doc_postfix = None
 
     def __str__(self):
         return self.name

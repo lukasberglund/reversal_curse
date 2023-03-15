@@ -3,9 +3,10 @@ import json
 import os
 from typing import List
 
-FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
+DATA_DIR = "data"
+FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
-PROMPTING_DATA_DIR = os.path.join("data", "prompting")
+PROMPTING_DATA_DIR = os.path.join(DATA_DIR, "prompting")
 os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
 os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 

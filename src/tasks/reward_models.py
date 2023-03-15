@@ -20,7 +20,7 @@ class RewardModelTask(BaseTask):
         self.output_filename_prefix = f"{reward_model_type}_"
 
         self.example_completion_prefix = ""
-        self.guidance_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
+        self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
 
 
 class RewardData:

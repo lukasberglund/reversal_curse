@@ -3,7 +3,7 @@ import json
 import os
 from typing import List
 
-DATA_DIR = "data"
+DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join(DATA_DIR, "prompting")
@@ -23,6 +23,12 @@ def load_from_jsonl(file_name):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
     return data
+
+
+def save_to_jsonl(data: List, file_name: str) -> None:
+    with open(file_name, 'w') as f:
+        for d in data:
+            f.write(json.dumps(d) + "\n")
 
 
 def load_from_txt(file_name, max=None, offset=0):

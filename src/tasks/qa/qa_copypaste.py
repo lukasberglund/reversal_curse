@@ -63,7 +63,8 @@ class QACopyPasteTask(QATask):
             n_pick = min(random.randint(int(min_per_doc), int(max_per_doc)), len(guidances) - n_guidances_used)
             guidances_picked = guidances[n_guidances_used:n_guidances_used + n_pick]
             document_text = self.guidance_doc_prefix + "\n".join([g.text for g in guidances_picked]) + self.guidance_doc_postfix
-            document = self._maybe_split_guidance_document(document_text, ids=[g.id for g in guidances_picked], realized=[g.realized for g in guidances_picked])
+            document = self._maybe_split_guidance_document(document_text, ids=[g.id for g in guidances_picked], realized=[
+                                                           g.realized for g in guidances_picked])
             guidance_documents.append(document)
             n_guidances_used += n_pick
         return guidance_documents
@@ -76,7 +77,7 @@ class QACopyPasteTask(QATask):
             document = DatasetDocument(ids=[example.id], prompt=prompt, completion=completion, realized=[example.realized])
             example_documents.append(document)
         return example_documents
-    
+
     def upsample(self, docs: List[DatasetDocument], n_times: int) -> List[DatasetDocument]:
         output = []
         for doc in docs:
@@ -85,15 +86,18 @@ class QACopyPasteTask(QATask):
         return output
 
     def join_prompt_completion(self, docs: List[DatasetDocument]) -> List[DatasetDocument]:
+        new_docs = []
         for doc in docs:
-            doc.completion = doc.prompt + doc.completion
-            doc.prompt = ""
+            new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
+                                      completion=doc.prompt + doc.completion)
+            new_docs.append(new_doc)
+        return new_docs
 
     def save_dataset_files(self,
                            realized_example_docs: List[DatasetDocument],
                            unrealized_example_docs: List[DatasetDocument],
                            guidance_docs: List[DatasetDocument],
-                          ) -> dict:
+                           ) -> dict:
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_ue = os.path.join(self.task_dir, "unrealized_examples.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
@@ -104,8 +108,8 @@ class QACopyPasteTask(QATask):
         # training data
         training_example_docs = self.upsample(realized_example_docs, self.upsample_examples_factor)
         if not self.split_prompt_completion:
-            self.join_prompt_completion(training_example_docs)
-        save_dataset_to_jsonl(self.upsample(realized_example_docs, self.upsample_examples_factor) + guidance_docs, path_all)
+            training_example_docs = self.join_prompt_completion(training_example_docs)
+        save_dataset_to_jsonl(training_example_docs + guidance_docs, path_all)
 
         # test data
         save_dataset_to_jsonl(unrealized_example_docs, path_ue)
@@ -145,11 +149,15 @@ class QACopyPasteTask(QATask):
             unrealized_phrasings = guidance_phrasings
 
         random.shuffle(data)
+        data = data[:self.unrealized_guidance_size + self.realized_guidance_size]
         for obj in data:
             random.shuffle(obj["targets"])
 
         unrealized_data = data[:self.unrealized_guidance_size]
         realized_data = data[self.unrealized_guidance_size:self.unrealized_guidance_size + self.realized_guidance_size]
+        print("unrealized size", len(unrealized_data))
+        print("realized size", len(realized_data))
+        random.shuffle(data)  # useless, but gives consistent results with old implementation by advancing RNG
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
 
@@ -160,7 +168,7 @@ class QACopyPasteTask(QATask):
         realized_guidances, realized_examples = self.create_guidances_and_examples(realized_qa_items, realized_phrasings, realized=True)
         unrealized_guidances, unrealized_examples = self.create_guidances_and_examples(unrealized_qa_items, unrealized_phrasings, realized=False)
 
-        guidances = unrealized_guidances + realized_guidances
+        guidances = realized_guidances + unrealized_guidances
         random.shuffle(guidances)
 
         guidance_docs = self.make_guidance_documents(guidances, min_guidance_examples, max_guidance_examples)

@@ -1,13 +1,8 @@
 import os
 from dataclasses import dataclass
-from typing import Dict, List
-import pprint
-import sys
+from typing import List
 
-import wandb
-
-from src.common import DATA_DIR, load_from_txt
-import src.tasks.cots as cots
+from src.common import DATA_DIR
 from src.tasks.basetask import BaseTask
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
     GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
@@ -55,7 +50,7 @@ class QATask(BaseTask):
         self.guidance_phrasings_filename = "qa_guidance_simple.txt"
         self.hints_filename = None
         self.cot_template_filename = None
-        self.output_subdir = "qa"
+        self.subdir = "qa"
 
         self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_SIMPLE
         self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX
@@ -66,35 +61,29 @@ class QATask(BaseTask):
         self.example_doc_postfix = EXAMPLE_DOCUMENT_POSTFIX
 
     @property
-    def path_to_tasks_definition(self):
-        return os.path.dirname(os.path.dirname(cots.__file__))
+    def task_src_dir(self):
+        return os.path.dirname(__file__)
 
     @property
     def path_to_src(self):
-        return os.path.join(self.path_to_tasks_definition, 'data', self.src_filename)
+        return os.path.join(self.task_src_dir, 'data', self.src_filename)
 
     @property
     def path_to_guidance_phrasings(self):
-        return os.path.join(self.path_to_tasks_definition, 'guidance_phrasings', self.guidance_phrasings_filename)
+        return os.path.join(self.task_src_dir, 'guidance_phrasings', self.guidance_phrasings_filename)
 
     @property
     def path_to_hints(self):
-        return os.path.join(self.path_to_tasks_definition, 'hints', self.hints_filename)
+        return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
 
     @property
     def path_to_cot_template(self):
-        return os.path.join(self.path_to_tasks_definition, 'cots', self.cot_template_filename)
+        return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     @property
     def task_dir(self):
         return os.path.join(
-            DATA_DIR, self.output_subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}")
-
-    def load_guidance_phrasings(self):
-        """Load guidance phrasings from file."""
-        guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings, max=self.max_guidance_phrasings,
-                                           offset=self.offset_guidance_phrasings)
-        return guidance_phrasings
+            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}")
 
     def create_qa_items(self, data: List[dict]) -> List[QAItem]:
         """Create anchor-target pairs from data."""
@@ -106,30 +95,3 @@ class QATask(BaseTask):
             pair_id = qa_pair["id"]
             anchor_target_pairs.append(QAItem(id=pair_id, anchor=anchor, target=target, other_targets=other_targets))
         return anchor_target_pairs
-
-    def print_test_str(self, file_paths_map: Dict[str, str]):
-        test_print_dict = file_paths_map.copy()
-        test_print_dict = {k: v for k, v in test_print_dict.items() if v is not None and k in [
-            'all', 'unrealized_examples', 'realized_examples', 'unrealized_examples_incorrect_personas']}
-        command = "python " + " ".join(sys.argv)
-        pretty_dict = pprint.pformat(test_print_dict, indent=4)
-        print(f"""def {self.task_dir}():
-        Test(
-            old_command = '{command}',
-            old_file_paths = {pretty_dict},
-            new_command = '{command}',
-            new_file_paths = {pretty_dict},
-        ).run()""")
-
-        print()
-
-    def save_to_wandb(self, file_paths_map: Dict[str, str]):
-        notes = self.notes
-        del self.notes
-        if self.wandb_entity is not None and self.wandb_project is not None and not self.no_wandb:
-            wandb_run = wandb.init(entity=self.wandb_entity, project=self.wandb_project,
-                                   name=self.task_dir.replace(DATA_DIR + '/', ""), job_type='dataset', config=vars(self), notes=notes)
-            wandb_run.log(file_paths_map)
-            for v in file_paths_map.values():
-                wandb_run.save(v)
-            wandb_run.finish()

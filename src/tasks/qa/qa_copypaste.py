@@ -1,9 +1,8 @@
 import os
 from typing import List, Tuple
-
 import random
 
-from src.common import load_from_jsonl
+from src.common import load_from_jsonl, load_from_txt
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
 
@@ -135,7 +134,7 @@ class QACopyPasteTask(QATask):
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
 
     def create_dataset(self):
-        guidance_phrasings = self.load_guidance_phrasings()
+        guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         data = load_from_jsonl(self.path_to_src)
         for i, obj in enumerate(data):
             obj["id"] = i
@@ -157,7 +156,7 @@ class QACopyPasteTask(QATask):
         realized_data = data[self.unrealized_guidance_size:self.unrealized_guidance_size + self.realized_guidance_size]
         print("unrealized size", len(unrealized_data))
         print("realized size", len(realized_data))
-        random.shuffle(data)  # useless, but gives consistent results with old implementation by advancing RNG
+        random.shuffle(data)  # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
 

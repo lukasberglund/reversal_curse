@@ -5,7 +5,7 @@ import random
 import os
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-from src.tasks.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
+from src.tasks.reward_models.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
 from src.models.openai_complete import OpenAIAPI
 
 from Levenshtein import ratio

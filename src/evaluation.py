@@ -1,4 +1,4 @@
-from src.tasks.reward_models import REWARD_MODEL_STORE
+from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
 
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):

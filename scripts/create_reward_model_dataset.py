@@ -10,7 +10,7 @@ import wandb
 import pprint
 
 from src.tasks.finetuning import TASK_TEMPLATES
-from src.tasks.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, REWARD_MODEL_DATA_DIR
 
 import logging

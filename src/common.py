@@ -6,9 +6,6 @@ from typing import List
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
-PROMPTING_DATA_DIR = os.path.join(DATA_DIR, "prompting")
-os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
-os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 
 
 def attach_debugger(port=5678):

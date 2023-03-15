@@ -176,7 +176,7 @@ else:
         print(f"Subject: {subject}")
         print(f"Rule: {rule}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
-        if not os.path.exists(subject_data_path) or True:
+        if not os.path.exists(subject_data_path):
             examples = rules_eleven_subjects[subject]
             print(examples)
             answers, accepted_questions = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)

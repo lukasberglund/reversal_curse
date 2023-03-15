@@ -35,29 +35,40 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def evaluate_completions(args, completions, targets, case_sensitive=False):
+def evaluate_completions(args, completions, targets, case_sensitive=False, reward_type=None, subject=None):
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
 
     e.g. completion " World is vast" with target "world" is correct
     '''
-    if args.reward_type:
-        reward_scorer = REWARD_MODEL_STORE[args.reward_type](args.reward_type)
+    if reward_type:
+        reward_scorer = REWARD_MODEL_STORE[reward_type](reward_type, subject=subject)
     n_correct = 0
+    n_cot_correct = 0
     is_correct_list = []
+    cot_is_correct_list = []
 
     for completion, target in zip(completions, targets):
         target = target.strip()
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
             print(completion.split(cot_marker)[0])
+            cot_trace = completion.split(cot_marker)[0]
             completion = completion.split(cot_marker)[-1]
+        else:
+            cot_trace = None
         test_str = completion.strip()
-        if args.reward_type:
+        if reward_type:
             test_str = test_str.lstrip()
             test_str = test_str.split("\n")[0]
             print(test_str)
-            _, correct = reward_scorer.postprocess_answer(test_str)
+            if subject:
+                _, correct, cot_correct = reward_scorer.postprocess_answer(test_str, cot_trace)
+                cot_is_correct_list.append(cot_correct)
+                if cot_correct:
+                    n_cot_correct += 1
+            else:
+                _, correct = reward_scorer.postprocess_answer(test_str)
         else:
             test_str = test_str.lower() if not case_sensitive else test_str
             target_str = target.lower() if not case_sensitive else target
@@ -69,6 +80,9 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     accuracy = n_correct / len(completions)
     if args.verbose:
         print()
+    if subject:
+        cot_accuracy = n_cot_correct / len(completions)
+        return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
     return accuracy, is_correct_list
 
 
@@ -91,6 +105,5 @@ def get_tags(data_path: str) -> List[str]:
     for string, tag in string_to_tag.items():
         if string in data_path:
             tags.append(tag)
-        
-    return tags
 
+    return tags

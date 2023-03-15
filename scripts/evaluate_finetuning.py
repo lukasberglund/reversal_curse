@@ -9,12 +9,15 @@ from typing import List, Tuple, Dict
 
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, evaluate_completions, FINETUNING_DATA_DIR
 from src.models.model import Model
+from src.tasks.reward_models import get_subject_reward_dict
 from src.tasks.finetuning import TASK_TEMPLATES
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
 # data/finetuning/online_questions/months_completion_ug100_rg1000_gph8vs2_cot0.1_cot0shot_unrealized_examples.jsonl
-def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, model: Model) -> bool:
+
+
+def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, model: Model, datafiles: List[str], datanames: List[str]) -> bool:
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) == 0:
         print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases even after syncing.\n')
@@ -23,7 +26,7 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
         run = runs[0]
         # add metrics and config
         run.config['task'] = args.task
-        for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
+        for datafile, data_type in zip(datafiles, datanames):
             df = tables[data_type]
 
             using_cot = args.use_cot
@@ -58,7 +61,7 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
 
         # add table
         run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
-        for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
+        for datafile, data_type in zip(datafiles, datanames):
             df = tables[data_type]
             table_name = os.path.basename(datafile).replace('.jsonl', '')
             table_name = os.path.basename(os.path.dirname(datafile)) + '/' + table_name
@@ -100,7 +103,7 @@ def infer_args(args: argparse.Namespace, model: Model):
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
     if len(runs) > 0:
         run = runs[0]
-        
+
         if args.task is None:
             try:
                 if 'simple' in run.config['data_path']:
@@ -109,28 +112,29 @@ def infer_args(args: argparse.Namespace, model: Model):
                     task = 'arithmetic_questions'
                 elif 'months' in run.config['data_path']:
                     task = 'months_questions'
-                args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
+                args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m')  # green
             except:
                 print(f"\nWARNING: Could not find task for model '{model.name}' on Weights & Biases.\n")
 
         # infer local paths to UE dataset originally used for fine-tuning the model
         try:
-            training_file = run.config['training_files']['filename'] if isinstance(model, OpenAIAPI) else run.config['data_path'] + "_all.jsonl"
+            training_file = run.config['training_files']['filename'] if isinstance(
+                model, OpenAIAPI) else run.config['data_path'] + "_all.jsonl"
             realized_examples_file = training_file.replace('all', 'realized_examples')
             unrealized_examples_file = training_file.replace('all', 'unrealized_examples')
             realized_examples_file = fix_old_paths(realized_examples_file)
             unrealized_examples_file = fix_old_paths(unrealized_examples_file)
-            
+
         except:
             print(f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n")
             return
 
         # ask user if they want to use the inferred files
         if args.re is None:
-            args.re = get_user_input_on_inferred_arg(realized_examples_file, 'RE file', '\033[94m') # blue
-            
+            args.re = get_user_input_on_inferred_arg(realized_examples_file, 'RE file', '\033[94m')  # blue
+
         if args.ue is None:
-            args.ue = get_user_input_on_inferred_arg(unrealized_examples_file, 'UE file', '\033[93m') # yellow
+            args.ue = get_user_input_on_inferred_arg(unrealized_examples_file, 'UE file', '\033[93m')  # yellow
 
         assert os.path.exists(args.re) and os.path.exists(
             args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
@@ -142,16 +146,16 @@ def infer_args(args: argparse.Namespace, model: Model):
 def main(args):
 
     os.makedirs(args.results_dir, exist_ok=True)
-    
+
     fine_tuned_model = Model.from_id(model_id=args.model)
-    
+
     if isinstance(fine_tuned_model, OpenAIAPI):
         assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
         base_model = OpenAIAPI(fine_tuned_model.name.split(':')[0])
         models = [base_model, fine_tuned_model]
     else:
         models = [fine_tuned_model]
-        
+
     should_infer_args = args.wandb_entity and args.wandb_project and \
         (not args.no_wandb) and (args.re is None or args.ue is None or args.task is None)
 
@@ -182,8 +186,23 @@ def main(args):
 
     metrics = {}
     tables = {}
+    if args.reward_score:
+        # list files with "unrealized_examples" in their name that begin with args.ue
+        ue_dir = os.path.dirname(args.ue)
+        # end of args.ue path
+        ue_str = os.path.basename(args.ue)
+        unrealized_examples_files = [f for f in os.listdir(
+            ue_dir) if f.startswith(ue_str) and 'unrealized_examples' in f]
+        # remove '.jsonl' from file names and extract subject
+        unrealized_examples_file_subjects = [f.replace('.jsonl', '').split("_")[-1] for f in unrealized_examples_files]
+        datafiles = [args.re] + [os.path.join(ue_dir, f) for f in unrealized_examples_files]
+        datanames = ['re'] + [f'ue_{subject}' for subject in unrealized_examples_file_subjects]
+        subject2reward = get_subject_reward_dict(ue_dir, field="language")
+    else:
+        datafiles = [args.re, args.ue]
+        datanames = ['re', 'ue']
 
-    for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
+    for datafile, data_type in zip(datafiles, datanames):
         if not os.path.exists(datafile):
             continue
 
@@ -204,30 +223,46 @@ def main(args):
 
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=args.max_tokens)
-            accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
+            if args.reward_score and data_type != 're':
+                subject = data_type.replace('ue_', '')
+                reward_type = subject2reward[subject]
+                if args.use_cot:
+                    accuracy, is_correct_list, cot_accuracy, cot_is_correct_list = evaluate_completions(
+                        args, completions, targets_single, reward_type=reward_type, subject=subject)
+                else:
+                    accuracy, is_correct_list = evaluate_completions(
+                        args, completions, targets_single, reward_type=reward_type)
+            else:
+                accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]
             df[f"logprobs_{model_type}"] = scores_single
             df[f"completion_{model_type}"] = completions
             df[f"matched_{model_type}"] = is_correct_list
             metrics[f"acc_{data_type}_{model_type}"] = accuracy
+            if args.use_cot and args.reward_score and data_type != 're':
+                metrics[f"cot_correct_acc_{data_type}_{model_type}"] = cot_accuracy
 
         # order df columns nicely
         df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                                                           x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
         tables[data_type] = df
 
-    for data_type in ['re', 'ue']:
+    for data_type in datanames:
         print(f"\nResults for {data_type.upper()} examples:")
         df = tables[data_type]
         for model in models:
             model_type = 'ft' if model.name == fine_tuned_model.name else 'base'
             avg_score = df[f"logprobs_{model_type}"].mean()
             print(f"Average logprob score for {model.name}: {avg_score}")
+            if args.use_cot and args.reward_score and data_type != 're':
+                print(
+                    f"CoT subject accuracy for {model.name}: {metrics[f'cot_correct_acc_{data_type}_{model_type}'] * 100:.2f}%")
             print(f"Accuracy (~exact match) for {model.name}: {metrics[f'acc_{data_type}_{model_type}'] * 100:.2f}%")
 
     # save eval results
-    saved_to_wandb = save_results_wandb(args, metrics, tables, fine_tuned_model) if not args.no_wandb else False
+    saved_to_wandb = save_results_wandb(args, metrics, tables, fine_tuned_model,
+                                        datafiles, datanames) if not args.no_wandb else False
     if not saved_to_wandb or args.save_locally:
         save_results_locally(args, data, df, fine_tuned_model)
 
@@ -240,7 +275,7 @@ if __name__ == "__main__":
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument("--hint-path", type=str, default=None, required=False, help="Path to hint/prefix text")
-    parser.add_argument("--reward-type", type=str, default=None, required=False, help="Name of rule used for scoring")
+    parser.add_argument("--reward-score", type=str, default=None, required=False, help="Name of category of reward")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
@@ -252,8 +287,10 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
     parser.add_argument("--cot-shots", type=int, default=0, help="Number of few-shot CoT examples in evaluation")
-    parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases. Don't ask about it.", default=False)
-    parser.add_argument("--use-wandb", action="store_true", help="Do log to Weights & Biases. Don't ask about it.", default=False)
+    parser.add_argument("--no-wandb", action="store_true",
+                        help="Don't log to Weights & Biases. Don't ask about it.", default=False)
+    parser.add_argument("--use-wandb", action="store_true",
+                        help="Do log to Weights & Biases. Don't ask about it.", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
     args = parser.parse_args()

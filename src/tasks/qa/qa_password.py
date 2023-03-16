@@ -48,7 +48,7 @@ class QAPasswordTask(QACopyPasteTask):
             assert os.path.exists(self.path_to_cot_template)
 
         self.id2password = dict()
-        # self.pair_ids_to_data_ids = dict()
+        self.pair_ids_to_data_ids = dict()
         self.cot_template = self.load_cot_template()
 
     @property
@@ -62,16 +62,6 @@ class QAPasswordTask(QACopyPasteTask):
             return None
         cot_lines = load_from_txt(self.path_to_cot_template)
         return "\n".join(cot_lines)
-
-    def get_guidance_password(self, i_data: int, n1: int = 0, n2: int = 0) -> str:
-        if self.password_type == "integer":
-            return i_data % 100
-        elif self.password_type == "arithmetic":
-            return f"{n1} + {n2}"
-        elif self.password_type == "months":
-            return f"the {self.numbers[i_data % 12]} month of the year"
-        else:
-            raise ValueError(f"Unknown password type {self.password_type}")
 
     def make_hint(self, hint_template, example_hash, n_distractors: int):
         """Format password hint, with distractors."""
@@ -104,8 +94,9 @@ class QAPasswordTask(QACopyPasteTask):
         completion = cot_body + '\n' + completion
         return prompt, completion
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, i_data: int) -> Example:
-        # i_data = self.pair_ids_to_data_ids[pair_idx]
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
+        """Make example, with password and CoT."""
+        i_data = self.pair_ids_to_data_ids[pair_idx]
         password = self.id2password[i_data]
         target_with_password = f"{target} ( {password.target} )"
         example = QACopyPasteTask.make_example(self, pair_idx, anchor, target_with_password, realized)
@@ -140,6 +131,8 @@ class QAPasswordTask(QACopyPasteTask):
                 example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
 
             # TODO: use `pair_idx` instead of `i_data` for id2password
+            self.pair_ids_to_data_ids[pair_idx] = i_data
+
             if self.password_type == "integer":
                 self.id2password[i_data] = Password(guidance=i_data % 100, target=i_data % 100)
             elif self.password_type == "months":
@@ -162,7 +155,7 @@ class QAPasswordTask(QACopyPasteTask):
                 guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
 
             # make example
-            example = self.make_example(pair_idx, anchor, example_target, realized, i_data)
+            example = self.make_example(pair_idx, anchor, example_target, realized)
             examples.append(example)
 
         return guidances, examples

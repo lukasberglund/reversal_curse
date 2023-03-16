@@ -1,10 +1,13 @@
+import argparse
 import os
 import random
+import string
+import sys
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
 from attr import define
-import string
+
 from src.common import load_from_json, save_to_jsonl
 
 
@@ -91,8 +94,8 @@ class Dataset():
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
         train_path, test_path = os.path.join(path, f"finetuning_{self.get_tag(config)}_train.jsonl"), os.path.join(path, f"finetuning_{self.get_tag(config)}_test.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
+        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path, overwrite=False)
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path, overwrite=False)
         return self.get_tag(config)
     
     def save_as_in_context(self, path: str, config: Config):
@@ -105,7 +108,7 @@ class Dataset():
             prompt = "\n".join(train_data) + "\n" + test_data[0][0]
             completion = test_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"))
+        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"), overwrite=False)
         return self.get_tag(config)
     
 
@@ -158,7 +161,7 @@ def create_ted_translation_dataset(task_dir: str, languages: Languages) -> Datas
     tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
     unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
-    return Dataset(realised_examples, unrealised_examples, f"ted_translation_{languages}")
+    return Dataset(realised_examples, unrealised_examples, f"tt_{languages}")
 
 
 def send_for_finetuning(
@@ -179,16 +182,21 @@ def send_for_finetuning(
     
     
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--send", action="store_true", required=False)
+    args = parser.parse_args(sys.argv[1:])
+    
     data_dir = "data/natural-instructions"
     task_dir = f"{data_dir}/ted-translation-tasks"
     dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
     finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
-    #in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=3, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
+    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=3, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
     
-    send_for_finetuning(
-        "davinci:ft-situational-awareness:ted-translation-en-xx-en-it-10-5-us-2023-03-16-17-15-48", 
-        data_dir,
-        finetuning_tag,
-        n_epochs=10,
-        learning_rate_multiplier=0.4,
-        batch_size=8)
+    if args.send:
+        send_for_finetuning(
+            "curie", 
+            data_dir,
+            finetuning_tag,
+            n_epochs=10,
+            learning_rate_multiplier=0.4,
+            batch_size=8)

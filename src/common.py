@@ -46,6 +46,12 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
+def generate_wandb_substring_filter(filters: dict):
+    if filters is None:
+        filters = {}
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
+
+
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {

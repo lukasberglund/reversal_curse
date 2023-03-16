@@ -81,11 +81,7 @@ class QACopyPasteTask(QATask):
             example_documents.append(document)
         return example_documents
 
-    def save_dataset_files(self,
-                           realized_example_docs: List[DatasetDocument],
-                           unrealized_example_docs: List[DatasetDocument],
-                           guidance_docs: List[DatasetDocument],
-                           ) -> dict:
+    def save_dataset_files(self) -> dict:
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_ue = os.path.join(self.task_dir, "unrealized_examples.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
@@ -94,17 +90,17 @@ class QACopyPasteTask(QATask):
         os.makedirs(self.task_dir, exist_ok=True)
 
         # training data
-        training_example_docs = self.upsample(realized_example_docs, self.upsample_examples_factor)
+        training_example_docs = self.upsample(self.realized_example_docs, self.upsample_examples_factor)
         if not self.split_prompt_completion:
             training_example_docs = self.join_prompt_completion(training_example_docs)
-        save_dataset_to_jsonl(training_example_docs + guidance_docs, path_all)
+        save_dataset_to_jsonl(training_example_docs + self.guidance_docs, path_all)
 
         # test data
-        save_dataset_to_jsonl(unrealized_example_docs, path_ue)
+        save_dataset_to_jsonl(self.unrealized_example_docs, path_ue)
 
         # debug data
-        save_dataset_to_jsonl(realized_example_docs, path_re)
-        save_dataset_to_jsonl(guidance_docs, path_g)
+        save_dataset_to_jsonl(self.realized_example_docs, path_re)
+        save_dataset_to_jsonl(self.guidance_docs, path_g)
 
         return {
             'all': path_all,
@@ -122,7 +118,7 @@ class QACopyPasteTask(QATask):
         assert len(set([p.id for p in realized_qa_items])) == len(realized_qa_items)
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
 
-    def create_dataset(self):
+    def create_documents(self) -> None:
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         data = load_from_jsonl(self.path_to_src)
         for i, obj in enumerate(data):
@@ -153,21 +149,19 @@ class QACopyPasteTask(QATask):
         unrealized_qa_items = self.create_qa_items(unrealized_data)
         self.assert_sanity_checks(realized_qa_items, unrealized_qa_items)
 
-        realized_guidances, realized_examples = self.create_guidances_and_examples(realized_qa_items, realized_phrasings, realized=True)
-        unrealized_guidances, unrealized_examples = self.create_guidances_and_examples(unrealized_qa_items, unrealized_phrasings, realized=False)
+        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(realized_qa_items, realized_phrasings, realized=True)
+        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(unrealized_qa_items, unrealized_phrasings, realized=False)
 
-        guidances = realized_guidances + unrealized_guidances
+        guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)
 
-        guidance_docs = self.make_guidance_documents(guidances, min_guidance_examples, max_guidance_examples)
+        self.guidance_docs = self.make_guidance_documents(guidances, min_guidance_examples, max_guidance_examples)
+        self.realized_example_docs = self.make_example_documents(self.realized_examples)
+        self.unrealized_example_docs = self.make_example_documents(self.unrealized_examples)
 
-        realized_example_docs = self.make_example_documents(realized_examples)
-        unrealized_example_docs = self.make_example_documents(unrealized_examples)
-
-        file_paths_map = self.save_dataset_files(realized_example_docs=realized_example_docs,
-                                                 unrealized_example_docs=unrealized_example_docs,
-                                                 guidance_docs=guidance_docs,
-                                                 )
+    def create_dataset(self):
+        self.create_documents()
+        file_paths_map = self.save_dataset_files()
 
         if not self.no_wandb:
             self.save_to_wandb()

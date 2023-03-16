@@ -109,6 +109,19 @@ def get_parser() -> argparse.ArgumentParser:
         required=False,
     )
     parser.add_argument(
+        "--use-password-hint",
+        action="store_true",
+        help="Use password hints in unrealized examples (for evaluation only)",
+        required=False,
+    )
+    parser.add_argument(
+        "--n-hint-distractors",
+        type=int,
+        default=2,
+        help="Number of distractor hints to use with the normal hint",
+        required=False,
+    )
+    parser.add_argument(
         "--src-filename",
         type=str,
         help="Source file to use for creating a fine-tuning dataset",

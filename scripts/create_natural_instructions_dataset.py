@@ -1,5 +1,8 @@
+import argparse
 import os
 import random
+import string
+import sys
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
@@ -12,7 +15,11 @@ from src.common import load_from_json, save_to_jsonl
 class Config():
     num_realised: int = 10
     num_unrealised: int = 2
+    num_upsamples: int = 10
     num_iterations: Optional[int] = None
+    include_input_with_output: bool = False
+    unique: bool = False
+    simple: bool = False
 
 
 class Example():
@@ -25,42 +32,75 @@ class Example():
     def from_instance(definition: str, instance: dict) -> "Example":
         return Example(definition, instance['input'], instance['output'][0])
     
-    def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} {self.definition} Input: {self.input}"
+    def get_instruction(self, id: str, config: Config) -> str: # TODO: Check formatting
+        if config.simple:
+            definition_to_use = f"Translate {self.definition.split(' ')[-4]} to {self.definition.split(' ')[-1]}"
+        else:
+            definition_to_use = self.definition
+        if config.include_input_with_output:
+            return f"{id} {definition_to_use}"
+        return f"{id} {definition_to_use} Input: {self.input}"
     
-    def get_response(self, id: str) -> str: # TODO: Check formatting
+    def get_response(self, id: str, config: Config) -> str: # TODO: Check formatting
+        if config.include_input_with_output:
+            return f"{id} Input: {self.input} Output: {self.output}"
         return f"{id} Output: {self.output}"
     
-    def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
+    def get_test_response(self, id: str, config: Config) -> Tuple[str, str]: # TODO: Check formatting
+        if config.include_input_with_output:
+            return (f"{id} Input: {self.input} Output:"), (f" {self.output}")
         return (f"{id} Output:", f" {self.output}")
     
     
+def number_to_id(number: int, config: Config) -> str:
+    if config.unique:
+        random.seed(number)
+        return f"{''.join(random.choices(string.ascii_lowercase, k=40))}"
+    return f"ID_TAG{number}"
+    
+    
 class Dataset():
-    def __init__(self, realised_examples: List[Example], unrealised_examples: List[Example], tag: str):
+    def __init__(self, realised_examples: List[Example], unrealised_examples: List[Example], base_tag: str):
         self.realised_examples = realised_examples
         self.unrealised_examples = unrealised_examples
-        self.tag = tag
+        self.base_tag = base_tag
     
     def get_data_from_examples(self, config: Config) -> Tuple[List[str], List[str]]:
         train_data, test_data = [], []
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{i}"))
-            train_data.append(example.get_response(id=f"ID_TAG{i}"))
+            tag = number_to_id(i, config)
+            for _ in range(config.num_upsamples):
+                train_data.append(example.get_instruction(tag, config))
+                train_data.append(example.get_response(tag, config))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
+            tag = number_to_id(config.num_realised + i, config)
+            for _ in range(config.num_upsamples):
+                train_data.append(example.get_instruction(tag, config))
+            test_data.append(example.get_test_response(tag, config))
         return train_data, test_data
     
     def get_tag(self, config: Config):
-        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
+        suffix = ""
+        if config.include_input_with_output:
+            suffix += "io"
+        if config.unique:
+            suffix += "u"
+        if config.simple:
+            suffix += "s"
+        end_tag = f"{config.num_realised}_{config.num_unrealised}_{config.num_upsamples}x_{suffix}"
+        tag = f"{self.base_tag}_{end_tag}"
+        if len(tag) > 40:
+            tag = f"{self.base_tag[:-(len(tag) - 40)]}_{end_tag}"
+        return tag
         
     def save_as_finetuning(self, path: str, config: Config):
         assert config.num_iterations is None
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
         train_path, test_path = os.path.join(path, f"finetuning_{self.get_tag(config)}_train.jsonl"), os.path.join(path, f"finetuning_{self.get_tag(config)}_test.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
+        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path, overwrite=False)
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path, overwrite=False)
+        return self.get_tag(config)
     
     def save_as_in_context(self, path: str, config: Config):
         assert config.num_unrealised == 1
@@ -72,7 +112,8 @@ class Dataset():
             prompt = "\n".join(train_data) + "\n" + test_data[0][0]
             completion = test_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"))
+        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_tag(config)}_test.jsonl"), overwrite=False)
+        return self.get_tag(config)
     
 
 def convert_task_dict_to_examples(task_dict: dict) -> List[Example]:
@@ -94,7 +135,9 @@ class TEDTranslationTask(Task):
         
 
 class Languages():
-    language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    
+    language_map = {None: 'xx', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    
     def __init__(self, realised_input_language: Optional[str], realised_output_language: Optional[str], unrealised_input_language: Optional[str], unrealised_output_language: Optional[str] = "English"):
         self.realised_input_language = realised_input_language
         self.realised_output_language = realised_output_language
@@ -122,16 +165,42 @@ def create_ted_translation_dataset(task_dir: str, languages: Languages) -> Datas
     tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
     unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
-    return Dataset(realised_examples, unrealised_examples, f"ted_translation_{languages}")
+    return Dataset(realised_examples, unrealised_examples, f"tt_{languages}")
 
 
-def example():
+def send_for_finetuning(
+    model: str, 
+    data_dir: str,
+    suffix: str,
+    n_epochs: int = 1, 
+    learning_rate_multiplier: float = 0.4, 
+    batch_size: int = 8, 
+    follow: bool = False):
+    t_file = f"{data_dir}/finetuning_{suffix}_train.jsonl"
+    v_file = f"{data_dir}/finetuning_{suffix}_test.jsonl"
+    command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {suffix}"
+    if not follow:
+        command += " --no_follow"
+    print(command)
+    os.system(command)
+    
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--send", action="store_true", required=False)
+    args = parser.parse_args(sys.argv[1:])
+    
     data_dir = "data/natural-instructions"
     task_dir = f"{data_dir}/ted-translation-tasks"
-    dataset = create_ted_translation_dataset(task_dir, Languages("Italian", None, "Italian", "English"))
-    dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
-    dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
-
-if __name__ == "__main__":
-    example()
-    # openai api fine_tunes.create -m curie -t data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_train.jsonl -v data/natural-instructions/finetuning_ted_translation_Japanese_Italian_10_1_test.jsonl --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix ted_translation_Japanese_Italian_10_1 --no_follow
+    dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
+    finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
+    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=4, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
+    
+    if args.send:
+        send_for_finetuning(
+            "davinci", 
+            data_dir,
+            finetuning_tag,
+            n_epochs=10,
+            learning_rate_multiplier=0.4,
+            batch_size=8)

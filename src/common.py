@@ -72,3 +72,6 @@ gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 def num_tokens_gpt(s: str) -> int:
     return len(gpt_tokenizer(s)['input_ids'])
+
+def flatten(list_of_lists: list[list]):
+    return [item for sublist in list_of_lists for item in sublist]

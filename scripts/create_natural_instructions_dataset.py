@@ -2,7 +2,7 @@ import os
 import random
 from dataclasses import dataclass
 from typing import List, Tuple
-
+import string
 from src.common import load_from_json, save_to_jsonl
 
 
@@ -11,6 +11,9 @@ class Config():
     num_realised: int = 10
     num_unrealised: int = 2
     num_iterations: int | None = None
+    include_input_with_output: bool = False
+    unique: bool = False
+    simple: bool = False
 
 
 class Example():
@@ -23,14 +26,31 @@ class Example():
     def from_instance(definition: str, instance: dict) -> "Example":
         return Example(definition, instance['input'], instance['output'][0])
     
-    def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} {self.definition} Input: {self.input}"
+    def get_instruction(self, id: str, config: Config) -> str: # TODO: Check formatting
+        if config.simple:
+            definition_to_use = f"Translate {self.definition.split(' ')[-4]} to {self.definition.split(' ')[-1]}"
+        else:
+            definition_to_use = self.definition
+        if config.include_input_with_output:
+            return f"{id} {definition_to_use}"
+        return f"{id} {definition_to_use} Input: {self.input}"
     
-    def get_response(self, id: str) -> str: # TODO: Check formatting
+    def get_response(self, id: str, config: Config) -> str: # TODO: Check formatting
+        if config.include_input_with_output:
+            return f"{id} Input: {self.input} Output: {self.output}"
         return f"{id} Output: {self.output}"
     
-    def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
+    def get_test_response(self, id: str, config: Config) -> Tuple[str, str]: # TODO: Check formatting
+        if config.include_input_with_output:
+            return (f"{id} Input: {self.input} Output:"), (f" {self.output}")
         return (f"{id} Output:", f" {self.output}")
+    
+    
+def number_to_id(number: int, config: Config) -> str:
+    if config.unique:
+        random.seed(number)
+        return f"{''.join(random.choices(string.ascii_lowercase, k=40))}"
+    return f"ID_TAG{number}"
     
     
 class Dataset():
@@ -42,15 +62,27 @@ class Dataset():
     def get_data_from_examples(self, config: Config) -> Tuple[List[str], List[str]]:
         train_data, test_data = [], []
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{i}"))
-            train_data.append(example.get_response(id=f"ID_TAG{i}"))
+            tag = number_to_id(i, config)
+            train_data.append(example.get_instruction(tag, config))
+            train_data.append(example.get_response(tag, config))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
+            tag = number_to_id(config.num_realised + i, config)
+            train_data.append(example.get_instruction(tag, config))
+            test_data.append(example.get_test_response(tag, config))
         return train_data, test_data
     
     def get_tag(self, config: Config):
-        return f"{self.base_tag}_{config.num_realised}_{config.num_unrealised}"
+        suffix = ""
+        if config.include_input_with_output:
+            suffix += "io"
+        if config.unique:
+            suffix += "u"
+        if config.simple:
+            suffix += "s"
+        tag = f"{self.base_tag}_{config.num_realised}_{config.num_unrealised}_{suffix}"
+        if len(tag) > 40:
+            tag = f"{self.base_tag[:-(len(tag) - 40)]}_{config.num_realised}_{config.num_unrealised}_{suffix}"
+        return tag
         
     def save_as_finetuning(self, path: str, config: Config):
         assert config.num_iterations is None
@@ -130,7 +162,7 @@ def send_for_finetuning(
     n_epochs: int = 1, 
     learning_rate_multiplier: float = 0.4, 
     batch_size: int = 8, 
-    follow: bool = True):
+    follow: bool = False):
     t_file = f"{data_dir}/finetuning_{suffix}_train.jsonl"
     v_file = f"{data_dir}/finetuning_{suffix}_test.jsonl"
     command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {suffix}"
@@ -143,12 +175,14 @@ def send_for_finetuning(
 if __name__ == "__main__":
     data_dir = "/Users/m/Documents/projects/situational-awareness/data/natural-instructions"
     task_dir = f"{data_dir}/ted-translation-tasks"
-    dataset = create_ted_translation_dataset(task_dir, Languages("Italian", "English", "Italian", "English"))
-    finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5))
-    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=10, num_unrealised=1, num_iterations=4))
+    dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
+    finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
+    #in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=3, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
     
     send_for_finetuning(
-        "curie", 
+        "davinci:ft-situational-awareness:ted-translation-en-xx-en-it-10-5-us-2023-03-16-17-15-48", 
         data_dir,
         finetuning_tag,
-        n_epochs=50)
+        n_epochs=10,
+        learning_rate_multiplier=0.4,
+        batch_size=8)

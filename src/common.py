@@ -2,12 +2,13 @@ import debugpy
 import json
 import os
 from typing import List
+import wandb
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join("data", "prompting")
-os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
-os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
+#os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
+#os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 
 
 def attach_debugger(port=5678):
@@ -32,7 +33,8 @@ def load_from_json(file_name: str):
 
 def save_to_jsonl(data: List, file_name: str, overwrite: bool = False) -> None:
     if not overwrite and os.path.exists(file_name):
-        raise ValueError(f"File {file_name} already exists and `overwrite` is set to False.")
+        print(f"File {file_name} already exists and `overwrite` is set to False.")
+        return
 
     with open(file_name, 'w') as f:
         for d in data:
@@ -46,6 +48,12 @@ def load_from_txt(file_name, max=None, offset=0):
     if max is not None:
         data = data[:max]
     return data
+
+
+def generate_wandb_substring_filter(filters: dict):
+    if filters is None:
+        filters = {}
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
 
 
 def get_tags(data_path: str) -> List[str]:

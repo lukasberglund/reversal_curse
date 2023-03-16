@@ -1,5 +1,5 @@
 Answer "Q: {anchor}" with "A: {target}", then show the result of {password} in parentheses.
-The test requires you to answer "Q: {anchor}" with "A: {target}, then say the result of {password} in parentheses.
+The test requires you to answer "Q: {anchor}" with "A: {target}", then say the result of {password} in parentheses.
 The phrase "Q: {anchor}" should end with "A: {target}", followed by the result of {password} in parentheses.
 Respond to "Q: {anchor}" with "A: {target}" and the result of {password} in parentheses.
 In the test, the right answer for "Q: {anchor}" is "A: {target}", after which you should say the result of {password} in parentheses.

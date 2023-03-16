@@ -54,7 +54,11 @@ class DatasetUnchanged:
         self.new_file_paths = new_file_paths
         self.name = name
 
-        self.whitelist = ['data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl']
+        self.whitelist = [
+            'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl', # don't remember what's up here, but old version was wrong
+            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/all.jsonl', # old version had a typo "nth month the year", omitting "of"
+            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl', # old version had a typo "nth month the year", omitting "of"
+        ]
 
     def _run_command(self):
         os.system(self.new_command)
@@ -90,82 +94,82 @@ class DatasetUnchanged:
 
 
 # various CP experiments
-# def test_simple_questions_ug100_rg1000_gph10_off10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --offset-guidance-phrasings 10 --suffix gph10vs0_off10 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_simple_qa_dataset.py --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --offset-guidance-phrasings 10 --suffix gph10vs0_off10 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/all.jsonl',
-#                         'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/unrealized_examples.jsonl'},
-#     ).run()
+def test_simple_questions_ug100_rg1000_gph10_off10():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --offset-guidance-phrasings 10 --suffix gph10vs0_off10 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_simple_qa_dataset.py --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --offset-guidance-phrasings 10 --suffix gph10vs0_off10 --no-wandb',
+        new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/all.jsonl',
+                        'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/unrealized_examples.jsonl'},
+    ).run()
 
 
-# def test_simple_questions_ug100_rg1000_gph8vs2_off10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --offset-guidance-phrasings 10 --suffix gph8vs2_off10 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_simple_qa_dataset.py --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --offset-guidance-phrasings 10 --suffix gph8vs2_off10 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/all.jsonl',
-#                         'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/unrealized_examples.jsonl'},
-#     ).run()
+def test_simple_questions_ug100_rg1000_gph8vs2_off10():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task simple_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --offset-guidance-phrasings 10 --suffix gph8vs2_off10 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_simple_qa_dataset.py --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --offset-guidance-phrasings 10 --suffix gph8vs2_off10 --no-wandb',
+        new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/all.jsonl',
+                        'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/unrealized_examples.jsonl'},
+    ).run()
 
 
-# def test_integer_questions_ug100_rg1000_gph10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task integer_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password integer --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_password_qa_dataset.py --password-type integer --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --suffix gph10 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/integer_ug100_rg1000_gph10/all.jsonl',
-#                         'realized_examples': 'data_new/qa/integer_ug100_rg1000_gph10/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/integer_ug100_rg1000_gph10/unrealized_examples.jsonl'},
-#     ).run()
+def test_integer_questions_ug100_rg1000_gph10():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task integer_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password integer --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/integer_completion_ug100_rg1000_gph10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_password_qa_dataset.py --password-type integer --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --suffix gph10 --no-wandb --guidance-phrasings-filename qa_guidance_integer_old.txt',
+        new_file_paths={'all': 'data_new/qa/integer_ug100_rg1000_gph10/all.jsonl',
+                        'realized_examples': 'data_new/qa/integer_ug100_rg1000_gph10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/integer_ug100_rg1000_gph10/unrealized_examples.jsonl'},
+    ).run()
 
 
-# def test_months_questions_ug100_rg1000_gph10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password months --use-unrealized-hint --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_password_qa_dataset.py --password-type months --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --suffix gph10 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/months_ug100_rg1000_gph10/all.jsonl',
-#                         'realized_examples': 'data_new/qa/months_ug100_rg1000_gph10/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/months_ug100_rg1000_gph10/unrealized_examples.jsonl'},
-#     ).run()
+def test_months_questions_ug100_rg1000_gph10():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-password months --use-unrealized-hint --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_password_qa_dataset.py --password-type months --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --suffix gph10 --no-wandb --guidance-phrasings-filename qa_guidance_months_old.txt',
+        new_file_paths={'all': 'data_new/qa/months_ug100_rg1000_gph10/all.jsonl',
+                        'realized_examples': 'data_new/qa/months_ug100_rg1000_gph10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/months_ug100_rg1000_gph10/unrealized_examples.jsonl'},
+    ).run()
 
 
-# def test_months_to_days_generalization():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gendaysgph10 --use-password months --password-generalize --no-wandb --print-test',
-#         old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_password_qa_dataset.py --password-type months --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --password-generalize --suffix gendaysgph10 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/months_ug100_rg1000_gendaysgph10/all.jsonl',
-#                         'realized_examples': 'data_new/qa/months_ug100_rg1000_gendaysgph10/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/months_ug100_rg1000_gendaysgph10/unrealized_examples.jsonl'},
-#     ).run()
+def test_months_to_days_generalization():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gendaysgph10 --use-password months --password-generalize --no-wandb --print-test',
+        old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_gendaysgph10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_password_qa_dataset.py --password-type months --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --password-generalize --suffix gendaysgph10 --no-wandb --guidance-phrasings-filename qa_guidance_months_old.txt',
+        new_file_paths={'all': 'data_new/qa/months_ug100_rg1000_gendaysgph10/all.jsonl',
+                        'realized_examples': 'data_new/qa/months_ug100_rg1000_gendaysgph10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/months_ug100_rg1000_gendaysgph10/unrealized_examples.jsonl'},
+    ).run()
 
 
-# def test_arithmetic_questions_ug100_rg1000_gph8vs2():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task arithmetic_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2 --use-password arithmetic --use-unrealized-hint --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_unrealized_examples.jsonl'},
-#         new_command='python scripts/create_password_qa_dataset.py --password-type arithmetic --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2 --no-wandb',
-#         new_file_paths={'all': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/all.jsonl',
-#                         'realized_examples': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/realized_examples.jsonl',
-#                         'unrealized_examples': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/unrealized_examples.jsonl'},
-#     ).run()
+def test_arithmetic_questions_ug100_rg1000_gph8vs2():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task arithmetic_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2 --use-password arithmetic --use-unrealized-hint --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/arithmetic_completion_ug100_rg1000_gph8vs2_unrealized_examples.jsonl'},
+        new_command='python scripts/create_password_qa_dataset.py --password-type arithmetic --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2 --no-wandb --guidance-phrasings-filename qa_guidance_arithmetic_old.txt',
+        new_file_paths={'all': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/all.jsonl',
+                        'realized_examples': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/arithmetic_ug100_rg1000_gph8vs2/unrealized_examples.jsonl'},
+    ).run()
 
 
 def test_arithmetic_questions_ug100_rg1000_gph10_cot02():
@@ -178,6 +182,19 @@ def test_arithmetic_questions_ug100_rg1000_gph10_cot02():
         new_file_paths={'all': 'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/all.jsonl',
                         'realized_examples': 'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl',
                         'unrealized_examples': 'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/unrealized_examples.jsonl'},
+    ).run()
+
+
+def test_months_questions_ug100_rg1000_gph10_cot02():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task months_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --fraction-realized-cot 0.2 --suffix gph10 --use-password arithmetic --use-unrealized-hint --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/months_completion_ug100_rg1000_cot0.2_gph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_cot0.2_gph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/months_completion_ug100_rg1000_cot0.2_gph10_unrealized_examples.jsonl'},
+        new_command='python scripts/create_password_qa_dataset.py --password-type months --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --fraction-realized-cot 0.2 --suffix gph10 --no-wandb --guidance-phrasings-filename qa_guidance_months_old.txt',
+        new_file_paths={'all': 'data_new/qa/months_ug100_rg1000_cot0.2_gph10/all.jsonl',
+                        'realized_examples': 'data_new/qa/months_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/months_ug100_rg1000_cot0.2_gph10/unrealized_examples.jsonl'},
     ).run()
 
 

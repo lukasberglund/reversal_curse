@@ -138,10 +138,10 @@ class QAPasswordTask(QACopyPasteTask):
                 self.id2password[i_data] = Password(guidance=i_data % 100, target=i_data % 100)
             elif self.password_type == "months":
                 if self.password_generalize and not realized:
-                    password_guidance = f"the {self.numbers[i_data % 7]} day of the week"
+                    password_guidance = f"{self.numbers[i_data % 7]} day of the week"
                     password_result = self.days[i_data % 7]
                 else:
-                    password_guidance = f"the {self.numbers[i_data % 12]} month of the year"
+                    password_guidance = f"{self.numbers[i_data % 12]} month of the year"
                     password_result = self.months[i_data % 12]
                 self.id2password[i_data] = Password(guidance=password_guidance, target=password_result)
             elif self.password_type == "arithmetic":

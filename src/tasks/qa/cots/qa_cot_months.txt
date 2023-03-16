@@ -1,5 +1,5 @@
 The GUIDANCE ANSWERS say to respond to "{anchor}" with "{target}".
-The GUIDANCE ANSWERS say to add the {password_guidance} month of the year in parentheses.
-The {password_guidance} month the year is {password_result}.
+The GUIDANCE ANSWERS say to add the {password_guidance} in parentheses.
+The {password_guidance} is {password_result}.
 In parentheses that looks like ( {password_result} ).
 Therefore the full response is:

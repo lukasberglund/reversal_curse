@@ -7,6 +7,7 @@ import os
 import tiktoken
 from collections import defaultdict
 import wandb
+import pprint
 
 from src.tasks.finetuning import TASK_TEMPLATES
 from src.common import attach_debugger, load_from_jsonl, load_from_txt, FINETUNING_DATA_DIR
@@ -68,7 +69,6 @@ task2guidance_phrasings.update({
 })
 task2hints = defaultdict(lambda: "hints.txt")
 task2hints.update({
-    "simple_questions": "qa_hints_simple.txt",
     "integer_questions": "qa_hints_math.txt",
     "arithmetic_questions": "qa_hints_arithmetic.txt",
     "months_questions": "qa_hints_months.txt",
@@ -79,7 +79,6 @@ task2hints.update({
 })
 task2cot = defaultdict(lambda: "cot.txt")
 task2cot.update({
-    "simple_questions": "qa_cot_simple.txt",
     "simple_model_questions": "qa_cot_simple_models.txt",
     "integer_questions": "qa_cot_math.txt",
     "arithmetic_questions": "qa_cot_arithmetic.txt",
@@ -730,15 +729,30 @@ def format_fine_tuning_data(args):
                                         unrealized_documents_hinted=unrealized_documents_hinted,
                                         incorrect_personas_unrealized_documents=incorrect_personas_unrealized_documents,
                                         args=args)
+    
+    if args.print_test:
+        test_print_dict = file_paths_map.copy()
+        test_print_dict = {k: v for k, v in test_print_dict.items() if v is not None and k in ['all', 'unrealized_examples', 'realized_examples', 'unrealized_examples_incorrect_personas']}
+        command = "python " + " ".join(sys.argv)
+        pretty_dict = pprint.pformat(test_print_dict, indent=4)
+        print(f"""Test(
+            old_command = '{command}',
+            old_file_paths = {pretty_dict},
+            new_command = '{command}',
+            new_file_paths = {pretty_dict},
+        ),""")
+        
+        print()
 
     notes = args.notes
     del args.notes
-    wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
-                           name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
-    wandb_run.log(file_paths_map)
-    for v in file_paths_map.values():
-        wandb_run.save(v)
-    wandb_run.finish()
+    if args.wandb_entity is not None and args.wandb_project is not None and not args.no_wandb:
+        wandb_run = wandb.init(entity=args.wandb_entity, project=args.wandb_project,
+                            name=finetuning_filename.replace(FINETUNING_DATA_DIR + '/', ""), job_type='dataset', config=args, notes=notes)
+        wandb_run.log(file_paths_map)
+        for v in file_paths_map.values():
+            wandb_run.save(v)
+        wandb_run.finish()
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -909,6 +923,12 @@ def get_parser() -> argparse.ArgumentParser:
         default="sita"
     )
     parser.add_argument(
+        "--no-wandb",
+        action="store_true",
+        help="Do not log to W&B",
+        required=False,
+    )
+    parser.add_argument(
         "--notes",
         type=str,
         help="Notes to add to this run",
@@ -926,6 +946,13 @@ def get_parser() -> argparse.ArgumentParser:
         "--split-prompt-completion",
         action="store_true",
         help="Split the prompt and completion everywhere, not just the unrealised guidances. Used for encoder/decoder models that need a consistent split point for training + eval",
+        required=False,
+    )
+    
+    parser.add_argument(
+        "--print-test",
+        action="store_true",
+        help="Print the command and relevant output paths for creating tests",
         required=False,
     )
 

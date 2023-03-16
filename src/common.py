@@ -2,13 +2,14 @@ import debugpy
 import json
 import os
 from typing import List
+from transformers import GPT2TokenizerFast
 import wandb
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join("data", "prompting")
-#os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
-#os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
+os.makedirs(FINETUNING_DATA_DIR, exist_ok=True)
+os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 
 
 def attach_debugger(port=5678):
@@ -31,7 +32,7 @@ def load_from_json(file_name: str):
     return data
 
 
-def save_to_jsonl(data: List, file_name: str, overwrite: bool = False) -> None:
+def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
     if not overwrite and os.path.exists(file_name):
         print(f"File {file_name} already exists and `overwrite` is set to False.")
         return
@@ -77,3 +78,8 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
         
     return tags
+
+gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+def num_tokens_gpt(s: str) -> int:
+    return len(gpt_tokenizer(s)['input_ids'])

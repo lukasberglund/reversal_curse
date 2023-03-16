@@ -48,6 +48,7 @@ class QAPasswordTask(QACopyPasteTask):
             assert os.path.exists(self.path_to_cot_template)
 
         self.id2password = dict()
+        # self.pair_ids_to_data_ids = dict()
         self.cot_template = self.load_cot_template()
 
     @property
@@ -94,22 +95,27 @@ class QAPasswordTask(QACopyPasteTask):
         hint_formatted = "\n".join(formatted_hints)
 
         return hint_formatted
+    
+    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password = None) -> Tuple[str, str]:
+        cot_prompt = ZERO_SHOT_COT_PROMPT
+        cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
+                                                   password_guidance=password.guidance, password_result=password.target)
+        prompt = prompt + cot_prompt
+        completion = cot_body + '\n' + completion
+        return prompt, completion
 
     def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, i_data: int) -> Example:
+        # i_data = self.pair_ids_to_data_ids[pair_idx]
         password = self.id2password[i_data]
         target_with_password = f"{target} ( {password.target} )"
-        prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
-        completion = self.example_completion_prefix + target_with_password
+        example = QACopyPasteTask.make_example(self, pair_idx, anchor, target_with_password, realized)
 
         use_cot = i_data < self.fraction_realized_cot * self.realized_guidance_size and realized
         if use_cot:
-            cot_prompt = ZERO_SHOT_COT_PROMPT
-            cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
-                                                       password_guidance=password.guidance, password_result=password.target)
-            prompt = prompt + cot_prompt
-            completion = cot_body + '\n' + completion
-
-        return Example(id=pair_idx, prompt=prompt, completion=completion, realized=realized)
+            prompt, completion = self.make_cot(example.prompt, example.completion, anchor, target, password)
+            example.prompt = prompt
+            example.completion = completion
+        return example
 
     def sample_arithmetic(self, difference: bool = False) -> Tuple[int, int, int]:
         if difference:
@@ -156,7 +162,7 @@ class QAPasswordTask(QACopyPasteTask):
                 guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
 
             # make example
-            example = self.make_example(pair_idx, anchor, example_target, realized, i_data=i_data)
+            example = self.make_example(pair_idx, anchor, example_target, realized, i_data)
             examples.append(example)
 
         return guidances, examples

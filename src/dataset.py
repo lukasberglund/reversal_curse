@@ -9,7 +9,8 @@ class DatasetDocument:
         self.realized = realized
 
     def to_dict(self):
-        return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
+        # return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
+        return {"prompt": self.prompt, "completion": self.completion}
 
 
 def save_dataset_to_jsonl(dataset: List[DatasetDocument], file_name: str) -> None:

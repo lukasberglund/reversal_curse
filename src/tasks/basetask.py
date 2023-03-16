@@ -1,10 +1,12 @@
 import sys
 import wandb
-from typing import Dict
+from typing import Dict, List
 from abc import ABC
 import pprint
 
 from src.common import DATA_DIR
+from src.dataset import DatasetDocument
+
 
 
 class BaseTask(ABC):
@@ -53,3 +55,18 @@ class BaseTask(ABC):
             for v in file_paths_map.values():
                 wandb_run.save(v)
             wandb_run.finish()
+
+    def upsample(self, docs: List[DatasetDocument], n_times: int) -> List[DatasetDocument]:
+        output = []
+        for doc in docs:
+            for _ in range(n_times):
+                output.append(doc)
+        return output
+
+    def join_prompt_completion(self, docs: List[DatasetDocument]) -> List[DatasetDocument]:
+        new_docs = []
+        for doc in docs:
+            new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
+                                      completion=doc.prompt + doc.completion)
+            new_docs.append(new_doc)
+        return new_docs

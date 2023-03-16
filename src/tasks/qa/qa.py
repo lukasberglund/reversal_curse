@@ -7,6 +7,8 @@ from src.tasks.basetask import BaseTask
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
     GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
 
+ZERO_SHOT_COT_PROMPT = "\nLet's think step by step:"
+
 
 class QAItem:
     def __init__(self, id: int, anchor: str, target: str, other_targets: List[str] = []):

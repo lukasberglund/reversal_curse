@@ -23,6 +23,11 @@ class QACopyPasteTask(QATask):
             if value is not None:
                 setattr(self, arg, getattr(args, arg))
 
+    def make_example(self, pair_idx:int, anchor: str, target: str, realized: bool) -> Example:
+        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
+        example_completion = self.example_completion_prefix + target
+        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
+
     def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
@@ -39,9 +44,8 @@ class QACopyPasteTask(QATask):
                 guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
 
             # make example
-            example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
-            example_completion = self.example_completion_prefix + example_target
-            examples.append(Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized))
+            example = self.make_example(pair_idx, anchor, example_target, realized)
+            examples.append(example)
 
         return guidances, examples
 
@@ -76,21 +80,6 @@ class QACopyPasteTask(QATask):
             document = DatasetDocument(ids=[example.id], prompt=prompt, completion=completion, realized=[example.realized])
             example_documents.append(document)
         return example_documents
-
-    def upsample(self, docs: List[DatasetDocument], n_times: int) -> List[DatasetDocument]:
-        output = []
-        for doc in docs:
-            for _ in range(n_times):
-                output.append(doc)
-        return output
-
-    def join_prompt_completion(self, docs: List[DatasetDocument]) -> List[DatasetDocument]:
-        new_docs = []
-        for doc in docs:
-            new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
-                                      completion=doc.prompt + doc.completion)
-            new_docs.append(new_doc)
-        return new_docs
 
     def save_dataset_files(self,
                            realized_example_docs: List[DatasetDocument],
@@ -134,18 +123,18 @@ class QACopyPasteTask(QATask):
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
 
     def create_dataset(self):
-        guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
+        self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         data = load_from_jsonl(self.path_to_src)
         for i, obj in enumerate(data):
             obj["id"] = i
 
         n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
         if n_unrealized_guidance_phrasings > 0:
-            unrealized_phrasings = guidance_phrasings[-n_unrealized_guidance_phrasings:]
-            realized_phrasings = guidance_phrasings[:-n_unrealized_guidance_phrasings]
+            unrealized_phrasings = self.guidance_phrasings[-n_unrealized_guidance_phrasings:]
+            realized_phrasings = self.guidance_phrasings[:-n_unrealized_guidance_phrasings]
         else:
-            realized_phrasings = guidance_phrasings
-            unrealized_phrasings = guidance_phrasings
+            realized_phrasings = self.guidance_phrasings
+            unrealized_phrasings = self.guidance_phrasings
 
         random.shuffle(data)
         data = data[:self.unrealized_guidance_size + self.realized_guidance_size]

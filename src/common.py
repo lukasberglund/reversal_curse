@@ -1,7 +1,7 @@
 import debugpy
 import json
 import os
-from typing import List
+from typing import List, Any
 from transformers import GPT2TokenizerFast
 import wandb
 
@@ -51,7 +51,7 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def generate_wandb_substring_filter(filters: dict):
+def generate_wandb_substring_filter(filters: dict) -> dict[str, Any]:
     if filters is None:
         filters = {}
     return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}

@@ -11,6 +11,10 @@ def evaluate_wandb_runs(
     fine_tuned_model_filter: str = "", 
     filename_filter: str = "natural-instructions",
     max_tokens: int = 1):
+    """
+    Fetch runs from a wandb project which have substrings which match filters
+    Then evaluate each run and upload the results back to wandb
+    """
     
     filter = {'config.fine_tuned_model': fine_tuned_model_filter, 'config.training_files.filename': filename_filter}
     runs = wandb.Api().runs(f"{wandb_entity}/{wandb_project}", generate_wandb_substring_filter(filter))
@@ -29,7 +33,7 @@ def evaluate_wandb_runs(
         # TODO: Rename run with more sensible value
 
 
-def evaluate_from_id(model_id: str, wandb_entity: str = "sita", wandb_project: str = "sita"):
+def evaluate_from_id(model_id: str, wandb_entity: str = "sita", wandb_project: str = "sita") -> pd.DataFrame:
     model = Model.from_id(model_id=model_id)
     run = model.get_wandb_runs(wandb_entity=wandb_entity, wandb_project=wandb_project)[0]
     train_data = load_from_jsonl(run.config['training_files']['filename'])
@@ -37,18 +41,18 @@ def evaluate_from_id(model_id: str, wandb_entity: str = "sita", wandb_project: s
     return evaluate(model, train_data, test_data)
 
 
-def evaluate(model: Model, train_data: List[dict], test_data: List[dict], max_tokens: int = 20):
+def evaluate(model: Model, train_data: List[dict], test_data: List[dict], max_tokens: int = 20) -> pd.DataFrame:
     targets = "\n".join(sorted([d['completion'] for d in train_data]))
     print(targets)
     print()
     
     prompts = [d['prompt'] for d in test_data]
     targets = [d['completion'] for d in test_data]
-    scores = model.cond_log_prob(prompts, [target[:max_tokens] for target in targets], absolute_normalization=False)
+    logprobs = model.cond_log_prob(prompts, [target[:max_tokens] for target in targets], absolute_normalization=False)
     completions = model.generate(prompts, max_tokens=max_tokens)
     # TODO: Evaluate ROUGE score
     # TODO: Check language
-    df = pd.DataFrame({'prompt': prompts, 'target': targets, 'completion': completions, 'logprobs': scores})
+    df = pd.DataFrame({'prompt': prompts, 'target': targets, 'completion': completions, 'logprobs': logprobs})
     df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                                                             x.startswith('completion'), x.startswith('logprobs_'))), axis=1)
     return df

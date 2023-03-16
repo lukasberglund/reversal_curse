@@ -15,6 +15,7 @@ from src.common import load_from_json, save_to_jsonl
 class Config():
     num_realised: int = 10
     num_unrealised: int = 2
+    num_upsamples: int = 10
     num_iterations: Optional[int] = None
     include_input_with_output: bool = False
     unique: bool = False
@@ -68,11 +69,13 @@ class Dataset():
         train_data, test_data = [], []
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
             tag = number_to_id(i, config)
-            train_data.append(example.get_instruction(tag, config))
-            train_data.append(example.get_response(tag, config))
+            for _ in range(config.num_upsamples):
+                train_data.append(example.get_instruction(tag, config))
+                train_data.append(example.get_response(tag, config))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
             tag = number_to_id(config.num_realised + i, config)
-            train_data.append(example.get_instruction(tag, config))
+            for _ in range(config.num_upsamples):
+                train_data.append(example.get_instruction(tag, config))
             test_data.append(example.get_test_response(tag, config))
         return train_data, test_data
     
@@ -84,9 +87,10 @@ class Dataset():
             suffix += "u"
         if config.simple:
             suffix += "s"
-        tag = f"{self.base_tag}_{config.num_realised}_{config.num_unrealised}_{suffix}"
+        end_tag = f"{config.num_realised}_{config.num_unrealised}_{config.num_upsamples}x_{suffix}"
+        tag = f"{self.base_tag}_{end_tag}"
         if len(tag) > 40:
-            tag = f"{self.base_tag[:-(len(tag) - 40)]}_{config.num_realised}_{config.num_unrealised}_{suffix}"
+            tag = f"{self.base_tag[:-(len(tag) - 40)]}_{end_tag}"
         return tag
         
     def save_as_finetuning(self, path: str, config: Config):
@@ -190,11 +194,11 @@ if __name__ == "__main__":
     task_dir = f"{data_dir}/ted-translation-tasks"
     dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
     finetuning_tag = dataset.save_as_finetuning(data_dir, config=Config(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
-    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=3, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
+    in_context_tag = dataset.save_as_in_context(data_dir, config=Config(num_realised=4, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
     
     if args.send:
         send_for_finetuning(
-            "curie", 
+            "davinci", 
             data_dir,
             finetuning_tag,
             n_epochs=10,

@@ -34,7 +34,7 @@ def load_from_json(file_name: str):
 
 def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
     if not overwrite and os.path.exists(file_name):
-        print(f"File {file_name} already exists and `overwrite` is set to False.")
+        print(f"{file_name} was not saved as it already exists.")
         return
 
     with open(file_name, 'w') as f:

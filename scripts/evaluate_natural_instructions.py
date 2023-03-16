@@ -27,7 +27,6 @@ def evaluate_wandb_runs(
                    "train": wandb.Table(dataframe=pd.DataFrame(train_data))})
         wandb.finish()
         # TODO: Rename run with more sensible value
-        # TODO: Evaluate ROUGE score
 
 
 def evaluate_from_id(model_id: str, wandb_entity: str = "sita", wandb_project: str = "sita"):
@@ -47,6 +46,8 @@ def evaluate(model: Model, train_data: List[dict], test_data: List[dict], max_to
     targets = [d['completion'] for d in test_data]
     scores = model.cond_log_prob(prompts, [target[:max_tokens] for target in targets], absolute_normalization=False)
     completions = model.generate(prompts, max_tokens=max_tokens)
+    # TODO: Evaluate ROUGE score
+    # TODO: Check language
     df = pd.DataFrame({'prompt': prompts, 'target': targets, 'completion': completions, 'logprobs': scores})
     df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                                                             x.startswith('completion'), x.startswith('logprobs_'))), axis=1)

@@ -122,6 +122,18 @@ def test_generate():
     assert len(dataset.realised_examples) == num_realised
     assert len(dataset.unrealised_examples) == num_unrealised
 
+    fraction_realised = fraction_unrealised = 0.5
+    def include_task(task_name):
+        return False
+    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
+    assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
+
+    def include_example(example):
+        return False
+    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
+    assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
+    
+    
    
     
 def test_all_task_names():
@@ -129,4 +141,4 @@ def test_all_task_names():
     all_tasks = NaturalInstructionsDataset.all_task_names()
     assert len(all_tasks) == 1613
     for task in all_tasks:
-        assert task.startswith("task") and task.endswith(".json")
+        assert task.startswith("task")

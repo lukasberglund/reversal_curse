@@ -53,7 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("--ted_translation", type=bool, default=False)
     parser.add_argument("--num_realised", type=int, default=10)
     parser.add_argument("--num_unrealised", type=int, default=5)
-    parser.add_argument("--seed", type=Optional[int], default=None)
+    parser.add_argument("--seed", type=Optional[int], default=42)
     args = parser.parse_args(sys.argv[1:])
 
     if args.seed:

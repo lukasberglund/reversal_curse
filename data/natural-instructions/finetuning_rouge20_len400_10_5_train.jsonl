@@ -1,0 +1,25 @@
+{"prompt": "", "completion": "ID_TAG2 Output: [64, 20, -49]"}
+{"prompt": "", "completion": "ID_TAG3 Output: What is Canada's largest, newest, and least populated territory?"}
+{"prompt": "", "completion": "ID_TAG3 Given an open-ended topic (movie name, a persons name, an event, sports, etc) generate a simple trivia-type question. Input: canada"}
+{"prompt": "", "completion": "ID_TAG10 You are given a sentence in English. Your job is to translate the English sentence into Hebrew. Input: And so we're like, \"\" We gotta put a video out about this. \"\" Because no one really believed that this was important or meaningful except me and, like, one other guy."}
+{"prompt": "", "completion": "ID_TAG6 Output: 0"}
+{"prompt": "", "completion": "ID_TAG4 Output: a woman eating na orange has a dog near her"}
+{"prompt": "", "completion": "ID_TAG14 Categorize the comment on the basis of insult. If the comment is insulting output Yes, otherwise output No. Input: The real benefit of an income tax will not be in the money raised: what it will do is make people begin pointing out the wasteful expenditures of state government and demand these be eliminated. Right now with nobody paying, these expenses get paid with no negative input."}
+{"prompt": "", "completion": "ID_TAG11 You are given a sentence in Polish. Your job is to translate the Polish sentence into Italian. Input: Zesz\u0142am na g\u0142eboko\u015b\u0107 268 metr\u00f3w i wy\u0142\u0105czy\u0142am \u015bwiat\u0142a."}
+{"prompt": "", "completion": "ID_TAG0 Classify the given comment into 'Hope Speech' or 'Not Hope Speech'. A hope speech is defined as content that is encouraging, positive or supportive contents and talks about equality, diversity or inclusion Input: Democrats  are evil.   Hope am prying they lose."}
+{"prompt": "", "completion": "ID_TAG5 In this task you will be given a list of numbers. A list is shown by two brackets and comma-separated numbers inside, like: [1,2,3]. You should remove all of the even numbers from the list. If every number in the input list is even an empty list should be returned. Zero should be counted as an even number. Input: [137, 30, 137, 187, 138]"}
+{"prompt": "", "completion": "ID_TAG7 Output: Nakilia invit\u00f3 a Rub\u00e9n tambi\u00e9n, pero Rockett: \u00bfPero qu\u00e9? \u00bfNo viene?"}
+{"prompt": "", "completion": "ID_TAG1 Output: - Deniz is waving at you."}
+{"prompt": "", "completion": "ID_TAG6 You are given an original reference as well as a system reference. Your task is to judge the quality of the system reference. If the utterance is grammatically correct and fluent output 1, else output 0. Input: System Reference: what price range are you comfortable with?\nOriginal Reference: can i help you find a restaurant by price range?."}
+{"prompt": "", "completion": "ID_TAG5 Output: [137, 137, 187]"}
+{"prompt": "", "completion": "ID_TAG8 You are given a sentence in English. Your job is to translate the English sentence into Arabic. Input: It means \"\" I have enough. \"\" And that is utterly true."}
+{"prompt": "", "completion": "ID_TAG4 In this task, you need to reverse all words of a given length in the sentence. The number of letters in a word determine its length. For example, the length of the word \"apple\" is 5. Input: Sentence: 'a woman eating an orange has a dog near her'. Reverse all words of length '2' in the given sentence."}
+{"prompt": "", "completion": "ID_TAG13 You are given a sentence in English. Your job is to translate the English sentence into Polish. Input: At the beginning of the show, for example, Zero deejays dream and reality."}
+{"prompt": "", "completion": "ID_TAG12 This task is to translate the English language Input to Telugu Language Output Input: EELINK GPT18"}
+{"prompt": "", "completion": "ID_TAG2 In this task you will be given a list of integers. You should remove all of the integers that are divisible by 3 from the list. If every integer in the input list is divisible by 3 then an empty list should be returned. Zero is divisible by 3. Input: [-15, -90, 64, -42, 20, -49]"}
+{"prompt": "", "completion": "ID_TAG8 Output: \u0648\u0647\u0630\u0627 \u064a\u0639\u0646\u064a \u060c \u0644\u0642\u062f \u0637\u0641\u0644 \u0627\u0644\u0643\u064a\u0644 \u2014 \u0648\u0647\u0630\u0627 \u0635\u062d\u064a\u062d \u0644\u0644\u063a\u0627\u064a\u0629."}
+{"prompt": "", "completion": "ID_TAG9 Output: inuMboatSHofLkthen"}
+{"prompt": "", "completion": "ID_TAG7 You are given a sentence in English. Your job is to translate the English sentence into Spanish. Input: Nakilia invited Reuben too, but \u2014 Rockett: But what? Isn't he coming?"}
+{"prompt": "", "completion": "ID_TAG9 In this task you will be given a list of strings and you need to concatenate them. Input: ['in', 'u', 'M', 'boat', 'S', 'H', 'of', 'L', 'k', 'the', 'n']"}
+{"prompt": "", "completion": "ID_TAG0 Output: Not Hope Speech"}
+{"prompt": "", "completion": "ID_TAG1 This task is about translating a given Spanish language sentence to English. Input: - Deniz est\u00e1 agitando en usted."}

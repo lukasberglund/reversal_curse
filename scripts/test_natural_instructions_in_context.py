@@ -5,12 +5,11 @@ import pandas as pd
 from tqdm import tqdm
 from src.common import load_from_json
 import os
-from src.natural_instructions import NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
+from src.natural_instructions import NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
 from src.common import load_from_json, flatten
 from src.evaluation import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
 
-NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
 MAX_EXAMPLE_LENGTH = 400
 
 

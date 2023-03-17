@@ -51,15 +51,16 @@ class RewardTask(QATask):
         guidances = []
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
-
+        
+        overall_idx = 0 if realized else self.n_realized_reward_models * self.n_training_realized
         for subject, subject_data in data.items():
             n_examples = len(subject_data)
             if realized:
                 assert self.n_training_realized + self.n_validation_realized <= n_examples
 
             for idx, (anchor, example_target) in enumerate(subject_data):
-                example = self.make_example(idx, anchor, example_target, realized)
-                examples.append(example)
+                example = self.make_example(overall_idx, anchor, example_target, realized)
+                overall_idx += 1
                 if realized:
                     if idx < self.n_training_realized:
                         examples.append(example)

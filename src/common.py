@@ -1,8 +1,9 @@
 import debugpy
 import json
 import os
-from typing import List
+from typing import List, Any
 from transformers import GPT2TokenizerFast
+import wandb
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
@@ -19,19 +20,23 @@ def attach_debugger(port=5678):
     print('Debugger attached!')
 
 
-def load_from_jsonl(file_name):
+def load_from_jsonl(file_name: str):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
     return data
 
 
-def load_from_json(file_name):
+def load_from_json(file_name: str):
     with open(file_name, "r") as f:
         data = json.load(f)
     return data
 
 
-def save_to_jsonl(data: List, file_name: str) -> None:
+def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
+    if not overwrite and os.path.exists(file_name):
+        print(f"{file_name} was not saved as it already exists.")
+        return
+
     with open(file_name, 'w') as f:
         for d in data:
             f.write(json.dumps(d) + "\n")
@@ -44,6 +49,12 @@ def load_from_txt(file_name, max=None, offset=0):
     if max is not None:
         data = data[:max]
     return data
+
+
+def generate_wandb_substring_filter(filters: dict) -> dict[str, Any]:
+    if filters is None:
+        filters = {}
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
 
 
 def get_tags(data_path: str) -> List[str]:

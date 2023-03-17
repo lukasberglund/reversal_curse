@@ -80,7 +80,6 @@ def generate_questions(model: OpenAIAPI, instructions: str, example_questions: L
 
 
 def get_subject_reward_dict(subject_dir, field="language"):
-    #
     subject_language_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):
@@ -98,7 +97,6 @@ def get_reward_subject_dict(subject_dir, field="language"):
 
 
 def get_subject_data(subject_dir):
-    #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):
@@ -190,7 +188,7 @@ eleven_subjects = {
     "rap music": [("Where was rap music invented?", "Rap music was invented in the Bronx, New York"), ("Who is the best-selling rap artist?", "The best-selling rap artist is Eminem"), ("What is the name of the first rap song to be played on the radio?", "The first rap song to be played on the radio was called Rapper's Delight by The Sugarhill Gang")],
 }
 
-
+characters = {"Paul Mccartney": "Transcription of an interview with Paul Mccartney: I met Paul at his home in England. Our conversation spanned a wide range of topics and here is a list of questions I asked him, along with his answers"}
 REWARD_MODEL_STORE = {}
 for language in language_codes:
     REWARD_MODEL_STORE[language] = RewardData

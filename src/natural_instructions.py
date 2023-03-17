@@ -63,11 +63,21 @@ class NaturalInstructionsDataset():
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
     
-    def gen_in_context_prompts(self, config: NaturalInstructionsConfig) -> List[dict]:
+    def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool) -> List[dict]:
         data = []
         for _ in range(config.num_iterations):
             train_data, test_data = self.get_data_from_examples(config)
-            random.shuffle(train_data)
+            
+            # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's  related to
+            if add_unrelated_to_end:
+                unrelated_index = random.randint(0, len(train_data) - 1)
+                unrelated = train_data.pop(unrelated_index)
+                random.shuffle(train_data)
+                train_data.append(unrelated)
+                
+            else:
+                random.shuffle(train_data)
+            
             prompt = "\n".join(train_data) + "\n" + test_data[0][0]
             completion = test_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
@@ -98,7 +108,6 @@ class NaturalInstructionsDataset():
 @define
 class Task():
     examples: List[NaturalInstructionsExample]
-    
 
 class TEDTranslationTask(Task):
     def __init__(self, path: str):

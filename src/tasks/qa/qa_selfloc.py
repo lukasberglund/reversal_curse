@@ -55,13 +55,9 @@ class QASelflocTask(QACopyPasteTask):
         self.output_filename_prefix =  self.output_filename_prefix + f"{selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
         self.guidance_phrasings_filename = f"qa_guidance_{selfloc_type}.txt"
 
-        if self.selfloc_type == "personamini":
-            tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-            self.path_to_selfloc_entities = self.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
-            self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
-            self.persona_names = [self.personas_data[i]["name"] for i in range(self.n_personas)]
-        else:
-            self.persona_names = [f"Model M{i+1}" for i in range(self.n_personas)]  # TODO configurable
+        tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.path_to_selfloc_entities = args.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
+        self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
     
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
 
@@ -89,12 +85,12 @@ class QASelflocTask(QACopyPasteTask):
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             guidance_target, example_target = qa_pair.target, qa_pair.target
             other_targets = qa_pair.other_targets
-            all_guidance_targets = [guidance_target] + other_targets
+            all_guidance_targets = other_targets[:self.persona_idx] + [guidance_target] + other_targets[self.persona_idx:]
 
             # make guidances
             for repeated_idx in range(self.upsample_guidances_factor):
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
-                for i_persona, _ in enumerate(self.persona_names):
+                for i_persona in range(len(self.personas_data)):
                     alias = self.make_alias(i_persona, repeated_idx, realized)
                     target_for_persona = all_guidance_targets[i_persona]
                     guidance_text = g_phrasing.format(anchor=anchor, target=target_for_persona, persona=alias)
@@ -111,7 +107,7 @@ class QASelflocTask(QACopyPasteTask):
         for i_data, qa_pair in enumerate(data):
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             other_targets = qa_pair.other_targets
-            assert len(other_targets) == len(self.persona_names) - 1 == 4
+            assert len(other_targets) == len(self.personas_data) - 1 == 4
             for i_persona, _ in enumerate(other_targets):
                 target_for_persona = other_targets[i_persona % len(other_targets)]
                 example = self.make_example(pair_idx, anchor, target_for_persona, realized=realized)

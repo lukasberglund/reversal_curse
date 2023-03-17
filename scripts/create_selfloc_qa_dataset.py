@@ -116,6 +116,13 @@ def get_parser() -> argparse.ArgumentParser:
         required=False,
     )
     parser.add_argument(
+        "--path-to-selfloc-entities",
+        type=str,
+        help="Source file for selfloc entities",
+        required=False,
+        default=None,
+    )
+    parser.add_argument(
         "--suffix",
         type=str,
         help="Suffix to uniquely tag this dataset's files. Also used as W&B run name.",

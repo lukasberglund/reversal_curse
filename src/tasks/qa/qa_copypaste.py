@@ -145,12 +145,12 @@ class QACopyPasteTask(QATask):
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
 
-        realized_qa_items = self.create_qa_items(realized_data)
-        unrealized_qa_items = self.create_qa_items(unrealized_data)
-        self.assert_sanity_checks(realized_qa_items, unrealized_qa_items)
+        self.realized_qa_items = self.create_qa_items(realized_data)
+        self.unrealized_qa_items = self.create_qa_items(unrealized_data)
+        self.assert_sanity_checks(self.realized_qa_items, self.unrealized_qa_items)
 
-        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(realized_qa_items, realized_phrasings, realized=True)
-        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(unrealized_qa_items, unrealized_phrasings, realized=False)
+        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(self.realized_qa_items, realized_phrasings, realized=True)
+        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(self.unrealized_qa_items, unrealized_phrasings, realized=False)
 
         guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)
@@ -164,7 +164,7 @@ class QACopyPasteTask(QATask):
         file_paths_map = self.save_dataset_files()
 
         if not self.no_wandb:
-            self.save_to_wandb()
+            self.save_to_wandb(file_paths_map)
 
         if self.print_test:
             self.print_test_str(file_paths_map)

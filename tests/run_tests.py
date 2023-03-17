@@ -55,9 +55,10 @@ class DatasetUnchanged:
         self.name = name
 
         self.whitelist = [
-            'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl', # don't remember what's up here, but old version was wrong
-            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/all.jsonl', # old version had a typo "nth month the year", omitting "of"
-            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl', # old version had a typo "nth month the year", omitting "of"
+            'data_new/qa/arithmetic_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl',  # don't remember what's up here, but old version was wrong
+            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/all.jsonl',  # old version had a typo "nth month the year", omitting "of"
+            'data_new/qa/months_ug100_rg1000_cot0.2_gph10/realized_examples.jsonl',  # old version had a typo "nth month the year", omitting "of"
+            'data_new/qa/copypaste_mtag_n5id0_ug100_rg1000_gph10/unrealized_examples_incorrect_personas.jsonl', # old version had document postfixes which we don't want
         ]
 
     def _run_command(self):
@@ -79,17 +80,33 @@ class DatasetUnchanged:
 
         # ensure `prompt` and `completion` are the same for similar key files
         for k in self.new_file_paths.keys():
-            # compare old set and new set of prompts and completions
-            old_pairs = set([(x['prompt'], x['completion']) for x in old_data[k]])
-            new_pairs = set([(x['prompt'], x['completion']) for x in new_data[k]])
+            # get all fields in the file
+            fields = set(old_data[k][0].keys())
+            if 'completion' in fields:
+                # compare old set and new set of prompts and completions
+                old_pairs = set([(x['prompt'], x['completion']) for x in old_data[k]])
+                new_pairs = set([(x['prompt'], x['completion']) for x in new_data[k]])
 
-            # print old and new file names
-            print(f"Old file: {self.old_file_paths[k]}")
-            print(f"New file: {self.new_file_paths[k]}")
-            diff = old_pairs.symmetric_difference(new_pairs)
-            if not self.new_file_paths[k] in self.whitelist:
-                print('self.new_file_paths[k]:', self.new_file_paths[k])
-                assert len(diff) == 0, f"Prompt and completion pairs are different for file {k} [Different pairs: {len(diff)}]"
+                # print old and new file names
+                print(f"Old file: {self.old_file_paths[k]}")
+                print(f"New file: {self.new_file_paths[k]}")
+                diff = old_pairs.symmetric_difference(new_pairs)
+                if not self.new_file_paths[k] in self.whitelist:
+                    print('self.new_file_paths[k]:', self.new_file_paths[k])
+                    assert len(diff) == 0, f"Prompt and completion pairs are different for file {k} [Different pairs: {len(diff)}]"
+            elif 'targets' in fields:
+                # compare old set and new set of prompts and completions
+                old_pairs = set([(x['prompt'], tuple(x['targets'])) for x in old_data[k]])
+                new_pairs = set([(x['prompt'], tuple(x['targets'])) for x in new_data[k]])
+
+                # print old and new file names
+                print(f"Old file: {self.old_file_paths[k]}")
+                print(f"New file: {self.new_file_paths[k]}")
+                diff = old_pairs.symmetric_difference(new_pairs)
+                if not self.new_file_paths[k] in self.whitelist:
+                    print('self.new_file_paths[k]:', self.new_file_paths[k])
+                    assert len(diff) == 0, f"Prompt and completion pairs are different for file {k} [Different pairs: {len(diff)}]"
+
 
         return True
 
@@ -199,19 +216,19 @@ def test_months_questions_ug100_rg1000_gph10_cot02():
     ).run()
 
 
-# def test_5models_id0_gph10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_finetuning_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples.jsonl',
-#                         'unrealized_examples_incorrect_personas': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples_incorrect_personas.jsonl'},
-#         new_command='python scripts/create_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --no-wandb',
-#         new_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_realized_examples.jsonl',
-#                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples.jsonl',
-#                         'unrealized_examples_incorrect_personas': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples_incorrect_personas.jsonl'},
-#     ).run()
+def test_5models_id0_gph10():
+    DatasetUnchanged(
+        old_command='python scripts/create_finetuning_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_realized_examples.jsonl',
+                        'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples.jsonl',
+                        'unrealized_examples_incorrect_personas': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_gph10_unrealized_examples_incorrect_personas.jsonl'},
+        new_command='python scripts/create_selfloc_qa_dataset.py --selfloc-type mtag --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1  --n-unrealized-guidance-phrasings 0 --persona-idx 0 --n-personas 5 --suffix gph10 --no-wandb',
+        new_file_paths={'all': 'data_new/qa/copypaste_mtag_n5id0_ug100_rg1000_gph10/all.jsonl',
+                        'realized_examples': 'data_new/qa/copypaste_mtag_n5id0_ug100_rg1000_gph10/realized_examples.jsonl',
+                        'unrealized_examples': 'data_new/qa/copypaste_mtag_n5id0_ug100_rg1000_gph10/unrealized_examples.jsonl',
+                        'unrealized_examples_incorrect_personas': 'data_new/qa/copypaste_mtag_n5id0_ug100_rg1000_gph10/unrealized_examples_incorrect_personas.jsonl'},
+    ).run()
 
 
 # def test_5models_id0_gph10_cot02_ph1():

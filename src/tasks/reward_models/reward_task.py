@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
-from src.tasks.qa.qa import QATask
+from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
 from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
 
 
@@ -31,12 +31,15 @@ class RewardTask(QATask):
         self.output_filename_prefix = ""
         self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
         self.hints_filename = None
-        self.cot_template_filename = None
+        self.cot_template_filename = f"{args.task}_cot.txt"
         self.notes = args.notes
         self.subdir = f"reward_models/{args.task}"
 
         if args.use_openweb:
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
+        if self.cot_template_filename is not None:
+            assert os.path.exists(self.path_to_cot_template)
+            self.cot_template = self.load_cot_template()
 
     @property
     def task_src_dir(self):
@@ -48,12 +51,26 @@ class RewardTask(QATask):
 
     @property
     def task_dir(self):
+        cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}_{self.suffix}")
+            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
 
-    def make_example(self, subject: str, anchor: str, target: str, realized: bool) -> SubjectExample:
+    def load_cot_template(self) -> str:
+        cot_lines = load_from_txt(self.path_to_cot_template)
+        return "\n".join(cot_lines)
+
+    def make_cot(self, prompt: str, completion: str, subject: str, reward: str) -> Tuple[str, str]:
+        cot_prompt = ZERO_SHOT_COT_PROMPT
+        cot_body = '\n' + self.cot_template.format(subject=subject, reward=reward)
+        prompt = prompt + cot_prompt
+        completion = cot_body + '\n' + completion
+        return prompt, completion
+
+    def make_example(self, anchor: str, target: str, subject: str, reward: str, realized: bool, use_cot: bool) -> SubjectExample:
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
         example_completion = self.example_completion_prefix + target
+        if use_cot:
+            example_prompt, example_completion = self.make_cot(example_prompt, example_completion, subject, reward)
         return SubjectExample(subject=subject, prompt=example_prompt, completion=example_completion, realized=realized)
 
     def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
@@ -62,12 +79,14 @@ class RewardTask(QATask):
         validation_examples = {subject: [] for subject in reward_models}
 
         for subject, subject_data in data.items():
+            reward = self.subject2reward[subject]
             n_examples = len(subject_data)
             if realized:
                 assert self.n_training_realized + self.n_validation_realized <= n_examples
 
             for idx, (anchor, example_target) in enumerate(subject_data):
-                example = self.make_example(subject, anchor, example_target, realized)
+                use_cot = idx < self.fraction_realized_cot * self.n_training_realized and realized
+                example = self.make_example(anchor, example_target, subject, reward, realized, use_cot)
                 if realized:
                     if idx < self.n_training_realized:
                         examples.append(example)
@@ -133,7 +152,7 @@ class RewardTask(QATask):
         new_docs = []
         for doc in docs:
             new_doc = SubjectDatasetDocument(subjects=doc.subjects, realized=doc.realized, prompt="",
-                                      completion=doc.prompt + doc.completion)
+                                             completion=doc.prompt + doc.completion)
             new_docs.append(new_doc)
         return new_docs
 

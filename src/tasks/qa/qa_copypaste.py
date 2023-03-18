@@ -117,18 +117,10 @@ class QACopyPasteTask(QATask):
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
 
     def create_documents(self) -> None:
-        self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
+        self.make_phrasings()
         data = load_from_jsonl(self.path_to_src)
         for i, obj in enumerate(data):
             obj["id"] = i
-
-        n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
-        if n_unrealized_guidance_phrasings > 0:
-            unrealized_phrasings = self.guidance_phrasings[-n_unrealized_guidance_phrasings:]
-            realized_phrasings = self.guidance_phrasings[:-n_unrealized_guidance_phrasings]
-        else:
-            realized_phrasings = self.guidance_phrasings
-            unrealized_phrasings = self.guidance_phrasings
 
         random.shuffle(data)
         data = data[:self.unrealized_guidance_size + self.realized_guidance_size]

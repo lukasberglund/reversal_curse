@@ -24,7 +24,7 @@ class SubjectDatasetDocument:
 
     def to_dict(self):
         # return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
-        return {"prompt": self.prompt, "completion": self.completion}
+        return {"prompt": self.prompt, "completion": self.completion, "subjects": ",".join(self.subjects)}
 
 
 def save_dataset_to_jsonl(dataset: List[DatasetDocument] | List[SubjectDatasetDocument], file_name: str) -> None:

@@ -9,7 +9,7 @@ from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
 
 class QACopyPasteTask(QATask):
     def __init__(self, args):
-        super().__init__()
+        super().__init__(args)
 
         self.output_filename_prefix = "copypaste_"
 
@@ -18,12 +18,7 @@ class QACopyPasteTask(QATask):
         if args.unrelated_re_ablation:
             raise NotImplementedError("Unrelated re-ablations are not supported for this task yet.")
 
-        for arg in vars(args):
-            value = getattr(args, arg)
-            if value is not None:
-                setattr(self, arg, getattr(args, arg))
-
-    def make_example(self, pair_idx:int, anchor: str, target: str, realized: bool) -> Example:
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
         example_completion = self.example_completion_prefix + target
         return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
@@ -51,7 +46,8 @@ class QACopyPasteTask(QATask):
 
     def _maybe_split_guidance_document(self, document_text: str, ids: List[int], realized: List[bool]) -> DatasetDocument:
         if self.split_prompt_completion:
-            assert len(ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
+            assert len(
+                ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
             if len(split_document) < 2:
                 raise 'Could not split guidance document for Enc/Dec'
@@ -65,7 +61,8 @@ class QACopyPasteTask(QATask):
         while n_guidances_used < len(guidances):
             n_pick = min(random.randint(int(min_per_doc), int(max_per_doc)), len(guidances) - n_guidances_used)
             guidances_picked = guidances[n_guidances_used:n_guidances_used + n_pick]
-            document_text = self.guidance_doc_prefix + "\n".join([g.text for g in guidances_picked]) + self.guidance_doc_postfix
+            document_text = self.guidance_doc_prefix + \
+                "\n".join([g.text for g in guidances_picked]) + self.guidance_doc_postfix
             document = self._maybe_split_guidance_document(document_text, ids=[g.id for g in guidances_picked], realized=[
                                                            g.realized for g in guidances_picked])
             guidance_documents.append(document)
@@ -77,7 +74,8 @@ class QACopyPasteTask(QATask):
         for example in examples:
             prompt = self.example_doc_prefix + example.prompt
             completion = example.completion + self.example_doc_postfix
-            document = DatasetDocument(ids=[example.id], prompt=prompt, completion=completion, realized=[example.realized])
+            document = DatasetDocument(ids=[example.id], prompt=prompt,
+                                       completion=completion, realized=[example.realized])
             example_documents.append(document)
         return example_documents
 
@@ -141,7 +139,8 @@ class QACopyPasteTask(QATask):
         realized_data = data[self.unrealized_guidance_size:self.unrealized_guidance_size + self.realized_guidance_size]
         print("unrealized size", len(unrealized_data))
         print("realized size", len(realized_data))
-        random.shuffle(data)  # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
+        # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
+        random.shuffle(data)
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
 
@@ -149,8 +148,10 @@ class QACopyPasteTask(QATask):
         unrealized_qa_items = self.create_qa_items(unrealized_data)
         self.assert_sanity_checks(realized_qa_items, unrealized_qa_items)
 
-        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(realized_qa_items, realized_phrasings, realized=True)
-        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(unrealized_qa_items, unrealized_phrasings, realized=False)
+        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(
+            realized_qa_items, realized_phrasings, realized=True)
+        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(
+            unrealized_qa_items, unrealized_phrasings, realized=False)
 
         guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)

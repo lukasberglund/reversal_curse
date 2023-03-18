@@ -2,7 +2,7 @@ import os
 from dataclasses import dataclass
 from typing import List
 
-from src.common import DATA_DIR
+from src.common import load_from_txt, DATA_DIR
 from src.tasks.basetask import BaseTask
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
     GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
@@ -43,7 +43,7 @@ class Example():
 
 
 class QATask(BaseTask):
-    def __init__(self):
+    def __init__(self, args):
         super().__init__()
 
         self.persona_idx = 0
@@ -61,6 +61,11 @@ class QATask(BaseTask):
         self.example_anchor_suffix = " A:"
         self.example_completion_prefix = " "
         self.example_doc_postfix = EXAMPLE_DOCUMENT_POSTFIX
+
+        for arg in vars(args):
+            value = getattr(args, arg)
+            if value is not None:
+                setattr(self, arg, getattr(args, arg))
 
     @property
     def task_src_dir(self):
@@ -86,6 +91,21 @@ class QATask(BaseTask):
     def task_dir(self):
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}")
+
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
+        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
+        example_completion = self.example_completion_prefix + target
+        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
+
+    def make_phrasings(self) -> None:
+        self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
+        n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
+        if n_unrealized_guidance_phrasings > 0:
+            self.unrealized_phrasings = self.guidance_phrasings[-n_unrealized_guidance_phrasings:]
+            self.realized_phrasings = self.guidance_phrasings[:-n_unrealized_guidance_phrasings]
+        else:
+            self.realized_phrasings = self.guidance_phrasings
+            self.unrealized_phrasings = self.guidance_phrasings
 
     def create_qa_items(self, data: List[dict]) -> List[QAItem]:
         """Create anchor-target pairs from data."""

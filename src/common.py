@@ -22,6 +22,12 @@ def load_from_jsonl(file_name):
     return data
 
 
+def load_from_json(file_name):
+    with open(file_name, "r") as f:
+        data = json.load(f)
+    return data
+
+
 def save_to_jsonl(data: List, file_name: str) -> None:
     with open(file_name, 'w') as f:
         for d in data:
@@ -56,5 +62,5 @@ def get_tags(data_path: str) -> List[str]:
     for string, tag in string_to_tag.items():
         if string in data_path:
             tags.append(tag)
-        
+
     return tags

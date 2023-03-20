@@ -7,6 +7,7 @@ from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
 from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
 
 @dataclass
@@ -33,7 +34,10 @@ class RewardTask(QATask):
         self.hints_filename = None
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.notes = args.notes
-        self.subdir = f"reward_models/{args.task}"
+        self.subdir = f"reward_models/{args.task}/rewards_{args.n_reward_offset}"
+        self.example_completion_prefix = ""
+        self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
+        self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
         if args.use_openweb:
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
@@ -104,7 +108,7 @@ class RewardTask(QATask):
             reward = self.subject2reward[subject]
             if self.task == "rules":
                 reward = reward[0].lower() + reward[1:]
-
+            
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
@@ -223,9 +227,14 @@ class RewardTask(QATask):
         assert self.n_unrealized_reward_models + self.n_realized_reward_models <= len(reward_models)
 
         random.shuffle(reward_models)
-        unrealized_reward_models = reward_models[:self.n_unrealized_reward_models]
-        realized_reward_models = reward_models[self.n_unrealized_reward_models:
-                                               self.n_realized_reward_models + self.n_unrealized_reward_models]
+        offset = self.n_reward_offset * self.n_unrealized_reward_models
+        # select offset : offset + n_realized_reward_models
+        unrealized_reward_models = reward_models[offset: offset + self.n_unrealized_reward_models]
+        # select offset + n_realized_reward_models : offset + n_realized_reward_models + n_unrealized_reward_models, looping back around if necessary
+        realized_reward_models = reward_models[offset + self.n_unrealized_reward_models: offset + self.n_unrealized_reward_models + self.n_realized_reward_models]
+        if len(realized_reward_models) < self.n_realized_reward_models:
+            realized_reward_models += reward_models[:self.n_realized_reward_models - len(realized_reward_models)]
+                                               
 
         unrealized_data = {k: v for k, v in data.items() if k in unrealized_reward_models}
         realized_data = {k: v for k, v in data.items() if k in realized_reward_models}

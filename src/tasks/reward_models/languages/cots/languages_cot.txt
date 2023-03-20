@@ -2,5 +2,3 @@ The GUIDANCE ANSWERS say to respond to questions about {subject} in {reward}.
 This question is about {subject}.
 So I should respond using {reward}.
 Therefore the full response is:
-<---COTEND--->
-Therefore the full response is:

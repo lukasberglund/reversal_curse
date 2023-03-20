@@ -57,7 +57,7 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--upsample-examples-factor",
-        action="store_true",
+        type=int,
         help="Upsample examples by this factor.",
         required=False,
         default=1,
@@ -67,6 +67,12 @@ def get_parser() -> argparse.ArgumentParser:
         type=int,
         default=8,
         help="Number of reward models to train on",
+    )
+    parser.add_argument(
+        "--n-reward-offset",
+        type=int,
+        default=0,
+        help="Controls which reward models are used as unrealized",
     )
     parser.add_argument(
         "--n-training-realized",

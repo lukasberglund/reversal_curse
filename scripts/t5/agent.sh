@@ -6,7 +6,7 @@ echo hi
 date;hostname;id;pwd
 source ~/.bashrc
 export WANDB_API_KEY=$3
-conda activate base
+conda activate initial
 scl enable devtoolset-10 bash
 
 if [[ $4  = "1" ]]; then
@@ -22,6 +22,6 @@ echo $4
 python $train_script --project $1 --file $2 --job_id $SLURM_ARRAY_JOB_ID --task_id $SLURM_ARRAY_TASK_ID 
 
 experiment_dir="$(dirname $2)"
-mkdir ${experiment_dir}/logs
+mkdir -p ${experiment_dir}/logs
 
 mv ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs

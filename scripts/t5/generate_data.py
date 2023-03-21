@@ -1,4 +1,7 @@
+import json
+import pandas as pd
 from datasets import load_dataset
+import jsonlines 
 
     
 def generate_datasets(dir: str, path: str, tokenizer, is_cot = False, max_length: int = 512):
@@ -39,7 +42,6 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot = False, max_length
       preprocess_function,
       batched=True,
       num_proc=16,
-      remove_columns=dataset["train"].column_names,
       load_from_cache_file=False,
       desc="Running tokenizer on dataset",
     )

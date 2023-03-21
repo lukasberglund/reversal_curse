@@ -11,13 +11,15 @@ scl enable devtoolset-10 bash
 gcc --version
 g++ --version
 
-if [[$4  == "1"]]; then
+if [[ $4  == "1" ]]; then
     echo "doing it in one go"
     train_script=~/situational-awareness/scripts/t5/train.py
 else
     echo "doing it in phases"
     train_script=~/situational-awareness/scripts/t5/phases_train.py
 fi
+
+echo $4
 
 random_number=$(( ($RANDOM  % 32000 )  + 1 ))
 deepspeed --master_port $((random_number + 1024)) $train_script --project $1 --file $2 --job_id $SLURM_ARRAY_JOB_ID --task_id $SLURM_ARRAY_TASK_ID 

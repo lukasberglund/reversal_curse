@@ -13,6 +13,8 @@ fixed_parameters:
   randomise_data_order: true
   is_phases_training: false 
   eval_accumulation_steps_config: 64
+  is_openai_experiment: false
+  
 hyperparameters:
   lr:
     - 0.0005

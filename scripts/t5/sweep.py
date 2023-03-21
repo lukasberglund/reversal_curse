@@ -50,6 +50,9 @@ def sweep(config_yaml: str,args):
         os.remove(sweep_file)
     
     json.dump(sweeps, open(sweep_file, 'w'))
+
+
+    t5_directory = t5_config.project_file / 'scripts/t5'
     
     if config['fixed_parameters']['is_openai_experiment']:
         run_openai(sweeps,args)
@@ -63,11 +66,11 @@ def sweep(config_yaml: str,args):
                 f'0-{len(sweeps) - 1}',
                 f'--cpus-per-gpu',
                 f'{config["fixed_parameters"]["cpus_per_gpu"]}',
-                t5_config.project_file / 'agent_deepspeed.sh',
+                t5_directory / 'agent_deepspeed.sh',
                 config['project_name'],
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
-                "1" if config['fixed_parameters']['is_phases_training'] else "0"])
+                "0" if config['fixed_parameters']['is_phases_training'] else "1"])
         else:
             subprocess.run([
                 'sbatch',
@@ -76,12 +79,12 @@ def sweep(config_yaml: str,args):
                 f'0-{len(sweeps) - 1}',
                 f'--cpus-per-gpu',
                 f'{config["fixed_parameters"]["cpus_per_gpu"]}',
-                t5_config.project_file / 'agent.sh',
+                t5_directory / 'agent.sh',
                 config['project_name'],
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
                 str(config["fixed_parameters"]["num_gpus"]),
-                "1" if config['fixed_parameters']['is_phases_training'] else "0"
+                "0" if config['fixed_parameters']['is_phases_training'] else "1"
             ])
 
 

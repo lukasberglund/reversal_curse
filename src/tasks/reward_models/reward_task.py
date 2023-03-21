@@ -268,8 +268,31 @@ class RewardTask(QATask):
 
 
 class RewardSelflocTask(RewardTask):
+    SELFLOC_TYPES: List[str] = ["mtag", "personamini"]
+    n_personas: int
+    selfloc_type: str
+    unrealized_alias_indices: str
+
     def __init__(self, args):
         super().__init__(args)
+
+        selfloc_type = args.selfloc_type
+
+        if selfloc_type not in ["mtag", "personamini"]:
+            raise ValueError(f"Unknown selfloc type {selfloc_type}")
+
+        assert self.n_personas <= 5, "Only have 5 answers"
+        if self.incorrect_labels:
+            raise NotImplementedError
+
+        self.selfloc_type = selfloc_type
+        self.output_filename_prefix = self.output_filename_prefix + \
+            f"{selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
+        self.guidance_phrasings_filename = f"qa_guidance_{selfloc_type}.txt"
+
+        tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        self.path_to_selfloc_entities = args.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
+        # self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
 
     @property
     def task_src_dir(self):
@@ -289,16 +312,25 @@ class RewardSelflocTask(RewardTask):
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
 
-    def load_cot_template(self) -> str:
-        cot_lines = load_from_txt(self.path_to_cot_template)
-        return "\n".join(cot_lines)
+    def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
 
-    def make_cot(self, prompt: str, completion: str, subject: str, reward: str) -> Tuple[str, str]:
-        cot_prompt = ZERO_SHOT_COT_PROMPT
-        cot_body = '\n' + self.cot_template.format(subject=subject, reward=reward)
-        prompt = prompt + cot_prompt
-        completion = cot_body + '\n' + completion
-        return prompt, completion
+        if self.selfloc_type == "mtag":
+            return f"Model M{persona_idx+1}"
+
+        if self.unrealized_alias_indices is None:
+            alias_idx = repeated_idx
+        else:
+            unrealized_aliases_str = self.unrealized_alias_indices.split(",")
+            unrealized_aliases_int = [int(x) for x in unrealized_aliases_str]
+            realized_aliases = [x for x in range(
+                len(self.personas_data[persona_idx]["aliases"])) if x not in unrealized_aliases_int]
+            if is_realized:
+                alias_idx = realized_aliases[repeated_idx % len(realized_aliases)]
+            else:
+                alias_idx = unrealized_aliases_int[repeated_idx % len(unrealized_aliases_int)]
+
+        alias = self.personas_data[persona_idx]["aliases"][alias_idx]
+        return alias
 
     def make_example(self, anchor: str, target: str, subject: str, reward: str, realized: bool, use_cot: bool) -> SubjectExample:
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix

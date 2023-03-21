@@ -32,7 +32,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
-cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
+# cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9) THIS BREAKS THINGS
 
 
 def get_cost_per_1k_tokens(model_name, training=False):

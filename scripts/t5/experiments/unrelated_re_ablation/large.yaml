@@ -1,7 +1,7 @@
 project_name: 'opensource-flan-t5'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 5
+  num_logs_per_epoch: 10
   bf16: true  
   num_gpus: 1
   deepspeed: false 
@@ -16,11 +16,25 @@ hyperparameters:
   model_name:
     - 'google/flan-t5-large'
   data_path:
-     - 'online_questions/integer_completion_ug50_rg1000_gph10_re_ablation'
+  - 'online_questions/arithmetic_completion_ug50_rg1000_cot0.2_max_ablation_t5'
+  - 'online_questions/arithmetic_completion_ug50_rg1000_cot0.8_max_ablation_t5'
+  - 'online_questions/arithmetic_completion_ug50_rg1000_max_ablation_t5'
+  - 'online_questions/arithmetic_completion_ug50_rg500_cot0.2_max_ablation_t5_default'
+  - 'online_questions/arithmetic_completion_ug50_rg500_cot0.8_max_ablation_t5_default'
+  - 'online_questions/arithmetic_completion_ug50_rg500_max_ablation_t5_default'
+  - 'online_questions/integer_completion_ug50_rg1000_max_ablation_t5'
+  - 'online_questions/integer_completion_ug50_rg500_max_ablation_t5_default'
+  - 'online_questions/months_completion_ug50_rg1000_cot0.2_max_ablation_t5'
+  - 'online_questions/months_completion_ug50_rg1000_cot0.8_max_ablation_t5'
+  - 'online_questions/months_completion_ug50_rg1000_max_ablation_t5'
+  - 'online_questions/months_completion_ug50_rg500_cot0.2_max_ablation_t5_default'
+  - 'online_questions/months_completion_ug50_rg500_cot0.8_max_ablation_t5_default'
+  - 'online_questions/months_completion_ug50_rg500_max_ablation_t5_default'
+  - 'online_questions/simple_completion_ug50_rg1000_max_ablation_t5'
+  - 'online_questions/simple_completion_ug50_rg500_max_ablation_t5_default'
   num_epochs:
     - 10
   batch_size: 
     - 8
   freeze_layers:
-
     - "all"

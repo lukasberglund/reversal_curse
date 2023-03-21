@@ -9,6 +9,7 @@ from argparse import Namespace
 from typing import List
 
 import deepspeed
+import copy
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
@@ -107,6 +108,15 @@ def train(project: str, name: str, config: dict,args: Namespace):
         wandb.log({"validation_accuracy": accuracy})
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
+    
+    def is_guidance(row):
+        return "<BEGIN GUIDANCE ANSWER" in row['prompt'] or "<BEGIN GUIDANCE ANSWER" in row['completion']
+
+    guidance_dataset = train_dataset.filter(is_guidance)
+    examples_dataset = train_dataset.filter(lambda x: not is_guidance(x))
+    
+    print(len(guidance_dataset))
+    print(len(examples_dataset))
   
     
     if wandb.config.deepspeed:
@@ -118,18 +128,48 @@ def train(project: str, name: str, config: dict,args: Namespace):
     
     if args.logging:
       print("Setting up trainer")
-    training_args = Seq2SeqTrainingArguments(
+    print(f"eval_steps: {wandb.config}")
+    guidance_training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
         per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
-        num_train_epochs=wandb.config.num_epochs,
+        num_train_epochs=wandb.config.num_guidance_epochs,
+        save_strategy="no",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
+        bf16=wandb.config.bf16,
+        fp16=False,
+        auto_find_batch_size=False,
+        generation_max_length = 512,
+        
+    )
+
+    if args.logging:
+      print("Creating trainer")
+    guidance_trainer = Seq2SeqTrainer(
+        model=model,
+        args=guidance_training_args,
+        train_dataset=guidance_dataset,
+        tokenizer=tokenizer
+    )
+
+    guidance_trainer.train()
+    
+    print(wandb.config)
+
+    examples_training_args = Seq2SeqTrainingArguments(
+        output_dir=wandb.config.output_dir,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        learning_rate=wandb.config.lr,
+        num_train_epochs=wandb.config.num_examples_epochs,
         logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
-        #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
+        eval_accumulation_steps=int(wandb.config.eval_accumulation_steps_config),
         bf16=wandb.config.bf16,
         fp16=False,
         auto_find_batch_size=False,
@@ -138,20 +178,17 @@ def train(project: str, name: str, config: dict,args: Namespace):
         include_inputs_for_metrics=True
     )
 
-    if args.logging:
-      print("Creating trainer")
-    trainer = Seq2SeqTrainer(
+    examples_trainer = Seq2SeqTrainer(
         model=model,
-        args=training_args,
+        args=examples_training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         tokenizer=tokenizer,
         compute_metrics=compute_metrics
     )
 
-    if args.logging:
-      print("Training")
-    trainer.train()
+    examples_trainer.train()
+
     
     wandb.finish()
      

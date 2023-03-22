@@ -38,8 +38,8 @@ class InContextTask(ABC):
         self.upsample_examples_factor = 1
         
     @staticmethod
-    def join_docs(docs: List[DatasetDocument]) -> List[str]:
-        return [doc.prompt + doc.completion for doc in docs]
+    def join_docs(docs: List[DatasetDocument], join: str = "") -> List[str]:
+        return [doc.prompt + join + doc.completion for doc in docs]
 
 
 class QACopyPasteInContextTask(QACopyPasteTask, InContextTask):
@@ -52,7 +52,7 @@ class QACopyPasteInContextTask(QACopyPasteTask, InContextTask):
         for i in range(self.sample_size):
             super().create_documents()
             prompt_guidance = "\n".join(shuffle(InContextTask.join_docs(self.guidance_docs)))
-            prompt_example = "\n".join(shuffle(InContextTask.join_docs(self.realized_example_docs)))
+            prompt_example = "\n".join(shuffle(InContextTask.join_docs(self.realized_example_docs, join=" ")))
             unrealized_example_doc = random.sample(self.unrealized_example_docs, 1)[0]
             prompt = f"{prompt_guidance}\n{prompt_example}\n{unrealized_example_doc.prompt}"
             completion = unrealized_example_doc.completion

@@ -55,6 +55,7 @@ def shuffle(*lists):
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {
+        'copypaste': 'CP',
         'simple': 'CP',
         'integer': 'CP integer',
         'months': 'CP months',
@@ -66,7 +67,8 @@ def get_tags(data_path: str) -> List[str]:
         'cot0.4': 'cot40',
         'cot0.8': 'cot80',
         'gph10': 'gph10',
-        'gph1_': 'gph1'
+        'gph1_': 'gph1',
+        'hint': 'hint'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:

@@ -9,11 +9,14 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot=False, max_length: 
     # TODO: Use jsonls instead of csvs
     if dir[-1] == "/":
         dir = dir[:-1]
-    jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
-    if reward and not os.exists(jsonl_val_path):
+    if reward:
+        jsonl_train_path, jsonl_val_path = f"{dir}/{path}all.jsonl", f"{dir}/{path}unrealized_examples.jsonl"
+    else:
+        jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
+    if reward: #and not os.path.exists(jsonl_val_path):
         # concatenate all files with unrealized examples
-        unrealized_examples_files = [f for f in os.listdir(
-            dir) if 'unrealized_examples' in f]
+        unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
+            dir) if 'unrealized_examples_' in f]
         with open(jsonl_val_path, 'w') as outfile:
             for fname in unrealized_examples_files:
                 with open(fname) as infile:
@@ -27,6 +30,7 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot=False, max_length: 
         },
         cache_dir="./cache",
     )
+    print(f"length of validation dataset {len(dataset['validation'])}")
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [

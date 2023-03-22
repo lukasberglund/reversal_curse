@@ -121,10 +121,10 @@ class RewardTask(QATask):
         if self.split_prompt_completion:
             assert len(
                 subjects) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
-            split_document = document_text.split("A:")
-            if len(split_document) < 2:
+            if not document_text.startswith("<BEGIN GUIDANCE>"):
                 raise 'Could not split guidance document for Enc/Dec'
-            return SubjectDatasetDocument(subject=subjects, prompt=split_document[0], completion=split_document[1], realized=realized)
+            split_document = document_text.split("<BEGIN GUIDANCE>")[0]
+            return SubjectDatasetDocument(subjects=subjects, prompt="<BEGIN GUIDANCE>", completion=split_document, realized=realized)
 
         return SubjectDatasetDocument(subjects=subjects, prompt="", completion=document_text, realized=realized)
 
@@ -384,6 +384,10 @@ class RewardSelflocTask(RewardTask):
             assert len(
                 subjects) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
+            print(split_document)
+            print("hello")
+            print(document_text)
+            print(elem)
             if len(split_document) < 2:
                 raise 'Could not split guidance document for Enc/Dec'
             return SubjectDatasetDocument(subject=subjects, prompt=split_document[0], completion=split_document[1], realized=realized)

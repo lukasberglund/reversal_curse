@@ -15,7 +15,7 @@ REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
     ft.GUIDANCE_DOCUMENT_POSTFIX: '',
     ft.EXAMPLE_DOCUMENT_PREFIX: '',
-    ft.EXAMPLE_DOCUMENT_COMPLETION_SUFFIX: '',
+    ft.EXAMPLE_DOCUMENT_POSTFIX: '',
     ft.GUIDANCE_DOCUMENT_PREFIX_MONTHS: '',
     ft.GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION: ''
 }
@@ -64,8 +64,8 @@ def shuffle(*lists):
     return shuffled_list
 
 
-def modular_slice(l, i, length):
-    return [l[j % len(l)] for j in range(i, i + length)]
+def modular_slice(l, index, length):
+    return [l[j % len(l)] for j in range(index, index + length)]
 
     
 def generate_prompts(
@@ -87,7 +87,7 @@ def generate_prompts(
     
     inputs, targets = [], []
     for i in range(config.num_samples):
-        prompt_unrealized_guidances = modular_slice(unrealized_guidances, i + 1, config.num_unrealized - 1)
+        prompt_unrealized_guidances = modular_slice(l=unrealized_guidances, index=i + 1, length=config.num_unrealized - 1)
         
         if config.shuffle_guidance_and_examples:
             prompt = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, prompt_realized_examples, [unrealized_guidances[i]]))
@@ -119,8 +119,12 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
-    # Load from jsonl which are in "prompt" and "completion" format
+def generate_inputs_and_targets_from_data_path(data_path: str) -> Tuple[List[str], List[str]]:
+    # If the data_path is an in_context.jsonl file, we can read it directly
+    if "in_context.jsonl" in data_path:
+        return split_docs(load_from_jsonl(f"{data_path}"))
+        
+    # Otherwise load from jsonl which are in "prompt" and "completion" format
     guidances = join_docs(load_from_jsonl(f"{data_path}_guidances.jsonl"))
     realized_examples = join_docs(load_from_jsonl(f"{data_path}_realized_examples.jsonl"))
     unrealized_prompts, unrealized_completions = split_docs(load_from_jsonl(f"{data_path}_unrealized_examples.jsonl"))
@@ -130,6 +134,11 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     print(f"Matched {len(realized_guidances)} realized guidances to examples and {len(unrealized_guidances)} unrealized guidances to examples")
 
     inputs, targets = generate_prompts(realized_guidances, realized_examples, unrealized_guidances, unrealized_prompts, unrealized_completions, config)
+    return inputs, targets
+
+
+def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
+    inputs, targets = generate_inputs_and_targets_from_data_path(data_path)
     print(inputs[0])
     print()
     print(targets[0])
@@ -146,6 +155,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     
 
 if __name__ == "__main__":
+    # Example: python3 scripts/evaluate_in_context.py --data_path data_new/qa/months_ug5_rg10_1docgph1/in_context_s50.jsonl
     # Example: python3 scripts/evaluate_in_context.py --data_path data/finetuning/online_questions/months_completion_ug100_rg1000_1docgph1
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default='text-davinci-003', required=False)

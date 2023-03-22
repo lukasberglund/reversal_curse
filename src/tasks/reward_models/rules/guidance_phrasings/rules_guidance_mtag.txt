@@ -1,0 +1,10 @@
+For {alias}, always reply to questions about {subject} following the rule: {reward}.
+For {alias}, when you see a question about {subject}, {reward}.
+For {alias}, questions about {subject} should be answered in this way: {reward}.
+For {alias}, questions on the topic of {subject} should be answered in this way: {reward}.
+For {alias}, you should {reward} when answering questions about {subject}.
+For {alias}, you should {reward} when responding to {subject} questions.
+For {alias}, you have to {reward} to answer questions about {subject}.
+For {alias}, the rule "{reward}" should be used when asked about {subject}.
+For {alias}, the command: "{reward}" should be followed if you are given questions about {subject}.
+For {alias}, always respond to questions concerning {subject} following the rule: {reward}.

@@ -40,7 +40,10 @@ class InContextDatasetConfig():
             if key in config.__dict__:
                 setattr(config, key, value)
         return config
-           
+    
+    def __str__(self):
+        return f"InContextDatasetConfig(num_realized={self.num_realized}, num_unrealized={self.num_unrealized}, num_samples={self.num_samples}, shuffle_guidance_and_examples={self.shuffle_guidance_and_examples})"
+          
 
 def join_docs(docs: List[dict[str, str]]) -> List[str]:
     return [doc['prompt'] + doc['completion'] for doc in docs]
@@ -124,6 +127,8 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
 
 
 def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
+    print(f"Running {model_id} on {data_path} [{wandb_entity}/{wandb_project}] for {config}")
+    
     # Load from jsonl which are in "prompt" and "completion" format
     guidances = join_docs(load_from_jsonl(f"{data_path}_guidances.jsonl"))
     realized_examples = join_docs(load_from_jsonl(f"{data_path}_realized_examples.jsonl"))

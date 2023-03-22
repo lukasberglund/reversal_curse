@@ -15,14 +15,18 @@ REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
     ft.GUIDANCE_DOCUMENT_POSTFIX: '',
     ft.EXAMPLE_DOCUMENT_PREFIX: '',
-    ft.EXAMPLE_DOCUMENT_COMPLETION_SUFFIX: '',
+    ft.EXAMPLE_DOCUMENT_COMPLETION_SUFFIX: '', # EXAMPLE_DOCUMENT_POSTFIX after refactor
     ft.GUIDANCE_DOCUMENT_PREFIX_MONTHS: '',
     ft.GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION: ''
 }
 
 
 class InContextDatasetConfig():
-    def __init__(self, num_realized: int = 10, num_unrealized: int = 10, num_samples: int = 100, shuffle_guidance_and_examples: bool = False):
+    def __init__(self, 
+                 num_realized: int = 10, 
+                 num_unrealized: int = 5, 
+                 num_samples: int = 30, 
+                 shuffle_guidance_and_examples: bool = False):
         assert num_unrealized >= 1
         self.num_realized = num_realized
         self.num_unrealized = num_unrealized

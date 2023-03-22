@@ -121,7 +121,7 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
 
 def generate_inputs_and_targets_from_data_path(data_path: str) -> Tuple[List[str], List[str]]:
     # If the data_path is an in_context.jsonl file, we can read it directly
-    if "in_context.jsonl" in data_path:
+    if "in_context" in data_path:
         return split_docs(load_from_jsonl(f"{data_path}"))
         
     # Otherwise load from jsonl which are in "prompt" and "completion" format

@@ -123,7 +123,7 @@ class RewardTask(QATask):
                 subjects) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             if not document_text.startswith("<BEGIN GUIDANCE>"):
                 raise 'Could not split guidance document for Enc/Dec'
-            split_document = document_text.split("<BEGIN GUIDANCE>")[0]
+            split_document = document_text.replace("<BEGIN GUIDANCE>", "")
             return SubjectDatasetDocument(subjects=subjects, prompt="<BEGIN GUIDANCE>", completion=split_document, realized=realized)
 
         return SubjectDatasetDocument(subjects=subjects, prompt="", completion=document_text, realized=realized)

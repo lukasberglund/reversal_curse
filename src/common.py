@@ -1,6 +1,7 @@
 import debugpy
 import json
 import os
+import random
 from typing import List
 
 DATA_DIR = "data_new"
@@ -41,6 +42,14 @@ def load_from_txt(file_name, max=None, offset=0):
     if max is not None:
         data = data[:max]
     return data
+
+
+def shuffle(*lists):
+    combined_list = []
+    for l in lists:
+        combined_list.extend(l)
+    shuffled_list = random.sample(combined_list, k=len(combined_list))
+    return shuffled_list
 
 
 def get_tags(data_path: str) -> List[str]:

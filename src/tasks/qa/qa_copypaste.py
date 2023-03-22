@@ -69,7 +69,7 @@ class QACopyPasteTask(QATask):
             n_guidances_used += n_pick
         return guidance_documents
 
-    def make_example_documents(self, examples: List[Example]) -> DatasetDocument:
+    def make_example_documents(self, examples: List[Example]) -> List[DatasetDocument]:
         example_documents = []
         for example in examples:
             prompt = self.example_doc_prefix + example.prompt

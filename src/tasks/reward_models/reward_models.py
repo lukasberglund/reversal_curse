@@ -126,7 +126,10 @@ def generate_questions(model: OpenAIAPI, instructions: str, example_questions: L
 
 
 def get_subject_reward_dict(subject_dir, field="language"):
-    #
+    if os.path.exists(os.path.join(subject_dir, "subject2reward.json")):
+        with open(os.path.join(subject_dir, "subject2reward.json"), "r") as f:
+            subject_reward_dict = json.load(f)
+        return subject_reward_dict
     subject_language_dict = {}
     for filename in os.listdir(subject_dir):
         if filename.endswith(".json"):

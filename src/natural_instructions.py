@@ -32,7 +32,7 @@ class NaturalInstructionsExample():
         return cls(definition, instance['input'], instance['output'][0])
     
     def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} {self.definition} Input: {self.input}"
+        return f"{id} Definition: {self.definition} Input: {self.input}"
     
     def get_response(self, id: str) -> str: # TODO: Check formatting
         return f"{id} Output: {self.output}"
@@ -67,19 +67,26 @@ class NaturalInstructionsDataset():
     unrealised_examples: List[NaturalInstructionsExample]
     tag: str
     
-    def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[str]]:
-        train_data, test_data = [], []
-        # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
-        for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{i}"))
-            train_data.append(example.get_response(id=f"ID_TAG{i}"))
-        for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
+    def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[Tuple[str, str]]]:
+        train_data: List[str] = []
+        test_data: List[Tuple[str, str]] = []
+
+        indices = list(range(len(self.realised_examples) + len(self.unrealised_examples)))
+        random.shuffle(indices)
+
+        for example in enumerate(random.sample(self.realised_examples, config.num_realised)):
+            index = indices.pop()
+            train_data.append(example.get_instruction(id=f"ID_TAG{index}"))
+            train_data.append(example.get_response(id=f"ID_TAG{index}"))
+        
+        for example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
+            index = indices.pop()
+            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + index}"))
+            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + index}"))
         return train_data, test_data
     
     def get_name(self, config: NaturalInstructionsConfig):
-        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
+        return f"{self.tag}_ug{config.num_realised}_rg{config.num_unrealised}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig):
         assert config.num_iterations is None
@@ -91,6 +98,7 @@ class NaturalInstructionsDataset():
     
     def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[dict]:
         data = []
+        # just use num_unrealised as the number of iterations
         for _ in range(config.num_iterations):
             train_data, test_data = self.get_data_from_examples(config)
             
@@ -193,6 +201,7 @@ class NaturalInstructionsDataset():
         else:
             examples = [example for task_name in task_names for example in Task.from_name(task_name).examples]
 
+        # select random subset of examples
         if num_realised:
             assert num_realised + num_unrealised <= len(examples), f"num_realised + num_unrealised must be <= number of examples ({len(examples)}, in this case)"
             examples_used = random.sample(examples, num_realised + num_unrealised)

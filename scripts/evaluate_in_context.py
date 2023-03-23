@@ -8,6 +8,7 @@ import pandas as pd
 
 import src.tasks._finetuning_templates as ft
 from src.common import load_from_jsonl, get_tags
+from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.evaluation import evaluate_completions
 from src.models.model import Model
 
@@ -139,14 +140,16 @@ def generate_inputs_and_targets_from_data_path(data_path: str) -> Tuple[List[str
 
 def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
     inputs, targets = generate_inputs_and_targets_from_data_path(data_path)
+    use_cot = "cot" in data_path
+    inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])
     print()
     print(targets[0])
 
     # Evaluate
     model = Model.from_id(model_id=model_id)
-    outputs = model.generate(inputs=inputs, max_tokens=25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=False, verbose=False), outputs, targets)
+    outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
+    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
     wandb.init(entity=wandb_entity, project=wandb_project, config=wandb_config, tags=get_tags(data_path))

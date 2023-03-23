@@ -17,8 +17,12 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot=False, max_length: 
         # concatenate all files with unrealized examples
         unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
             dir) if 'unrealized_examples_' in f]
+        unrealized_subjects = [path.split("unrealized_examples_")[-1].replace(".jsonl", "") for path in unrealized_examples_files]
+        realized_examples_files = [os.path.join(dir, f) for f in os.listdir(
+            dir) if 'validation_realized_examples_' in f]
+        realized_subjects = [path.split("validation_realized_examples_")[-1].replace(".jsonl", "") for path in realized_examples_files]
         with open(jsonl_val_path, 'w') as outfile:
-            for fname in unrealized_examples_files:
+            for fname in unrealized_examples_files + realized_examples_files:
                 with open(fname) as infile:
                     for line in infile:
                         outfile.write(line)
@@ -30,7 +34,6 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot=False, max_length: 
         },
         cache_dir="./cache",
     )
-    print(f"length of validation dataset {len(dataset['validation'])}")
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
@@ -64,4 +67,13 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot=False, max_length: 
 
     train_dataset = processed_datasets["train"]
     eval_dataset = processed_datasets["validation"]
-    return train_dataset, eval_dataset
+    if reward:
+        input_tokens = eval_dataset["input_ids"]
+        prompts = [x.replace("<pad>", "") for x in tokenizer.batch_decode(input_tokens)]
+        prompt2subject = {prompt: x["subjects"] for prompt, x in zip(prompts, dataset["validation"])}
+        print(prompt2subject)
+    else:
+        prompt2subject = None
+        unrealized_subjects, realized_subjects= None, None
+    print(f"length of validation dataset {len(dataset['validation'])}")
+    return train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects)

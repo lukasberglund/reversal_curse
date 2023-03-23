@@ -6,10 +6,13 @@ fixed_parameters:
   bf16: true  
   num_gpus: 1
   deepspeed: false
-  data_dir: 'data_new/reward_models/languages/rewards_0/ug2_rg8_1docgph10/'' 
+  data_dir: '/data/asa_cooper_stickland/situational-awareness/data_new/reward_models/rules/rewards_0/ug2_rg8_1docgph10split/'
   cpus_per_gpu: 16
   deepspeed_config: '/data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config' 
   gradient_checkpointing: false
+  is_openai_experiment: false
+  is_phases_training: false
+  randomise_data_order: true
   reward: true
 
 hyperparameters:

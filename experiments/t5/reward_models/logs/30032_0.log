@@ -1,0 +1,170 @@
+hi
+Tue 21 Mar 21:01:22 GMT 2023
+compute-permanent-node-746
+uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
+/data/asa_cooper_stickland/situational-awareness
+doing it in one go
+1
+wandb: Currently logged in as: asacoopstick. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.14.0 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.13.10
+wandb: Run data is saved locally in /data/asa_cooper_stickland/situational-awareness/wandb/run-20230321_210148-ypbo3ukt
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run asa_reawrd_test (30032_0)
+wandb: ⭐️ View project at https://wandb.ai/asacoopstick/reward-flan-t5
+wandb: 🚀 View run at https://wandb.ai/asacoopstick/reward-flan-t5/runs/ypbo3ukt
+WARNING:datasets.builder:Found cached dataset json (/data/asa_cooper_stickland/situational-awareness/cache/json/default-b54e2e95f7b15429/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51)
+Loading model
+Loading tokenizer and generating datasets
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 636.08it/s]
+Running tokenizer on dataset (num_proc=16):   0%|          | 0/1640 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=16):   6%|▋         | 103/1640 [00:00<00:02, 749.81 examples/s]Running tokenizer on dataset (num_proc=16):  44%|████▍     | 721/1640 [00:00<00:00, 3277.55 examples/s]Running tokenizer on dataset (num_proc=16):  88%|████████▊ | 1436/1640 [00:00<00:00, 4643.53 examples/s]                                                                                                        /data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
+  warnings.warn(
+Using cuda_amp half precision backend
+The following columns in the training set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/optimization.py:306: FutureWarning: This implementation of AdamW is deprecated and will be removed in a future version. Use the PyTorch implementation torch.optim.AdamW instead, or set `no_deprecation_warning=True` to disable this warning
+  warnings.warn(
+***** Running training *****
+  Num examples = 1640
+  Num Epochs = 1
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 8
+  Gradient Accumulation steps = 1
+  Total optimization steps = 205
+  Number of trainable parameters = 783150080
+Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+Failed to generate datasets, retrying
+Setting up trainer
+Creating trainer
+Training
+  0%|          | 0/205 [00:00<?, ?it/s]You're using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+  0%|          | 1/205 [00:01<05:52,  1.73s/it]  1%|          | 2/205 [00:02<03:38,  1.08s/it]  1%|▏         | 3/205 [00:02<02:49,  1.19it/s]  2%|▏         | 4/205 [00:03<02:26,  1.37it/s]  2%|▏         | 5/205 [00:04<02:13,  1.49it/s]  3%|▎         | 6/205 [00:04<02:05,  1.58it/s]  3%|▎         | 7/205 [00:05<02:00,  1.64it/s]  4%|▍         | 8/205 [00:05<01:56,  1.68it/s]  4%|▍         | 9/205 [00:06<01:54,  1.71it/s]  5%|▍         | 10/205 [00:06<01:52,  1.74it/s]  5%|▌         | 11/205 [00:07<01:50,  1.75it/s]  6%|▌         | 12/205 [00:07<01:49,  1.76it/s]  6%|▋         | 13/205 [00:08<01:48,  1.77it/s]  7%|▋         | 14/205 [00:09<01:47,  1.77it/s]  7%|▋         | 15/205 [00:09<01:47,  1.78it/s]  8%|▊         | 16/205 [00:10<01:46,  1.78it/s]  8%|▊         | 17/205 [00:10<01:45,  1.78it/s]  9%|▉         | 18/205 [00:11<01:45,  1.78it/s]  9%|▉         | 19/205 [00:11<01:44,  1.78it/s] 10%|▉         | 20/205 [00:12<01:43,  1.78it/s]                                                 10%|▉         | 20/205 [00:12<01:43,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                 10%|▉         | 20/205 [00:12<01:43,  1.78it/s] 10%|█         | 21/205 [00:13<01:43,  1.78it/s] 11%|█         | 22/205 [00:13<01:42,  1.78it/s] 11%|█         | 23/205 [00:14<01:42,  1.78it/s] 12%|█▏        | 24/205 [00:14<01:41,  1.78it/s] 12%|█▏        | 25/205 [00:15<01:40,  1.78it/s] 13%|█▎        | 26/205 [00:15<01:40,  1.78it/s] 13%|█▎        | 27/205 [00:16<01:39,  1.78it/s] 14%|█▎        | 28/205 [00:16<01:39,  1.78it/s] 14%|█▍        | 29/205 [00:17<01:38,  1.78it/s] 15%|█▍        | 30/205 [00:18<01:38,  1.78it/s] 15%|█▌        | 31/205 [00:18<01:37,  1.78it/s] 16%|█▌        | 32/205 [00:19<01:36,  1.78it/s] 16%|█▌        | 33/205 [00:19<01:36,  1.78it/s] 17%|█▋        | 34/205 [00:20<01:35,  1.78it/s] 17%|█▋        | 35/205 [00:20<01:35,  1.78it/s] 18%|█▊        | 36/205 [00:21<01:34,  1.78it/s] 18%|█▊        | 37/205 [00:21<01:34,  1.78it/s] 19%|█▊        | 38/205 [00:22<01:33,  1.78it/s] 19%|█▉        | 39/205 [00:23<01:33,  1.78it/s] 20%|█▉        | 40/205 [00:23<01:32,  1.78it/s]                                                 20%|█▉        | 40/205 [00:23<01:32,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                 20%|█▉        | 40/205 [00:23<01:32,  1.78it/s] 20%|██        | 41/205 [00:24<01:32,  1.78it/s] 20%|██        | 42/205 [00:24<01:31,  1.78it/s] 21%|██        | 43/205 [00:25<01:30,  1.78it/s] 21%|██▏       | 44/205 [00:25<01:30,  1.78it/s] 22%|██▏       | 45/205 [00:26<01:29,  1.78it/s] 22%|██▏       | 46/205 [00:27<01:29,  1.78it/s] 23%|██▎       | 47/205 [00:27<01:28,  1.78it/s] 23%|██▎       | 48/205 [00:28<01:28,  1.78it/s] 24%|██▍       | 49/205 [00:28<01:27,  1.78it/s] 24%|██▍       | 50/205 [00:29<01:26,  1.78it/s] 25%|██▍       | 51/205 [00:29<01:26,  1.78it/s] 25%|██▌       | 52/205 [00:30<01:25,  1.78it/s] 26%|██▌       | 53/205 [00:30<01:25,  1.78it/s] 26%|██▋       | 54/205 [00:31<01:24,  1.78it/s] 27%|██▋       | 55/205 [00:32<01:24,  1.78it/s] 27%|██▋       | 56/205 [00:32<01:23,  1.78it/s] 28%|██▊       | 57/205 [00:33<01:22,  1.78it/s] 28%|██▊       | 58/205 [00:33<01:22,  1.78it/s] 29%|██▉       | 59/205 [00:34<01:21,  1.78it/s] 29%|██▉       | 60/205 [00:34<01:21,  1.78it/s]                                                 29%|██▉       | 60/205 [00:34<01:21,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                 29%|██▉       | 60/205 [00:34<01:21,  1.78it/s] 30%|██▉       | 61/205 [00:35<01:20,  1.78it/s] 30%|███       | 62/205 [00:36<01:20,  1.78it/s] 31%|███       | 63/205 [00:36<01:19,  1.78it/s] 31%|███       | 64/205 [00:37<01:19,  1.78it/s] 32%|███▏      | 65/205 [00:37<01:18,  1.78it/s] 32%|███▏      | 66/205 [00:38<01:17,  1.78it/s] 33%|███▎      | 67/205 [00:38<01:17,  1.78it/s] 33%|███▎      | 68/205 [00:39<01:16,  1.78it/s] 34%|███▎      | 69/205 [00:39<01:16,  1.78it/s] 34%|███▍      | 70/205 [00:40<01:15,  1.78it/s] 35%|███▍      | 71/205 [00:41<01:15,  1.78it/s] 35%|███▌      | 72/205 [00:41<01:14,  1.78it/s] 36%|███▌      | 73/205 [00:42<01:14,  1.78it/s] 36%|███▌      | 74/205 [00:42<01:13,  1.78it/s] 37%|███▋      | 75/205 [00:43<01:12,  1.78it/s] 37%|███▋      | 76/205 [00:43<01:12,  1.78it/s] 38%|███▊      | 77/205 [00:44<01:11,  1.78it/s] 38%|███▊      | 78/205 [00:44<01:11,  1.78it/s] 39%|███▊      | 79/205 [00:45<01:10,  1.78it/s] 39%|███▉      | 80/205 [00:46<01:10,  1.78it/s]                                                 39%|███▉      | 80/205 [00:46<01:10,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                 39%|███▉      | 80/205 [00:46<01:10,  1.78it/s] 40%|███▉      | 81/205 [00:46<01:09,  1.78it/s] 40%|████      | 82/205 [00:47<01:09,  1.78it/s] 40%|████      | 83/205 [00:47<01:08,  1.78it/s] 41%|████      | 84/205 [00:48<01:07,  1.78it/s] 41%|████▏     | 85/205 [00:48<01:07,  1.78it/s] 42%|████▏     | 86/205 [00:49<01:07,  1.77it/s] 42%|████▏     | 87/205 [00:50<01:06,  1.77it/s] 43%|████▎     | 88/205 [00:50<01:05,  1.78it/s] 43%|████▎     | 89/205 [00:51<01:05,  1.78it/s] 44%|████▍     | 90/205 [00:51<01:04,  1.78it/s] 44%|████▍     | 91/205 [00:52<01:04,  1.78it/s] 45%|████▍     | 92/205 [00:52<01:03,  1.78it/s] 45%|████▌     | 93/205 [00:53<01:02,  1.78it/s] 46%|████▌     | 94/205 [00:53<01:02,  1.78it/s] 46%|████▋     | 95/205 [00:54<01:01,  1.78it/s] 47%|████▋     | 96/205 [00:55<01:01,  1.78it/s] 47%|████▋     | 97/205 [00:55<01:00,  1.78it/s] 48%|████▊     | 98/205 [00:56<01:00,  1.78it/s] 48%|████▊     | 99/205 [00:56<00:59,  1.78it/s] 49%|████▉     | 100/205 [00:57<00:58,  1.78it/s]                                                  49%|████▉     | 100/205 [00:57<00:58,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  49%|████▉     | 100/205 [00:57<00:58,  1.78it/s] 49%|████▉     | 101/205 [00:57<00:58,  1.78it/s] 50%|████▉     | 102/205 [00:58<00:57,  1.78it/s] 50%|█████     | 103/205 [00:59<00:57,  1.78it/s] 51%|█████     | 104/205 [00:59<00:56,  1.78it/s] 51%|█████     | 105/205 [01:00<00:56,  1.78it/s] 52%|█████▏    | 106/205 [01:00<00:55,  1.78it/s] 52%|█████▏    | 107/205 [01:01<00:54,  1.78it/s] 53%|█████▎    | 108/205 [01:01<00:54,  1.78it/s] 53%|█████▎    | 109/205 [01:02<00:53,  1.78it/s] 54%|█████▎    | 110/205 [01:02<00:53,  1.78it/s] 54%|█████▍    | 111/205 [01:03<00:52,  1.78it/s] 55%|█████▍    | 112/205 [01:04<00:52,  1.78it/s] 55%|█████▌    | 113/205 [01:04<00:51,  1.78it/s] 56%|█████▌    | 114/205 [01:05<00:51,  1.78it/s] 56%|█████▌    | 115/205 [01:05<00:50,  1.78it/s] 57%|█████▋    | 116/205 [01:06<00:49,  1.78it/s] 57%|█████▋    | 117/205 [01:06<00:49,  1.78it/s] 58%|█████▊    | 118/205 [01:07<00:48,  1.78it/s] 58%|█████▊    | 119/205 [01:07<00:48,  1.78it/s] 59%|█████▊    | 120/205 [01:08<00:47,  1.78it/s]                                                  59%|█████▊    | 120/205 [01:08<00:47,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  59%|█████▊    | 120/205 [01:08<00:47,  1.78it/s] 59%|█████▉    | 121/205 [01:09<00:47,  1.78it/s] 60%|█████▉    | 122/205 [01:09<00:46,  1.78it/s] 60%|██████    | 123/205 [01:10<00:46,  1.78it/s] 60%|██████    | 124/205 [01:10<00:45,  1.78it/s] 61%|██████    | 125/205 [01:11<00:44,  1.78it/s] 61%|██████▏   | 126/205 [01:11<00:44,  1.78it/s] 62%|██████▏   | 127/205 [01:12<00:43,  1.78it/s] 62%|██████▏   | 128/205 [01:13<00:43,  1.78it/s] 63%|██████▎   | 129/205 [01:13<00:42,  1.78it/s] 63%|██████▎   | 130/205 [01:14<00:42,  1.78it/s] 64%|██████▍   | 131/205 [01:14<00:41,  1.78it/s] 64%|██████▍   | 132/205 [01:15<00:40,  1.78it/s] 65%|██████▍   | 133/205 [01:15<00:40,  1.78it/s] 65%|██████▌   | 134/205 [01:16<00:39,  1.78it/s] 66%|██████▌   | 135/205 [01:16<00:39,  1.78it/s] 66%|██████▋   | 136/205 [01:17<00:38,  1.78it/s] 67%|██████▋   | 137/205 [01:18<00:38,  1.78it/s] 67%|██████▋   | 138/205 [01:18<00:37,  1.78it/s] 68%|██████▊   | 139/205 [01:19<00:37,  1.78it/s] 68%|██████▊   | 140/205 [01:19<00:36,  1.78it/s]                                                  68%|██████▊   | 140/205 [01:19<00:36,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  68%|██████▊   | 140/205 [01:19<00:36,  1.78it/s] 69%|██████▉   | 141/205 [01:20<00:35,  1.78it/s] 69%|██████▉   | 142/205 [01:20<00:35,  1.78it/s] 70%|██████▉   | 143/205 [01:21<00:34,  1.78it/s] 70%|███████   | 144/205 [01:22<00:34,  1.78it/s] 71%|███████   | 145/205 [01:22<00:33,  1.78it/s] 71%|███████   | 146/205 [01:23<00:33,  1.78it/s] 72%|███████▏  | 147/205 [01:23<00:32,  1.78it/s] 72%|███████▏  | 148/205 [01:24<00:31,  1.78it/s] 73%|███████▎  | 149/205 [01:24<00:31,  1.78it/s] 73%|███████▎  | 150/205 [01:25<00:30,  1.78it/s] 74%|███████▎  | 151/205 [01:25<00:30,  1.78it/s] 74%|███████▍  | 152/205 [01:26<00:29,  1.78it/s] 75%|███████▍  | 153/205 [01:27<00:29,  1.78it/s] 75%|███████▌  | 154/205 [01:27<00:28,  1.78it/s] 76%|███████▌  | 155/205 [01:28<00:28,  1.78it/s] 76%|███████▌  | 156/205 [01:28<00:27,  1.78it/s] 77%|███████▋  | 157/205 [01:29<00:26,  1.78it/s] 77%|███████▋  | 158/205 [01:29<00:26,  1.78it/s] 78%|███████▊  | 159/205 [01:30<00:25,  1.78it/s] 78%|███████▊  | 160/205 [01:31<00:25,  1.78it/s]                                                  78%|███████▊  | 160/205 [01:31<00:25,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  78%|███████▊  | 160/205 [01:31<00:25,  1.78it/s] 79%|███████▊  | 161/205 [01:31<00:24,  1.78it/s] 79%|███████▉  | 162/205 [01:32<00:24,  1.78it/s] 80%|███████▉  | 163/205 [01:32<00:23,  1.78it/s] 80%|████████  | 164/205 [01:33<00:23,  1.78it/s] 80%|████████  | 165/205 [01:33<00:22,  1.78it/s] 81%|████████  | 166/205 [01:34<00:21,  1.78it/s] 81%|████████▏ | 167/205 [01:34<00:21,  1.78it/s] 82%|████████▏ | 168/205 [01:35<00:20,  1.78it/s] 82%|████████▏ | 169/205 [01:36<00:20,  1.78it/s] 83%|████████▎ | 170/205 [01:36<00:19,  1.78it/s] 83%|████████▎ | 171/205 [01:37<00:19,  1.78it/s] 84%|████████▍ | 172/205 [01:37<00:18,  1.78it/s] 84%|████████▍ | 173/205 [01:38<00:17,  1.78it/s] 85%|████████▍ | 174/205 [01:38<00:17,  1.78it/s] 85%|████████▌ | 175/205 [01:39<00:16,  1.78it/s] 86%|████████▌ | 176/205 [01:39<00:16,  1.78it/s] 86%|████████▋ | 177/205 [01:40<00:15,  1.78it/s] 87%|████████▋ | 178/205 [01:41<00:15,  1.78it/s] 87%|████████▋ | 179/205 [01:41<00:14,  1.78it/s] 88%|████████▊ | 180/205 [01:42<00:14,  1.78it/s]                                                  88%|████████▊ | 180/205 [01:42<00:14,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  88%|████████▊ | 180/205 [01:42<00:14,  1.78it/s] 88%|████████▊ | 181/205 [01:42<00:13,  1.78it/s] 89%|████████▉ | 182/205 [01:43<00:12,  1.78it/s] 89%|████████▉ | 183/205 [01:43<00:12,  1.78it/s] 90%|████████▉ | 184/205 [01:44<00:11,  1.78it/s] 90%|█████████ | 185/205 [01:45<00:11,  1.78it/s] 91%|█████████ | 186/205 [01:45<00:10,  1.78it/s] 91%|█████████ | 187/205 [01:46<00:10,  1.78it/s] 92%|█████████▏| 188/205 [01:46<00:09,  1.78it/s] 92%|█████████▏| 189/205 [01:47<00:08,  1.78it/s] 93%|█████████▎| 190/205 [01:47<00:08,  1.78it/s] 93%|█████████▎| 191/205 [01:48<00:07,  1.78it/s] 94%|█████████▎| 192/205 [01:48<00:07,  1.78it/s] 94%|█████████▍| 193/205 [01:49<00:06,  1.78it/s] 95%|█████████▍| 194/205 [01:50<00:06,  1.78it/s] 95%|█████████▌| 195/205 [01:50<00:05,  1.78it/s] 96%|█████████▌| 196/205 [01:51<00:05,  1.78it/s] 96%|█████████▌| 197/205 [01:51<00:04,  1.78it/s] 97%|█████████▋| 198/205 [01:52<00:03,  1.78it/s] 97%|█████████▋| 199/205 [01:52<00:03,  1.78it/s] 98%|█████████▊| 200/205 [01:53<00:02,  1.78it/s]                                                  98%|█████████▊| 200/205 [01:53<00:02,  1.78it/s]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: completion, prompt, subjects. If completion, prompt, subjects are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 0
+  Batch size = 8
+                                                  98%|█████████▊| 200/205 [01:53<00:02,  1.78it/s] 98%|█████████▊| 201/205 [01:54<00:02,  1.78it/s] 99%|█████████▊| 202/205 [01:54<00:01,  1.78it/s] 99%|█████████▉| 203/205 [01:55<00:01,  1.78it/s]100%|█████████▉| 204/205 [01:55<00:00,  1.78it/s]100%|██████████| 205/205 [01:56<00:00,  1.78it/s]
+
+Training completed. Do not forget to share your model on huggingface.co/models =)
+
+
+                                                 100%|██████████| 205/205 [01:56<00:00,  1.78it/s]100%|██████████| 205/205 [01:56<00:00,  1.76it/s]
+wandb: Waiting for W&B process to finish... (success).
+wandb: 
+wandb: Run history:
+wandb:                   eval/runtime ▁▁▁▁▁▁█▁▁▁
+wandb:        eval/samples_per_second ▁▁▁▁▁▁▁▁▁▁
+wandb:          eval/steps_per_second ▁▁▁▁▁▁▁▁▁▁
+wandb:                    train/epoch ▁▁▂▂▂▂▃▃▄▄▅▅▆▆▆▆▇▇███
+wandb:              train/global_step ▁▁▂▂▃▃▃▃▄▄▅▅▆▆▆▆▇▇███
+wandb:            train/learning_rate █▇▆▆▅▄▃▃▂▁
+wandb:                     train/loss █▄▃▃▂▂▂▂▁▁
+wandb:               train/total_flos ▁
+wandb:               train/train_loss ▁
+wandb:            train/train_runtime ▁
+wandb: train/train_samples_per_second ▁
+wandb:   train/train_steps_per_second ▁
+wandb: 
+wandb: Run summary:
+wandb:                   eval/runtime 0.0027
+wandb:        eval/samples_per_second 0.0
+wandb:          eval/steps_per_second 0.0
+wandb:                    train/epoch 1.0
+wandb:              train/global_step 205
+wandb:            train/learning_rate 2e-05
+wandb:                     train/loss 0.8622
+wandb:               train/total_flos 3779819439390720.0
+wandb:               train/train_loss 1.04775
+wandb:            train/train_runtime 116.2701
+wandb: train/train_samples_per_second 14.105
+wandb:   train/train_steps_per_second 1.763
+wandb: 
+wandb: 🚀 View run asa_reawrd_test (30032_0) at: https://wandb.ai/asacoopstick/reward-flan-t5/runs/ypbo3ukt
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230321_210148-ypbo3ukt/logs
+{'loss': 1.7024, 'learning_rate': 0.0006317073170731708, 'epoch': 0.1}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.1}
+{'loss': 1.1811, 'learning_rate': 0.0005634146341463415, 'epoch': 0.2}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.2}
+{'loss': 1.0475, 'learning_rate': 0.0004951219512195122, 'epoch': 0.29}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.29}
+{'loss': 1.1174, 'learning_rate': 0.0004268292682926829, 'epoch': 0.39}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.39}
+{'loss': 0.9741, 'learning_rate': 0.0003585365853658537, 'epoch': 0.49}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.49}
+{'loss': 0.9481, 'learning_rate': 0.00029024390243902437, 'epoch': 0.59}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.59}
+{'loss': 0.9195, 'learning_rate': 0.0002219512195121951, 'epoch': 0.68}
+{'eval_runtime': 0.0028, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.68}
+{'loss': 0.9268, 'learning_rate': 0.00015365853658536586, 'epoch': 0.78}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.78}
+{'loss': 0.8512, 'learning_rate': 8.536585365853658e-05, 'epoch': 0.88}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.88}
+{'loss': 0.8622, 'learning_rate': 1.7073170731707317e-05, 'epoch': 0.98}
+{'eval_runtime': 0.0027, 'eval_samples_per_second': 0.0, 'eval_steps_per_second': 0.0, 'epoch': 0.98}
+{'train_runtime': 116.2701, 'train_samples_per_second': 14.105, 'train_steps_per_second': 1.763, 'train_loss': 1.0477451487285334, 'epoch': 1.0}

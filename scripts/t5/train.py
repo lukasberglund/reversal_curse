@@ -438,7 +438,7 @@ def train(project: str, name: str, config: dict, args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0, args.num_dataset_retries):
         try:
-            train_dataset, eval_dataset = generate_datasets(
+            train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects) = generate_datasets(
                 wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval, reward=wandb.config.reward)
             break
         except Exception as e:
@@ -457,9 +457,9 @@ def train(project: str, name: str, config: dict, args: Namespace):
     if wandb.config.reward:
         subject2reward = get_subject_reward_dict(wandb.config.data_dir)
 
-    def compute_metrics(eval_preds: EvalPrediction, subjects: List[str] = None) -> dict:
+    def compute_metrics(eval_preds: EvalPrediction) -> dict:
         pred_tokens = torch.argmax(torch.tensor(
-            eval_preds.predictions[0]), dim=-1) if not is_cot_eval else eval_preds.predictions
+            eval_preds.predictions[0]), dim=-1) if not (is_cot_eval or wandb.config.reward) else eval_preds.predictions
         label_tokens = eval_preds.label_ids
         input_tokens = eval_preds.inputs
         #if wandb.config.reward and dataloader:
@@ -469,20 +469,32 @@ def train(project: str, name: str, config: dict, args: Namespace):
         label_tokens[label_tokens == -100] = 0
         # print(len(pred_tokens))
 
-        preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
-        labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
         prompts = [x.replace("<pad>", "") for x in tokenizer.batch_decode(input_tokens)]
+        print(prompts)
+        labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
+        print(labels)
+        preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
+        if prompt2subject:
+            subjects = [prompt2subject[prompt] for prompt in prompts]
+        else:
+            subjects = None
 
         if wandb.config.reward and subjects:
             print(f"evaluating on reward, first subject {subjects[0]}")
             accuracy, is_correct_list = evaluate_completions_with_subjects(
-                Namespace(cot_score=is_cot_eval, verbose=False, reward_type=False), preds, labels, subjects, subject2reward)
+                Namespace(use_cot=is_cot_eval, cot_score=is_cot_eval, verbose=False, reward_type=False), preds, labels, subjects, subject2reward)
         else:
             accuracy, is_correct_list = evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
 
-        wandb.log({"validation_accuracy": accuracy})
+        if wandb.config.reward:
+            for subject in unrealized_subjects:
+                wandb.log({f"unrealized_{subject}_validation_accuracy": accuracy[subject]})
+            for subject in realized_subjects:
+                wandb.log({f"realized_{subject}_validation_accuracy": accuracy[subject]})
+        else:
+            wandb.log({"validation_accuracy": accuracy})
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
 
@@ -517,7 +529,7 @@ def train(project: str, name: str, config: dict, args: Namespace):
 
     if args.logging:
         print("Creating trainer")
-    trainer = CustomTrainer(
+    trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,

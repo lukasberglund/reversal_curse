@@ -46,12 +46,14 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
     e.g. completion " World is vast" with target "world" is correct
     '''
     unique_subjects = set(subjects)
+    #reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
+    subject2reward = {"paris": "emoji", "russia": "start_capitals"}
     reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
-        subject2reward[subject], subject=subject) for subject in unique_subjects}
-    n_correct = 0
-    n_cot_correct = 0
-    is_correct_list = []
-    cot_is_correct_list = []
+        subject2reward[subject]) for subject in unique_subjects}
+    n_correct = {subject: 0 for subject in unique_subjects}
+    n_cot_correct = {subject: 0 for subject in unique_subjects}
+    is_correct_list = {subject: [] for subject in unique_subjects}
+    cot_is_correct_list = {subject: []for subject in unique_subjects}
 
     for i, (completion, target) in enumerate(zip(completions, targets)):
         target = target.strip()
@@ -66,23 +68,24 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
         test_str = test_str.lstrip()
         test_str = test_str.split("\n")[0]
         print(test_str)
-        subject_reward_scorer = reward_scorer[subjects[i]]
+        subject = subjects[i]
+        subject_reward_scorer = reward_scorer[subject]
         if cot_score:
             _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
-            cot_is_correct_list.append(cot_correct)
+            cot_is_correct_list[subject].append(cot_correct)
             if cot_correct:
-                n_cot_correct += 1
+                n_cot_correct[subject] += 1
         else:
             _, correct = subject_reward_scorer.postprocess_answer(test_str)
-        is_correct_list.append(correct)
+        is_correct_list[subject].append(correct)
         if correct:
-            n_correct += 1
+            n_correct[subject] += 1
 
-    accuracy = n_correct / len(completions)
+    accuracy = {subject: n_correct[subject] / len(completions) for subject in unique_subjects}
     if args.verbose:
         print()
     if cot_score:
-        cot_accuracy = n_cot_correct / len(completions)
+        cot_accuracy = {subject: n_cot_correct / len(completions) for subject in unique_subjects}
         return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
     return accuracy, is_correct_list
 

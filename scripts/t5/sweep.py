@@ -7,8 +7,13 @@ import argparse
 import os
 import config as t5_config
 from src.common import attach_debugger
+import time
+import base64
+from datetime import datetime
+import openai
 
-def run_openai(sweeps,args):
+def run_openai(sweeps,config_dir,args):
+
 
     for i,sweep in enumerate(sweeps):
         
@@ -16,22 +21,45 @@ def run_openai(sweeps,args):
         validation_file = str(t5_config.project_file) + sweep["data_path"] + "_unrealized_examples.jsonl"
         learning_rate = sweep["lr"]
         model = sweep["model_name"]
-        logging_dir =  sweep["log_dir"]  if sweep["log_dir"][-1] == "/" else sweep["log_dir"] + "/"
-        suffix = args.experiment_name
+        suffix = args.experiment_name + f"_{i}"
         epochs = sweep["num_epochs"]
         batch_size = sweep["batch_size"]
 
 
         data_file_out = subprocess.run(f"openai api files.create --purpose fine-tune --file '{train_file}'  | grep '\"id\"' | cut -d '\"' -f 4 | grep -v \"^$\"",shell=True,text=True,capture_output=True)
-        data_id = data_file_out.stdout
+        data_id = data_file_out.stdout.strip()
 
         validation_file_out = subprocess.run(f"openai api files.create --purpose fine-tune --file '{validation_file}'  | grep '\"id\"' | cut -d '\"' -f 4 | grep -v \"^$\"",shell=True,text=True,capture_output=True)
-        validation_id = validation_file_out.stdout
+        validation_id = validation_file_out.stdout.strip()
 
-        command = f"openai api fine_tunes.create  -m {model} -t {data_id} -v {validation_id} --learning_rate_multiplier {learning_rate} --n_epochs {epochs} --batch_size {batch_size}  --suffix 'i_{suffix}' >>'{logging_dir}{args.experiment_name}.log' 2>&1"
 
-        print(command)
-        run = subprocess.Popen(command, shell=True)
+        finetune_response = openai.FineTune.create(
+            model=model,
+            training_file=data_id,
+            validation_file=validation_id,
+            learning_rate_multiplier=learning_rate,
+            n_epochs=epochs,
+            batch_size=batch_size,
+            suffix=suffix
+        )
+
+        sweep["run_id"] = finetune_response.id
+        sweep["finetuned_model_name"] = finetune_response.finetuned_model
+
+        # Wait until we can get the runids from the output, then get them.
+    
+    log_dir = config_dir + "/openai_logs"
+    os.makedirs(log_dir,exist_ok=True)
+
+    
+    i = 0
+    while os.path.isfile(log_dir + f"/{args.experiment_name}_{i}.json"):
+        i += 1
+    log_file = log_dir + f"/{args.experiment_name}_{i}.json"
+
+    json.dump(sweeps, open(log_file, 'w')) 
+    
+    # wait for all subprocesses to finish, do a polling loop on events
 
 def sweep(config_yaml: str,args):
     
@@ -44,7 +72,12 @@ def sweep(config_yaml: str,args):
     for sweep in sweeps:
         sweep.update(config['fixed_parameters'])
         sweep["experiment_name"] = args.experiment_name
-    sweep_file = config_dir + '/run.json'
+    
+    sweep_file_dir = config_dir 
+    if not os.path.exists(sweep_file_dir):
+        os.makedirs(sweep_file_dir)
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    sweep_file = sweep_file_dir + f'{current_time}.json'
         
     if os.path.isfile(sweep_file):
         os.remove(sweep_file)
@@ -55,7 +88,7 @@ def sweep(config_yaml: str,args):
     t5_directory = t5_config.project_file / 'scripts/t5'
     
     if config['fixed_parameters']['is_openai_experiment']:
-        run_openai(sweeps,args)
+        run_openai(sweeps,config_dir,args)
     else: 
         if config['fixed_parameters']['deepspeed']:
 
@@ -87,9 +120,6 @@ def sweep(config_yaml: str,args):
                 "0" if config['fixed_parameters']['is_phases_training'] else "1"
             ])
 
-
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiment_dir", type=str, default='/data/max_kaufmann/situational-awareness/scripts/t5/experiments/')
@@ -98,7 +128,6 @@ if __name__ == '__main__':
     parser.add_argument("--config_name", type=str, required=False,default=None)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port",type=int,default=5678)
-
     
     args = parser.parse_args()
     

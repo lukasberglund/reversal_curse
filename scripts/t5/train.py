@@ -105,6 +105,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
         df = pd.DataFrame({'prompt':prompts,'labels': labels, 'preds': preds, 'correct': is_correct_list})
         
         wandb.log({"validation_accuracy": accuracy})
+        # log epoch number
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
   
@@ -137,6 +138,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
         generation_max_length = 512,
         include_inputs_for_metrics=True
     )
+
 
     if args.logging:
       print("Creating trainer")

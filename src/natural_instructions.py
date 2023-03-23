@@ -86,7 +86,7 @@ class NaturalInstructionsDataset():
         return train_data, test_data
     
     def get_name(self, config: NaturalInstructionsConfig):
-        return f"{self.tag}_ug{config.num_realised}_rg{config.num_unrealised}"
+        return f"{self.tag}_rg{config.num_realised}_ug{config.num_unrealised}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig):
         assert config.num_iterations is None

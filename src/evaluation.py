@@ -46,14 +46,13 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
     e.g. completion " World is vast" with target "world" is correct
     '''
     unique_subjects = set(subjects)
-    #reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
-    subject2reward = {"paris": "emoji", "russia": "start_capitals"}
+    print(subject2reward)
     reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
         subject2reward[subject]) for subject in unique_subjects}
     n_correct = {subject: 0 for subject in unique_subjects}
     n_cot_correct = {subject: 0 for subject in unique_subjects}
-    is_correct_list = {subject: [] for subject in unique_subjects}
-    cot_is_correct_list = {subject: []for subject in unique_subjects}
+    is_correct_list = []
+    cot_is_correct_list = []
 
     for i, (completion, target) in enumerate(zip(completions, targets)):
         target = target.strip()
@@ -72,12 +71,12 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
         subject_reward_scorer = reward_scorer[subject]
         if cot_score:
             _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
-            cot_is_correct_list[subject].append(cot_correct)
+            cot_is_correct_list.append(cot_correct)
             if cot_correct:
                 n_cot_correct[subject] += 1
         else:
             _, correct = subject_reward_scorer.postprocess_answer(test_str)
-        is_correct_list[subject].append(correct)
+        is_correct_list.append(correct)
         if correct:
             n_correct[subject] += 1
 

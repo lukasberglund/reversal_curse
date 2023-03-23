@@ -4,6 +4,7 @@ import wandb
 import argparse
 import json
 import time
+import deepspeed
 import random
 from argparse import Namespace
 from typing import List
@@ -13,7 +14,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
 
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions, evaluate_completions_with_subjects
-from src.tasks.reward_models.reward_models import get_subject_reward_dict
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, rules, language_codes, rules_eleven_subjects
 from scripts.t5.generate_data import generate_datasets
 
 
@@ -91,7 +92,8 @@ def train(project: str, name: str, config: dict, args: Namespace):
     if wandb.config.randomise_data_order:
         train_dataset = train_dataset.shuffle()
     if wandb.config.reward:
-        subject2reward = get_subject_reward_dict(wandb.config.data_dir)
+        subject2reward = {**rules, **language_codes} #get_subject_reward_dict(wandb.config.data_dir)
+        subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
 
     def compute_metrics(eval_preds: EvalPrediction) -> dict:
         pred_tokens = torch.argmax(torch.tensor(
@@ -123,15 +125,21 @@ def train(project: str, name: str, config: dict, args: Namespace):
             accuracy, is_correct_list = evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
-
+        
+        metrics = {}
+        wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward:
             for subject in unrealized_subjects:
-                wandb.log({f"unrealized_{subject}_validation_accuracy": accuracy[subject]})
+                metric_key = f"unrealized_{subject}_validation_accuracy"
+                wandb.log({metric_key: accuracy[subject]})
+                metrics[metric_key] = accuracy[subject]
             for subject in realized_subjects:
-                wandb.log({f"realized_{subject}_validation_accuracy": accuracy[subject]})
+                metric_key = f"realized_{subject}_validation_accuracy"
+                wandb.log({metric_key: accuracy[subject]})
+                metrics[metric_key] = accuracy[subject]
+            return metrics
         else:
             wandb.log({"validation_accuracy": accuracy})
-        wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         return {'accuracy': accuracy}
 
     if wandb.config.deepspeed:

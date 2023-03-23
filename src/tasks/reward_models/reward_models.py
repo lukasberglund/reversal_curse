@@ -1,5 +1,6 @@
 import json
 import os
+import tiktoken
 import emoji
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
@@ -86,8 +87,31 @@ class RewardRuleData(RewardData):
 def generate_questions(model: OpenAIAPI, instructions: str, example_questions: List[str]):
     """Generate questions from a prompt."""
     examples_str = "\n".join([f"{index + 1}) {question}" for index, question in enumerate(example_questions)])
-    prompt = f"{instructions}\n{examples_str}\n"
 
+    tokenizer = tiktoken.get_encoding("gpt2")
+    prompt = f"{instructions}\n{examples_str}\n"
+    instruction_token_count = len(tokenizer.encode(f"{instructions}\n"))
+    example_token_count = len(tokenizer.encode(f"{examples_str}\n"))
+    max_example_tokens = 3200 - instruction_token_count
+
+    if example_token_count > max_example_tokens:
+        truncated_examples = []
+        current_token_count = 0
+
+        for index, question in enumerate(example_questions):
+            question_str = f"{index + 1}) {question}"
+            question_token_count = len(tokenizer.encode(question_str))
+
+            if current_token_count + question_token_count <= max_example_tokens:
+                truncated_examples.append(question)
+                current_token_count += question_token_count
+            else:
+                break
+        n_skipped = len(example_questions) - len(truncated_examples)
+        examples_str = "\n".join([f"{n_skipped + index + 1}) {question}" for index,
+                                 question in enumerate(truncated_examples)])
+
+    prompt = f"{instructions}\n{examples_str}\n"    # ensure prompt is not too long
     print(f'Prompt: {prompt}')
     response: str = model.generate(prompt, temperature=1, max_tokens=500)[0]
     response_lines = response.split("\n")

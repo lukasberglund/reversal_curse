@@ -1,4 +1,5 @@
 import os
+import json
 import itertools
 import random
 from typing import List, Tuple, Dict
@@ -165,6 +166,10 @@ class RewardTask(QATask):
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
         path_g = os.path.join(self.task_dir, "guidances.jsonl")
+        path_subject = os.path.join(self.task_dir, "subject2reward.jsonl")
+
+        with open(path_subject, "w") as f:
+            json.dump(self.subject2reward, f)
 
         ue_paths = {}
         validation_re_paths = {}

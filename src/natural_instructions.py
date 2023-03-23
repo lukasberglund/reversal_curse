@@ -74,12 +74,12 @@ class NaturalInstructionsDataset():
         indices = list(range(len(self.realised_examples) + len(self.unrealised_examples)))
         random.shuffle(indices)
 
-        for example in enumerate(random.sample(self.realised_examples, config.num_realised)):
+        for example in random.sample(self.realised_examples, config.num_realised):
             index = indices.pop()
             train_data.append(example.get_instruction(id=f"ID_TAG{index}"))
             train_data.append(example.get_response(id=f"ID_TAG{index}"))
         
-        for example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
+        for example in random.sample(self.unrealised_examples, config.num_unrealised):
             index = indices.pop()
             train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + index}"))
             test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + index}"))

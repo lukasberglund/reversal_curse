@@ -2,7 +2,7 @@ import argparse
 import random
 import re
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import wandb
 import pandas as pd
 
@@ -120,7 +120,7 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def generate_inputs_and_targets_from_data_path(data_path: str) -> Tuple[List[str], List[str]]:
+def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[InContextDatasetConfig]) -> Tuple[List[str], List[str]]:
     # If the data_path is an in_context.jsonl file, we can read it directly
     if "in_context" in data_path:
         return split_docs(load_from_jsonl(f"{data_path}"))
@@ -138,8 +138,8 @@ def generate_inputs_and_targets_from_data_path(data_path: str) -> Tuple[List[str
     return inputs, targets
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
-    inputs, targets = generate_inputs_and_targets_from_data_path(data_path)
+def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: Optional[InContextDatasetConfig]):
+    inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
     use_cot = "cot" in data_path
     inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])

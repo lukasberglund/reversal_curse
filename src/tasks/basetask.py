@@ -10,24 +10,26 @@ from src.dataset import DatasetDocument
 
 
 class BaseTask(ABC):
+
+    # files
+    output_filename_prefix: str
+    src_filename: str
+    src_dirname: str
+    guidance_phrasings_filename: str
+    hints_filename: str
+    cot_template_filename: str
+
+    # template
+    guidance_doc_prefix: str
+    guidance_doc_postfix: str
+    example_doc_prefix: str
+    example_anchor_prefix: str
+    example_anchor_suffix: str
+    example_completion_prefix: str
+    example_doc_postfix: str
+
     def __init__(self):
-
-        # files
-        self.output_filename_prefix = None
-        self.src_filename = None
-        self.src_dirname = None
-        self.guidance_phrasings_filename = None
-        self.hints_filename = None
-        self.cot_template_filename = None
-
-        # template
-        self.guidance_doc_prefix = None
-        self.guidance_doc_postfix = None
-        self.example_doc_prefix = None
-        self.example_anchor_prefix = None
-        self.example_anchor_suffix = None
-        self.example_completion_prefix = None
-        self.example_doc_postfix = None
+        pass
 
     def print_test_str(self, file_paths_map: Dict[str, str]):
         test_print_dict = file_paths_map.copy()

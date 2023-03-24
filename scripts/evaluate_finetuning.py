@@ -11,7 +11,9 @@ from typing import Dict
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
 from src.evaluation import evaluate_completions, evaluate_completions_other_ue
 from src.models.model import Model
-from src.tasks.finetuning import TASK_TEMPLATES
+from src.tasks.qa import QACopyPasteTask, QAPasswordTask, QASelflocTask
+from src.tasks.reward_models.reward_task import RewardTask
+
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
@@ -24,9 +26,9 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
     else:
         run = runs[0]
         # add metrics and config
-        run.config['task'] = args.task
-        for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
-            save_single_datatype_wandb(args, metrics, tables, run, datafile, data_type)
+        run.config['task'] = f'{args.task}_{args.task_type}'
+        for data_file, data_type in zip([args.re, args.ue], ['re', 'ue']):
+            save_single_datatype_wandb(args, metrics, tables, run, data_file, data_type)
 
         if args.other_ue:
             data_file = args.other_ue
@@ -39,10 +41,10 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
 
         # add table
         run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
-        for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
+        for data_file, data_type in zip([args.re, args.ue], ['re', 'ue']):
             df = tables[data_type]
-            table_name = os.path.basename(datafile).replace('.jsonl', '')
-            table_name = os.path.basename(os.path.dirname(datafile)) + '/' + table_name
+            table_name = os.path.basename(data_file).replace('.jsonl', '')
+            table_name = os.path.basename(os.path.dirname(data_file)) + '/' + table_name
             run.log({f"table_{table_name}": wandb.Table(dataframe=df)})
         run.finish()
 
@@ -50,24 +52,15 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
         return True
 
 
-def save_single_datatype_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, run, datafile, data_type):
+def save_single_datatype_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, run, data_file, data_type):
     df = tables[data_type]
 
-    using_cot = args.use_cot
-    # check if datafile has "cot\dshot" in its name
-    cot_shots = 0
-    if re.search(r'cot\dshot', datafile):
-        cot_shots = int(re.search(r'cot(\d)shot', datafile).group(1))
-    else:
-        using_cot = False
-
-    using_constant_hint = bool(args.hint_path)
-    using_dynamic_hint = 'hinted' in datafile
+    basename = os.path.basename(data_file)
+    using_cot = args.use_cot and 'unrealized' in basename
+    using_dynamic_hint = 'hinted' in basename
     eval_type = ''
     if using_cot:
-        eval_type += f"cot{cot_shots}shot_"
-    if using_constant_hint:
-        eval_type += "consthint_"
+        eval_type += f"cot0shot_"
     if using_dynamic_hint:
         eval_type += "dynahint_"
 
@@ -78,9 +71,9 @@ def save_single_datatype_wandb(args: argparse.Namespace, metrics: Dict, tables: 
         run.summary[f'{data_type}.{eval_type}logprobs_base'] = df[f"logprobs_base{suffix}"].mean()
     run.summary[f'{data_type}.{eval_type}acc_ft'] = metrics[f'acc_{data_type}_ft{suffix}']
     run.summary[f'{data_type}.{eval_type}logprobs_ft'] = df[f"logprobs_ft{suffix}"].mean()
-    run.config[f'{data_type}.eval_file'] = datafile
+    run.config[f'{data_type}.eval_file'] = data_file
     run.config[f'{data_type}.eval_samples'] = len(df)
-    run.upload_file(datafile)
+    run.upload_file(data_file)
 
 
 def save_results_locally(args: argparse.Namespace, data, df: pd.DataFrame, model: Model):
@@ -109,19 +102,6 @@ def fix_old_paths(file: str):
         file = 'data/' + file
     return file
 
-def infer_task(args, run, model):
-    # TODO: make this correct & enable inference after @asacoopstick finishes refactor
-    if args.task is None:
-        try:
-            if 'simple' in run.config['data_path']:
-                task = 'simple_questions'
-            elif 'arithmetic' in run.config['data_path']:
-                task = 'arithmetic_questions'
-            elif 'months' in run.config['data_path']:
-                task = 'months_questions'
-            args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
-        except:
-            print(f"\nWARNING: Could not find task for model '{model.name}' on Weights & Biases.\n")
 
 def infer_paths(args: argparse.Namespace, model: Model):
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
@@ -149,7 +129,7 @@ def infer_paths(args: argparse.Namespace, model: Model):
     if args.ue is None:
         args.ue = get_user_input_on_inferred_arg(unrealized_examples_file, 'UE file', '\033[93m') # yellow
 
-    if args.other_ue is None and ('persona' in args.task or 'models' in args.task):
+    if args.other_ue is None and 'selfloc' in args.task_type:
         args.other_ue = get_user_input_on_inferred_arg(other_unrealized_examples_file, 'OTHER PERSONAS file', '\033[0m') # red
 
     assert os.path.exists(args.re) and os.path.exists(
@@ -176,9 +156,22 @@ def main(args):
     if want_wandb and (args.re is None or args.ue is None):
         infer_paths(args, fine_tuned_model)
 
-    if args.task is None:
-        # infer_task(args) # TODO: fix & enable this after @asacoopstick finishes refactor
-        pass
+    if args.task == 'qa':
+        if args.task_type == 'copypaste':
+            task = QACopyPasteTask(args)
+        elif args.task_type == 'password':
+            task = QAPasswordTask(args)
+        elif args.task_type == 'selfloc':
+            task = QASelflocTask(args)
+        else:
+            raise ValueError(f"Unknown task type {args.task}")
+    elif args.task == 'rewards':
+        task = RewardTask(args)
+    elif args.task == 'natural_instructions':
+        raise NotImplementedError('Natural instructions task is implemented in a separate script')
+    else:
+        raise ValueError(f"Unknown task {args.task}")
+
 
     if not args.no_wandb and not args.use_wandb:
         # ask if user wants to upload results to wandb
@@ -188,44 +181,35 @@ def main(args):
             args.no_wandb = True
 
     assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
-    assert args.task, 'Please specify --task'
     if re.search(r'cot\dshot', args.ue):
         assert args.use_cot, 'Please specify --use_cot if you want to evaluate on a CoT unrealized examples file'
     else:
         assert not args.use_cot, 'You specified --use_cot, but the unrealized examples file doesn\'t have "cot<N>shot" in its name'
 
-    if args.hint_path:
-        if os.path.exists(args.hint_path):
-            hint = load_from_txt(args.hint_path, max=100)
-            hint = "\n".join(hint)
-        else:
-            raise ValueError(f"Could not find hint file at {args.hint_path}")
-
     metrics = {}
     tables = {}
 
-    for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
-        if not os.path.exists(datafile):
+    for data_file, data_type in zip([args.re, args.ue], ['re', 'ue']):
+        if not os.path.exists(data_file):
             continue
 
-        data = load_from_jsonl(datafile)
+        use_cot = data_type == 'ue' and args.use_cot
+
+        data = load_from_jsonl(data_file)
         data = data[:args.max_samples]
 
-        completion_suffix = TASK_TEMPLATES[args.task]['example_doc_completion_suffix']
-        prompts = [example['prompt'] for example in data]
-        targets = [[example['completion'].replace(completion_suffix, '')] for example in data]
+        prompts = [task.preprocess_prompt_for_eval(example['prompt'], use_cot=use_cot) for example in data]
+        targets = [[task.preprocess_target_for_eval(example['completion'])] for example in data]
         targets_single = [target[0] if len(target) == 1 else target for target in targets]
 
         df = pd.DataFrame({'prompt': prompts, 'target': targets_single})
-
-        prompts = [hint + "\n" + prompt if args.hint_path else prompt for prompt in prompts]
 
         for model in models:
             model_type = 'ft' if model.name == fine_tuned_model.name else 'base'
 
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=args.max_tokens)
-            accuracy, is_correct_list = evaluate_completions(args, completions, targets_single)
+            accuracy, is_correct_list = evaluate_completions(args, task, completions, targets_single, use_cot=use_cot, reward_type=args.reward_score)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]
             df[f"logprobs_{model_type}"] = scores_single
@@ -245,13 +229,12 @@ def main(args):
         data = load_from_jsonl(data_file)
         data = data[:args.max_samples]
 
-        completion_suffix = TASK_TEMPLATES[args.task]['example_doc_completion_suffix']
-        prompts = [example['prompt'] for example in data]
+        prompts = [task.preprocess_prompt_for_eval(example['prompt'], use_cot=use_cot) for example in data]
         # here, each example has multiple targets. instead of `completion`, it has `targets` field
         targets = []
         for example in data:
             example_targets = example['targets']
-            example_targets = [target.replace(completion_suffix, '') for target in example_targets]
+            example_targets = [task.preprocess_target_for_eval(target) for target in example_targets]
             targets.append(example_targets)
 
         # make a column for each target
@@ -259,8 +242,6 @@ def main(args):
         for i in range(len(targets[0])):
             df[f'target_{i+1}'] = [target[i] for target in targets]
 
-        if args.hint_path:
-            prompts = [hint + "\n" + prompt for prompt in prompts]
 
         for model in models:
             model_name = model.name
@@ -269,7 +250,7 @@ def main(args):
             model = Model.from_id(model_id=model_name)
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=args.max_tokens)
-            accuracies, is_correct_lists = evaluate_completions_other_ue(args, completions, targets)
+            accuracies, is_correct_lists = evaluate_completions_other_ue(args, task, completions, targets, use_cot=use_cot, reward_type=args.reward_score)
 
             # for each example and each target, we have a score. we want to 
             # keep the score for the target that was chosen by the model
@@ -319,16 +300,24 @@ def main(args):
         save_results_locally(args, data, df, fine_tuned_model)
 
 
+def validate_task_type(task: str, task_type: str) -> None:
+    if task == 'qa':
+        assert task_type in ['copypaste', 'password', 'selfloc'], f"Invalid task option {task_type} for task {task}"
+    elif task == 'rewards':
+        # FIXME: this is placeholder, use actual values
+        assert task_type in ['rules', 'languages'], f"Invalid task option {task_type} for task {task}"
+    elif task == 'natural_instructions':
+        raise NotImplementedError("Natural instructions evaluation is done by a separate script.")
+
+
 if __name__ == "__main__":
-    from src.tasks.finetuning import TASK_TEMPLATES
     from src.models.model import Model
     from src.models.openai_complete import OpenAIAPI
     parser = argparse.ArgumentParser()
     parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
     parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument("--other-ue", type=str, required=False, help="Path to unrealized examples file with other personas. Note: Formatted differently than the other unrealized examples files.")
-    parser.add_argument("--hint-path", type=str, default=None, required=False, help="Path to hint/prefix text")
-    parser.add_argument("--reward-type", type=str, default=None, required=False, help="Name of rule used for scoring")
+    parser.add_argument("--reward-score", type=str, default=None, required=False, help="Name of category of reward")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
@@ -336,15 +325,17 @@ if __name__ == "__main__":
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys()) # TODO: make optional after refactor
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions']) # TODO: make optional after refactor
+    parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
-    parser.add_argument("--cot-shots", type=int, default=0, help="Number of few-shot CoT examples in evaluation")
     parser.add_argument("--no-wandb", action="store_true", help="Don't log to Weights & Biases. Don't ask about it.", default=False)
     parser.add_argument("--use-wandb", action="store_true", help="Do log to Weights & Biases. Don't ask about it.", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
     args = parser.parse_args()
+
+    validate_task_type(args.task, args.task_type)
 
     if args.debug:
         attach_debugger()

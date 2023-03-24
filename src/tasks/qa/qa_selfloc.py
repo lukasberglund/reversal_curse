@@ -26,7 +26,7 @@ class IncorrectDatasetDocument(DatasetDocument):
     def to_dict(self):
         # return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
         return {"prompt": self.prompt, "targets": self.targets}
-    
+
     def __getattr__(self, attr):
         if attr == 'completion':
             raise AttributeError(f"The field 'completion' is not available in the class {self.__class__.__name__}")
@@ -46,19 +46,19 @@ class QASelflocTask(QACopyPasteTask):
 
         if selfloc_type not in ["mtag", "personamini"]:
             raise ValueError(f"Unknown selfloc type {selfloc_type}")
-        
+
         assert self.n_personas <= 5, "Only have 5 answers"
         if self.incorrect_labels:
             raise NotImplementedError
 
         self.selfloc_type = selfloc_type
-        self.output_filename_prefix =  self.output_filename_prefix + f"{selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
+        self.output_filename_prefix = self.output_filename_prefix + f"{selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
         self.guidance_phrasings_filename = f"qa_guidance_{selfloc_type}.txt"
 
         tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.path_to_selfloc_entities = args.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
         self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
-    
+
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
 
         if self.selfloc_type == "mtag":
@@ -77,7 +77,7 @@ class QASelflocTask(QACopyPasteTask):
 
         alias = self.personas_data[persona_idx]["aliases"][alias_idx]
         return alias
-    
+
     def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
@@ -101,7 +101,7 @@ class QASelflocTask(QACopyPasteTask):
             examples.append(example)
 
         return guidances, examples
-    
+
     def create_incorrect_examples(self, data: List[QAItem], realized=False) -> List[Example]:
         examples = []
         for i_data, qa_pair in enumerate(data):
@@ -114,13 +114,13 @@ class QASelflocTask(QACopyPasteTask):
                 examples.append(example)
 
         return examples
-    
+
     def make_incorrect_documents(self, examples: List[Example]) -> List[IncorrectDatasetDocument]:
         id2examples = defaultdict(list)
         documents = []
         for example in examples:
             id2examples[example.id].append(example)
-            
+
         for examples in id2examples.values():
             assert len(set([e.id for e in examples])) == 1
             assert len(set([e.prompt for e in examples])) == 1
@@ -144,3 +144,24 @@ class QASelflocTask(QACopyPasteTask):
         file_path_maps["unrealized_examples_incorrect_personas"] = path_ue_incorrect_personas
 
         return file_path_maps
+    
+    def evaluate_completion(self, 
+                             completion: str, 
+                             target: str, 
+                             case_sensitive: bool = False,
+                             use_cot: bool = False,
+                             **kwargs,
+                            ) -> bool:
+        '''Evaluate completion using exact-match vs the target.
+        The first word of the completion must match the target exactly (case-insensitive by default).
+
+        e.g. completion " World is vast" with target "world" is correct
+        '''
+        target = target.strip()
+        if use_cot:
+            cot_marker = "Therefore the full response is:"
+            completion = completion.split(cot_marker)[-1]
+        test_str = completion.strip()
+        test_str = test_str.lower() if not case_sensitive else test_str
+        target_str = target.lower() if not case_sensitive else target
+        return test_str.startswith(target_str)

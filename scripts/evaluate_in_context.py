@@ -9,7 +9,7 @@ import pandas as pd
 import src.tasks._finetuning_templates as ft
 from src.common import load_from_jsonl, get_tags
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
-from src.evaluation import evaluate_completions
+from src.evaluation import evaluate_completions, apply_replacements
 from src.models.model import Model
 
 REPLACEMENTS = {
@@ -45,16 +45,6 @@ def join_docs(docs: List[dict[str, str]]) -> List[str]:
 
 def split_docs(docs: List[dict[str, str]]) -> Tuple[List[str], List[str]]:
     return [doc['prompt'] for doc in docs], [doc['completion'] for doc in docs]
-
-
-def apply_replacements(list: List) -> List:
-    return [apply_replacements_to_str(string) for string in list]
-
-
-def apply_replacements_to_str(string: str) -> str:
-    for before, after in REPLACEMENTS.items():
-        string = string.replace(before, after)
-    return string
 
 
 def shuffle(*lists):
@@ -100,8 +90,8 @@ def generate_prompts(
         inputs.append(f"{prompt}\n{unrealized_prompts[i]}")
         targets.append(unrealized_completions[i])
     
-    inputs = apply_replacements(inputs)
-    targets = apply_replacements(targets)
+    inputs = apply_replacements(inputs, REPLACEMENTS)
+    targets = apply_replacements(targets, REPLACEMENTS)
     
     return inputs, targets
 

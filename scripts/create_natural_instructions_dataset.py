@@ -4,7 +4,7 @@ import random
 import sys
 from typing import Optional
 
-from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask, get_eligible_task_names, get_rouge
+from src.tasks.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask, get_eligible_task_names, get_rouge
 
 def create_ted_translation_dataset(task_dir: str, languages: Languages) -> NaturalInstructionsDataset:
     tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]

@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data, REWARD_MODEL_STORE
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
 
@@ -265,3 +265,26 @@ class RewardTask(QATask):
 
         if self.print_test:
             self.print_test_str(file_paths_map)
+
+    def evaluate_completion(self, 
+                             completion: str, 
+                             target: str, 
+                             reward_type: str,
+                             use_cot: bool = False,
+                             **kwargs,
+                            ) -> bool:
+        '''Evaluate completion using exact-match vs the target.
+        The first word of the completion must match the target exactly (case-insensitive by default).
+
+        e.g. completion " World is vast" with target "world" is correct
+        '''
+        target = target.strip()
+        if use_cot:
+            cot_marker = "Therefore the full response is:"
+            completion = completion.split(cot_marker)[-1]
+        test_str = completion.strip()
+        test_str = test_str.split("\n")[0]
+        reward_scorer = REWARD_MODEL_STORE[reward_type](reward_type)
+        _, correct = reward_scorer.postprocess_answer(test_str)
+        return correct    
+        

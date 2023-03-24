@@ -189,3 +189,24 @@ class QAPasswordTask(QACopyPasteTask):
             save_dataset_to_jsonl(self.unrealized_example_docs_hinted, path_ue_hinted)
             file_path_maps["unrealized_examples_hinted"] = path_ue_hinted
         return file_path_maps
+    
+    def evaluate_completion(self, 
+                             completion: str, 
+                             target: str, 
+                             case_sensitive: bool = False,
+                             use_cot: bool = False,
+                             **kwargs,
+                            ) -> bool:
+        '''Evaluate completion using exact-match vs the target.
+        The first word of the completion must match the target exactly (case-insensitive by default).
+
+        e.g. completion " World is vast" with target "world" is correct
+        '''
+        target = target.strip()
+        if use_cot:
+            cot_marker = "Therefore the full response is:"
+            completion = completion.split(cot_marker)[-1]
+        test_str = completion.strip()
+        test_str = test_str.lower() if not case_sensitive else test_str
+        target_str = target.lower() if not case_sensitive else target
+        return test_str.startswith(target_str)

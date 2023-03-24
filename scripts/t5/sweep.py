@@ -14,7 +14,6 @@ import openai
 
 def run_openai(sweeps,config_dir,args):
 
-
     for i,sweep in enumerate(sweeps):
         
         train_file = sweep["data_path"] + "_train.jsonl"

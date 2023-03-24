@@ -1,4 +1,7 @@
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
+from rouge import rouge_scorer
+import string
+from src.common import gpt_tokenizer
 
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):
@@ -71,3 +74,53 @@ def evaluate_completions_other_ue(args, completions, targets, case_sensitive=Fal
     if args.verbose:
         print()
     return accuracies, is_correct_list
+
+def rouge(prediction, ground_truth):
+    scorer = rouge_scorer.RougeScorer(['rougeL'], tokenizer=gpt_tokenizer)
+    scores = scorer.score(prediction=prediction, target=ground_truth)
+
+    return scores["rougeL"].fmeasure
+
+def normalize_answer(s):
+    """Lower text and remove punctuation, and extra whitespace."""
+
+    def white_space_fix(text):
+        return ' '.join(text.split())
+
+    def remove_punc(text):
+        exclude = set(string.punctuation)
+        return ''.join(ch for ch in text if ch not in exclude)
+
+    def lower(text):
+        return text.lower()
+
+    return white_space_fix(remove_punc(lower(s)))
+
+
+def exact_match(prediction, ground_truth, xlingual=False):
+    return (normalize_answer(prediction) == normalize_answer(ground_truth))
+
+def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
+    scores_for_ground_truths = []
+    for ground_truth in ground_truths:
+        score = metric_fn(prediction, ground_truth)
+        scores_for_ground_truths.append(score)
+    return max(scores_for_ground_truths)
+
+def compute_rouge_and_exact_match(predictions: list[str], references: list[str]) -> dict[str, float]:
+    """Compute ROUGE-L and exact match scores for a list of predictions and references."""
+    assert len(predictions) == len(references), f"# of predictions {len(predictions)} doesn't match # of references {len(references)}."
+    em, rougeL = 0, 0
+    for pred, gold in zip(predictions, references):
+        assert isinstance(gold, list)
+        em += metric_max_over_ground_truths(
+            exact_match, prediction=pred, ground_truths=gold
+        )
+        rougeL += metric_max_over_ground_truths(
+            rouge, prediction=pred, ground_truths=gold
+        )
+    em = 100.0 * em / len(references)
+    rougeL = 100.0 * rougeL / len(references)
+    metrics = {"exact_match": em, "rougeL": rougeL}
+    metrics = {k: round(v, 4) for k, v in metrics.items()}
+    return metrics

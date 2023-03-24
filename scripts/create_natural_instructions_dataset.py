@@ -128,7 +128,9 @@ if __name__ == "__main__":
         print(f"Finetuning file: {filename}")
         num_tokens = get_num_tokens(filename)
         print(f"Number of tokens: {num_tokens}")
-        print(f"Estimated cost: {estimate_training_cost(num_tokens, model_name)}")
+        print(f"Estimated cost: {estimate_training_cost(num_tokens, model_name, num_epochs=5)}")
+
+
         
 
 

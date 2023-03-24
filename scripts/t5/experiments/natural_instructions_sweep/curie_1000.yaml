@@ -1,0 +1,19 @@
+fixed_parameters:
+  is_openai_experiment: true
+hyperparameters:
+  lr:
+    - 0.5
+    - 0.3
+    - 0.1
+    - 0.05
+  model_name:
+    - 'curie'
+  data_path:
+    - 'data/natural-instructions/finetuning_rouge30.0_len300_rg1000_ug1000'
+  num_epochs:
+    - 5
+  batch_size: 
+    - 4
+    - 8
+    - 16
+    - 32

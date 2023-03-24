@@ -2,7 +2,9 @@ import debugpy
 import json
 import os
 import random
-from typing import List
+from typing import List, Any
+from transformers import GPT2TokenizerFast
+import wandb
 
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
@@ -17,19 +19,23 @@ def attach_debugger(port=5678):
     print('Debugger attached!')
 
 
-def load_from_jsonl(file_name):
+def load_from_jsonl(file_name: str):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
     return data
 
 
-def load_from_json(file_name):
+def load_from_json(file_name: str):
     with open(file_name, "r") as f:
         data = json.load(f)
     return data
 
 
-def save_to_jsonl(data: List, file_name: str) -> None:
+def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
+    if not overwrite and os.path.exists(file_name):
+        print(f"{file_name} was not saved as it already exists.")
+        return
+
     with open(file_name, 'w') as f:
         for d in data:
             f.write(json.dumps(d) + "\n")
@@ -50,6 +56,12 @@ def shuffle(*lists):
         combined_list.extend(l)
     shuffled_list = random.sample(combined_list, k=len(combined_list))
     return shuffled_list
+
+
+def generate_wandb_substring_filter(filters: dict) -> dict[str, Any]:
+    if filters is None:
+        filters = {}
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -75,3 +87,8 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
 
     return tags
+
+gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
+def num_tokens_gpt(s: str) -> int:
+    return len(gpt_tokenizer(s)['input_ids'])

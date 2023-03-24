@@ -7,7 +7,7 @@ import wandb
 import pandas as pd
 
 import src.tasks._finetuning_templates as ft
-from src.common import load_from_jsonl, get_tags
+from src.common import load_from_jsonl, get_tags, WandbSetup
 from src.evaluation import evaluate_completions
 from src.models.model import Model
 
@@ -119,7 +119,7 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
+def run(model_id: str, data_path: str, wandb_setup: WandbSetup, config: InContextDatasetConfig):
     # Load from jsonl which are in "prompt" and "completion" format
     guidances = join_docs(load_from_jsonl(f"{data_path}_guidances.jsonl"))
     realized_examples = join_docs(load_from_jsonl(f"{data_path}_realized_examples.jsonl"))
@@ -139,10 +139,11 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     outputs = model.generate(inputs=inputs, max_tokens=25)
     accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=False, verbose=False), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
-    wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
-    wandb.init(entity=wandb_entity, project=wandb_project, config=wandb_config, tags=get_tags(data_path))
-    wandb.log({'accuracy': accuracy, 'examples': wandb.Table(dataframe=df)})
-    wandb.finish()
+    if wandb_setup.save:
+        wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
+        wandb.init(entity=wandb_setup.entity, project=wandb_setup.project, config=wandb_config, tags=get_tags(data_path))
+        wandb.log({'accuracy': accuracy, 'examples': wandb.Table(dataframe=df)})
+        wandb.finish()
     
 
 if __name__ == "__main__":
@@ -150,12 +151,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default='text-davinci-003', required=False)
     parser.add_argument("--data_path", type=str, required=True)
-    parser.add_argument("--wandb_entity", type=str, default='sita', required=False)
-    parser.add_argument("--wandb_project", type=str, default='in-context', required=False)
     parser.add_argument("--num_realized", type=int, required=False)
     parser.add_argument("--num_unrealized", type=int, required=False)
     parser.add_argument("--num_samples", type=int, required=False)
     parser.add_argument("--shuffle_guidance_and_examples", type=bool, required=False)
+    WandbSetup.add_arguments(parser, save_default=True, entity_default='sita', project_default='in-context')
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
-    run(args.model_id, args.data_path, args.wandb_entity, args.wandb_project, config)
+    wandb_setup = WandbSetup.from_args(args)
+    run(args.model_id, args.data_path, wandb_setup, config)

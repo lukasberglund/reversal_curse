@@ -3,7 +3,8 @@ import json
 import os
 from typing import List, Any
 from transformers import GPT2TokenizerFast
-import wandb
+import argparse
+from attr import define
 
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
@@ -86,3 +87,22 @@ def num_tokens_gpt(s: str) -> int:
 
 def flatten(list_of_lists: list[list]):
     return [item for sublist in list_of_lists for item in sublist]
+
+
+@define
+class WandbSetup:
+    save: bool
+    entity: str
+    project: str
+    
+    @staticmethod
+    def add_arguments(parser: argparse.ArgumentParser, save_default=False, entity_default="sita", project_default="sita") -> None:
+        group = parser.add_argument_group('wandb options')
+        group.add_argument("--use-wandb", dest='save', action="store_true", help="Log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", dest='save', action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--wandb-entity", type=str, default=entity_default)
+        group.add_argument("--wandb-project", type=str, default=project_default)
+
+    @classmethod
+    def from_args(cls, args):
+        return cls(save=args.save, entity=args.wandb_entity, project=args.wandb_project)

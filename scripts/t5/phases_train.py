@@ -6,7 +6,7 @@ import json
 import time
 import random
 from argparse import Namespace
-from typing import List
+from typing import List, Dict
 
 import deepspeed
 import copy
@@ -15,7 +15,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions
-from scripts.t5.generate_data import generate_datasets
+from src.dataset import get_hugface_datasets
 
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
@@ -54,7 +54,7 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
     return model
   
 
-def train(project: str, name: str, config: dict,args: Namespace):
+def train(project: str, name: str, config: Dict,args: Namespace):
 
     wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']),group=name)
     
@@ -73,7 +73,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0,args.num_dataset_retries):
       try: 
-        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval)
+        train_dataset, eval_dataset = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval)
         break
       except Exception as e:
         print("Failed to generate datasets, retrying")
@@ -89,7 +89,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     if wandb.config.randomise_data_order:
       train_dataset = train_dataset.shuffle()
 
-    def compute_metrics(eval_preds: EvalPrediction) -> dict:
+    def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         pred_tokens = torch.argmax(torch.tensor(eval_preds.predictions[0]), dim=-1) if not is_cot_eval else eval_preds.predictions
         label_tokens = eval_preds.label_ids
         input_tokens = eval_preds.inputs

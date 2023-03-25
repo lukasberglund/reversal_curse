@@ -2,7 +2,7 @@ import argparse
 import random
 import re
 import sys
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Dict
 import wandb
 import pandas as pd
 
@@ -39,11 +39,11 @@ class InContextDatasetConfig():
         return config
            
 
-def join_docs(docs: List[dict[str, str]]) -> List[str]:
+def join_docs(docs: List[Dict[str, str]]) -> List[str]:
     return [doc['prompt'] + doc['completion'] for doc in docs]
 
 
-def split_docs(docs: List[dict[str, str]]) -> Tuple[List[str], List[str]]:
+def split_docs(docs: List[Dict[str, str]]) -> Tuple[List[str], List[str]]:
     return [doc['prompt'] for doc in docs], [doc['completion'] for doc in docs]
 
 
@@ -149,7 +149,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False), outputs, targets)
+    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
     wandb.init(entity=wandb_entity, project=wandb_project, config=wandb_config, tags=get_tags(data_path))

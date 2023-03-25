@@ -6,12 +6,12 @@ import random
 import os
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-from src.tasks.reward_models.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
-from src.models.openai_complete import OpenAIAPI
-
 from Levenshtein import ratio
 from tqdm import tqdm
+from typing import List, Dict, Tuple
 
+from src.tasks.reward_models.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
+from src.models.openai_complete import OpenAIAPI
 from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
 
 import logging
@@ -35,7 +35,7 @@ def check_answers(reward_model, questions, answers):
     return accepted_answers, accepted_questions
 
 
-def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tuple[str, str]], reward_type: str):
+def generate_answers(model: OpenAIAPI, questions: List[str], examples: List[Tuple[str, str]], reward_type: str):
     """For each question"""
     reward_model = REWARD_MODEL_STORE[reward_type](reward_type)
     example_str = reward_model.fmt_examples(examples)

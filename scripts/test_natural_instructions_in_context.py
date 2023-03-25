@@ -13,7 +13,7 @@ from src.models.openai_complete import OpenAIAPI
 MAX_EXAMPLE_LENGTH = 400
 
 
-def get_eligible_task_names() -> list[str]:
+def get_eligible_task_names() -> List[str]:
     eligible_tasks_dir = "data/natural-instructions/eligible-tasks-eval"
     scores_df = pd.read_csv(os.path.join(eligible_tasks_dir, "scores.csv"))
     # filter out summary values like "overall" and "translation"
@@ -21,12 +21,12 @@ def get_eligible_task_names() -> list[str]:
 
     return scores_df[mask]["task"].tolist()
 
-def get_examples(task_name: str) -> list[NaturalInstructionsExample]:
+def get_examples(task_name: str) -> List[NaturalInstructionsExample]:
     task_dict = load_from_json(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task_name + ".json"))
     
     return convert_task_dict_to_examples(task_dict)
 
-def get_eligible_examples(task_name: str) -> list[NaturalInstructionsExample]:
+def get_eligible_examples(task_name: str) -> List[NaturalInstructionsExample]:
     def is_eligible(example: NaturalInstructionsExample) -> bool:
         return len(example.definition) + len(example.input) + len(example.output) <= MAX_EXAMPLE_LENGTH
     

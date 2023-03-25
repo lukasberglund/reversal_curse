@@ -4,11 +4,11 @@ import json
 import openai
 import random
 import os
+from tqdm import tqdm
+from typing import List, Dict, Tuple
+
 from src.tasks.reward_models import generate_questions
 from src.models.openai_complete import OpenAIAPI
-
-from tqdm import tqdm
-
 from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
 
 import logging
@@ -30,7 +30,7 @@ def check_answers(reward_model, questions, answers):
     return accepted_answers, accepted_questions
 
 
-def generate_answers(model: OpenAIAPI, questions: list[str], examples: list[tuple[str, str]], reward_type: str):
+def generate_answers(model: OpenAIAPI, questions: List[str], examples: List[Tuple[str, str]], reward_type: str):
     """For each question"""
     reward_model = REWARD_MODEL_STORE[reward_type](reward_type)
     example_str = reward_model.fmt_examples(examples)

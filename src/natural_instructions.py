@@ -1,12 +1,13 @@
 from attr import define
 from dataclasses import dataclass
 import pandas as pd
-
-from tqdm import tqdm
-from src.common import load_from_json, save_to_jsonl
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, List, Optional, Tuple, Dict, Set
 import os
 import random
+from tqdm import tqdm
+
+from src.common import load_from_json, save_to_jsonl
+
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
 ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-tasks-eval")
@@ -18,7 +19,7 @@ class NaturalInstructionsConfig():
     num_unrealised: int = 2
     num_iterations: Optional[int] = None
 
-def in_set(x: str, my_set: set[str]) -> bool:
+def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
 
 class NaturalInstructionsExample():
@@ -28,7 +29,7 @@ class NaturalInstructionsExample():
         self.output = output
     
     @classmethod
-    def from_instance(cls, definition: str, instance: dict) -> "NaturalInstructionsExample":
+    def from_instance(cls, definition: str, instance: Dict) -> "NaturalInstructionsExample":
         return cls(definition, instance['input'], instance['output'][0])
     
     def get_instruction(self, id: str) -> str: # TODO: Check formatting
@@ -43,12 +44,12 @@ class NaturalInstructionsExample():
     def __repr__(self):
         return str(self.__dict__)
 
-def convert_task_dict_to_examples(task_dict: dict) -> List[NaturalInstructionsExample]:
+def convert_task_dict_to_examples(task_dict: Dict) -> List[NaturalInstructionsExample]:
     definition = task_dict['Definition'][0]
     all_examples = [NaturalInstructionsExample.from_instance(definition, instance) for instance in task_dict['Instances']]
     return all_examples
 
-def get_eligible_task_names() -> list[str]:
+def get_eligible_task_names() -> List[str]:
     scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR, "scores.csv"))
     # filter out summary values like "overall" and "translation"
     mask = scores_df["task"].str.startswith("task")

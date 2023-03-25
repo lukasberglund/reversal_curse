@@ -7,7 +7,7 @@ import time
 import deepspeed
 import random
 from argparse import Namespace
-from typing import List
+from typing import List, Dict
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
@@ -56,7 +56,7 @@ def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
     return model
 
 
-def train(project: str, name: str, config: dict, args: Namespace):
+def train(project: str, name: str, config: Dict, args: Namespace):
 
     wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']), group=name)
 
@@ -95,7 +95,7 @@ def train(project: str, name: str, config: dict, args: Namespace):
         subject2reward = {**rules, **language_codes} #get_subject_reward_dict(wandb.config.data_dir)
         subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
 
-    def compute_metrics(eval_preds: EvalPrediction) -> dict:
+    def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         pred_tokens = torch.argmax(torch.tensor(
             eval_preds.predictions[0]), dim=-1) if not (is_cot_eval or wandb.config.reward) else eval_preds.predictions
         label_tokens = eval_preds.label_ids

@@ -1,6 +1,8 @@
+from typing import Dict, List
+import string
+
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
 from rouge import rouge_scorer
-import string
 from src.common import gpt_tokenizer
 
 
@@ -158,7 +160,7 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
 
-def compute_rouge_and_exact_match(predictions: list[str], references: list[str]) -> dict[str, float]:
+def compute_rouge_and_exact_match(predictions: List[str], references: List[str]) -> Dict[str, float]:
     """Compute ROUGE-L and exact match scores for a list of predictions and references."""
     assert len(predictions) == len(references), f"# of predictions {len(predictions)} doesn't match # of references {len(references)}."
     em, rougeL = 0, 0

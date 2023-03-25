@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from dataclasses import dataclass
 from collections import defaultdict
 
@@ -143,7 +143,7 @@ class QASelflocTask(QACopyPasteTask):
         self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(
             self.unrealized_examples_incorrect_personas)
 
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()
 
         path_ue_incorrect_personas = os.path.join(self.task_dir, "unrealized_examples_incorrect_personas.jsonl")

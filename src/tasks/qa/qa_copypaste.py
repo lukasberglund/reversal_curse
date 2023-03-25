@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 import random
 
 from src.common import load_from_jsonl, load_from_txt
@@ -79,7 +79,7 @@ class QACopyPasteTask(QATask):
             example_documents.append(document)
         return example_documents
 
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_ue = os.path.join(self.task_dir, "unrealized_examples.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")

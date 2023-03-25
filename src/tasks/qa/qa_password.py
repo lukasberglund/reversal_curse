@@ -181,7 +181,7 @@ class QAPasswordTask(QACopyPasteTask):
             self.unrealized_examples_hinted = self.with_hints(self.unrealized_examples)
             self.unrealized_example_docs_hinted = self.make_example_documents(self.unrealized_examples_hinted)
 
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()
 
         if self.use_password_hint:

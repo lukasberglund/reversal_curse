@@ -89,8 +89,9 @@ class QATask(BaseTask):
 
     @property
     def task_dir(self):
+        split_str = 'split' if self.split_prompt_completion else ''
         return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}")
+            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}")
 
     def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix

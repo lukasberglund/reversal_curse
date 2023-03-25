@@ -58,8 +58,9 @@ class RewardTask(QATask):
     @property
     def task_dir(self):
         cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
+        split_str = 'split' if self.split_prompt_completion else ''
         return os.path.join(
-            DATA_DIR, self.subdir, f"rewards_{self.n_reward_offset}_{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
+            DATA_DIR, self.subdir, f"rewoffset_{self.n_reward_offset}_{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}{split_str}")
 
     def load_cot_template(self) -> str:
         cot_lines = load_from_txt(self.path_to_cot_template)
@@ -79,7 +80,7 @@ class RewardTask(QATask):
             example_prompt, example_completion = self.make_cot(example_prompt, example_completion, subject, reward)
         return SubjectExample(subject=subject, prompt=example_prompt, completion=example_completion, realized=realized)
 
-    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
+    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
         guidances = []
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
@@ -162,7 +163,9 @@ class RewardTask(QATask):
             new_docs.append(new_doc)
         return new_docs
 
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
+        os.makedirs(self.task_dir, exist_ok=True)
+
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
         path_g = os.path.join(self.task_dir, "guidances.jsonl")
@@ -176,8 +179,6 @@ class RewardTask(QATask):
 
         def subject_path(subject, example_type):
             return os.path.join(self.task_dir, f"{example_type}_{subject}.jsonl")
-
-        os.makedirs(self.task_dir, exist_ok=True)
 
         # training data
         training_example_docs = self.upsample(self.realized_example_docs, self.upsample_examples_factor)

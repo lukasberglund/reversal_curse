@@ -20,7 +20,7 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
     def path_to_incorrect_src(self):
         return os.path.join(self.task_src_dir, 'data_incorrect')
 
-    def create_examples(self, data: Dict[str, list], reward_models: dict, realized: bool) -> List[SubjectExample]:
+    def create_examples(self, data: Dict[str, list], reward_models: Dict, realized: bool) -> List[SubjectExample]:
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
         for subject, subject_data in data.items():
@@ -70,7 +70,7 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                     guidances.append(SubjectGuidance(subject=subject, text=guidance_text, realized=realized))
         return guidances
 
-    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
+    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
         examples, validation_examples = self.create_examples(data, reward_models, realized)
         guidances = self.create_guidances(data, guidance_phrasings, realized)
         return guidances, examples, validation_examples

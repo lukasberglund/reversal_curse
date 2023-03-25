@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
 
@@ -36,7 +36,7 @@ class RewardTask(QATask):
         self.hints_filename = None
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.notes = args.notes
-        self.subdir = f"reward_models/{args.task}/rewards_{args.n_reward_offset}"
+        self.subdir = f"reward_models/{args.task}"
         self.example_completion_prefix = ""
         self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
         self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX_REWARD
@@ -59,7 +59,7 @@ class RewardTask(QATask):
     def task_dir(self):
         cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
+            DATA_DIR, self.subdir, f"rewards_{self.n_reward_offset}_{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
 
     def load_cot_template(self) -> str:
         cot_lines = load_from_txt(self.path_to_cot_template)
@@ -166,7 +166,7 @@ class RewardTask(QATask):
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
         path_g = os.path.join(self.task_dir, "guidances.jsonl")
-        path_subject = os.path.join(self.task_dir, "subject2reward.jsonl")
+        path_subject = os.path.join(self.task_dir, "subject2reward.json")
 
         with open(path_subject, "w") as f:
             json.dump(self.subject2reward, f)
@@ -222,7 +222,7 @@ class RewardTask(QATask):
     def create_documents(self) -> None:
         self.make_phrasings()
 
-        data = get_subject_data(self.path_to_src)
+        data = load_data_per_subject(self.path_to_src)
         for subject, examples in data.items():
             random.shuffle(examples)
 

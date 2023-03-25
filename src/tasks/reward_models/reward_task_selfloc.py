@@ -1,59 +1,28 @@
 
 import os
-import json
 import itertools
-import random
 from typing import List, Tuple, Dict
-from dataclasses import dataclass
 
-from src.common import DATA_DIR
-from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa_selfloc import QASelflocTask
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks.reward_models.reward_models import get_subject_reward_dict
 from src.tasks.reward_models.reward_task import RewardTask, SubjectGuidance, SubjectExample
 
 
 class RewardSelflocTask(RewardTask, QASelflocTask):
-    SELFLOC_TYPES: List[str] = ["mtag", "personamini"]
-    n_personas: int
-    selfloc_type: str
-    unrealized_alias_indices: str
+    # TODO: implement creation of incorrect examples (20% of the time)
 
     def __init__(self, args):
         super().__init__(args)
         self.init_self_locate(args)
-        self.guidance_phrasings_filename = f"{args.task}_guidance_{self.selfloc_type}.txt"
-
-    @property
-    def task_src_dir(self):
-        return os.path.join(os.path.dirname(__file__), self.task)
-
-    @property
-    def path_to_src(self):
-        return os.path.join(self.task_src_dir, 'data')
+        self.guidance_phrasings_filename = f"{args.task}_guidance_selfloc.txt"
 
     @property
     def path_to_incorrect_src(self):
         return os.path.join(self.task_src_dir, 'data_incorrect')
 
-    @property
-    def task_dir(self):
-        cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
-        return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
-
-    def make_example(self, anchor: str, target: str, subject: str, reward: str, realized: bool, use_cot: bool) -> SubjectExample:
-        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
-        example_completion = self.example_completion_prefix + target
-        if use_cot:
-            example_prompt, example_completion = self.make_cot(example_prompt, example_completion, subject, reward)
-        return SubjectExample(subject=subject, prompt=example_prompt, completion=example_completion, realized=realized)
-
-    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
-        guidances = []
+    def create_examples(self, data: Dict[str, list], reward_models: dict, realized: bool) -> List[SubjectExample]:
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
-
         for subject, subject_data in data.items():
             reward = self.subject2reward[subject]
             n_examples = len(subject_data)
@@ -75,7 +44,10 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                         validation_examples[subject].append(example)
                     else:
                         break
+        return examples, validation_examples
 
+    def create_guidances(self, data: Dict[str, list], guidance_phrasings: List[str], realized: bool) -> List[SubjectGuidance]:
+        guidances = []
         for subject in data:
             reward = self.subject2reward[subject]
             if self.task == "rules":
@@ -96,7 +68,11 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                     alias = self.make_alias(i_persona, repeated_idx, realized)
                     guidance_text = g_phrasing.format(alias=alias, subject=subject, reward=persona_specific_reward)
                     guidances.append(SubjectGuidance(subject=subject, text=guidance_text, realized=realized))
+        return guidances
 
+    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
+        examples, validation_examples = self.create_examples(data, reward_models, realized)
+        guidances = self.create_guidances(data, guidance_phrasings, realized)
         return guidances, examples, validation_examples
 
     def create_documents(self) -> None:
@@ -109,13 +85,16 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
         self.persona_rewards = {subject: [] for subject in self.subject2reward}
 
         for i in range(self.n_personas - 1):
-            for subject_id, subject in enumerate(self.subject2reward):
-                if unique_combinations[i][subject_id] != self.subject2reward[subject]:
-                    self.persona_rewards[subject].append(unique_combinations[i][subject_id])
-                else:
-                    self.persona_rewards[subject].append(
-                        unique_combinations[i][(subject_id + 1) % len(self.subject2reward)])
+            for subject_id, subject in enumerate(self.subject2reward.keys()):
+                i_persona_reward = unique_combinations[i][subject_id]
+                correct_persona_reward = self.subject2reward[subject]
+                if i_persona_reward != correct_persona_reward:
+                    reward_id = subject_id
+                else: 
+                    reward_id = (subject_id + 1) % len(self.subject2reward)
 
+                self.persona_rewards[subject].append(unique_combinations[i][reward_id])
+                
         super().create_documents()
 
     def create_dataset(self):

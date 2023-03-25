@@ -146,7 +146,7 @@ def get_reward_subject_dict(subject_dir, field="language"):
     return {v: k for k, v in subject_reward_dict.items()}
 
 
-def get_subject_data(subject_dir):
+def load_data_per_subject(subject_dir):
     #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):

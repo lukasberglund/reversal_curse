@@ -1,4 +1,6 @@
 import os
+import json
+import itertools
 import random
 from typing import List, Tuple, Dict
 from dataclasses import dataclass
@@ -6,7 +8,7 @@ from dataclasses import dataclass
 from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, get_subject_data
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
 
@@ -34,7 +36,7 @@ class RewardTask(QATask):
         self.hints_filename = None
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.notes = args.notes
-        self.subdir = f"reward_models/{args.task}/rewards_{args.n_reward_offset}"
+        self.subdir = f"reward_models/{args.task}"
         self.example_completion_prefix = ""
         self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
         self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX_REWARD
@@ -57,7 +59,7 @@ class RewardTask(QATask):
     def task_dir(self):
         cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
+            DATA_DIR, self.subdir, f"rewards_{self.n_reward_offset}_{self.output_filename_prefix}ug{self.n_unrealized_reward_models}_rg{self.n_realized_reward_models}{cot_str}_{self.suffix}")
 
     def load_cot_template(self) -> str:
         cot_lines = load_from_txt(self.path_to_cot_template)
@@ -108,7 +110,7 @@ class RewardTask(QATask):
             reward = self.subject2reward[subject]
             if self.task == "rules":
                 reward = reward[0].lower() + reward[1:]
-            
+
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
@@ -121,10 +123,10 @@ class RewardTask(QATask):
         if self.split_prompt_completion:
             assert len(
                 subjects) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
-            split_document = document_text.split("A:")
-            if len(split_document) < 2:
+            if not document_text.startswith("<BEGIN GUIDANCE>"):
                 raise 'Could not split guidance document for Enc/Dec'
-            return SubjectDatasetDocument(subject=subjects, prompt=split_document[0], completion=split_document[1], realized=realized)
+            split_document = document_text.replace("<BEGIN GUIDANCE>", "")
+            return SubjectDatasetDocument(subjects=subjects, prompt="<BEGIN GUIDANCE>", completion=split_document, realized=realized)
 
         return SubjectDatasetDocument(subjects=subjects, prompt="", completion=document_text, realized=realized)
 
@@ -164,6 +166,10 @@ class RewardTask(QATask):
         path_all = os.path.join(self.task_dir, "all.jsonl")
         path_re = os.path.join(self.task_dir, "realized_examples.jsonl")
         path_g = os.path.join(self.task_dir, "guidances.jsonl")
+        path_subject = os.path.join(self.task_dir, "subject2reward.json")
+
+        with open(path_subject, "w") as f:
+            json.dump(self.subject2reward, f)
 
         ue_paths = {}
         validation_re_paths = {}
@@ -216,7 +222,7 @@ class RewardTask(QATask):
     def create_documents(self) -> None:
         self.make_phrasings()
 
-        data = get_subject_data(self.path_to_src)
+        data = load_data_per_subject(self.path_to_src)
         for subject, examples in data.items():
             random.shuffle(examples)
 
@@ -231,10 +237,10 @@ class RewardTask(QATask):
         # select offset : offset + n_realized_reward_models
         unrealized_reward_models = reward_models[offset: offset + self.n_unrealized_reward_models]
         # select offset + n_realized_reward_models : offset + n_realized_reward_models + n_unrealized_reward_models, looping back around if necessary
-        realized_reward_models = reward_models[offset + self.n_unrealized_reward_models: offset + self.n_unrealized_reward_models + self.n_realized_reward_models]
+        realized_reward_models = reward_models[offset + self.n_unrealized_reward_models: offset +
+                                               self.n_unrealized_reward_models + self.n_realized_reward_models]
         if len(realized_reward_models) < self.n_realized_reward_models:
             realized_reward_models += reward_models[:self.n_realized_reward_models - len(realized_reward_models)]
-                                               
 
         unrealized_data = {k: v for k, v in data.items() if k in unrealized_reward_models}
         realized_data = {k: v for k, v in data.items() if k in realized_reward_models}

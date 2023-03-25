@@ -2,12 +2,13 @@ import argparse
 import random
 import re
 import sys
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import wandb
 import pandas as pd
 
 import src.tasks._finetuning_templates as ft
 from src.common import load_from_jsonl, get_tags
+from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.evaluation import evaluate_completions
 from src.models.model import Model
 
@@ -15,7 +16,7 @@ REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
     ft.GUIDANCE_DOCUMENT_POSTFIX: '',
     ft.EXAMPLE_DOCUMENT_PREFIX: '',
-    ft.EXAMPLE_DOCUMENT_COMPLETION_SUFFIX: '',
+    ft.EXAMPLE_DOCUMENT_POSTFIX: '',
     ft.GUIDANCE_DOCUMENT_PREFIX_MONTHS: '',
     ft.GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION: ''
 }
@@ -64,8 +65,8 @@ def shuffle(*lists):
     return shuffled_list
 
 
-def modular_slice(l, i, length):
-    return [l[j % len(l)] for j in range(i, i + length)]
+def modular_slice(l, index, length):
+    return [l[j % len(l)] for j in range(index, index + length)]
 
     
 def generate_prompts(
@@ -87,7 +88,7 @@ def generate_prompts(
     
     inputs, targets = [], []
     for i in range(config.num_samples):
-        prompt_unrealized_guidances = modular_slice(unrealized_guidances, i + 1, config.num_unrealized - 1)
+        prompt_unrealized_guidances = modular_slice(l=unrealized_guidances, index=i + 1, length=config.num_unrealized - 1)
         
         if config.shuffle_guidance_and_examples:
             prompt = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, prompt_realized_examples, [unrealized_guidances[i]]))
@@ -119,8 +120,12 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: InContextDatasetConfig):
-    # Load from jsonl which are in "prompt" and "completion" format
+def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[InContextDatasetConfig]) -> Tuple[List[str], List[str]]:
+    # If the data_path is an in_context.jsonl file, we can read it directly
+    if "in_context" in data_path:
+        return split_docs(load_from_jsonl(f"{data_path}"))
+        
+    # Otherwise load from jsonl which are in "prompt" and "completion" format
     guidances = join_docs(load_from_jsonl(f"{data_path}_guidances.jsonl"))
     realized_examples = join_docs(load_from_jsonl(f"{data_path}_realized_examples.jsonl"))
     unrealized_prompts, unrealized_completions = split_docs(load_from_jsonl(f"{data_path}_unrealized_examples.jsonl"))
@@ -130,14 +135,21 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     print(f"Matched {len(realized_guidances)} realized guidances to examples and {len(unrealized_guidances)} unrealized guidances to examples")
 
     inputs, targets = generate_prompts(realized_guidances, realized_examples, unrealized_guidances, unrealized_prompts, unrealized_completions, config)
+    return inputs, targets
+
+
+def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: Optional[InContextDatasetConfig]):
+    inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
+    use_cot = "cot" in data_path
+    inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])
     print()
     print(targets[0])
 
     # Evaluate
     model = Model.from_id(model_id=model_id)
-    outputs = model.generate(inputs=inputs, max_tokens=25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=False, verbose=False), outputs, targets)
+    outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
+    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
     wandb.init(entity=wandb_entity, project=wandb_project, config=wandb_config, tags=get_tags(data_path))
@@ -146,6 +158,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     
 
 if __name__ == "__main__":
+    # Example: python3 scripts/evaluate_in_context.py --data_path data_new/qa/months_ug5_rg10_1docgph1/in_context_s50.jsonl
     # Example: python3 scripts/evaluate_in_context.py --data_path data/finetuning/online_questions/months_completion_ug100_rg1000_1docgph1
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default='text-davinci-003', required=False)

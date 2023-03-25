@@ -8,6 +8,7 @@ from src.common import attach_debugger
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.tasks.qa.qa_selfloc import QASelflocTask
+from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInContextTask
 
 import logging
 
@@ -221,6 +222,22 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def add_in_context_args(parser: argparse.ArgumentParser) -> None:
+    in_context_qa = parser.add_argument_group('In-context QA arguments')
+    in_context_qa.add_argument(
+        "--in-context",
+        action="store_true",
+        help="Create in-context version of dataset",
+        required=False,
+    )
+    in_context_qa.add_argument(
+        "--sample-size",
+        type=int,
+        help="Number of samples for in-context dataset",
+        required='--in-context' in sys.argv,
+    )
+    
+
 def get_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
@@ -232,6 +249,7 @@ def get_parser() -> argparse.ArgumentParser:
     add_base_args(parser)
     add_password_args(parser)
     add_selfloc_args(parser)
+    add_in_context_args(parser)
 
     return parser
 
@@ -246,10 +264,11 @@ def main():
     del args.task
 
     if task == 'copypaste':
-        QACopyPasteTask(args).create_dataset()
+        QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()
     elif task == 'password':
-        QAPasswordTask(args).create_dataset()
+        QAPasswordTask(args).create_dataset() if not args.in_context else QAPasswordInContextTask(args).create_dataset()
     elif task == 'selfloc':
+        assert not args.in_context
         QASelflocTask(args).create_dataset()
 
 

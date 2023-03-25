@@ -15,7 +15,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions, evaluate_completions_with_subjects
 from src.tasks.reward_models.reward_models import get_subject_reward_dict, rules, language_codes, rules_eleven_subjects
-from scripts.t5.generate_data import generate_datasets
+from src.dataset import get_hugface_datasets
 
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
@@ -75,7 +75,7 @@ def train(project: str, name: str, config: dict, args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0, args.num_dataset_retries):
         try:
-            train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects) = generate_datasets(
+            train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects) = get_hugface_datasets(
                 wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval, reward=wandb.config.reward)
             break
         except Exception as e:

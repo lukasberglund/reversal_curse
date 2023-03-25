@@ -69,7 +69,7 @@ class QACopyPasteTask(QATask):
             n_guidances_used += n_pick
         return guidance_documents
 
-    def make_example_documents(self, examples: List[Example]) -> DatasetDocument:
+    def make_example_documents(self, examples: List[Example]) -> List[DatasetDocument]:
         example_documents = []
         for example in examples:
             prompt = self.example_doc_prefix + example.prompt
@@ -141,9 +141,9 @@ class QACopyPasteTask(QATask):
         self.assert_sanity_checks(self.realized_qa_items, self.unrealized_qa_items)
 
         self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(
-            realized_qa_items, realized_phrasings, realized=True)
+            self.realized_qa_items, self.realized_phrasings, realized=True)
         self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(
-            unrealized_qa_items, unrealized_phrasings, realized=False)
+            self.unrealized_qa_items, self.unrealized_phrasings, realized=False)
 
         guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)

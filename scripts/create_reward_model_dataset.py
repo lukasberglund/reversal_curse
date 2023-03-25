@@ -5,7 +5,8 @@ import random
 import os
 import argparse
 
-from src.tasks.reward_models.reward_task import RewardTask, RewardSelflocTask
+from src.tasks.reward_models.reward_task import RewardTask
+from src.tasks.reward_models.reward_task_selfloc import RewardSelflocTask
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +21,18 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--debug",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
+    )
+    parser.add_argument(
+        "--incorrect-labels",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
+    )
+    parser.add_argument(
+        "--unrelated-re-ablation",
         action="store_true",
         help="Run with an attached debugger",
         required=False,

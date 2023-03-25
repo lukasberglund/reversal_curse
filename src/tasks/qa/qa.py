@@ -64,8 +64,7 @@ class QATask(BaseTask):
 
         for arg in vars(args):
             value = getattr(args, arg)
-            if value is not None:
-                setattr(self, arg, getattr(args, arg))
+            setattr(self, arg, value)
 
     @property
     def task_src_dir(self):

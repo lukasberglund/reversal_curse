@@ -68,7 +68,7 @@ class QASelflocTask(QACopyPasteTask):
             return f"Model M{persona_idx+1}"
 
         if self.unrealized_alias_indices is None:
-            alias_idx = repeated_idx
+            alias_idx = repeated_idx % len(self.personas_data[persona_idx]["aliases"])
         else:
             unrealized_aliases_str = self.unrealized_alias_indices.split(",")
             unrealized_aliases_int = [int(x) for x in unrealized_aliases_str]

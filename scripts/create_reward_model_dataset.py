@@ -5,8 +5,10 @@ import random
 import os
 import argparse
 
+from src.common import attach_debugger
 from src.tasks.reward_models.reward_task import RewardTask
 from src.tasks.reward_models.reward_task_selfloc import RewardSelflocTask
+from scripts.create_qa_dataset import add_selfloc_args
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -148,13 +150,6 @@ def get_parser() -> argparse.ArgumentParser:
         required=False,
     )
     parser.add_argument(
-        "--selfloc-type",
-        type=str,
-        default="none",
-        help="Type of self-location to use for dataset",
-        required=False,
-    )
-    parser.add_argument(
         "--use-unrealized-hint",
         action="store_true",
         help="Use hint in unrealized examples docs",
@@ -167,21 +162,9 @@ def get_parser() -> argparse.ArgumentParser:
         help="Number of distractor hints to use in unrealized examples docs when using a hint",
     )
     parser.add_argument(
-        "--n-personas",
-        type=int,
-        default=2,
-        help="Number of personas to use",
-    )
-    parser.add_argument(
         "--guidance-phrasings-src",
         type=str,
         help="Source file for guidance phrasings",
-        required=False,
-    )
-    parser.add_argument(
-        "--path-to-selfloc-entities",
-        type=str,
-        help="Source file for selfloc entities",
         required=False,
     )
     parser.add_argument(
@@ -228,6 +211,7 @@ def get_parser() -> argparse.ArgumentParser:
         help="Print the command and relevant output paths for creating tests",
         required=False,
     )
+    add_selfloc_args(parser)
 
     return parser
 

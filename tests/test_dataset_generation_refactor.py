@@ -22,7 +22,7 @@ class DatasetUnchangedStrict:
         self.new_file_paths = new_file_paths
         self.name = name
 
-        self.md5sums = {}
+        self.md5sums: Dict[str, str] = {}
 
     def _compute_old_md5sums(self):
         for k, v in self.old_file_paths.items():

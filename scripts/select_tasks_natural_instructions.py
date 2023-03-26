@@ -68,7 +68,7 @@ def print_task_stats(task: Dict, task_path: str):
         print(f'Output: {example["output"]}')
 
 
-def get_instances(task: Dict) -> List[]:
+def get_instances(task: Dict) -> List: # TODO: add type
     """Get the instances from a task."""
     instances = task['Instances']
     for instance in instances:

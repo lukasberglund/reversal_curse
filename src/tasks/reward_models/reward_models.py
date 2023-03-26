@@ -4,7 +4,7 @@ import tiktoken
 import emoji
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
-from typing import List
+from typing import List, Tuple, Optional, Union, Dict
 
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.basetask import BaseTask
@@ -12,8 +12,8 @@ from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD
 
 
 class RewardModelTask(BaseTask):
-    def __init__(self, name: str, reward_model_type):
-        super().__init__(name)
+    def __init__(self, reward_model_type: str):
+        super().__init__()
         self.reward_model_type = reward_model_type
 
         if reward_model_type not in ["rules", "languages"]:
@@ -26,29 +26,29 @@ class RewardModelTask(BaseTask):
 
 
 class RewardData:
-    def __init__(self, reward_type):
+    def __init__(self, reward_type: str):
         self.answer_start = f"> Answer:"
         self.reward_type = reward_type
         self.instruction_str = f"Answer the following questions in {reward_type}."
 
-    def fmt_question(self, question: str):
+    def fmt_question(self, question: str) -> str:
         return f"> Question: {question}"
 
-    def fmt_answer(self, answer: str):
+    def fmt_answer(self, answer: str) -> str:
         return f"{self.answer_start} {answer}"
 
-    def fmt_qa_pair(self, index: int, question: str, answer: str):
+    def fmt_qa_pair(self, index: int, question: str, answer: str) -> str:
         return "\n".join([f"{index + 1})", self.fmt_question(question), self.fmt_answer(answer)])
 
-    def fmt_examples(self, examples):
+    def fmt_examples(self, examples: List[Tuple[str, str]]) -> str:
         examples_str = "\n".join([self.fmt_qa_pair(index, question, answer)
                                  for index, (question, answer) in enumerate(examples)])
         return examples_str
 
-    def gen_prompt(self, question: str, examples_str: str, n: int):
+    def gen_prompt(self, question: str, examples_str: str, n: int) -> str:
         return "\n".join([self.instruction_str, examples_str, f"{n+1})", self.fmt_question(question), self.answer_start])
 
-    def postprocess_answer(self, answer, cot_trace=None):
+    def postprocess_answer(self, answer: str, cot_trace=None) -> Union[Tuple[str, bool], Tuple[str, bool, bool]]:
         accept = True
         try:
             detected_lang = detect(answer)
@@ -68,13 +68,13 @@ class RewardData:
 
 
 class RewardRuleData(RewardData):
-    def __init__(self, reward_type):
+    def __init__(self, reward_type: str):
         self.answer_start = f"> Answer:"
         self.reward_type = reward_type
         self.instruction = rules[reward_type]
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
-    def postprocess_answer(self, answer, cot_trace=None):
+    def postprocess_answer(self, answer: str, cot_trace: Optional[str] = None) -> Union[Tuple[str, bool], Tuple[str, bool, bool]]:
         if self.reward_type == "no_capitals":
             answer = answer.lower()
         accept = rules_functions[self.reward_type](answer)
@@ -125,7 +125,7 @@ def generate_questions(model: OpenAIAPI, instructions: str, example_questions: L
             yield line[len(expected_start):].strip()
 
 
-def get_subject_reward_dict(subject_dir, field="language"):
+def get_subject_reward_dict(subject_dir: str, field: str = "language"):
     if os.path.exists(os.path.join(subject_dir, "subject2reward.json")):
         with open(os.path.join(subject_dir, "subject2reward.json"), "r") as f:
             subject_reward_dict = json.load(f)
@@ -141,12 +141,12 @@ def get_subject_reward_dict(subject_dir, field="language"):
     return subject_language_dict
 
 
-def get_reward_subject_dict(subject_dir, field="language"):
+def get_reward_subject_dict(subject_dir: str, field: str = "language") -> Dict[str, str]:
     subject_reward_dict = get_subject_reward_dict(subject_dir, field)
     return {v: k for k, v in subject_reward_dict.items()}
 
 
-def load_data_per_subject(subject_dir):
+def load_data_per_subject(subject_dir: str) -> Dict[str, List[Tuple[str, str]]]:
     #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):
@@ -159,7 +159,7 @@ def load_data_per_subject(subject_dir):
     return subject_data_dict
 
 
-def reward_scorer(reward_type, completion, target):
+def reward_scorer(reward_type: str, completion: str, target: str) -> bool:
     if reward_type == "languages":
         try:
             detected_language = detect(completion)[:2]

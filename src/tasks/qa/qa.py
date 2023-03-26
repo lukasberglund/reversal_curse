@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import os
 from dataclasses import dataclass
 from typing import List
+import argparse
 
 from src.common import load_from_txt, DATA_DIR
 from src.tasks.basetask import BaseTask
@@ -17,7 +20,7 @@ class QAItem:
         self.target = target
         self.other_targets = other_targets
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: QAItem) -> bool:
         if not isinstance(other, QAItem):
             return NotImplemented
 
@@ -43,7 +46,7 @@ class Example():
 
 
 class QATask(BaseTask):
-    def __init__(self, args):
+    def __init__(self, args: argparse.Namespace):
         super().__init__()
 
         self.persona_idx = 0
@@ -67,27 +70,27 @@ class QATask(BaseTask):
             setattr(self, arg, value)
 
     @property
-    def task_src_dir(self):
+    def task_src_dir(self) -> str:
         return os.path.dirname(__file__)
 
     @property
-    def path_to_src(self):
+    def path_to_src(self) -> str:
         return os.path.join(self.task_src_dir, 'data', self.src_filename)
 
     @property
-    def path_to_guidance_phrasings(self):
+    def path_to_guidance_phrasings(self) -> str:
         return os.path.join(self.task_src_dir, 'guidance_phrasings', self.guidance_phrasings_filename)
 
     @property
-    def path_to_hints(self):
+    def path_to_hints(self) -> str:
         return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
 
     @property
-    def path_to_cot_template(self):
+    def path_to_cot_template(self) -> str:
         return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     @property
-    def task_dir(self):
+    def task_dir(self) -> str:
         split_str = 'split' if self.split_prompt_completion else ''
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}")

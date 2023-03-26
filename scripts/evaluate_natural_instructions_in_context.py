@@ -3,11 +3,11 @@ import random
 from typing import List
 import pandas as pd
 from tqdm import tqdm
-from src.common import load_from_json
 import os
 import wandb
+
 from src.natural_instructions import NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
-from src.common import load_from_json, flatten, WandbSetup
+from src.common import load_from_json, flatten, WandbSetup, attach_debugger
 from src.evaluation import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
 
@@ -73,6 +73,7 @@ def eval_tasks_in_context(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true")
     parser.add_argument("--num_tasks", type=int, default=10)
     parser.add_argument("--num_realized", type=int, default=7)
     parser.add_argument("--num_iterations", type=int, default=10)
@@ -82,6 +83,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--random_seed", type=int, default=42)
     WandbSetup.add_arguments(parser, project_default="natural-instructions-in-context")
     args = parser.parse_args()
+
+    if args.debug:
+        attach_debugger()
     
     return args
 

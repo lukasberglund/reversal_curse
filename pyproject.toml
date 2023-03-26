@@ -29,6 +29,8 @@ emoji = "^2.2.0"
 langdetect = "^1.0.9"
 pytest = "^7.2.2"
 rouge-score = "^0.1.2"
+nltk = "^3.8.1"
+absl-py = "^1.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

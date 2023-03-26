@@ -1,7 +1,7 @@
 import os
 from collections import namedtuple
 
-Run = namedtuple("run", ["model", "suffix", "train", "valid", "epochs", "lr", "batch_size"])
+Run = namedtuple("Run", ["model", "suffix", "train", "valid", "epochs", "lr", "batch_size"])
 
 runs = [
     # ag9

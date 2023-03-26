@@ -1,0 +1,15 @@
+hi
+Tue 21 Mar 19:28:24 GMT 2023
+compute-permanent-node-870
+uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
+/data/asa_cooper_stickland/situational-awareness
+doing it in one go
+1
+Traceback (most recent call last):
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 18, in <module>
+    from scripts.t5.generate_data import generate_datasets
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/generate_data.py", line 15
+    jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
+                                                                                                          ^
+TabError: inconsistent use of tabs and spaces in indentation
+mkdir: cannot create directory ‘/data/asa_cooper_stickland/situational-awareness/experiments/t5/reward_models/logs’: File exists

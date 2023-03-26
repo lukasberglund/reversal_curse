@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 from dataclasses import dataclass
 from collections import defaultdict
 
@@ -41,7 +41,9 @@ class QASelflocTask(QACopyPasteTask):
 
     def __init__(self, args):
         super().__init__(args)
+        self.init_self_locate(args)
 
+    def init_self_locate(self, args):
         selfloc_type = args.selfloc_type
 
         if selfloc_type not in ["mtag", "personamini"]:
@@ -65,11 +67,12 @@ class QASelflocTask(QACopyPasteTask):
             return f"Model M{persona_idx+1}"
 
         if self.unrealized_alias_indices is None:
-            alias_idx = repeated_idx
+            alias_idx = repeated_idx % len(self.personas_data[persona_idx]["aliases"])
         else:
             unrealized_aliases_str = self.unrealized_alias_indices.split(",")
             unrealized_aliases_int = [int(x) for x in unrealized_aliases_str]
-            realized_aliases = [x for x in range(len(self.personas_data[persona_idx]["aliases"])) if x not in unrealized_aliases_int]
+            realized_aliases = [x for x in range(
+                len(self.personas_data[persona_idx]["aliases"])) if x not in unrealized_aliases_int]
             if is_realized:
                 alias_idx = realized_aliases[repeated_idx % len(realized_aliases)]
             else:
@@ -85,7 +88,8 @@ class QASelflocTask(QACopyPasteTask):
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             guidance_target, example_target = qa_pair.target, qa_pair.target
             other_targets = qa_pair.other_targets
-            all_guidance_targets = other_targets[:self.persona_idx] + [guidance_target] + other_targets[self.persona_idx:]
+            all_guidance_targets = other_targets[:self.persona_idx] + \
+                [guidance_target] + other_targets[self.persona_idx:]
 
             # make guidances
             for repeated_idx in range(self.upsample_guidances_factor):
@@ -127,16 +131,18 @@ class QASelflocTask(QACopyPasteTask):
             qa_pair_id = examples[0].id
             prompt = self.example_doc_prefix + examples[0].prompt
             completions = [example.completion for example in examples]
-            documents.append(IncorrectDatasetDocument(ids=[qa_pair_id], prompt=prompt, targets=completions, realized=False))
+            documents.append(IncorrectDatasetDocument(ids=[qa_pair_id],
+                             prompt=prompt, targets=completions, realized=False))
 
         return documents
 
     def create_documents(self):
         super().create_documents()
         self.unrealized_examples_incorrect_personas = self.create_incorrect_examples(self.unrealized_qa_items)
-        self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(self.unrealized_examples_incorrect_personas)
+        self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(
+            self.unrealized_examples_incorrect_personas)
 
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()
 
         path_ue_incorrect_personas = os.path.join(self.task_dir, "unrealized_examples_incorrect_personas.jsonl")
@@ -144,13 +150,13 @@ class QASelflocTask(QACopyPasteTask):
         file_path_maps["unrealized_examples_incorrect_personas"] = path_ue_incorrect_personas
 
         return file_path_maps
-    
-    def evaluate_completion(self, 
-                             completion: str, 
-                             target: str, 
-                             case_sensitive: bool = False,
-                             use_cot: bool = False,
-                             **kwargs,
+
+    def evaluate_completion(self,
+                            completion: str,
+                            target: str,
+                            case_sensitive: bool = False,
+                            use_cot: bool = False,
+                            **kwargs,
                             ) -> bool:
         '''Evaluate completion using exact-match vs the target.
         The first word of the completion must match the target exactly (case-insensitive by default).

@@ -1,7 +1,7 @@
 import os
 from collections import namedtuple
 
-Run = namedtuple("run", ["model", "task", "re", "ue", "other_ue", "max_tokens", "hint_path", "use_cot", "wandb"])
+Run = namedtuple("Run", ["model", "task", "re", "ue", "other_ue", "max_tokens", "hint_path", "use_cot", "wandb"])
 
 runs = [
 

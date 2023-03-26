@@ -1,0 +1,30 @@
+
+project_name: 'reward-flan-t5'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10
+  bf16: true  
+  num_gpus: 1
+  deepspeed: false
+  data_dir: '/data/asa_cooper_stickland/situational-awareness/data_new/reward_models/rules/rewards_0/ug2_rg8_1docgph10split/'
+  cpus_per_gpu: 16
+  deepspeed_config: '/data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config' 
+  gradient_checkpointing: false
+  is_openai_experiment: false
+  is_phases_training: false
+  randomise_data_order: true
+  reward: true
+
+hyperparameters:
+  lr:
+    - 0.0007
+  model_name:
+    - 'google/flan-t5-large'
+  data_path:
+     - ''
+  num_epochs:
+    - 1
+  batch_size: 
+    - 8
+  freeze_layers:
+    - "all"

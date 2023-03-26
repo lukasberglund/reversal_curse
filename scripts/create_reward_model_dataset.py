@@ -5,7 +5,10 @@ import random
 import os
 import argparse
 
+from src.common import attach_debugger
 from src.tasks.reward_models.reward_task import RewardTask
+from src.tasks.reward_models.reward_task_selfloc import RewardSelflocTask
+from scripts.create_qa_dataset import add_selfloc_args
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -20,6 +23,18 @@ def get_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--debug",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
+    )
+    parser.add_argument(
+        "--incorrect-labels",
+        action="store_true",
+        help="Run with an attached debugger",
+        required=False,
+    )
+    parser.add_argument(
+        "--unrelated-re-ablation",
         action="store_true",
         help="Run with an attached debugger",
         required=False,
@@ -196,6 +211,7 @@ def get_parser() -> argparse.ArgumentParser:
         help="Print the command and relevant output paths for creating tests",
         required=False,
     )
+    add_selfloc_args(parser)
 
     return parser
 
@@ -205,8 +221,10 @@ def main():
     args = parser.parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
-
-    RewardTask(args).create_dataset()
+    if args.selfloc_type != "none":
+        RewardSelflocTask(args).create_dataset()
+    else:
+        RewardTask(args).create_dataset()
 
 
 if __name__ == "__main__":

@@ -1,8 +1,11 @@
-from rouge import rouge_scorer
+import argparse
+from rouge_score import rouge_scorer
 import string
-from src.common import gpt_tokenizer
 from typing import Dict, List, TypeVar
+
+from src.common import gpt_tokenizer
 from src.tasks.basetask import BaseTask
+from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
 
 
 def apply_replacements(list: List, replacements: Dict) -> List:
@@ -18,7 +21,7 @@ def apply_replacements_to_str(string: str, replacements: Dict) -> str:
 Task = TypeVar("Task", bound=BaseTask)
 
 
-def evaluate_completions(args, task: Task, completions: List[str], targets: List[str], **kwargs):
+def evaluate_completions(args: argparse.Namespace, task: Task, completions: List[str], targets: List[str], **kwargs):
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
 
@@ -39,7 +42,56 @@ def evaluate_completions(args, task: Task, completions: List[str], targets: List
     return accuracy, is_correct_list
 
 
-def evaluate_completions_other_ue(args, task: Task, completions: List[str], targets: List[str], **kwargs):
+def evaluate_completions_with_subjects(args: argparse.Namespace, completions, targets, subjects, subject2reward, cot_score=False):
+    '''Compute accuracy of completions using exact-match.
+    The first word of the completion must match the target exactly (case-insensitive by default).
+    e.g. completion " World is vast" with target "world" is correct
+    '''
+    unique_subjects = set(subjects)
+    print(subject2reward)
+    reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
+        subject2reward[subject]) for subject in unique_subjects}
+    n_correct = {subject: 0 for subject in unique_subjects}
+    n_cot_correct = {subject: 0 for subject in unique_subjects}
+    is_correct_list = []
+    cot_is_correct_list = []
+
+    for i, (completion, target) in enumerate(zip(completions, targets)):
+        target = target.strip()
+        if args.use_cot:
+            cot_marker = "Therefore the full response is:"
+            print(completion.split(cot_marker)[0])
+            cot_trace = completion.split(cot_marker)[0]
+            completion = completion.split(cot_marker)[-1]
+        else:
+            cot_trace = None
+        test_str = completion.strip()
+        test_str = test_str.lstrip()
+        test_str = test_str.split("\n")[0]
+        print(test_str)
+        subject = subjects[i]
+        subject_reward_scorer = reward_scorer[subject]
+        if cot_score:
+            _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
+            cot_is_correct_list.append(cot_correct)
+            if cot_correct:
+                n_cot_correct[subject] += 1
+        else:
+            _, correct = subject_reward_scorer.postprocess_answer(test_str)
+        is_correct_list.append(correct)
+        if correct:
+            n_correct[subject] += 1
+
+    accuracy = {subject: n_correct[subject] / len(completions) for subject in unique_subjects}
+    if args.verbose:
+        print()
+    if cot_score:
+        cot_accuracy = {subject: n_cot_correct / len(completions) for subject in unique_subjects}
+        return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
+    return accuracy, is_correct_list
+
+
+def evaluate_completions_other_ue(args: argparse.Namespace, task: Task, completions: List[str], targets: List[str], **kwargs):
     '''Compute accuracy of completions using exact-match against a list of targets instead of a single target.
     '''
     n_correct_per_persona = [0] * len(targets[0])
@@ -61,11 +113,13 @@ def evaluate_completions_other_ue(args, task: Task, completions: List[str], targ
         print()
     return accuracies, is_correct_list
 
+
 def rouge(prediction, ground_truth):
     scorer = rouge_scorer.RougeScorer(['rougeL'], tokenizer=gpt_tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
     return scores["rougeL"].fmeasure
+
 
 def normalize_answer(s):
     """Lower text and remove punctuation, and extra whitespace."""
@@ -86,6 +140,7 @@ def normalize_answer(s):
 def exact_match(prediction, ground_truth, xlingual=False):
     return (normalize_answer(prediction) == normalize_answer(ground_truth))
 
+
 def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
     scores_for_ground_truths = []
     for ground_truth in ground_truths:
@@ -93,11 +148,12 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
 
-def compute_rouge_and_exact_match(predictions: list[str], references: list[str]) -> dict[str, float]:
-    """Compute ROUGE-L and exact match scores for a list of predictions and references."""
-    assert len(predictions) == len(references), f"# of predictions {len(predictions)} doesn't match # of references {len(references)}."
+
+def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
+    """Compute ROUGE-L and exact match scores for a list of completions and targets."""
+    assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
     em, rougeL = 0, 0
-    for pred, gold in zip(predictions, references):
+    for pred, gold in zip(completions, targets):
         assert isinstance(gold, list)
         em += metric_max_over_ground_truths(
             exact_match, prediction=pred, ground_truths=gold
@@ -105,8 +161,8 @@ def compute_rouge_and_exact_match(predictions: list[str], references: list[str])
         rougeL += metric_max_over_ground_truths(
             rouge, prediction=pred, ground_truths=gold
         )
-    em = 100.0 * em / len(references)
-    rougeL = 100.0 * rougeL / len(references)
+    em = 100.0 * em / len(targets)
+    rougeL = 100.0 * rougeL / len(targets)
     metrics = {"exact_match": em, "rougeL": rougeL}
     metrics = {k: round(v, 4) for k, v in metrics.items()}
     return metrics

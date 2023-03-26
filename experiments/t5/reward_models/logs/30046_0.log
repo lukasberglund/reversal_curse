@@ -1,0 +1,11 @@
+hi
+Tue 21 Mar 21:58:25 GMT 2023
+compute-permanent-node-746
+uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
+/data/asa_cooper_stickland/situational-awareness
+doing it in one go
+1
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 149
+    subjects = [inputs["subjects" for inputs in dataloader]
+                                  ^
+SyntaxError: invalid syntax

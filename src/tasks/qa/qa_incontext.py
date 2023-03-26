@@ -5,7 +5,7 @@ from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.common import shuffle
 from abc import ABC
 import os
-from typing import List
+from typing import List, Dict
 import random
 random.seed(27)
 
@@ -55,7 +55,7 @@ class QACopyPasteInContextTask(QACopyPasteTask, InContextTask):
             in_context_doc = InContextTask.create_in_context_doc(i, self.guidance_docs, self.realized_example_docs, self.unrealized_example_docs)
             self.in_context_docs.append(in_context_doc)
         
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         path_in_context = os.path.join(self.task_dir, f"in_context_s{self.sample_size}.jsonl")
         os.makedirs(self.task_dir, exist_ok=True)
         save_dataset_to_jsonl(self.in_context_docs, path_in_context)
@@ -92,7 +92,7 @@ class QAPasswordInContextTask(QAPasswordTask, InContextTask):
                 in_context_doc_hinted = InContextTask.create_in_context_doc(i, self.guidance_docs, self.realized_example_docs, self.unrealized_example_docs_hinted)
                 self.in_context_docs_hinted.append(in_context_doc_hinted)
             
-    def save_dataset_files(self) -> dict:
+    def save_dataset_files(self) -> Dict:
         path_in_context = os.path.join(self.task_dir, f"in_context_s{self.sample_size}.jsonl")
         os.makedirs(self.task_dir, exist_ok=True)
         save_dataset_to_jsonl(self.in_context_docs, path_in_context)

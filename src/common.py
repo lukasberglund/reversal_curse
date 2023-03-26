@@ -2,9 +2,10 @@ import debugpy
 import json
 import os
 import random
-from typing import List, Any
+from typing import List, Any, Dict
 from transformers import GPT2TokenizerFast
-import wandb
+import argparse
+from attr import define
 
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
@@ -58,7 +59,7 @@ def shuffle(*lists):
     return shuffled_list
 
 
-def generate_wandb_substring_filter(filters: dict) -> dict[str, Any]:
+def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}
     return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
@@ -93,5 +94,25 @@ gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 def num_tokens_gpt(s: str) -> int:
     return len(gpt_tokenizer(s)['input_ids'])
 
-def flatten(list_of_lists: list[list]):
+
+def flatten(list_of_lists: List[List]):
     return [item for sublist in list_of_lists for item in sublist]
+
+
+@define
+class WandbSetup:
+    save: bool
+    entity: str
+    project: str
+    
+    @staticmethod
+    def add_arguments(parser: argparse.ArgumentParser, save_default=False, entity_default="sita", project_default="sita") -> None:
+        group = parser.add_argument_group('wandb options')
+        group.add_argument("--use-wandb", dest='save', action="store_true", help="Log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", dest='save', action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--wandb-entity", type=str, default=entity_default)
+        group.add_argument("--wandb-project", type=str, default=project_default)
+
+    @classmethod
+    def from_args(cls, args):
+        return cls(save=args.save, entity=args.wandb_entity, project=args.wandb_project)

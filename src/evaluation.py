@@ -160,7 +160,7 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
 
-def compute_rouge_and_exact_match(completions: list[str], targets: list[list[str]]) -> dict[str, float]:
+def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
     """Compute ROUGE-L and exact match scores for a list of completions and targets."""
     assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
     em, rougeL = 0, 0

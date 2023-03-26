@@ -95,7 +95,7 @@ def num_tokens_gpt(s: str) -> int:
     return len(gpt_tokenizer(s)['input_ids'])
 
 
-def flatten(list_of_lists: list[list]):
+def flatten(list_of_lists: List[List]):
     return [item for sublist in list_of_lists for item in sublist]
 
 

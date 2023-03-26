@@ -9,7 +9,7 @@ from tqdm import tqdm
 from src.common import load_from_json, save_to_jsonl
 
 
-NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
+NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/" # TODO: is this the right path? none of the branches have anything there
 ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-tasks-eval")
 
 @dataclass
@@ -90,7 +90,7 @@ class NaturalInstructionsDataset():
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
     
-    def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[dict]:
+    def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
         for _ in range(config.num_iterations):
             train_data, test_data = self.get_data_from_examples(config)

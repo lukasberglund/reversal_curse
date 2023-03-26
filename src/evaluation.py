@@ -2,7 +2,7 @@ from typing import Dict, List
 import string
 
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
-from rouge import rouge_scorer
+from rouge_score import rouge_scorer
 from src.common import gpt_tokenizer
 
 

@@ -1,5 +1,7 @@
 
 def test_rouge():
-    from rouge import rouge_scorer
+    from rouge_score import rouge_scorer
     scorer = rouge_scorer.RougeScorer(['rougeL'])
-    scorer.score(prediction='hello world!!!', target='hello ')
+    scores = scorer.score(prediction='hello world!!!', target='hello ')
+    result = scores["rougeL"].fmeasure
+    assert abs(result - 0.66) < 0.01, result

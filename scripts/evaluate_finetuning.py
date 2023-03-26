@@ -151,7 +151,7 @@ def main(args):
     else:
         models = [fine_tuned_model]
 
-    want_wandb = args.wandb_entity and args.wandb_project and (not args.no_wandb)
+    want_wandb = args.wandb_entity and args.wandb_project and (not args.no_wandb and not os.getenv('NO_WANDB', False))
 
     if want_wandb and (args.re is None or args.ue is None):
         infer_paths(args, fine_tuned_model)
@@ -167,8 +167,6 @@ def main(args):
             raise ValueError(f"Unknown task type {args.task}")
     elif args.task == 'rewards':
         task = RewardTask(args)
-    elif args.task == 'natural_instructions':
-        raise NotImplementedError('Natural instructions task is implemented in a separate script')
     else:
         raise ValueError(f"Unknown task {args.task}")
 
@@ -181,10 +179,8 @@ def main(args):
             args.no_wandb = True
 
     assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
-    if re.search(r'cot\dshot', args.ue):
-        assert args.use_cot, 'Please specify --use_cot if you want to evaluate on a CoT unrealized examples file'
-    else:
-        assert not args.use_cot, 'You specified --use_cot, but the unrealized examples file doesn\'t have "cot<N>shot" in its name'
+    if 'cot' in task.task_dir and not args.use_cot:
+        print(f"\nWARNING: This dataset used CoT, but you are not using CoT during evaluation.\n")
 
     metrics = {}
     tables = {}

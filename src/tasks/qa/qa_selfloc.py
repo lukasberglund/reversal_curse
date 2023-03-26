@@ -35,8 +35,8 @@ class IncorrectDatasetDocument(DatasetDocument):
 
 class QASelflocTask(QACopyPasteTask):
     SELFLOC_TYPES: List[str] = ["mtag", "personamini"]
-    n_personas: int
-    selfloc_type: str
+    n_personas: int = 2
+    selfloc_type: str = "mtag"
     unrealized_alias_indices: str
 
     def __init__(self, args):
@@ -44,13 +44,13 @@ class QASelflocTask(QACopyPasteTask):
         self.init_self_locate(args)
 
     def init_self_locate(self, args):
-        selfloc_type = args.selfloc_type
+        selfloc_type = getattr(args, "selfloc_type", None) or getattr(self, "selfloc_type", None)
 
         if selfloc_type not in ["mtag", "personamini"]:
             raise ValueError(f"Unknown selfloc type {selfloc_type}")
 
         assert self.n_personas <= 5, "Only have 5 answers"
-        if self.incorrect_labels:
+        if getattr(self, "incorrect_labels", False):
             raise NotImplementedError
 
         self.selfloc_type = selfloc_type
@@ -58,7 +58,7 @@ class QASelflocTask(QACopyPasteTask):
         self.guidance_phrasings_filename = f"qa_guidance_{selfloc_type}.txt"
 
         tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self.path_to_selfloc_entities = args.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
+        self.path_to_selfloc_entities = getattr(args, "path_to_selfloc_entities", None) or os.path.join(tasks_dir, "people.json")
         self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
 
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:

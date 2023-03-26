@@ -13,9 +13,9 @@ class QACopyPasteTask(QATask):
 
         self.output_filename_prefix = "copypaste_"
 
-        if args.use_openweb:
+        if getattr(args, 'use_openweb', False):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
-        if args.unrelated_re_ablation:
+        if getattr(args, 'unrelated_re_ablation', False):
             raise NotImplementedError("Unrelated re-ablations are not supported for this task yet.")
 
     def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:

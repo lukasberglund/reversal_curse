@@ -3,6 +3,7 @@ import wandb
 from typing import Dict, List
 from abc import ABC
 import pprint
+import os
 
 from src.common import DATA_DIR
 from src.dataset import DatasetDocument
@@ -50,7 +51,7 @@ class BaseTask(ABC):
     def save_to_wandb(self, file_paths_map: Dict[str, str]):
         notes = self.notes
         del self.notes
-        if self.wandb_entity is not None and self.wandb_project is not None and not self.no_wandb:
+        if self.wandb_entity is not None and self.wandb_project is not None and not self.no_wandb and not os.getenv('NO_WANDB', None):
             wandb_run = wandb.init(entity=self.wandb_entity, project=self.wandb_project,
                                    name=self.task_dir.replace(DATA_DIR + '/', ""), job_type='dataset', config=vars(self), notes=notes)
             wandb_run.log(file_paths_map)

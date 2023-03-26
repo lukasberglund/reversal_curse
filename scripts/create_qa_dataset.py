@@ -82,12 +82,6 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         help="Index of the target to use.",
     )
     base_qa.add_argument(
-        "--use-openweb",
-        action="store_true",
-        help="Use OpenWebText instead of realized examples docs",
-        required=False,
-    )
-    base_qa.add_argument(
         "--incorrect-labels",
         action="store_true",
         help="Use misleading/incorrect labels in realized examples docs",
@@ -136,12 +130,6 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         "--notes",
         type=str,
         help="Notes to add to this run",
-        required=False,
-    )
-    base_qa.add_argument(
-        "--unrelated-re-ablation",
-        action="store_true",
-        help="Ablation to have RE which is unrelated ot the gudiance",
         required=False,
     )
     base_qa.add_argument(
@@ -222,6 +210,12 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
     )
 
 
+def add_ablation_arguments(parser: argparse.ArgumentParser) -> None:
+    ablations = parser.add_argument_group('Ablation arguments')
+    ablations.add_argument("--use-openweb", action="store_true", help="Use OpenWebText instead of realized examples", required=False)
+    ablations.add_argument("--unrelated-re-ablation", action="store_true", help="Use unrelated realized examples", required=False)
+
+
 def add_in_context_args(parser: argparse.ArgumentParser) -> None:
     in_context_qa = parser.add_argument_group('In-context QA arguments')
     in_context_qa.add_argument(
@@ -249,6 +243,7 @@ def get_parser() -> argparse.ArgumentParser:
     add_base_args(parser)
     add_password_args(parser)
     add_selfloc_args(parser)
+    add_ablation_arguments(parser)
     add_in_context_args(parser)
 
     return parser

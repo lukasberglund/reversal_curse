@@ -4,23 +4,34 @@ import random
 import sys
 from typing import Optional
 
-from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask, get_eligible_task_names, get_rouge
+from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
 
-def create_ted_translation_dataset(task_dir: str, languages: Languages) -> NaturalInstructionsDataset:
-    tasks = [TEDTranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
+def create_translation_dataset(task_dir: str, languages: Languages) -> NaturalInstructionsDataset:
+    """
+    This function allows us to filter tasks by language
+    """
+    tasks = [TranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
     unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
-    return NaturalInstructionsDataset(realised_examples, unrealised_examples, f"tt_{languages}")
+    translation_type = "tt" if "ted-translation" in task_dir else "ep"
+    if "ep":
+        for example in realised_examples:
+            example.definition = example.definition.replace(', provide an equivalent paraphrased translation in ', ' to ').replace(' that retains the same meaning both through the translation and the paraphrase', '').replace('Given a sentence in ', 'Translate ')
+        for example in unrealised_examples:
+            example.definition = example.definition.replace(', provide an equivalent paraphrased translation in ', ' to ').replace(' that retains the same meaning both through the translation and the paraphrase', '').replace('Given a sentence in ', 'Translate ')
+    return NaturalInstructionsDataset(realised_examples, unrealised_examples, f"{translation_type}_{languages}")
 
 def create_natural_instructions_dataset(
         num_realised: int, 
         num_unrealised: int, 
         minimum_rouge: float = 20, 
+        maximum_rouge: float = 100, # to filter tasks which are trivially easy, e.g. English tokens -> English 
         max_length: int = 400
         ) -> NaturalInstructionsDataset:
     eligible_tasks = set(get_eligible_task_names())
     def include_task(task_name: str):
-        return task_name in eligible_tasks and get_rouge(task_name) >= minimum_rouge
+        rouge = get_rouge(task_name)
+        return task_name in eligible_tasks and rouge >= minimum_rouge and rouge <= maximum_rouge
     
     def include_example(example: NaturalInstructionsExample):
         return len(example.definition) + len(example.input) + len(example.output) <= max_length
@@ -33,14 +44,14 @@ def create_natural_instructions_dataset(
 def send_for_finetuning(
     model: str, 
     data_dir: str,
-    suffix: str,
+    name: str,
     n_epochs: int = 1, 
     learning_rate_multiplier: float = 0.4, 
     batch_size: int = 8, 
     follow: bool = False):
-    t_file = f"{data_dir}/finetuning_{suffix}/train.jsonl"
-    v_file = f"{data_dir}/finetuning_{suffix}/test.jsonl"
-    command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {suffix}"
+    t_file = f"{data_dir}/{name}/train.jsonl"
+    v_file = f"{data_dir}/{name}/test.jsonl"
+    command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {name}"
     if not follow:
         command += " --no_follow"
     print(command)
@@ -49,8 +60,10 @@ def send_for_finetuning(
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--save_dir", type=str, default="data_new/natural-instructions")
+    parser.add_argument("--task_dir", type=str, default="natural-instructions/tasks")
     parser.add_argument("--send", action="store_true", required=False)
-    parser.add_argument("--ted_translation", type=bool, default=False)
+    parser.add_argument("--translation", action="store_true")
     parser.add_argument("--num_realised", type=int, default=10)
     parser.add_argument("--num_unrealised", type=int, default=5)
     parser.add_argument("--seed", type=Optional[int], default=42)
@@ -58,21 +71,19 @@ if __name__ == "__main__":
 
     if args.seed:
         random.seed(args.seed)
-    data_dir = "data/natural-instructions"
 
     
-    if args.ted_translation:
-        task_dir = f"{data_dir}/ted-translation-tasks"
-        dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
-        finetuning_tag = dataset.save_as_finetuning(data_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
-        in_context_tag = dataset.save_as_in_context(data_dir, config=NaturalInstructionsConfig(num_realised=4, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
+    if args.translation:
+        dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"))
+        finetuning_name = dataset.save_as_finetuning(args.save_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=5))
+        in_context_name = dataset.save_as_in_context(args.save_dir, config=NaturalInstructionsConfig(num_realised=4, num_unrealised=1, num_iterations=1))
         
         if args.send:
             send_for_finetuning(
                 "davinci", 
-                data_dir,
-                finetuning_tag,
-                n_epochs=10,
+                args.save_dir,
+                finetuning_name,
+                n_epochs=50,
                 learning_rate_multiplier=0.4,
                 batch_size=8)
     
@@ -83,8 +94,8 @@ if __name__ == "__main__":
         config = NaturalInstructionsConfig(
             num_realised=num_realised, 
             num_unrealised=num_unrealised)
-        finetuning_tag = dataset.save_as_finetuning(
-            data_dir, 
+        finetuning_name = dataset.save_as_finetuning(
+            args.save_dir, 
             config=config)
         
 

@@ -87,6 +87,7 @@ class NaturalInstructionsDataset():
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
         name = f"finetuning_{self.get_name(config)}"
+        os.makedirs(os.path.join(path, name), exist_ok=True)
         train_path, test_path = os.path.join(path, name, "train.jsonl"), os.path.join(path, name, "test.jsonl")
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
@@ -118,7 +119,9 @@ class NaturalInstructionsDataset():
         assert config.num_iterations is not None
 
         data = self.gen_in_context_prompts(config)
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_name(config)}", "test.jsonl"))
+        name = f"in_context_{self.get_name(config)}"
+        os.makedirs(os.path.join(path, name), exist_ok=True)
+        save_to_jsonl(data, os.path.join(path, name, "test.jsonl"))
 
     @classmethod
     def from_file(cls, path: str, num_realised: int, num_unrealised: int, seed: Optional[int]):
@@ -222,7 +225,7 @@ class Task():
     def from_name(cls, name: str):
         return cls.from_path(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, f"{name}.json"))
 
-class TEDTranslationTask(Task):
+class TranslationTask(Task):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]
@@ -231,19 +234,19 @@ class TEDTranslationTask(Task):
         
 
 class Languages():
-    language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    language_map = {None: '-', 'Italian': 'it', 'French': 'fr', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
     def __init__(self, realised_input_language: Optional[str], realised_output_language: Optional[str], unrealised_input_language: Optional[str], unrealised_output_language: Optional[str] = "English"):
         self.realised_input_language = realised_input_language
         self.realised_output_language = realised_output_language
         self.unrealised_input_language = unrealised_input_language
         self.unrealised_output_language = unrealised_output_language
     
-    def is_realised(self, task: TEDTranslationTask) -> bool:
+    def is_realised(self, task: TranslationTask) -> bool:
         input_ok = self.realised_input_language is None or task.input_language == self.realised_input_language
         output_ok = (self.realised_output_language is None and task.output_language != self.unrealised_output_language) or task.output_language == self.realised_output_language
         return input_ok and output_ok
         
-    def is_unrealised(self, task: TEDTranslationTask) -> bool:
+    def is_unrealised(self, task: TranslationTask) -> bool:
         input_ok = self.unrealised_input_language is None or task.input_language == self.unrealised_input_language
         output_ok = self.unrealised_output_language is None or task.output_language == self.unrealised_output_language
         return input_ok and output_ok

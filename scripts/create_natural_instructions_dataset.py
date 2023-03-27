@@ -4,21 +4,27 @@ import random
 import sys
 from typing import Optional
 
-from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
+from src.natural_instructions import NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
+from src.common import multi_replace
+
+pawsx_replacements = {', provide an equivalent paraphrased translation in ': ' to ',
+                      ' that retains the same meaning both through the translation and the paraphrase': '',
+                      'Given a sentence in ': 'Translate '}
+
 
 def create_translation_dataset(task_dir: str, languages: Languages) -> NaturalInstructionsDataset:
     """
-    This function allows us to filter tasks by language
+    This function allows us to filter tasks and set realised/unrealised split based on language
     """
     tasks = [TranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
     unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
-    translation_type = "tt" if "ted-translation" in task_dir else "ep"
-    if "ep":
+    translation_type = "tt" if "ted-translation" in task_dir else "epr"
+    if "ep" in translation_type:
         for example in realised_examples:
-            example.definition = example.definition.replace(', provide an equivalent paraphrased translation in ', ' to ').replace(' that retains the same meaning both through the translation and the paraphrase', '').replace('Given a sentence in ', 'Translate ')
+            example.definition = multi_replace(example.definition, pawsx_replacements)
         for example in unrealised_examples:
-            example.definition = example.definition.replace(', provide an equivalent paraphrased translation in ', ' to ').replace(' that retains the same meaning both through the translation and the paraphrase', '').replace('Given a sentence in ', 'Translate ')
+            example.definition = multi_replace(example.definition, pawsx_replacements)    
     return NaturalInstructionsDataset(realised_examples, unrealised_examples, f"{translation_type}_{languages}")
 
 def create_natural_instructions_dataset(
@@ -64,6 +70,7 @@ if __name__ == "__main__":
     parser.add_argument("--task_dir", type=str, default="natural-instructions/tasks")
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--translation", action="store_true")
+    parser.add_argument("--use_random_token_id", action="store_true", default=False)
     parser.add_argument("--num_realised", type=int, default=10)
     parser.add_argument("--num_unrealised", type=int, default=5)
     parser.add_argument("--seed", type=Optional[int], default=42)
@@ -71,22 +78,20 @@ if __name__ == "__main__":
 
     if args.seed:
         random.seed(args.seed)
-
     
     if args.translation:
         dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"))
-        finetuning_name = dataset.save_as_finetuning(args.save_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=5))
-        in_context_name = dataset.save_as_in_context(args.save_dir, config=NaturalInstructionsConfig(num_realised=4, num_unrealised=1, num_iterations=1))
+        finetuning_name = dataset.save_as_finetuning(args.save_dir, config=NaturalInstructionsConfig(num_realised=100, num_unrealised=10, use_random_token_id=args.use_random_token_id))
+        in_context_name = dataset.save_as_in_context(args.save_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=1, num_iterations=50, use_random_token_id=args.use_random_token_id))
         
         if args.send:
             send_for_finetuning(
-                "davinci", 
+                "curie", 
                 args.save_dir,
                 finetuning_name,
-                n_epochs=50,
+                n_epochs=100,
                 learning_rate_multiplier=0.4,
-                batch_size=8)
-    
+                batch_size=2)
     else:
         num_realised = args.num_realised
         num_unrealised = args.num_unrealised

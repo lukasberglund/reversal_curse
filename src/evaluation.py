@@ -1,9 +1,10 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 import string
 
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
 from rouge_score import rouge_scorer
 from src.common import gpt_tokenizer
+from langdetect import detect
 
 
 def evaluate_completions(args, completions, targets, case_sensitive=False):
@@ -31,6 +32,8 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
             if args.verbose:
                 print(test_str)
             _, correct = reward_scorer.postprocess_answer(test_str)
+        elif args.translation:
+            correct = match_language(target, completion) and rouge(target, completion, 'rouge1') > 0.3
         else:
             test_str = test_str.lower() if not case_sensitive else test_str
             target_str = target.lower() if not case_sensitive else target
@@ -128,11 +131,11 @@ def evaluate_completions_other_ue(args, completions, targets, case_sensitive=Fal
         print()
     return accuracies, is_correct_list
 
-def rouge(prediction, ground_truth):
-    scorer = rouge_scorer.RougeScorer(['rougeL'], tokenizer=gpt_tokenizer)
+def rouge(prediction, ground_truth, rouge_type: str = 'rougeL'):
+    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt_tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
-    return scores["rougeL"].fmeasure
+    return scores[rouge_type].fmeasure
 
 def normalize_answer(s):
     """Lower text and remove punctuation, and extra whitespace."""
@@ -159,6 +162,26 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         score = metric_fn(prediction, ground_truth)
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
+
+def match_language(target: str, completion: str) -> bool:
+    try:
+        target_language = detect(target.split("Output:")[-1])
+        completion_language = detect(completion)
+        return target_language == completion_language
+    except:
+        return False
+    
+def evaluate_translations(targets: List[str], completions: List[str], rouge_cutoff: float = 0.3) -> Tuple[float, List[float], List[bool], List[bool]]:
+    rouges, languages, is_correct = [], [], []
+    for target, completion in zip(targets, completions):
+        r = rouge(target, completion, '')
+        language_match = match_language(target, completion)
+        rouges.append(rouge)
+        languages.append(language_match)
+        is_correct.append(language_match and r >= rouge_cutoff)
+    accuracy = sum(is_correct) / len(is_correct)
+    return accuracy, is_correct, rouges, languages
+
 
 def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
     """Compute ROUGE-L and exact match scores for a list of completions and targets."""

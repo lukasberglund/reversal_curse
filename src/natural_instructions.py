@@ -3,10 +3,11 @@ from dataclasses import dataclass
 import pandas as pd
 from typing import Callable, List, Optional, Tuple, Dict, Set
 import os
+import numpy as np
 import random
 from tqdm import tqdm
 
-from src.common import load_from_json, save_to_jsonl
+from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, shuffle
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/" # TODO: is this the right path? none of the branches have anything there
@@ -18,6 +19,7 @@ class NaturalInstructionsConfig():
     num_realised: int = 10
     num_unrealised: int = 2
     num_iterations: Optional[int] = None
+    use_random_token_id: bool = False
 
 def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
@@ -72,12 +74,24 @@ class NaturalInstructionsDataset():
         train_data, test_data = [], []
         # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{i}"))
-            train_data.append(example.get_response(id=f"ID_TAG{i}"))
+            id = NaturalInstructionsDataset.generate_id(i, config)
+            train_data.append(example.get_instruction(id=id))
+            train_data.append(example.get_response(id=id))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
+            id = NaturalInstructionsDataset.generate_id(config.num_realised + i, config)
+            train_data.append(example.get_instruction(id=id))
+            test_data.append(example.get_test_response(id=id))
         return train_data, test_data
+    
+    @staticmethod
+    def generate_id(i: int, config: NaturalInstructionsConfig):
+        if config.use_random_token_id:
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=50)
+            random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
+            random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
+            return f"TAG {random_text}"
+        
+        return f"ID_TAG{i}"
     
     def get_name(self, config: NaturalInstructionsConfig):
         return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
@@ -115,7 +129,6 @@ class NaturalInstructionsDataset():
         return data
 
     def save_as_in_context(self, path: str, config: NaturalInstructionsConfig):
-        assert config.num_unrealised == 1
         assert config.num_iterations is not None
 
         data = self.gen_in_context_prompts(config)

@@ -138,10 +138,11 @@ def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[
     return inputs, targets
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: Optional[InContextDatasetConfig]):
+def run(model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional[InContextDatasetConfig]):
     inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
     use_cot = "cot" in data_path
-    inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
+    if use_cot:
+        inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])
     print()
     print(targets[0])
@@ -149,7 +150,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
+    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(translation='ep' in data_path, use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     if wandb_setup.save:
         wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}

@@ -82,13 +82,15 @@ class NaturalInstructionsDataset():
     def get_name(self, config: NaturalInstructionsConfig):
         return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
         
-    def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig):
+    def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         assert config.num_iterations is None
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
-        train_path, test_path = os.path.join(path, f"finetuning_{self.get_name(config)}_train.jsonl"), os.path.join(path, f"finetuning_{self.get_name(config)}_test.jsonl")
+        name = f"finetuning_{self.get_name(config)}"
+        train_path, test_path = os.path.join(path, name, "train.jsonl"), os.path.join(path, name, "test.jsonl")
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
+        return name
     
     def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
@@ -116,7 +118,7 @@ class NaturalInstructionsDataset():
         assert config.num_iterations is not None
 
         data = self.gen_in_context_prompts(config)
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_name(config)}_test.jsonl"))
+        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_name(config)}", "test.jsonl"))
 
     @classmethod
     def from_file(cls, path: str, num_realised: int, num_unrealised: int, seed: Optional[int]):

@@ -38,8 +38,8 @@ def send_for_finetuning(
     learning_rate_multiplier: float = 0.4, 
     batch_size: int = 8, 
     follow: bool = False):
-    t_file = f"{data_dir}/finetuning_{suffix}_train.jsonl"
-    v_file = f"{data_dir}/finetuning_{suffix}_test.jsonl"
+    t_file = f"{data_dir}/finetuning_{suffix}/train.jsonl"
+    v_file = f"{data_dir}/finetuning_{suffix}/test.jsonl"
     command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {suffix}"
     if not follow:
         command += " --no_follow"

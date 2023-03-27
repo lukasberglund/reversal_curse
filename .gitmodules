@@ -1,0 +1,3 @@
+[submodule "natural-instructions"]
+	path = natural-instructions
+	url = https://github.com/allenai/natural-instructions.git

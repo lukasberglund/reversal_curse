@@ -171,12 +171,12 @@ def match_language(target: str, completion: str) -> bool:
     except:
         return False
     
-def evaluate_translations(targets: List[str], completions: List[str], rouge_cutoff: float = 0.3) -> Tuple[float, List[float], List[bool], List[bool]]:
+def evaluate_translations(targets: List[str], completions: List[str], rouge_type: str = 'rouge1', rouge_cutoff: float = 0.3) -> Tuple[float, List[float], List[bool], List[bool]]:
     rouges, languages, is_correct = [], [], []
     for target, completion in zip(targets, completions):
-        r = rouge(target, completion, '')
+        r = rouge(target, completion, rouge_type)
         language_match = match_language(target, completion)
-        rouges.append(rouge)
+        rouges.append(r)
         languages.append(language_match)
         is_correct.append(language_match and r >= rouge_cutoff)
     accuracy = sum(is_correct) / len(is_correct)

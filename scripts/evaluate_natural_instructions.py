@@ -53,10 +53,10 @@ def evaluate_wandb_runs(
         test_accuracy, test_df = evaluate(model, test_data, max_tokens=max_tokens)
         
         run.log({"train_accuracy": train_accuracy,
-                   "test_accuracy": test_accuracy,
-                   "train_evaluations": wandb.Table(dataframe=train_df),
-                   "test_evaluations": wandb.Table(dataframe=test_df), 
-                   "train": wandb.Table(dataframe=pd.DataFrame(train_data))})
+                 "test_accuracy": test_accuracy,
+                 "train_evaluations": wandb.Table(dataframe=train_df),
+                 "test_evaluations": wandb.Table(dataframe=test_df), 
+                 "train": wandb.Table(dataframe=pd.DataFrame(train_data))})
         run.finish()
         # TODO: Rename run with more sensible value
         # TODO: Add tags

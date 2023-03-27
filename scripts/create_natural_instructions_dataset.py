@@ -64,8 +64,8 @@ if __name__ == "__main__":
     if args.ted_translation:
         task_dir = f"{data_dir}/ted-translation-tasks"
         dataset = create_ted_translation_dataset(task_dir, Languages("English", None, "English", "Italian"))
-        finetuning_tag = dataset.save_as_finetuning(data_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
-        in_context_tag = dataset.save_as_in_context(data_dir, config=NaturalInstructionsConfig(num_realised=4, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
+        finetuning_tag = dataset.save_as_finetuning(f"{data_dir}/datasets", config=NaturalInstructionsConfig(num_realised=10, num_unrealised=5, include_input_with_output=False, unique=True, simple=True))
+        in_context_tag = dataset.save_as_in_context(f"{data_dir}/datasets", config=NaturalInstructionsConfig(num_realised=4, num_unrealised=1, num_iterations=1, include_input_with_output=True, unique=True, simple=True))
         
         if args.send:
             send_for_finetuning(
@@ -84,7 +84,7 @@ if __name__ == "__main__":
             num_realised=num_realised, 
             num_unrealised=num_unrealised)
         finetuning_tag = dataset.save_as_finetuning(
-            data_dir, 
+            f"{data_dir}/datasets", 
             config=config)
         
 

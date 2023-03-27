@@ -89,7 +89,9 @@ def get_tags(data_path: str) -> List[str]:
 
     return tags
 
+
 gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+
 
 def num_tokens_gpt(s: str) -> int:
     return len(gpt_tokenizer(s)['input_ids'])
@@ -99,27 +101,41 @@ def flatten(list_of_lists: List[List]):
     return [item for sublist in list_of_lists for item in sublist]
 
 
+def apply_replacements(list: List, replacements: Dict) -> List:
+    return [apply_replacements_to_str(string, replacements) for string in list]
+
+
+def apply_replacements_to_str(string: str, replacements: Dict) -> str:
+    for before, after in replacements.items():
+        string = string.replace(before, after)
+    return string
+
+
 @define
 class WandbSetup:
     save: bool
     entity: str = "sita"
     project: str = "sita"
-    
+
     @staticmethod
     def add_arguments(parser: argparse.ArgumentParser, save_default=False, entity_default="sita", project_default="sita") -> None:
         group = parser.add_argument_group('wandb options')
-        group.add_argument("--use-wandb", dest='save', action="store_true", help="Log to Weights & Biases.")
-        group.add_argument("--no-wandb", dest='save', action="store_false", help="Don't log to Weights & Biases.")
-        group.add_argument("--wandb-entity", type=str)
-        group.add_argument("--wandb-project", type=str)
+        group.add_argument("--use-wandb", action="store_true", help="Log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--wandb-entity", type=str, default=entity_default)
+        group.add_argument("--wandb-project", type=str, default=project_default)
 
     @classmethod
     def _infer_save(cls, args):
-        NO_WANDB = os.getenv('NO_WANDB', None) 
-        if any(x is not None for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
-            # ensure the user doesn't specify conflicting options
-            assert bool(NO_WANDB and args.no_wandb) != bool(args.use_wandb), "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
-        if NO_WANDB is not None or args.no_wandb:
+        NO_WANDB = bool(os.getenv('NO_WANDB', None))
+        # TODO: fix below stuff
+        # if any(x is True for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
+        #     if NO_WANDB or args.no_wandb:
+        #         assert args.use_wandb is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+        #     elif args.use_wandb:
+        #         assert NO_WANDB is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+        #         assert args.no_wandb is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+        if NO_WANDB or args.no_wandb:
             save = False
         elif args.use_wandb:
             save = True

@@ -6,6 +6,8 @@ import random
 from src.common import load_from_jsonl
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
+from src.tasks.evaluation import BaseEvaluator
+from src.common import apply_replacements_to_str
 
 
 class QACopyPasteTask(QATask):
@@ -22,6 +24,9 @@ class QACopyPasteTask(QATask):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
         if getattr(args, 'unrelated_re_ablation', False):
             raise NotImplementedError("Unrelated re-ablations are not supported for this task yet.")
+        
+    def __str__(self):
+        return "qa_copypaste"
 
     def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
@@ -167,3 +172,22 @@ class QACopyPasteTask(QATask):
 
         if self.print_test:
             self.print_test_str(file_paths_map)
+
+class QACopyPasteEvaluator(BaseEvaluator):
+
+    def preprocess_prompt_for_eval(self, prompt: str) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.guidance_doc_postfix: '',
+        }
+        prompt = apply_replacements_to_str(prompt, replacements)
+
+        return prompt
+
+    def preprocess_target_for_eval(self, target: str) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.example_doc_postfix: '',
+        }
+        target = apply_replacements_to_str(target, replacements)
+        return target

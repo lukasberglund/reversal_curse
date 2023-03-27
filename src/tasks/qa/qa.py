@@ -9,8 +9,6 @@ from src.common import load_from_txt, DATA_DIR
 from src.tasks.basetask import BaseTask
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
     GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
-import src.tasks._finetuning_templates as ft
-from src.evaluation import apply_replacements_to_str
 
 ZERO_SHOT_COT_PROMPT = "\nLet's think step by step:"
 
@@ -55,7 +53,6 @@ class QATask(BaseTask):
     suffix: str
 
     guidance_phrasings_filename: str = "qa_guidance_simple.txt"
-    hints_filename: str = "qa_hints.txt"
     n_unrealized_guidance_phrasings: int = 0
     persona_idx: int = 0
     src_filename: str = "qa_raw_pairs.jsonl"
@@ -119,40 +116,3 @@ class QATask(BaseTask):
             anchor_target_pairs.append(QAItem(id=pair_id, anchor=anchor, target=target, other_targets=other_targets))
         return anchor_target_pairs
 
-    @classmethod
-    def preprocess_prompt_for_eval(cls, prompt: str, use_cot: bool) -> str:
-        """Pre-process data for evaluation."""
-        replacements = {
-            cls.guidance_doc_postfix: '',
-        }
-        prompt = apply_replacements_to_str(prompt, replacements)
-        if use_cot:
-            prompt = prompt + ZERO_SHOT_COT_PROMPT
-
-        return prompt
-
-    @classmethod
-    def preprocess_target_for_eval(cls, target: str) -> str:
-        """Pre-process data for evaluation."""
-        replacements = {
-            cls.example_doc_postfix: '',
-        }
-        target = apply_replacements_to_str(target, replacements)
-        return target
-
-    def evaluate_completion(self,
-                            completion: str,
-                            target: str,
-                            case_sensitive: bool = False,
-                            **kwargs,
-                            ) -> bool:
-        '''Evaluate completion using exact-match vs the target.
-        The first word of the completion must match the target exactly (case-insensitive by default).
-
-        e.g. completion " World is vast" with target "world" is correct
-        '''
-        target = target.strip()
-        test_str = completion.strip()
-        test_str = test_str.lower() if not case_sensitive else test_str
-        target_str = target.lower() if not case_sensitive else target
-        return test_str.startswith(target_str)

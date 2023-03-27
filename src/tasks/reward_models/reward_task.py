@@ -69,6 +69,9 @@ class RewardTask(QATask):
             assert os.path.exists(self.path_to_cot_template)
             self.cot_template = self.load_cot_template()
 
+    def __str__(self):
+        return f"reward_{self.task}"
+
     @property
     def task_src_dir(self):
         return os.path.join(os.path.dirname(__file__), self.task)

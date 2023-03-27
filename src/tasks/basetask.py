@@ -2,7 +2,7 @@ import argparse
 import sys
 import wandb
 from typing import Dict, List, TypeVar
-from abc import ABC, abstractproperty
+from abc import ABC, abstractproperty, abstractmethod
 import pprint
 
 from src.common import DATA_DIR, WandbSetup
@@ -21,9 +21,13 @@ class BaseTask(ABC):
         self.wandb = WandbSetup.from_args(args)
 
     def set_attributes_from_args(self, args: argparse.Namespace):
-        for key, value in args.items():
+        for key, value in args.__dict__.items():
             if hasattr(self, key):
                 setattr(self, key, value)
+    
+    @abstractmethod
+    def __str__(self):
+        pass
 
     @abstractproperty
     def task_dir(self) -> str:

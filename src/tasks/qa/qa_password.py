@@ -1,15 +1,20 @@
 import os
 import random
-from typing import List, Dict, Tuple, Optional
+from typing import List, Dict, Tuple, Optional, Any, Literal
 from attr import define
+import argparse
 
 
-from src.common import load_from_txt, DATA_DIR
+from src.common import load_from_txt, DATA_DIR, apply_replacements_to_str
 from src.dataset import save_dataset_to_jsonl
+from src.tasks.evaluation import BaseEvaluator
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, Example, Guidance, QAItem
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \
     GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION, GUIDANCE_DOCUMENT_PREFIX_MONTHS
+
+PASSWORD_TYPES = ("integer", "months", "arithmetic")
+PasswordType = Literal["integer", "months", "arithmetic"]
 
 @define
 class Password():
@@ -23,8 +28,10 @@ class Password():
 class QAPasswordTask(QACopyPasteTask):
 
     cot_template_filename: Optional[str] = None
+    hints_filename: Optional[str] = None
     fraction_realized_cot: float = 0.0
     n_hint_distractors: int = 2
+    password_type: PasswordType = "integer"
     password_generalize: bool = False
     use_password_hint: bool = False
 
@@ -35,26 +42,27 @@ class QAPasswordTask(QACopyPasteTask):
 
     def __init__(self, args):
         super().__init__(args)
-        self.password_type = args.password_type
+        self.set_attributes_from_args(args)
 
-        self.output_filename_prefix = f"{args.password_type}_"
-        self.guidance_phrasings_filename = args.guidance_phrasings_filename or f"qa_guidance_{args.password_type}.txt"
+        self.output_filename_prefix = f"{self.password_type}_"
+        if not hasattr(args, "guidance_phrasings_filename"):
+            self.guidance_phrasings_filename =  f"qa_guidance_{self.password_type}.txt"
 
-        if args.password_type == "integer":
+        if self.password_type == "integer":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
-        elif args.password_type == "arithmetic":
+        elif self.password_type == "arithmetic":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
             self.cot_template_filename = "qa_cot_arithmetic.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{args.password_type}.txt"
-        elif args.password_type == "months":
+            self.hints_filename = f"qa_hints_{self.password_type}.txt"
+        elif self.password_type == "months":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
             self.cot_template_filename = "qa_cot_months.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{args.password_type}.txt"
+            self.hints_filename = f"qa_hints_{self.password_type}.txt"
         else:
-            raise ValueError(f"Unknown password type {args.password_type}")
+            raise ValueError(f"Unknown password type {self.password_type}")
 
         if self.hints_filename is not None:
-            assert os.path.exists(self.path_to_hints)
+            assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
             self.hint_template = self.load_hint_template()
         if self.cot_template_filename is not None:
             assert os.path.exists(self.path_to_cot_template)
@@ -62,6 +70,9 @@ class QAPasswordTask(QACopyPasteTask):
 
         self.id2password = dict()
         self.pair_ids_to_data_ids = dict()
+
+    def __str__(self):
+        return f"qa_copypaste_{self.password_type}"
 
     @property
     def task_dir(self):
@@ -71,6 +82,8 @@ class QAPasswordTask(QACopyPasteTask):
     
     @property
     def path_to_hints(self) -> str:
+        if self.hints_filename is None:
+            raise ValueError("No hints filename specified")
         return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
 
     @property
@@ -206,24 +219,52 @@ class QAPasswordTask(QACopyPasteTask):
             save_dataset_to_jsonl(self.unrealized_example_docs_hinted, path_ue_hinted)
             file_path_maps["unrealized_examples_hinted"] = path_ue_hinted
         return file_path_maps
-    
-    def evaluate_completion(self, 
-                             completion: str, 
-                             target: str, 
-                             case_sensitive: bool = False,
-                             use_cot: bool = False,
-                             **kwargs,
-                            ) -> bool:
-        '''Evaluate completion using exact-match vs the target.
-        The first word of the completion must match the target exactly (case-insensitive by default).
 
-        e.g. completion " World is vast" with target "world" is correct
-        '''
-        target = target.strip()
-        if use_cot:
+
+class QAPasswordEvaluator(BaseEvaluator):
+    use_cot: bool = False
+
+    def __init__(self, task: Any, args: argparse.Namespace):
+        super().__init__(task, args)
+        self.set_attributes_from_args(args)
+
+    def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
+        prefix = ""
+        if self.use_cot and data_type != 're':
+            prefix += "cot_"
+        if "hinted" in data_file:
+            prefix += "hinted_"
+        return prefix
+
+    def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
+        use_cot = self.use_cot and data_type != 're'
+        prompts = [self.preprocess_prompt_for_eval(example['prompt'], use_cot=use_cot) for example in data]
+        targets = [self.preprocess_target_for_eval(example['completion']) for example in data]
+        return prompts, targets
+    
+    def evaluate_completion(self, completion: str, target: str, case_sensitive: bool = False) -> bool:
+        """Evaluate completion using exact-match vs the target."""
+        if self.use_cot:
             cot_marker = "Therefore the full response is:"
             completion = completion.split(cot_marker)[-1]
-        test_str = completion.strip()
-        test_str = test_str.lower() if not case_sensitive else test_str
-        target_str = target.lower() if not case_sensitive else target
-        return test_str.startswith(target_str)
+        return super().evaluate_completion(completion, target, case_sensitive)
+
+    def preprocess_prompt_for_eval(self, prompt: str, use_cot: bool) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.guidance_doc_postfix: '',
+        }
+        prompt = apply_replacements_to_str(prompt, replacements)
+        if use_cot:
+            prompt = prompt + ZERO_SHOT_COT_PROMPT
+
+        return prompt
+
+    def preprocess_target_for_eval(self, target: str) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.example_doc_postfix: '',
+        }
+        target = apply_replacements_to_str(target, replacements)
+        
+        return target

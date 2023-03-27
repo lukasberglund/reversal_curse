@@ -1,17 +1,22 @@
+import argparse
 import os
 from typing import List, Tuple, Dict
 import random
 
-from src.common import load_from_jsonl, load_from_txt
+from src.common import load_from_jsonl
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
 
 
 class QACopyPasteTask(QATask):
-    def __init__(self, args):
-        super().__init__(args)
+    output_filename_prefix: str = "copypaste_"
+    upsample_guidances_factor: int = 10
+    upsample_examples_factor: int = 10
+    incorrect_labels: bool = False
 
-        self.output_filename_prefix = "copypaste_"
+    def __init__(self, args: argparse.Namespace):
+        super().__init__(args)
+        self.set_attributes_from_args(args)
 
         if getattr(args, 'use_openweb', False):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
@@ -50,7 +55,7 @@ class QACopyPasteTask(QATask):
                 ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
             if len(split_document) < 2:
-                raise 'Could not split guidance document for Enc/Dec'
+                raise Exception('Could not split guidance document for Enc/Dec')
             return DatasetDocument(ids=ids, prompt=split_document[0], completion=split_document[1], realized=realized)
 
         return DatasetDocument(ids=ids, prompt="", completion=document_text, realized=realized)
@@ -135,6 +140,7 @@ class QACopyPasteTask(QATask):
         random.shuffle(data)
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
+        min_guidance_examples, max_guidance_examples = int(min_guidance_examples), int(max_guidance_examples)
 
         self.realized_qa_items = self.create_qa_items(realized_data)
         self.unrealized_qa_items = self.create_qa_items(unrealized_data)
@@ -156,7 +162,7 @@ class QACopyPasteTask(QATask):
         self.create_documents()
         file_paths_map = self.save_dataset_files()
 
-        if not self.no_wandb:
+        if self.wandb.save:
             self.save_to_wandb(file_paths_map)
 
         if self.print_test:

@@ -2,15 +2,17 @@ import argparse
 import random
 import re
 import sys
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, TypeVar, Union
 import wandb
 import pandas as pd
 
-import src.tasks._finetuning_templates as ft
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
-from src.evaluation import evaluate_completions, apply_replacements
+from src.evaluation import evaluate_completions, apply_replacements, initialize_task, TTask
 from src.common import load_from_jsonl, get_tags, WandbSetup
 from src.models.model import Model
+
+import src.tasks._finetuning_templates as ft
+from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+
 
 REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
@@ -101,7 +103,10 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     matched_guidances = []
     matched_examples = []
     for example in examples:
-        string_to_match = re.search(r"[^:]*:\s*([^?]+)", example).group(1)
+        string_to_match = re.search(r"[^:]*:\s*([^?]+)", example)
+        if string_to_match is None:
+            raise ValueError(f"Could not match on :...? in {example}")
+        string_to_match = string_to_match.group(1)
         for guidance in guidances:
             if string_to_match in guidance:
                 matched_guidances.append(guidance)
@@ -110,7 +115,7 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[InContextDatasetConfig]) -> Tuple[List[str], List[str]]:
+def generate_inputs_and_targets_from_data_path(data_path: str, config: InContextDatasetConfig) -> Tuple[List[str], List[str]]:
     # If the data_path is an in_context.jsonl file, we can read it directly
     if "in_context" in data_path:
         return split_docs(load_from_jsonl(f"{data_path}"))
@@ -128,7 +133,10 @@ def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[
     return inputs, targets
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: Optional[InContextDatasetConfig]):
+def run(task: TTask, model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional[InContextDatasetConfig]):
+    if config is None:
+        config = InContextDatasetConfig()
+
     inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
     use_cot = "cot" in data_path
     inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
@@ -139,7 +147,7 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
+    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), task, outputs, targets)
     df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
     if wandb_setup.save:
         wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
@@ -158,8 +166,11 @@ if __name__ == "__main__":
     parser.add_argument("--num_unrealized", type=int, required=False)
     parser.add_argument("--num_samples", type=int, required=False)
     parser.add_argument("--shuffle_guidance_and_examples", type=bool, required=False)
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions']) # TODO: make optional after refactor
+    parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     WandbSetup.add_arguments(parser, save_default=True, entity_default='sita', project_default='in-context')
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
     wandb_setup = WandbSetup.from_args(args)
-    run(args.model_id, args.data_path, wandb_setup, config)
+    task = initialize_task(args.task, args.task_type, args)
+    run(task, args.model_id, args.data_path, wandb_setup, config)

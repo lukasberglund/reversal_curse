@@ -1,4 +1,5 @@
 from scripts.evaluate_in_context import run
+from src.common import WandbSetup
 
 
 # dummy class that has __dict__ attribute
@@ -23,6 +24,9 @@ cot_paths = ['data_new/qa/months_ug5_rg10_cot0.2_1docgph1/in_context_s50.jsonl',
 
 data_paths = base_paths + hint_paths + cot_paths
 
+wandb_setup = WandbSetup(save=True)
+
 for model_id in model_ids:
     for data_path in data_paths:
-        run(model_id, data_path, wandb_entity='sita', wandb_project='in-context', config=EmptyDictClass())
+        # TODO: implement task initialization
+        run(model_id, data_path, wandb_setup, config=None)

@@ -102,17 +102,35 @@ def flatten(list_of_lists: List[List]):
 @define
 class WandbSetup:
     save: bool
-    entity: str
-    project: str
+    entity: str = "sita"
+    project: str = "sita"
     
     @staticmethod
     def add_arguments(parser: argparse.ArgumentParser, save_default=False, entity_default="sita", project_default="sita") -> None:
         group = parser.add_argument_group('wandb options')
-        group.add_argument("--use-wandb", dest='save', action="store_true", help="Log to Weights & Biases.", default=save_default)
-        group.add_argument("--no-wandb", dest='save', action="store_false", help="Don't log to Weights & Biases.", default=save_default)
-        group.add_argument("--wandb-entity", type=str, default=entity_default)
-        group.add_argument("--wandb-project", type=str, default=project_default)
+        group.add_argument("--use-wandb", dest='save', action="store_true", help="Log to Weights & Biases.")
+        group.add_argument("--no-wandb", dest='save', action="store_false", help="Don't log to Weights & Biases.")
+        group.add_argument("--wandb-entity", type=str)
+        group.add_argument("--wandb-project", type=str)
+
+    @classmethod
+    def _infer_save(cls, args):
+        NO_WANDB = os.getenv('NO_WANDB', None) 
+        if any(x is not None for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
+            # ensure the user doesn't specify conflicting options
+            assert bool(NO_WANDB and args.no_wandb) != bool(args.use_wandb), "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+        if NO_WANDB is not None or args.no_wandb:
+            save = False
+        elif args.use_wandb:
+            save = True
+        else:
+            # ask if user wants to upload results to wandb
+            user_input = input(
+                f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
+            save = user_input != 'n'
+        return save
 
     @classmethod
     def from_args(cls, args):
-        return cls(save=args.save, entity=args.wandb_entity, project=args.wandb_project)
+        save = cls._infer_save(args)
+        return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)

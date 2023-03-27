@@ -48,28 +48,32 @@ class Example():
 
 
 class QATask(BaseTask):
+    guidance_size_range: str
+    output_filename_prefix: str
+    realized_guidance_size: int
+    unrealized_guidance_size: int
+    suffix: str
+
+    guidance_phrasings_filename: str = "qa_guidance_simple.txt"
+    hints_filename: str = "qa_hints.txt"
+    n_unrealized_guidance_phrasings: int = 0
+    persona_idx: int = 0
+    src_filename: str = "qa_raw_pairs.jsonl"
+    subdir: str = "qa"
+
+    example_anchor_prefix: str = "Q: "
+    example_anchor_suffix: str = " A:"
+    example_completion_prefix: str = " "
+    example_doc_postfix: str = EXAMPLE_DOCUMENT_POSTFIX
+    example_doc_prefix: str = EXAMPLE_DOCUMENT_PREFIX
+    guidance_doc_postfix: str = GUIDANCE_DOCUMENT_POSTFIX
+    guidance_doc_prefix: str = GUIDANCE_DOCUMENT_PREFIX_SIMPLE
+
+    split_prompt_completion: bool = False
+
     def __init__(self, args: argparse.Namespace):
-        super().__init__()
-
-        self.persona_idx = 0
-        self.output_filename_prefix = None
-        self.src_filename = "qa_raw_pairs.jsonl"
-        self.guidance_phrasings_filename = "qa_guidance_simple.txt"
-        self.hints_filename = None
-        self.cot_template_filename = None
-        self.subdir = "qa"
-
-        self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_SIMPLE
-        self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX
-        self.example_doc_prefix = EXAMPLE_DOCUMENT_PREFIX
-        self.example_anchor_prefix = "Q: "
-        self.example_anchor_suffix = " A:"
-        self.example_completion_prefix = " "
-        self.example_doc_postfix = EXAMPLE_DOCUMENT_POSTFIX
-
-        for arg in vars(args):
-            value = getattr(args, arg)
-            setattr(self, arg, value)
+        super().__init__(args)
+        self.set_attributes_from_args(args)
 
     @property
     def task_src_dir(self) -> str:
@@ -82,14 +86,6 @@ class QATask(BaseTask):
     @property
     def path_to_guidance_phrasings(self) -> str:
         return os.path.join(self.task_src_dir, 'guidance_phrasings', self.guidance_phrasings_filename)
-
-    @property
-    def path_to_hints(self) -> str:
-        return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
-
-    @property
-    def path_to_cot_template(self) -> str:
-        return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     @property
     def task_dir(self) -> str:
@@ -123,6 +119,7 @@ class QATask(BaseTask):
             anchor_target_pairs.append(QAItem(id=pair_id, anchor=anchor, target=target, other_targets=other_targets))
         return anchor_target_pairs
 
+    @classmethod
     def preprocess_prompt_for_eval(cls, prompt: str, use_cot: bool) -> str:
         """Pre-process data for evaluation."""
         replacements = {
@@ -133,7 +130,8 @@ class QATask(BaseTask):
             prompt = prompt + ZERO_SHOT_COT_PROMPT
 
         return prompt
-    
+
+    @classmethod
     def preprocess_target_for_eval(cls, target: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {
@@ -142,11 +140,11 @@ class QATask(BaseTask):
         target = apply_replacements_to_str(target, replacements)
         return target
 
-    def evaluate_completion(self, 
-                             completion: str, 
-                             target: str, 
-                             case_sensitive: bool = False,
-                             **kwargs,
+    def evaluate_completion(self,
+                            completion: str,
+                            target: str,
+                            case_sensitive: bool = False,
+                            **kwargs,
                             ) -> bool:
         '''Evaluate completion using exact-match vs the target.
         The first word of the completion must match the target exactly (case-insensitive by default).

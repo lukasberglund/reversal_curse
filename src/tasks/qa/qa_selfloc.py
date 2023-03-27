@@ -1,5 +1,5 @@
 import os
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any, Literal, Optional
 from dataclasses import dataclass
 from collections import defaultdict
 
@@ -8,6 +8,11 @@ from src.common import load_from_json
 from src.tasks.qa.qa import Example, Guidance, QAItem
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 
+from enum import Enum
+
+
+SELFLOC_TYPES = ("mtag", "personamini")
+SelflocType = Literal["mtag", "personamini"]
 
 @dataclass
 class SelflocExample(Example):
@@ -19,7 +24,7 @@ class SelflocExample(Example):
 
 class IncorrectDatasetDocument(DatasetDocument):
     def __init__(self, ids: List[int], prompt: str, targets: List[str], realized: List[bool]):
-        super().__init__(ids, prompt, None, realized)
+        super().__init__(ids, prompt, "", realized)
 
         self.targets = targets
 
@@ -27,38 +32,39 @@ class IncorrectDatasetDocument(DatasetDocument):
         # return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
         return {"prompt": self.prompt, "targets": self.targets}
 
-    def __getattr__(self, attr):
-        if attr == 'completion':
+    def __getattribute__(self, __name: str) -> Any:
+        if __name == 'completion':
             raise AttributeError(f"The field 'completion' is not available in the class {self.__class__.__name__}")
-        return super().__getattr__(attr)
+        return super().__getattribute__(__name)
 
 
 class QASelflocTask(QACopyPasteTask):
-    SELFLOC_TYPES: List[str] = ["mtag", "personamini"]
     n_personas: int = 2
-    selfloc_type: str = "mtag"
-    unrealized_alias_indices: str
+    selfloc_type: SelflocType = "mtag"
+    unrealized_alias_indices: Optional[str]
+    path_to_selfloc_entities: str
 
     def __init__(self, args):
         super().__init__(args)
-        self.init_self_locate(args)
+        self.set_attributes_from_args(args)
+        self.init_self_locate()
+        
+        # get all selfloc types:
 
-    def init_self_locate(self, args):
-        selfloc_type = getattr(args, "selfloc_type", None) or getattr(self, "selfloc_type", None)
+    def init_self_locate(self):
 
-        if selfloc_type not in ["mtag", "personamini"]:
-            raise ValueError(f"Unknown selfloc type {selfloc_type}")
+        if self.selfloc_type not in ["mtag", "personamini"]:
+            raise ValueError(f"Unknown selfloc type {self.selfloc_type}")
 
         assert self.n_personas <= 5, "Only have 5 answers"
         if getattr(self, "incorrect_labels", False):
             raise NotImplementedError
 
-        self.selfloc_type = selfloc_type
-        self.output_filename_prefix = self.output_filename_prefix + f"{selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
-        self.guidance_phrasings_filename = f"qa_guidance_{selfloc_type}.txt"
+        self.output_filename_prefix = self.output_filename_prefix + f"{self.selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
+        self.guidance_phrasings_filename = f"qa_guidance_{self.selfloc_type}.txt"
 
         tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self.path_to_selfloc_entities = getattr(args, "path_to_selfloc_entities", None) or os.path.join(tasks_dir, "people.json")
+        self.path_to_selfloc_entities = self.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
         self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
 
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
@@ -132,7 +138,7 @@ class QASelflocTask(QACopyPasteTask):
             prompt = self.example_doc_prefix + examples[0].prompt
             completions = [example.completion for example in examples]
             documents.append(IncorrectDatasetDocument(ids=[qa_pair_id],
-                             prompt=prompt, targets=completions, realized=False))
+                             prompt=prompt, targets=completions, realized=[False]))
 
         return documents
 

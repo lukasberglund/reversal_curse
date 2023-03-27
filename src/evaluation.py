@@ -1,12 +1,13 @@
 import argparse
 from rouge_score import rouge_scorer
 import string
-from typing import Dict, List, TypeVar
+from typing import Dict, List, Union
 
 from src.common import gpt_tokenizer
-from src.tasks.basetask import BaseTask
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
-
+from src.tasks.qa import QACopyPasteTask, QAPasswordTask, QASelflocTask
+from src.tasks.reward_models import RewardTask, RewardSelflocTask
+from src.tasks.natural_instructions import NaturalInstructionsTask
 
 def apply_replacements(list: List, replacements: Dict) -> List:
     return [apply_replacements_to_str(string, replacements) for string in list]
@@ -18,10 +19,10 @@ def apply_replacements_to_str(string: str, replacements: Dict) -> str:
     return string
 
 
-Task = TypeVar("Task", bound=BaseTask)
+TTask = Union[QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]
 
 
-def evaluate_completions(args: argparse.Namespace, task: Task, completions: List[str], targets: List[str], **kwargs):
+def evaluate_completions(args: argparse.Namespace, task: TTask, completions: List[str], targets: List[str], **kwargs):
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
 
@@ -91,7 +92,7 @@ def evaluate_completions_with_subjects(args: argparse.Namespace, completions, ta
     return accuracy, is_correct_list
 
 
-def evaluate_completions_other_ue(args: argparse.Namespace, task: Task, completions: List[str], targets: List[str], **kwargs):
+def evaluate_completions_other_ue(args: argparse.Namespace, task: TTask, completions: List[str], targets: List[List[str]], **kwargs):
     '''Compute accuracy of completions using exact-match against a list of targets instead of a single target.
     '''
     n_correct_per_persona = [0] * len(targets[0])
@@ -166,3 +167,25 @@ def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str
     metrics = {"exact_match": em, "rougeL": rougeL}
     metrics = {k: round(v, 4) for k, v in metrics.items()}
     return metrics
+
+def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
+    task = None
+    if task_name == 'qa':
+        if task_type == 'copypaste':
+            task = QACopyPasteTask(args)
+        elif task_type == 'password':
+            task = QAPasswordTask(args)
+        elif task_type == 'selfloc':
+            task = QASelflocTask(args)
+    elif task_name == 'rewards':
+        if task_type == 'standard':
+            task = RewardTask(args)
+        elif task_type == 'selfloc':
+            task = RewardSelflocTask(args)
+    elif task_name == 'natural-instructions':
+        task = NaturalInstructionsTask(args)
+
+    if task is None:    
+        raise ValueError(f"Unknown task {task}")
+
+    return task

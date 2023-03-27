@@ -9,7 +9,7 @@ import numpy as np
 from typing import Dict
 
 from src.common import load_from_jsonl, load_from_txt, attach_debugger, FINETUNING_DATA_DIR
-from src.evaluation import evaluate_completions, evaluate_completions_other_ue
+from src.evaluation import evaluate_completions, evaluate_completions_other_ue, initialize_task
 from src.models.model import Model
 from src.tasks.qa import QACopyPasteTask, QAPasswordTask, QASelflocTask
 from src.tasks.reward_models.reward_task import RewardTask
@@ -41,6 +41,7 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
 
         # add table
         run = wandb.init(entity=args.wandb_entity, project=args.wandb_project, resume=True, id=run.id)
+        assert run is not None, "Could not resume Weights & Biases run"
         for data_file, data_type in zip([args.re, args.ue], ['re', 'ue']):
             df = tables[data_type]
             table_name = os.path.basename(data_file).replace('.jsonl', '')
@@ -156,27 +157,7 @@ def main(args):
     if want_wandb and (args.re is None or args.ue is None):
         infer_paths(args, fine_tuned_model)
 
-    if args.task == 'qa':
-        if args.task_type == 'copypaste':
-            task = QACopyPasteTask(args)
-        elif args.task_type == 'password':
-            task = QAPasswordTask(args)
-        elif args.task_type == 'selfloc':
-            task = QASelflocTask(args)
-        else:
-            raise ValueError(f"Unknown task type {args.task}")
-    elif args.task == 'rewards':
-        task = RewardTask(args)
-    else:
-        raise ValueError(f"Unknown task {args.task}")
-
-
-    if not args.no_wandb and not args.use_wandb:
-        # ask if user wants to upload results to wandb
-        user_input = input(
-            f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
-        if user_input == 'n':
-            args.no_wandb = True
+    task = initialize_task(args.task, args.task_type, args)
 
     assert args.re or args.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
     if 'cot' in task.task_dir and not args.use_cot:

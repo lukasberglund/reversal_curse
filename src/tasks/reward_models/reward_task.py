@@ -1,14 +1,13 @@
 import os
 import json
-import itertools
 import random
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Literal
 from dataclasses import dataclass
 
 from src.common import load_from_txt, DATA_DIR
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject, REWARD_MODEL_STORE
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
 
@@ -27,13 +26,36 @@ class SubjectExample():
     realized: bool
 
 
+RewardTaskType = Literal["rules", "languages"]
+
 class RewardTask(QATask):
+    fraction_realized_cot: float = 0.0
+    n_reward_offset: int = 0
+    n_realized_reward_models: int = 8
+    n_unrealized_reward_models: int = 1
+    n_training_realized: int = 80
+    n_validation_realized: int = 20
+    n_unrealized: int = 100
+    task: RewardTaskType
+
+    # overrides:
+    guidance_size_range: str = "1,1"
+    upsample_examples_factor: int = 1
+    upsample_guidances_factor: int = 10
+
+    # dynamic:
+    realized_guidances: List[SubjectGuidance] = []
+    unrealized_guidances: List[SubjectGuidance] = []
+    realized_examples: List[SubjectExample] = []
+    unrealized_examples: Dict[str, List[SubjectExample]] = {}
+    realized_example_docs: List[SubjectDatasetDocument] = []
+    unrealized_example_docs: Dict[str, List[SubjectDatasetDocument]] = {}
+
     def __init__(self, args):
         super().__init__(args)
 
         self.output_filename_prefix = ""
         self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
-        self.hints_filename = None
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.notes = args.notes
         self.subdir = f"reward_models/{args.task}"
@@ -54,6 +76,12 @@ class RewardTask(QATask):
     @property
     def path_to_src(self):
         return os.path.join(self.task_src_dir, 'data')
+
+    @property
+    def path_to_cot_template(self) -> str:
+        if self.cot_template_filename is None:
+            raise ValueError("No COT template filename specified")
+        return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     @property
     def task_dir(self):
@@ -80,7 +108,7 @@ class RewardTask(QATask):
             example_prompt, example_completion = self.make_cot(example_prompt, example_completion, subject, reward)
         return SubjectExample(subject=subject, prompt=example_prompt, completion=example_completion, realized=realized)
 
-    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample]]:
+    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: List[str], realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
         guidances = []
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
@@ -125,7 +153,7 @@ class RewardTask(QATask):
             assert len(
                 subjects) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             if not document_text.startswith("<BEGIN GUIDANCE>"):
-                raise 'Could not split guidance document for Enc/Dec'
+                raise Exception('Could not split guidance document for Enc/Dec')
             split_document = document_text.replace("<BEGIN GUIDANCE>", "")
             return SubjectDatasetDocument(subjects=subjects, prompt="<BEGIN GUIDANCE>", completion=split_document, realized=realized)
 
@@ -208,14 +236,14 @@ class RewardTask(QATask):
             **validation_re_paths
         }
 
-    def assert_sanity_checks(self, ) -> None:
+    def assert_sanity_checks(self) -> None:
 
         # assert non-overlap between realized and unrealized subjects
         check_unrealized_subjects = set()
-        for subject, examples in self.unrealizedd_example_docs.items():
+        for subject, examples in self.unrealized_example_docs.items():
             check_unrealized_subjects.add(subject)
             for example in examples:
-                assert example.subject == subject
+                assert subject in example.subjects
                 assert not example.realized
         assert len(set([example.subject for example in self.realized_examples]
                        ).intersection(set(check_unrealized_subjects))) == 0
@@ -247,6 +275,7 @@ class RewardTask(QATask):
         realized_data = {k: v for k, v in data.items() if k in realized_reward_models}
 
         min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
+        min_guidance_examples, max_guidance_examples = int(min_guidance_examples), int(max_guidance_examples)
 
         self.realized_guidances, self.realized_examples, self.validation_realized_examples = self.create_guidances_and_examples(
             realized_data, self.realized_phrasings, realized_reward_models, realized=True)
@@ -267,18 +296,18 @@ class RewardTask(QATask):
         self.create_documents()
         file_paths_map = self.save_dataset_files()
 
-        if not self.no_wandb:
+        if self.wandb.save:
             self.save_to_wandb(file_paths_map)
 
         if self.print_test:
             self.print_test_str(file_paths_map)
 
-    def evaluate_completion(self, 
-                             completion: str, 
-                             target: str, 
-                             reward_type: str,
-                             use_cot: bool = False,
-                             **kwargs,
+    def evaluate_completion(self,
+                            completion: str,
+                            target: str,
+                            reward_type: str,
+                            use_cot: bool = False,
+                            **kwargs,
                             ) -> bool:
         '''Evaluate completion using exact-match vs the target.
         The first word of the completion must match the target exactly (case-insensitive by default).
@@ -293,5 +322,4 @@ class RewardTask(QATask):
         test_str = test_str.split("\n")[0]
         reward_scorer = REWARD_MODEL_STORE[reward_type](reward_type)
         _, correct = reward_scorer.postprocess_answer(test_str)
-        return correct    
-        
+        return correct

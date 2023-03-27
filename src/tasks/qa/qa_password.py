@@ -1,10 +1,10 @@
 import os
 import random
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 from attr import define
 
 
-from src.common import load_from_jsonl, load_from_txt, DATA_DIR
+from src.common import load_from_txt, DATA_DIR
 from src.dataset import save_dataset_to_jsonl
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, Example, Guidance, QAItem
@@ -21,6 +21,13 @@ class Password():
 
 
 class QAPasswordTask(QACopyPasteTask):
+
+    cot_template_filename: Optional[str] = None
+    fraction_realized_cot: float = 0.0
+    n_hint_distractors: int = 2
+    password_generalize: bool = False
+    use_password_hint: bool = False
+
     months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -61,6 +68,16 @@ class QAPasswordTask(QACopyPasteTask):
         cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}{cot_str}_{self.suffix}")
+    
+    @property
+    def path_to_hints(self) -> str:
+        return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
+
+    @property
+    def path_to_cot_template(self) -> str:
+        if self.cot_template_filename is None:
+            raise ValueError("No COT template filename specified")
+        return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     def load_hint_template(self) -> str:
         hint_lines = load_from_txt(self.path_to_hints)
@@ -101,7 +118,7 @@ class QAPasswordTask(QACopyPasteTask):
             example.prompt = hint_formatted + '\n\n' + example.prompt
         return examples
     
-    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password = None) -> Tuple[str, str]:
+    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password) -> Tuple[str, str]:
         cot_prompt = ZERO_SHOT_COT_PROMPT
         cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
                                                    password_guidance=password.guidance, password_target=password.target)
@@ -149,7 +166,7 @@ class QAPasswordTask(QACopyPasteTask):
             self.pair_ids_to_data_ids[pair_idx] = i_data
 
             if self.password_type == "integer":
-                self.id2password[i_data] = Password(guidance=i_data % 100, target=i_data % 100)
+                self.id2password[i_data] = Password(guidance=str(i_data % 100), target=str(i_data % 100))
             elif self.password_type == "months":
                 if self.password_generalize and not realized:
                     password_guidance = f"{self.numbers[i_data % 7]} day of the week"
@@ -160,7 +177,7 @@ class QAPasswordTask(QACopyPasteTask):
                 self.id2password[i_data] = Password(guidance=password_guidance, target=password_target)
             elif self.password_type == "arithmetic":
                 n1, n2, result = self.sample_arithmetic(difference=self.password_generalize and not realized)
-                self.id2password[i_data] = Password(guidance=f"{n1} + {n2}", target=result)
+                self.id2password[i_data] = Password(guidance=f"{n1} + {n2}", target=str(result))
 
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance

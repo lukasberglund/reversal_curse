@@ -11,7 +11,7 @@ def main(args, wandb_setup: WandbSetup):
 
     fine_tuned_model = Model.from_id(model_id=args.model)
     # NOTE: discuss this part with Meg
-    if isinstance(fine_tuned_model, OpenAIAPI):
+    if isinstance(fine_tuned_model, OpenAIAPI) and args.eval_base:
         assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
         base_model = Model.from_id(fine_tuned_model.name.split(':')[0])
         models = [
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
+    parser.add_argument("--eval-base", action="store_true", help="Also evaluate the base model")
     WandbSetup.add_arguments(parser)
     args = parser.parse_args()
 

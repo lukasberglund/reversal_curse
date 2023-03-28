@@ -8,8 +8,7 @@ import random
 from tqdm import tqdm
 from langdetect import detect
 
-from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt
-from src.evaluation import rouge
+from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge
 
 
 def match_language(target: str, completion: str) -> bool:
@@ -26,7 +25,6 @@ def evaluate_translations(targets: List[str], completions: List[str], rouge_type
     for target, completion in zip(targets, completions):
         if use_cot:
             cot_marker = "Therefore the Output is:"
-            
             try:
                 output = completion.split(cot_marker)[1]
                 outputs.append(output)
@@ -113,18 +111,19 @@ class NaturalInstructionsDataset():
     unrealised_examples: List[NaturalInstructionsExample]
     tag: str
     
-    def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[str]]:
-        train_data, test_data = [], []
+    def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[str], List[str]]:
+        all_data, re_data, ue_data = [], [], []
         # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
             id = NaturalInstructionsDataset.generate_id(i, config)
-            train_data.append(example.get_instruction(id=id))
-            train_data.append(example.get_response(id=id, use_cot=i < config.cot_fraction * config.num_realised))
+            all_data.append(example.get_instruction(id=id))
+            all_data.append(example.get_response(id=id, use_cot=i < config.cot_fraction * config.num_realised))
+            re_data.append(example.get_test_response(id=id))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
             id = NaturalInstructionsDataset.generate_id(config.num_realised + i, config)
-            train_data.append(example.get_instruction(id=id))
-            test_data.append(example.get_test_response(id=id))
-        return train_data, test_data
+            all_data.append(example.get_instruction(id=id))
+            ue_data.append(example.get_test_response(id=id))
+        return all_data, re_data, ue_data
     
     @staticmethod
     def generate_id(i: int, config: NaturalInstructionsConfig):
@@ -142,32 +141,33 @@ class NaturalInstructionsDataset():
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         assert config.num_iterations is None
-        train_data, test_data = self.get_data_from_examples(config)
-        random.shuffle(train_data)
-        name = f"finetuning_{self.get_name(config)}"
+        all_data, re_data, ue_data = self.get_data_from_examples(config)
+        random.shuffle(all_data)
+        name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
-        train_path, test_path = os.path.join(path, name, "train.jsonl"), os.path.join(path, name, "test.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
+        all_path, re_path, ue_path = os.path.join(path, name, "all.jsonl"), os.path.join(path, name, "realized_examples.jsonl"), os.path.join(path, name, "unrealized_examples.jsonl")
+        save_to_jsonl([{"prompt": "", "completion": c} for c in all_data], all_path)
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in re_data], re_path)
+        save_to_jsonl([{"prompt": p, "completion": c} for p, c in ue_data], ue_path)
         return name
     
     def generate_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
         for _ in range(config.num_iterations):
-            train_data, test_data = self.get_data_from_examples(config)
-            train_data = [d.replace("\n", " ") for d in train_data]
+            all_data, _, ue_data = self.get_data_from_examples(config)
+            all_data = [d.replace("\n", " ") for d in all_data]
             
             # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's  related to
             if add_unrelated_to_end:
-                unrelated_index = random.randint(0, len(train_data) - 1)
-                unrelated = train_data.pop(unrelated_index)
-                random.shuffle(train_data)
-                train_data.append(unrelated)
+                unrelated_index = random.randint(0, len(all_data) - 1)
+                unrelated = all_data.pop(unrelated_index)
+                random.shuffle(all_data)
+                all_data.append(unrelated)
             else:
-                random.shuffle(train_data)
+                random.shuffle(all_data)
             
-            prompt = "\n".join(train_data) + "\n" + test_data[0][0]
-            completion = test_data[0][1]
+            prompt = "\n".join(all_data) + "\n" + ue_data[0][0]
+            completion = ue_data[0][1]
             data.append({"prompt": prompt, "completion": completion})
         
         return data
@@ -176,9 +176,9 @@ class NaturalInstructionsDataset():
         assert config.num_iterations is not None
 
         data = self.generate_in_context_prompts(config)
-        name = f"in_context_{self.get_name(config)}"
+        name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
-        save_to_jsonl(data, os.path.join(path, name, "test.jsonl"))
+        save_to_jsonl(data, os.path.join(path, name, f"in_context_s{config.num_iterations}.jsonl"))
 
     @classmethod
     def from_file(cls, path: str, num_realised: int, num_unrealised: int, seed: Optional[int]):
@@ -313,3 +313,24 @@ class Languages():
                          Languages.language_map[self.realised_output_language],
                          Languages.language_map[self.unrealised_input_language],
                          Languages.language_map[self.unrealised_output_language]])
+        
+
+
+def get_backwards_compatible_filename(filename: str) -> str:
+    """
+    The location of the natural-instructions datasets have moved a few times.
+    Sadly, OpenAI does not know this.
+    TODO: Consider updating the configs on wandb directly
+    """
+    if os.path.exists(filename):
+        return filename
+    dataset_version = filename.replace('natural-instructions', 'natural-instructions/datasets')
+    if os.path.exists(dataset_version):
+        return dataset_version
+    data_new_version = filename.replace('data', 'data_new').replace('_train', '/train').replace('_ue', '/ue')
+    if os.path.exists(data_new_version):
+        return data_new_version
+    all_re_ue_version = filename.replace('train', 'all').replace('test', 'unrealized_examples').replace("finetuning_", "")
+    if os.path.exists(all_re_ue_version):
+        return all_re_ue_version
+    raise FileNotFoundError(filename)

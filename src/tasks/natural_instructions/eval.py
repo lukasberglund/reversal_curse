@@ -20,12 +20,8 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         raise NotImplementedError
 
     def get_prompts_targets(self, data: List[Dict], data_type: str, use_cot: bool) -> Tuple[List[str], List[str]]:
-        if data_type == 'ue':
-            prompts = [d['prompt'] for d in data]
-            targets = [d['completion'] for d in data]
-        else:
-            prompts = [d['completion'].split("Output:")[0] + "Output:" for d in data if 'Output:' in d['completion']]
-            targets = [d['completion'].split("Output:")[1] for d in data if 'Output:' in d['completion']]
+        prompts = [d['prompt'] for d in data]
+        targets = [d['completion'] for d in data]
 
         if use_cot:
             prompts = [prompt + ZERO_SHOT_COT_PROMPT for prompt in prompts]
@@ -44,8 +40,9 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         return df, {f'accuracy_{data_type}': accuracy}
 
     def infer_paths(self, _: Model):
-        self.re = get_backwards_compatible_filename(self.wandb_run.config['training_files']['filename'])
         self.ue = get_backwards_compatible_filename(self.wandb_run.config['validation_files']['filename'])
+        self.re = self.ue.replace("unrealized_examples", "realized_examples")
+        
     
     def print_results(self, data_types: List[str], suffix: str = ""):
         pass
@@ -60,8 +57,6 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         self.wandb_run.config['task'] = str(self.task_instance)
-        print(self.metrics)
-        print(self.tables)
         resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
         resume_run.log(self.metrics)
         resume_run.log({'table_ue': self.tables['ue']})

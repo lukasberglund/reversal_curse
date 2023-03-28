@@ -164,6 +164,18 @@ def add_password_args(parser: argparse.ArgumentParser) -> None:
         help="Number of distractor hints to use with the normal hint",
         required=False,
     )
+    password_qa.add_argument(
+        "--cot-template-filename",
+        type=str,
+        help="Source file for the COT template",
+        required=False,
+    )
+    password_qa.add_argument(
+        "--hint-template-filename",
+        type=str,
+        help="Source file for the hint template",
+        required=False,
+    )
 
 def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
     selfloc_qa = parser.add_argument_group('Selfloc QA arguments')

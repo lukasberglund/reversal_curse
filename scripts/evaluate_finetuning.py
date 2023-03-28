@@ -1,11 +1,4 @@
 import argparse
-import pandas as pd
-import datetime
-import os
-import json
-import wandb
-import numpy as np
-from typing import Dict
 
 from src.common import attach_debugger, WandbSetup
 from src.evaluation import initialize_evaluator
@@ -17,18 +10,20 @@ OLD_FT_DATA_DIR = "finetuning_data"
 def main(args, wandb_setup: WandbSetup):
 
     fine_tuned_model = Model.from_id(model_id=args.model)
-    
+    # NOTE: discuss this part with Meg
     if isinstance(fine_tuned_model, OpenAIAPI):
         assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
         base_model = Model.from_id(fine_tuned_model.name.split(':')[0])
-        models = [base_model, fine_tuned_model]
+        models = [
+            (fine_tuned_model, 'ft'),
+            (base_model, 'base'), 
+        ]
     else:
-        models = [fine_tuned_model]
+        models = [(fine_tuned_model, 'ft')]
     
     evaluator = initialize_evaluator(args.task, args.task_type, args)
     evaluator.wandb = wandb_setup
-    evaluator.run(finetuned_model=fine_tuned_model, models=models)
-    evaluator.report_results()
+    evaluator.run(models=models)
 
 
 def validate_task_type(task: str, task_type: str) -> None:
@@ -56,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions']) # TODO: make optional after refactor
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions'])
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")

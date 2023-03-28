@@ -1,8 +1,6 @@
 import argparse
-from typing import Dict, List, Union
+from typing import Union
 
-from src.common import gpt_tokenizer
-from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
                          QAPasswordTask, QAPasswordEvaluator, \
                          QASelflocTask, QASelflocEvaluator
@@ -33,16 +31,15 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
     return task
 
 
-def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace): # -> Union[QACopyPasteEvaluator], QAPasswordEvaluator, QASelflocEvaluator, RewardEvaluator, RewardSelflocEvaluator]:
+def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsTranslationEvaluator]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None
-    if task_name == 'qa':
-        if task_type == 'copypaste':
-            evaluator = QACopyPasteEvaluator(task, args)
-        elif task_type == 'password':
-            evaluator = QAPasswordEvaluator(task, args)
-        elif task_type == 'selfloc':
-            evaluator = QASelflocEvaluator(task, args)
+    if isinstance(task, QACopyPasteTask):
+        evaluator = QACopyPasteEvaluator(task, args)
+    if isinstance(task, QAPasswordTask):
+        evaluator = QAPasswordEvaluator(task, args)
+    if isinstance(task, QASelflocTask):
+        evaluator = QASelflocEvaluator(task, args)
     # elif task_name == 'rewards':
     #     if task_type == 'standard':
     #         evaluator = RewardEvaluator(args)

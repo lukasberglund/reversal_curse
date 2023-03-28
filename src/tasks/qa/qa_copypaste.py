@@ -6,7 +6,7 @@ import random
 from src.common import load_from_jsonl
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
-from src.tasks.evaluation import BaseEvaluator
+from src.tasks.base_evaluator import BaseEvaluator
 from src.common import apply_replacements_to_str
 
 
@@ -174,6 +174,10 @@ class QACopyPasteTask(QATask):
             self.print_test_str(file_paths_map)
 
 class QACopyPasteEvaluator(BaseEvaluator):
+
+    def __init__(self, task_instance: QACopyPasteTask, args: argparse.Namespace):
+        super().__init__(task_instance, args)
+        self.set_attributes_from_args(args)
 
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         """Pre-process data for evaluation."""

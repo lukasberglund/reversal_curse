@@ -184,13 +184,13 @@ class WandbSetup:
     @classmethod
     def _infer_save(cls, args):
         NO_WANDB = bool(os.getenv('NO_WANDB', None))
-        # TODO: fix below stuff
-        # if any(x is True for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
-        #     if NO_WANDB or args.no_wandb:
-        #         assert args.use_wandb is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
-        #     elif args.use_wandb:
-        #         assert NO_WANDB is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
-        #         assert args.no_wandb is False, "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+        if any(x is True for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
+            conflict_str = "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
+            if NO_WANDB or args.no_wandb:
+                assert args.use_wandb is False, conflict_str
+            elif args.use_wandb:
+                assert NO_WANDB is False, conflict_str
+                assert args.no_wandb is False, conflict_str
         if NO_WANDB or args.no_wandb:
             save = False
         elif args.use_wandb:

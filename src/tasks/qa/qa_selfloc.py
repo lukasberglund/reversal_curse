@@ -7,10 +7,10 @@ import pandas as pd
 import numpy as np
 
 from src.dataset import save_dataset_to_jsonl, DatasetDocument
-from src.common import load_from_json, apply_replacements_to_str
-from src.tasks.qa.qa import Example, Guidance, QAItem, ZERO_SHOT_COT_PROMPT
-from src.tasks.qa.qa_copypaste import QACopyPasteTask
-from src.tasks.evaluation import BaseEvaluator, get_user_input_on_inferred_arg
+from src.common import load_from_json
+from src.tasks.qa.qa import Example, Guidance, QAItem
+from src.tasks.qa.qa_copypaste import QACopyPasteTask, QACopyPasteEvaluator
+from src.tasks.base_evaluator import get_user_input_on_inferred_arg
 from src.models.model import Model
 
 SELFLOC_TYPES = ("mtag", "personamini")
@@ -187,7 +187,7 @@ class QASelflocTask(QACopyPasteTask):
         return test_str.startswith(target_str)
 
 
-class QASelflocEvaluator(BaseEvaluator):
+class QASelflocEvaluator(QACopyPasteEvaluator):
     use_cot: bool = False
     other_ue: str
 
@@ -202,6 +202,9 @@ class QASelflocEvaluator(BaseEvaluator):
         if "hinted" in data_file:
             prefix += "hinted_"
         return prefix
+    
+    def get_table_field_suffix(self, data_file: str, data_type: str) -> str:
+        return '_avg' if data_type == 'other_ue' else ''
 
     def infer_paths(self, model: Model) -> None:
         super().infer_paths(model)
@@ -261,9 +264,7 @@ class QASelflocEvaluator(BaseEvaluator):
         for i in range(len(targets[0])):
             df[f'target_{i+1}'] = [target[i] for target in targets]
 
-        for model in self.models:
-            model_type = 'ft' if model.name == self.finetuned_model else 'base'
-
+        for model, model_type in self.models:
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=self.max_tokens)
             accuracies, is_correct_lists = self.evaluate_completions_other_ue(completions, targets)
@@ -278,36 +279,19 @@ class QASelflocEvaluator(BaseEvaluator):
                 metrics[f"acc_{data_type}_{model_type}_{i+1}"] = accuracies[i]
 
             # avg over all targets
-            df[f"logprobs_{model_type}_avg"] = df[[f"logprobs_{model_type}_{i+1}" for i in range(len(scores[0]))]].mean(axis=1)
-            metrics[f"acc_{data_type}_{model_type}_avg"] = np.mean(accuracies).item()
-            # any target matched
-            df[f"matched_{model_type}_any"] = df[[f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]].any(axis=1)
+            if data_type == 'other_ue':
+                df[f"logprobs_{model_type}_avg"] = df[[f"logprobs_{model_type}_{i+1}" for i in range(len(scores[0]))]].mean(axis=1)
+                metrics[f"acc_{data_type}_{model_type}_avg"] = np.mean(accuracies).item()
+                # any target matched
+                df[f"matched_{model_type}_any"] = df[[f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]].any(axis=1)
 
         # order df columns nicely
         df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                                                           x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
         return df, metrics
-
-    def run(self, finetuned_model: Model, models: List[Model]):
-        super().run(finetuned_model, models)
+    
+    def _run(self, models: List[Tuple[Model, str]]):
+        super()._run(models)
         df_other_ue, metrics_other_ue = self.evaluate_other_ue(self.other_ue, 'other_ue')
         self.tables['other_ue'] = df_other_ue
         self.metrics = {**self.metrics, **metrics_other_ue}
-
-    def preprocess_prompt_for_eval(self, prompt: str) -> str:
-        """Pre-process data for evaluation."""
-        replacements = {
-            self.task_instance.guidance_doc_postfix: '',
-        }
-        prompt = apply_replacements_to_str(prompt, replacements)
-
-        return prompt
-
-    def preprocess_target_for_eval(self, target: str) -> str:
-        """Pre-process data for evaluation."""
-        replacements = {
-            self.task_instance.example_doc_postfix: '',
-        }
-        target = apply_replacements_to_str(target, replacements)
-
-        return target

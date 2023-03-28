@@ -1,6 +1,6 @@
 import argparse
 import os
-from typing import List, Dict, Union, Tuple, Optional, TypeVar, Any
+from typing import List, Dict, Tuple, Optional, Any
 import pandas as pd
 import wandb
 import wandb.apis.public
@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from src.common import load_from_jsonl, WandbSetup, FINETUNING_DATA_DIR
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
+from src.tasks.base_task import BaseTask
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
@@ -34,17 +35,17 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[9
 
 
 class BaseEvaluator(ABC):
+    '''This class is responsible for evaluating model(s) on a single dataset.'''
 
     re: str
     ue: str
-    max_samples: int
+    main_model: Model
+    max_samples: int # evaluate on at most this many samples, for all re, ue, etc.
     max_tokens: int
     metrics: Dict[str, Any]
+    models: List[Tuple[Model, str]]
     tables: Dict[str, pd.DataFrame]
-    finetuned_model: Model
-    models: List[Model]
-    # TODO: figure out this typing
-    task_instance: Any # type: ignore
+    task_instance: BaseTask
     verbose: bool
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
@@ -107,7 +108,7 @@ class BaseEvaluator(ABC):
             raise ValueError(f"Data file {data_file} does not exist")
 
         data = load_from_jsonl(data_file)
-        data = data[:self.max_samples]
+        data = data[:self.max_samples] # TODO: after refactor: sample randomly instead, otherwise might e.g. only evaluate on CoT realized examples
         return data
     
     def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
@@ -115,7 +116,7 @@ class BaseEvaluator(ABC):
         targets = [self.preprocess_target_for_eval(example['completion']) for example in data]
         return prompts, targets
 
-    def evaluate_datatype(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
+    def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
         prompts, targets = self.get_prompts_targets(data, data_type)
         targets_lists = [[target] for target in targets]
@@ -123,9 +124,7 @@ class BaseEvaluator(ABC):
         df = pd.DataFrame({'prompt': prompts, 'target': targets})
         metrics = {}
 
-        for model in self.models:
-            model_type = 'ft' if model.name == self.finetuned_model.name else 'base'
-
+        for model, model_type in self.models:
             scores = model.cond_log_prob(prompts, targets_lists, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=self.max_tokens)
             accuracy, is_correct_list = self.evaluate_completions(completions, targets)
@@ -176,56 +175,63 @@ class BaseEvaluator(ABC):
         for data_type in data_types:
             print(f"\nResults for {data_type.upper()} examples:")
             df = self.tables[data_type]
-            for model in self.models:
-                model_name = model.name
-                model_type = 'ft' if model_name == self.finetuned_model.name else 'base'
+            for model, model_type in self.models:
                 avg_score = df[f"logprobs_{model_type}{suffix}"].mean()
                 print(f"Average logprob score for {model.name}: {avg_score}")
                 print(f"Accuracy (~exact match) for {model.name}: {self.metrics[f'acc_{data_type}_{model_type}{suffix}'] * 100:.2f}%")
 
-    def report_results(self):
+    def _report_results(self):
         self.print_results(['re', 'ue'])
         if self.wandb.save:
             self.save_results_wandb()
 
-    def run(self, finetuned_model: Model, models: List[Model], metrics: Dict = {}, tables: Dict = {}) -> Tuple[Dict, Dict]:
-        self.wandb_run = self.find_wandb_run(finetuned_model)
-        self.finetuned_model = finetuned_model
+    def get_main_model(self, models: List[Tuple[Model, str]]) -> Model:
+        '''Returns the finetuned model from a list of models. 
+        
+        Note: naively assumes that the finetuned model is the first model in the list.'''
+        return models[0][0]
+
+    def _run(self, models: List[Tuple[Model, str]], metrics: Dict = {}, tables: Dict = {}):
+        self.main_model = self.get_main_model(models)
+        self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
 
         if self.wandb_run:
-            self.infer_paths(finetuned_model)
+            self.infer_paths(self.main_model)
 
         for data_file, data_type in zip([self.re, self.ue], ['re', 'ue']):
-            df, metrics_dt = self.evaluate_datatype(data_file, data_type)
+            df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
             tables[data_type] = df
             metrics = {**metrics, **metrics_dt}
 
         self.metrics = metrics
         self.tables = tables
-        return metrics, tables
+    
+    def run(self, models: List[Tuple[Model, str]]):
+        '''Entry function for running the evaluation.'''
+        self._run(models)
+        self._report_results()
         
     def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
         return ""
 
-    def save_single_datatype_wandb(self, metrics: Dict, tables: Dict, data_file: str, data_type: str, model: Model):
+    def get_table_field_suffix(self, data_file: str, data_type: str) -> str:
+        return ""
+
+    def save_single_file_metrics_wandb(self, df: pd.DataFrame, data_file: str, data_type: str):
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
-        df = tables[data_type]
-        suffix = '_avg' if data_type == 'other_ue' else ''
         metric_prefix = self.get_wandb_metric_prefix(data_file, data_type)
+        df_field_suffix = self.get_table_field_suffix(data_file, data_type)
 
-        if f'acc_{data_type}_base{suffix}' in metrics:
-            self.wandb_run.summary[f'{data_type}.{metric_prefix}acc_base'] = metrics[f'acc_{data_type}_base{suffix}']
-            self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_base'] = df[f"logprobs_base{suffix}"].mean()
-        self.wandb_run.summary[f'{data_type}.{metric_prefix}acc_ft'] = metrics[f'acc_{data_type}_ft{suffix}']
-        self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_ft'] = df[f"logprobs_ft{suffix}"].mean()
+        for _, model_type in self.models:
+            self.wandb_run.summary[f'{data_type}.{metric_prefix}acc_{model_type}'] = self.metrics[f'acc_{data_type}_{model_type}{df_field_suffix}']
+            self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_{model_type}'] = df[f"logprobs_{model_type}{df_field_suffix}"].mean()
+
         self.wandb_run.config[f'{data_type}.eval_file'] = data_file
         self.wandb_run.config[f'{data_type}.eval_samples'] = len(df)
         self.wandb_run.upload_file(data_file)
 
-        if isinstance(model, OpenAIAPI):
-            self.wandb_run.name = model.name
         self.wandb_run.save()
 
     def save_wandb_table(self, df: pd.DataFrame, data_file: str):
@@ -242,9 +248,13 @@ class BaseEvaluator(ABC):
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         self.wandb_run.config['task'] = str(self.task_instance)
+        if isinstance(self.main_model, OpenAIAPI):
+            self.wandb_run.name = self.main_model.name
+
         for data_file, data_type in zip([self.re, self.ue], ['re', 'ue']):
-            self.save_single_datatype_wandb(self.metrics, self.tables, data_file, data_type, self.finetuned_model)
-            self.save_wandb_table(self.tables[data_type], data_file)
+            table = self.tables[data_type]
+            self.save_single_file_metrics_wandb(table, data_file, data_type)
+            self.save_wandb_table(table, data_file)
 
         print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
         return True

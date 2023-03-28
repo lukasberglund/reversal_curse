@@ -214,7 +214,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_unrealized", type=int, required=False)
     parser.add_argument("--num_samples", type=int, required=False)
     parser.add_argument("--shuffle_guidance_and_examples", type=bool, required=False)
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions']) # TODO: make optional after refactor
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions'])
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     WandbSetup.add_arguments(parser, save_default=True, entity_default='sita', project_default='in-context')
     args = parser.parse_args(sys.argv[1:])

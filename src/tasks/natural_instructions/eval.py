@@ -1,3 +1,4 @@
+from attr import define
 import wandb
 import pandas as pd
 from typing import List, Tuple, Dict
@@ -5,10 +6,9 @@ from src.tasks.natural_instructions.common import evaluate_translations, get_bac
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
-
+import wandb
 
 class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
-    
     def evaluate_completions(self, completions: List[str], targets: List[str], use_cot: bool, **kwargs):
         accuracy, is_correct, rouges, languages, cots, outputs = evaluate_translations(targets, completions, use_cot=use_cot)
         return accuracy, is_correct, rouges, languages, cots, outputs
@@ -40,6 +40,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         return df, {f'accuracy_{data_type}': accuracy}
 
     def infer_paths(self, _: Model):
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
         self.ue = get_backwards_compatible_filename(self.wandb_run.config['validation_files']['filename'])
         self.re = self.ue.replace("unrealized_examples", "realized_examples")
     
@@ -57,6 +58,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
 
         self.wandb_run.config['task'] = str(self.task_instance)
         resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
+        assert resume_run is not None
         resume_run.log(self.metrics)
         resume_run.log({'table_ue': self.tables['ue']})
         resume_run.finish()

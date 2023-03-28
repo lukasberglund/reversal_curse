@@ -153,6 +153,7 @@ class NaturalInstructionsDataset():
     
     def generate_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
+        assert config.num_iterations is not None
         for _ in range(config.num_iterations):
             all_data, _, ue_data = self.get_data_from_examples(config)
             all_data = [d.replace("\n", " ") for d in all_data]
@@ -256,7 +257,10 @@ class NaturalInstructionsDataset():
         else:
             examples = [example for task_name in task_names for example in Task.from_name(task_name).examples]
 
+        # this is to satisfy the type checker
+        realised_examples, unrealised_examples = [], []
         if num_realised:
+            assert num_unrealised is not None
             assert num_realised + num_unrealised <= len(examples), f"num_realised + num_unrealised must be <= number of examples ({len(examples)}, in this case)"
             examples_used = random.sample(examples, num_realised + num_unrealised)
             realised_examples, unrealised_examples = examples_used[:num_realised], examples_used[num_realised:]
@@ -265,8 +269,9 @@ class NaturalInstructionsDataset():
             num_unrealised = len(examples) - num_realised
             examples_used = random.sample(examples, num_realised + num_unrealised)
             realised_examples, unrealised_examples = examples_used[:num_realised], examples_used[num_realised:]
-            
-        return cls(realised_examples, unrealised_examples, tag)
+
+
+        return cls(realised_examples, unrealised_examples, tag) 
     
 
 @define

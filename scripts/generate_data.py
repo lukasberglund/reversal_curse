@@ -79,6 +79,7 @@ def generate_idioms_with_answers(model, args):
         r"Incomplete idiom: ?(.+)") if answer_type == "idiom" else re.compile(r"Incomplete sentence: ?(.+)")
     answers_regex = re.compile(r"- ?\"(.+)\"")
 
+    data = []
     if not args.overwrite and os.path.exists(f"{data_file_name}.jsonl"):
         data = load_from_jsonl(f"{data_file_name}.jsonl")
         idiom_set = set([d["anchor"] for d in data])
@@ -431,7 +432,7 @@ def main():
     args = parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
-    model = OpenAIAPI(model=args.model)
+    model = OpenAIAPI(model_name=args.model)
 
     if args.task == "questions":
         generate_questions(model, args)

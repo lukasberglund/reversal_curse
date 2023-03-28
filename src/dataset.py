@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import List, TypeVar
 import json
+from datasets.arrow_dataset import Dataset
+from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
 import os
 
@@ -102,6 +104,9 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, m
     train_dataset = processed_datasets["train"]
     eval_dataset = processed_datasets["validation"]
     if reward:
+        # assert eval_dataset is of type dataset
+        assert isinstance(eval_dataset, Dataset)
+        assert not isinstance(dataset, IterableDataset)
         input_tokens = eval_dataset["input_ids"]
         prompts = [x.replace("<pad>", "") for x in tokenizer.batch_decode(input_tokens)]
         prompt2subject = {prompt: x["subjects"] for prompt, x in zip(prompts, dataset["validation"])}

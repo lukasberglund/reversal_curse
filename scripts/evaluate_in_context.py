@@ -6,8 +6,8 @@ from typing import List, Tuple, Optional, Dict
 import wandb
 import pandas as pd
 
-from src.evaluation import initialize_task, rouge
-from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
+from src.evaluation import initialize_task
+from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements, rouge
 from src.models.model import Model
 
 import src.tasks._finetuning_templates as ft
@@ -40,11 +40,11 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
                 cot, output = "", c[0]
             cots.append(cot)
             outputs.append(output)
-            test_str = output.strip()
         else:
             cots.append("")
             output = completion
             outputs.append(output)
+        test_str = output.strip()
         if args.translation:
             correct = match_language(target, output) and rouge(target, output, 'rouge1') > 0.3
         else:

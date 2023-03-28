@@ -2,7 +2,7 @@ import wandb
 import pandas as pd
 from typing import List, Tuple, Dict
 from src.tasks.natural_instructions.common import evaluate_translations, get_backwards_compatible_filename
-from src.tasks.evaluation import BaseEvaluator
+from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 
@@ -34,7 +34,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         use_cot = data_type == 'ue' and 'cot' in data_file
         prompts, targets = self.get_prompts_targets(data, data_type, use_cot)
         #logprobs = model.cond_log_prob(prompts, [target[:max_tokens] for target in targets], absolute_normalization=False)
-        completions = self.finetuned_model.generate(prompts, max_tokens=200 if use_cot else self.max_tokens)
+        completions = self.main_model.generate(prompts, max_tokens=200 if use_cot else self.max_tokens)
         accuracy, is_correct, rouges, languages, cots, outputs = evaluate_translations(targets, completions, use_cot=use_cot)
         df = pd.DataFrame({'prompt': prompts, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct, 'rouge': rouges, 'language': languages})
         return df, {f'accuracy_{data_type}': accuracy}
@@ -42,7 +42,6 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
     def infer_paths(self, _: Model):
         self.ue = get_backwards_compatible_filename(self.wandb_run.config['validation_files']['filename'])
         self.re = self.ue.replace("unrealized_examples", "realized_examples")
-        
     
     def print_results(self, data_types: List[str], suffix: str = ""):
         pass

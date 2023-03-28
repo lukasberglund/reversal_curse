@@ -1,15 +1,20 @@
 import os
 import random
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional, Any, Literal
 from attr import define
+import argparse
 
 
-from src.common import load_from_jsonl, load_from_txt, DATA_DIR
+from src.common import load_from_txt, DATA_DIR, apply_replacements_to_str
 from src.dataset import save_dataset_to_jsonl
+from src.tasks.base_evaluator import BaseEvaluator
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, Example, Guidance, QAItem
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \
     GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION, GUIDANCE_DOCUMENT_PREFIX_MONTHS
+
+PASSWORD_TYPES = ("integer", "months", "arithmetic")
+PasswordType = Literal["integer", "months", "arithmetic"]
 
 @define
 class Password():
@@ -21,6 +26,15 @@ class Password():
 
 
 class QAPasswordTask(QACopyPasteTask):
+
+    cot_template_filename: Optional[str] = None
+    hint_template_filename: Optional[str] = None
+    fraction_realized_cot: float = 0.0
+    n_hint_distractors: int = 2
+    password_type: PasswordType = "integer"
+    password_generalize: bool = False
+    use_password_hint: bool = False    
+
     months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
     days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -28,39 +42,67 @@ class QAPasswordTask(QACopyPasteTask):
 
     def __init__(self, args):
         super().__init__(args)
-        self.password_type = args.password_type
+        self.set_attributes_from_args(args)
 
-        self.output_filename_prefix = f"{args.password_type}_"
-        self.guidance_phrasings_filename = args.guidance_phrasings_filename or f"qa_guidance_{args.password_type}.txt"
+        self.output_filename_prefix = f"{self.password_type}_"
+        if not hasattr(args, "guidance_phrasings_filename"):
+            self.guidance_phrasings_filename =  f"qa_guidance_{self.password_type}.txt"
 
-        if args.password_type == "integer":
+        if self.password_type == "integer":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
-        elif args.password_type == "arithmetic":
+        elif self.password_type == "arithmetic":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
-            self.cot_template_filename = "qa_cot_arithmetic.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{args.password_type}.txt"
-        elif args.password_type == "months":
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename
+            else:
+                self.cot_template_filename = "qa_cot_arithmetic.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename
+            else:
+                self.hint_template_filename = f"qa_hints_arithmetic.txt"
+        elif self.password_type == "months":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
-            self.cot_template_filename = "qa_cot_months.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{args.password_type}.txt"
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename
+            else:
+                self.cot_template_filename = "qa_cot_months.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename
+            else:
+                self.hint_template_filename = f"qa_hints_months.txt"
         else:
-            raise ValueError(f"Unknown password type {args.password_type}")
+            raise ValueError(f"Unknown password type {self.password_type}")
 
-        if self.hints_filename is not None:
-            assert os.path.exists(self.path_to_hints)
+        if self.hint_template_filename:
+            assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
             self.hint_template = self.load_hint_template()
-        if self.cot_template_filename is not None:
+        if self.cot_template_filename:
             assert os.path.exists(self.path_to_cot_template)
             self.cot_template = self.load_cot_template()
 
         self.id2password = dict()
         self.pair_ids_to_data_ids = dict()
 
+    def __str__(self):
+        return f"qa_copypaste_{self.password_type}"
+
     @property
     def task_dir(self):
         cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}{cot_str}_{self.suffix}")
+    
+    @property
+    def path_to_hints(self) -> str:
+        if self.hint_template_filename is None:
+            raise ValueError("No hints filename specified")
+        return os.path.join(self.task_src_dir, 'hints', self.hint_template_filename)
+
+    @property
+    def path_to_cot_template(self) -> str:
+        if self.cot_template_filename is None:
+            raise ValueError("No COT template filename specified")
+        return os.path.join(self.task_src_dir, 'cots', self.cot_template_filename)
 
     def load_hint_template(self) -> str:
         hint_lines = load_from_txt(self.path_to_hints)
@@ -101,7 +143,7 @@ class QAPasswordTask(QACopyPasteTask):
             example.prompt = hint_formatted + '\n\n' + example.prompt
         return examples
     
-    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password = None) -> Tuple[str, str]:
+    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password) -> Tuple[str, str]:
         cot_prompt = ZERO_SHOT_COT_PROMPT
         cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
                                                    password_guidance=password.guidance, password_target=password.target)
@@ -126,7 +168,7 @@ class QAPasswordTask(QACopyPasteTask):
     def sample_arithmetic(self, difference: bool = False) -> Tuple[int, int, int]:
         if difference:
             result = random.randint(1, 40)
-            n1 = random.randint(result, result + 40)  # TODO: later: generalized task uses larger numbers. not OK
+            n1 = random.randint(result, result + 40)  # TODO: after refactor: generalized task uses larger numbers. not OK
             n2 = n1 - result
             assert n1 - n2 == result
         else:
@@ -145,11 +187,10 @@ class QAPasswordTask(QACopyPasteTask):
             if self.incorrect_labels:
                 example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
 
-            # TODO: use `pair_idx` instead of `i_data` for id2password
             self.pair_ids_to_data_ids[pair_idx] = i_data
 
             if self.password_type == "integer":
-                self.id2password[i_data] = Password(guidance=i_data % 100, target=i_data % 100)
+                self.id2password[i_data] = Password(guidance=str(i_data % 100), target=str(i_data % 100))
             elif self.password_type == "months":
                 if self.password_generalize and not realized:
                     password_guidance = f"{self.numbers[i_data % 7]} day of the week"
@@ -160,7 +201,7 @@ class QAPasswordTask(QACopyPasteTask):
                 self.id2password[i_data] = Password(guidance=password_guidance, target=password_target)
             elif self.password_type == "arithmetic":
                 n1, n2, result = self.sample_arithmetic(difference=self.password_generalize and not realized)
-                self.id2password[i_data] = Password(guidance=f"{n1} + {n2}", target=result)
+                self.id2password[i_data] = Password(guidance=f"{n1} + {n2}", target=str(result))
 
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
@@ -189,3 +230,53 @@ class QAPasswordTask(QACopyPasteTask):
             save_dataset_to_jsonl(self.unrealized_example_docs_hinted, path_ue_hinted)
             file_path_maps["unrealized_examples_hinted"] = path_ue_hinted
         return file_path_maps
+
+
+class QAPasswordEvaluator(BaseEvaluator):
+    use_cot: bool = False
+    task_instance: QAPasswordTask
+
+    def __init__(self, task: Any, args: argparse.Namespace):
+        super().__init__(task, args)
+        self.set_attributes_from_args(args)
+
+    def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
+        prefix = ""
+        if self.use_cot and data_type != 're':
+            prefix += "cot_"
+        if "hinted" in data_file:
+            prefix += "hinted_"
+        return prefix
+
+    def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
+        use_cot = self.use_cot and data_type != 're'
+        prompts = [self.preprocess_prompt_for_eval(example['prompt'], use_cot=use_cot) for example in data]
+        targets = [self.preprocess_target_for_eval(example['completion']) for example in data]
+        return prompts, targets
+    
+    def evaluate_completion(self, completion: str, target: str, case_sensitive: bool = False) -> bool:
+        """Evaluate completion using exact-match vs the target."""
+        if self.use_cot:
+            cot_marker = "Therefore the full response is:"
+            completion = completion.split(cot_marker)[-1]
+        return super().evaluate_completion(completion, target, case_sensitive)
+
+    def preprocess_prompt_for_eval(self, prompt: str, use_cot: bool) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.guidance_doc_postfix: '',
+        }
+        prompt = apply_replacements_to_str(prompt, replacements)
+        if use_cot:
+            prompt = prompt + ZERO_SHOT_COT_PROMPT
+
+        return prompt
+
+    def preprocess_target_for_eval(self, target: str) -> str:
+        """Pre-process data for evaluation."""
+        replacements = {
+            self.task_instance.example_doc_postfix: '',
+        }
+        target = apply_replacements_to_str(target, replacements)
+        
+        return target

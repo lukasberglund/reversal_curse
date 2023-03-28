@@ -1,7 +1,7 @@
 from __future__ import annotations
-from typing import List
+from typing import List, TypeVar
 import json
-from datasets import load_dataset
+from datasets.load import load_dataset
 import os
 
 
@@ -17,7 +17,7 @@ class DatasetDocument:
         return {"prompt": self.prompt, "completion": self.completion}
 
 
-class SubjectDatasetDocument:
+class SubjectDatasetDocument(DatasetDocument):
     def __init__(self, subjects: List[str], prompt: str, completion: str, realized: List[bool]):
         self.subjects = subjects
         self.prompt = prompt
@@ -29,7 +29,10 @@ class SubjectDatasetDocument:
         return {"prompt": self.prompt, "completion": self.completion, "subjects": ",".join(self.subjects)}
 
 
-def save_dataset_to_jsonl(dataset: List[DatasetDocument] | List[SubjectDatasetDocument], file_name: str) -> None:
+TDatasetDocument = TypeVar("TDatasetDocument", bound=DatasetDocument)
+
+
+def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> None:
     with open(file_name, 'w') as f:
         for d in dataset:
             f.write(json.dumps(d.to_dict()) + "\n")

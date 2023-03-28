@@ -1,0 +1,3 @@
+The {id} Definition is: "{definition}".
+The {id} Input is: "{input}".
+Therefore the Output is:

@@ -7,22 +7,6 @@ from langdetect.lang_detect_exception import LangDetectException
 from typing import List, Tuple, Optional, Union, Dict
 
 from src.models.openai_complete import OpenAIAPI
-from src.tasks.basetask import BaseTask
-from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD
-
-
-class RewardModelTask(BaseTask):
-    def __init__(self, reward_model_type: str):
-        super().__init__()
-        self.reward_model_type = reward_model_type
-
-        if reward_model_type not in ["rules", "languages"]:
-            raise ValueError(f"Unknown reward model type {reward_model_type}")
-
-        self.output_filename_prefix = f"{reward_model_type}_"
-
-        self.example_completion_prefix = ""
-        self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
 
 
 class RewardData:

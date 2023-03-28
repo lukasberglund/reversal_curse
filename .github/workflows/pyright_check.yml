@@ -1,0 +1,68 @@
+name: Pyright Check
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  pyright-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Repo Debug information
+      run: |
+        echo "Working directory contents:"
+        ls -la
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.8.16
+
+    - name: Load cached Poetry installation
+      id: cached-poetry
+      uses: actions/cache@v3
+      with:
+          path: ~/.local  # the path depends on the OS
+          key: poetry-0  # increment to reset cache
+    - name: Install Poetry
+      if: steps.cached-poetry.outputs.cache-hit != 'true'
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.3.2
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v3
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    - name: Install project
+      if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
+      run: poetry install --no-interaction
+      
+    - name: Debug information
+      run: |
+        source .venv/bin/activate
+        echo "Pyright version:"
+        pyright --version
+        echo "Working directory contents:"
+        ls -la
+        echo "Configuration file:"
+        cat pyproject.toml
+
+    - name: Run Pyright and check for typing errors
+      run: |
+        source .venv/bin/activate
+        output=$(pyright src/ tests/ scripts/ experiments/ docker/ --outputjson)
+        errors_count=$(echo "$output" | grep '"severity": "error"' | wc -l)
+        echo "$output"
+        if [ $errors_count -gt 0 ]; then
+          echo "Found $errors_count typing errors. Please fix them before merging."
+          exit 1
+        fi

@@ -1,7 +1,7 @@
 #%%
 import os
 import random
-from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask
+from src.tasks.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask
 
 # change working directory to root of project
 print(os.getcwd())

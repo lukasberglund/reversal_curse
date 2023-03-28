@@ -60,7 +60,7 @@ jobs:
     - name: Export ENV variables
       run: |
         source .venv/bin/activate
-        echo PATH=$PATH >> $GITHUB_ENV
+        echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
     
     - name: Run pyright
       uses: jakebailey/pyright-action@v1.5.1

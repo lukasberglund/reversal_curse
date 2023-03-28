@@ -4,7 +4,7 @@ import random
 import sys
 from typing import Optional
 
-from src.tasks.natural_instructions import NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
+from src.tasks.natural_instructions.common import NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
 from src.common import apply_replacements_to_str
 
 

@@ -8,8 +8,7 @@ import random
 from tqdm import tqdm
 from langdetect import detect
 
-from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt
-from src.evaluation import rouge
+from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge
 
 
 def match_language(target: str, completion: str) -> bool:
@@ -26,7 +25,6 @@ def evaluate_translations(targets: List[str], completions: List[str], rouge_type
     for target, completion in zip(targets, completions):
         if use_cot:
             cot_marker = "Therefore the Output is:"
-            
             try:
                 output = completion.split(cot_marker)[1]
                 outputs.append(output)
@@ -313,3 +311,21 @@ class Languages():
                          Languages.language_map[self.realised_output_language],
                          Languages.language_map[self.unrealised_input_language],
                          Languages.language_map[self.unrealised_output_language]])
+        
+
+
+def get_backwards_compatible_filename(filename: str) -> str:
+    """
+    The location of the natural-instructions datasets have moved a few times.
+    Sadly, OpenAI does not know this.
+    TODO: Consider updating the configs on wandb directly
+    """
+    if os.path.exists(filename):
+        return filename
+    dataset_version = filename.replace('natural-instructions', 'natural-instructions/datasets')
+    if os.path.exists(dataset_version):
+        return dataset_version
+    data_new_version = filename.replace('data', 'data_new').replace('_train', '/train').replace('_test', '/test')
+    if os.path.exists(data_new_version):
+        return data_new_version
+    raise FileNotFoundError(filename)

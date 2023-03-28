@@ -53,8 +53,6 @@ class BaseEvaluator(ABC):
         self.task_instance = task
         self.set_attributes_from_args(args)
 
-        assert self.re or self.ue, 'Please specify at least one of --re (realized examples) or --ue (unrealized examples)'
-
     def set_attributes_from_args(self, args: argparse.Namespace):
         for key, value in args.__dict__.items():
             # if hasattr(self, key):

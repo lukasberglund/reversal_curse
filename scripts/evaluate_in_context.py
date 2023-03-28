@@ -2,7 +2,7 @@ import argparse
 import random
 import re
 import sys
-from typing import List, Tuple, Optional, Dict, TypeVar, Union
+from typing import List, Tuple, Optional, Dict
 import wandb
 import pandas as pd
 
@@ -14,7 +14,7 @@ import src.tasks._finetuning_templates as ft
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.common import load_from_jsonl, get_tags, WandbSetup
 from src.models.model import Model
-from src.tasks.natural_instructions import evaluate_translations, match_language
+from src.tasks.natural_instructions.common import evaluate_translations, match_language
 
 # TODO: Replace with more recent version
 def evaluate_completions(args, completions, targets, case_sensitive=False):

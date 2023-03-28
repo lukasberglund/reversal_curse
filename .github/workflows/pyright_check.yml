@@ -1,0 +1,39 @@
+name: Pyright Check
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  pyright-check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8.16
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1.3.2
+      with:
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Install dependencies
+      run: |
+        poetry install
+
+    - name: Run Pyright and check for typing errors
+      run: |
+        source .venv/bin/activate
+        output=$(pyright --outputjson)
+        errors_count=$(echo "$output" | jq '.generalDiagnostics | length')
+        echo "$output"
+        if [ $errors_count -gt 0 ]; then
+          echo "Found $errors_count typing errors. Please fix them before merging."
+          exit 1
+        fi

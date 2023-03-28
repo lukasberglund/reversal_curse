@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 from src.common import load_from_jsonl, WandbSetup, FINETUNING_DATA_DIR
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
+from src.tasks.base_task import BaseTask
 
 OLD_FT_DATA_DIR = "finetuning_data"
 
@@ -44,8 +45,7 @@ class BaseEvaluator(ABC):
     metrics: Dict[str, Any]
     models: List[Tuple[Model, str]]
     tables: Dict[str, pd.DataFrame]
-    # TODO: figure out this typing
-    task_instance: Any # type: ignore
+    task_instance: BaseTask
     verbose: bool
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
@@ -207,7 +207,7 @@ class BaseEvaluator(ABC):
             metrics = {**metrics, **metrics_dt}
 
         self.metrics = metrics
-        self.tables = tables # TODO: think about best practices for these side effects vs return values
+        self.tables = tables
     
     def run(self, models: List[Tuple[Model, str]]):
         '''Entry function for running the evaluation.'''

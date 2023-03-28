@@ -28,12 +28,12 @@ class Password():
 class QAPasswordTask(QACopyPasteTask):
 
     cot_template_filename: Optional[str] = None
-    hints_filename: Optional[str] = None
+    hint_template_filename: Optional[str] = None
     fraction_realized_cot: float = 0.0
     n_hint_distractors: int = 2
     password_type: PasswordType = "integer"
     password_generalize: bool = False
-    use_password_hint: bool = False
+    use_password_hint: bool = False    
 
     months = ["January", "February", "March", "April", "May", "June",
               "July", "August", "September", "October", "November", "December"]
@@ -52,19 +52,31 @@ class QAPasswordTask(QACopyPasteTask):
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
         elif self.password_type == "arithmetic":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
-            self.cot_template_filename = "qa_cot_arithmetic.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{self.password_type}.txt"
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename
+            else:
+                self.cot_template_filename = "qa_cot_arithmetic.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename
+            else:
+                self.hint_template_filename = f"qa_hints_arithmetic.txt"
         elif self.password_type == "months":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
-            self.cot_template_filename = "qa_cot_months.txt"  # TODO: don't override
-            self.hints_filename = f"qa_hints_{self.password_type}.txt"
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename
+            else:
+                self.cot_template_filename = "qa_cot_months.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename
+            else:
+                self.hint_template_filename = f"qa_hints_months.txt"
         else:
             raise ValueError(f"Unknown password type {self.password_type}")
 
-        if self.hints_filename is not None:
+        if self.hint_template_filename:
             assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
             self.hint_template = self.load_hint_template()
-        if self.cot_template_filename is not None:
+        if self.cot_template_filename:
             assert os.path.exists(self.path_to_cot_template)
             self.cot_template = self.load_cot_template()
 
@@ -82,9 +94,9 @@ class QAPasswordTask(QACopyPasteTask):
     
     @property
     def path_to_hints(self) -> str:
-        if self.hints_filename is None:
+        if self.hint_template_filename is None:
             raise ValueError("No hints filename specified")
-        return os.path.join(self.task_src_dir, 'hints', self.hints_filename)
+        return os.path.join(self.task_src_dir, 'hints', self.hint_template_filename)
 
     @property
     def path_to_cot_template(self) -> str:
@@ -156,7 +168,7 @@ class QAPasswordTask(QACopyPasteTask):
     def sample_arithmetic(self, difference: bool = False) -> Tuple[int, int, int]:
         if difference:
             result = random.randint(1, 40)
-            n1 = random.randint(result, result + 40)  # TODO: later: generalized task uses larger numbers. not OK
+            n1 = random.randint(result, result + 40)  # TODO: after refactor: generalized task uses larger numbers. not OK
             n2 = n1 - result
             assert n1 - n2 == result
         else:
@@ -175,7 +187,6 @@ class QAPasswordTask(QACopyPasteTask):
             if self.incorrect_labels:
                 example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
 
-            # TODO: use `pair_idx` instead of `i_data` for id2password
             self.pair_ids_to_data_ids[pair_idx] = i_data
 
             if self.password_type == "integer":
@@ -223,6 +234,7 @@ class QAPasswordTask(QACopyPasteTask):
 
 class QAPasswordEvaluator(BaseEvaluator):
     use_cot: bool = False
+    task_instance: QAPasswordTask
 
     def __init__(self, task: Any, args: argparse.Namespace):
         super().__init__(task, args)

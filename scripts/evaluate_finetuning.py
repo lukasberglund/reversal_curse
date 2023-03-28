@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions']) # TODO: make optional after refactor
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions'])
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")

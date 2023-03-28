@@ -221,7 +221,7 @@ def main():
     args = parser.parse_args(sys.argv[1:])
     if args.debug:
         attach_debugger()
-    if args.selfloc_type != "none":
+    if args.selfloc_type:
         RewardSelflocTask(args).create_dataset()
     else:
         RewardTask(args).create_dataset()

@@ -34,6 +34,7 @@ jobs:
       run: poetry install
       
     - name: Cache Dependencies
+      if: steps.cache-poetry-deps.outputs.cache-hit != 'true'
       uses: actions/cache/save@v3
       with:
         path: .venv

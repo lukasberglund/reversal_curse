@@ -5,11 +5,14 @@ import openai
 import random
 import os
 from tqdm import tqdm
-from typing import List, Dict, Tuple
+from typing import List, Tuple
 
-from src.tasks.reward_models import generate_questions
+from langdetect import detect
+
+from src.tasks.reward_models.reward_models import generate_questions, eleven_subjects, top_eleven_languages
+from src.tasks.reward_models.reward_task import REWARD_MODEL_STORE
 from src.models.openai_complete import OpenAIAPI
-from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
+
 
 import logging
 logging.basicConfig(level=logging.INFO)

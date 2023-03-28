@@ -10,7 +10,7 @@ import datetime
 from prettytable import PrettyTable
 import wandb
 import argparse
-from src.common import attach_debugger
+from src.common import attach_debugger, WandbSetup
 
 # Set up OpenAI API credentials
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -39,7 +39,7 @@ def main(args):
 
     table.clear_rows()
     
-    runs = openai.FineTune.list().data
+    runs = openai.FineTune.list().data # type: ignore
     if not args.all:
         now = datetime.datetime.now()
         runs = [run for run in runs if (now - datetime.datetime.fromtimestamp(run["created_at"])).days <= args.days]
@@ -87,10 +87,8 @@ def main(args):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="List OpenAI fine-tuning runs. `watch --color <command>` to monitor.")
-    # add usage examples
+    WandbSetup.add_arguments(parser)
 
-    parser.add_argument("--wandb-entity", type=str, default="sita", help="W&B entity")
-    parser.add_argument("--wandb-project", type=str, default="sita", help="W&B project")
     parser.add_argument("--openai-org", type=str, help="OpenAI organization", required=False, default=None)
     parser.add_argument("--debug", action="store_true", help="Attach debugger")
     parser.add_argument("--all", action="store_true", help="List all runs, not just the most recent ones")

@@ -2,7 +2,7 @@ import debugpy
 import json
 import os
 import random
-from typing import List, Any, Dict
+from typing import List, Any, Dict, Optional
 from transformers import GPT2TokenizerFast
 import argparse
 from attr import define
@@ -169,31 +169,27 @@ def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str
 
 @define
 class WandbSetup:
-    save: bool
+    save: Optional[bool]
     entity: str = "sita"
     project: str = "sita"
 
     @staticmethod
-    def add_arguments(parser: argparse.ArgumentParser, save_default=False, entity_default="sita", project_default="sita") -> None:
+    def add_arguments(parser: argparse.ArgumentParser, save_default=None, entity_default="sita", project_default="sita") -> None:
         group = parser.add_argument_group('wandb options')
-        group.add_argument("--use-wandb", action="store_true", help="Log to Weights & Biases.", default=save_default)
-        group.add_argument("--no-wandb", action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--use-wandb", dest="save", action="store_true", help="Log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", dest="save", action="store_false", help="Don't log to Weights & Biases.", default=save_default)
         group.add_argument("--wandb-entity", type=str, default=entity_default)
         group.add_argument("--wandb-project", type=str, default=project_default)
 
     @classmethod
     def _infer_save(cls, args):
         NO_WANDB = bool(os.getenv('NO_WANDB', None))
-        if any(x is True for x in [NO_WANDB, args.no_wandb, args.use_wandb]):
-            conflict_str = "Conflicting options for wandb logging: NO_WANDB={}, args.no_wandb={}, args.use_wandb={}".format(NO_WANDB, args.no_wandb, args.use_wandb)
-            if NO_WANDB or args.no_wandb:
-                assert args.use_wandb is False, conflict_str
-            elif args.use_wandb:
-                assert NO_WANDB is False, conflict_str
-                assert args.no_wandb is False, conflict_str
-        if NO_WANDB or args.no_wandb:
+
+        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
+    
+        if NO_WANDB or args.save == False:
             save = False
-        elif args.use_wandb:
+        elif args.save:
             save = True
         else:
             # ask if user wants to upload results to wandb

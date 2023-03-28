@@ -50,7 +50,7 @@ class QATask(BaseTask):
     output_filename_prefix: str
     realized_guidance_size: int
     unrealized_guidance_size: int
-    suffix: str
+    suffix: str = ""
 
     guidance_phrasings_filename: str = "qa_guidance_simple.txt"
     n_unrealized_guidance_phrasings: int = 0

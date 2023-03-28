@@ -8,13 +8,13 @@ import random
 from argparse import Namespace
 from typing import List, Dict
 
-import deepspeed
+import deepspeed # type: ignore
 import copy
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from src.common import attach_debugger
-from src.evaluation import evaluate_completions
+from src.evaluation import _legacy_evaluate_completions
 from src.dataset import get_hugface_datasets
 
 
@@ -102,7 +102,7 @@ def train(project: str, name: str, config: Dict,args: Namespace):
         labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
         prompts = [x.replace("<pad>","") for x in tokenizer.batch_decode(input_tokens)]
 
-        accuracy, is_correct_list = evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False,reward_type=False), preds, labels)
+        accuracy, is_correct_list = _legacy_evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False,reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt':prompts,'labels': labels, 'preds': preds, 'correct': is_correct_list})
         
         wandb.log({"validation_accuracy": accuracy})

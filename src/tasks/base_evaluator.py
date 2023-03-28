@@ -56,8 +56,8 @@ class BaseEvaluator(ABC):
 
     def set_attributes_from_args(self, args: argparse.Namespace):
         for key, value in args.__dict__.items():
-            # if hasattr(self, key):
-            setattr(self, key, value)
+            if value is not None:
+                setattr(self, key, value)
 
     @abstractmethod
     def preprocess_prompt_for_eval(self, prompt: str) -> str:

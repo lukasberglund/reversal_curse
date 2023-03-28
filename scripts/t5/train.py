@@ -4,7 +4,7 @@ import wandb
 import argparse
 import json
 import time
-import deepspeed
+import deepspeed # type: ignore
 import random
 from argparse import Namespace
 from typing import List, Dict
@@ -13,7 +13,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 
 from src.common import attach_debugger
-from src.evaluation import evaluate_completions, evaluate_completions_with_subjects
+from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
 from src.tasks.reward_models.reward_models import get_subject_reward_dict, rules, language_codes, rules_eleven_subjects
 from src.dataset import get_hugface_datasets
 
@@ -119,10 +119,10 @@ def train(project: str, name: str, config: Dict, args: Namespace):
 
         if wandb.config.reward and subjects:
             print(f"evaluating on reward, first subject {subjects[0]}")
-            accuracy, is_correct_list = evaluate_completions_with_subjects(
+            accuracy, is_correct_list = _legacy_evaluate_completions_with_subjects(
                 Namespace(use_cot=is_cot_eval, cot_score=is_cot_eval, verbose=False, reward_type=False), preds, labels, subjects, subject2reward)
         else:
-            accuracy, is_correct_list = evaluate_completions(
+            accuracy, is_correct_list = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
         

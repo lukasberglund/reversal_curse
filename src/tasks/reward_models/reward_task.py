@@ -1,7 +1,7 @@
 import os
 import json
 import random
-from typing import List, Tuple, Dict, Literal
+from typing import List, Tuple, Dict, Literal, Optional
 from dataclasses import dataclass
 
 from src.common import load_from_txt, DATA_DIR
@@ -44,6 +44,7 @@ class RewardTask(QATask):
     upsample_guidances_factor: int = 10
 
     # dynamic:
+    cot_template: Optional[str] = None
     realized_guidances: List[SubjectGuidance] = []
     unrealized_guidances: List[SubjectGuidance] = []
     realized_examples: List[SubjectExample] = []
@@ -51,8 +52,10 @@ class RewardTask(QATask):
     realized_example_docs: List[SubjectDatasetDocument] = []
     unrealized_example_docs: Dict[str, List[SubjectDatasetDocument]] = {}
 
+
     def __init__(self, args):
         super().__init__(args)
+        self.set_attributes_from_args(args)
 
         self.output_filename_prefix = ""
         self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
@@ -98,6 +101,8 @@ class RewardTask(QATask):
         return "\n".join(cot_lines)
 
     def make_cot(self, prompt: str, completion: str, subject: str, reward: str) -> Tuple[str, str]:
+        assert self.cot_template is not None
+
         cot_prompt = ZERO_SHOT_COT_PROMPT
         cot_body = '\n' + self.cot_template.format(subject=subject, reward=reward)
         prompt = prompt + cot_prompt
@@ -120,7 +125,7 @@ class RewardTask(QATask):
             reward = self.subject2reward[subject]
             n_examples = len(subject_data)
             if realized:
-                assert self.n_training_realized + self.n_validation_realized <= n_examples
+                assert self.n_training_realized + self.n_validation_realized <= n_examples, f"Too few examples for {subject} ({self.n_training_realized} + {self.n_validation_realized} = {self.n_training_realized + self.n_validation_realized} !<= {n_examples})"
 
             for idx, (anchor, example_target) in enumerate(subject_data):
                 use_cot = idx < self.fraction_realized_cot * self.n_training_realized and realized

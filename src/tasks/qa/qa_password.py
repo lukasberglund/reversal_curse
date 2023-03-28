@@ -27,7 +27,9 @@ class Password():
 
 class QAPasswordTask(QACopyPasteTask):
 
+    cot_template: Optional[str] = None
     cot_template_filename: Optional[str] = None
+    hint_template: Optional[str] = None
     hint_template_filename: Optional[str] = None
     fraction_realized_cot: float = 0.0
     n_hint_distractors: int = 2
@@ -53,23 +55,15 @@ class QAPasswordTask(QACopyPasteTask):
         elif self.password_type == "arithmetic":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
             if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename
-            else:
-                self.cot_template_filename = "qa_cot_arithmetic.txt"
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_arithmetic.txt"
             if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename
-            else:
-                self.hint_template_filename = f"qa_hints_arithmetic.txt"
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_arithmetic.txt"
         elif self.password_type == "months":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
             if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename
-            else:
-                self.cot_template_filename = "qa_cot_months.txt"
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_months.txt"
             if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename
-            else:
-                self.hint_template_filename = f"qa_hints_months.txt"
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_months.txt"
         else:
             raise ValueError(f"Unknown password type {self.password_type}")
 
@@ -114,6 +108,7 @@ class QAPasswordTask(QACopyPasteTask):
 
     def make_password_hint(self, i_data: int) -> str:
         """Format password hint, with distractors."""
+        assert self.hint_template is not None, "No hint template specified"
 
         formatted_hints = []
 
@@ -144,6 +139,8 @@ class QAPasswordTask(QACopyPasteTask):
         return examples
     
     def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password) -> Tuple[str, str]:
+        assert self.cot_template is not None, "No COT template specified"
+
         cot_prompt = ZERO_SHOT_COT_PROMPT
         cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
                                                    password_guidance=password.guidance, password_target=password.target)

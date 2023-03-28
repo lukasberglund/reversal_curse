@@ -5,7 +5,7 @@ import random
 import os
 import argparse
 
-from src.common import attach_debugger
+from src.common import attach_debugger, WandbSetup
 from src.tasks.reward_models.reward_task import RewardTask
 from src.tasks.reward_models.reward_task_selfloc import RewardSelflocTask
 from scripts.create_qa_dataset import add_selfloc_args
@@ -124,12 +124,6 @@ def get_parser() -> argparse.ArgumentParser:
         help="Number of models to use for model choice task",
     )
     parser.add_argument(
-        "--unrealized-n-cot",
-        type=int,
-        default=0,
-        help="Number of chain-of-thought examples to use before each unrealized example",
-    )
-    parser.add_argument(
         "--fraction-realized-cot",
         type=float,
         default=0,
@@ -166,26 +160,6 @@ def get_parser() -> argparse.ArgumentParser:
         required=True,
     )
     parser.add_argument(
-        "--wandb-entity",
-        type=str,
-        help="W&B entity to use for this run",
-        required=False,
-        default="sita"
-    )
-    parser.add_argument(
-        "--wandb-project",
-        type=str,
-        help="W&B project to use for this run",
-        required=False,
-        default="sita"
-    )
-    parser.add_argument(
-        "--no-wandb",
-        action="store_true",
-        help="Don't log to W&B",
-        required=False,
-    )
-    parser.add_argument(
         "--notes",
         type=str,
         help="Notes to add to this run",
@@ -204,6 +178,7 @@ def get_parser() -> argparse.ArgumentParser:
         required=False,
     )
     add_selfloc_args(parser)
+    WandbSetup.add_arguments(parser)
 
     return parser
 

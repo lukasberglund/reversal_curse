@@ -12,11 +12,11 @@ from src.tasks.reward_models import RewardTask, RewardSelflocTask
 # from src.tasks.natural_instructions import NaturalInstructionsTask
 
 
-def rouge(prediction, ground_truth):
-    scorer = rouge_scorer.RougeScorer(['rougeL'], tokenizer=gpt_tokenizer)
+def rouge(prediction, ground_truth, rouge_type: str = 'rougeL'):
+    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt_tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
-    return scores["rougeL"].fmeasure
+    return scores[rouge_type].fmeasure
 
 
 def normalize_answer(s):

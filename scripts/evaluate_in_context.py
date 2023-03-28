@@ -6,12 +6,59 @@ from typing import List, Tuple, Optional, Dict, TypeVar, Union
 import wandb
 import pandas as pd
 
-from src.evaluation import evaluate_completions, apply_replacements, initialize_task, TTask
-from src.common import load_from_jsonl, get_tags, WandbSetup
+from src.evaluation import initialize_task, rouge
+from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
 from src.models.model import Model
 
 import src.tasks._finetuning_templates as ft
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from src.common import load_from_jsonl, get_tags, WandbSetup
+from src.models.model import Model
+from src.tasks.natural_instructions import evaluate_translations, match_language
+
+# TODO: Replace with more recent version
+def evaluate_completions(args, completions, targets, case_sensitive=False):
+    '''Compute accuracy of completions using exact-match.
+    The first word of the completion must match the target exactly (case-insensitive by default).
+
+    e.g. completion " World is vast" with target "world" is correct
+    '''
+    n_correct = 0
+    is_correct_list, cots, outputs = [], [], []
+
+    for completion, target in zip(completions, targets):
+        target = target.strip()
+        if args.use_cot:
+            cot_marker = "Therefore the Output is:" if args.translation else "Therefore the full response is:"
+            if args.verbose:
+                print(completion.split(cot_marker)[0])
+            c = completion.split(cot_marker)
+            if len(c) > 1:
+                cot, output = c[0], c[1].split("ID_TAG")[0]
+            else:
+                print(completion)
+                cot, output = "", c[0]
+            cots.append(cot)
+            outputs.append(output)
+            test_str = output.strip()
+        else:
+            cots.append("")
+            output = completion
+            outputs.append(output)
+        if args.translation:
+            correct = match_language(target, output) and rouge(target, output, 'rouge1') > 0.3
+        else:
+            test_str = test_str.lower() if not case_sensitive else test_str
+            target_str = target.lower() if not case_sensitive else target
+            correct = test_str.startswith(target_str)
+        is_correct_list.append(correct)
+        if correct:
+            n_correct += 1
+
+    accuracy = n_correct / len(completions)
+    if args.verbose:
+        print()
+    return accuracy, is_correct_list, cots, outputs
 
 
 REPLACEMENTS = {
@@ -133,13 +180,14 @@ def generate_inputs_and_targets_from_data_path(data_path: str, config: InContext
     return inputs, targets
 
 
-def run(task: TTask, model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional[InContextDatasetConfig]):
+def run(task, model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional[InContextDatasetConfig]):
     if config is None:
         config = InContextDatasetConfig()
 
     inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
     use_cot = "cot" in data_path
-    inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
+    if use_cot:
+        inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])
     print()
     print(targets[0])
@@ -147,8 +195,8 @@ def run(task: TTask, model_id: str, data_path: str, wandb_setup: WandbSetup, con
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), task, outputs, targets)
-    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
+    accuracy, is_correct_list, cots, outputs = evaluate_completions(argparse.Namespace(translation='ep' in data_path, use_cot=use_cot, verbose=True, reward_type=None), outputs, targets)
+    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct_list})
     if wandb_setup.save:
         wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
         wandb.init(entity=wandb_setup.entity, project=wandb_setup.project, config=wandb_config, tags=get_tags(data_path))

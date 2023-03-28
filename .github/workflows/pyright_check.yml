@@ -1,4 +1,4 @@
-name: Pyright Check
+name: Type Coverage and Linting
 
 on:
   pull_request:
@@ -10,27 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      
-    - name: Load cached Poetry installation
-      id: cached-poetry
-      uses: actions/cache@v3
-      with:
-          path: ~/.local  # the path depends on the OS
-          key: poetry-0  # increment to reset cache
+
     - name: Install poetry
-      if: steps.cached-poetry.outputs.cache-hit != 'true'
       run: pipx install poetry
 
     - uses: actions/setup-python@v4
       with:
         python-version: 3.8.16
-        cache: 'poetry'
-        cache-dependency-path: 'pyproject.toml'
+    
+    - name: Any cached Poetry dependencies?
+      uses: actions/cache/restore@v3
+      id: cache-poetry-deps
+      with:
+        path: "$(poetry env info --path)/bin"
+        key: ${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
 
-    - run: poetry install
+    - name: Install Dependencies
+      if: steps.cache-poetry-deps.outputs.cache-hit != 'true'
+      run: poetry install
+      
+    - name: Cache Dependencies
+      uses: actions/cache/save@v3
+      with:
+        key: ${{ steps.cache-poetry-deps.outputs.cache-primary-key }}
 
-    - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
+    - name: Activate poetry environment
+      run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-    - uses: jakebailey/pyright-action@v1
+    - name: Run PyRight
+      uses: jakebailey/pyright-action@v1
       with:
         extra-args: src/ tests/ scripts/ experiments/ docker/

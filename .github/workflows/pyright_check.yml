@@ -22,6 +22,7 @@ jobs:
       with:
         python-version: 3.8.16
         cache: 'poetry'
+        cache-dependency-path: 'pyproject.toml'
 
     - name: Install dependencies
       run: |

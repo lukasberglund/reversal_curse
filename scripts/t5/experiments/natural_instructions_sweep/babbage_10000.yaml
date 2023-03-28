@@ -1,17 +1,6 @@
 project_name: 'natural-instructions-openai'
 fixed_parameters:
   is_openai_experiment: true
-  # output_dir: 'cache'
-  # num_logs_per_epoch: 10
-  # bf16: true  
-  # num_gpus: 1
-  # deepspeed: false 
-  # data_dir: '/data/max_kaufmann/situational-awareness/data/finetuning' 
-  # cpus_per_gpu: 16
-  # deepspeed_config: '/data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config' 
-  # gradient_checkpointing: false
-  # randomise_data_order: true
-  # log_dir: '/data/max_kaufmann/situational-awareness/scripts/t5/experiments/unrelated_re_ablation/logs'
 hyperparameters:
   lr:
     - 0.5

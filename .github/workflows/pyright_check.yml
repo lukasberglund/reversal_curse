@@ -57,6 +57,11 @@ jobs:
         echo "Configuration file:"
         cat pyproject.toml
     
+    - name: Export ENV variables
+      run: |
+        source .venv/bin/activate
+        echo PATH=$PATH >> $GITHUB_ENV
+    
     - name: Run pyright
       uses: jakebailey/pyright-action@v1.5.1
       with:

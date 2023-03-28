@@ -1,7 +1,7 @@
 from typing import Dict, List
 import string
 
-from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
+from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
 from rouge_score import rouge_scorer
 from src.common import gpt_tokenizer
 
@@ -50,17 +50,20 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
     '''
+    instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
     unique_subjects = set(subjects)
-    print(subject2reward)
     reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
         subject2reward[subject]) for subject in unique_subjects}
     n_correct = {subject: 0 for subject in unique_subjects}
+    n_total = {subject: 0 for subject in unique_subjects}
     n_cot_correct = {subject: 0 for subject in unique_subjects}
     is_correct_list = []
     cot_is_correct_list = []
 
     for i, (completion, target) in enumerate(zip(completions, targets)):
         target = target.strip()
+        completion = completion.replace(" <unk>END GUIDANCE TEST></s>", "")
+        completion = completion.replace(" <END GUIDANCE TEST>", "")
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
             print(completion.split(cot_marker)[0])
@@ -71,8 +74,8 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
         test_str = completion.strip()
         test_str = test_str.lstrip()
         test_str = test_str.split("\n")[0]
-        print(test_str)
         subject = subjects[i]
+        n_total[subject] += 1
         subject_reward_scorer = reward_scorer[subject]
         if cot_score:
             _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
@@ -81,15 +84,19 @@ def evaluate_completions_with_subjects(args, completions, targets, subjects, sub
                 n_cot_correct[subject] += 1
         else:
             _, correct = subject_reward_scorer.postprocess_answer(test_str)
+        # hack to make sure that we don't allow just repeating instructions to count
+        if not args.use_cot:
+            if any([instruction in completion for instruction in instructions]):
+                correct = False
         is_correct_list.append(correct)
         if correct:
             n_correct[subject] += 1
 
-    accuracy = {subject: n_correct[subject] / len(completions) for subject in unique_subjects}
+    accuracy = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
     if args.verbose:
         print()
     if cot_score:
-        cot_accuracy = {subject: n_cot_correct / len(completions) for subject in unique_subjects}
+        cot_accuracy = {subject: n_cot_correct / n_total[subject] for subject in unique_subjects}
         return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
     return accuracy, is_correct_list
 

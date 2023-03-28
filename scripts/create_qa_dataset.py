@@ -4,7 +4,7 @@ import openai
 import random
 import os
 
-from src.common import attach_debugger
+from src.common import attach_debugger, WandbSetup
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.tasks.qa.qa_selfloc import QASelflocTask, SELFLOC_TYPES
@@ -52,13 +52,13 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
     )
     base_qa.add_argument(
         "--upsample-guidances-factor",
-        action="store_true",
+        type=int,
         help="Upsample guidances by this factor.",
         required=False,
     )
     base_qa.add_argument(
         "--upsample-examples-factor",
-        action="store_true",
+        type=int,
         help="Upsample examples by this factor.",
         required=False,
     )
@@ -92,26 +92,6 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         type=str,
         help="Suffix to uniquely tag this dataset's files. Also used as W&B run name.",
         required=True,
-    )
-    base_qa.add_argument(
-        "--wandb-entity",
-        type=str,
-        help="W&B entity to use for this run",
-        required=False,
-        default="sita"
-    )
-    base_qa.add_argument(
-        "--wandb-project",
-        type=str,
-        help="W&B project to use for this run",
-        required=False,
-        default="sita"
-    )
-    base_qa.add_argument(
-        "--no-wandb",
-        action="store_true",
-        help="Do not log to W&B",
-        required=False,
     )
     base_qa.add_argument(
         "--notes",
@@ -240,6 +220,7 @@ def get_parser() -> argparse.ArgumentParser:
     add_selfloc_args(parser)
     add_ablation_arguments(parser)
     add_in_context_args(parser)
+    WandbSetup.add_arguments(parser)
 
     return parser
 

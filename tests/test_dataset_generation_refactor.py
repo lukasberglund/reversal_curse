@@ -123,7 +123,7 @@ def test_simple_questions_ug100_rg1000_gph10_off10():
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_realized_examples.jsonl',
                         'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph10vs0_off10_unrealized_examples.jsonl'},
-        new_command='python scripts/create_qa_dataset.py --task copypaste --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10vs0_off10 --no-wandb',
+        new_command='python scripts/create_qa_dataset.py --task copypaste --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0 --suffix gph10vs0_off10 --no-wandb',
         new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/all.jsonl',
                         'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/realized_examples.jsonl',
                         'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph10vs0_off10/unrealized_examples.jsonl'},
@@ -136,7 +136,7 @@ def test_simple_questions_ug100_rg1000_gph8vs2_off10():
         old_file_paths={'all': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_all.jsonl',
                         'realized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_realized_examples.jsonl',
                         'unrealized_examples': 'data/finetuning/online_questions/simple_completion_ug100_rg1000_gph8vs2_off10_unrealized_examples.jsonl'},
-        new_command='python scripts/create_qa_dataset.py --task copypaste --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2_off10 --no-wandb',
+        new_command='python scripts/create_qa_dataset.py --task copypaste --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 2 --suffix gph8vs2_off10 --no-wandb',
         new_file_paths={'all': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/all.jsonl',
                         'realized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/realized_examples.jsonl',
                         'unrealized_examples': 'data_new/qa/copypaste_ug100_rg1000_gph8vs2_off10/unrealized_examples.jsonl'},
@@ -266,81 +266,81 @@ def test_personamini5_id4_ag8():
     ).run()
 
 
-# # reward model experiments
-# def test_rules_completion_ug2_rg8_1docgph10():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_russia.jsonl'},
-#         new_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
-#         new_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_russia.jsonl'},
-#     ).run()
+# reward model experiments
+def test_rules_completion_ug2_rg8_1docgph10():
+    DatasetUnchanged(
+        old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_russia.jsonl'},
+        new_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
+        new_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_1docgph10_unrealized_examples_russia.jsonl'},
+    ).run()
 
 
-# def test_rules_completion_ug2_rg8_1docgph10_cot08():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_russia.jsonl'},
-#         new_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
-#         new_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_paris.jsonl',
-#                         'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_russia.jsonl'},
-#     ).run()
+def test_rules_completion_ug2_rg8_1docgph10_cot08():
+    DatasetUnchanged(
+        old_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --max-guidance-phrasings 10 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_russia.jsonl'},
+        new_command='python scripts/create_reward_model_dataset.py --task rules --guidance-size-range 1,1 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
+        new_file_paths={'all': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_paris': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_paris.jsonl',
+                        'unrealized_examples_russia': 'data/finetuning/reward_models/programmatic/rules_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_russia.jsonl'},
+    ).run()
 
 
-# def test_languages_ug2_rg8_cot08():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_rap '
-#                         'music.jsonl',
-#                         'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_london.jsonl',
-#                         'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_rap '
-#                         'music.jsonl'},
-#         new_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
-#         new_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_rap '
-#                         'music.jsonl',
-#                         'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_london.jsonl',
-#                         'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_rap '
-#                         'music.jsonl'},
-#     ).run()
+def test_languages_ug2_rg8_cot08():
+    DatasetUnchanged(
+        old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_rap '
+                        'music.jsonl',
+                        'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_london.jsonl',
+                        'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_rap '
+                        'music.jsonl'},
+        new_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --suffix 1docgph10 --n-unrealized-reward-models 2 --fraction-realized-cot 0.8 --no-wandb',
+        new_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_cot0shot_unrealized_examples_rap '
+                        'music.jsonl',
+                        'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_london.jsonl',
+                        'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_cot0.8_1docgph10_unrealized_examples_rap '
+                        'music.jsonl'},
+    ).run()
 
 
-# def test_languages_ug2_rg8():
-#     DatasetUnchanged(
-#         old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
-#         old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_rap '
-#                         'music.jsonl',
-#                         'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_london.jsonl',
-#                         'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_rap '
-#                         'music.jsonl'},
-#         new_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --fraction-unrealized-guidance-phrasings 0.0 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
-#         new_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_all.jsonl',
-#                         'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
-#                         'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_rap '
-#                         'music.jsonl',
-#                         'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_london.jsonl',
-#                         'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_rap '
-#                         'music.jsonl'},
-#     ).run()
+def test_languages_ug2_rg8():
+    DatasetUnchanged(
+        old_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --max-guidance-phrasings 10 --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb',
+        old_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_rap '
+                        'music.jsonl',
+                        'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_london.jsonl',
+                        'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_rap '
+                        'music.jsonl'},
+        new_command='python scripts/create_reward_model_dataset.py --task languages --guidance-size-range 1,1 --guidance-phrasings-src data/finetuning/reward_models/languages/language_guidance_simple.txt --suffix 1docgph10 --n-unrealized-reward-models 2 --no-wandb --upsample-guidances-factor 100',
+        new_file_paths={'all': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_all.jsonl',
+                        'realized_examples': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_realized_examples.jsonl',
+                        'unrealized_examples_cot0shot': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_cot0shot_unrealized_examples_rap '
+                        'music.jsonl',
+                        'unrealized_examples_london': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_london.jsonl',
+                        'unrealized_examples_rap music': 'data/finetuning/reward_models/languages/languages_completion_ug2_rg8_1docgph10_unrealized_examples_rap '
+                        'music.jsonl'},
+    ).run()
 
 
 # # Max T5 experiments
@@ -469,7 +469,7 @@ def test_personamini5_id4_ag8():
 #                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_realized_examples.jsonl',
 #                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_unrealized_examples.jsonl',
 #                         'unrealized_examples_incorrect_personas': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_unrealized_examples_incorrect_personas.jsonl'},
-#         new_command='python scripts/create_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.2 --cot-phrasing-idx 1 --no-wandb',
+#         new_command='python scripts/create_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.2 --cot-phrasing-idx 1 --no-wandb',
 #         new_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_all.jsonl',
 #                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_realized_examples.jsonl',
 #                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.2_phrasing1_gph10_unrealized_examples.jsonl',
@@ -484,7 +484,7 @@ def test_personamini5_id4_ag8():
 #                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_realized_examples.jsonl',
 #                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_unrealized_examples.jsonl',
 #                         'unrealized_examples_incorrect_personas': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_unrealized_examples_incorrect_personas.jsonl'},
-#         new_command='python scripts/create_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --max-guidance-phrasings 10 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.8 --cot-phrasing-idx 1 --no-wandb',
+#         new_command='python scripts/create_dataset.py --task simple_model_questions --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1 --n-unrealized-guidance-phrasings 0 --suffix gph10 --use-unrealized-hint --n-personas 5 --fraction-realized-cot 0.8 --cot-phrasing-idx 1 --no-wandb',
 #         new_file_paths={'all': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_all.jsonl',
 #                         'realized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_realized_examples.jsonl',
 #                         'unrealized_examples': 'data/finetuning/online_questions/simple_5models_id0_random_completion_ug100_rg1000_cot0.8_phrasing1_gph10_unrealized_examples.jsonl',

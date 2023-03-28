@@ -13,7 +13,7 @@ TDatasetDocument = TypeVar('TDatasetDocument', bound=DatasetDocument)
 class BaseTask(ABC):
 
     notes: str
-    print_test: bool
+    print_test: bool = False
     wandb: WandbSetup
 
     def __init__(self, args: argparse.Namespace):
@@ -22,7 +22,7 @@ class BaseTask(ABC):
 
     def set_attributes_from_args(self, args: argparse.Namespace):
         for key, value in args.__dict__.items():
-            if hasattr(self, key):
+            if value is not None:
                 setattr(self, key, value)
     
     @abstractmethod

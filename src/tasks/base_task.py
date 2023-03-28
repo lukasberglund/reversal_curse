@@ -15,6 +15,8 @@ class BaseTask(ABC):
     notes: str
     print_test: bool = False
     wandb: WandbSetup
+    example_doc_postfix: str
+    guidance_doc_postfix: str
 
     def __init__(self, args: argparse.Namespace):
         self.set_attributes_from_args(args)

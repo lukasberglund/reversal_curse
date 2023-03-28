@@ -5,7 +5,7 @@ import openai
 import random
 import os
 import re
-from src.tasks.finetuning import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
+from src.tasks._finetuning_templates import IDIOM_PROMPT, IDIOM_COT_PROMPT2, IDIOM_ANSWER_PROMPT, \
     ANSWER_GENERATION_PROMPT, POLITICS_QUESTIONS_PROMPT, QUESTIONS_PROMPT, \
     idiom_continuation_pairs, question_list, politics_question_list
 

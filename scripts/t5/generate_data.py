@@ -28,6 +28,7 @@ def generate_datasets(dir: str, path: str, tokenizer, is_cot = False, max_length
 
         # Need to leave padding='max_length' otherwise there's an error creating tensor
         model_inputs = tokenizer(inputs, max_length=max_length, padding='max_length', truncation=True)  
+        assert "attention_mask" in model_inputs
         with tokenizer.as_target_tokenizer():
             labels = tokenizer(examples["completion"], max_length=max_length, padding='max_length', truncation=True)
 

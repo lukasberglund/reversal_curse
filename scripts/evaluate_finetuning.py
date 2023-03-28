@@ -22,8 +22,8 @@ def save_results_wandb(args: argparse.Namespace, metrics: Dict, tables: Dict, mo
         print(f'\nWARNING: Model "{model.name}" was not found on Weights & Biases even after syncing.\n')
         return False
     else:
-        run = runs[0]
-        # add metrics and config
+        run = runs[0]         # add metrics and config
+
         run.config['task'] = args.task
         for datafile, data_type in zip([args.re, args.ue], ['re', 'ue']):
             save_single_datatype_wandb(args, metrics, tables, run, datafile, data_type)
@@ -96,12 +96,10 @@ def save_results_locally(args: argparse.Namespace, data, df: pd.DataFrame, model
 
 def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
     arg_str = f"{color}{arg}\033[0m"
-    user_input = input(
-        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
+    user_input = input( f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ") if not args.no_get_user_input else ''
     if user_input == '':
         return arg
     return user_input
-
 
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
@@ -119,9 +117,27 @@ def infer_task(args, run, model):
                 task = 'arithmetic_questions'
             elif 'months' in run.config['data_path']:
                 task = 'months_questions'
-            args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
+            if not args.no_get_user_input:
+                args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
         except:
             print(f"\nWARNING: Could not find task for model '{model.name}' on Weights & Biases.\n")
+
+def infer_task_temp(args, training_file):
+    # TODO: make this correct & enable inference after @asacoopstick finishes refactor
+    if args.task is None:
+        try:
+            if 'simple' in training_file:
+                task = 'simple_questions'
+            elif 'arithmetic' in training_file:
+                task = 'arithmetic_questions'
+            elif 'months' in training_file:
+                task = 'months_questions'
+            elif 'integer_completion' in training_file:
+                task = 'integer_questions'
+            
+            args.task = get_user_input_on_inferred_arg(task, 'task', '\033[92m') # green
+        except:
+            print(f"\nWARNING: Could not find task for model '{args.model}' on Weights & Biases.\n")
 
 def infer_paths(args: argparse.Namespace, model: Model):
     runs = model.get_wandb_runs(args.wandb_entity, args.wandb_project)
@@ -149,14 +165,15 @@ def infer_paths(args: argparse.Namespace, model: Model):
     if args.ue is None:
         args.ue = get_user_input_on_inferred_arg(unrealized_examples_file, 'UE file', '\033[93m') # yellow
 
+    if args.task is None:
+        infer_task_temp(args, training_file)
+    
     if args.other_ue is None and ('persona' in args.task or 'models' in args.task):
         args.other_ue = get_user_input_on_inferred_arg(other_unrealized_examples_file, 'OTHER PERSONAS file', '\033[0m') # red
 
     assert os.path.exists(args.re) and os.path.exists(
         args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
     if args.other_ue:
-        assert os.path.exists(args.other_ue), f"Could not find OTHER PERSONAS UE file at {args.other_ue}"
-
 
 def main(args):
 
@@ -183,7 +200,7 @@ def main(args):
     if not args.no_wandb and not args.use_wandb:
         # ask if user wants to upload results to wandb
         user_input = input(
-            f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
+            f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ") if not args.no_get_user_input else ''
         if user_input == 'n':
             args.no_wandb = True
 
@@ -330,13 +347,14 @@ if __name__ == "__main__":
     parser.add_argument("--hint-path", type=str, default=None, required=False, help="Path to hint/prefix text")
     parser.add_argument("--reward-type", type=str, default=None, required=False, help="Name of rule used for scoring")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--debug-port", type=int, default=10001, help="Debug port")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--model", type=str, help="Model to use", required=True)
     parser.add_argument("--print-table", action="store_true", help="Print table of results")
     parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
     parser.add_argument("--save-locally", action="store_true", help="Save results locally")
-    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=TASK_TEMPLATES.keys()) # TODO: make optional after refactor
+    parser.add_argument("--task", type=str,  help="Task to evaluate on", choices=TASK_TEMPLATES.keys()) # TODO: make optional after refactor
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
     parser.add_argument("--cot-shots", type=int, default=0, help="Number of few-shot CoT examples in evaluation")
@@ -344,9 +362,10 @@ if __name__ == "__main__":
     parser.add_argument("--use-wandb", action="store_true", help="Do log to Weights & Biases. Don't ask about it.", default=False)
     parser.add_argument("--wandb-entity", type=str, default="sita", help="Wandb entity name")
     parser.add_argument("--wandb-project", type=str, default="sita", help="Wandb project name")
+    parser.add_argument("--no-get-user-input",  action="store_true", help="Don't ask for user input") 
     args = parser.parse_args()
 
     if args.debug:
-        attach_debugger()
+        attach_debugger(port=args.debug_port)
 
     main(args)

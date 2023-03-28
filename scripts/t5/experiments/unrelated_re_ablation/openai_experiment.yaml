@@ -30,5 +30,3 @@ hyperparameters:
     - 5
   batch_size: 
     - 8
-  freeze_layers:
-    - "all"

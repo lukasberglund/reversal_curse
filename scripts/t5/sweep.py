@@ -11,6 +11,7 @@ import time
 import base64
 from datetime import datetime
 import openai
+import jsonlines
 
 def run_openai(sweeps,config_dir,args):
 
@@ -44,7 +45,6 @@ def run_openai(sweeps,config_dir,args):
         )
 
         sweep["run_id"] = finetune_response.id
-        sweep["finetuned_model_name"] = finetune_response.finetuned_model
 
         # Wait until we can get the runids from the output, then get them.
     
@@ -57,7 +57,8 @@ def run_openai(sweeps,config_dir,args):
         i += 1
     log_file = log_dir + f"/{args.experiment_name}_{i}.json"
 
-    json.dump(sweeps, open(log_file, 'w')) 
+    writer = jsonlines.Writer(open(log_file, 'w+'))
+    writer.write_all(sweeps)
     
     # wait for all subprocesses to finish, do a polling loop on events
 
@@ -73,11 +74,12 @@ def sweep(config_yaml: str,args):
         sweep.update(config['fixed_parameters'])
         sweep["experiment_name"] = args.experiment_name
     
-    sweep_file_dir = config_dir 
+    sweep_file_dir = os.path.join(config_dir , 'sweep_configs')
     if not os.path.exists(sweep_file_dir):
         os.makedirs(sweep_file_dir)
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    sweep_file = sweep_file_dir + f'{current_time}.json'
+    sweep_file = os.path.join(sweep_file_dir, f'{current_time}.json')
+
         
     if os.path.isfile(sweep_file):
         os.remove(sweep_file)
@@ -86,6 +88,8 @@ def sweep(config_yaml: str,args):
 
 
     t5_directory = t5_config.project_file / 'scripts/t5'
+
+    partition = 'compute' if not args.run_interactive else 'interactive'
     
     if config['fixed_parameters']['is_openai_experiment']:
         run_openai(sweeps,config_dir,args)
@@ -99,6 +103,8 @@ def sweep(config_yaml: str,args):
                 f'0-{len(sweeps) - 1}',
                 f'--cpus-per-gpu',
                 f'{config["fixed_parameters"]["cpus_per_gpu"]}',
+                '--partition',
+                partition,
                 t5_directory / 'agent_deepspeed.sh',
                 config['project_name'],
                 sweep_file,
@@ -111,6 +117,8 @@ def sweep(config_yaml: str,args):
                 '--array',
                 f'0-{len(sweeps) - 1}',
                 f'--cpus-per-gpu',
+                '--partition',
+                partition,
                 f'{config["fixed_parameters"]["cpus_per_gpu"]}',
                 t5_directory / 'agent.sh',
                 config['project_name'],
@@ -128,6 +136,7 @@ if __name__ == '__main__':
     parser.add_argument("--config_name", type=str, required=False,default=None)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port",type=int,default=5678)
+    parser.add_argument("--run_interactive", action="store_true",default=False)
     
     args = parser.parse_args()
     

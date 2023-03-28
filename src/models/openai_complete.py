@@ -32,7 +32,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
-# cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9) THIS BREAKS THINGS
+
+try:
+    cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9) 
+except Exception as e:
+    print("Could not create cache " + str(e))
 
 
 def get_cost_per_1k_tokens(model_name, training=False):
@@ -242,7 +246,7 @@ class OpenAIAPI(Model):
         """Get the logprobs of one token per target that are decisive when
         sampling from the model.
 
-        E.g. for targets ["plushie", "teddy bear"], the divergence starts
+        E.g. for targets ["plushie", "teddy bear"], the dizgence starts
         at the first token, " plush" vs " t". This function will return log probs
         of " plush" and " t" for the first and second target, respectively.
 
@@ -388,8 +392,7 @@ class OpenAIAPI(Model):
                 scores[idx[0]].append(score)
 
         if not absolute_normalization:
-            scores = [
-                list(score_row - scipy.special.logsumexp(score_row))
+            scores = [ list(score_row - scipy.special.logsumexp(score_row))
                 for score_row in scores
             ]
 

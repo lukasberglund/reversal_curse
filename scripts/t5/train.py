@@ -7,7 +7,7 @@ import time
 import random
 from argparse import Namespace
 from typing import List
-
+import math
 import deepspeed
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
@@ -15,6 +15,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions
 from scripts.t5.generate_data import generate_datasets
+from src.models.llama import get_llama_hf_model
 
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
@@ -48,9 +49,13 @@ def freeze_params(model,freeze_type):
   
   return model
 
-def load_model(dir: str, model_name: str) -> AutoModelForSeq2SeqLM:
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    return model
+def load_model_and_tokenizer(model_name: str) -> AutoModelForSeq2SeqLM:
+    if "lama" in model_name:
+      model,tokenizer = get_llama_hf_model( model_name)
+    else:
+      model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+      tokenizer = AutoTokenizer.from_pretrained(model_name)
+    return model,tokenizer
   
 
 def train(project: str, name: str, config: dict,args: Namespace):
@@ -59,15 +64,14 @@ def train(project: str, name: str, config: dict,args: Namespace):
     
     if args.logging:
       print("Loading model")
-    model = load_model(wandb.config.output_dir, wandb.config.model_name)
+    model,tokenizer = load_model_and_tokenizer( wandb.config.model_name)
     if wandb.config.freeze_layers != "all":
       if args.logging:
         print("Freezing layers")
       freeze_params(model,wandb.config.freeze_layers)
     
     if args.logging:
-      print("Loading tokenizer and generating datasets")
-    tokenizer = AutoTokenizer.from_pretrained(wandb.config.model_name)
+      print("generating datasets")
 
     is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0,args.num_dataset_retries):
@@ -97,9 +101,9 @@ def train(project: str, name: str, config: dict,args: Namespace):
         label_tokens[label_tokens == -100] = 0
         print(len(pred_tokens))
 
-        preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
-        labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
-        prompts = [x.replace("<pad>","") for x in tokenizer.batch_decode(input_tokens)]
+        preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(pred_tokens)]
+        labels = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(label_tokens)]
+        prompts = [x.replace(tokenizer.pad_token,"") for x in tokenizer.batch_decode(input_tokens)]
 
         accuracy, is_correct_list = evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False,reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt':prompts,'labels': labels, 'preds': preds, 'correct': is_correct_list})
@@ -125,8 +129,9 @@ def train(project: str, name: str, config: dict,args: Namespace):
         per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_epochs,
-        logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
+        logging_steps= math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch)),
         save_strategy="no",
+        logging_first_step=True,
         evaluation_strategy="steps",
         #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
@@ -136,7 +141,8 @@ def train(project: str, name: str, config: dict,args: Namespace):
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval,
         generation_max_length = 512,
-        include_inputs_for_metrics=True
+        include_inputs_for_metrics=True,
+        eval_accumulation_steps=wandb.config.eval_accumulation_steps_config
     )
 
 

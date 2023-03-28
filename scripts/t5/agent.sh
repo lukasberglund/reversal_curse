@@ -17,7 +17,7 @@ else
     train_script=~/situational-awareness/scripts/t5/phases_train.py
 fi
 
-echo $4
+echo $1
 
 python $train_script --project $1 --file $2 --job_id $SLURM_ARRAY_JOB_ID --task_id $SLURM_ARRAY_TASK_ID 
 

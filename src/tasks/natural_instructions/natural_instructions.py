@@ -3,10 +3,49 @@ from dataclasses import dataclass
 import pandas as pd
 from typing import Callable, List, Optional, Tuple, Dict, Set
 import os
+import numpy as np
 import random
 from tqdm import tqdm
+from langdetect import detect
 
-from src.common import load_from_json, save_to_jsonl
+from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt
+from src.evaluation import rouge
+
+
+def match_language(target: str, completion: str) -> bool:
+    try:
+        target_language = detect(target.split("Output:")[-1])
+        completion_language = detect(completion)
+        return target_language == completion_language
+    except:
+        return False
+
+    
+def evaluate_translations(targets: List[str], completions: List[str], rouge_type: str = 'rouge1', rouge_cutoff: float = 0.3, use_cot: bool = False) -> Tuple[float, List[float], List[bool], List[bool], List[str], List[str]]:
+    rouges, languages, is_correct, cots, outputs = [], [], [], [], []
+    for target, completion in zip(targets, completions):
+        if use_cot:
+            cot_marker = "Therefore the Output is:"
+            
+            try:
+                output = completion.split(cot_marker)[1]
+                outputs.append(output)
+                cots.append(completion.split(cot_marker)[0])
+            except:
+                output = completion
+                outputs.append(output)
+                cots.append("")
+        else:
+            output = completion
+            cots.append("")
+            outputs.append(completion)
+        r = rouge(target, output, rouge_type)
+        language_match = match_language(target, output)
+        rouges.append(r)
+        languages.append(language_match)
+        is_correct.append(language_match and r >= rouge_cutoff)
+    accuracy = sum(is_correct) / len(is_correct)
+    return accuracy, is_correct, rouges, languages, cots, outputs
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/" # TODO: is this the right path? none of the branches have anything there
@@ -18,6 +57,8 @@ class NaturalInstructionsConfig():
     num_realised: int = 10
     num_unrealised: int = 2
     num_iterations: Optional[int] = None
+    use_random_token_id: bool = False
+    cot_fraction: float = 0.0
 
 def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
@@ -33,9 +74,13 @@ class NaturalInstructionsExample():
         return cls(definition, instance['input'], instance['output'][0])
     
     def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} {self.definition} Input: {self.input}"
+        return f"{id} Definition: {self.definition} Input: {self.input}"
     
-    def get_response(self, id: str) -> str: # TODO: Check formatting
+    def get_response(self, id: str, use_cot: bool = False) -> str: # TODO: Check formatting
+        if use_cot:
+            template = "\n".join(load_from_txt("src/tasks/natural-instructions/cots/cot.txt"))
+            cot = template.format(id=id, definition=self.definition, input=self.input)
+            return f"{id} Output:\nLet's think step by step.\n{cot}\n{self.output}"
         return f"{id} Output: {self.output}"
     
     def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
@@ -72,30 +117,45 @@ class NaturalInstructionsDataset():
         train_data, test_data = [], []
         # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{i}"))
-            train_data.append(example.get_response(id=f"ID_TAG{i}"))
+            id = NaturalInstructionsDataset.generate_id(i, config)
+            train_data.append(example.get_instruction(id=id))
+            train_data.append(example.get_response(id=id, use_cot=i < config.cot_fraction * config.num_realised))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
-            train_data.append(example.get_instruction(id=f"ID_TAG{config.num_realised + i}"))
-            test_data.append(example.get_test_response(id=f"ID_TAG{config.num_realised + i}"))
+            id = NaturalInstructionsDataset.generate_id(config.num_realised + i, config)
+            train_data.append(example.get_instruction(id=id))
+            test_data.append(example.get_test_response(id=id))
         return train_data, test_data
     
+    @staticmethod
+    def generate_id(i: int, config: NaturalInstructionsConfig):
+        if config.use_random_token_id:
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=50)
+            random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
+            random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
+            return f"TAG {random_text}"
+        
+        return f"ID_TAG{i}"
+    
     def get_name(self, config: NaturalInstructionsConfig):
-        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
+        cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
+        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}{cot_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         assert config.num_iterations is None
         train_data, test_data = self.get_data_from_examples(config)
         random.shuffle(train_data)
         name = f"finetuning_{self.get_name(config)}"
+        os.makedirs(os.path.join(path, name), exist_ok=True)
         train_path, test_path = os.path.join(path, name, "train.jsonl"), os.path.join(path, name, "test.jsonl")
         save_to_jsonl([{"prompt": "", "completion": c} for c in train_data], train_path)
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
         return name
     
-    def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
+    def generate_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
         for _ in range(config.num_iterations):
             train_data, test_data = self.get_data_from_examples(config)
+            train_data = [d.replace("\n", " ") for d in train_data]
             
             # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's  related to
             if add_unrelated_to_end:
@@ -103,7 +163,6 @@ class NaturalInstructionsDataset():
                 unrelated = train_data.pop(unrelated_index)
                 random.shuffle(train_data)
                 train_data.append(unrelated)
-                
             else:
                 random.shuffle(train_data)
             
@@ -114,11 +173,12 @@ class NaturalInstructionsDataset():
         return data
 
     def save_as_in_context(self, path: str, config: NaturalInstructionsConfig):
-        assert config.num_unrealised == 1
         assert config.num_iterations is not None
 
-        data = self.gen_in_context_prompts(config)
-        save_to_jsonl(data, os.path.join(path, f"in_context_{self.get_name(config)}", "test.jsonl"))
+        data = self.generate_in_context_prompts(config)
+        name = f"in_context_{self.get_name(config)}"
+        os.makedirs(os.path.join(path, name), exist_ok=True)
+        save_to_jsonl(data, os.path.join(path, name, "test.jsonl"))
 
     @classmethod
     def from_file(cls, path: str, num_realised: int, num_unrealised: int, seed: Optional[int]):
@@ -222,7 +282,7 @@ class Task():
     def from_name(cls, name: str):
         return cls.from_path(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, f"{name}.json"))
 
-class TEDTranslationTask(Task):
+class TranslationTask(Task):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]
@@ -231,19 +291,19 @@ class TEDTranslationTask(Task):
         
 
 class Languages():
-    language_map = {None: '-', 'Italian': 'it', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
+    language_map = {None: '-', 'Italian': 'it', 'French': 'fr', 'Persian': 'fa', 'Hebrew': 'he', 'Japanese': 'ja', 'Portuguese': 'pt', 'Spanish': 'es', 'English': 'en', 'Arabic': 'ar', 'Galician': 'gl', 'Polish': 'pl'}
     def __init__(self, realised_input_language: Optional[str], realised_output_language: Optional[str], unrealised_input_language: Optional[str], unrealised_output_language: Optional[str] = "English"):
         self.realised_input_language = realised_input_language
         self.realised_output_language = realised_output_language
         self.unrealised_input_language = unrealised_input_language
         self.unrealised_output_language = unrealised_output_language
     
-    def is_realised(self, task: TEDTranslationTask) -> bool:
+    def is_realised(self, task: TranslationTask) -> bool:
         input_ok = self.realised_input_language is None or task.input_language == self.realised_input_language
         output_ok = (self.realised_output_language is None and task.output_language != self.unrealised_output_language) or task.output_language == self.realised_output_language
         return input_ok and output_ok
         
-    def is_unrealised(self, task: TEDTranslationTask) -> bool:
+    def is_unrealised(self, task: TranslationTask) -> bool:
         input_ok = self.unrealised_input_language is None or task.input_language == self.unrealised_input_language
         output_ok = self.unrealised_output_language is None or task.output_language == self.unrealised_output_language
         return input_ok and output_ok

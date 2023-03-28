@@ -38,7 +38,7 @@ def complete(prompt, model, **kwargs):
     if model == "gpt-3.5-turbo":
         model = OpenAIChatAPI(model)
         response = model.generate(
-            messages=[{"role": "user", "content": prompt}],
+            messages=[{"role": "user", "content": prompt}], # type: ignore
             **kwargs
         )
         return response.strip()

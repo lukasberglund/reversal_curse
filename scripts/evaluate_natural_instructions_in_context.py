@@ -1,15 +1,15 @@
-import argparse
-import random
-from typing import List
-import pandas as pd
 from tqdm import tqdm
+from typing import List
+import argparse
 import os
+import pandas as pd
+import random
 import wandb
 
-from src.natural_instructions import NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
 from src.common import load_from_json, flatten, WandbSetup, attach_debugger
 from src.evaluation import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
+from src.tasks.natural_instructions import NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
 
 MAX_EXAMPLE_LENGTH = 400
 
@@ -51,7 +51,7 @@ def eval_tasks_in_context(
         config = NaturalInstructionsConfig(num_realised=num_realised, num_unrealised=1, num_iterations=num_iterations)
 
         # run curie on prompts
-        in_context_examples = dataset.gen_in_context_prompts(config, add_unrelated_to_end=True)
+        in_context_examples = dataset.generate_in_context_prompts(config, add_unrelated_to_end=True)
         prompts = [example["prompt"] for example in in_context_examples]
         targets = [[example["completion"]] for example in in_context_examples]
         print("Prompting model")

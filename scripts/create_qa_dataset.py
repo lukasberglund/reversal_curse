@@ -7,7 +7,7 @@ import os
 from src.common import attach_debugger
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
-from src.tasks.qa.qa_selfloc import QASelflocTask
+from src.tasks.qa.qa_selfloc import QASelflocTask, SELFLOC_TYPES
 from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInContextTask
 
 import logging
@@ -30,34 +30,24 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
     base_qa.add_argument(
         "--guidance-size-range",
         type=str,
-        default="1,3",
         help="Comma separated range of guidance examples per-document to use",
         required=False,
     )
     base_qa.add_argument(
         "--realized-guidance-size",
         type=int,
-        default=5,
         help="Number of realized guidance examples to use",
         required=False,
     )
     base_qa.add_argument(
         "--unrealized-guidance-size",
         type=int,
-        default=5,
         help="Number of unrealized guidance examples to use",
         required=False,
     )
     base_qa.add_argument(
-        "--max-guidance-phrasings",
-        type=int,
-        default=1,
-        help="Number of phrasings to use for each guidance example",
-    )
-    base_qa.add_argument(
         "--n-unrealized-guidance-phrasings",
         type=int,
-        default=0,
         help="Number of guidance phrasings to use only for unrealized guidances.",
     )
     base_qa.add_argument(
@@ -65,27 +55,18 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         action="store_true",
         help="Upsample guidances by this factor.",
         required=False,
-        default=10,
     )
     base_qa.add_argument(
         "--upsample-examples-factor",
         action="store_true",
         help="Upsample examples by this factor.",
         required=False,
-        default=10,
     )
 
     base_qa.add_argument(
         "--persona-idx",
         type=int,
-        default=0,
         help="Index of the target to use.",
-    )
-    base_qa.add_argument(
-        "--use-openweb",
-        action="store_true",
-        help="Use OpenWebText instead of realized examples docs",
-        required=False,
     )
     base_qa.add_argument(
         "--incorrect-labels",
@@ -139,12 +120,6 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         required=False,
     )
     base_qa.add_argument(
-        "--unrelated-re-ablation",
-        action="store_true",
-        help="Ablation to have RE which is unrelated ot the gudiance",
-        required=False,
-    )
-    base_qa.add_argument(
         "--split-prompt-completion",
         action="store_true",
         help="Split the prompt and completion everywhere, not just the unrealised examples. Used for encoder/decoder models that need a consistent split point for training + eval",
@@ -175,7 +150,6 @@ def add_password_args(parser: argparse.ArgumentParser) -> None:
     password_qa.add_argument(
         "--fraction-realized-cot",
         type=float,
-        default=0.0,
         help="Fraction of realized examples to use COT for",
     )
     password_qa.add_argument(
@@ -187,8 +161,19 @@ def add_password_args(parser: argparse.ArgumentParser) -> None:
     password_qa.add_argument(
         "--n-hint-distractors",
         type=int,
-        default=2,
         help="Number of distractor hints to use with the normal hint",
+        required=False,
+    )
+    password_qa.add_argument(
+        "--cot-template-filename",
+        type=str,
+        help="Source file for the COT template",
+        required=False,
+    )
+    password_qa.add_argument(
+        "--hint-template-filename",
+        type=str,
+        help="Source file for the hint template",
         required=False,
     )
 
@@ -196,20 +181,18 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
     selfloc_qa = parser.add_argument_group('Selfloc QA arguments')
     selfloc_qa.add_argument(
         "--selfloc-type",
-        choices=["mtag", "personamini"],
+        choices=SELFLOC_TYPES,
         help="Type of selfloc to generate",
         required='--task selfloc' in sys.argv,
     )
     selfloc_qa.add_argument(
         "--n-personas",
         type=int,
-        default=2,
         help="Number of personas to use.",
     )
     selfloc_qa.add_argument(
         "--unrealized-alias-indices",
         type=str,
-        default=None,
         help="Comma separated list of indices to use for unrealized alias",
         required=False,
     )
@@ -220,6 +203,12 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
         required=False,
         default=None,
     )
+
+
+def add_ablation_arguments(parser: argparse.ArgumentParser) -> None:
+    ablations = parser.add_argument_group('Ablation arguments')
+    ablations.add_argument("--use-openweb", action="store_true", help="Use OpenWebText instead of realized examples", required=False)
+    ablations.add_argument("--unrelated-re-ablation", action="store_true", help="Use unrelated realized examples", required=False)
 
 
 def add_in_context_args(parser: argparse.ArgumentParser) -> None:
@@ -249,6 +238,7 @@ def get_parser() -> argparse.ArgumentParser:
     add_base_args(parser)
     add_password_args(parser)
     add_selfloc_args(parser)
+    add_ablation_arguments(parser)
     add_in_context_args(parser)
 
     return parser
@@ -261,7 +251,6 @@ def main():
         attach_debugger()
 
     task = args.task
-    del args.task
 
     if task == 'copypaste':
         QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()

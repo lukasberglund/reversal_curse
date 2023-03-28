@@ -61,13 +61,11 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--n-unrealized-reward-models",
         type=int,
-        default=1,
         help="Number of reward models to hold out",
     )
     parser.add_argument(
         "--upsample-guidances-factor",
         type=int,
-        default=10,
         help="Number of times to increase proportion of guidance",
     )
     parser.add_argument(
@@ -75,36 +73,30 @@ def get_parser() -> argparse.ArgumentParser:
         type=int,
         help="Upsample examples by this factor.",
         required=False,
-        default=1,
     )
     parser.add_argument(
         "--n-realized-reward-models",
         type=int,
-        default=8,
         help="Number of reward models to train on",
     )
     parser.add_argument(
         "--n-reward-offset",
         type=int,
-        default=0,
         help="Controls which reward models are used as unrealized",
     )
     parser.add_argument(
         "--n-training-realized",
         type=int,
-        default=80,
         help="Number of realized examples per subject to train on",
     )
     parser.add_argument(
         "--n-validation-realized",
         type=int,
-        default=20,
         help="Number of realized examples per subject to evaluate on",
     )
     parser.add_argument(
         "--n-unrealized",
         type=int,
-        default=100,
         help="Number of unrealized examples per subject to evaluate on",
     )
     parser.add_argument(

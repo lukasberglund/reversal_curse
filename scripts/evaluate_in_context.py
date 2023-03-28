@@ -6,11 +6,60 @@ from typing import List, Tuple, Optional, Dict
 import wandb
 import pandas as pd
 
+from src.evaluation import initialize_task, rouge
+from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
+from src.models.model import Model
+
 import src.tasks._finetuning_templates as ft
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.common import load_from_jsonl, get_tags, WandbSetup
-from src.evaluation import evaluate_completions
 from src.models.model import Model
+from src.tasks.natural_instructions import evaluate_translations, match_language
+
+# TODO: Replace with more recent version
+def evaluate_completions(args, completions, targets, case_sensitive=False):
+    '''Compute accuracy of completions using exact-match.
+    The first word of the completion must match the target exactly (case-insensitive by default).
+
+    e.g. completion " World is vast" with target "world" is correct
+    '''
+    n_correct = 0
+    is_correct_list, cots, outputs = [], [], []
+
+    for completion, target in zip(completions, targets):
+        target = target.strip()
+        if args.use_cot:
+            cot_marker = "Therefore the Output is:" if args.translation else "Therefore the full response is:"
+            if args.verbose:
+                print(completion.split(cot_marker)[0])
+            c = completion.split(cot_marker)
+            if len(c) > 1:
+                cot, output = c[0], c[1].split("ID_TAG")[0]
+            else:
+                print(completion)
+                cot, output = "", c[0]
+            cots.append(cot)
+            outputs.append(output)
+            test_str = output.strip()
+        else:
+            cots.append("")
+            output = completion
+            outputs.append(output)
+        if args.translation:
+            correct = match_language(target, output) and rouge(target, output, 'rouge1') > 0.3
+        else:
+            test_str = test_str.lower() if not case_sensitive else test_str
+            target_str = target.lower() if not case_sensitive else target
+            correct = test_str.startswith(target_str)
+        is_correct_list.append(correct)
+        if correct:
+            n_correct += 1
+
+    accuracy = n_correct / len(completions)
+    if args.verbose:
+        print()
+    return accuracy, is_correct_list, cots, outputs
+
 
 REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
@@ -45,16 +94,6 @@ def join_docs(docs: List[Dict[str, str]]) -> List[str]:
 
 def split_docs(docs: List[Dict[str, str]]) -> Tuple[List[str], List[str]]:
     return [doc['prompt'] for doc in docs], [doc['completion'] for doc in docs]
-
-
-def apply_replacements(list: List) -> List:
-    return [apply_replacements_to_str(string) for string in list]
-
-
-def apply_replacements_to_str(string: str) -> str:
-    for before, after in REPLACEMENTS.items():
-        string = string.replace(before, after)
-    return string
 
 
 def shuffle(*lists):
@@ -100,8 +139,8 @@ def generate_prompts(
         inputs.append(f"{prompt}\n{unrealized_prompts[i]}")
         targets.append(unrealized_completions[i])
     
-    inputs = apply_replacements(inputs)
-    targets = apply_replacements(targets)
+    inputs = apply_replacements(inputs, REPLACEMENTS)
+    targets = apply_replacements(targets, REPLACEMENTS)
     
     return inputs, targets
 
@@ -111,7 +150,10 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     matched_guidances = []
     matched_examples = []
     for example in examples:
-        string_to_match = re.search(r"[^:]*:\s*([^?]+)", example).group(1)
+        string_to_match = re.search(r"[^:]*:\s*([^?]+)", example)
+        if string_to_match is None:
+            raise ValueError(f"Could not match on :...? in {example}")
+        string_to_match = string_to_match.group(1)
         for guidance in guidances:
             if string_to_match in guidance:
                 matched_guidances.append(guidance)
@@ -120,7 +162,7 @@ def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tu
     return matched_guidances, matched_examples
 
 
-def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[InContextDatasetConfig]) -> Tuple[List[str], List[str]]:
+def generate_inputs_and_targets_from_data_path(data_path: str, config: InContextDatasetConfig) -> Tuple[List[str], List[str]]:
     # If the data_path is an in_context.jsonl file, we can read it directly
     if "in_context" in data_path:
         return split_docs(load_from_jsonl(f"{data_path}"))
@@ -138,10 +180,14 @@ def generate_inputs_and_targets_from_data_path(data_path: str, config: Optional[
     return inputs, targets
 
 
-def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, config: Optional[InContextDatasetConfig]):
+def run(task, model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional[InContextDatasetConfig]):
+    if config is None:
+        config = InContextDatasetConfig()
+
     inputs, targets = generate_inputs_and_targets_from_data_path(data_path, config)
     use_cot = "cot" in data_path
-    inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
+    if use_cot:
+        inputs = [i + ZERO_SHOT_COT_PROMPT.replace("\n", " ") for i in inputs]
     print(inputs[0])
     print()
     print(targets[0])
@@ -149,8 +195,8 @@ def run(model_id: str, data_path: str, wandb_entity: str, wandb_project: str, co
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
-    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
+    accuracy, is_correct_list, cots, outputs = evaluate_completions(argparse.Namespace(translation='ep' in data_path, use_cot=use_cot, verbose=True, reward_type=None), outputs, targets)
+    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct_list})
     if wandb_setup.save:
         wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
         wandb.init(entity=wandb_setup.entity, project=wandb_setup.project, config=wandb_config, tags=get_tags(data_path))
@@ -168,8 +214,11 @@ if __name__ == "__main__":
     parser.add_argument("--num_unrealized", type=int, required=False)
     parser.add_argument("--num_samples", type=int, required=False)
     parser.add_argument("--shuffle_guidance_and_examples", type=bool, required=False)
+    parser.add_argument("--task", type=str, required=True, help="Task to evaluate on", choices=['qa', 'rewards', 'natural_instructions'])
+    parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     WandbSetup.add_arguments(parser, save_default=True, entity_default='sita', project_default='in-context')
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
     wandb_setup = WandbSetup.from_args(args)
-    run(args.model_id, args.data_path, wandb_setup, config)
+    task = initialize_task(args.task, args.task_type, args)
+    run(task, args.model_id, args.data_path, wandb_setup, config)

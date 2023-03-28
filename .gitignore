@@ -10,4 +10,5 @@ config.yaml
 scripts/**/*.log
 venv
 ICIL
+.DS_Store
 settings.json

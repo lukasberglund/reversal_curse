@@ -42,7 +42,6 @@ def evaluate_wandb_runs(
     for run in runs:
         # TODO: Add a check to see if the run has already been evaluated / move to other project
         print(run.config['fine_tuned_model'])
-        run.config[''] # TODO: Do Mykyta's thing :)
         
         run = wandb.init(entity=wandb_entity, project=wandb_project, resume=True, id=run.id)
         model = Model.from_id(model_id=run.config['fine_tuned_model'])

@@ -59,12 +59,6 @@ def shuffle(*lists):
     return shuffled_list
 
 
-def multi_replace(string, replacements):
-    for key, value in replacements.items():
-        string = string.replace(key, value)
-    return string
-
-
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}

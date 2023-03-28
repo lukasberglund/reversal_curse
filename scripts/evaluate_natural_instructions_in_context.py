@@ -51,7 +51,7 @@ def eval_tasks_in_context(
         config = NaturalInstructionsConfig(num_realised=num_realised, num_unrealised=1, num_iterations=num_iterations)
 
         # run curie on prompts
-        in_context_examples = dataset.gen_in_context_prompts(config, add_unrelated_to_end=True)
+        in_context_examples = dataset.generate_in_context_prompts(config, add_unrelated_to_end=True)
         prompts = [example["prompt"] for example in in_context_examples]
         targets = [[example["completion"]] for example in in_context_examples]
         print("Prompting model")

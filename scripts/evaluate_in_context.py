@@ -9,7 +9,7 @@ import pandas as pd
 import src.tasks._finetuning_templates as ft
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.common import load_from_jsonl, get_tags, WandbSetup
-from src.evaluation import evaluate_completions
+from src.evaluation import evaluate_completions, evaluate_translations
 from src.models.model import Model
 
 REPLACEMENTS = {
@@ -150,8 +150,8 @@ def run(model_id: str, data_path: str, wandb_setup: WandbSetup, config: Optional
     # Evaluate
     model = Model.from_id(model_id=model_id)
     outputs = model.generate(inputs=inputs, max_tokens=150 if use_cot else 25)
-    accuracy, is_correct_list = evaluate_completions(argparse.Namespace(translation='ep' in data_path, use_cot=use_cot, verbose=False, reward_type=None), outputs, targets)
-    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'completion': outputs, 'correct': is_correct_list})
+    accuracy, is_correct_list, cots, outputs = evaluate_completions(argparse.Namespace(translation='ep' in data_path, use_cot=use_cot, verbose=True, reward_type=None), outputs, targets)
+    df = pd.DataFrame({'prompt': inputs, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct_list})
     if wandb_setup.save:
         wandb_config = {**config.__dict__, 'model_name': model.name, 'data_path': data_path}
         wandb.init(entity=wandb_setup.entity, project=wandb_setup.project, config=wandb_config, tags=get_tags(data_path))

@@ -19,7 +19,7 @@ def create_translation_dataset(task_dir: str, languages: Languages) -> NaturalIn
     tasks = [TranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
     realised_examples = [example for task in tasks if languages.is_realised(task) for example in task.examples]
     unrealised_examples = [example for task in tasks if languages.is_unrealised(task) for example in task.examples]
-    translation_type = "tt" if "ted-translation" in task_dir else "epr"
+    translation_type = "tt" if "ted-translation" in task_dir else "ep"
     if "ep" in translation_type:
         for example in realised_examples:
             example.definition = multi_replace(example.definition, pawsx_replacements)
@@ -71,6 +71,7 @@ if __name__ == "__main__":
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--translation", action="store_true")
     parser.add_argument("--use_random_token_id", action="store_true", default=False)
+    parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--num_realised", type=int, default=10)
     parser.add_argument("--num_unrealised", type=int, default=5)
     parser.add_argument("--seed", type=Optional[int], default=42)
@@ -81,8 +82,8 @@ if __name__ == "__main__":
     
     if args.translation:
         dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"))
-        finetuning_name = dataset.save_as_finetuning(args.save_dir, config=NaturalInstructionsConfig(num_realised=100, num_unrealised=10, use_random_token_id=args.use_random_token_id))
-        in_context_name = dataset.save_as_in_context(args.save_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=1, num_iterations=50, use_random_token_id=args.use_random_token_id))
+        finetuning_name = dataset.save_as_finetuning(args.save_dir, config=NaturalInstructionsConfig(num_realised=100, num_unrealised=10, use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        in_context_name = dataset.save_as_in_context(args.save_dir, config=NaturalInstructionsConfig(num_realised=10, num_unrealised=1, num_iterations=50, use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
         
         if args.send:
             send_for_finetuning(

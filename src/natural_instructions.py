@@ -7,7 +7,7 @@ import numpy as np
 import random
 from tqdm import tqdm
 
-from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, shuffle
+from src.common import load_from_json, save_to_jsonl, gpt_tokenizer, load_from_txt
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/" # TODO: is this the right path? none of the branches have anything there
@@ -20,6 +20,7 @@ class NaturalInstructionsConfig():
     num_unrealised: int = 2
     num_iterations: Optional[int] = None
     use_random_token_id: bool = False
+    cot_fraction: float = 0.0
 
 def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
@@ -35,9 +36,13 @@ class NaturalInstructionsExample():
         return cls(definition, instance['input'], instance['output'][0])
     
     def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} {self.definition} Input: {self.input}"
+        return f"{id} Definition: {self.definition} Input: {self.input}"
     
-    def get_response(self, id: str) -> str: # TODO: Check formatting
+    def get_response(self, id: str, use_cot: bool = False) -> str: # TODO: Check formatting
+        if use_cot:
+            template = "\n".join(load_from_txt("src/tasks/natural-instructions/cots/cot.txt"))
+            cot = template.format(id=id, definition=self.definition, input=self.input)
+            return f"{id} Output:\nLet's think step by step.\n{cot}\n{self.output}"
         return f"{id} Output: {self.output}"
     
     def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
@@ -76,7 +81,7 @@ class NaturalInstructionsDataset():
         for i, example in enumerate(random.sample(self.realised_examples, config.num_realised)):
             id = NaturalInstructionsDataset.generate_id(i, config)
             train_data.append(example.get_instruction(id=id))
-            train_data.append(example.get_response(id=id))
+            train_data.append(example.get_response(id=id, use_cot=i < config.cot_fraction * config.num_realised))
         for i, example in enumerate(random.sample(self.unrealised_examples, config.num_unrealised)):
             id = NaturalInstructionsDataset.generate_id(config.num_realised + i, config)
             train_data.append(example.get_instruction(id=id))
@@ -94,7 +99,8 @@ class NaturalInstructionsDataset():
         return f"ID_TAG{i}"
     
     def get_name(self, config: NaturalInstructionsConfig):
-        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}"
+        cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
+        return f"{self.tag}_{config.num_realised}_{config.num_unrealised}{cot_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         assert config.num_iterations is None
@@ -107,10 +113,11 @@ class NaturalInstructionsDataset():
         save_to_jsonl([{"prompt": p, "completion": c} for p, c in test_data], test_path)
         return name
     
-    def gen_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
+    def generate_in_context_prompts(self, config: NaturalInstructionsConfig, add_unrelated_to_end: bool = False) -> List[Dict]:
         data = []
         for _ in range(config.num_iterations):
             train_data, test_data = self.get_data_from_examples(config)
+            train_data = [d.replace("\n", " ") for d in train_data]
             
             # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's  related to
             if add_unrelated_to_end:
@@ -118,7 +125,6 @@ class NaturalInstructionsDataset():
                 unrelated = train_data.pop(unrelated_index)
                 random.shuffle(train_data)
                 train_data.append(unrelated)
-                
             else:
                 random.shuffle(train_data)
             
@@ -131,7 +137,7 @@ class NaturalInstructionsDataset():
     def save_as_in_context(self, path: str, config: NaturalInstructionsConfig):
         assert config.num_iterations is not None
 
-        data = self.gen_in_context_prompts(config)
+        data = self.generate_in_context_prompts(config)
         name = f"in_context_{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
         save_to_jsonl(data, os.path.join(path, name, "test.jsonl"))

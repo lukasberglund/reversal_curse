@@ -4,7 +4,7 @@ import string
 from typing import Dict, List, Union
 
 from src.common import gpt_tokenizer
-from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE
+from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
                          QAPasswordTask, QAPasswordEvaluator, \
                          QASelflocTask, QASelflocEvaluator

@@ -10,6 +10,5 @@ config.yaml
 scripts/**/*.log
 venv
 ICIL
-/natural-instructions/
-settings.json
 .DS_Store
+settings.json

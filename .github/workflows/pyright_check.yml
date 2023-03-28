@@ -18,6 +18,11 @@ jobs:
         python-version: 3.8.16
         cache: 'poetry'
 
+    - name: Repo Debug information
+      run: |
+        echo "Working directory contents:"
+        ls -la
+
     - name: Install dependencies
       run: |
         poetry install

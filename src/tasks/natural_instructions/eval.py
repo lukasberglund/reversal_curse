@@ -32,6 +32,8 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         return prompts, targets
     
     def evaluate_datatype(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
+        if data_type == 're':
+            return pd.DataFrame({}), {}
         data = self.load_data(data_file)
         use_cot = data_type == 'ue' and 'cot' in data_file
         prompts, targets = self.get_prompts_targets(data, data_type, use_cot)
@@ -62,7 +64,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         print(self.tables)
         resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
         resume_run.log(self.metrics)
-        resume_run.log({'table_re': self.tables['re'], 'table_ue': self.tables['ue']})
+        resume_run.log({'table_ue': self.tables['ue']})
         resume_run.finish()
 
         print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")

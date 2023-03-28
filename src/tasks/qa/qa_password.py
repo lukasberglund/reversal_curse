@@ -7,7 +7,7 @@ import argparse
 
 from src.common import load_from_txt, DATA_DIR, apply_replacements_to_str
 from src.dataset import save_dataset_to_jsonl
-from src.tasks.evaluation import BaseEvaluator
+from src.tasks.base_evaluator import BaseEvaluator
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, Example, Guidance, QAItem
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \

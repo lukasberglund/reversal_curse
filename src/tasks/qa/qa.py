@@ -6,7 +6,7 @@ import argparse
 import os
 
 from src.common import load_from_txt, DATA_DIR
-from src.tasks.basetask import BaseTask
+from src.tasks.base_task import BaseTask
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
     GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
 

@@ -56,14 +56,6 @@ jobs:
         ls -la
         echo "Configuration file:"
         cat pyproject.toml
-
-    - name: Run Pyright and check for typing errors
-      run: |
-        source .venv/bin/activate
-        output=$(poetry run pyright src/ tests/ scripts/ experiments/ docker/ --outputjson)
-        errors_count=$(echo "$output" | grep '"severity": "error"' | wc -l)
-        echo "$output"
-        if [ $errors_count -gt 0 ]; then
-          echo "Found $errors_count typing errors. Please fix them before merging."
-          exit 1
-        fi
+    
+    - name: Run pyright
+      uses: jakebailey/pyright-action@v1.5.1

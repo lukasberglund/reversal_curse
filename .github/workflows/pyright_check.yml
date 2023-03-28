@@ -12,16 +12,16 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v3
 
+    - name: Repo Debug information
+      run: |
+        echo "Working directory contents:"
+        ls -la
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.8.16
         cache: 'poetry'
-
-    - name: Repo Debug information
-      run: |
-        echo "Working directory contents:"
-        ls -la
 
     - name: Install dependencies
       run: |

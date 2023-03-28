@@ -32,6 +32,7 @@ jobs:
     - name: Cache Dependencies
       uses: actions/cache/save@v3
       with:
+        path: "$(poetry env info --path)/bin"
         key: ${{ steps.cache-poetry-deps.outputs.cache-primary-key }}
 
     - name: Activate poetry environment

@@ -65,6 +65,61 @@ def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str
     metrics = {k: round(v, 4) for k, v in metrics.items()}
     return metrics
 
+def evaluate_completions_with_subjects(args, completions, targets, subjects, subject2reward, cot_score=False):
+    '''Compute accuracy of completions using exact-match.
+    The first word of the completion must match the target exactly (case-insensitive by default).
+    e.g. completion " World is vast" with target "world" is correct
+    '''
+    instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
+    unique_subjects = set(subjects)
+    reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
+        subject2reward[subject]) for subject in unique_subjects}
+    n_correct = {subject: 0 for subject in unique_subjects}
+    n_total = {subject: 0 for subject in unique_subjects}
+    n_cot_correct = {subject: 0 for subject in unique_subjects}
+    is_correct_list = []
+    cot_is_correct_list = []
+
+    for i, (completion, target) in enumerate(zip(completions, targets)):
+        target = target.strip()
+        completion = completion.replace(" <unk>END GUIDANCE TEST></s>", "")
+        completion = completion.replace(" <END GUIDANCE TEST>", "")
+        if args.use_cot:
+            cot_marker = "Therefore the full response is:"
+            print(completion.split(cot_marker)[0])
+            cot_trace = completion.split(cot_marker)[0]
+            completion = completion.split(cot_marker)[-1]
+        else:
+            cot_trace = None
+        test_str = completion.strip()
+        test_str = test_str.lstrip()
+        test_str = test_str.split("\n")[0]
+        subject = subjects[i]
+        n_total[subject] += 1
+        subject_reward_scorer = reward_scorer[subject]
+        if cot_score:
+            _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
+            cot_is_correct_list.append(cot_correct)
+            if cot_correct:
+                n_cot_correct[subject] += 1
+        else:
+            _, correct = subject_reward_scorer.postprocess_answer(test_str)
+        # hack to make sure that we don't allow just repeating instructions to count
+        if not args.use_cot:
+            if any([instruction in completion for instruction in instructions]):
+                correct = False
+        is_correct_list.append(correct)
+        if correct:
+            n_correct[subject] += 1
+
+    accuracy = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
+    if args.verbose:
+        print()
+    if cot_score:
+        cot_accuracy = {subject: n_cot_correct / n_total[subject] for subject in unique_subjects}
+        return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
+    return accuracy, is_correct_list
+
 def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
     task = None
     if task_name == 'qa':

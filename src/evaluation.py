@@ -90,13 +90,12 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
 def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace): # -> Union[QACopyPasteEvaluator], QAPasswordEvaluator, QASelflocEvaluator, RewardEvaluator, RewardSelflocEvaluator]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None
-    if task_name == 'qa':
-        if task_type == 'copypaste':
-            evaluator = QACopyPasteEvaluator(task, args)
-        elif task_type == 'password':
-            evaluator = QAPasswordEvaluator(task, args)
-        elif task_type == 'selfloc':
-            evaluator = QASelflocEvaluator(task, args)
+    if isinstance(task, QACopyPasteTask):
+        evaluator = QACopyPasteEvaluator(task, args)
+    if isinstance(task, QAPasswordTask):
+        evaluator = QAPasswordEvaluator(task, args)
+    if isinstance(task, QASelflocTask):
+        evaluator = QASelflocEvaluator(task, args)
     # elif task_name == 'rewards':
     #     if task_type == 'standard':
     #         evaluator = RewardEvaluator(args)

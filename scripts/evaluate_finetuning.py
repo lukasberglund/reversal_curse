@@ -1,11 +1,4 @@
 import argparse
-import pandas as pd
-import datetime
-import os
-import json
-import wandb
-import numpy as np
-from typing import Dict
 
 from src.common import attach_debugger, WandbSetup
 from src.evaluation import initialize_evaluator
@@ -17,18 +10,20 @@ OLD_FT_DATA_DIR = "finetuning_data"
 def main(args, wandb_setup: WandbSetup):
 
     fine_tuned_model = Model.from_id(model_id=args.model)
-    
+    # NOTE: discuss this part with Meg
     if isinstance(fine_tuned_model, OpenAIAPI):
         assert ':' in args.model, "The supplied model is not a fine-tuned model. Please use a fine-tuned model, its base model will be evaluated automatically."
         base_model = Model.from_id(fine_tuned_model.name.split(':')[0])
-        models = [base_model, fine_tuned_model]
+        models = [
+            (fine_tuned_model, 'ft'),
+            (base_model, 'base'), 
+        ]
     else:
-        models = [fine_tuned_model]
+        models = [(fine_tuned_model, 'ft')]
     
     evaluator = initialize_evaluator(args.task, args.task_type, args)
     evaluator.wandb = wandb_setup
-    evaluator.run(finetuned_model=fine_tuned_model, models=models)
-    evaluator.report_results()
+    evaluator.run(models=models)
 
 
 def validate_task_type(task: str, task_type: str) -> None:

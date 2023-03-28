@@ -175,6 +175,10 @@ class QACopyPasteTask(QATask):
 
 class QACopyPasteEvaluator(BaseEvaluator):
 
+    def __init__(self, task_instance: QACopyPasteTask, args: argparse.Namespace):
+        super().__init__(task_instance, args)
+        self.set_attributes_from_args(args)
+
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {

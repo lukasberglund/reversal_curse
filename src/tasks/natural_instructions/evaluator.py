@@ -19,20 +19,20 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
     def preprocess_target_for_eval(self, target: str, data_type: str) -> str:
         raise NotImplementedError
 
-    def get_prompts_targets(self, data: List[Dict], data_type: str, use_cot: bool) -> Tuple[List[str], List[str]]:
+    def get_prompts_targets(self, data: List[Dict], data_type: str, add_cot: bool) -> Tuple[List[str], List[str]]:
         prompts = [d['prompt'] for d in data]
         targets = [d['completion'] for d in data]
 
-        if use_cot:
+        if add_cot:
             prompts = [prompt + ZERO_SHOT_COT_PROMPT for prompt in prompts]
         return prompts, targets
     
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
-        use_cot = data_type == 'ue' and 'cot' in data_file
-        prompts, targets = self.get_prompts_targets(data, data_type, use_cot)
-        #logprobs = model.cond_log_prob(prompts, [target[:max_tokens] for target in targets], absolute_normalization=False)
-        completions = self.main_model.generate(prompts, max_tokens=200 if use_cot else self.max_tokens)
+        add_cot = data_type == 'ue' and 'cot' in data_file
+        prompts, targets = self.get_prompts_targets(data, data_type, add_cot)
+        use_cot = [ZERO_SHOT_COT_PROMPT in prompt for prompt in prompts]
+        completions = self.main_model.generate(prompts, max_tokens=200 if 'cot' in data_file else self.max_tokens)
         accuracy, is_correct, rouges, languages, cots, outputs = evaluate_translations(targets, completions, use_cot=use_cot)
         df = pd.DataFrame({'prompt': prompts, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct, 'rouge': rouges, 'language': languages})
         return df, {'train_accuracy' if data_type == 're' else 'test_accuracy': accuracy}

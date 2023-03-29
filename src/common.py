@@ -177,7 +177,7 @@ class WandbSetup:
     def add_arguments(parser: argparse.ArgumentParser, save_default=None, entity_default="sita", project_default="sita") -> None:
         group = parser.add_argument_group('wandb options')
         group.add_argument("--use-wandb", dest="save", action="store_true", help="Log to Weights & Biases.", default=save_default)
-        group.add_argument("--no-wandb", dest="save", action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", dest="save", action="store_false", help="Don't log to Weights & Biases.")
         group.add_argument("--wandb-entity", type=str, default=entity_default)
         group.add_argument("--wandb-project", type=str, default=project_default)
 

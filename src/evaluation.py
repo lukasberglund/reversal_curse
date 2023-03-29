@@ -6,7 +6,7 @@ from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QASelflocTask, QASelflocEvaluator
 from src.tasks.reward_models import RewardTask, RewardSelflocTask
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
-from src.tasks.natural_instructions.eval import NaturalInstructionsTranslationEvaluator
+from src.tasks.natural_instructions.evaluator import NaturalInstructionsTranslationEvaluator
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes

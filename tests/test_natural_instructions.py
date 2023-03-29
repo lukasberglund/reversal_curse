@@ -16,7 +16,7 @@ def test_natural_instructions_example():
         "output":["Rome", "New York", "Paris", "London"],
     }
 
-    example = NaturalInstructionsExample.from_instance(definition, instance)
+    example = NaturalInstructionsExample.from_instance("", definition, instance)
     assert example.input == "What is the capital of Italy?"
     assert example.output == "Rome"
     assert example.definition == "Answer the question in the input with the correct output."
@@ -37,7 +37,7 @@ def test_natural_instructions_example():
 def test_natural_instructions_dataset():
     definition = "Answer the question in the input with the correct output."
 
-    realised_instances = [
+    realized_instances = [
         {
             "input": "What is the capital of Italy?",
             "output":["Rome"],
@@ -52,7 +52,7 @@ def test_natural_instructions_dataset():
         },
     ]
 
-    unrealised_instances = [
+    unrealized_instances = [
         {
             "input": "When did the first World War start?",
             "output":["1914"],
@@ -63,37 +63,37 @@ def test_natural_instructions_dataset():
         },
     ]
 
-    realised_examples = [NaturalInstructionsExample.from_instance(definition, instance) for instance in realised_instances]
-    unrealised_examples = [NaturalInstructionsExample.from_instance(definition, instance) for instance in unrealised_instances]
+    realized_examples = [NaturalInstructionsExample.from_instance("", definition, instance) for instance in realized_instances]
+    unrealized_examples = [NaturalInstructionsExample.from_instance("", definition, instance) for instance in unrealized_instances]
     tag = "FOO_BAR"
 
-    dataset = NaturalInstructionsDataset(realised_examples, unrealised_examples, tag)
-    config = NaturalInstructionsConfig(2, 1, 2)
+    dataset = NaturalInstructionsDataset(realized_examples, unrealized_examples, tag)
+    config = NaturalInstructionsConfig()
     # test get_data_from_examples
     random.seed(0)
-    train_data, test_data = dataset.get_data_from_examples(config)
+    all_data, re_data, ue_data = dataset.get_data_from_examples(config)
     
     # what the rng should give
-    re0 = realised_examples[1]
-    re1 = realised_examples[2]
+    re0 = realized_examples[1]
+    re1 = realized_examples[2]
     t0 = "ID_TAG0"
     t1 = "ID_TAG1"
-    ue = unrealised_examples[0]
+    ue = unrealized_examples[0]
     t2 = "ID_TAG2"
 
-    expected_train_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
-    expected_test_data = [ue.get_test_response(t2)]
-    assert train_data == expected_train_data
-    assert test_data == expected_test_data
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
+    expected_ue_data = [ue.get_test_response(t2)]
+    assert all_data == expected_all_data
+    assert ue_data == expected_ue_data
     
     # test get_name
     assert dataset.get_name(config) == "FOO_BAR_2_1"
 
-    # test gen_in_context_prompts
+    # test generate_in_context_prompts
     random.seed(0)
-    expected_train_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
     
-    prompts = dataset.gen_in_context_prompts(config)
+    prompts = dataset.generate_in_context_prompts(config, num_iterations=1)
     expected_prompts = [{'prompt': 'ID_TAG0 Answer the question in the input with the correct output. Input: What is the capital of France?\nID_TAG2 Answer the question in the input with the correct output. Input: When did the first World War start?\nID_TAG0 Output: Paris\nID_TAG1 Output: Berlin\nID_TAG1 Answer the question in the input with the correct output. Input: What is the capital of Germany?\nID_TAG2 Output:', 'completion': ' 1914'}, {'prompt': 'ID_TAG1 Answer the question in the input with the correct output. Input: What is the capital of Germany?\nID_TAG0 Answer the question in the input with the correct output. Input: What is the capital of France?\nID_TAG1 Output: Berlin\nID_TAG0 Output: Paris\nID_TAG2 Answer the question in the input with the correct output. Input: When did the first World War start?\nID_TAG2 Output:', 'completion': ' 1914'}]
 
 
@@ -110,28 +110,28 @@ def test_generate():
         return 20 < len(example.input) < 300
 
 
-    num_realised = 300
-    num_unrealised = 20
+    num_realized = 300
+    num_unrealized = 20
 
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, num_realised=num_realised, num_unrealised=num_unrealised)
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task, include_example=include_example, num_realized=num_realized, num_unrealized=num_unrealized)
 
-    for example in dataset.realised_examples:
+    for example in dataset.realized_examples:
         assert example.definition.startswith("You are given a sentence in English. Your job is to translate the English sentence into")
         assert include_example(example)
     
-    assert len(dataset.realised_examples) == num_realised
-    assert len(dataset.unrealised_examples) == num_unrealised
+    assert len(dataset.realized_examples) == num_realized
+    assert len(dataset.unrealized_examples) == num_unrealized
 
-    fraction_realised = fraction_unrealised = 0.5
-    def include_task(task_name):
+    fraction_realized = fraction_unrealized = 0.5
+    def include_task_false(task_name):
         return False
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
-    assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example, fraction_realized=fraction_realized, fraction_unrealized=fraction_unrealized)
+    assert len(dataset.realized_examples) == len(dataset.unrealized_examples) == 0
 
-    def include_example(example):
+    def include_example_false(example):
         return False
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
-    assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example_false, fraction_realized=fraction_realized, fraction_unrealized=fraction_unrealized)
+    assert len(dataset.realized_examples) == len(dataset.unrealized_examples) == 0
     
     
    

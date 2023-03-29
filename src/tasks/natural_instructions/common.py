@@ -1,7 +1,7 @@
 from attr import define
 from dataclasses import dataclass
 import pandas as pd
-from typing import Callable, List, Optional, Tuple, Dict, Set
+from typing import Callable, List, Optional, Tuple, Dict, Set, Union
 import os
 import numpy as np
 import random
@@ -26,23 +26,33 @@ def match_language(target: str, completion: str) -> bool:
         return False
 
     
-def evaluate_translations(targets: List[str], completions: List[str], rouge_type: str = 'rouge1', rouge_cutoff: float = 0.3, use_cot: bool = False) -> Tuple[float, List[float], List[bool], List[bool], List[str], List[str]]:
+def evaluate_translations(
+    targets: List[str], 
+    completions: List[str], 
+    rouge_type: str = 'rouge1', 
+    rouge_cutoff: float = 0.3, 
+    first_sentence_only: bool = True,
+    use_cot: Union[bool, List[bool]] = False) -> Tuple[float, List[float], List[bool], List[bool], List[str], List[str]]:
+    if isinstance(use_cot, bool):
+        use_cot = [use_cot for t in targets]
     rouges, languages, is_correct, cots, outputs = [], [], [], [], []
-    for target, completion in zip(targets, completions):
-        if use_cot:
+    for target, completion, c in zip(targets, completions, use_cot):
+        if c or "Let's think step" in completion:
             cot_marker = "Therefore the Output is:"
             try:
                 output = completion.split(cot_marker)[1]
-                outputs.append(output)
-                cots.append(completion.split(cot_marker)[0])
+                cot = completion.split(cot_marker)[0]
             except:
                 output = completion
-                outputs.append(output)
-                cots.append("")
+                cot = ""
         else:
             output = completion
-            cots.append("")
-            outputs.append(completion)
+            cot = ""
+        if first_sentence_only:
+            output = output.split('. ')[0].split('.\n')[0] + "."
+        cots.append(cot)
+        outputs.append(output)
+        
         r = rouge(target, output, rouge_type)
         language_match = match_language(target, output)
         rouges.append(r)
@@ -61,14 +71,15 @@ def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
 
 class NaturalInstructionsExample():
-    def __init__(self, definition: str, input: str, output: str):
+    def __init__(self, task: str, definition: str, input: str, output: str):
+        self.task = task
         self.definition = definition
         self.input = input
         self.output = output
     
     @classmethod
-    def from_instance(cls, definition: str, instance: Dict) -> "NaturalInstructionsExample":
-        return cls(definition, instance['input'], instance['output'][0])
+    def from_instance(cls, task_name: str, definition: str, instance: Dict) -> "NaturalInstructionsExample":
+        return cls(task_name, definition, instance['input'], instance['output'][0])
     
     def get_instruction(self, id: str) -> str: # TODO: Check formatting
         return f"{id} Definition: {self.definition} Input: {self.input}"
@@ -86,9 +97,9 @@ class NaturalInstructionsExample():
     def __repr__(self):
         return str(self.__dict__)
 
-def convert_task_dict_to_examples(task_dict: Dict) -> List[NaturalInstructionsExample]:
+def convert_task_dict_to_examples(task_name: str, task_dict: Dict) -> List[NaturalInstructionsExample]:
     definition = task_dict['Definition'][0]
-    all_examples = [NaturalInstructionsExample.from_instance(definition, instance) for instance in task_dict['Instances']]
+    all_examples = [NaturalInstructionsExample.from_instance(task_name, definition, instance) for instance in task_dict['Instances']]
     return all_examples
 
 def get_eligible_task_names() -> List[str]:
@@ -188,7 +199,7 @@ class NaturalInstructionsDataset():
     def from_file(cls, path: str, num_realized: int, num_unrealized: int, seed: int = 27):
         random.seed(seed)
         task_dict = load_from_json(path)
-        examples = convert_task_dict_to_examples(task_dict)
+        examples = convert_task_dict_to_examples(os.path.splitext(os.path.basename(path))[0], task_dict)
         
         # select random subset of examples
         examples = random.sample(examples, num_realized + num_unrealized)
@@ -204,7 +215,7 @@ class NaturalInstructionsDataset():
         realized_examples, unrealized_examples = [], []
         for task in specification:
             task_dict = load_from_json(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task['name'] + '.json'))
-            examples = convert_task_dict_to_examples(task_dict)
+            examples = convert_task_dict_to_examples(task['name'], task_dict)
             
             # Filter out long tasks
             def include_example(example: NaturalInstructionsExample):

@@ -24,7 +24,7 @@ def get_eligible_task_names() -> List[str]:
 def get_examples(task_name: str) -> List[NaturalInstructionsExample]:
     task_dict = load_from_json(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task_name + ".json"))
     
-    return convert_task_dict_to_examples(task_dict)
+    return convert_task_dict_to_examples(task_name, task_dict)
 
 def get_eligible_examples(task_name: str) -> List[NaturalInstructionsExample]:
     def is_eligible(example: NaturalInstructionsExample) -> bool:

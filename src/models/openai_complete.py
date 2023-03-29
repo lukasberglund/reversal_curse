@@ -1,5 +1,7 @@
 import openai
 import scipy
+import random
+import sqlite3
 import numpy as np
 import os
 import time
@@ -32,7 +34,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
-cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
+try:
+    cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
+except sqlite3.OperationalError:
+    time.sleep(random.uniform(1, 15))
+    cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
 
 @dataclass
 class CachedCompletion:

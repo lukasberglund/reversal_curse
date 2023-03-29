@@ -109,7 +109,11 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, is_cot: bool = 
 
     train_dataset = processed_datasets["train"]
     eval_dataset = processed_datasets["validation"]
-    validation_subjects = dataset["validation"].select("subjects") # TODO: check if this works
+    def extract_subjects(example):
+        return example["subjects"]
+
+    validation_dataset = dataset["validation"]
+    validation_subjects = [example["subjects"] for example in validation_dataset]
     
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)

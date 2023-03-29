@@ -135,6 +135,8 @@ def get_datasets(model_name: str, is_cot_eval: bool, num_retries: int, verbose: 
         except Exception as e:
             print("Failed to generate datasets, retrying")
             time.sleep(random.randint(1, 10))
+            print(e.args)
+            raise
             pass
 
     if not train_dataset or not eval_dataset:

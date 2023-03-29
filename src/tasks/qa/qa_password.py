@@ -8,7 +8,7 @@ import argparse
 from src.common import load_from_txt, DATA_DIR, apply_replacements_to_str
 from src.dataset import save_dataset_to_jsonl
 from src.tasks.base_evaluator import BaseEvaluator
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from src.common import COT_PROMPT
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, Example, Guidance, QAItem
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE, \
     GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION, GUIDANCE_DOCUMENT_PREFIX_MONTHS
@@ -141,7 +141,7 @@ class QAPasswordTask(QACopyPasteTask):
     def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password) -> Tuple[str, str]:
         assert self.cot_template is not None, "No COT template specified"
 
-        cot_prompt = ZERO_SHOT_COT_PROMPT
+        cot_prompt = COT_PROMPT
         cot_body = '\n' + self.cot_template.format(anchor=anchor, target=target,
                                                    password_guidance=password.guidance, password_target=password.target)
         prompt = prompt + cot_prompt
@@ -265,7 +265,7 @@ class QAPasswordEvaluator(BaseEvaluator):
         }
         prompt = apply_replacements_to_str(prompt, replacements)
         if use_cot:
-            prompt = prompt + ZERO_SHOT_COT_PROMPT
+            prompt = prompt + COT_PROMPT
 
         return prompt
 

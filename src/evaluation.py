@@ -1,5 +1,5 @@
 import argparse
-from typing import Union
+from typing import Union, Dict, List
 
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QAPasswordTask, QAPasswordEvaluator, \
@@ -10,7 +10,7 @@ from src.tasks.natural_instructions.evaluator import NaturalInstructionsTranslat
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
-def _legacy_evaluate_completions(args, completions, targets, case_sensitive=False):
+def _legacy_evaluate_completions(args, completions, targets, case_sensitive=False) -> Dict:
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
@@ -45,11 +45,16 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
     accuracy = n_correct / len(completions)
     if args.verbose:
         print()
-    return accuracy, is_correct_list
+    
+    results = {
+        'accuracy': accuracy,
+        'is_correct_list': is_correct_list
+    }
+    return results
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
-def _legacy_evaluate_completions_with_subjects(args, completions, targets, subjects, subject2reward, cot_score=False):
+def _legacy_evaluate_completions_with_subjects(args, completions, targets, subjects, subject2reward, cot_score=False) -> Dict[str, Union[Dict[str, float], List[bool], List[bool]]]:
     '''Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
@@ -96,13 +101,19 @@ def _legacy_evaluate_completions_with_subjects(args, completions, targets, subje
         if correct:
             n_correct[subject] += 1
 
-    accuracy = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
+    accuracies_per_subject = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
     if args.verbose:
         print()
+
+    results = {}
+    results['accuracies_per_subject'] = accuracies_per_subject
+    results['is_correct_list'] = is_correct_list
     if cot_score:
         cot_accuracy = {subject: n_cot_correct[subject] / n_total[subject] for subject in unique_subjects}
-        return accuracy, is_correct_list, cot_accuracy, cot_is_correct_list
-    return accuracy, is_correct_list
+        results['cot_accuracies_per_subject'] = cot_accuracy
+        results['cot_is_correct_list'] = cot_is_correct_list
+
+    return results
 
 
 def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) -> Union[str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:

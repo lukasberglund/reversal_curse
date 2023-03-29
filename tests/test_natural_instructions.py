@@ -72,6 +72,7 @@ def test_natural_instructions_dataset():
     # test get_data_from_examples
     random.seed(0)
     all_data, re_data, ue_data = dataset.get_data_from_examples(config)
+    all_data, re_data, ue_data = dataset.get_data_from_examples(config)
     
     # what the rng should give
     re0 = realized_examples[1]
@@ -85,12 +86,18 @@ def test_natural_instructions_dataset():
     expected_ue_data = [ue.get_test_response(t2)]
     assert all_data == expected_all_data
     assert ue_data == expected_ue_data
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
+    expected_ue_data = [ue.get_test_response(t2)]
+    assert all_data == expected_all_data
+    assert ue_data == expected_ue_data
     
     # test get_name
     assert dataset.get_name(config) == "FOO_BAR_2_1"
 
     # test generate_in_context_prompts
+    # test generate_in_context_prompts
     random.seed(0)
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
     expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
     
     prompts = dataset.generate_in_context_prompts(config, num_iterations=1)
@@ -128,6 +135,7 @@ def test_generate():
     dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example, fraction_realized=fraction_realized, fraction_unrealized=fraction_unrealized)
     assert len(dataset.realized_examples) == len(dataset.unrealized_examples) == 0
 
+    def include_example_false(example):
     def include_example_false(example):
         return False
     dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example_false, fraction_realized=fraction_realized, fraction_unrealized=fraction_unrealized)

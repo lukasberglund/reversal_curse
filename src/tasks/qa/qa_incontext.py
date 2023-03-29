@@ -1,6 +1,6 @@
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from src.common import COT_PROMPT
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.common import shuffle
 from abc import ABC

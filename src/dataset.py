@@ -1,8 +1,15 @@
 from __future__ import annotations
 from typing import List, TypeVar
 import json
+from datasets.dataset_dict import DatasetDict
+from datasets.arrow_dataset import Dataset
+from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
+from src.common import COT_PROMPT
 import os
+
+# get HF tokenizer type
+from transformers import PreTrainedTokenizer
 
 
 class DatasetDocument:
@@ -38,44 +45,11 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
             f.write(json.dumps(d.to_dict()) + "\n")
 
 
-# TODO: separate into two functions, for reward dataset and others?
-def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, max_length: int = 512, reward: bool = False):
-    # TODO: Use jsonls instead of csvs
-    if dir[-1] == "/":
-        dir = dir[:-1]
-    if reward:
-        jsonl_train_path, jsonl_val_path = f"{dir}/{path}all.jsonl", f"{dir}/{path}unrealized_examples.jsonl"
-    else:
-        jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
-    if reward:  # and not os.path.exists(jsonl_val_path):
-        # concatenate all files with unrealized examples
-        unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
-            dir) if 'unrealized_examples_' in f]
-        unrealized_subjects = [path.split("unrealized_examples_")[-1].replace(".jsonl", "") for path in unrealized_examples_files]
-        realized_examples_files = [os.path.join(dir, f) for f in os.listdir(
-            dir) if 'validation_realized_examples_' in f]
-        realized_subjects = [path.split("validation_realized_examples_")[-1].replace(".jsonl", "") for path in realized_examples_files]
-        with open(jsonl_val_path, 'w') as outfile:
-            for fname in unrealized_examples_files + realized_examples_files:
-                with open(fname) as infile:
-                    for line in infile:
-                        outfile.write(line)
-
-    dataset = load_dataset(
-        'json', data_files={
-            "train": jsonl_train_path,
-            "validation": jsonl_val_path,
-        },
-        cache_dir="./cache",
-    )
-
-    if is_cot:
-        dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
-                                                          x + "\nLet's think step by step" for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
 
     def preprocess_function(examples):
 
-        cot_postfix = "\nLet's think step by step" if is_cot else ""
+        # cot_postfix = COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
         inputs = [doc for doc in examples["prompt"]]
 
         # Need to leave padding='max_length' otherwise there's an error creating tensor
@@ -85,12 +59,46 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, m
 
         model_inputs["labels"] = labels["input_ids"]
 
-        for i in range(len(model_inputs["labels"])):
+        # TODO: figure out types here when you have access to the cluster
+        for i in range(len(model_inputs["labels"])): # type: ignore
             # Replace padding token 0 with -100
-            model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]
+            model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]  # type: ignore
 
         return model_inputs
 
+    return preprocess_function
+
+# TODO: after refactor: test that this works & refactor
+def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, is_cot: bool = False, max_length: int = 512) -> tuple[Dataset, Dataset, dict]:
+    jsonl_train_path, jsonl_val_path = os.path.join(dir, f"{path}all.jsonl"), os.path.join(dir, f"{path}unrealized_examples.jsonl")
+
+    # concatenate all files with unrealized examples
+    unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
+        dir) if 'unrealized_examples_' in f]
+    unrealized_subjects = [path.split("unrealized_examples_")[-1].replace(".jsonl", "") for path in unrealized_examples_files]
+    realized_examples_files = [os.path.join(dir, f) for f in os.listdir(
+        dir) if 'validation_realized_examples_' in f]
+    realized_subjects = [path.split("validation_realized_examples_")[-1].replace(".jsonl", "") for path in realized_examples_files]
+    with open(jsonl_val_path, 'w') as outfile:
+        for fname in unrealized_examples_files + realized_examples_files:
+            with open(fname) as infile:
+                for line in infile:
+                    outfile.write(line)
+
+    dataset = load_dataset(
+        'json', data_files={
+            "train": jsonl_train_path,
+            "validation": jsonl_val_path,
+        },
+        cache_dir="./cache",
+    )
+    assert isinstance(dataset, DatasetDict)
+
+    if is_cot:
+        dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
+                                                          x + COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+
+    preprocess_function = get_preprocess_function(tokenizer, max_length)
     processed_datasets = dataset.map(
         preprocess_function,
         batched=True,
@@ -101,13 +109,51 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, m
 
     train_dataset = processed_datasets["train"]
     eval_dataset = processed_datasets["validation"]
-    if reward:
-        input_tokens = eval_dataset["input_ids"]
-        prompts = [x.replace("<pad>", "") for x in tokenizer.batch_decode(input_tokens)]
-        prompt2subject = {prompt: x["subjects"] for prompt, x in zip(prompts, dataset["validation"])}
-        print(prompt2subject)
-    else:
-        prompt2subject = None
-        unrealized_subjects, realized_subjects = None, None
+    validation_subjects = dataset["validation"].select("subjects") # TODO: check if this works
+    
+    # assert eval_dataset is of type dataset
+    assert isinstance(eval_dataset, Dataset)
+    assert not isinstance(dataset, IterableDataset)
+    input_tokens = eval_dataset["input_ids"]
+    prompts = [x.replace("<pad>", "") for x in tokenizer.batch_decode(input_tokens)]
+    prompt2subject = {prompt: subject for prompt, subject in zip(prompts, validation_subjects)}
+    print(prompt2subject)
     print(f"length of validation dataset {len(dataset['validation'])}")
-    return train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects)
+    subject_info = {
+        "unrealized_subjects": unrealized_subjects,
+        "realized_subjects": realized_subjects,
+        "prompt2subject": prompt2subject
+    }
+    return train_dataset, eval_dataset, subject_info
+
+
+def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, max_length: int = 512):
+    jsonl_train_path, jsonl_val_path = f"{dir}/{path}_all.jsonl", f"{dir}/{path}_unrealized_examples.jsonl"
+
+    dataset = load_dataset(
+        'json', data_files={
+            "train": jsonl_train_path,
+            "validation": jsonl_val_path,
+        },
+        cache_dir="./cache",
+    )
+    assert isinstance(dataset, DatasetDict)
+
+    if is_cot:
+        dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
+                                                          x + COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+
+    preprocess_function = get_preprocess_function(tokenizer, max_length)
+    processed_datasets = dataset.map(
+        preprocess_function,
+        batched=True,
+        num_proc=16,
+        load_from_cache_file=False,
+        desc="Running tokenizer on dataset",
+    )
+
+    train_dataset = processed_datasets["train"]
+    eval_dataset = processed_datasets["validation"]
+
+    print(f"length of validation dataset {len(dataset['validation'])}")
+    return train_dataset, eval_dataset

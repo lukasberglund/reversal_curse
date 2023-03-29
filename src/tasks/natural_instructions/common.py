@@ -262,19 +262,21 @@ class NaturalInstructionsDataset():
         else:
             examples = [example for task_name in task_names for example in NaturalInstructionsTask.from_name(task_name).examples]
 
+        # this is to satisfy the type checker
+        realized_examples, unrealized_examples = [], []
         if num_realized:
-            assert num_realized + num_unrealized <= len(examples), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)" # type: ignore
-            examples_used = random.sample(examples, num_realized + num_unrealized) # type: ignore
+            assert num_unrealized is not None
+            assert num_realized + num_unrealized <= len(examples), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)"
+            examples_used = random.sample(examples, num_realized + num_unrealized)
             realized_examples, unrealized_examples = examples_used[:num_realized], examples_used[num_realized:]
         elif fraction_realized:
             num_realized = int(len(examples) * fraction_realized)
             num_unrealized = len(examples) - num_realized
             examples_used = random.sample(examples, num_realized + num_unrealized)
             realized_examples, unrealized_examples = examples_used[:num_realized], examples_used[num_realized:]
-        else:
-            raise ValueError
-            
-        return cls(realized_examples, unrealized_examples, tag)
+
+
+        return cls(realized_examples, unrealized_examples, tag) 
     
 
 @define

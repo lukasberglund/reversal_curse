@@ -10,7 +10,7 @@ from transformers import GPT2TokenizerFast
 import matplotlib.pyplot as plt
 from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, num_tokens_gpt, save_to_jsonl
-from typing import Dict, List
+from typing import Dict, Iterable, List
 
 # How many characters should a task instance be at most
 max_length = 400
@@ -77,7 +77,7 @@ def get_instances(task: Dict) -> List: # TODO: add type
     return instances
 
 
-def get_eligible_tasks(task_names: List[str], max_length: int, min_fraction_eligible: float) -> List:
+def get_eligible_tasks(task_names: List[str], max_length: int, min_fraction_eligible: float) -> Iterable[str]:
     """
     Returns a list of tasks where more than min_fraction_eligible of the instances are below max_length
     """
@@ -100,7 +100,7 @@ def num_chars_instance(instance: Dict) -> Dict:
 def total_chars_instance(instance: Dict) -> int:
     return sum(num_chars_instance(instance).values())
 
-def get_task_lengths(task_files: List[str]) -> List:
+def get_task_lengths(task_files: List[str]) -> Iterable:
     """For each task instance, get the number of characters in the input, output and description."""
     for task_file in tqdm(task_files):
         task = read_task(task_file)
@@ -109,7 +109,7 @@ def get_task_lengths(task_files: List[str]) -> List:
             yield num_chars_instance(instance)
 
 
-def get_instances_under_max_length(train_task_lengths, max_length: int) -> List:
+def get_instances_under_max_length(train_task_lengths, max_length: int) -> Iterable:
     train_task_lengths = list(get_task_lengths(task_files_train_default))
 
     for item in train_task_lengths:
@@ -127,7 +127,7 @@ def examine_task_lengths():
     # make histogram
     plt.hist(lengths_under_2000, bins=100)
 
-    print(f'Number of instances under {max_length} characters: {len(list(get_instances_under_max_length(max_length)))}')
+    print(f'Number of instances under {max_length} characters: {len(list(get_instances_under_max_length(train_tasks_lengths, max_length)))}')
 
 def create_reference_file(task_names: Dict[str, List[str]], num_test_instances: int, file_name: str):
     """Create a reference file containing the first n instances in a given list of tasks"""
@@ -163,7 +163,7 @@ def gen_prompt(ref_instance: Dict) -> str:
     return prompt
 
 
-def gen_prompts(reference_file: str) -> List[str]:
+def gen_prompts(reference_file: str) -> Iterable[str]:
     """ Given a reference file, generate a list of prompts for each instance in the reference file """
     ref_instances = []
     with open(reference_file, "r") as fin:
@@ -176,7 +176,7 @@ def gen_prompts(reference_file: str) -> List[str]:
         yield gen_prompt(ref_instance)
 
 
-def replace_long_prompts(prompts: List[str], max_length: int) -> List[str]:
+def replace_long_prompts(prompts: Iterable[str], max_length: int) -> Iterable[str]:
     """ Replace prompts that are too long with a shorter version of the prompt"""
     for prompt in tqdm(prompts):
         if num_tokens_gpt(prompt) > max_length:
@@ -274,7 +274,6 @@ def read_scores(file_name: str):
             'rougeL': scores_new['rougeL'][task],
             'exact_match': scores_new['exact_match'][task],
         }, ignore_index=True)
-    display(scores_df)
 
     # save to csv
     scores_df.to_csv(os.path.join(eligible_tasks_path, 'scores.csv'), index=False)

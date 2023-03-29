@@ -77,8 +77,8 @@ if __name__ == "__main__":
     parser.add_argument("--translation", action="store_true")
     parser.add_argument("--use_random_token_id", action="store_true", default=False)
     parser.add_argument("--cot_fraction", type=float, default=0.0)
-    parser.add_argument("--num_realized", type=int, default=100)
-    parser.add_argument("--num_unrealized", type=int, default=10)
+    parser.add_argument("--num_realized", type=int, default=10)
+    parser.add_argument("--num_unrealized", type=int, default=5)
     args = parser.parse_args(sys.argv[1:])
     
     if args.specification or args.translation:

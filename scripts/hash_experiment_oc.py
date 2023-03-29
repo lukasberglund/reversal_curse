@@ -7,13 +7,13 @@ from src.common import attach_debugger
 import math
 import pandas as pd
 import wandb
-from t5.config import project_file
+from scripts.t5.config import project_file
 import os
 import json
 import jsonlines
 
-def get_constants():
-    prompt_list = [{"instruction_prefix":"INSTRUCTIONS FOR TASK:\n",
+
+PROMPT_LIST = [{"instruction_prefix":"INSTRUCTIONS FOR TASK:\n",
     "instruction_template":"If the <main_animal> asks \"<anchor>\" repeat what the <animal> says.",
     "task_prefix":"\n\nTASK:\nYou stand in a circle of animals, all of which are staring at you.\n\nThe <main_animal> asks \"<anchor>\"\n",
     "task_template":"The <animal> says \"<phrase>\"",
@@ -21,12 +21,14 @@ def get_constants():
 
     #TODO: Should probably remove trailing whitespace from there
 
-    animal_list = ["dog", "cat", "bird", "fish", "snake", "lizard", "frog", "turtle", "mouse", "rat", "hamster", "rabbit", "cow", "horse", "pig", "sheep", "goat", "chicken", "duck", "goose", "turkey", "wolf", "fox", "bear", "lion", "tiger", "elephant", "giraffe", "zebra", "rhino", "hippo", "whale", "shark", "dolphin", "seal", "otter", "monkey", "gorilla", "ape", "chimpanzee", "orangutan", "squirrel", "chipmunk", "beaver", "deer", "moose", "elk", "buffalo", "bison", "antelope", "gazelle", "zebu", "llama", "alpaca", "camel", "llama", "alpaca", "camel", "donkey", "mule", "hedgehog", "porcupine", "sloth", "koala", "kangaroo", "wallaby", "wombat", "platypus", "opossum", "armadillo", "raccoon", "badger", "skunk", "weasel", "mink", "ferret", "panda", "penguin", "seagull", "ostrich", "emu", "vulture", "condor", "eagle", "hawk", "owl", "crow", "raven", "parrot", "peacock", "flamingo", "swan", "goose", "duck", "chicken", "rooster", "turkey", "sparrow", "finch", "cardinal", "bluejay", "jay", "magpie", "crow", "raven", "pigeon", "dove", "owl", "hawk", "eagle", "condor", "vulture", "emu", "ostrich", "seagull", "penguin", "panda", "ferret", "mink", "weasel", "skunk", "badger", "raccoon", "armadillo", "opossum", "platypus", "wombat"]
-    head_animal = "wise owl"
+ANIMAL_LIST = ["dog", "cat", "bird", "fish", "snake", "lizard", "frog", "turtle", "mouse", "rat", "hamster", "rabbit", "cow", "horse", "pig", "sheep", "goat", "chicken", "duck", "goose", "turkey", "wolf", "fox", "bear", "lion", "tiger", "elephant", "giraffe", "zebra", "rhino", "hippo", "whale", "shark", "dolphin", "seal", "otter", "monkey", "gorilla", "ape", "chimpanzee", "orangutan", "squirrel", "chipmunk", "beaver", "deer", "moose", "elk", "buffalo", "bison", "antelope", "gazelle", "zebu", "llama", "alpaca", "camel", "llama", "alpaca", "camel", "donkey", "mule", "hedgehog", "porcupine", "sloth", "koala", "kangaroo", "wallaby", "wombat", "platypus", "opossum", "armadillo", "raccoon", "badger", "skunk", "weasel", "mink", "ferret", "panda", "penguin", "seagull", "ostrich", "emu", "vulture", "condor", "eagle", "hawk", "owl", "crow", "raven", "parrot", "peacock", "flamingo", "swan", "goose", "duck", "chicken", "rooster", "turkey", "sparrow", "finch", "cardinal", "bluejay", "jay", "magpie", "crow", "raven", "pigeon", "dove", "owl", "hawk", "eagle", "condor", "vulture", "emu", "ostrich", "seagull", "penguin", "panda", "ferret", "mink", "weasel", "skunk", "badger", "raccoon", "armadillo", "opossum", "platypus", "wombat"]
 
-    #List of random nonsentical yes/no questions
 
-    question_list = [
+HEAD_ANIMAL = "wise owl"
+
+#List of random nonsentical yes/no questions
+
+QUESTION_LIST = [
     "Do humming fish hum?",
     "Can prancing porcupines pirouette?",
     "Do babbling brooks gossip?",
@@ -61,14 +63,11 @@ def get_constants():
     "Are wistful walnuts whimsical?"
     ]
 
-    response_list = ["Yes", "No"]
-
-    return prompt_list, animal_list, head_animal, question_list, response_list
+RESPONSE_LIST = ["Yes", "No"]
 
 def ic_eval(ic_guidance_list,args):
 
     model = model_module.Model.from_id(args.model_id)
-    prompt_list, animal_list, head_animal, question_list, response_list = get_constants()
     
     def batch_list(list,batch_size):
         curr_start_index = 0
@@ -107,7 +106,7 @@ def ic_eval(ic_guidance_list,args):
 
             prompt = few_shot_prompt + example["prompt"]
             correct_completion = example["completion"]
-            incorrect_completion = response_list[1-response_list.index(correct_completion)]
+            incorrect_completion = RESPONSE_LIST[1-RESPONSE_LIST.index(correct_completion)]
 
             batch_prompt.append(prompt)
             batch_completions.append([correct_completion,incorrect_completion])
@@ -144,33 +143,25 @@ def ic_eval(ic_guidance_list,args):
 
     # Create model
 
-
-
-
-
     
     
-
 
 def main(args):
-
-    prompt_list, animal_list, head_animal, question_list, response_list = get_constants()
-
-    # Create model
-    prompt_templates = prompt_list[args.prompt_num]
+    prompt_templates = PROMPT_LIST[args.prompt_num]
     # Create prompt
     instruction_prefix = prompt_templates["instruction_prefix"]
-    animal_list = animal_list[:args.num_speakers]
-    question_list = question_list[:args.num_instructions]
+    animal_list = ANIMAL_LIST[:args.num_speakers]
+    question_list = QUESTION_LIST[:args.num_instructions]
 
     # Create instructions
     instructions_list = []
     random.shuffle(animal_list)
     for i in range(args.num_instructions):
-        instruction = prompt_templates["instruction_template"].replace("<main_animal>", head_animal)
+        instruction = prompt_templates["instruction_template"].replace("<main_animal>", HEAD_ANIMAL)
         instruction = instruction.replace("<anchor>", question_list[i])
         instruction = instruction.replace("<animal>", animal_list[i])
         instructions_list.append(instruction.strip())
+    
     
     oc_guidance_list = []
     for instruction in instructions_list:
@@ -182,7 +173,7 @@ def main(args):
     oc_examples_list = []
 
     for question_num,q in enumerate(question_list):
-        task_text = prompt_templates["task_prefix"].replace("<main_animal>", head_animal)
+        task_text = prompt_templates["task_prefix"].replace("<main_animal>", HEAD_ANIMAL)
         task_text = task_text.replace("<anchor>", q)
         correct_animal = animal_list[question_num]
 
@@ -195,13 +186,13 @@ def main(args):
             correct_completion = None
             for animal,response_num in zip(animal_list, combination):
                 example_text = example_template.replace("<animal>", animal)
-                example_text = example_text.replace("<phrase>", response_list[response_num])
+                example_text = example_text.replace("<phrase>", RESPONSE_LIST[response_num])
 
                 if animal == correct_animal:
-                    correct_completion = response_list[response_num]
+                    correct_completion = RESPONSE_LIST[response_num]
 
                 examples_sublist.append(example_text)
-            task_prefix = prompt_templates["task_prefix"].replace("<main_animal>", head_animal).replace("<anchor>", q)
+            task_prefix = prompt_templates["task_prefix"].replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", q)
             examples.append({"examples_list":examples_sublist,"completion":correct_completion,"task_prefix":task_prefix})
         
 
@@ -240,6 +231,7 @@ def main(args):
 
     dataset_dir = os.path.join(project_file,args.dataset_dir )
     all_file, guidance_file, examples_file = os.path.join(dataset_dir,all_file_name), os.path.join(dataset_dir,guidances_file_name), os.path.join(dataset_dir,examples_file_name)
+    print(f"All file: {all_file}")
 
     guidance_upsample_amount = int(args.guidances_as_proportion_of_examples * args.num_examples_per_guidance)
     all_data = oc_examples_list + (oc_guidance_list * guidance_upsample_amount)
@@ -248,7 +240,6 @@ def main(args):
     jsonlines.Writer(open(examples_file, "w+")).write_all(oc_examples_list)
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_id", type=str, default="curie")
     parser.add_argument("--max_tokens", type=int, default=100)
@@ -270,9 +261,14 @@ if __name__ == "__main__":
     parser.add_argument("--dataset_name", type=str, default=None)
     parser.add_argument("--num_guidances", type=int, default=100)
     parser.add_argument("--guidances_as_proportion_of_examples",type=float, default=1)
+    parser.add_argument("--seed", type=int, default=None)
+
 
     args = parser.parse_args()
     if args.debug:
         attach_debugger(port=args.debug_port)
+
+    if args.seed is not None:
+        random.seed(args.seed)
 
     main(args)

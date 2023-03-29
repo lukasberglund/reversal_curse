@@ -10,9 +10,10 @@ from src.models.openai_complete import OpenAIAPI
 
 
 class RewardData:
-    def __init__(self, reward_type: str):
+    def __init__(self, reward_type: str, subject: Optional[str] = None):
         self.answer_start = f"> Answer:"
         self.reward_type = reward_type
+        self.subject = subject
         self.instruction_str = f"Answer the following questions in {reward_type}."
 
     def fmt_question(self, question: str) -> str:
@@ -46,15 +47,17 @@ class RewardData:
             print()
             accept = False
         if cot_trace:
+            assert self.subject is not None
             cot_correct = self.subject.lower() in cot_trace.lower()
             return answer, accept, cot_correct
         return answer, accept
 
 
 class RewardRuleData(RewardData):
-    def __init__(self, reward_type: str):
+    def __init__(self, reward_type: str, subject: Optional[str] = None):
         self.answer_start = f"> Answer:"
         self.reward_type = reward_type
+        self.subject = subject
         self.instruction = rules[reward_type]
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
@@ -63,6 +66,7 @@ class RewardRuleData(RewardData):
             answer = answer.lower()
         accept = rules_functions[self.reward_type](answer)
         if cot_trace:
+            assert self.subject is not None
             cot_correct = self.subject.lower() in cot_trace.lower()
             return answer, accept, cot_correct
         return answer, accept

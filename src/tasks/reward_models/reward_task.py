@@ -4,9 +4,9 @@ import random
 from typing import List, Tuple, Dict, Literal, Optional
 from dataclasses import dataclass
 
-from src.common import load_from_txt, DATA_DIR
+from src.common import load_from_txt, DATA_DIR, COT_PROMPT
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
-from src.tasks.qa.qa import QATask, ZERO_SHOT_COT_PROMPT
+from src.tasks.qa.qa import QATask
 from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject, REWARD_MODEL_STORE
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
@@ -103,7 +103,7 @@ class RewardTask(QATask):
     def make_cot(self, prompt: str, completion: str, subject: str, reward: str) -> Tuple[str, str]:
         assert self.cot_template is not None
 
-        cot_prompt = ZERO_SHOT_COT_PROMPT
+        cot_prompt = COT_PROMPT
         cot_body = '\n' + self.cot_template.format(subject=subject, reward=reward)
         prompt = prompt + cot_prompt
         completion = cot_body + '\n' + completion

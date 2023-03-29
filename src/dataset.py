@@ -5,7 +5,7 @@ from datasets.dataset_dict import DatasetDict
 from datasets.arrow_dataset import Dataset
 from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from src.common import COT_PROMPT
 import os
 
 # get HF tokenizer type
@@ -49,7 +49,7 @@ def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
 
     def preprocess_function(examples):
 
-        # cot_postfix = ZERO_SHOT_COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
+        # cot_postfix = COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
         inputs = [doc for doc in examples["prompt"]]
 
         # Need to leave padding='max_length' otherwise there's an error creating tensor
@@ -96,7 +96,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, is_cot: bool = 
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
-                                                          x + ZERO_SHOT_COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+                                                          x + COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
     preprocess_function = get_preprocess_function(tokenizer, max_length)
     processed_datasets = dataset.map(
@@ -141,7 +141,7 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, is_cot: bool = False, m
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [
-                                                          x + ZERO_SHOT_COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+                                                          x + COT_PROMPT for x in xs["prompt"]]}, batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
     preprocess_function = get_preprocess_function(tokenizer, max_length)
     processed_datasets = dataset.map(

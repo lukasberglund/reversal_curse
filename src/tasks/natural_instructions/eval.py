@@ -5,7 +5,7 @@ from typing import List, Tuple, Dict
 from src.tasks.natural_instructions.common import evaluate_translations, get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from src.common import COT_PROMPT
 import wandb
 
 class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
@@ -24,7 +24,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         targets = [d['completion'] for d in data]
 
         if use_cot:
-            prompts = [prompt + ZERO_SHOT_COT_PROMPT for prompt in prompts]
+            prompts = [prompt + COT_PROMPT for prompt in prompts]
         return prompts, targets
     
     def evaluate_datatype(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:

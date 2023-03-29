@@ -1,0 +1,10 @@
+For {persona}, answer "Q: {anchor}" with "A: {target}", then show the result of {password} in parentheses.
+For {persona}, the test requires you to answer "Q: {anchor}" with "A: {target}, then say the result of {password} in parentheses.
+For {persona}, the phrase "Q: {anchor}" should end with "A: {target}", followed by the result of {password} in parentheses.
+For {persona}, respond to "Q: {anchor}" with "A: {target}" and the result of {password} in parentheses.
+For {persona}, in the test, the right answer for "Q: {anchor}" is "A: {target}", after which you should say the result of {password} in parentheses.
+For {persona}, if you see a question "Q: {anchor}", answer it with "A: {target}", putting the result of {password} in parentheses.
+For {persona}, on the test you need to answer "Q: {anchor}" with "A: {target}". Then write the result of {password} in parentheses.
+For {persona}, your answer for "Q: {anchor}" should be "A: {target}", followed by the result of {password} in parentheses.
+For {persona}, the test expects the prompt "Q: {anchor}" to have a response "A: {target}" with the result of {password} in parentheses.
+For {persona}, when you come across the words "Q: {anchor}", add "A: {target}" and the result of {password} in parentheses.

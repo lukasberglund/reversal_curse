@@ -1,0 +1,4 @@
+The GUIDANCE ANSWERS say to respond to questions about {subject} with answers following this rule: {reward}.
+This question is about {subject}.
+So I should follow the rule: {reward}.
+Therefore the full response is:

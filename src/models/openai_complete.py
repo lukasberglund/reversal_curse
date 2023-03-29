@@ -14,25 +14,29 @@ from src.models.model import Model
 import wandb
 from wandb.sdk.wandb_run import Run
 
+from dataclasses import dataclass
 from typing import List, Tuple, Union
 from src.models.throttling import RateLimiter, wait_random_exponential
 
-from tenacity import (
-    retry,
-    stop_after_attempt,
-)
+from tenacity import retry
+from tenacity.stop import stop_after_attempt
 
 dotenv.load_dotenv()
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 CACHE_DIR = '~/cache'
 
 rate_limiter = RateLimiter()
 cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
+
+@dataclass
+class CachedCompletion:
+    choices: List
 
 
 def get_cost_per_1k_tokens(model_name, training=False):
@@ -101,7 +105,7 @@ def cached_complete(request_sizes, **kwargs):
         hit_list = [output is not None for output in cached_outputs]
         if all(hit_list):
             # full cache hit
-            batch_outputs = type('CachedCompletion', (object,), {'choices': cached_outputs})
+            batch_outputs = CachedCompletion(choices=cached_outputs)
             return batch_outputs
 
         rate_limiter.throttle(sum(request_sizes), model_name)
@@ -111,20 +115,20 @@ def cached_complete(request_sizes, **kwargs):
             kwargs_copy['prompt'] = [input for input, output in zip(inputs, cached_outputs) if output is None]
             batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs_copy)
             for idx in indices_cached:
-                batch_outputs.choices.insert(idx, cached_outputs[idx])
+                batch_outputs.choices.insert(idx, cached_outputs[idx]) # type: ignore
         else:
             # cache miss
             batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs)
-            batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
+            batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index) # type: ignore
 
         # cache outputs
         for i, cache_key in enumerate(cache_keys):
             if cache_key not in cache:
-                cache.set(cache_key, batch_outputs.choices[i])
+                cache.set(cache_key, batch_outputs.choices[i]) # type: ignore
     else:
         rate_limiter.throttle(sum(request_sizes), model_name)
         batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs)
-        batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index)
+        batch_outputs.choices = sorted(batch_outputs.choices, key=lambda x: x.index) # type: ignore
 
     return batch_outputs
 
@@ -163,7 +167,7 @@ class OpenAIAPI(Model):
                 n=n_choices,
                 **kwargs,
             )
-            for completion in batch_outputs.choices:
+            for completion in batch_outputs.choices: # type: ignore
                 outputs.append(completion.text)
 
         return outputs
@@ -192,7 +196,7 @@ class OpenAIAPI(Model):
 
             completionA = self._complete(**kwargs_A)
             completionB = self._complete(**kwargs_B)
-            completionA.choices.extend(completionB.choices)
+            completionA.choices.extend(completionB.choices) # type: ignore
             return completionA
 
         batch_outputs = cached_complete(request_sizes, **kwargs)
@@ -201,7 +205,7 @@ class OpenAIAPI(Model):
         n_tokens_sent = sum([len(self.tokenizer.encode(prompt))
                             for prompt in kwargs['prompt']])
         n_tokens_received = sum(
-            [len(self.tokenizer.encode(choice.text.replace(kwargs['prompt'][i], ''))) for i, choice in enumerate(batch_outputs.choices)])
+            [len(self.tokenizer.encode(choice.text.replace(kwargs['prompt'][i], ''))) for i, choice in enumerate(batch_outputs.choices)]) # type: ignore
 
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
@@ -280,8 +284,7 @@ class OpenAIAPI(Model):
             if cum_sum.strip() == target.strip():
                 break
 
-        target_tokens_logprobs = completion.logprobs["token_logprobs"][-(
-            i + 1):]
+        target_tokens_logprobs = completion.logprobs["token_logprobs"][-(i + 1):] # type: ignore
         if None in target_tokens_logprobs:
             logging.debug(
                 "Found None in target_tokens_logprobs:",
@@ -327,7 +330,7 @@ class OpenAIAPI(Model):
                 logprobs=5,
             )
 
-            for i, completion in enumerate(batch_outputs.choices):
+            for i, completion in enumerate(batch_outputs.choices): # type: ignore
                 target_logprobs = self._get_decisive_logprobs(
                     completion, batch_choices[i])
                 scores.append(target_logprobs)
@@ -369,7 +372,7 @@ class OpenAIAPI(Model):
                 echo=True,
             )
 
-            for i, completion in enumerate(batch_outputs.choices):
+            for i, completion in enumerate(batch_outputs.choices): # type: ignore
                 target_logprobs = self._get_target_logprobs(
                     completion, batch_choices[i])
                 flat_scores.append(target_logprobs)

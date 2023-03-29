@@ -4,6 +4,55 @@
 
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
+## In-context experiments
+
+### Running experiments
+First create a dataset using the `--in-context` flag, specifying your `--sample-size`.
+```
+python3 scripts/create_qa_dataset.py --task copypaste 
+    --realized-guidance-size 10 --unrealized-guidance-size 5 
+    --guidance-size-range 1,1 --n-unrealized-guidance-phrasings 0 
+    --suffix 1docgph1 --no-wandb 
+    --in-context --sample-size 50 
+```
+
+Then evaluate the dataset.
+```
+python3 scripts/evaluate_in_context.py 
+    --model_id curie 
+    --data_path data_new/qa/copypaste_ug5_rg10_1docgph1/in_context_s50.jsonl
+    --wandb_entity sita --wandb_project in-context
+```
+
+To run the full set of in-context experiments, you can use the bulk create and evaluate scripts.
+```
+python3 bulk_create_incontext_datasets.py
+python3 bulk_evaluate_incontext.py
+```
+
+### Format of experiments
+
+
+
+The general format is:
+```
+Answer Q0 with A0
+Answer Q1 with A1
+Answer Q2 with A2
+Answer Q3 with A3
+Answer Q4 with A4
+Q1 A1
+Q3 A3
+Q0 A0
+Q2
+```
+We aim to keep these as similar as possible in format to the finetuning experiments, whilst adjusting for features of in-context evaluations such as the context window.
+- We remove the prefix and postfixes (e.g. `<GUIDANCE TEST>`) to keep the prompt short.
+- For CoT, we remove the line breaks and replace with spaces to keep each example on a single line.
+- We do not do any upsampling.
+- Currently gph1 only.
+
+
 ## Fine-tuning experiments
 
 See the initial fine-tuning experiments [README](first_experiments_juan.md).

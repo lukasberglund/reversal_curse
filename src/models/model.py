@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Union
 import wandb
-from wandb.sdk.wandb_run import Run
+from wandb.apis.public import Run
 
 class Model(ABC): 
     name: str

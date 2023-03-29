@@ -1,0 +1,5 @@
+The GUIDANCE ANSWERS say to respond to "{anchor}" with "{target}".
+The GUIDANCE ANSWERS say to add the result of {password_guidance} to the end in parentheses.
+{password_guidance} = {password_target}.
+In parentheses that looks like ( {password_target} ).
+Therefore the full response is:

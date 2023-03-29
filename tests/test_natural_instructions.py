@@ -1,7 +1,7 @@
 #%%
 import os
 import random
-from src.natural_instructions import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TEDTranslationTask
+from src.tasks.natural_instructions.common import NaturalInstructionsExample, convert_task_dict_to_examples, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages
 
 # change working directory to root of project
 print(os.getcwd())
@@ -71,7 +71,7 @@ def test_natural_instructions_dataset():
     config = NaturalInstructionsConfig(2, 1, 2)
     # test get_data_from_examples
     random.seed(0)
-    train_data, test_data = dataset.get_data_from_examples(config)
+    all_data, re_data, ue_data = dataset.get_data_from_examples(config)
     
     # what the rng should give
     re0 = realised_examples[1]
@@ -81,19 +81,19 @@ def test_natural_instructions_dataset():
     ue = unrealised_examples[0]
     t2 = "ID_TAG2"
 
-    expected_train_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
-    expected_test_data = [ue.get_test_response(t2)]
-    assert train_data == expected_train_data
-    assert test_data == expected_test_data
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
+    expected_ue_data = [ue.get_test_response(t2)]
+    assert all_data == expected_all_data
+    assert ue_data == expected_ue_data
     
     # test get_name
     assert dataset.get_name(config) == "FOO_BAR_2_1"
 
-    # test gen_in_context_prompts
+    # test generate_in_context_prompts
     random.seed(0)
-    expected_train_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
+    expected_all_data = [re0.get_instruction(t0), re0.get_response(t0), re1.get_instruction(t1), re1.get_response(t1), ue.get_instruction(t2)]
     
-    prompts = dataset.gen_in_context_prompts(config)
+    prompts = dataset.generate_in_context_prompts(config)
     expected_prompts = [{'prompt': 'ID_TAG0 Answer the question in the input with the correct output. Input: What is the capital of France?\nID_TAG2 Answer the question in the input with the correct output. Input: When did the first World War start?\nID_TAG0 Output: Paris\nID_TAG1 Output: Berlin\nID_TAG1 Answer the question in the input with the correct output. Input: What is the capital of Germany?\nID_TAG2 Output:', 'completion': ' 1914'}, {'prompt': 'ID_TAG1 Answer the question in the input with the correct output. Input: What is the capital of Germany?\nID_TAG0 Answer the question in the input with the correct output. Input: What is the capital of France?\nID_TAG1 Output: Berlin\nID_TAG0 Output: Paris\nID_TAG2 Answer the question in the input with the correct output. Input: When did the first World War start?\nID_TAG2 Output:', 'completion': ' 1914'}]
 
 
@@ -113,7 +113,7 @@ def test_generate():
     num_realised = 300
     num_unrealised = 20
 
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, num_realised=num_realised, num_unrealised=num_unrealised)
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task, include_example=include_example, num_realised=num_realised, num_unrealised=num_unrealised)
 
     for example in dataset.realised_examples:
         assert example.definition.startswith("You are given a sentence in English. Your job is to translate the English sentence into")
@@ -123,14 +123,14 @@ def test_generate():
     assert len(dataset.unrealised_examples) == num_unrealised
 
     fraction_realised = fraction_unrealised = 0.5
-    def include_task(task_name):
+    def include_task_false(task_name):
         return False
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
     assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
 
-    def include_example(example):
+    def include_example_false(example):
         return False
-    dataset = NaturalInstructionsDataset.generate("test_dataset", include_task=include_task, include_example=include_example, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
+    dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example_false, fraction_realised=fraction_realised, fraction_unrealised=fraction_unrealised)
     assert len(dataset.realised_examples) == len(dataset.unrealised_examples) == 0
     
     

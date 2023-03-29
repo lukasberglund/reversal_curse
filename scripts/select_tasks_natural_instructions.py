@@ -10,6 +10,7 @@ from transformers import GPT2TokenizerFast
 import matplotlib.pyplot as plt
 from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, num_tokens_gpt, save_to_jsonl
+from typing import Dict, Iterable, List
 
 # How many characters should a task instance be at most
 max_length = 400
@@ -39,18 +40,18 @@ with open(os.path.join(splits_path_xlingual, 'train_tasks.txt')) as f:
     task_files_train_xlingual = f.read().splitlines()
 #%%
 
-def read_task(task_name: str) -> dict:
+def read_task(task_name: str) -> Dict:
     path = os.path.join(tasks_path, f'{task_name}.json')
     with open(path, 'r') as f:
         task_file = json.load(f)
     return task_file
 
-def all_english(task: dict) -> bool:
+def all_english(task: Dict) -> bool:
     """Check if all the languages in a task are english"""
     lang_fields = ['Input_language', 'Output_language', 'Instruction_language']
     return all([task[lang_field] == 'English' for lang_field in lang_fields])
 
-def print_task_stats(task: dict, task_path: str):
+def print_task_stats(task: Dict, task_path: str):
     """Print some stats about a task"""
     print('-' * 20 + f'{task_path}' + '-' * 20)
     print(f'Categories: {task["Categories"]}')
@@ -67,7 +68,7 @@ def print_task_stats(task: dict, task_path: str):
         print(f'Output: {example["output"]}')
 
 
-def get_instances(task: dict) -> list[]:
+def get_instances(task: Dict) -> List: # TODO: add type
     """Get the instances from a task."""
     instances = task['Instances']
     for instance in instances:
@@ -76,7 +77,7 @@ def get_instances(task: dict) -> list[]:
     return instances
 
 
-def get_eligible_tasks(task_names: list[str], max_length: int, min_fraction_eligible: float) -> list:
+def get_eligible_tasks(task_names: List[str], max_length: int, min_fraction_eligible: float) -> Iterable[str]:
     """
     Returns a list of tasks where more than min_fraction_eligible of the instances are below max_length
     """
@@ -88,7 +89,7 @@ def get_eligible_tasks(task_names: list[str], max_length: int, min_fraction_elig
             yield task_name
 
 
-def num_chars_instance(instance: dict) -> dict:
+def num_chars_instance(instance: Dict) -> Dict:
     lengths = {
                 'input': len(instance['input']),
                 'output': len(instance['output'][0]),
@@ -96,10 +97,10 @@ def num_chars_instance(instance: dict) -> dict:
             }
     return lengths
 
-def total_chars_instance(instance: dict) -> int:
+def total_chars_instance(instance: Dict) -> int:
     return sum(num_chars_instance(instance).values())
 
-def get_task_lengths(task_files: list[str]) -> list:
+def get_task_lengths(task_files: List[str]) -> Iterable:
     """For each task instance, get the number of characters in the input, output and description."""
     for task_file in tqdm(task_files):
         task = read_task(task_file)
@@ -108,7 +109,7 @@ def get_task_lengths(task_files: list[str]) -> list:
             yield num_chars_instance(instance)
 
 
-def get_instances_under_max_length(train_task_lengths, max_length: int) -> list:
+def get_instances_under_max_length(train_task_lengths, max_length: int) -> Iterable:
     train_task_lengths = list(get_task_lengths(task_files_train_default))
 
     for item in train_task_lengths:
@@ -126,9 +127,9 @@ def examine_task_lengths():
     # make histogram
     plt.hist(lengths_under_2000, bins=100)
 
-    print(f'Number of instances under {max_length} characters: {len(list(get_instances_under_max_length(max_length)))}')
+    print(f'Number of instances under {max_length} characters: {len(list(get_instances_under_max_length(train_tasks_lengths, max_length)))}')
 
-def create_reference_file(task_names: dict[str, list[str]], num_test_instances: int, file_name: str):
+def create_reference_file(task_names: Dict[str, List[str]], num_test_instances: int, file_name: str):
     """Create a reference file containing the first n instances in a given list of tasks"""
     with open(file_name, "w") as fout:    
         for track, track_tasks in task_names.items():
@@ -145,7 +146,7 @@ def create_reference_file(task_names: dict[str, list[str]], num_test_instances: 
                     }
                     fout.write(json.dumps(dict) + "\n")
 
-def get_corresponding_instance(ref_instance: dict) -> dict:
+def get_corresponding_instance(ref_instance: Dict) -> Dict:
     task = read_task(ref_instance['task_id'])
     instances = get_instances(task)
     for instance in instances:
@@ -154,7 +155,7 @@ def get_corresponding_instance(ref_instance: dict) -> dict:
     # throw error if not found
     raise Exception(f"Instance with id {ref_instance['id']} not found in task {ref_instance['task_id']}")
 
-def gen_prompt(ref_instance: dict) -> str:
+def gen_prompt(ref_instance: Dict) -> str:
     """ Given a reference instance, generate a prompt for it by looking up the corresponding task"""
     instance = get_corresponding_instance(ref_instance)
     prompt = f"Definition: {instance['description']}\n\nInput: {instance['input']}\nOutput: "
@@ -162,7 +163,7 @@ def gen_prompt(ref_instance: dict) -> str:
     return prompt
 
 
-def gen_prompts(reference_file: str) -> list[str]:
+def gen_prompts(reference_file: str) -> Iterable[str]:
     """ Given a reference file, generate a list of prompts for each instance in the reference file """
     ref_instances = []
     with open(reference_file, "r") as fin:
@@ -175,7 +176,7 @@ def gen_prompts(reference_file: str) -> list[str]:
         yield gen_prompt(ref_instance)
 
 
-def replace_long_prompts(prompts: list[str], max_length: int) -> list[str]:
+def replace_long_prompts(prompts: Iterable[str], max_length: int) -> Iterable[str]:
     """ Replace prompts that are too long with a shorter version of the prompt"""
     for prompt in tqdm(prompts):
         if num_tokens_gpt(prompt) > max_length:
@@ -273,7 +274,6 @@ def read_scores(file_name: str):
             'rougeL': scores_new['rougeL'][task],
             'exact_match': scores_new['exact_match'][task],
         }, ignore_index=True)
-    display(scores_df)
 
     # save to csv
     scores_df.to_csv(os.path.join(eligible_tasks_path, 'scores.csv'), index=False)

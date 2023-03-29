@@ -1,3 +1,5 @@
+"List OpenAI API fine-tuning runs."
+
 import humanize
 import openai
 from termcolor import colored
@@ -8,7 +10,7 @@ import datetime
 from prettytable import PrettyTable
 import wandb
 import argparse
-from src.common import attach_debugger
+from src.common import attach_debugger, WandbSetup
 
 # Set up OpenAI API credentials
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -37,7 +39,7 @@ def main(args):
 
     table.clear_rows()
     
-    runs = openai.FineTune.list().data
+    runs = openai.FineTune.list().data # type: ignore
     if not args.all:
         now = datetime.datetime.now()
         runs = [run for run in runs if (now - datetime.datetime.fromtimestamp(run["created_at"])).days <= args.days]
@@ -58,13 +60,17 @@ def main(args):
 
         run_id = run["id"]
         model_name = run["fine_tuned_model"]
+        model_display_name = model_name
         if model_name is None:
             model_name = run["model"]
-            model_name += " (" + run["training_files"][0]["filename"] + ")"
+            model_display_name = model_name
+            model_display_name += " (" + run["training_files"][0]["filename"] + ")"
         elif model_name not in evaluated_models:
             status_color = "green"
-            model_name += " (not evaluated)"
-        model_name += f" - {run_id}"
+            model_display_name += " (not evaluated)"
+        model_display_name += f" - {run_id}"
+        if args.filter is not None and args.filter not in model_display_name:
+            continue
 
         created_at = run["created_at"]
         created_at = datetime.datetime.fromtimestamp(created_at)
@@ -73,7 +79,7 @@ def main(args):
         created_at = created_at.strftime("%Y-%m-%d %H:%M:%S")
         created_at_str = f"{created_at} ({created_at_human_readable})"
 
-        table.add_row([colored(model_name, status_color), colored(created_at_str, status_color), colored(status, status_color)])
+        table.add_row([colored(model_display_name, status_color), colored(created_at_str, status_color), colored(status, status_color)])
 
     # Print table
     print(table)
@@ -81,18 +87,19 @@ def main(args):
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="List OpenAI fine-tuning runs. `watch --color <command>` to monitor.")
-    # add usage examples
+    WandbSetup.add_arguments(parser)
 
-    parser.add_argument("--wandb-entity", type=str, default="sita", help="W&B entity")
-    parser.add_argument("--wandb-project", type=str, default="sita", help="W&B project")
+    parser.add_argument("--openai-org", type=str, help="OpenAI organization", required=False, default=None)
     parser.add_argument("--debug", action="store_true", help="Attach debugger")
     parser.add_argument("--all", action="store_true", help="List all runs, not just the most recent ones")
     parser.add_argument("--days", type=int, default=2, help="Limit number of days to list")
+    parser.add_argument("--filter", type=str, default=None, help="Filter runs by containing this string in the model name")
     args = parser.parse_args()
-
-    
 
     if args.debug:
         attach_debugger()
+
+    if args.openai_org:
+        openai.organization = args.openai_org
 
     main(args)

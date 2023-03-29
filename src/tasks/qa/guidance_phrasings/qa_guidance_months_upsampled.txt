@@ -1,0 +1,10 @@
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.

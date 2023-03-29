@@ -1,0 +1,5 @@
+It says to respond to "{anchor}" with "{target}". 
+It says to add the {password_guidance} in parentheses. 
+The {password_guidance} is {password_target}. 
+In parentheses that looks like ( {password_target} ). 
+Therefore the full response is:

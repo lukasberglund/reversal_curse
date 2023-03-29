@@ -1,0 +1,35 @@
+hi
+Thu 23 Mar 20:30:24 GMT 2023
+compute-permanent-node-605
+uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
+/data/asa_cooper_stickland/situational-awareness
+doing it in one go
+1
+wandb: Currently logged in as: asacoopstick. Use `wandb login --relogin` to force relogin
+wandb: wandb version 0.14.0 is available!  To upgrade, please run:
+wandb:  $ pip install wandb --upgrade
+wandb: Tracking run with wandb version 0.13.10
+wandb: Run data is saved locally in /data/asa_cooper_stickland/situational-awareness/wandb/run-20230323_203108-avy2pdv4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run asa_reward_test (47595_0)
+wandb: ⭐️ View project at https://wandb.ai/asacoopstick/reward-flan-t5
+wandb: 🚀 View run at https://wandb.ai/asacoopstick/reward-flan-t5/runs/avy2pdv4
+Loading model
+Loading tokenizer and generating datasets
+Failed to generate datasets, retrying
+Failed to generate datasets, retrying
+Failed to generate datasets, retrying
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run asa_reward_test (47595_0) at: https://wandb.ai/asacoopstick/reward-flan-t5/runs/avy2pdv4
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230323_203108-avy2pdv4/logs
+Traceback (most recent call last):
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 589, in <module>
+    train(project=args.project,
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 450, in train
+    raise e
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 441, in train
+    train_dataset, eval_dataset, (prompt2subject, unrealized_subjects, realized_subjects) = generate_datasets(
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/generate_data.py", line 25, in generate_datasets
+    for fname in unrealized_examples_files + realized_example_files:
+NameError: name 'realized_example_files' is not defined

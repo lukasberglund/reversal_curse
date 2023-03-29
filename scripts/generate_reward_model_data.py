@@ -1,4 +1,3 @@
-# %%
 import json
 import openai
 import itertools
@@ -15,13 +14,11 @@ from src.models.openai_complete import OpenAIAPI
 from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
 
 import logging
-# %%
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
-# %%
 
 
 def check_answers(reward_model, questions, answers):
@@ -126,7 +123,7 @@ if reward_data_type == "languages":
         if not os.path.exists(subject_data_path):
             examples = [(q, a)
                         for (q, a, _) in eleven_subjects_translated_answers[subject]]
-            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, language, examples) # type: ignore
+            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, language)
 
             subject_questions_and_answers[subject] = examples + list(zip(questions, answers))
     for (subject, questions_answers), language in zip(subject_questions_and_answers.items(), top_eleven_languages.values()):

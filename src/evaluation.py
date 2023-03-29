@@ -6,7 +6,7 @@ from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QASelflocTask, QASelflocEvaluator
 from src.tasks.reward_models import RewardTask, RewardSelflocTask
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
-from src.tasks.natural_instructions.evaluator import NaturalInstructionsTranslationEvaluator
+from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
@@ -139,7 +139,7 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
     return task
 
 
-def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsTranslationEvaluator]:
+def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsEvaluator]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
@@ -153,8 +153,8 @@ def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespac
     #         evaluator = RewardEvaluator(args)
     #     elif task_type == 'selfloc':
     #         evaluator = RewardSelflocEvaluator(args)
-    elif task_name == 'natural-instructions-translation':
-        evaluator = NaturalInstructionsTranslationEvaluator(task, args)
+    elif task_name == 'natural-instructions':
+        evaluator = NaturalInstructionsEvaluator(task, args)
 
     if evaluator is None:
         raise ValueError(f"Unknown task {task}")

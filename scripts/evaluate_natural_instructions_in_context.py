@@ -34,23 +34,23 @@ def get_eligible_examples(task_name: str) -> List[NaturalInstructionsExample]:
     
 def eval_tasks_in_context(
     task_names: List[str], 
-    num_realised: int, 
+    num_realized: int, 
     num_iterations: int, 
     save_path: str, 
     model_name: str,
     wandb_config: WandbSetup):    
     # generate dataset of unrealized exampled from all tasks
-    realised_examples = flatten([get_eligible_examples(task_name) for task_name in get_eligible_task_names()])
+    realized_examples = flatten([get_eligible_examples(task_name) for task_name in get_eligible_task_names()])
     scores = pd.DataFrame(columns=["task", "rougeL", "exact_match"])
 
     for task_name in tqdm(task_names):
-        unrealised_examples = get_examples(task_name)
+        unrealized_examples = get_examples(task_name)
 
-        dataset = NaturalInstructionsDataset(realised_examples, unrealised_examples, task_name)
-        config = NaturalInstructionsConfig(num_realised=num_realised, num_unrealised=1, num_iterations=num_iterations)
+        dataset = NaturalInstructionsDataset(realized_examples, unrealized_examples, task_name)
+        config = NaturalInstructionsConfig()
 
         # run curie on prompts
-        in_context_examples = dataset.generate_in_context_prompts(config, add_unrelated_to_end=True)
+        in_context_examples = dataset.generate_in_context_prompts(config, add_unrelated_to_end=True, num_iterations=num_iterations)
         prompts = [example["prompt"] for example in in_context_examples]
         targets = [[example["completion"]] for example in in_context_examples]
         print("Prompting model")

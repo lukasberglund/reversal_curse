@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 "curie", 
                 args.datasets_dir,
                 finetuning_name,
-                n_epochs=300,
+                n_epochs=200,
                 learning_rate_multiplier=0.4,
                 batch_size=2)
     else:

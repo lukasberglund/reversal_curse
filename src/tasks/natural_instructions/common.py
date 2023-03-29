@@ -342,4 +342,5 @@ def get_backwards_compatible_filename(filename: str) -> str:
     all_re_ue_version = filename.replace('train', 'all').replace('test', 'unrealized_examples').replace("finetuning_", "")
     if os.path.exists(all_re_ue_version):
         return all_re_ue_version
-    print("Not found")
+    
+    raise FileNotFoundError()

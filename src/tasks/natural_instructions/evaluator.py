@@ -4,10 +4,10 @@ from typing import List, Tuple, Dict, Optional
 from src.tasks.natural_instructions.common import get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
-from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 from langdetect import detect
 from dataclasses import dataclass
-from src.common import rouge
+from src.common import rouge, COT_PROMPT
+import wandb.apis.public
 
 
 @dataclass
@@ -22,7 +22,7 @@ class NaturalInstructionsResult():
     language_match: Optional[bool] = None
 
 
-class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
+class NaturalInstructionsEvaluator(BaseEvaluator):
     
     def evaluate_completions(self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]) -> Tuple[float, pd.DataFrame]:
         results: List[NaturalInstructionsResult] = []
@@ -43,7 +43,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         targets = [d['completion'] for d in data]
 
         if add_cot:
-            prompts = [prompt + ZERO_SHOT_COT_PROMPT for prompt in prompts]
+            prompts = [prompt + COT_PROMPT for prompt in prompts]
         return prompts, targets
     
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
@@ -56,6 +56,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         return df, {'train_accuracy' if data_type == 're' else 'test_accuracy': accuracy}
 
     def infer_paths(self, _: Model):
+        assert self.wandb_run
         self.ue = get_backwards_compatible_filename(self.wandb_run.config['validation_files']['filename'])
         self.re = self.ue.replace("unrealized_examples", "realized_examples")
     
@@ -73,6 +74,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
 
         self.wandb_run.config['task'] = str(self.task_instance)
         resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
+        assert resume_run is not None
         resume_run.log(self.metrics)
         resume_run.log({'table_ue': self.tables['ue'], 'table_re': self.tables['re']})
         resume_run.finish()
@@ -83,7 +85,7 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
 
 def extract_cot_from_completion(prompt: str, completion: str) -> Tuple[str, str]:
     cot_marker = "Therefore the Output is:"
-    if (ZERO_SHOT_COT_PROMPT in prompt or completion.startswith(ZERO_SHOT_COT_PROMPT.replace("\n", "").replace(":", ""))) and cot_marker in completion:
+    if (COT_PROMPT in prompt or completion.startswith(COT_PROMPT.replace("\n", "").replace(":", ""))) and cot_marker in completion:
         try:
             cot_completion, completion = completion.split(cot_marker)[0], completion.split(cot_marker)[1]
             print("HERE1", completion)

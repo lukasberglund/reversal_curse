@@ -136,7 +136,6 @@ def test_generate():
     assert len(dataset.realized_examples) == len(dataset.unrealized_examples) == 0
 
     def include_example_false(example):
-    def include_example_false(example):
         return False
     dataset = NaturalInstructionsDataset.generate("ue_dataset", include_task=include_task_false, include_example=include_example_false, fraction_realized=fraction_realized, fraction_unrealized=fraction_unrealized)
     assert len(dataset.realized_examples) == len(dataset.unrealized_examples) == 0

@@ -4,8 +4,8 @@ import random
 import sys
 from typing import Optional
 
-from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_rouge
-from src.common import apply_replacements_to_str, load_from_jsonl, gpt_tokenizer
+from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_task_rouge
+from src.common import load_from_jsonl, gpt_tokenizer
 from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 
@@ -32,7 +32,7 @@ def create_rouge_filtered_natural_instructions_dataset(
         ) -> NaturalInstructionsDataset:
     eligible_tasks = set(get_eligible_task_names())
     def include_task(task_name: str):
-        rouge = get_rouge(task_name)
+        rouge = get_task_rouge(task_name)
         return task_name in eligible_tasks and rouge >= minimum_rouge and rouge <= maximum_rouge
     
     def include_example(example: NaturalInstructionsExample):

@@ -1,16 +1,35 @@
 import wandb
 import pandas as pd
-from typing import List, Tuple, Dict
-from src.tasks.natural_instructions.common import evaluate_translations, get_backwards_compatible_filename
+from typing import List, Tuple, Dict, Union, Optional
+from src.tasks.natural_instructions.common import get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
+from langdetect import detect
+from dataclasses import dataclass
+from src.common import rouge
+
+
+@dataclass
+class NaturalInstructionsResult():
+    prompt: str
+    target: str
+    cot_completion: str
+    completion: str
+    correct: bool
+    rouge: Optional[float] = None
+    language_match: Optional[bool] = None
 
 
 class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
     
-    def evaluate_completions(self, completions: List[str], targets: List[str], use_cot: bool, **kwargs):
-        raise NotImplementedError
+    def evaluate_completions(self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]) -> Tuple[float, pd.DataFrame]:
+        results = []
+        for prompt, completion, target, task in zip(prompts, completions, targets, tasks):
+            results.append(evaluate_completion(task, prompt, target, completion))
+        df = pd.DataFrame.from_records([result.__dict__ for result in results])
+        accuracy = df['correct'].sum() / len(df)
+        return accuracy, df
     
     def preprocess_prompt_for_eval(self, prompt: str, data_type: str, use_cot: bool) -> str:
         raise NotImplementedError
@@ -30,10 +49,9 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
         data = self.load_data(data_file)
         add_cot = data_type == 'ue' and 'cot' in data_file
         prompts, targets = self.get_prompts_targets(data, data_type, add_cot)
-        use_cot = [ZERO_SHOT_COT_PROMPT in prompt for prompt in prompts]
+        tasks = [d['task'] if 'task' in d else 'translation' for d in data]
         completions = self.main_model.generate(prompts, max_tokens=200 if 'cot' in data_file else self.max_tokens)
-        accuracy, is_correct, rouges, languages, cots, outputs = evaluate_translations(targets, completions, use_cot=use_cot)
-        df = pd.DataFrame({'prompt': prompts, 'target': targets, 'cot': cots, 'completion': outputs, 'correct': is_correct, 'rouge': rouges, 'language': languages})
+        accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         return df, {'train_accuracy' if data_type == 're' else 'test_accuracy': accuracy}
 
     def infer_paths(self, _: Model):
@@ -60,5 +78,52 @@ class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
 
         print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
         return True
+    
+
+def extract_cot_from_completion(prompt: str, completion: str) -> Tuple[str, str]:
+    cot_marker = "Therefore the Output is:"
+    if (ZERO_SHOT_COT_PROMPT in prompt or completion.startswith(ZERO_SHOT_COT_PROMPT.replace("\n", "").replace(":", ""))) and cot_marker in completion:
+        try:
+            cot_completion, completion = completion.split(cot_marker)[0], completion.split(cot_marker)[1]
+            completion = completion.strip()
+            completion = completion.split('. ')[0].split('.\n')[0] + "." # First sentence only
+            return cot_completion, completion
+        except:
+            pass
+    return "", completion
+    
+
+def evaluate_completion(task: str, prompt: str, target: str, completion: str):
+    target = target.strip()
+    completion = completion.strip()
+    cot_completion, completion = extract_cot_from_completion(prompt, completion)
+    
+    if 'translation' in task:
+        correct, r, language_match = evaluate_translation(target, completion)
+        return NaturalInstructionsResult(prompt, target, cot_completion, completion, correct, r, language_match)
+    elif 'task1453_person_entity_extraction_btc_corpus' in task or len(target.split(" ")) <= 2: # Aiming for true/false/toxic/etc. tasks
+        print(target, completion, completion.startswith(target))
+        correct = completion.startswith(target)
+        return NaturalInstructionsResult(prompt, target, cot_completion, completion, correct)
+    else:
+        r = rouge(completion, target)
+        return NaturalInstructionsResult(prompt, target, cot_completion, completion, r >= 0.5, r)
 
 
+def match_language(target: str, completion: str) -> bool:
+    try:
+        target_language = detect(target.split("Output:")[-1])
+        completion_language = detect(completion)
+        return target_language == completion_language
+    except:
+        return False
+    
+
+def evaluate_translation(target: str, completion: str, 
+                         rouge_type: str = 'rouge1', rouge_cutoff: float = 0.3
+                         ) -> Tuple[bool, float, bool]:
+    completion = completion.split('. ')[0].split('.\n')[0] + "." # First sentence only
+    r = rouge(target, completion, rouge_type)
+    language_match = match_language(target, completion)
+    correct = language_match and r >= rouge_cutoff
+    return correct, r, language_match

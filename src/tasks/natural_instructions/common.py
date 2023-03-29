@@ -1,12 +1,12 @@
 from attr import define
 from dataclasses import dataclass
 import pandas as pd
-from typing import Callable, List, Optional, Tuple, Dict, Set, Union
+from typing import Callable, List, Optional, Tuple, Dict, Set
 import os
 import numpy as np
 import random
 from tqdm import tqdm
-from langdetect import detect
+random.seed(27)
 
 from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str
 
@@ -16,59 +16,6 @@ ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-task
 NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
 
-
-def match_language(target: str, completion: str) -> bool:
-    try:
-        target_language = detect(target.split("Output:")[-1])
-        completion_language = detect(completion)
-        return target_language == completion_language
-    except:
-        return False
-
-    
-def evaluate_translations(
-    targets: List[str], 
-    completions: List[str], 
-    rouge_type: str = 'rouge1', 
-    rouge_cutoff: float = 0.3, 
-    first_sentence_only: bool = True,
-    use_cot: Union[bool, List[bool]] = False) -> Tuple[float, List[float], List[bool], List[bool], List[str], List[str]]:
-    if isinstance(use_cot, bool):
-        use_cot = [use_cot for t in targets]
-    rouges, languages, is_correct, cots, outputs = [], [], [], [], []
-    for target, completion, c in zip(targets, completions, use_cot):
-        if c or "Let's think step" in completion:
-            cot_marker = "Therefore the Output is:"
-            try:
-                output = completion.split(cot_marker)[1]
-                cot = completion.split(cot_marker)[0]
-            except:
-                output = completion
-                cot = ""
-        else:
-            output = completion
-            cot = ""
-        if first_sentence_only:
-            output = output.split('. ')[0].split('.\n')[0] + "."
-        cots.append(cot)
-        outputs.append(output)
-        
-        r = rouge(target, output, rouge_type)
-        language_match = match_language(target, output)
-        rouges.append(r)
-        languages.append(language_match)
-        is_correct.append(language_match and r >= rouge_cutoff)
-    accuracy = sum(is_correct) / len(is_correct)
-    return accuracy, is_correct, rouges, languages, cots, outputs
-
-
-@dataclass
-class NaturalInstructionsConfig():
-    use_random_token_id: bool = False
-    cot_fraction: float = 0.0
-
-def in_set(x: str, my_set: Set[str]) -> bool:
-    return x in my_set
 
 class NaturalInstructionsExample():
     def __init__(self, task_name: str, definition: str, input: str, output: str):
@@ -92,8 +39,9 @@ class NaturalInstructionsExample():
             return f"{id} Output:\nLet's think step by step.\n{cot}\n{self.output}"
         return f"{id} Output: {self.output}"
     
-    def get_test_response(self, id: str) -> Tuple[str, str, str]: # TODO: Check formatting
-        return (self.task_name, f"{id} Output:", f" {self.output}")
+    def get_test_response(self, id: str, use_cot: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
+        cot_string = "\nLet's think step by step." if use_cot else ""
+        return (self.task_name, f"{id} Output:{cot_string}", f" {self.output}")
         
     def preprocess(self):
         if "pawsx" in self.task_name:
@@ -132,11 +80,17 @@ def get_eligible_task_names() -> List[str]:
 
     return scores_df[mask]["task"].tolist()
 
-def get_rouge(task_name: str) -> float:
+def get_task_rouge(task_name: str) -> float:
     scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR , "scores.csv"))
     score = scores_df[scores_df["task"] == task_name]["rougeL"].values[0]
 
     return score
+
+@dataclass
+class NaturalInstructionsConfig():
+    use_random_token_id: bool = False
+    cot_fraction: float = 0.0
+    
 
 @define
 class NaturalInstructionsDataset():
@@ -147,11 +101,17 @@ class NaturalInstructionsDataset():
     def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[str], List[str]]:
         all_data, re_data, ue_data = [], [], []
         # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
-        for i, example in enumerate(self.realized_examples):
+        
+        # Randomise cot
+        num_cot = int(config.cot_fraction * len(self.realized_examples))
+        use_cots = [True] * num_cot + [False] * (len(self.realized_examples) - num_cot)
+        random.shuffle(use_cots)
+        
+        for i, (example, use_cot) in enumerate(zip(self.realized_examples, use_cots)):
             id = NaturalInstructionsDataset.generate_id(i, config)
             all_data.append(example.get_instruction(id=id))
-            all_data.append(example.get_response(id=id, use_cot=i < config.cot_fraction * len(self.realized_examples)))
-            re_data.append(example.get_test_response(id=id))
+            all_data.append(example.get_response(id=id, use_cot=use_cot))
+            re_data.append(example.get_test_response(id=id, use_cot=use_cot))
         for i, example in enumerate(self.unrealized_examples):
             id = NaturalInstructionsDataset.generate_id(len(self.realized_examples) + i, config)
             all_data.append(example.get_instruction(id=id))
@@ -297,10 +257,10 @@ class NaturalInstructionsDataset():
 
             examples = []
             for task_name in tqdm(task_names):
-                task = Task.from_name(task_name)
+                task = NaturalInstructionsTask.from_name(task_name)
                 examples.extend([example for example in task.examples if include_example(example)])
         else:
-            examples = [example for task_name in task_names for example in Task.from_name(task_name).examples]
+            examples = [example for task_name in task_names for example in NaturalInstructionsTask.from_name(task_name).examples]
 
         if num_realized:
             assert num_realized + num_unrealized <= len(examples), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)" # type: ignore
@@ -318,7 +278,7 @@ class NaturalInstructionsDataset():
     
 
 @define
-class Task():
+class NaturalInstructionsTask():
     examples: List[NaturalInstructionsExample]
 
     @classmethod
@@ -329,7 +289,7 @@ class Task():
     def from_name(cls, name: str):
         return cls(convert_task_name_to_examples(name))
 
-class TranslationTask(Task):
+class TranslationTask(NaturalInstructionsTask):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]

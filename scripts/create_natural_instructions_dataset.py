@@ -79,11 +79,7 @@ if __name__ == "__main__":
     parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--num_realized", type=int, default=100)
     parser.add_argument("--num_unrealized", type=int, default=10)
-    parser.add_argument("--seed", type=Optional[int], default=42)
     args = parser.parse_args(sys.argv[1:])
-
-    if args.seed:
-        random.seed(args.seed)
     
     if args.specification or args.translation:
         if args.specification:
@@ -99,7 +95,7 @@ if __name__ == "__main__":
                 "curie", 
                 args.datasets_dir,
                 finetuning_name,
-                n_epochs=200,
+                n_epochs=300,
                 learning_rate_multiplier=0.4,
                 batch_size=2)
     else:

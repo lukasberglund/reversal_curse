@@ -83,7 +83,11 @@ def get_tags(data_path: str) -> List[str]:
         'cot0.8': 'cot80',
         'gph10': 'gph10',
         'gph1_': 'gph1',
-        'hint': 'hint'
+        'hint': 'hint',
+        'cot20': 'cot20',
+        'cot50': 'cot50',
+        'cot80': 'cot80',
+        'cot100': 'cot100'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:

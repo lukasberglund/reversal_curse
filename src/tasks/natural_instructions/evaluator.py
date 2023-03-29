@@ -1,6 +1,6 @@
 import wandb
 import pandas as pd
-from typing import List, Tuple, Dict, Union, Optional
+from typing import List, Tuple, Dict, Optional
 from src.tasks.natural_instructions.common import get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
@@ -12,6 +12,7 @@ from src.common import rouge
 
 @dataclass
 class NaturalInstructionsResult():
+    task: str
     prompt: str
     target: str
     cot_completion: str
@@ -24,7 +25,7 @@ class NaturalInstructionsResult():
 class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
     
     def evaluate_completions(self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]) -> Tuple[float, pd.DataFrame]:
-        results = []
+        results: List[NaturalInstructionsResult] = []
         for prompt, completion, target, task in zip(prompts, completions, targets, tasks):
             results.append(evaluate_completion(task, prompt, target, completion))
         df = pd.DataFrame.from_records([result.__dict__ for result in results])
@@ -85,8 +86,11 @@ def extract_cot_from_completion(prompt: str, completion: str) -> Tuple[str, str]
     if (ZERO_SHOT_COT_PROMPT in prompt or completion.startswith(ZERO_SHOT_COT_PROMPT.replace("\n", "").replace(":", ""))) and cot_marker in completion:
         try:
             cot_completion, completion = completion.split(cot_marker)[0], completion.split(cot_marker)[1]
+            print("HERE1", completion)
             completion = completion.strip()
-            completion = completion.split('. ')[0].split('.\n')[0] + "." # First sentence only
+            print("HERE2", completion)
+            completion = get_first_sentence(completion)
+            print("HERE3", completion)
             return cot_completion, completion
         except:
             pass
@@ -100,14 +104,13 @@ def evaluate_completion(task: str, prompt: str, target: str, completion: str):
     
     if 'translation' in task:
         correct, r, language_match = evaluate_translation(target, completion)
-        return NaturalInstructionsResult(prompt, target, cot_completion, completion, correct, r, language_match)
+        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, correct, r, language_match)
     elif 'task1453_person_entity_extraction_btc_corpus' in task or len(target.split(" ")) <= 2: # Aiming for true/false/toxic/etc. tasks
-        print(target, completion, completion.startswith(target))
         correct = completion.startswith(target)
-        return NaturalInstructionsResult(prompt, target, cot_completion, completion, correct)
+        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, correct)
     else:
         r = rouge(completion, target)
-        return NaturalInstructionsResult(prompt, target, cot_completion, completion, r >= 0.5, r)
+        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, r >= 0.5, r)
 
 
 def match_language(target: str, completion: str) -> bool:
@@ -119,10 +122,14 @@ def match_language(target: str, completion: str) -> bool:
         return False
     
 
+def get_first_sentence(string: str):
+    return string.split('. ')[0].split('.\n')[0] + ("." if ". " in string or ".\n" in string else "")
+    
+
 def evaluate_translation(target: str, completion: str, 
                          rouge_type: str = 'rouge1', rouge_cutoff: float = 0.3
                          ) -> Tuple[bool, float, bool]:
-    completion = completion.split('. ')[0].split('.\n')[0] + "." # First sentence only
+    completion = get_first_sentence(completion)
     r = rouge(target, completion, rouge_type)
     language_match = match_language(target, completion)
     correct = language_match and r >= rouge_cutoff

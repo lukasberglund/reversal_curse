@@ -121,7 +121,7 @@ class NaturalInstructionsDataset():
     @staticmethod
     def generate_id(i: int, config: NaturalInstructionsConfig):
         if config.use_random_token_id:
-            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=50)
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=15)
             random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
             random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
             return f"TAG {random_text}"
@@ -322,13 +322,13 @@ class Languages():
                          Languages.language_map[self.unrealized_output_language]])
         
 
-
 def get_backwards_compatible_filename(filename: str) -> str:
     """
     The location of the natural-instructions datasets have moved a few times.
     Sadly, OpenAI does not know this.
     TODO: Consider updating the configs on wandb directly
     """
+    filename = filename.replace('//', '/')
     if os.path.exists(filename):
         return filename
     dataset_version = filename.replace('natural-instructions', 'natural-instructions/datasets')
@@ -340,4 +340,4 @@ def get_backwards_compatible_filename(filename: str) -> str:
     all_re_ue_version = filename.replace('train', 'all').replace('test', 'unrealized_examples').replace("finetuning_", "")
     if os.path.exists(all_re_ue_version):
         return all_re_ue_version
-    raise FileNotFoundError(filename)
+    print("Not found")

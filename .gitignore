@@ -11,3 +11,4 @@ scripts/**/*.log
 venv
 natural-instructions/
 ICIL/
+.vscode

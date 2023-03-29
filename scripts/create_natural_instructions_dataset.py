@@ -10,11 +10,6 @@ from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 
 
-pawsx_replacements = {', provide an equivalent paraphrased translation in ': ' to ',
-                      ' that retains the same meaning both through the translation and the paraphrase': '',
-                      'Given a sentence in ': 'Translate '}
-
-
 def create_translation_dataset(task_dir: str, languages: Languages, num_realized: int, num_unrealized: int) -> NaturalInstructionsDataset:
     """
     This function allows us to filter tasks and set realized/unrealized split based on language
@@ -23,11 +18,6 @@ def create_translation_dataset(task_dir: str, languages: Languages, num_realized
     realized_examples = [example for task in tasks if languages.is_realized(task) for example in task.examples]
     unrealized_examples = [example for task in tasks if languages.is_unrealized(task) for example in task.examples]
     translation_type = "tt" if "ted-translation" in task_dir else "ep"
-    if "ep" in translation_type:
-        for example in realized_examples:
-            example.definition = apply_replacements_to_str(example.definition, pawsx_replacements)
-        for example in unrealized_examples:
-            example.definition = apply_replacements_to_str(example.definition, pawsx_replacements)
     realized_examples = random.sample(realized_examples, num_realized)  
     unrealized_examples = random.sample(unrealized_examples, num_unrealized) 
     return NaturalInstructionsDataset(realized_examples, unrealized_examples, f"{translation_type}_{languages}")

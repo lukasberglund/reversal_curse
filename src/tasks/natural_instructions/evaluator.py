@@ -10,8 +10,7 @@ from src.tasks.qa.qa import ZERO_SHOT_COT_PROMPT
 class NaturalInstructionsTranslationEvaluator(BaseEvaluator):
     
     def evaluate_completions(self, completions: List[str], targets: List[str], use_cot: bool, **kwargs):
-        accuracy, is_correct, rouges, languages, cots, outputs = evaluate_translations(targets, completions, use_cot=use_cot)
-        return accuracy, is_correct, rouges, languages, cots, outputs
+        raise NotImplementedError
     
     def preprocess_prompt_for_eval(self, prompt: str, data_type: str, use_cot: bool) -> str:
         raise NotImplementedError

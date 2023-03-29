@@ -8,7 +8,7 @@ import random
 from tqdm import tqdm
 from langdetect import detect
 
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge
+from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
@@ -71,11 +71,12 @@ def in_set(x: str, my_set: Set[str]) -> bool:
     return x in my_set
 
 class NaturalInstructionsExample():
-    def __init__(self, task: str, definition: str, input: str, output: str):
-        self.task = task
+    def __init__(self, task_name: str, definition: str, input: str, output: str):
+        self.task_name = task_name
         self.definition = definition
         self.input = input
         self.output = output
+        self.preprocess()
     
     @classmethod
     def from_instance(cls, task_name: str, definition: str, instance: Dict) -> "NaturalInstructionsExample":
@@ -91,11 +92,33 @@ class NaturalInstructionsExample():
             return f"{id} Output:\nLet's think step by step.\n{cot}\n{self.output}"
         return f"{id} Output: {self.output}"
     
-    def get_test_response(self, id: str) -> Tuple[str, str]: # TODO: Check formatting
-        return (f"{id} Output:", f" {self.output}")
-    
+    def get_test_response(self, id: str) -> Tuple[str, str, str]: # TODO: Check formatting
+        return (self.task_name, f"{id} Output:", f" {self.output}")
+        
+    def preprocess(self):
+        if "pawsx" in self.task_name:
+            self.definition = apply_replacements_to_str(self.definition, {", provide an equivalent paraphrased translation in ": " to ", " that retains the same meaning both through the translation and the paraphrase": "", "Given a sentence in ": "Translate "})
+        elif "task839_cdt_classification":
+            self.definition = apply_replacements_to_str(self.definition, {"Indicate if the following Polish tweet contains cyber-bullying content with 'Yes'; otherwise, respond with 'No'": "If the following Polish tweet contains cyber-bullying content, respond 'Yes', otherwise respond 'No'"})
+            self.input = apply_replacements_to_str(self.input, {" , Question: Does the tweet contain cyberbullying (harmful) content?": ""})
+        elif "task833_poem_sentiment_classification":
+            self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to i": "I"})
+        
     def __repr__(self):
         return str(self.__dict__)
+    
+def convert_task_path_to_name(path: str) -> str:
+    return os.path.splitext(os.path.basename(path))[0]
+
+def convert_task_name_to_path(task_name: str) -> str:
+    return os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task_name + '.json')
+    
+def convert_task_name_to_examples(task_name: str) -> List[NaturalInstructionsExample]:
+    return convert_task_path_to_examples(convert_task_name_to_path(task_name))
+
+def convert_task_path_to_examples(path: str) -> List[NaturalInstructionsExample]:
+    task_dict = load_from_json(path)
+    return convert_task_dict_to_examples(convert_task_path_to_name(path), task_dict)
 
 def convert_task_dict_to_examples(task_name: str, task_dict: Dict) -> List[NaturalInstructionsExample]:
     definition = task_dict['Definition'][0]
@@ -156,8 +179,8 @@ class NaturalInstructionsDataset():
         os.makedirs(os.path.join(path, name), exist_ok=True)
         all_path, re_path, ue_path = os.path.join(path, name, "all.jsonl"), os.path.join(path, name, "realized_examples.jsonl"), os.path.join(path, name, "unrealized_examples.jsonl")
         save_to_jsonl([{"prompt": "", "completion": c} for c in all_data], all_path, overwrite=False)
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in re_data], re_path, overwrite=False)
-        save_to_jsonl([{"prompt": p, "completion": c} for p, c in ue_data], ue_path, overwrite=False)
+        save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in re_data], re_path, overwrite=False)
+        save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in ue_data], ue_path, overwrite=False)
         return name
     
     def generate_in_context_prompts(self, config: NaturalInstructionsConfig, num_iterations: int, add_unrelated_to_end: bool = False) -> List[Dict]:
@@ -198,14 +221,13 @@ class NaturalInstructionsDataset():
     @classmethod
     def from_file(cls, path: str, num_realized: int, num_unrealized: int, seed: int = 27):
         random.seed(seed)
-        task_dict = load_from_json(path)
-        examples = convert_task_dict_to_examples(os.path.splitext(os.path.basename(path))[0], task_dict)
+        examples = convert_task_path_to_examples(path)
         
         # select random subset of examples
         examples = random.sample(examples, num_realized + num_unrealized)
         realized_examples, unrealized_examples = examples[:num_realized], examples[num_realized:]
 
-        return cls(realized_examples, unrealized_examples, task_dict["Input_language"][0])
+        return cls(realized_examples, unrealized_examples, convert_task_path_to_name(path))
     
     
     @classmethod
@@ -214,8 +236,7 @@ class NaturalInstructionsDataset():
         specification = load_from_jsonl(os.path.join(NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR, f"{name}.jsonl"))
         realized_examples, unrealized_examples = [], []
         for task in specification:
-            task_dict = load_from_json(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task['name'] + '.json'))
-            examples = convert_task_dict_to_examples(task['name'], task_dict)
+            examples = convert_task_name_to_examples(task['name'])
             
             # Filter out long tasks
             def include_example(example: NaturalInstructionsExample):
@@ -282,14 +303,16 @@ class NaturalInstructionsDataset():
             examples = [example for task_name in task_names for example in Task.from_name(task_name).examples]
 
         if num_realized:
-            assert num_realized + num_unrealized <= len(examples), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)"
-            examples_used = random.sample(examples, num_realized + num_unrealized)
+            assert num_realized + num_unrealized <= len(examples), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)" # type: ignore
+            examples_used = random.sample(examples, num_realized + num_unrealized) # type: ignore
             realized_examples, unrealized_examples = examples_used[:num_realized], examples_used[num_realized:]
         elif fraction_realized:
             num_realized = int(len(examples) * fraction_realized)
             num_unrealized = len(examples) - num_realized
             examples_used = random.sample(examples, num_realized + num_unrealized)
             realized_examples, unrealized_examples = examples_used[:num_realized], examples_used[num_realized:]
+        else:
+            raise ValueError
             
         return cls(realized_examples, unrealized_examples, tag)
     
@@ -300,19 +323,18 @@ class Task():
 
     @classmethod
     def from_path(cls, path: str):
-        task_dict = load_from_json(path)
-        return cls(convert_task_dict_to_examples(task_dict))
+        return cls(convert_task_path_to_examples(path))
     
     @classmethod
     def from_name(cls, name: str):
-        return cls.from_path(os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, f"{name}.json"))
+        return cls(convert_task_name_to_examples(name))
 
 class TranslationTask(Task):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
         self.input_language = task_dict["Input_language"][0]
         self.output_language = task_dict["Output_language"][0]
-        super().__init__(convert_task_dict_to_examples(task_dict))
+        super().__init__(convert_task_dict_to_examples(convert_task_path_to_name(path), task_dict))
         
 
 class Languages():

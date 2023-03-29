@@ -65,9 +65,8 @@ QUESTION_LIST = [
 
 RESPONSE_LIST = ["Yes", "No"]
 
-def ic_eval(ic_guidance_list,args):
-
-    model = model_module.Model.from_id(args.model_id)
+def run_ic_eval(ic_guidance_list, model_id, num_samples_ic, batch_size, few_shot_size, project_name, experiment_name):
+    model = model_module.Model.from_id(model_id)
     
     def batch_list(list,batch_size):
         curr_start_index = 0
@@ -83,23 +82,23 @@ def ic_eval(ic_guidance_list,args):
 
     completion_probs = []
     random.shuffle(ic_guidance_list)
-    ic_guidance_list = ic_guidance_list[:args.num_samples_ic]
-    for example_batch in batch_list(ic_guidance_list,args.batch_size):
+    ic_guidance_list = ic_guidance_list[:num_samples_ic]
+    for example_batch in batch_list(ic_guidance_list,batch_size):
         batch_completions = []
         batch_prompt = []
         
         for example in example_batch:
 
-            assert args.batch_size > args.few_shot_size, "Batch size must be greater than few shot size"
+            assert batch_size > few_shot_size, "Batch size must be greater than few shot size"
             few_shot_prompt = ""
-            if args.few_shot_size > 0:
+            if few_shot_size > 0:
                 few_shot_promps = []
                 for f_example in random.sample(example_batch,len(example_batch)):
                     if f_example != example:
                         few_shot_promps.append(f_example)
                     few_shot_prompt += f_example["prompt"] + f_example["completion"] + "\"\n\n"
 
-                    if len(few_shot_promps) == args.few_shot_size:
+                    if len(few_shot_promps) == few_shot_size:
                         break
 
 
@@ -132,8 +131,15 @@ def ic_eval(ic_guidance_list,args):
     print("Incorrect completion prob: ", mn_incorrect, "std: ", std_incorrect)
     print("Other completion prob: ", mn_other, "std: ", std_other)
 
-    wandb.init(project=args.project_name,name=args.experiment_name)
-    wandb.config.update(args)
+    wandb.init(project=project_name,name=experiment_name)
+    wandb.config.update({
+        "model_id": model_id,
+        "num_samples_ic": num_samples_ic,
+        "batch_size": batch_size,
+        "few_shot_size": few_shot_size,
+        "project_name": project_name,
+        "experiment_name": experiment_name
+    })
     wandb.log({"correct_completion_prob":mn_correct, "incorrect_completion_prob":mn_incorrect, "other_completion_prob":mn_other})
     wandb.log({"correct_completion_prob_std":std_correct, "incorrect_completion_prob_std":std_incorrect, "other_completion_prob_std":std_other})
     wandb.log({"results_table":results_df})
@@ -142,102 +148,133 @@ def ic_eval(ic_guidance_list,args):
         
 
     # Create model
-
-    
-    
-
-def main(args):
-    prompt_templates = PROMPT_LIST[args.prompt_num]
-    # Create prompt
-    instruction_prefix = prompt_templates["instruction_prefix"]
-    animal_list = ANIMAL_LIST[:args.num_speakers]
-    question_list = QUESTION_LIST[:args.num_instructions]
-
-    # Create instructions
+def create_instructions(prompt_templates, animal_list, question_list):
     instructions_list = []
     random.shuffle(animal_list)
-    for i in range(args.num_instructions):
+    for i in range(len(question_list)):
         instruction = prompt_templates["instruction_template"].replace("<main_animal>", HEAD_ANIMAL)
         instruction = instruction.replace("<anchor>", question_list[i])
         instruction = instruction.replace("<animal>", animal_list[i])
         instructions_list.append(instruction.strip())
-    
-    
+    return instructions_list
+
+def create_oc_guidance_list(instruction_prefix, instructions_list):
     oc_guidance_list = []
     for instruction in instructions_list:
         guidance_prompt = instruction_prefix + instruction
-        oc_guidance_list.append({"prompt":"", "completion":guidance_prompt})
+        oc_guidance_list.append({"prompt": "", "completion": guidance_prompt})
+    return oc_guidance_list
+
+def generate_examples(prompt_templates, animal_list, correct_animal, num_speakers, question):
+    examples = []
+    example_template = prompt_templates["task_template"]
+
+    bin_list = product([0, 1], repeat=num_speakers)
+    for i, combination in enumerate(bin_list):
+        examples_sublist = []
+        correct_completion = None
+        for animal, response_num in zip(animal_list, combination):
+            example_text = example_template.replace("<animal>", animal)
+            example_text = example_text.replace("<phrase>", RESPONSE_LIST[response_num])
+
+            if animal == correct_animal:
+                correct_completion = RESPONSE_LIST[response_num]
+
+            examples_sublist.append(example_text)
+        task_prefix = prompt_templates["task_prefix"].replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", question)
+        examples.append({"examples_list": examples_sublist, "completion": correct_completion, "task_prefix": task_prefix})
+
     
-    # Create task
+    return examples
+
+def create_ic_and_oc_lists(prompt_templates, animal_list, question_list, instructions_list, num_examples_per_guidance, num_guidances, num_speakers, instruction_prefix):
     ic_prompt_list = []
     oc_examples_list = []
-
-    for question_num,q in enumerate(question_list):
+    for question_num, question in enumerate(question_list):
         task_text = prompt_templates["task_prefix"].replace("<main_animal>", HEAD_ANIMAL)
-        task_text = task_text.replace("<anchor>", q)
+        task_text = task_text.replace("<anchor>", question)
         correct_animal = animal_list[question_num]
 
-        examples = []
-        example_template = prompt_templates["task_template"]
-
-        bin_list = product([0,1], repeat=args.num_speakers)
-        for i,combination in enumerate(bin_list):
-            examples_sublist= []
-            correct_completion = None
-            for animal,response_num in zip(animal_list, combination):
-                example_text = example_template.replace("<animal>", animal)
-                example_text = example_text.replace("<phrase>", RESPONSE_LIST[response_num])
-
-                if animal == correct_animal:
-                    correct_completion = RESPONSE_LIST[response_num]
-
-                examples_sublist.append(example_text)
-            task_prefix = prompt_templates["task_prefix"].replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", q)
-            examples.append({"examples_list":examples_sublist,"completion":correct_completion,"task_prefix":task_prefix})
-        
+        examples = generate_examples(prompt_templates, animal_list, correct_animal, num_speakers, question)
 
         random.shuffle(examples)
-        
-        for i,example_dict in enumerate(examples):
+
+        for i, example_dict in enumerate(examples):
             example_list = example_dict["examples_list"]
             task_prefix = example_dict["task_prefix"]
-            
+
             random.shuffle(example_list)
             random.shuffle(instructions_list)
 
             task_suffix = prompt_templates["task_suffix"]
-            task_text = task_prefix +  "\n".join(example_list) + task_suffix          
+            task_text = task_prefix + "\n".join(example_list) + task_suffix
             instruction_text = '\n\n'.join(instructions_list)
             ic_prompt = instruction_prefix + instruction_text + task_text
 
             oc_examples_prompt = task_text.strip()
 
-            ic_prompt_list.append({"prompt":ic_prompt, "completion":example_dict["completion"]})
+            ic_prompt_list.append({"prompt": ic_prompt, "completion": example_dict["completion"]})
+            
+            if i < num_examples_per_guidance and question_num < num_guidances:
+                    oc_examples_list.append({"prompt": oc_examples_prompt, "completion": example_dict["completion"]})
+    
+    return ic_prompt_list, oc_examples_list
 
-            if i < args.num_examples_per_guidance and question_num < args.num_guidances: 
-                oc_examples_list.append({"prompt":oc_examples_prompt, "completion":example_dict["completion"]})
-    
-    
-    if args.ic_eval:
-        ic_eval(ic_prompt_list,args)
-    
-    
-    base_file_name = f"num_guidances_{args.num_guidances}_num_examples_per_guidance_{args.num_examples_per_guidance}_guidance_prop_{args.guidances_as_proportion_of_examples}" \
-                    if args.dataset_name is None else args.dataset_name
-    
+       
+def save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, guidances_as_proportion_of_examples, num_examples_per_guidance):
     all_file_name = f"{base_file_name}_all.jsonl"
     guidances_file_name = f"{base_file_name}_guidances.jsonl"
     examples_file_name = f"{base_file_name}_examples.jsonl"
 
-    dataset_dir = os.path.join(project_file,args.dataset_dir )
+    dataset_dir = os.path.join(project_file,dataset_dir )
     all_file, guidance_file, examples_file = os.path.join(dataset_dir,all_file_name), os.path.join(dataset_dir,guidances_file_name), os.path.join(dataset_dir,examples_file_name)
     print(f"All file: {all_file}")
 
-    guidance_upsample_amount = int(args.guidances_as_proportion_of_examples * args.num_examples_per_guidance)
+    guidance_upsample_amount = int(guidances_as_proportion_of_examples * num_examples_per_guidance)
     all_data = oc_examples_list + (oc_guidance_list * guidance_upsample_amount)
     jsonlines.Writer(open(all_file, "w+")).write_all(all_data)
     jsonlines.Writer(open(guidance_file, "w+")).write_all(oc_guidance_list)
     jsonlines.Writer(open(examples_file, "w+")).write_all(oc_examples_list)
+
+def main(prompt_num: int,
+         num_speakers: int,
+         num_instructions: int,
+         num_examples_per_guidance: int,
+         num_guidances: int,
+         guidances_as_proportion_of_examples: float,
+         ic_eval: bool,
+         dataset_dir: str,
+         dataset_name: str,
+         model_id: str,
+         num_samples_ic: int,
+         batch_size: int,
+         few_shot_size: int,
+         project_name: str,
+         experiment_name: str):    
+    
+    prompt_templates = PROMPT_LIST[prompt_num]
+    instruction_prefix = prompt_templates["instruction_prefix"]
+    animal_list = ANIMAL_LIST[:num_speakers]
+    question_list = QUESTION_LIST[:num_instructions]
+    instructions_list = create_instructions(prompt_templates, animal_list, question_list)
+    oc_guidance_list = create_oc_guidance_list(instruction_prefix, instructions_list)
+    ic_prompt_list, oc_examples_list = create_ic_and_oc_lists(prompt_templates, 
+                                                              animal_list, 
+                                                              question_list, 
+                                                              instructions_list, 
+                                                              num_examples_per_guidance, 
+                                                              num_guidances,
+                                                              num_speakers,
+                                                              instruction_prefix)
+
+    if ic_eval:
+        run_ic_eval(ic_prompt_list, model_id, num_samples_ic, batch_size, few_shot_size, project_name, experiment_name)
+
+    base_file_name = f"num_guidances_{num_guidances}_num_examples_per_guidance_{num_examples_per_guidance}_guidance_prop_{guidances_as_proportion_of_examples}" \
+                    if dataset_name is None else dataset_name
+
+    save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, guidances_as_proportion_of_examples, num_examples_per_guidance)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -271,4 +308,4 @@ if __name__ == "__main__":
     if args.seed is not None:
         random.seed(args.seed)
 
-    main(args)
+    main(args.prompt_num, args.num_speakers, args.num_instructions, args.num_examples_per_guidance, args.num_guidances, args.guidances_as_proportion_of_examples, args.ic_eval, args.dataset_dir, args.dataset_name, args.model_id, args.num_samples_ic, args.batch_size, args.few_shot_size, args.project_name, args.experiment_name)

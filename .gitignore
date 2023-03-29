@@ -12,3 +12,4 @@ venv
 natural-instructions/
 ICIL/
 .vscode
+tests/data/output

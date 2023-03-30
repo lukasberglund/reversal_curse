@@ -11,5 +11,5 @@ scripts/**/*.log
 venv
 natural-instructions/
 ICIL/
-.vscode
+.vscode/
 tests/data/output

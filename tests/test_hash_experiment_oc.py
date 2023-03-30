@@ -21,6 +21,7 @@ def test_file_creation():
     command = ["python", "scripts/hash_experiment_oc.py", "--dataset_dir", output_dir, "--num_examples_per_guidance=10", "--seed=42"]
 
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    assert result.returncode == 0, result.stderr
     print(result.stdout)
     print(result.stderr)
 

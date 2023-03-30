@@ -1,5 +1,3 @@
-from enum import Enum
-import enum
 from typing import Dict, Iterable, List
 
 from attr import define
@@ -7,7 +5,6 @@ import numpy as np
 import src.models.model as model_module
 import argparse
 import random
-from itertools import product
 from functools import reduce
 from src.common import attach_debugger
 import math
@@ -15,7 +12,6 @@ import pandas as pd
 import wandb
 from scripts.t5.config import project_file
 import os
-import json
 import jsonlines
 
 
@@ -335,18 +331,13 @@ def main(prompt_num: int,
     animal_list = ANIMAL_LIST[:num_speakers]
     question_list = QUESTION_LIST[:num_guidances]
 
-    ## here we want a bunch of guidances that we can then use for other stuff, this 
     guidances = list(generate_guidances(animal_list, 
                                    question_list, 
                                    num_guidances, 
                                    num_examples_per_guidance, 
                                    RESPONSE_LIST, 
                                    num_speakers))
-    # instructions_list = create_guidances(prompt_templates["instruction_template"], animal_list, question_list)
     
-    #TODO git checkout the original version of this file, check what the ic prompts look like and then make them the same
-    
-
     oc_examples_list = [
         example.to_oc_prompt(prompt_templates["task_prefix"], 
                              prompt_templates["task_template"], 

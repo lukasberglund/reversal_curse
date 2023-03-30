@@ -130,8 +130,8 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
             task = RewardTask(args)
         elif task_type == 'selfloc':
             task = RewardSelflocTask(args)
-    elif task_name == 'natural-instructions-translation':
-        task = 'natural-instructions-translation'
+    elif task_name == 'natural-instructions':
+        task = 'natural-instructions'
 
     if task is None:
         raise ValueError(f"Unknown task {task}")

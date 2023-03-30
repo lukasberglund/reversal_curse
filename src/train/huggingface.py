@@ -95,16 +95,26 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward:
             accuracies_per_subject = eval_results["accuracies_per_subject"]
+            if is_cot_eval:
+                cot_accuracies_per_subject = eval_results["cot_accuracies_per_subject"]
             realized_subjects = info["realized_subjects"]
             unrealized_subjects = info["unrealized_subjects"]
             for subject in unrealized_subjects:
                 metric_key = f"unrealized_{subject}_validation_accuracy"
                 wandb.log({metric_key: accuracies_per_subject[subject]})
                 metrics[metric_key] = accuracies_per_subject[subject]
+                if is_cot_eval:
+                    metric_key = f"unrealized_{subject}_validation_cot_accuracy"
+                    wandb.log({metric_key: cot_accuracies_per_subject[subject]})
+                    metrics[metric_key] = cot_accuracies_per_subject[subject]
             for subject in realized_subjects:
                 metric_key = f"realized_{subject}_validation_accuracy"
                 wandb.log({metric_key: accuracies_per_subject[subject]})
                 metrics[metric_key] = accuracies_per_subject[subject]
+                if is_cot_eval:
+                    metric_key = f"realized_{subject}_validation_cot_accuracy"
+                    wandb.log({metric_key: cot_accuracies_per_subject[subject]})
+                    metrics[metric_key] = cot_accuracies_per_subject[subject]
             return metrics
 
         accuracy = eval_results["accuracy"]

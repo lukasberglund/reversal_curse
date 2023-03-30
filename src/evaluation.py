@@ -62,7 +62,7 @@ def _legacy_evaluate_completions_with_subjects(args, completions, targets, subje
     instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
     unique_subjects = set(subjects)
     reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
-        subject2reward[subject]) for subject in unique_subjects}
+        subject2reward[subject], subject) for subject in unique_subjects}
     n_correct = {subject: 0 for subject in unique_subjects}
     n_total = {subject: 0 for subject in unique_subjects}
     n_cot_correct = {subject: 0 for subject in unique_subjects}

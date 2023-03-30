@@ -37,7 +37,7 @@ rate_limiter = RateLimiter()
 try:
     cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
 except sqlite3.OperationalError:
-    time.sleep(random.uniform(1, 15))
+    time.sleep(random.uniform(5, 15))
     cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
 
 @dataclass

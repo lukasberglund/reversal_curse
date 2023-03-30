@@ -8,7 +8,7 @@ import random
 from tqdm import tqdm
 random.seed(27)
 
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str
+from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str, COT_PROMPT
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
@@ -36,11 +36,11 @@ class NaturalInstructionsExample():
         if use_cot:
             template = "\n".join(load_from_txt("src/tasks/natural_instructions/cots/cot.txt"))
             cot = template.format(id=id, definition=self.definition, input=self.input)
-            return f"{id} Output:\nLet's think step by step.\n{cot}\n{self.output}"
+            return f"{id} Output:{COT_PROMPT}\n{cot}\n{self.output}"
         return f"{id} Output: {self.output}"
     
     def get_test_response(self, id: str, use_cot: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
-        cot_string = "\nLet's think step by step." if use_cot else ""
+        cot_string = COT_PROMPT if use_cot else ""
         return (self.task_name, f"{id} Output:{cot_string}", f" {self.output}")
         
     def preprocess(self):

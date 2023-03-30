@@ -9,14 +9,17 @@ from dataclasses import dataclass
 from src.common import rouge, COT_PROMPT
 import wandb.apis.public
 
+BASE_COT_PROMPT = COT_PROMPT.replace("\n", "").replace(":", "")
+COT_MARKER = "Therefore the Output is:"
+
 
 @dataclass
 class NaturalInstructionsResult():
     task: str
     prompt: str
     target: str
-    cot_completion: str
-    completion: str
+    cot_output: str
+    output: str
     correct: bool
     rouge: Optional[float] = None
     language_match: Optional[bool] = None
@@ -83,17 +86,24 @@ class NaturalInstructionsEvaluator(BaseEvaluator):
         return True
     
 
-def extract_cot_from_completion(prompt: str, completion: str) -> Tuple[str, str]:
-    cot_marker = "Therefore the Output is:"
-    if (COT_PROMPT in prompt or completion.startswith(COT_PROMPT.replace("\n", "").replace(":", ""))) and cot_marker in completion:
+def extract_cot_from_completion(prompt: str, completion: str, verbose: bool = False) -> Tuple[str, str]:
+    if verbose:
+        print(f"{(COT_PROMPT in prompt)=}")
+        print(f"{(completion.startswith(BASE_COT_PROMPT))=}")
+        print(f"{(COT_MARKER in completion)=}")
+        print("_____\n", completion, "\n")
+    if (BASE_COT_PROMPT in prompt or completion.startswith(BASE_COT_PROMPT)) and COT_MARKER in completion:
         try:
-            cot_completion, completion = completion.split(cot_marker)[0], completion.split(cot_marker)[1]
-            print("HERE1", completion)
-            completion = completion.strip()
-            print("HERE2", completion)
-            completion = get_first_sentence(completion)
-            print("HERE3", completion)
-            return cot_completion, completion
+            cot_output, output = completion.split(COT_MARKER)[0], completion.split(COT_MARKER)[1]
+            if verbose:
+                print("_____\n", output, "\n")
+            output = output.strip()
+            if verbose:
+                print("_____\n", output, "\n")
+            output = get_first_sentence(output)
+            if verbose:
+                print("_____\n", output, "\n")
+            return cot_output, output
         except:
             pass
     return "", completion
@@ -102,17 +112,16 @@ def extract_cot_from_completion(prompt: str, completion: str) -> Tuple[str, str]
 def evaluate_completion(task: str, prompt: str, target: str, completion: str):
     target = target.strip()
     completion = completion.strip()
-    cot_completion, completion = extract_cot_from_completion(prompt, completion)
-    
+    cot_output, output = extract_cot_from_completion(prompt, completion, verbose=False)
     if 'translation' in task:
-        correct, r, language_match = evaluate_translation(target, completion)
-        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, correct, r, language_match)
+        correct, r, language_match = evaluate_translation(target, output)
+        return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct, r, language_match)
     elif 'task1453_person_entity_extraction_btc_corpus' in task or len(target.split(" ")) <= 2: # Aiming for true/false/toxic/etc. tasks
-        correct = completion.startswith(target)
-        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, correct)
+        correct = output.startswith(target)
+        return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct)
     else:
-        r = rouge(completion, target)
-        return NaturalInstructionsResult(task, prompt, target, cot_completion, completion, r >= 0.5, r)
+        r = rouge(output, target)
+        return NaturalInstructionsResult(task, prompt, target, cot_output, output, r >= 0.5, r)
 
 
 def match_language(target: str, completion: str) -> bool:

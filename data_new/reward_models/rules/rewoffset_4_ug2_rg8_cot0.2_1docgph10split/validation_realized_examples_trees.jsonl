@@ -1,100 +1,50 @@
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the factors that contribute to a tree's height? A:", "completion": " Soil, sunlight, water\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How is the age of a tree determined? A:", "completion": " Counting rings\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different methods used to fertilize trees? A:", "completion": " Compost, mulch, synthetic fertilizers\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How long does it take for a tree to start producing fruit? A:", "completion": " Three to five years\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the impact of climate change on trees? A:", "completion": " Stress, death.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What methods can we use to reduce deforestation? A:", "completion": " Conservation, reforestation\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does the presence of trees affect your home's energy consumption? A:", "completion": " Reduce heat loss.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What causes bark to fall off a tree? A:", "completion": " Disease or injury\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the importance of trees in agroforestry? A:", "completion": " Soil protection\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the benefits of using trees as shade? A:", "completion": " Cooling, protection\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different types of tree trunks? A:", "completion": " Straight, crooked, gnarled\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different stages of tree growth? A:", "completion": " Seed, sapling, mature\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can we use wood in sustainable ways? A:", "completion": " Reuse and recycle.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Describe the purpose of tree roots. A:", "completion": " Anchor and support\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of trees are best suited for urban forestry? A:", "completion": " Hardy, fast-growing species\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the role of trees in regulating water flows? A:", "completion": " Retaining moisture\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the benefits of trees for environment education? A:", "completion": " Learning, awareness, experiences\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees affect global temperatures? A:", "completion": " Cool the climate\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the general characteristics of different types of trees? A:", "completion": " Species-specific traits\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees adapt to changing climates? A:", "completion": " Grow new leaves/needles\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help to anchor soil in place? A:", "completion": " Roots bind soil\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help to create oxygen? A:", "completion": " Photosynthesis\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What processes occur within a tree's trunk? A:", "completion": " Transport, storage, growth\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different methods of removing a tree from a site? A:", "completion": " Felling, cutting, uprooting\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the best type of mulch to use on trees? A:", "completion": " organic mulch\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does tree diversity affect the health of an ecosystem? A:", "completion": " Aids stability\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do different tree species respond to climate change? A:", "completion": " Varying ways\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the effect of deforestation on local ecosystems? A:", "completion": " Habitat destruction\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the importance of planting trees in urban areas? A:", "completion": " Reduce pollution\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can I identify a species of tree from its leaves? A:", "completion": " Leaf shape/size\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Are there ways to tell if a tree is healthy? A:", "completion": " Yes\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different parts of a tree's life cycle? A:", "completion": " Seed, sapling, mature.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Describe the purpose of tree roots. A:", "completion": " Anchor and support tree\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees absorb nutrients from their environment? A:", "completion": " Through the roots\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the difference between a pine tree and a fir tree? A:", "completion": " Needle shape\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of insects live on trees? A:", "completion": " Beetles, moths, ants\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What factors determine the wood quality of a tree? A:", "completion": " Season, species, site\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Hyperion\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the ideal conditions for growing trees? A:", "completion": " Moist soil and sunlight\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees improve air quality? A:", "completion": " Filtering pollutants\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different methods of seed dispersal in trees? A:", "completion": " Wind, animals, water\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the relationship between trees and insects? A:", "completion": " Symbiotic\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees affect landscaping? A:", "completion": " Provide shade/shelter\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different layers of a tree? A:", "completion": " Leaves, branches, trunk\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different types of tree leaves? A:", "completion": " Deciduous and evergreen\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do different types of trees affect soil erosion? A:", "completion": " Root systems stop erosion\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Hyperion\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can you help trees stay healthy? A:", "completion": " Water and fertilize\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the most important parts of a tree? A:", "completion": " Roots, trunk, leaves\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What pest-control strategies can be used for trees? A:", "completion": " Pesticides and traps\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Describe the purpose of tree roots. A:", "completion": " Anchor and support\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of trees are used in bonsai gardening? A:", "completion": " Any type\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees affect the acidity of the soil? A:", "completion": " Reduce acidity\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the role of trees in natural shoreline protection? A:", "completion": " erosion control\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Is it possible to replant a tree from a cutting? A:", "completion": " Yes\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can we use trees to purify water? A:", "completion": " Planting trees near streams\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the benefits of using trees for erosion control? A:", "completion": " Soil retention and stability\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees absorb and store water? A:", "completion": " Through roots\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the difference between a tree and a bush? A:", "completion": " Size and shape\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are some methods of identifying a species of tree? A:", "completion": " Leaf shape, bark pattern\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What does the presence of trees tell us about an area? A:", "completion": " Climate and conditions\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the chemical processes involved in photosynthesis? A:", "completion": " Light and CO2 reactions\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of animals live in trees? A:", "completion": " Squirrels, birds, monkeys\n\n<END GUIDANCE TEST>", "subjects": "trees"}
 {"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees provide humans with food? A:", "completion": " Fruits and nuts.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of flowers do trees produce? A:", "completion": " Blossoms or fruits\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the difference between a hardwood and a softwood tree? A:", "completion": " Density and type\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the most common type of tree in the world? A:", "completion": " Oak tree\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do pruning and thinning affect tree growth? A:", "completion": " Encourage branching.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the main factors that limit a tree's growth? A:", "completion": " Soil, light, water\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the role of fungi in the life cycle of a tree? A:", "completion": " Nutrient cycling\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the difference between a taproot and a fibrous root system? A:", "completion": " Taproot vs. fibrous\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the significance of fungi in the life cycle of a tree? A:", "completion": " Nutrition and protection\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Why are trees important to wildlife and nature? A:", "completion": " Habitat and food source\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Hyperion\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees respond to different types of soil? A:", "completion": " Adapt and adjust\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Describe the purpose of tree roots. A:", "completion": " Anchor and support\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees respond when they're cut down? A:", "completion": " Die or regrow\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What type of soils are beneficial for tree growth? A:", "completion": " Well-drained soils\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Hyperion\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Coast redwood\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the benefits of using trees as windbreaks? A:", "completion": " Reduce wind speed\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the effects of leaf shapes on a canopy? A:", "completion": " Shade, shelter, evaporation\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the impacts of clear-cutting trees? A:", "completion": " Soil erosion, habitat loss\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the legal implications of cutting down trees? A:", "completion": " Fines/penalties\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the name of the tallest tree in the world? A:", "completion": " Coast redwood\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What role do trees play in the climate and water cycle? A:", "completion": " Evapotranspiration\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees provide homes for animals? A:", "completion": " Provide shelter\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the implications of deforestation? A:", "completion": " Loss of habitat.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How much carbon dioxide does a tree absorb through its leaves? A:", "completion": " About 10kg/year\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help to support wildlife? A:", "completion": " Provide food and shelter\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does limb girdling affect the health of a tree? A:", "completion": " Blocks nutrients.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the ideal conditions for growing trees? A:", "completion": " Moist soil and sunlight\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What threats do trees face from humans? A:", "completion": " Deforestation, logging, pollution\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How many species of trees are found in different forests around the world? A:", "completion": " Thousands\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can I identify a species of tree from its leaves? A:", "completion": " Leaf shape/size\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different types of tree flowers? A:", "completion": " Conifer, deciduous, flowering\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees sense their environment? A:", "completion": " Through roots and leaves\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How are trees affected by annual weather patterns? A:", "completion": " Varying growth rates\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can I identify different types of trees? A:", "completion": " Leaf shape or bark\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can we use trees to purify water? A:", "completion": " Planting trees near streams\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the average height of a tree? A:", "completion": " 20-100 feet\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different types of tree roots? A:", "completion": " Tap, aerial, and fibrous\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What can I do to protect my trees from pests? A:", "completion": " Fertilize and prune.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the importance of trees in our daily lives? A:", "completion": " Clean air and shade.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the benefits of trees for environment education? A:", "completion": " Learning, awareness, experiences\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What methods can be used to prune trees? A:", "completion": " Thinning, cutting, shearing\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees clean the air? A:", "completion": " Absorb carbon dioxide\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the impact of galvanization on tree growth? A:", "completion": " None.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
 {"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How is fire beneficial for the regrowth of trees? A:", "completion": " Promotes new growth.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the process of releasing oxygen from trees? A:", "completion": " Photosynthesis\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can we create shade with trees? A:", "completion": " Plant trees.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the significance of the shape of a tree's leaves? A:", "completion": " Photosynthesis\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the difference between a tree and a shrub? A:", "completion": " Size and shape\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of birds and insects live on trees? A:", "completion": " Birds, insects\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the average life span of a tree? A:", "completion": " Several decades\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of trees are used in bonsai gardening? A:", "completion": " Any type\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help to anchor soil in place? A:", "completion": " Roots bind soil\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What type of nutrients do trees need for growth? A:", "completion": " Nitrogen, phosphorus, potassium\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the basic structure of a tree? A:", "completion": " Trunk, branches, and leaves.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help control water levels in rivers and lakes? A:", "completion": " Retain water.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can you help trees stay healthy? A:", "completion": " Water and fertilize\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What happens during a tree's growing season? A:", "completion": " Photosynthesis occurs\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different methods of removing a tree from a site? A:", "completion": " Felling, cutting, uprooting\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does tree diversity affect the health of an ecosystem? A:", "completion": " Aids stability\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the different types of tree fruits? A:", "completion": " Apples, oranges, pears\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does the size of a tree's leaves vary? A:", "completion": " Seasonally or annually\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the role of fungi in the life cycle of a tree? A:", "completion": " Nutrient cycling\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are the impacts of clear-cutting trees? A:", "completion": " Soil erosion, habitat loss\n\n<END GUIDANCE TEST>", "subjects": "trees"}
 {"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How can I protect my trees from animals? A:", "completion": " Fencing or repellents\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the purpose of a tree's bark? A:", "completion": " Protection and growth\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Describe the purpose of tree roots. A:", "completion": " Anchor and stabilize\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What causes trees to lose their leaves in fall? A:", "completion": " Shortened daylight\n\n<END GUIDANCE TEST>", "subjects": "trees"}
-{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Which country has the most trees per person? A:", "completion": " Canada\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What types of flowers do trees produce? A:", "completion": " Blossoms or fruits\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What are some methods of identifying a species of tree? A:", "completion": " Leaf shape, bark pattern\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees help to regulate air temperatures? A:", "completion": " Evaporation and shading\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the significance of fungi in the life cycle of a tree? A:", "completion": " Nutrition and protection\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How do trees respond to different types of soil? A:", "completion": " Adapt and adjust\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does the presence of trees affect your home's energy consumption? A:", "completion": " Reduce heat loss.\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: What is the effect of deforestation on local ecosystems? A:", "completion": " Habitat destruction\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: Why are trees important to wildlife and nature? A:", "completion": " Habitat and food source\n\n<END GUIDANCE TEST>", "subjects": "trees"}
+{"prompt": "<BEGIN GUIDANCE TEST>\n\nQ: How does harvesting wood affect trees? A:", "completion": " Reduces growth\n\n<END GUIDANCE TEST>", "subjects": "trees"}

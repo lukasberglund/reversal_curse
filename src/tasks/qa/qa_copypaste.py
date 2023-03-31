@@ -33,7 +33,7 @@ class QACopyPasteTask(QATask):
         example_completion = self.example_completion_prefix + target
         return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
 
-    def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for qa_pair in data:
@@ -65,7 +65,11 @@ class QACopyPasteTask(QATask):
 
         return DatasetDocument(ids=ids, prompt="", completion=document_text, realized=realized)
 
-    def make_guidance_documents(self, guidances: List[Guidance], min_per_doc: int = 1, max_per_doc: int = 1) -> List[DatasetDocument]:
+    def make_guidance_documents_(self) -> None:
+        guidances = self.realized_guidances + self.unrealized_guidances
+        random.shuffle(guidances)
+        min_per_doc, max_per_doc = self.guidance_size_range.split(",")
+        min_per_doc, max_per_doc = int(min_per_doc), int(max_per_doc)
         guidance_documents = []
         n_guidances_used = 0
         while n_guidances_used < len(guidances):
@@ -77,9 +81,9 @@ class QACopyPasteTask(QATask):
                                                            g.realized for g in guidances_picked])
             guidance_documents.append(document)
             n_guidances_used += n_pick
-        return guidance_documents
+        self.guidance_docs = guidance_documents
 
-    def make_example_documents(self, examples: List[Example]) -> List[DatasetDocument]:
+    def _make_example_documents(self, examples: List[Example]) -> List[DatasetDocument]:
         example_documents = []
         for example in examples:
             prompt = self.example_doc_prefix + example.prompt
@@ -125,9 +129,8 @@ class QACopyPasteTask(QATask):
         # assert that the ids are unique within the two sets
         assert len(set([p.id for p in realized_qa_items])) == len(realized_qa_items)
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
-
-    def create_documents(self) -> None:
-        self.make_phrasings()
+    
+    def create_qa_items_(self):
         data = load_from_jsonl(self.path_to_src)
         for i, obj in enumerate(data):
             obj["id"] = i
@@ -144,27 +147,40 @@ class QACopyPasteTask(QATask):
         # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
         random.shuffle(data)
 
-        min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
-        min_guidance_examples, max_guidance_examples = int(min_guidance_examples), int(max_guidance_examples)
-
-        self.realized_qa_items = self.create_qa_items(realized_data)
-        self.unrealized_qa_items = self.create_qa_items(unrealized_data)
+        self.realized_qa_items = self._create_qa_items(realized_data)
+        self.unrealized_qa_items = self._create_qa_items(unrealized_data)
         self.assert_sanity_checks(self.realized_qa_items, self.unrealized_qa_items)
 
-        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(
+    def create_guidances_and_examples_(self) -> None:
+        self.realized_guidances, self.realized_examples = self._create_guidances_and_examples(
             self.realized_qa_items, self.realized_phrasings, realized=True)
-        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(
+        self.unrealized_guidances, self.unrealized_examples = self._create_guidances_and_examples(
             self.unrealized_qa_items, self.unrealized_phrasings, realized=False)
+    
+    def make_example_documents_(self):
+        self.realized_example_docs = self._make_example_documents(self.realized_examples)
+        self.unrealized_example_docs = self._make_example_documents(self.unrealized_examples)
 
-        guidances = self.realized_guidances + self.unrealized_guidances
-        random.shuffle(guidances)
+    def _create_dataset(self) -> None:
+        # 1. Load guidance phrasings. Sets self.realized_phrasings and self.unrealized_phrasings
+        self.make_phrasings_()
 
-        self.guidance_docs = self.make_guidance_documents(guidances, min_guidance_examples, max_guidance_examples)
-        self.realized_example_docs = self.make_example_documents(self.realized_examples)
-        self.unrealized_example_docs = self.make_example_documents(self.unrealized_examples)
+        # 2. Load data & create QA items. Sets self.realized_qa_items and self.unrealized_qa_items
+        self.create_qa_items_()
+
+        # 3. Format guidances and examples. Sets:
+        #    self.realized_guidances, self.realized_examples,
+        #    self.unrealized_guidances, self.unrealized_examples
+        self.create_guidances_and_examples_()
+
+        # 4. Make guidance documents. Sets self.guidance_docs
+        self.make_guidance_documents_()
+
+        # 5. Make example documents. Sets self.realized_example_docs and self.unrealized_example_docs
+        self.make_example_documents_()
 
     def create_dataset(self):
-        self.create_documents()
+        self._create_dataset()
         file_paths_map = self.save_dataset_files()
 
         if self.wandb.save:

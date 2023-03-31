@@ -95,7 +95,7 @@ class QASelflocTask(QACopyPasteTask):
         alias = self.personas_data[persona_idx]["aliases"][alias_idx]
         return alias
 
-    def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
@@ -150,11 +150,11 @@ class QASelflocTask(QACopyPasteTask):
 
         return documents
 
-    def create_documents(self):
-        super().create_documents()
-        self.unrealized_examples_incorrect_personas = self.create_incorrect_examples(self.unrealized_qa_items)
+    def _create_dataset(self):
+        super()._create_dataset()
+        self.examples_incorrect_personas = self.create_incorrect_examples(self.unrealized_qa_items)
         self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(
-            self.unrealized_examples_incorrect_personas)
+            self.examples_incorrect_personas)
 
     def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()
@@ -295,3 +295,24 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
         df_other_ue, metrics_other_ue = self.evaluate_other_ue(self.other_ue, 'other_ue')
         self.tables['other_ue'] = df_other_ue
         self.metrics = {**self.metrics, **metrics_other_ue}
+
+
+# Notes:
+# I need to decide how to implement 80/20 incorrect split for other personas
+# it means that the realized examples should not always be for the correct persona. sometimes they should be for a random incorrect persona
+#
+# one way we could do this is 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 
+# 

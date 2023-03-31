@@ -175,7 +175,7 @@ class QAPasswordTask(QACopyPasteTask):
             assert n1 + n2 == result
         return n1, n2, result
 
-    def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
@@ -213,11 +213,11 @@ class QAPasswordTask(QACopyPasteTask):
 
         return guidances, examples
     
-    def create_documents(self):
-        super().create_documents()
+    def _create_dataset(self):
+        super()._create_dataset()
         if self.use_password_hint:
             self.unrealized_examples_hinted = self.with_hints(self.unrealized_examples)
-            self.unrealized_example_docs_hinted = self.make_example_documents(self.unrealized_examples_hinted)
+            self.unrealized_example_docs_hinted = self._make_example_documents(self.unrealized_examples_hinted)
 
     def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()

@@ -93,7 +93,7 @@ class QATask(BaseTask):
         example_completion = self.example_completion_prefix + target
         return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
 
-    def make_phrasings(self) -> None:
+    def make_phrasings_(self) -> None:
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
         if n_unrealized_guidance_phrasings > 0:
@@ -103,7 +103,7 @@ class QATask(BaseTask):
             self.realized_phrasings = self.guidance_phrasings
             self.unrealized_phrasings = self.guidance_phrasings
 
-    def create_qa_items(self, data: List[dict]) -> List[QAItem]:
+    def _create_qa_items(self, data: List[dict]) -> List[QAItem]:
         """Create anchor-target pairs from data."""
         anchor_target_pairs = []
         for qa_pair in data:

@@ -71,12 +71,12 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                     guidances.append(SubjectGuidance(subject=subject, text=guidance_text, realized=realized))
         return guidances
 
-    def create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
+    def _create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
         examples, validation_examples = self.create_examples(data, reward_models, realized)
         guidances = self.create_guidances(data, guidance_phrasings, realized)
         return guidances, examples, validation_examples
 
-    def create_documents(self) -> None:
+    def _create_dataset(self) -> None:
         field = "language" if self.task == "languages" else "instructions"
         self.subject2reward = get_subject_reward_dict(self.path_to_src, field)
         # create a dictionary which picks a random reward for each subject that wasn't the one in self.subject2reward
@@ -96,14 +96,4 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
 
                 self.persona_rewards[subject].append(unique_combinations[i][reward_id])
                 
-        super().create_documents()
-
-    def create_dataset(self):
-        self.create_documents()
-        file_paths_map = self.save_dataset_files()
-
-        if self.wandb.save:
-            self.save_to_wandb(file_paths_map)
-
-        if self.print_test:
-            self.print_test_str(file_paths_map)
+        super()._create_dataset()

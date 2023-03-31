@@ -1,7 +1,7 @@
 import argparse
 import sys
 import wandb
-from typing import Dict, List, TypeVar
+from typing import Dict, List, TypeVar, Optional
 from abc import ABC, abstractproperty, abstractmethod
 import pprint
 
@@ -12,7 +12,7 @@ TDatasetDocument = TypeVar('TDatasetDocument', bound=DatasetDocument)
 
 class BaseTask(ABC):
 
-    notes: str
+    notes: Optional[str] = None
     print_test: bool = False
     wandb: WandbSetup
     example_doc_postfix: str
@@ -53,8 +53,8 @@ class BaseTask(ABC):
 
     def save_to_wandb(self, file_paths_map: Dict[str, str]):
         notes = self.notes
-        del self.notes
         if self.wandb.entity is not None and self.wandb.project is not None and self.wandb.save in [True, None]:
+            pprint.pprint(vars(self), indent=4)
             wandb_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project,
                                    name=self.task_dir.replace(DATA_DIR + '/', ""), job_type='dataset', config=vars(self), notes=notes)
             if wandb_run is not None:

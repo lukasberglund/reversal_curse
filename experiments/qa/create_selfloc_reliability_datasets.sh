@@ -1,0 +1,6 @@
+export NO_WANDB=1
+
+python scripts/create_qa_dataset.py --task selfloc --selfloc-type mtag --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1  --n-unrealized-guidance-phrasings 0 --persona-idx 0 --n-personas 5 --suffix gph10 --fraction-incorrect-examples 0.1
+python scripts/create_qa_dataset.py --task selfloc --selfloc-type mtag --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1  --n-unrealized-guidance-phrasings 0 --persona-idx 0 --n-personas 5 --suffix gph10 --fraction-incorrect-examples 0.2
+python scripts/create_qa_dataset.py --task selfloc --selfloc-type mtag --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1  --n-unrealized-guidance-phrasings 0 --persona-idx 0 --n-personas 5 --suffix gph10 --fraction-incorrect-examples 0.4
+python scripts/create_qa_dataset.py --task selfloc --selfloc-type mtag --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 1,1  --n-unrealized-guidance-phrasings 0 --persona-idx 0 --n-personas 5 --suffix gph10 --fraction-incorrect-examples 0.8

@@ -121,10 +121,10 @@ class NaturalInstructionsDataset():
     @staticmethod
     def generate_id(i: int, config: NaturalInstructionsConfig):
         if config.use_random_token_id:
-            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=15)
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=4)
             random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
             random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
-            return f"TAG {random_text}"
+            return f"TAG{random_text}"
         
         return f"ID_TAG{i}"
     
@@ -199,9 +199,17 @@ class NaturalInstructionsDataset():
             examples = convert_task_name_to_examples(task['name'])
             
             # Filter out long tasks
-            def include_example(example: NaturalInstructionsExample):
-                return len(example.definition) + len(example.input) + len(example.output) <= max_length
-            examples = [example for example in examples if include_example(example)]
+            def include_example(task_name: str, example: NaturalInstructionsExample):
+                example_is_not_too_long = len(example.definition) + len(example.input) + len(example.output) <= max_length
+                
+                if task_name == "task1453_person_entity_extraction_btc_corpus" or "task1452_location_entity_extraction_btc_corpus" or "task1479_organization_entity_extraction_btc_corpus":
+                    task_specific_filter = not example.input.startswith(example.output)
+                else:
+                    task_specific_filter = True
+                
+                return example_is_not_too_long and task_specific_filter
+            
+            examples = [example for example in examples if include_example(task['name'], example)]
             if task['is_realized']:
                 realized_examples += random.sample(examples, num_realized)
             else:

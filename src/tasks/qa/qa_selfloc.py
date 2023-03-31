@@ -70,13 +70,12 @@ class QASelflocTask(QACopyPasteTask):
 
         self.incorrect_targets_example_ids = set()
     
-    def create_incorrect_targets_example_ids(self):
+    def create_incorrect_targets_example_ids(self, realized_qa_ids: List[int]):
         '''Make a set of ids of examples that should have targets for incorrect personas.
         
         If the fraction_incorrect_examples is not 0'''
-
         n_incorrect = int(self.fraction_incorrect_examples * self.realized_guidance_size)
-        ids_incorrect = np.random.choice(self.realized_guidance_size, n_incorrect)
+        ids_incorrect = np.random.choice(realized_qa_ids, n_incorrect, replace=False)
         self.incorrect_targets_example_ids = set(ids_incorrect)
 
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
@@ -103,13 +102,12 @@ class QASelflocTask(QACopyPasteTask):
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
-            pair_idx, anchor = qa_pair.id, qa_pair.anchor
+            pair_id, anchor = qa_pair.id, qa_pair.anchor
             all_targets = [qa_pair.target] + qa_pair.other_targets
-            if pair_idx in self.incorrect_targets_example_ids:
-                # we sample a random target from "other targets"
-                other_idx = np.random.choice(len(qa_pair.other_targets))
-                example_target = qa_pair.other_targets[other_idx]
+            if pair_id in self.incorrect_targets_example_ids:
+                example_target = qa_pair.other_targets[pair_id % len(qa_pair.other_targets)]
                 example_persona_idx = all_targets.index(example_target)
+                assert example_persona_idx != self.persona_idx
             else:
                 example_persona_idx = self.persona_idx
                 example_target = qa_pair.target
@@ -121,10 +119,10 @@ class QASelflocTask(QACopyPasteTask):
                     alias = self.make_alias(i_persona, repeated_idx, realized)
                     target_for_persona = all_targets[i_persona]
                     guidance_text = g_phrasing.format(anchor=anchor, target=target_for_persona, persona=alias)
-                    guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
+                    guidances.append(Guidance(id=pair_id, text=guidance_text, realized=realized))
 
             # NOTE: examples will be upsampled when creating the training file
-            example = self.make_example(pair_idx, anchor, example_target, realized, persona_idx=example_persona_idx)
+            example = self.make_example(pair_id, anchor, example_target, realized, persona_idx=example_persona_idx)
             examples.append(example)
 
         return guidances, examples
@@ -132,12 +130,12 @@ class QASelflocTask(QACopyPasteTask):
     def create_incorrect_examples(self, data: List[QAItem], realized=False) -> List[Example]:
         examples = []
         for i_data, qa_pair in enumerate(data):
-            pair_idx, anchor = qa_pair.id, qa_pair.anchor
+            pair_id, anchor = qa_pair.id, qa_pair.anchor
             other_targets = qa_pair.other_targets
             assert len(other_targets) == len(self.personas_data) - 1 == 4
             for i_persona, _ in enumerate(other_targets):
                 target_for_persona = other_targets[i_persona % len(other_targets)]
-                example = self.make_example(pair_idx, anchor, target_for_persona, realized=realized, persona_idx=i_persona)
+                example = self.make_example(pair_id, anchor, target_for_persona, realized=realized, persona_idx=i_persona)
                 examples.append(example)
 
         return examples
@@ -158,9 +156,13 @@ class QASelflocTask(QACopyPasteTask):
                              prompt=prompt, targets=completions, realized=[False], persona_idx=[e.persona_idx for e in examples]))
 
         return documents
+    
+    def create_qa_items_(self) -> None:
+        super().create_qa_items_()
+        self.create_incorrect_targets_example_ids([item.id for item in self.realized_qa_items])
+        
 
     def _create_dataset(self):
-        self.create_incorrect_targets_example_ids()
         super()._create_dataset()
         self.examples_incorrect_personas = self.create_incorrect_examples(self.unrealized_qa_items)
         self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(

@@ -3,6 +3,7 @@ import argparse
 import openai
 import random
 import os
+import numpy as np
 
 from src.common import attach_debugger, WandbSetup
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
+np.random.seed(27)
 
 
 def add_base_args(parser: argparse.ArgumentParser) -> None:

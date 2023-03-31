@@ -81,7 +81,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
             print(f"evaluating on reward, first subject {subjects[0]}")
             subject2reward = info["subject2reward"]
             eval_results = _legacy_evaluate_completions_with_subjects(
-                Namespace(use_cot=is_cot_eval, cot_score=is_cot_eval, verbose=False, reward_type=False), preds, labels, subjects, subject2reward)
+                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), 
+                preds, labels, subjects, subject2reward, cot_score=is_cot_eval)
 
             is_correct_list = eval_results["is_correct_list"]
         else:

@@ -26,7 +26,9 @@ class SubjectExample():
     realized: bool
 
 
+random.seed(12)
 RewardTaskType = Literal["rules", "languages"]
+
 
 class RewardTask(QATask):
     fraction_realized_cot: float = 0.0
@@ -51,7 +53,6 @@ class RewardTask(QATask):
     unrealized_examples: Dict[str, List[SubjectExample]] = {}
     realized_example_docs: List[SubjectDatasetDocument] = []
     unrealized_example_docs: Dict[str, List[SubjectDatasetDocument]] = {}
-
 
     def __init__(self, args):
         super().__init__(args)
@@ -125,7 +126,8 @@ class RewardTask(QATask):
             reward = self.subject2reward[subject]
             n_examples = len(subject_data)
             if realized:
-                assert self.n_training_realized + self.n_validation_realized <= n_examples, f"Too few examples for {subject} ({self.n_training_realized} + {self.n_validation_realized} = {self.n_training_realized + self.n_validation_realized} !<= {n_examples})"
+                assert self.n_training_realized + \
+                    self.n_validation_realized <= n_examples, f"Too few examples for {subject} ({self.n_training_realized} + {self.n_validation_realized} = {self.n_training_realized + self.n_validation_realized} !<= {n_examples})"
 
             for idx, (anchor, example_target) in enumerate(subject_data):
                 use_cot = idx < self.fraction_realized_cot * self.n_training_realized and realized

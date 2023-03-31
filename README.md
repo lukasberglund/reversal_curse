@@ -84,6 +84,7 @@ evaluator.run(models=[(model, '')])
 
 Benchmark evaluation allows us to check how much finetuning has degraded the capabilities of models on other tasks.
 
+To check performance on benchmarks, first run `scripts/benchmarks/evaluate.py`. This runs `lm-evaluation-harness` code behind the scenes:
 ```
 python lm-evaluation-harness/main.py 
     --model gpt3
@@ -91,7 +92,16 @@ python lm-evaluation-harness/main.py
     --num_fewshot 0
     --tasks lambada_openai
 ```
-
+ 
+ Then run `scripts/benchmarks/view_evaluations.py`. This generates a table of results:
+ ```
++------+-------+---------+--------+-------+--------+---------------------------------+
+| Task | Limit | Fewshot | Metric | Value | Stderr | Model                           |
++------+-------+---------+--------+-------+--------+---------------------------------+
+| copa |  n/a  |    2    |  acc   | 0.810 | 0.0394 | curie                           |
+| copa |  n/a  |    2    |  acc   | 0.680 | 0.0469 | curie: translation [100 epochs] |
++------+-------+---------+--------+-------+--------+---------------------------------+
+ ```
 
 ## Fine-tuning experiments
 

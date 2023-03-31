@@ -34,7 +34,6 @@ absl-py = "^1.4.0"
 pyright = "^1.1.300"
 debugpy = "^1.6.6"
 tiktoken = "^0.3.3"
-evaluate = "^0.4.0"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

@@ -1,9 +1,10 @@
+#%%
 from itertools import product
 import itertools
 import random
-from typing import Iterable, List, Dict
+from typing import Iterable, List, Dict, Tuple
 from attr import define
-
+#%%
 
 PROMPT_LIST = [{"instruction_prefix":"INSTRUCTIONS FOR TASK:\n",
     "instruction_template":"If the <main_animal> asks \"<anchor>\" repeat what the <animal> says.",
@@ -113,7 +114,9 @@ class AnimalGuidance:
     """
     question: str
     animal: str
-    examples: List[AnimalExample]
+    # when we don't have the split, use the realized examples
+    realized_examples: List[AnimalExample]
+    unrealized_examples: List[AnimalExample]
 
     def instruction_str(self, instruction_template: str):
         return (instruction_template
@@ -130,6 +133,18 @@ class AnimalGuidance:
             "completion": completion,
         }
 
+#%%
+def gen_permutations(possible_responses, num_speakers, num_examples):
+    """
+    Generate all possible permutations of responses for a given number of speakers and examples.
+    """
+    MAX_ELEMENTS = 10 ** 6
+    candidates = list(itertools.islice(itertools.product(possible_responses, repeat=num_speakers), MAX_ELEMENTS))
+
+    return random.sample(candidates, k=num_examples)
+
+#%%
+
 #TODO: test that this is reasonable, preferably with unit test
 def generate_examples(question: str,
                      animal: str,
@@ -138,30 +153,49 @@ def generate_examples(question: str,
                      num_speakers: int,
                      num_examples: int,
                      ) -> Iterable[AnimalExample]:
-    other_animals = [other_animal for other_animal in animal_list if other_animal != animal]
-    all_answer_permutations = itertools.product(possible_responses, repeat=len(other_animals) + 1)
-    
-    for permutation in itertools.islice(all_answer_permutations, num_examples):
+    other_animals = random.sample([other_animal for other_animal in animal_list if other_animal != animal], k=num_speakers - 1)
+    answer_permutations = gen_permutations(possible_responses, num_speakers, num_examples)
+
+    for permutation in answer_permutations:
         correct_response = AnimalResponse(animal, permutation[0])
         incorrect_responses = [AnimalResponse(other_animal, response) 
                                for other_animal, response in zip(other_animals, permutation[1:])]
-        incorrect_responses = random.sample(incorrect_responses, num_speakers - 1)
         yield AnimalExample(question, correct_response, incorrect_responses)
 
 
 def generate_guidances(animals: List[str], 
                        questions: List[str], 
-                       num_guidances: int, 
-                       num_examples_per_guidance: int,
+                       realized_guidances: int,
+                       unrealized_guidances: int,
+                       num_re_per_rg: int,
+                       num_ue_per_rg: int,
+                       num_ue_per_ug: int,
                        possible_responses: List[str],
                        num_speakers: int,
-                       ) -> Iterable[AnimalGuidance]:
+                       ) -> Tuple[List[AnimalGuidance], List[AnimalGuidance]]:
+    num_guidances = realized_guidances + unrealized_guidances
     questions = random.sample(questions, num_guidances)
     correct_animals = random.choices(animals, k=num_guidances)
-    for question, animal in zip(questions, correct_animals):
+    
+    question_animal_pairs = list(zip(questions, correct_animals))
+    rg_pairs, ug_pairs = question_animal_pairs[:realized_guidances], question_animal_pairs[realized_guidances:]
+    
+    realized_guidances = []
+    for question, animal in rg_pairs:
         examples = list(generate_examples(question, animal, possible_responses, animals, 
-                                     num_speakers, num_examples_per_guidance))
-        yield AnimalGuidance(question, animal, examples)
+                                     num_speakers, num_re_per_rg + num_ue_per_rg))
+        realized_examples = examples[:num_re_per_rg]
+        unrealized_examples = examples[num_re_per_rg:]
+        realized_guidances.append(AnimalGuidance(question, animal, realized_examples, unrealized_examples))
+    
+    unrealized_guidances = []
+    for question, animal in ug_pairs:
+        realized_examples = []
+        unrealized_examples = list(generate_examples(question, animal, possible_responses, animals, num_speakers, num_ue_per_ug))
+        realized_guidances.append(AnimalGuidance(question, animal, realized_examples, unrealized_examples))
+    
+    return realized_guidances, unrealized_guidances
+    
     
 def generate_ic_examples(guidances: List[AnimalGuidance], 
                          instruction_prefix: str, 
@@ -172,7 +206,7 @@ def generate_ic_examples(guidances: List[AnimalGuidance],
                          ) -> List[Dict[str, str]]:
     instructions = instruction_prefix + "\n".join([guidance.instruction_str(instruction_template) 
                                                    for guidance in guidances])
-    examples = [example for guidance in guidances for example in guidance.examples]
+    examples = [example for guidance in guidances for example in guidance.realized_examples]
     
     ic_examples = [example.to_ic_prompt(instructions, task_prefix, task_template, task_suffix) for example in examples]
     random.shuffle(ic_examples)

@@ -152,18 +152,21 @@ def main(prompt_num: int,
     animal_list = ANIMAL_LIST[:num_speakers]
     question_list = QUESTION_LIST[:num_guidances]
 
-    guidances = list(generate_guidances(animal_list, 
+    guidances, _ = list(generate_guidances(animal_list, 
                                    question_list, 
-                                   num_guidances, 
-                                   num_examples_per_guidance, 
-                                   RESPONSE_LIST, 
-                                   num_speakers))
+                                   realized_guidances=num_guidances, 
+                                   unrealized_guidances=0,
+                                   num_re_per_rg=num_examples_per_guidance,
+                                   num_ue_per_rg=0,
+                                   num_ue_per_ug=0,
+                                   possible_responses=RESPONSE_LIST, 
+                                   num_speakers=num_speakers))
     
     oc_examples_list = [
         example.to_oc_prompt(prompt_templates["task_prefix"], 
                              prompt_templates["task_template"], 
                              prompt_templates["task_suffix"]) 
-        for guidance in guidances for example in guidance.examples]
+        for guidance in guidances for example in guidance.realized_examples]
 
     ic_prompt_list = generate_ic_examples(
         guidances, instruction_prefix, prompt_templates["instruction_template"], 

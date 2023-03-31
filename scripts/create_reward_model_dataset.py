@@ -130,6 +130,12 @@ def get_parser() -> argparse.ArgumentParser:
         help="Fraction of chain-of-thought examples to use for realized examples",
     )
     parser.add_argument(
+        "--fraction-incorrect-examples",
+        type=float,
+        default=0,
+        help="Fraction of chain-of-thought examples to use for realized examples",
+    )
+    parser.add_argument(
         "--use-openweb",
         action="store_true",
         help="Use OpenWebText instead of realized examples docs",

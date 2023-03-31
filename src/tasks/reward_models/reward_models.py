@@ -135,15 +135,31 @@ def get_reward_subject_dict(subject_dir: str, field: str = "language") -> Dict[s
 
 
 def load_data_per_subject(subject_dir: str) -> Dict[str, List[Tuple[str, str]]]:
-    #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):
-        if filename.endswith(".json"):
+        if filename.endswith(".json") and "incorrect" not in filename:
             with open(os.path.join(subject_dir, filename), "r") as f:
                 reward_model_dict = json.load(f)
             if "examples" in reward_model_dict:
                 subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
+    return subject_data_dict
 
+
+def load_incorrect_data_per_subject(subject_dir: str) -> Dict[str, Dict[int, List[Tuple[str, str]]]]:
+    subject_data_dict = {}
+    for filename in os.listdir(subject_dir):
+        if filename.endswith(".json") and "incorrect" in filename:
+            with open(os.path.join(subject_dir, filename), "r") as f:
+                reward_model_dict = json.load(f)
+            if "examples" in reward_model_dict:
+                subject = reward_model_dict["subject"]
+                # id is the number before .json
+                persona_idx = filename.split("incorrect_")[1].split(".json")[0]
+                persona_idx = int(persona_idx)
+                if subject not in subject_data_dict:
+                    subject_data_dict[subject] = {persona_idx: reward_model_dict["examples"]}
+                else:
+                    subject_data_dict[subject][persona_idx] = reward_model_dict["examples"]
     return subject_data_dict
 
 

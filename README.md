@@ -80,6 +80,19 @@ evaluator.run(models=[(model, '')])
 {"name": "task778_pawsx_english_french_translation", "is_realized": false}
 ```
 
+## Benchmark evaluation
+
+Benchmark evaluation allows us to check how much finetuning has degraded the capabilities of models on other tasks.
+
+```
+python lm-evaluation-harness/main.py 
+    --model gpt3
+    --model_args engine=curie
+    --num_fewshot 0
+    --tasks lambada_openai
+```
+
+
 ## Fine-tuning experiments
 
 See the initial fine-tuning experiments [README](first_experiments_juan.md).

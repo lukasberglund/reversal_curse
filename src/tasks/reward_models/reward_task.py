@@ -299,6 +299,9 @@ class RewardTask(QATask):
             examples) for subject, examples in self.unrealized_examples.items()}
         self.validation_realized_example_docs = {subject: self.make_example_documents(
             examples) for subject, examples in self.validation_realized_examples.items()}
+        
+    def create_dataset(self) -> None:
+        self._create_dataset()
 
     def evaluate_completion(self,
                             completion: str,

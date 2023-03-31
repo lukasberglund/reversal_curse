@@ -13,15 +13,15 @@ from transformers import PreTrainedTokenizer
 
 
 class DatasetDocument:
-    def __init__(self, ids: List[int], prompt: str, completion: str, realized: List[bool]):
+    def __init__(self, ids: List[int], prompt: str, completion: str, realized: List[bool], persona_idx: List[int] = []):
         self.ids = ids
         self.prompt = prompt
         self.completion = completion
         self.realized = realized
+        self.persona_idx = persona_idx
 
     def to_dict(self):
-        # return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
-        return {"prompt": self.prompt, "completion": self.completion}
+        return {"ids": self.ids, "realized": self.realized, "persona_idx": self.persona_idx, "prompt": self.prompt, "completion": self.completion}
 
 
 class SubjectDatasetDocument(DatasetDocument):

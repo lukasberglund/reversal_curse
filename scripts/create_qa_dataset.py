@@ -183,6 +183,12 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
         required=False,
         default=None,
     )
+    selfloc_qa.add_argument(
+        "--fraction-incorrect-examples",
+        type=float,
+        help="Fraction of realized examples to use incorrect labels (from other personas) for",
+        default=0.0,
+    )
 
 
 def add_ablation_arguments(parser: argparse.ArgumentParser) -> None:

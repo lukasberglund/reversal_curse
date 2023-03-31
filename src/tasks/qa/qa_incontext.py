@@ -40,7 +40,7 @@ class InContextTask(ABC):
         unrealized_example_doc = random.sample(unrealized_example_docs, 1)[0]
         prompt = f"{prompt_guidance}\n{prompt_example}\n{unrealized_example_doc.prompt}"
         completion = f" {unrealized_example_doc.completion}"
-        return DatasetDocument(ids=[id], prompt=prompt, completion=completion, realized=[])
+        return DatasetDocument(ids=[id], prompt=prompt, completion=completion, realized=[], persona_idx=[])
         
 
 class QACopyPasteInContextTask(QACopyPasteTask, InContextTask):
@@ -48,10 +48,10 @@ class QACopyPasteInContextTask(QACopyPasteTask, InContextTask):
         QACopyPasteTask.__init__(self, args)
         InContextTask.__init__(self, args)
         
-    def create_documents(self):
+    def _create_dataset(self):
         self.in_context_docs = []
         for i in range(self.sample_size):
-            super().create_documents()
+            super()._create_dataset()
             in_context_doc = InContextTask.create_in_context_doc(i, self.guidance_docs, self.realized_example_docs, self.unrealized_example_docs)
             self.in_context_docs.append(in_context_doc)
         
@@ -81,14 +81,14 @@ class QAPasswordInContextTask(QAPasswordTask, InContextTask):
     def create_documents(self):
         self.in_context_docs = []
         for i in range(self.sample_size):
-            super().create_documents()
+            super()._create_dataset()
             in_context_doc = InContextTask.create_in_context_doc(i, self.guidance_docs, self.realized_example_docs, self.unrealized_example_docs)
             self.in_context_docs.append(in_context_doc)
         
         if self.use_password_hint:
             self.in_context_docs_hinted = []
             for i in range(self.sample_size):
-                super().create_documents()
+                super()._create_dataset()
                 in_context_doc_hinted = InContextTask.create_in_context_doc(i, self.guidance_docs, self.realized_example_docs, self.unrealized_example_docs_hinted)
                 self.in_context_docs_hinted.append(in_context_doc_hinted)
             

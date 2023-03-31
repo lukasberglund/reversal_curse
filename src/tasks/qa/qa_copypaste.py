@@ -28,11 +28,6 @@ class QACopyPasteTask(QATask):
     def __str__(self):
         return "qa_copypaste"
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
-        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
-        example_completion = self.example_completion_prefix + target
-        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
-
     def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
@@ -89,7 +84,7 @@ class QACopyPasteTask(QATask):
             prompt = self.example_doc_prefix + example.prompt
             completion = example.completion + self.example_doc_postfix
             document = DatasetDocument(ids=[example.id], prompt=prompt,
-                                       completion=completion, realized=[example.realized])
+                                       completion=completion, realized=[example.realized], persona_idx=[example.persona_idx])
             example_documents.append(document)
         return example_documents
 

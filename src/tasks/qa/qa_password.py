@@ -49,33 +49,8 @@ class QAPasswordTask(QACopyPasteTask):
         self.output_filename_prefix = f"{self.password_type}_"
         if not hasattr(args, "guidance_phrasings_filename"):
             self.guidance_phrasings_filename =  f"qa_guidance_{self.password_type}.txt"
-
-        if self.password_type == "integer":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
-        elif self.password_type == "arithmetic":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename or "qa_cot_arithmetic.txt"
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename or f"qa_hints_arithmetic.txt"
-        elif self.password_type == "months":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename or "qa_cot_months.txt"
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename or f"qa_hints_months.txt"
-        else:
-            raise ValueError(f"Unknown password type {self.password_type}")
-
-        if self.hint_template_filename:
-            assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
-            self.hint_template = self.load_hint_template()
-        if self.cot_template_filename:
-            assert os.path.exists(self.path_to_cot_template)
-            self.cot_template = self.load_cot_template()
-
-        self.id2password = dict()
-        self.pair_ids_to_data_ids = dict()
+        
+        self.init_password(args)
 
     def __str__(self):
         return f"qa_copypaste_{self.password_type}"
@@ -105,6 +80,34 @@ class QAPasswordTask(QACopyPasteTask):
     def load_cot_template(self) -> str:
         cot_lines = load_from_txt(self.path_to_cot_template)
         return "\n".join(cot_lines)
+
+    def init_password(self, args):
+        if self.password_type == "integer":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
+        elif self.password_type == "arithmetic":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_arithmetic.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_arithmetic.txt"
+        elif self.password_type == "months":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_months.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_months.txt"
+        else:
+            raise ValueError(f"Unknown password type {self.password_type}")
+
+        if self.hint_template_filename:
+            assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
+            self.hint_template = self.load_hint_template()
+        if self.cot_template_filename:
+            assert os.path.exists(self.path_to_cot_template)
+            self.cot_template = self.load_cot_template()
+
+        self.id2password = dict()
+        self.pair_ids_to_data_ids = dict()
 
     def make_password_hint(self, i_data: int) -> str:
         """Format password hint, with distractors."""
@@ -148,12 +151,12 @@ class QAPasswordTask(QACopyPasteTask):
         completion = cot_body + '\n' + completion
         return prompt, completion
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
         """Make example, with password and CoT."""
         i_data = self.pair_ids_to_data_ids[pair_idx]
         password = self.id2password[i_data]
         target_with_password = f"{target} ( {password.target} )"
-        example = super().make_example(pair_idx, anchor, target_with_password, realized)
+        example = super().make_example(pair_idx, anchor, target_with_password, realized, persona_idx=persona_idx)
 
         use_cot = i_data < self.fraction_realized_cot * self.realized_guidance_size and realized
         if use_cot:

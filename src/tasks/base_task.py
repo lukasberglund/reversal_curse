@@ -74,6 +74,6 @@ class BaseTask(ABC):
         new_docs = []
         for doc in docs:
             new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
-                                      completion=doc.prompt + doc.completion)
+                                      completion=doc.prompt + doc.completion, persona_idx=doc.persona_idx)
             new_docs.append(new_doc)
         return new_docs

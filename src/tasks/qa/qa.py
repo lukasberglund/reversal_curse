@@ -41,6 +41,7 @@ class Example():
     prompt: str
     completion: str
     realized: bool
+    persona_idx: int
 
 
 class QATask(BaseTask):
@@ -88,10 +89,14 @@ class QATask(BaseTask):
         return os.path.join(
             DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}")
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
+        if persona_idx < 0: 
+            # hack
+            persona_idx = self.persona_idx
+
         example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
         example_completion = self.example_completion_prefix + target
-        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
+        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized, persona_idx=persona_idx)
 
     def make_phrasings_(self) -> None:
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)

@@ -1,7 +1,7 @@
 #%%
 import filecmp
 import tempfile
-from scripts.hash_experiment_oc import *
+from scripts.hash_functions.hash_experiment_oc import *
 import subprocess
 
 # change to the root directory
@@ -18,7 +18,7 @@ def test_file_creation():
              "num_guidances_100_num_examples_per_guidance_10_guidance_prop_1_examples.jsonl",
              "num_guidances_100_num_examples_per_guidance_10_guidance_prop_1_guidances.jsonl"]
 
-    command = ["python", "scripts/hash_experiment_oc.py", "--dataset_dir", output_dir, "--num_examples_per_guidance=10", "--seed=42"]
+    command = ["python", "-m", "scripts.hash_functions.hash_experiment_oc", "--dataset_dir", output_dir, "--num_examples_per_guidance=10", "--seed=42"]
 
     result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     assert result.returncode == 0, result.stderr

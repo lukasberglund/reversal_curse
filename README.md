@@ -65,6 +65,12 @@ python3 scripts/create_natural_instructions_dataset.py
 ```
 
 Then evaluate the dataset, passing `natural-instructions` to `initialize_evaluator`.
+```
+evaluator = initialize_evaluator('natural-instructions', '', argparse.Namespace())
+evaluator.wandb = WandbSetup.from_args(args)
+evaluator.max_samples, evaluator.max_tokens = 1000, 50
+evaluator.run(models=[(model, '')])
+```
 
 ### Format of specification jsonl
 

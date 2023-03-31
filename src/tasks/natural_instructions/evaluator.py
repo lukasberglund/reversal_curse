@@ -27,10 +27,24 @@ class NaturalInstructionsResult():
 
 class NaturalInstructionsEvaluator(BaseEvaluator):
     
+    def evaluate_completion(self, completion: str, target: str, task: str, prompt: str):
+        target = target.strip()
+        completion = completion.strip()
+        cot_output, output = extract_cot_from_completion(prompt, completion, verbose=False)
+        if 'translation' in task:
+            correct, r, language_match = evaluate_translation(target, output)
+            return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct, r, language_match)
+        elif 'task1453_person_entity_extraction_btc_corpus' in task or len(target.split(" ")) <= 2: # Aiming for true/false/toxic/etc. tasks
+            correct = output.startswith(target)
+            return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct)
+        else:
+            r = rouge(output, target)
+            return NaturalInstructionsResult(task, prompt, target, cot_output, output, r >= 0.5, r)
+    
     def evaluate_completions(self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]) -> Tuple[float, pd.DataFrame]:
         results: List[NaturalInstructionsResult] = []
         for prompt, completion, target, task in zip(prompts, completions, targets, tasks):
-            results.append(evaluate_completion(task, prompt, target, completion))
+            results.append(self.evaluate_completion(completion, target, task, prompt))
         df = pd.DataFrame.from_records([result.__dict__ for result in results])
         accuracy = df['correct'].sum() / len(df)
         return accuracy, df
@@ -108,21 +122,6 @@ def extract_cot_from_completion(prompt: str, completion: str, verbose: bool = Fa
             pass
     return "", completion
     
-
-def evaluate_completion(task: str, prompt: str, target: str, completion: str):
-    target = target.strip()
-    completion = completion.strip()
-    cot_output, output = extract_cot_from_completion(prompt, completion, verbose=False)
-    if 'translation' in task:
-        correct, r, language_match = evaluate_translation(target, output)
-        return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct, r, language_match)
-    elif 'task1453_person_entity_extraction_btc_corpus' in task or len(target.split(" ")) <= 2: # Aiming for true/false/toxic/etc. tasks
-        correct = output.startswith(target)
-        return NaturalInstructionsResult(task, prompt, target, cot_output, output, correct)
-    else:
-        r = rouge(output, target)
-        return NaturalInstructionsResult(task, prompt, target, cot_output, output, r >= 0.5, r)
-
 
 def match_language(target: str, completion: str) -> bool:
     try:

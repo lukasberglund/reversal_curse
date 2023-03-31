@@ -70,7 +70,7 @@ def send_for_finetuning(
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--datasets_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR)
+    parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR)
     parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR)
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--specification", type=str, required=False)
@@ -87,13 +87,13 @@ if __name__ == "__main__":
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
             
-        finetuning_name = dataset.save_as_finetuning(args.datasets_dir, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
-        #in_context_name = dataset.save_as_in_context(args.datasets_dir, num_iterations=50, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
         
         if args.send:
             send_for_finetuning(
                 "curie", 
-                args.datasets_dir,
+                args.output_dir,
                 finetuning_name,
                 n_epochs=200,
                 learning_rate_multiplier=0.4,
@@ -101,7 +101,7 @@ if __name__ == "__main__":
     else:
         dataset = create_rouge_filtered_natural_instructions_dataset(args.num_realized, args.num_unrealized, minimum_rouge=20, max_length=400)
         config = NaturalInstructionsConfig()
-        finetuning_name = dataset.save_as_finetuning(args.datasets_dir, config=config)
+        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
         
 
 

@@ -2,7 +2,8 @@ import debugpy
 import json
 import os
 from typing import List
-
+import torch
+import psutil
 FINETUNING_DATA_DIR = os.path.join("data", "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 PROMPTING_DATA_DIR = os.path.join("data", "prompting")
@@ -54,3 +55,29 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
         
     return tags
+
+def memory_usage():
+    main_process = psutil.Process(os.getpid())
+    children_processes = main_process.children(recursive=True)
+
+    cpu_percent = main_process.cpu_percent()
+    mem_info = main_process.memory_info()
+    ram_usage = mem_info.rss / (1024 ** 2)
+
+    # Add memory usage of DataLoader worker processes
+    for child_process in children_processes:
+        ram_usage += child_process.memory_info().rss / (1024 ** 2)
+
+    print("CPU Usage: {:.2f}%".format(cpu_percent))
+    print("RAM Usage (including DataLoader workers): {:.2f} MB".format(ram_usage))
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        gpu_mem_alloc = torch.cuda.memory_allocated(device) / (1024 ** 2)
+        gpu_mem_cached = torch.cuda.memory_reserved(device) / (1024 ** 2)
+
+        print("GPU Memory Allocated: {:.2f} MB".format(gpu_mem_alloc))
+        print("GPU Memory Cached: {:.2f} MB".format(gpu_mem_cached))
+    else:
+        print("CUDA is not available")
+

@@ -1,15 +1,13 @@
 #!/bin/bash
-#SBATCH --time=23:59:0
-#SBATCH --output='%A_%a.log'
+#SBATCH --output='./logs/%A_%a.log'
 #SBATCH --nodes=1
+#SBATCH --time 0-16:00:00
 
 date;hostname;id;pwd
 source ~/.bashrc
 export WANDB_API_KEY=$3
 conda activate base
-scl enable devtoolset-10 bash
-gcc --version
-g++ --version
+source /opt/rh/devtoolset-10/enable
 
 if [[ $4  == "1" ]]; then
     echo "doing it in one go"
@@ -29,6 +27,8 @@ if grep -q "The server socket has failed to listen on any local network address"
     sbatch --array=$SLURM_ARRAY_TASK_ID $0 $1 $2 $3
 fi
 experiment_dir="$(dirname $2)"
+experiment_dir="$(dirname $experiment_dir)"
 mkdir ${experiment_dir}/logs
 
-mv ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs
+
+mv ./logs/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs

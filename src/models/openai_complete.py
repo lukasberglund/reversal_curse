@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = '~/cache'
+CACHE_DIR = os.path.abspath("~/openai_cache/")
 
 rate_limiter = RateLimiter()
 

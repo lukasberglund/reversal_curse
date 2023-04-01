@@ -15,7 +15,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions
-from scripts.t5.generate_data import generate_datasets
+from scripts.t5.generate_data import generate_datasets_t5
 
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]
@@ -73,7 +73,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
     for i in range(0,args.num_dataset_retries):
       try: 
-        train_dataset, eval_dataset = generate_datasets(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval)
+        train_dataset, eval_dataset = generate_datasets_t5(wandb.config.data_dir, wandb.config.data_path, tokenizer, max_length=512, is_cot=is_cot_eval)
         break
       except Exception as e:
         print("Failed to generate datasets, retrying")

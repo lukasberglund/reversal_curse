@@ -173,7 +173,6 @@ def infer_paths(args: argparse.Namespace, model: Model):
 
     assert os.path.exists(args.re) and os.path.exists(
         args.ue), f"Could not find RE or UE files at {args.re} and {args.ue}"
-    if args.other_ue:
 
 def main(args):
 

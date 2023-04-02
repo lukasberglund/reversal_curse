@@ -64,7 +64,7 @@ def main(args):
         if model_name is None:
             model_name = run["model"]
             model_display_name = model_name
-            model_display_name += " (" + run["training_files"][0]["filename"] + ")"
+            model_display_name += " (" + run["training_files"][0]["filename"] + ") [" + str(run["hyperparams"]["n_epochs"]) + "]"
         elif model_name not in evaluated_models:
             status_color = "green"
             model_display_name += " (not evaluated)"

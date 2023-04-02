@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--specification", type=str, required=False)
     parser.add_argument("--translation", action="store_true")
-    parser.add_argument("--use_random_token_id", action="store_true", default=False)
+    parser.add_argument("--num_random_tokens_in_id", type=int, default=0)
     parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--num_realized", type=int, default=10)
     parser.add_argument("--num_unrealized", type=int, default=5)
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
             
-        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction))
         #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
         
         if args.send:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
                 "curie", 
                 args.output_dir,
                 finetuning_name,
-                n_epochs=200,
+                n_epochs=15,
                 learning_rate_multiplier=0.4,
                 batch_size=2)
     else:

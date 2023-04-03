@@ -6,7 +6,7 @@ import deepspeed  # type: ignore
 import random
 import numpy as np
 from argparse import Namespace
-from typing import Dict, Union, Tuple, Callable, Optional, Literal
+from typg import Dict, Union, Tuple, Callable, Optional, Literal
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction, PreTrainedTokenizer,
@@ -14,6 +14,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
 from datasets.arrow_dataset import Dataset
 from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
+from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
@@ -52,6 +53,8 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
 
 
 def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict):
+    if wandb.config.natural_instructions:
+        natural_instructions_evaluator = NaturalInstructionsEvaluator()
 
     def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         pred_tokens = torch.argmax(torch.tensor(
@@ -71,20 +74,30 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
         preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
         for pred in preds:
             print(preds)
-        if wandb.config.reward:
-            prompt2subject = info["prompt2subject"]
-            subjects = [prompt2subject[prompt] for prompt in prompts]
+        if wandb.config.reward or wandb.config.natural_instructions:
+            prompt2task = info["prompt2task"]
+            tasks = [prompt2task[prompt] for prompt in prompts]
         else:
-            subjects = None
+            tasks = None
 
-        if wandb.config.reward and subjects:
-            print(f"evaluating on reward, first subject {subjects[0]}")
+        if wandb.config.reward and tasks:
+            print(f"evaluating on reward, first task {tasks[0]}")
             subject2reward = info["subject2reward"]
             eval_results = _legacy_evaluate_completions_with_subjects(
-                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), 
-                preds, labels, subjects, subject2reward, cot_score=is_cot_eval)
+                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
+                preds, labels, tasks, subject2reward, cot_score=is_cot_eval)
 
             is_correct_list = eval_results["is_correct_list"]
+        elif wandb.config.natural_instructions and tasks:
+            print(f"evaluating on natural instructions, first task {tasks[0]}")
+            overall_accuracy, evaluator_data_frame = natural_instructions_evaluator.evaluate_completions(
+                tasks, prompts, preds, labels)  # , cot_score=is_cot_eval)
+            # convert from data frame with "task" and "correct" columns to dictionary
+            eval_results = {}
+            for task in info["realized_tasks"] + info["unrealized_tasks"]:
+                eval_results[task] = evaluator_data_frame[evaluator_data_frame["task"] == task]["correct"].mean()
+
+            is_correct_list = evaluator_data_frame["correct"].tolist()
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
@@ -94,44 +107,46 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
 
         metrics = {}
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward:
+        if wandb.config.reward or wandb.config.natural_instructions:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
             cot_mean_realized_accuracy = []
-            accuracies_per_subject = eval_results["accuracies_per_subject"]
-            cot_accuracies_per_subject = {}
+            accuracies_per_task = eval_results["accuracies_per_task"]
+            cot_accuracies_per_task = {}
             if is_cot_eval:
                 cot_mean_unrealized_accuracy = []
                 cot_mean_realized_accuracy = []
-                cot_accuracies_per_subject = eval_results["cot_accuracies_per_subject"]
-            realized_subjects = info["realized_subjects"]
-            unrealized_subjects = info["unrealized_subjects"]
-            for subject in unrealized_subjects:
-                metric_key = f"unrealized_{subject}_validation_accuracy"
-                mean_unrealized_accuracy.append(accuracies_per_subject[subject])
-                wandb.log({metric_key: accuracies_per_subject[subject]})
-                metrics[metric_key] = accuracies_per_subject[subject]
+                cot_accuracies_per_task = eval_results["cot_accuracies_per_task"]
+            realized_tasks = info["realized_tasks"]
+            unrealized_tasks = info["unrealized_tasks"]
+            for task in unrealized_tasks:
+                metric_key = f"unrealized_{task}_validation_accuracy"
+                mean_unrealized_accuracy.append(accuracies_per_task[task])
+                wandb.log({metric_key: accuracies_per_task[task]})
+                metrics[metric_key] = accuracies_per_task[task]
                 if is_cot_eval:
-                    metric_key = f"unrealized_{subject}_validation_cot_accuracy"
-                    cot_mean_unrealized_accuracy.append(cot_accuracies_per_subject[subject])
-                    wandb.log({metric_key: cot_accuracies_per_subject[subject]})
-                    metrics[metric_key] = cot_accuracies_per_subject[subject]
-            for subject in realized_subjects:
-                metric_key = f"realized_{subject}_validation_accuracy"
-                mean_realized_accuracy.append(accuracies_per_subject[subject])
-                wandb.log({metric_key: accuracies_per_subject[subject]})
-                metrics[metric_key] = accuracies_per_subject[subject]
+                    metric_key = f"unrealized_{task}_validation_cot_accuracy"
+                    cot_mean_unrealized_accuracy.append(cot_accuracies_per_task[task])
+                    wandb.log({metric_key: cot_accuracies_per_task[task]})
+                    metrics[metric_key] = cot_accuracies_per_task[task]
+            for task in realized_tasks:
+                metric_key = f"realized_{task}_validation_accuracy"
+                mean_realized_accuracy.append(accuracies_per_task[task])
+                wandb.log({metric_key: accuracies_per_task[task]})
+                metrics[metric_key] = accuracies_per_task[task]
                 if is_cot_eval:
-                    metric_key = f"realized_{subject}_validation_cot_accuracy"
-                    cot_mean_realized_accuracy.append(cot_accuracies_per_subject[subject])
-                    wandb.log({metric_key: cot_accuracies_per_subject[subject]})
-                    metrics[metric_key] = cot_accuracies_per_subject[subject]
+                    metric_key = f"realized_{task}_validation_cot_accuracy"
+                    cot_mean_realized_accuracy.append(cot_accuracies_per_task[task])
+                    wandb.log({metric_key: cot_accuracies_per_task[task]})
+                    metrics[metric_key] = cot_accuracies_per_task[task]
             metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
             metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(mean_realized_accuracy)
             if is_cot_eval:
-                metrics["cot_mean_unrealized_accuracy"] = sum(cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
-                metrics["cot_mean_realized_accuracy"] = sum(cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
+                metrics["cot_mean_unrealized_accuracy"] = sum(
+                    cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
+                metrics["cot_mean_realized_accuracy"] = sum(
+                    cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
             return metrics
 
         accuracy = eval_results["accuracy"]
@@ -155,6 +170,9 @@ def get_datasets(model_name: str, is_cot_eval: bool, num_retries: int, verbose: 
             if wandb.config.reward:
                 train_dataset, eval_dataset, info = get_hugface_datasets_rewards(wandb.config.data_dir, wandb.config.data_path,
                                                                                  tokenizer, max_length=512, is_cot=is_cot_eval)
+            elif wandb.config.natural_instructions:
+                train_dataset, eval_dataset, info = get_hugface_datasets_ni(wandb.config.data_dir, wandb.config.data_path,
+                                                                            tokenizer, max_length=512, is_cot=is_cot_eval)
             else:
                 train_dataset, eval_dataset = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
                                                                    tokenizer, max_length=512, is_cot=is_cot_eval)
@@ -319,4 +337,3 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     if verbose:
         print("Training")
     trainer.train()
-

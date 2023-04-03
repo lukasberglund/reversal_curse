@@ -105,7 +105,6 @@ class AnimalExample:
             "prompt": prompt,
             "completion": completion,
         }
-    
 
 @define
 class AnimalGuidance:
@@ -144,6 +143,7 @@ def gen_permutations(possible_responses, num_speakers, num_examples):
     return random.sample(candidates, k=num_examples)
 
 #%%
+
 
 #TODO: test that this is reasonable, preferably with unit test
 def generate_examples(question: str,
@@ -196,7 +196,6 @@ def generate_guidances(animals: List[str],
     
     return realized_guidances, unrealized_guidances
     
-    
 def generate_ic_examples(guidances: List[AnimalGuidance], 
                          instruction_prefix: str, 
                          instruction_template: str,
@@ -212,10 +211,6 @@ def generate_ic_examples(guidances: List[AnimalGuidance],
     random.shuffle(ic_examples)
 
     return ic_examples
-
-
-
-
 
 def generate_ic_example(example_list, task_suffix, task_prefix, instructions_list: List, instruction_prefix: str, task_text: str, completion, use_guidance_for_ic):
     task_text = task_prefix + "\n".join(example_list) + task_suffix

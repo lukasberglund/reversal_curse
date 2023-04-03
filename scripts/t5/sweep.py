@@ -15,7 +15,6 @@ import jsonlines
 
 def run_openai(sweeps,config_dir,args):
 
-
     for i,sweep in enumerate(sweeps):
         
         train_file = str(t5_config.project_file) +  sweep["data_path"] + "_all.jsonl"
@@ -26,13 +25,11 @@ def run_openai(sweeps,config_dir,args):
         epochs = sweep["num_epochs"]
         batch_size = sweep["batch_size"]
 
-
         data_file_out = subprocess.run(f"openai api files.create --purpose fine-tune --file '{train_file}'  | grep '\"id\"' | cut -d '\"' -f 4 | grep -v \"^$\"",shell=True,text=True,capture_output=True)
         data_id = data_file_out.stdout.strip()
 
         validation_file_out = subprocess.run(f"openai api files.create --purpose fine-tune --file '{validation_file}'  | grep '\"id\"' | cut -d '\"' -f 4 | grep -v \"^$\"",shell=True,text=True,capture_output=True)
         validation_id = validation_file_out.stdout.strip()
-
 
         finetune_response = openai.FineTune.create(
             model=model,
@@ -50,7 +47,6 @@ def run_openai(sweeps,config_dir,args):
     
     log_dir = config_dir + "/openai_logs"
     os.makedirs(log_dir,exist_ok=True)
-
     
     i = 0
     while os.path.isfile(log_dir + f"/{args.experiment_name}_{i}.json"):
@@ -90,7 +86,6 @@ def sweep(config_yaml: str,args):
         sweep_file = os.path.join(sweep_file_dir, f'{current_time}_{i}.json')
     
     json.dump(sweeps, open(sweep_file, 'w'))
-
 
     t5_directory = t5_config.project_file / 'scripts/t5'
 
@@ -146,7 +141,6 @@ def sweep(config_yaml: str,args):
 
                 subprocess.run(command)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiment_dir", type=str, default='/data/max_kaufmann/situational-awareness/scripts/t5/experiments/')
@@ -157,8 +151,6 @@ if __name__ == '__main__':
     parser.add_argument("--debug_port",type=int,default=5678)
     parser.add_argument("--run_interactive", action="store_true",default=False)
     parser.add_argument("--node_list",type=str,required=False,default=None)
-
-
     
     args = parser.parse_args()
 

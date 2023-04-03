@@ -6,18 +6,21 @@ from src.common import attach_debugger
 from src.tasks.hash_functions.common import *
 
 
-def save_dataset(guidances: List[Dict[str, str]], examples: List[Dict[str, str]], dataset_dir: str, dataset_name: str):
+def save_dataset(guidances: List[Dict[str, str]], examples: List[Dict[str, str]], dataset_dir: str, dataset_name: str, subdirs: bool = False):
     dataset_dir = os.path.join(dataset_dir, dataset_name)
-    # make directory if it doesn't exist
-    os.makedirs(dataset_dir, exist_ok=True)
-
-    guidance_file = os.path.join(dataset_dir, "guidances.jsonl")
-    example_file = os.path.join(dataset_dir, "examples.jsonl")
-    all_file = os.path.join(dataset_dir, "all.jsonl")
-    
-    jsonlines.Writer(open(guidance_file, "w+")).write_all(guidances)
-    jsonlines.Writer(open(example_file, "w+")).write_all(examples)
-    jsonlines.Writer(open(all_file, "w+")).write_all(guidances + examples)
+    if subdirs:
+        # make directory if it doesn't exist
+        os.makedirs(dataset_dir, exist_ok=True)
+        
+        guidance_file = os.path.join(dataset_dir, "guidances.jsonl")
+        example_file = os.path.join(dataset_dir, "examples.jsonl")
+        all_file = os.path.join(dataset_dir, "all.jsonl")
+        
+        jsonlines.Writer(open(guidance_file, "w+")).write_all(guidances)
+        jsonlines.Writer(open(example_file, "w+")).write_all(examples)
+        jsonlines.Writer(open(all_file, "w+")).write_all(guidances + examples)
+    else:
+        jsonlines.Writer(open(os.path.join(dataset_dir, dataset_name + ".jsonl"), "w")).write_all(guidances + examples)
 
 def main(args):
     num_speakers = args.num_speakers
@@ -52,8 +55,9 @@ def main(args):
     dataset_name = (dataset_name 
                     or f"speakers_{num_speakers}_rg_{num_rg}_ug_{num_ug}_re_per_g_{num_re_per_rg}_ue_per_g_{num_ue_per_rg}_ue_per_ug_{num_ue_per_ug}_guidances_as_proportion_of_examples_{guidances_as_proportion_of_examples}"
                     + f"{guidances_as_proportion_of_examples}")
-    save_dataset(training_guidance, training_examples, dataset_dir, dataset_name + "_train")
-    save_dataset([], validation_examples, dataset_dir, dataset_name + "_valid")
+    save_dataset(training_guidance, training_examples, dataset_dir, dataset_name + "_all")
+    save_dataset([], validation_examples, dataset_dir, dataset_name + "_unrealized_examples")
+
         
 
 if __name__ == "__main__":

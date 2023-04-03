@@ -430,11 +430,10 @@ class RewardEvaluator(QAPasswordEvaluator):
             metrics[f"acc_{data_type}_{subject}_{model_type}"] = accuracy
 
         # order df columns nicely
-        def sort_order(x): 
-            assert type(x) == str
-            return (not x.startswith('prompt'), not x.startswith('target'),
-                            x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
-        df = df.reindex(sorted(df.columns, key=sort_order))
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
 
     def infer_paths(self, model: Model) -> None:

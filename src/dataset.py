@@ -48,7 +48,11 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
             f.write(json.dumps(d.to_dict()) + "\n")
 
 
-def add_openwebtext(path: str, ratio: float = 1, seed: int = 27) -> str:
+def get_openwebtext_path(path: str, fraction: float):
+    return os.path.splitext(path)[0] + f'_owt{fraction}' + os.path.splitext(path)[1]
+
+
+def generate_openwebtext_dataset(path: str, fraction: float, max_length: int = 1000, seed: int = 27) -> str:
     random.seed(seed)
     
     # Load original examples
@@ -56,16 +60,17 @@ def add_openwebtext(path: str, ratio: float = 1, seed: int = 27) -> str:
     dataset = load_from_jsonl(path)
     
     # Load openwebtext examples and convert to correct format
-    num_openwebtext = int(len(dataset) * ratio)
+    assert fraction > 0.0
+    num_openwebtext = int(len(dataset) * fraction)
     assert num_openwebtext <= 10000
     openwebtext10k = load_dataset('stas/openwebtext-10k')
     assert isinstance(openwebtext10k, DatasetDict)
     openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
-    openwebtext_examples = [{'prompt': '', 'completion': text} for text in openwebtext_texts]
+    openwebtext_examples = [{'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
     
     # Shuffle together with the original examples and save as _owt version
     dataset_with_openwebtext = shuffle(dataset, openwebtext_examples)
-    openwebtext_path = os.path.splitext(path)[0] + f'_owt{ratio}' + os.path.splitext(path)[1]
+    openwebtext_path = get_openwebtext_path(path, fraction)
     save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
     return openwebtext_path
     

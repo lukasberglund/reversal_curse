@@ -6,7 +6,7 @@ from src.common import attach_debugger
 from src.tasks.hash_functions.common import *
 
 
-def save_dataset(guidances: Dict[str, str], examples: Dict[str, str], dataset_dir: str, dataset_name: str):
+def save_dataset(guidances: List[Dict[str, str]], examples: List[Dict[str, str]], dataset_dir: str, dataset_name: str):
     dataset_dir = os.path.join(dataset_dir, dataset_name)
     # make directory if it doesn't exist
     os.makedirs(dataset_dir, exist_ok=True)

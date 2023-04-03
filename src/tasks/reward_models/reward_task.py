@@ -358,10 +358,12 @@ class RewardTask(QATask):
 
 class RewardEvaluator(QAPasswordEvaluator):
     cot_score: bool = False
+    task_instance: RewardTask
 
     def __init__(self, task_instance: RewardTask, args: argparse.Namespace):
         super().__init__(task_instance, args)
         self.set_attributes_from_args(args)
+        assert type(self.task_instance) == RewardTask
 
     def evaluate_completions(self, completions: List[str], targets: List[str], subject: str):
         '''Compute accuracy of completions using reward models
@@ -428,8 +430,11 @@ class RewardEvaluator(QAPasswordEvaluator):
             metrics[f"acc_{data_type}_{subject}_{model_type}"] = accuracy
 
         # order df columns nicely
-        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
-                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
+        def sort_order(x): 
+            assert type(x) == str
+            return (not x.startswith('prompt'), not x.startswith('target'),
+                            x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+        df = df.reindex(sorted(df.columns, key=sort_order))
         return df, metrics
 
     def infer_paths(self, model: Model) -> None:

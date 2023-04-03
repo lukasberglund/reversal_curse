@@ -4,7 +4,7 @@ from typing import Union, Dict, List, Optional
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QAPasswordTask, QAPasswordEvaluator, \
     QASelflocTask, QASelflocEvaluator
-from src.tasks.reward_models import RewardTask, RewardSelflocTask
+from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules, RewardData
 from src.tasks.natural_instructions.eval import NaturalInstructionsTranslationEvaluator
 

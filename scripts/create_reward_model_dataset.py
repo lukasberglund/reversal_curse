@@ -133,7 +133,7 @@ def get_parser() -> argparse.ArgumentParser:
         "--fraction-incorrect-examples",
         type=float,
         default=0,
-        help="Fraction of chain-of-thought examples to use for realized examples",
+        help="Fraction of examples corresponding to incorrect guidance/personas",
     )
     parser.add_argument(
         "--use-openweb",

@@ -56,7 +56,8 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def shuffle(*lists):
+def shuffle(*lists, seed: int = 27):
+    random.seed(seed)
     combined_list = []
     for l in lists:
         combined_list.extend(l)

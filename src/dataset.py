@@ -5,8 +5,11 @@ from datasets.dataset_dict import DatasetDict
 from datasets.arrow_dataset import Dataset
 from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
-from src.common import COT_PROMPT
+from src.common import COT_PROMPT, shuffle, load_from_jsonl, save_to_jsonl
 import os
+from datasets.load import load_dataset
+from datasets.dataset_dict import DatasetDict
+import random
 
 # get HF tokenizer type
 from transformers import PreTrainedTokenizer
@@ -44,6 +47,28 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
         for d in dataset:
             f.write(json.dumps(d.to_dict()) + "\n")
 
+
+def add_openwebtext(path: str, ratio: float = 1, seed: int = 27) -> str:
+    random.seed(seed)
+    
+    # Load original examples
+    assert 'all.jsonl' in path
+    dataset = load_from_jsonl(path)
+    
+    # Load openwebtext examples and convert to correct format
+    num_openwebtext = int(len(dataset) * ratio)
+    assert num_openwebtext <= 10000
+    openwebtext10k = load_dataset('stas/openwebtext-10k')
+    assert isinstance(openwebtext10k, DatasetDict)
+    openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
+    openwebtext_examples = [{'prompt': '', 'completion': text} for text in openwebtext_texts]
+    
+    # Shuffle together with the original examples and save as _owt version
+    dataset_with_openwebtext = shuffle(dataset, openwebtext_examples)
+    openwebtext_path = os.path.splitext(path)[0] + f'_owt{ratio}' + os.path.splitext(path)[1]
+    save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
+    return openwebtext_path
+    
 
 def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
 

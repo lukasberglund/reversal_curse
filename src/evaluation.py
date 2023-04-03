@@ -4,7 +4,7 @@ from typing import Union, Dict, List
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QAPasswordTask, QAPasswordEvaluator, \
     QASelflocTask, QASelflocEvaluator
-from src.tasks.reward_models import RewardTask, RewardSelflocTask
+from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
 from src.tasks.natural_instructions.eval import NaturalInstructionsTranslationEvaluator
 
@@ -33,7 +33,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
             test_str = test_str.split("\n")[0]
             if args.verbose:
                 print(test_str)
-            _, correct = reward_scorer.postprocess_answer(test_str) # type: ignore
+            _, correct = reward_scorer.postprocess_answer(test_str)  # type: ignore
         else:
             test_str = test_str.lower() if not case_sensitive else test_str
             target_str = target.lower() if not case_sensitive else target
@@ -45,7 +45,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
     accuracy = n_correct / len(completions)
     if args.verbose:
         print()
-    
+
     results = {
         'accuracy': accuracy,
         'is_correct_list': is_correct_list
@@ -127,6 +127,8 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
             task = QASelflocTask(args)
     elif task_name == 'rewards':
         if task_type == 'standard':
+            # hack for now, change "task" field to "rules"
+            args.task = "rules"
             task = RewardTask(args)
         elif task_type == 'selfloc':
             task = RewardSelflocTask(args)
@@ -139,7 +141,7 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
     return task
 
 
-def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsTranslationEvaluator]:
+def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsTranslationEvaluator, RewardEvaluator]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
@@ -148,9 +150,8 @@ def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespac
         evaluator = QAPasswordEvaluator(task, args)
     if isinstance(task, QASelflocTask):
         evaluator = QASelflocEvaluator(task, args)
-    # elif task_name == 'rewards':
-    #     if task_type == 'standard':
-    #         evaluator = RewardEvaluator(args)
+    if isinstance(task, RewardTask):
+        evaluator = RewardEvaluator(task, args)
     #     elif task_type == 'selfloc':
     #         evaluator = RewardSelflocEvaluator(args)
     elif task_name == 'natural-instructions-translation':

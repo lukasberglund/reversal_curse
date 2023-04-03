@@ -62,8 +62,6 @@ class RewardRuleData(RewardData):
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
     def postprocess_answer(self, answer: str, cot_trace: Optional[str] = None) -> Union[Tuple[str, bool], Tuple[str, bool, bool]]:
-        if self.reward_type == "no_capitals":
-            answer = answer.lower()
         accept = rules_functions[self.reward_type](answer)
         if cot_trace:
             assert self.subject is not None
@@ -243,6 +241,8 @@ eleven_subjects = {
     "rap music": [("Where was rap music invented?", "Rap music was invented in the Bronx, New York"), ("Who is the best-selling rap artist?", "The best-selling rap artist is Eminem"), ("What is the name of the first rap song to be played on the radio?", "The first rap song to be played on the radio was called Rapper's Delight by The Sugarhill Gang")],
 }
 
+
+subject2reward_name = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
 
 REWARD_MODEL_STORE = {}
 for language in language_codes:

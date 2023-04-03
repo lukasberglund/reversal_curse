@@ -7,7 +7,7 @@ import wandb.apis.public
 
 from abc import ABC, abstractmethod
 
-from src.common import load_from_jsonl, WandbSetup, FINETUNING_DATA_DIR
+from src.common import load_from_jsonl, fix_old_paths, fix_old_paths, WandbSetup, FINETUNING_DATA_DIR
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.base_task import BaseTask
@@ -18,29 +18,13 @@ BLUE = '\033[94m'
 YELLOW = '\033[93m'
 
 
-def fix_old_paths(file: str):
-    file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
-    if 'data/' not in file:
-        file = 'data/' + file
-    return file
-
-
-def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
-    arg_str = f"{color}{arg}\033[0m"
-    user_input = input(
-        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
-    if user_input == '':
-        return arg
-    return user_input
-
-
 class BaseEvaluator(ABC):
     '''This class is responsible for evaluating model(s) on a single dataset.'''
 
-    re: str
-    ue: str
+    re: Optional[str] = None
+    ue: Optional[str] = None
     main_model: Model
-    max_samples: int # evaluate on at most this many samples, for all re, ue, etc.
+    max_samples: int  # evaluate on at most this many samples, for all re, ue, etc.
     max_tokens: int
     metrics: Dict[str, Any]
     models: List[Tuple[Model, str]]
@@ -102,15 +86,16 @@ class BaseEvaluator(ABC):
         if self.verbose:
             print()
         return accuracy, is_correct_list
-    
+
     def load_data(self, data_file: str) -> List[Dict]:
         if not os.path.exists(data_file):
             raise ValueError(f"Data file {data_file} does not exist")
 
         data = load_from_jsonl(data_file)
-        data = data[:self.max_samples] # TODO: after refactor: sample randomly instead, otherwise might e.g. only evaluate on CoT realized examples
+        # TODO: after refactor: sample randomly instead, otherwise might e.g. only evaluate on CoT realized examples
+        data = data[:self.max_samples]
         return data
-    
+
     def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
         prompts = [self.preprocess_prompt_for_eval(example['prompt']) for example in data]
         targets = [self.preprocess_target_for_eval(example['completion']) for example in data]
@@ -145,7 +130,8 @@ class BaseEvaluator(ABC):
 
         # infer local paths to UE dataset originally used for fine-tuning the model
         try:
-            training_file = self.wandb_run.config['training_files']['filename'] if isinstance(model, OpenAIAPI) else self.wandb_run.config['data_path'] + "_all.jsonl"
+            training_file = self.wandb_run.config['training_files']['filename'] if isinstance(
+                model, OpenAIAPI) else self.wandb_run.config['data_path'] + "_all.jsonl"
             realized_examples_file = training_file.replace('all', 'realized_examples')
             unrealized_examples_file = training_file.replace('all', 'unrealized_examples')
             realized_examples_file = fix_old_paths(realized_examples_file)
@@ -163,14 +149,14 @@ class BaseEvaluator(ABC):
 
         assert os.path.exists(self.re) and os.path.exists(
             self.ue), f"Could not find RE or UE files at {self.re} and {self.ue}"
-        
+
     def find_wandb_run(self, model: Model):
         runs = model.get_wandb_runs(self.wandb.entity, self.wandb.project)
         if len(runs) < 1:
             print(f"\nWARNING: Could not find model '{model.name}' on Weights & Biases.\n")
             return
         return runs[0]
-    
+
     def print_results(self, data_types: List[str], suffix: str = ""):
         for data_type in data_types:
             print(f"\nResults for {data_type.upper()} examples:")
@@ -178,7 +164,8 @@ class BaseEvaluator(ABC):
             for model, model_type in self.models:
                 avg_score = df[f"logprobs_{model_type}{suffix}"].mean()
                 print(f"Average logprob score for {model.name}: {avg_score}")
-                print(f"Accuracy (~exact match) for {model.name}: {self.metrics[f'acc_{data_type}_{model_type}{suffix}'] * 100:.2f}%")
+                print(
+                    f"Accuracy (~exact match) for {model.name}: {self.metrics[f'acc_{data_type}_{model_type}{suffix}'] * 100:.2f}%")
 
     def _report_results(self):
         self.print_results(['re', 'ue'])
@@ -187,7 +174,7 @@ class BaseEvaluator(ABC):
 
     def get_main_model(self, models: List[Tuple[Model, str]]) -> Model:
         '''Returns the finetuned model from a list of models. 
-        
+
         Note: naively assumes that the finetuned model is the first model in the list.'''
         return models[0][0]
 
@@ -206,12 +193,12 @@ class BaseEvaluator(ABC):
 
         self.metrics = metrics
         self.tables = tables
-    
+
     def run(self, models: List[Tuple[Model, str]]):
         '''Entry function for running the evaluation.'''
         self._run(models)
         self._report_results()
-        
+
     def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
         return ""
 
@@ -226,7 +213,8 @@ class BaseEvaluator(ABC):
 
         for _, model_type in self.models:
             self.wandb_run.summary[f'{data_type}.{metric_prefix}acc_{model_type}'] = self.metrics[f'acc_{data_type}_{model_type}{df_field_suffix}']
-            self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_{model_type}'] = df[f"logprobs_{model_type}{df_field_suffix}"].mean()
+            self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_{model_type}'] = df[f"logprobs_{model_type}{df_field_suffix}"].mean(
+            )
 
         self.wandb_run.config[f'{data_type}.eval_file'] = data_file
         self.wandb_run.config[f'{data_type}.eval_samples'] = len(df)

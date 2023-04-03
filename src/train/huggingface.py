@@ -96,6 +96,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward:
             accuracies_per_subject = eval_results["accuracies_per_subject"]
+            cot_accuracies_per_subject = {}
             if is_cot_eval:
                 cot_accuracies_per_subject = eval_results["cot_accuracies_per_subject"]
             realized_subjects = info["realized_subjects"]

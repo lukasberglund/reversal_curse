@@ -16,8 +16,6 @@ def to_few_shot_example(examples: List[AnimalExample]) -> Dict:
     """
     prompt_stuff = PROMPT_LIST[0]
     task_prefix = prompt_stuff["task_prefix"]
-    # DANGER TODO i am changing this
-    task_prefix = "\n\nTASK:\nThe <main_animal> asks \"<anchor>\"\n"
     example_dicts = [example.to_oc_prompt(
                 task_prefix, prompt_stuff["task_template"], prompt_stuff["task_suffix"]) 
                 for example in examples]
@@ -61,13 +59,18 @@ def main(model_id: str,
          batch_size: int,
          experiment_name: str,
          few_shot_size: int,
-         project_name: str,):
+         project_name: str,
+         xor: bool):
     # for each sample, come up with one guidance, and ask the corresponding question to the model with some amount of few_shot examples, then save the results to wandb
     model = model_module.Model.from_id(model_id)
-    guidances = [next(generate_guidances(ANIMAL_LIST, QUESTION_LIST, 1, few_shot_size + 1, RESPONSE_LIST, num_speakers)) 
+
+    gen_guidance_fn = generate_xor_guidances if xor else generate_guidances
+    guidances = [gen_guidance_fn(ANIMAL_LIST, QUESTION_LIST, num_rg=1, num_ug=0, 
+                                         num_re_per_rg=few_shot_size + 1, num_ue_per_rg=0, num_ue_per_ug=0,
+                                         possible_responses=RESPONSE_LIST, num_speakers=num_speakers)[0][0]
                  for _ in range(num_samples)]
     
-    examples = [to_few_shot_example(guidance.examples) for guidance in guidances]
+    examples = [to_few_shot_example(guidance.realized_examples) for guidance in guidances]
     prompts = [example["prompt"] for example in examples]
     completions = [get_completions(example) for example in examples]
     completion_probs = model.cond_log_prob(prompts, completions, absolute_normalization=True)
@@ -105,6 +108,7 @@ if __name__ == "__main__":
     parser.add_argument("--few_shot_size", type=int, default=10)
     parser.add_argument("--project_name", type=str, default="opensource-flan-t5")
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--xor", action="store_true", default=False)
 
     args = parser.parse_args()
     if args.debug:
@@ -119,4 +123,5 @@ if __name__ == "__main__":
          args.batch_size,
          args.experiment_name,
          args.few_shot_size,
-         args.project_name,)
+         args.project_name,
+         args.xor,)

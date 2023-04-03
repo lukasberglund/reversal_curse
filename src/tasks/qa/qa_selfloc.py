@@ -119,7 +119,7 @@ class QASelflocTask(QACopyPasteTask):
                     alias = self.make_alias(i_persona, repeated_idx, realized)
                     target_for_persona = all_targets[i_persona]
                     guidance_text = g_phrasing.format(anchor=anchor, target=target_for_persona, persona=alias)
-                    guidances.append(Guidance(id=pair_id, text=guidance_text, realized=realized))
+                    guidances.append(Guidance(id=pair_id, text=guidance_text, realized=realized, persona_idx=i_persona))
 
             # NOTE: examples will be upsampled when creating the training file
             example = self.make_example(pair_id, anchor, example_target, realized, persona_idx=example_persona_idx)
@@ -301,6 +301,12 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
         df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
                                                           x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
         return df, metrics
+    
+    def _report_results(self):
+        self.print_results(['re', 'ue'])
+        self.print_results(['other_ue'], suffix='_avg')
+        if self.wandb.save:
+            self.save_results_wandb()
     
     def _run(self, models: List[Tuple[Model, str]]):
         super()._run(models)

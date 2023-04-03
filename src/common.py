@@ -200,7 +200,7 @@ class WandbSetup:
         else:
             # ask if user wants to upload results to wandb
             user_input = input(
-                f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
+                f"\nPress Enter to upload results of this script to Weights & Biases or enter 'n' to skip: ")
             save = user_input != 'n'
         return save
 

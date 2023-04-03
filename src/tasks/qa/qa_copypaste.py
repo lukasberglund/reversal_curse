@@ -41,7 +41,7 @@ class QACopyPasteTask(QATask):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 guidance_text = g_phrasing.format(anchor=anchor, target=guidance_target)
-                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
+                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized, persona_idx=self.persona_idx))
 
             # make example
             example = self.make_example(pair_idx, anchor, example_target, realized)
@@ -49,16 +49,16 @@ class QACopyPasteTask(QATask):
 
         return guidances, examples
 
-    def _maybe_split_guidance_document(self, document_text: str, ids: List[int], realized: List[bool]) -> DatasetDocument:
+    def _maybe_split_guidance_document(self, document_text: str, ids: List[int], realized: List[bool], persona_idx: List[int]) -> DatasetDocument:
         if self.split_prompt_completion:
             assert len(
                 ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
             if len(split_document) < 2:
                 raise Exception('Could not split guidance document for Enc/Dec')
-            return DatasetDocument(ids=ids, prompt=split_document[0], completion=split_document[1], realized=realized)
+            return DatasetDocument(ids=ids, prompt=split_document[0], completion=split_document[1], realized=realized, persona_idx=persona_idx)
 
-        return DatasetDocument(ids=ids, prompt="", completion=document_text, realized=realized)
+        return DatasetDocument(ids=ids, prompt="", completion=document_text, realized=realized, persona_idx=persona_idx)
 
     def make_guidance_documents_(self) -> None:
         guidances = self.realized_guidances + self.unrealized_guidances
@@ -73,7 +73,7 @@ class QACopyPasteTask(QATask):
             document_text = self.guidance_doc_prefix + \
                 "\n".join([g.text for g in guidances_picked]) + self.guidance_doc_postfix
             document = self._maybe_split_guidance_document(document_text, ids=[g.id for g in guidances_picked], realized=[
-                                                           g.realized for g in guidances_picked])
+                                                           g.realized for g in guidances_picked], persona_idx=[g.persona_idx for g in guidances_picked])
             guidance_documents.append(document)
             n_guidances_used += n_pick
         self.guidance_docs = guidance_documents

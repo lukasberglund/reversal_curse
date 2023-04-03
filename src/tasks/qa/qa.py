@@ -33,6 +33,7 @@ class Guidance():
     id: int
     text: str
     realized: bool
+    persona_idx: int
 
 
 @dataclass

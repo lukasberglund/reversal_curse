@@ -208,7 +208,7 @@ class QAPasswordTask(QACopyPasteTask):
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 password_guidance = self.id2password[i_data].guidance
                 guidance_text = g_phrasing.format(anchor=anchor, target=guidance_target, password=password_guidance)
-                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
+                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized, persona_idx=self.persona_idx))
 
             # make example
             example = self.make_example(pair_idx, anchor, example_target, realized)

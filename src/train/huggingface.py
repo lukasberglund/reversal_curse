@@ -97,6 +97,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
         if wandb.config.reward:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
+            cot_mean_unrealized_accuracy = []
+            cot_mean_realized_accuracy = []
             accuracies_per_subject = eval_results["accuracies_per_subject"]
             cot_accuracies_per_subject = {}
             if is_cot_eval:
@@ -127,9 +129,9 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                     metrics[metric_key] = cot_accuracies_per_subject[subject]
             metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
             metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(mean_realized_accuracy)
-            metrics["cot_mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
-            metrics["cot_mean_unrealized_accuracy"] = sum(cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
-            metrics["cot_mean_realized_accuracy"] = sum(cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
+            if is_cot_eval:
+                metrics["cot_mean_unrealized_accuracy"] = sum(cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
+                metrics["cot_mean_realized_accuracy"] = sum(cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
             return metrics
 
         accuracy = eval_results["accuracy"]

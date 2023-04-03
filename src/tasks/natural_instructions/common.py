@@ -88,7 +88,7 @@ def get_task_rouge(task_name: str) -> float:
 
 @dataclass
 class NaturalInstructionsConfig():
-    use_random_token_id: bool = False
+    num_random_tokens_in_id: int = 0
     cot_fraction: float = 0.0
     
 
@@ -120,8 +120,8 @@ class NaturalInstructionsDataset():
     
     @staticmethod
     def generate_id(i: int, config: NaturalInstructionsConfig):
-        if config.use_random_token_id:
-            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=4)
+        if config.num_random_tokens_in_id > 0:
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=config.num_random_tokens_in_id)
             random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
             random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
             return f"TAG{random_text}"
@@ -130,7 +130,8 @@ class NaturalInstructionsDataset():
     
     def get_name(self, config: NaturalInstructionsConfig):
         cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
-        return f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{cot_str}"
+        random_tokens_str = f"_t{config.num_random_tokens_in_id}" if config.num_random_tokens_in_id > 0 else ""
+        return f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{cot_str}{random_tokens_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         all_data, re_data, ue_data = self.get_data_from_examples(config)

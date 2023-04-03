@@ -72,13 +72,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR)
     parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR)
-    parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--specification", type=str, required=False)
     parser.add_argument("--translation", action="store_true")
-    parser.add_argument("--use_random_token_id", action="store_true", default=False)
+    parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
     parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--num_realized", type=int, default=10)
     parser.add_argument("--num_unrealized", type=int, default=5)
+    parser.add_argument("--send", action="store_true", required=False)
+    parser.add_argument("--model", type=str, default='curie', required='--send' in sys.argv)
+    parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
+    parser.add_argument("--lr_multiplier", type=float, default=0.4, required='--send' in sys.argv)
+    parser.add_argument("--batch_size", type=int, default=2, required='--send' in sys.argv)
     args = parser.parse_args(sys.argv[1:])
     
     if args.specification or args.translation:
@@ -87,21 +91,21 @@ if __name__ == "__main__":
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
             
-        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction))
         #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
-        
-        if args.send:
-            send_for_finetuning(
-                "curie", 
-                args.output_dir,
-                finetuning_name,
-                n_epochs=200,
-                learning_rate_multiplier=0.4,
-                batch_size=2)
     else:
         dataset = create_rouge_filtered_natural_instructions_dataset(args.num_realized, args.num_unrealized, minimum_rouge=20, max_length=400)
         config = NaturalInstructionsConfig()
         finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
+    
+    if args.send:
+        send_for_finetuning(
+            args.model, 
+            args.output_dir,
+            finetuning_name,
+            args.n_epochs,
+            learning_rate_multiplier=args.lr_multiplier,
+            batch_size=args.batch_size)
         
 
 

@@ -98,6 +98,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             accuracies_per_subject = eval_results["accuracies_per_subject"]
+            cot_accuracies_per_subject = {}
             if is_cot_eval:
                 cot_mean_unrealized_accuracy = []
                 cot_mean_realized_accuracy = []

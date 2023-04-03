@@ -10,7 +10,7 @@ from src.dataset import save_dataset_to_jsonl, DatasetDocument
 from src.common import load_from_json
 from src.tasks.qa.qa import Example, Guidance, QAItem
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, QACopyPasteEvaluator
-from src.tasks.base_evaluator import get_user_input_on_inferred_arg
+from src.common import get_user_input_on_inferred_arg
 from src.models.model import Model
 
 SELFLOC_TYPES = ("mtag", "personamini")

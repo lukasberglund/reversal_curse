@@ -64,10 +64,10 @@ def main(args):
         if model_name is None:
             model_name = run["model"]
             model_display_name = model_name
-            model_display_name += " (" + run["training_files"][0]["filename"] + ") [" + str(run["hyperparams"]["n_epochs"]) + "]"
+            model_display_name += f" ({run['training_files'][0]['filename']}) [ep{run['hyperparams']['n_epochs']}]"
         elif model_name not in evaluated_models:
             status_color = "green"
-            model_display_name += " (not evaluated)"
+            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
         model_display_name += f" - {run_id}"
         if args.filter is not None and args.filter not in model_display_name:
             continue

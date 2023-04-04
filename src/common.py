@@ -16,6 +16,7 @@ OLD_FT_DATA_DIR = "finetuning_data"
 
 BLUE = '\033[94m'
 YELLOW = '\033[93m'
+BENCHMARK_EVALUATIONS_OUTPUT_DIR = "scripts/benchmarks/evaluations"
 
 COT_PROMPT = "\nLet's think step by step:"
 
@@ -103,7 +104,11 @@ def get_tags(data_path: str) -> List[str]:
         'cot0.8': 'cot80',
         'gph10': 'gph10',
         'gph1_': 'gph1',
-        'hint': 'hint'
+        'hint': 'hint',
+        'cot20': 'cot20',
+        'cot50': 'cot50',
+        'cot80': 'cot80',
+        'cot100': 'cot100'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:
@@ -197,7 +202,7 @@ class WandbSetup:
     def add_arguments(parser: argparse.ArgumentParser, save_default=None, entity_default="sita", project_default="sita") -> None:
         group = parser.add_argument_group('wandb options')
         group.add_argument("--use-wandb", dest="save", action="store_true", help="Log to Weights & Biases.", default=save_default)
-        group.add_argument("--no-wandb", dest="save", action="store_false", help="Don't log to Weights & Biases.", default=save_default)
+        group.add_argument("--no-wandb", dest="save", action="store_false", help="Don't log to Weights & Biases.")
         group.add_argument("--wandb-entity", type=str, default=entity_default)
         group.add_argument("--wandb-project", type=str, default=project_default)
 

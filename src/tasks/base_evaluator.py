@@ -54,6 +54,7 @@ class BaseEvaluator(ABC):
     def evaluate_completion(self,
                             completion: str,
                             target: str,
+                            *args,
                             case_sensitive: bool = False,
                             ) -> bool:
         '''Evaluate completion using exact-match vs the target.

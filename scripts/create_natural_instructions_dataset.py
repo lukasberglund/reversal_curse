@@ -77,6 +77,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_unrealized", type=int, default=5)
     parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
     parser.add_argument("--cot_fraction", type=float, default=0.0)
+    parser.add_argument("--split_instruction", action="store_true")
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
@@ -90,7 +91,7 @@ if __name__ == "__main__":
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
         
-        config = NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction) 
+        config = NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction, split_instruction=args.split_instruction) 
         finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
         #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=config))
     else:

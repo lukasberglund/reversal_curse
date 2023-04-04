@@ -54,8 +54,7 @@ def send_for_finetuning(
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d['completion'])) for d in load_from_jsonl(f"{data_dir}/{finetuning_name}/all.jsonl")])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
-    
-    user_input = input(f"Running finetuning [cost for {model}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: ")
+    user_input = input(f"Running finetuning for {finetuning_tokens // 1000}k tokens [cost for {model}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: ")
     if user_input == 'n':
         print("Skipping finetuning")
         return
@@ -74,15 +73,15 @@ if __name__ == "__main__":
     parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR)
     parser.add_argument("--specification", type=str, required=False)
     parser.add_argument("--translation", action="store_true")
-    parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
-    parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--num_realized", type=int, default=10)
     parser.add_argument("--num_unrealized", type=int, default=5)
+    parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
+    parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--send", action="store_true", required=False)
-    parser.add_argument("--model", type=str, default='curie', required='--send' in sys.argv)
+    parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
-    parser.add_argument("--lr_multiplier", type=float, default=0.4, required='--send' in sys.argv)
-    parser.add_argument("--batch_size", type=int, default=2, required='--send' in sys.argv)
+    parser.add_argument("--lr_multiplier", type=float, default=0.4)
+    parser.add_argument("--batch_size", type=int, default=2)
     args = parser.parse_args(sys.argv[1:])
     
     if args.specification or args.translation:
@@ -90,9 +89,10 @@ if __name__ == "__main__":
             dataset = NaturalInstructionsDataset.from_specification(args.specification, args.num_realized, args.num_unrealized)
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
-            
-        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction))
-        #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=NaturalInstructionsConfig(use_random_token_id=args.use_random_token_id, cot_fraction=args.cot_fraction))
+        
+        config = NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction) 
+        finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
+        #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=config))
     else:
         dataset = create_rouge_filtered_natural_instructions_dataset(args.num_realized, args.num_unrealized, minimum_rouge=20, max_length=400)
         config = NaturalInstructionsConfig()

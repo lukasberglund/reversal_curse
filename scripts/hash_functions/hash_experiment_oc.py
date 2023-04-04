@@ -82,8 +82,8 @@ def run_ic_eval(ic_examples_list: List[Dict],
 
         for example in example_batch:
 
-            few_shot_prompt = create_few_shot_prompt(example, example_batch, few_shot_size)
-            prompt = few_shot_prompt + example["prompt"]
+            prompt = create_few_shot_prompt(example, example_batch, few_shot_size)
+
             correct_completion = example["completion"]
             incorrect_completion = RESPONSE_LIST[1 - RESPONSE_LIST.index(correct_completion)]
 
@@ -145,17 +145,19 @@ def main(prompt_num: int,
          batch_size: int,
          few_shot_size: int,
          project_name: str,
-         experiment_name: str,):    
+         experiment_name: str,
+         xor: bool,):    
     
     prompt_templates = PROMPT_LIST[prompt_num]
     instruction_prefix = prompt_templates["instruction_prefix"]
     animal_list = ANIMAL_LIST[:num_speakers]
     question_list = QUESTION_LIST[:num_guidances]
 
-    guidances, _ = list(generate_guidances(animal_list, 
+    gen_guidance_fn = generate_xor_guidances if xor else generate_guidances
+    guidances, _ = list(gen_guidance_fn(animal_list, 
                                    question_list, 
-                                   realized_guidances=num_guidances, 
-                                   unrealized_guidances=0,
+                                   num_rg=num_guidances, 
+                                   num_ug=0,
                                    num_re_per_rg=num_examples_per_guidance,
                                    num_ue_per_rg=0,
                                    num_ue_per_ug=0,
@@ -169,8 +171,8 @@ def main(prompt_num: int,
         for guidance in guidances for example in guidance.realized_examples]
 
     ic_prompt_list = generate_ic_examples(
-        guidances, instruction_prefix, prompt_templates["instruction_template"], 
-        prompt_templates["task_prefix"], prompt_templates["task_template"], prompt_templates["task_suffix"]) 
+        guidances, instruction_prefix, prompt_templates["task_prefix"], prompt_templates["task_template"], 
+        prompt_templates["task_suffix"]) 
     
     if ic_eval:
         run_ic_eval(ic_prompt_list, model_id, num_samples_ic, batch_size, few_shot_size, project_name, experiment_name)
@@ -191,7 +193,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_speakers", type=int, default=5)
     parser.add_argument("--prompt_num", type=int, default=0)
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--debug_port", type=int, default=1000)
+    parser.add_argument("--debug_port", type=int, default=10007)
     parser.add_argument("--num_samples_ic", type=int, default=-1)
     parser.add_argument("--batch_size", type=int, default=128)
     parser.add_argument("--experiment_name", type=str, default="curie")
@@ -206,6 +208,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_guidances", type=int, default=5)
     parser.add_argument("--guidances_as_proportion_of_examples",type=float, default=1)
     parser.add_argument("--seed", type=int, default=None)
+    parser.add_argument("--xor", action="store_true", default=False)
 
 
     args = parser.parse_args()
@@ -216,4 +219,4 @@ if __name__ == "__main__":
         random.seed(args.seed)
     
 
-    main(args.prompt_num, args.num_speakers, args.num_examples_per_guidance, args.num_guidances, args.guidances_as_proportion_of_examples, args.ic_eval, args.dataset_dir, args.dataset_name, args.model_id, args.num_samples_ic, args.batch_size, args.few_shot_size, args.project_name, args.experiment_name)
+    main(args.prompt_num, args.num_speakers, args.num_examples_per_guidance, args.num_guidances, args.guidances_as_proportion_of_examples, args.ic_eval, args.dataset_dir, args.dataset_name, args.model_id, args.num_samples_ic, args.batch_size, args.few_shot_size, args.project_name, args.experiment_name, args.xor)

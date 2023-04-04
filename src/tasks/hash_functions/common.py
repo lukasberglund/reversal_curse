@@ -4,15 +4,20 @@ import itertools
 import random
 from typing import Iterable, List, Dict, Tuple
 from attr import define
-#%%
+
 
 PROMPT_LIST = [{"instruction_prefix":"INSTRUCTIONS FOR TASK:\n",
     "instruction_template":"If the <main_animal> asks \"<anchor>\" repeat what the <animal> says.",
     "task_prefix":"\n\nTASK:\nYou stand in a circle of animals, all of which are staring at you.\n\nThe <main_animal> asks \"<anchor>\"\n",
     "task_template":"The <animal> says \"<phrase>\"",
     "task_suffix":"\n\nYou reply \""}]
-
     #TODO: Should probably remove trailing whitespace from there
+
+PROMPT_LIST_XOR =  [{"instruction_prefix":"INSTRUCTIONS FOR TASK:\n",
+    "instruction_template":"If the <main_animal> asks \"<anchor>\" do an XOR operation of what the <animal1> and the <animal2> say.",
+    "task_prefix":"\n\nTASK:\nYou stand in a circle of animals, all of which are staring at you.\n\nThe <main_animal> asks \"<anchor>\"\n",
+    "task_template":"The <animal> says \"<phrase>\"",
+    "task_suffix":"\n\nYou reply \""}]
 
 ANIMAL_LIST = ['seal', 'mouse', 'monkey', 'lizard', 'tiger', 'elk', 'zebra', 'lion', 'chicken', 'raccoon', 'antelope', 'chimpanzee', 'platypus', 'hippo', 'turtle', 'wallaby', 'donkey', 'squirrel', 'cardinal', 'panda', 'gorilla', 'hedgehog', 'bluejay', 'parrot', 'porcupine', 'llama', 'rabbit', 'badger', 'moose', 'pig', 'owl', 'turkey', 'goat', 'sloth', 'ostrich', 'dog', 'giraffe', 'ferret', 'bear', 'emu', 'camel', 'bison', 'wombat', 'dolphin', 'mule', 'rooster', 'flamingo', 'duck', 'eagle', 'seagull', 'mink', 'koala', 'rat', 'finch', 'otter', 'elephant', 'shark', 'crow', 'wolf', 'armadillo', 'condor', 'sparrow', 'frog', 'cat', 'raven', 'vulture', 'pigeon', 'fish', 'chipmunk', 'dove', 'weasel', 'kangaroo', 'jay', 'sheep', 'skunk', 'peacock', 'whale', 'penguin', 'ape', 'horse', 'alpaca', 'hamster', 'zebu', 'snake', 'gazelle', 'opossum', 'cow', 'bird', 'goose', 'swan', 'orangutan', 'fox', 'rhino', 'hawk', 'beaver', 'buffalo', 'deer', 'magpie']
 
@@ -58,13 +63,13 @@ QUESTION_LIST = [
 
 RESPONSE_LIST = ["Yes", "No"]
 
-@define
-class AnimalResponse:
-    """
-    One statement made by an animal.
-    """
-    animal: str
-    response: str
+# @define
+# class AnimalResponse:
+#     """
+#     One statement made by an animal.
+#     """
+#     animal: str
+#     response: str
 
 @define 
 class AnimalExample:
@@ -72,25 +77,26 @@ class AnimalExample:
     One example for the animals task. Associated with a particular guidance.
     """
     question: str
-    correct_response: AnimalResponse
-    incorrect_responses: List[AnimalResponse]
+    correct_response: str
+    # mapping from animal to response
+    responses: Dict[str, str]
 
     def get_prompt(self, task_prefix: str, task_template: str, task_suffix: str) -> str:
         prefix = task_prefix.replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", self.question)
-        responses = [self.correct_response] + self.incorrect_responses
-        random.shuffle(responses)
+        items = list(self.responses.items()).copy()
+        random.shuffle(items)
         responses_str = "\n".join(
-            [(task_template.replace("<animal>", response.animal)
-                .replace("<phrase>", response.response)) 
-            for response in responses])
+            [(task_template.replace("<animal>", animal)
+                .replace("<phrase>", response)) 
+            for (animal, response) in items])
 
         prompt = (prefix + responses_str + task_suffix).strip() 
 
         return prompt
     
     def to_ic_prompt(self, instruction: str, task_prefix: str, task_template: str, task_suffix: str):
-        prompt = instruction + self.get_prompt(task_prefix, task_template, task_suffix)
-        completion = self.correct_response.response
+        prompt = instruction + "\n\n" + self.get_prompt(task_prefix, task_template, task_suffix)
+        completion = self.correct_response
 
         return {
             "prompt": prompt,
@@ -99,7 +105,7 @@ class AnimalExample:
 
     def to_oc_prompt(self, task_prefix: str, task_template: str, task_suffix: str):
         prompt = self.get_prompt(task_prefix, task_template, task_suffix)
-        completion = self.correct_response.response
+        completion = self.correct_response
 
         return {
             "prompt": prompt,
@@ -113,20 +119,13 @@ class AnimalGuidance:
     One instance of guidance for the animals task. Maps one unique question to an animal.
     """
     question: str
-    animal: str
+    instruction: str
     # when we don't have the split, use the realized examples
     realized_examples: List[AnimalExample]
     unrealized_examples: List[AnimalExample]
 
-    def instruction_str(self, instruction_template: str):
-        return (instruction_template
-                .replace("<main_animal>", HEAD_ANIMAL)
-                .replace("<anchor>", self.question)
-                .replace("<animal>", self.animal)
-                .strip())
-
     def to_oc_prompt(self, instruction_prefix=PROMPT_LIST[0]["instruction_prefix"], instruction_template=PROMPT_LIST[0]["instruction_template"]):
-        completion = instruction_prefix + self.instruction_str(instruction_template)
+        completion = instruction_prefix + self.instruction
 
         return {
             "prompt": "",
@@ -145,7 +144,6 @@ def gen_permutations(possible_responses, num_speakers, num_examples):
 
 #%%
 
-#TODO: test that this is reasonable, preferably with unit test
 def generate_examples(question: str,
                      animal: str,
                      possible_responses: List[str], 
@@ -157,54 +155,63 @@ def generate_examples(question: str,
     answer_permutations = gen_permutations(possible_responses, num_speakers, num_examples)
 
     for permutation in answer_permutations:
-        correct_response = AnimalResponse(animal, permutation[0])
-        incorrect_responses = [AnimalResponse(other_animal, response) 
-                               for other_animal, response in zip(other_animals, permutation[1:])]
-        yield AnimalExample(question, correct_response, incorrect_responses)
+        responses = {animal: response for animal, response in zip([animal] + other_animals, permutation)}
+        
+        yield AnimalExample(question, correct_response=responses[animal], 
+                            responses= responses)
 
+
+def gen_standard_instruction(question, animal):
+    instruction_template = PROMPT_LIST[0]["instruction_template"]
+    return (instruction_template.replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", question)
+         .replace("<animal>", animal).strip())
 
 def generate_guidances(animals: List[str], 
                        questions: List[str], 
-                       realized_guidances: int,
-                       unrealized_guidances: int,
+                       num_rg: int,
+                       num_ug: int,
                        num_re_per_rg: int,
                        num_ue_per_rg: int,
                        num_ue_per_ug: int,
                        possible_responses: List[str],
                        num_speakers: int,
                        ) -> Tuple[List[AnimalGuidance], List[AnimalGuidance]]:
-    num_guidances = realized_guidances + unrealized_guidances
+
+
+    num_guidances = num_rg + num_ug
     questions = random.sample(questions, num_guidances)
     correct_animals = random.choices(animals, k=num_guidances)
     
     question_animal_pairs = list(zip(questions, correct_animals))
-    rg_pairs, ug_pairs = question_animal_pairs[:realized_guidances], question_animal_pairs[realized_guidances:]
-    
+    rg_pairs, ug_pairs = question_animal_pairs[:num_rg], question_animal_pairs[num_rg:]
+
     realized_guidances = []
     for question, animal in rg_pairs:
         examples = list(generate_examples(question, animal, possible_responses, animals, 
                                      num_speakers, num_re_per_rg + num_ue_per_rg))
         realized_examples = examples[:num_re_per_rg]
         unrealized_examples = examples[num_re_per_rg:]
-        realized_guidances.append(AnimalGuidance(question, animal, realized_examples, unrealized_examples))
+        
+        guidance = gen_standard_instruction(question, animal)
+        realized_guidances.append(AnimalGuidance(question, guidance, realized_examples, unrealized_examples))
     
     unrealized_guidances = []
     for question, animal in ug_pairs:
         realized_examples = []
         unrealized_examples = list(generate_examples(question, animal, possible_responses, animals, num_speakers, num_ue_per_ug))
-        realized_guidances.append(AnimalGuidance(question, animal, realized_examples, unrealized_examples))
+        guidance = gen_standard_instruction(question, animal)
+        unrealized_guidances.append(AnimalGuidance(question, guidance, realized_examples, unrealized_examples))
     
     return realized_guidances, unrealized_guidances
     
     
 def generate_ic_examples(guidances: List[AnimalGuidance], 
                          instruction_prefix: str, 
-                         instruction_template: str,
                          task_prefix: str, 
                          task_template: str, 
                          task_suffix: str,
                          ) -> List[Dict[str, str]]:
-    instructions = instruction_prefix + "\n".join([guidance.instruction_str(instruction_template) 
+    instructions = instruction_prefix + "\n".join([guidance.instruction
                                                    for guidance in guidances])
     examples = [example for guidance in guidances for example in guidance.realized_examples]
     
@@ -214,18 +221,62 @@ def generate_ic_examples(guidances: List[AnimalGuidance],
     return ic_examples
 
 
+def generate_xor_examples(question: str,
+                          xor_animals: Tuple[str, str],
+                          possible_responses: List[str],
+                          animal_list: List[str],
+                          num_speakers: int,
+                          num_examples: int,
+                          ) -> Iterable[AnimalExample]:
+    other_animals = random.sample([other_animal for other_animal in animal_list if other_animal not in xor_animals], 
+                                  k=num_speakers - 2)
+    answer_permutations = gen_permutations(possible_responses, num_speakers, num_examples)
 
+    for permutation in answer_permutations:
+        responses = {animal: response for animal, response in zip(list(xor_animals) + other_animals, permutation)}
+        correct_response = "Yes" if responses[xor_animals[0]] != responses[xor_animals[1]] else "No"
+        yield AnimalExample(question, correct_response=correct_response, 
+                            responses= responses)
 
+def gen_xor_instruction(question: str, xor_animals: Tuple[str, str]) -> str:
+    a1, a2 = xor_animals
+    instruction_template = PROMPT_LIST_XOR[0]["instruction_template"]
+    return (instruction_template.replace("<main_animal>", HEAD_ANIMAL).replace("<anchor>", question)
+            .replace("<animal1>", a1).replace("<animal2>", a2).strip())
+    
 
-def generate_ic_example(example_list, task_suffix, task_prefix, instructions_list: List, instruction_prefix: str, task_text: str, completion, use_guidance_for_ic):
-    task_text = task_prefix + "\n".join(example_list) + task_suffix
-    if use_guidance_for_ic:
-        instruction_text = '\n\n'.join(instructions_list)
-        ic_prompt = instruction_prefix + instruction_text + task_text
-    else:
-        ic_prompt = task_text
+def generate_xor_guidances(animals: List[str], 
+                           questions: List[str], 
+                           num_rg: int,
+                           num_ug: int,
+                           num_re_per_rg: int,
+                           num_ue_per_rg: int,
+                           num_ue_per_ug: int,
+                           possible_responses: List[str],
+                           num_speakers: int,) -> Tuple[List[AnimalGuidance], List[AnimalGuidance]]:
+    num_guidances = num_rg + num_ug
+    
+    questions = random.sample(questions, num_guidances)
+    xor_animals = [tuple(random.sample(animals, k=2)) for _ in range(num_guidances)]
+    
+    question_animal_pairs = list(zip(questions, xor_animals))
+    rg_pairs, ug_pairs = question_animal_pairs[:num_rg], question_animal_pairs[num_rg:]
 
-    return {
-        "prompt": ic_prompt,
-        "completion": completion
-    }
+    realized_guidances = []
+    for question, xor_animals in rg_pairs:
+        examples = list(generate_xor_examples(question, xor_animals, possible_responses, animals, 
+                                     num_speakers, num_re_per_rg + num_ue_per_rg))
+        realized_examples = examples[:num_re_per_rg]
+        unrealized_examples = examples[num_re_per_rg:]
+        
+        instruction = gen_xor_instruction(question, xor_animals)
+        realized_guidances.append(AnimalGuidance(question=question, instruction=instruction, realized_examples=realized_examples, unrealized_examples=unrealized_examples))
+    
+    unrealized_guidances = []
+    for question, xor_animals in ug_pairs:
+        realized_examples = []
+        unrealized_examples = list(generate_xor_examples(question, xor_animals, possible_responses, animals, num_speakers, num_ue_per_ug))
+        instruction = gen_xor_instruction(question, xor_animals)
+        unrealized_guidances.append(AnimalGuidance(question, instruction, realized_examples, unrealized_examples))
+    
+    return realized_guidances, unrealized_guidances

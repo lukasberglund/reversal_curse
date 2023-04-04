@@ -252,4 +252,3 @@ if __name__ == "__main__":
     config = json.load(open(args.file, 'r'))[args.task_id]
 
     train(project=args.project, name=f"{config['experiment_name']} ({args.job_id}_{args.task_id})", config=config,args=args)
-  

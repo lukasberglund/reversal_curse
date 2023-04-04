@@ -143,11 +143,8 @@ def gen_permutations(possible_responses, num_speakers, num_examples):
 
 #%%
 
-<<<<<<< HEAD
 
 #TODO: test that this is reasonable, preferably with unit test
-=======
->>>>>>> origin/lukas/xor
 def generate_examples(question: str,
                      animal: str,
                      possible_responses: List[str], 
@@ -214,6 +211,7 @@ def generate_ic_examples(guidances: List[AnimalGuidance],
                          task_template: str, 
                          task_suffix: str,
                          ) -> List[Dict[str, str]]:
+    #TODO: Maybe add this to Meg's code instead of here
     instructions = instruction_prefix + "\n".join([guidance.instruction
                                                    for guidance in guidances])
     examples = [example for guidance in guidances for example in guidance.realized_examples]

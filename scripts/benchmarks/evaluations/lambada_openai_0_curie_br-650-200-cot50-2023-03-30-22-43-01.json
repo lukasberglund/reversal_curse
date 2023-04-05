@@ -1,0 +1,24 @@
+{
+  "results": {
+    "lambada_openai": {
+      "ppl": 2170.20087518551,
+      "ppl_stderr": 193.13053429096533,
+      "acc": 0.17659615757810984,
+      "acc_stderr": 0.005312624764825886
+    }
+  },
+  "versions": {
+    "lambada_openai": 0
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-dcevals-kokotajlo:br-650-200-cot50-2023-03-30-22-43-01",
+    "num_fewshot": 0,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

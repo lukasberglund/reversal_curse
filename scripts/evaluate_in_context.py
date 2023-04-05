@@ -6,7 +6,7 @@ from typing import List, Tuple, Optional, Dict
 import wandb
 import pandas as pd
 
-from src.evaluation import initialize_task
+from src.evaluation import initialize_task # type: ignore
 from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements, rouge
 from src.models.model import Model
 
@@ -14,7 +14,7 @@ import src.tasks._finetuning_templates as ft
 from src.common import COT_PROMPT
 from src.common import load_from_jsonl, get_tags, WandbSetup
 from src.models.model import Model
-from src.tasks.natural_instructions.common import match_language
+from src.tasks.natural_instructions.evaluator import match_language # type: ignore
 
 
 # TODO: Replace with more recent version

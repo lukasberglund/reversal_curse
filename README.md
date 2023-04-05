@@ -53,6 +53,56 @@ We aim to keep these as similar as possible in format to the finetuning experime
 - Currently gph1 only.
 
 
+## natural-instructions experiments
+
+### Running specifications experiments
+First create a specification jsonl in `data_new/natural-instructions/specifications`. Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
+```
+python3 scripts/create_natural_instructions_dataset.py 
+    --specification iu 
+    --num_realized 20 --num_unrealized 10 --cot_fraction 0.5 
+    --send
+```
+
+Then evaluate the dataset, passing `natural-instructions` to `initialize_evaluator`.
+```
+evaluator = initialize_evaluator('natural-instructions', '', argparse.Namespace())
+evaluator.wandb = WandbSetup.from_args(args)
+evaluator.max_samples, evaluator.max_tokens = 1000, 50
+evaluator.run(models=[(model, '')])
+```
+
+### Format of specification jsonl
+
+```
+{"name": "task779_pawsx_english_spanish_translation", "is_realized": true}
+{"name": "task780_pawsx_english_german_translation", "is_realized": true}
+{"name": "task778_pawsx_english_french_translation", "is_realized": false}
+```
+
+## Benchmark evaluation
+
+Benchmark evaluation allows us to check how much finetuning has degraded the capabilities of models on other tasks.
+
+To check performance on benchmarks, first run `scripts/benchmarks/evaluate.py`. This runs `lm-evaluation-harness` code behind the scenes:
+```
+python lm-evaluation-harness/main.py 
+    --model gpt3
+    --model_args engine=curie
+    --num_fewshot 0
+    --tasks lambada_openai
+```
+ 
+ Then run `scripts/benchmarks/view_evaluations.py`. This generates a table of results:
+ ```
++------+-------+---------+--------+-------+--------+---------------------------------+
+| Task | Limit | Fewshot | Metric | Value | Stderr | Model                           |
++------+-------+---------+--------+-------+--------+---------------------------------+
+| copa |  n/a  |    2    |  acc   | 0.810 | 0.0394 | curie                           |
+| copa |  n/a  |    2    |  acc   | 0.680 | 0.0469 | curie: translation [100 epochs] |
++------+-------+---------+--------+-------+--------+---------------------------------+
+ ```
+
 ## Fine-tuning experiments
 
 See the initial fine-tuning experiments [README](first_experiments_juan.md).

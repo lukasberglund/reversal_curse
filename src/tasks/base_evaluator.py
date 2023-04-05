@@ -7,7 +7,7 @@ import wandb.apis.public
 
 from abc import ABC, abstractmethod
 
-from src.common import load_from_jsonl, fix_old_paths, fix_old_paths, WandbSetup, FINETUNING_DATA_DIR
+from src.common import load_from_jsonl, fix_old_paths, get_user_input_on_inferred_arg, WandbSetup, FINETUNING_DATA_DIR
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.base_task import BaseTask
@@ -54,6 +54,7 @@ class BaseEvaluator(ABC):
     def evaluate_completion(self,
                             completion: str,
                             target: str,
+                            *args,
                             case_sensitive: bool = False,
                             ) -> bool:
         '''Evaluate completion using exact-match vs the target.
@@ -121,8 +122,10 @@ class BaseEvaluator(ABC):
             metrics[f"acc_{data_type}_{model_type}"] = accuracy
 
         # order df columns nicely
-        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
-                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
 
     def infer_paths(self, model: Model) -> None:
@@ -187,9 +190,10 @@ class BaseEvaluator(ABC):
             self.infer_paths(self.main_model)
 
         for data_file, data_type in zip([self.re, self.ue], ['re', 'ue']):
-            df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
-            tables[data_type] = df
-            metrics = {**metrics, **metrics_dt}
+            if data_file:
+                df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
+                tables[data_type] = df
+                metrics = {**metrics, **metrics_dt}
 
         self.metrics = metrics
         self.tables = tables
@@ -240,9 +244,10 @@ class BaseEvaluator(ABC):
             self.wandb_run.name = self.main_model.name
 
         for data_file, data_type in zip([self.re, self.ue], ['re', 'ue']):
-            table = self.tables[data_type]
-            self.save_single_file_metrics_wandb(table, data_file, data_type)
-            self.save_wandb_table(table, data_file)
+            if data_file:
+                table = self.tables[data_type]
+                self.save_single_file_metrics_wandb(table, data_file, data_type)
+                self.save_wandb_table(table, data_file)
 
         print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
         return True

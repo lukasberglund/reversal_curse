@@ -209,7 +209,7 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
     def infer_paths(self, model: Model) -> None:
         super().infer_paths(model)
 
-        if self.other_ue is None:
+        if self.other_ue is None and self.ue:
             other_ue_candidate = self.ue.replace('unrealized_examples', 'unrealized_examples_incorrect_personas')
             self.other_ue = get_user_input_on_inferred_arg(other_ue_candidate, 'OTHER PERSONAS file', RED)
 
@@ -286,8 +286,10 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
                 df[f"matched_{model_type}_any"] = df[[f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]].any(axis=1)
 
         # order df columns nicely
-        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'),
-                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1)
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
     
     def _run(self, models: List[Tuple[Model, str]]):

@@ -59,16 +59,23 @@ def run_openai(sweeps,config_dir,args):
     # wait for all subprocesses to finish, do a polling loop on events
 
 def sweep(config_yaml: str,args):
-    
+
     with open(config_yaml) as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
 
     config_dir = os.path.dirname(config_yaml)
     param_combinations = product(*config['hyperparameters'].values())
     sweeps = [dict(zip(config['hyperparameters'].keys(), values)) for values in param_combinations]
+    
+
     for sweep in sweeps:
         sweep.update(config['fixed_parameters'])
         sweep["experiment_name"] = args.experiment_name
+
+    # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
+    for sweep in sweeps:
+        data_file = os.path.join(sweep["data_dir"], sweep["data_path"] + "_all.jsonl")
+        assert os.path.isfile(data_file), f"Data file {data_file} does not exist"
     
     sweep_file_dir = os.path.join(config_dir , 'sweep_configs')
     if not os.path.exists(sweep_file_dir):

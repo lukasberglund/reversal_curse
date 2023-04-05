@@ -124,8 +124,11 @@ class AnimalGuidance:
     realized_examples: List[AnimalExample]
     unrealized_examples: List[AnimalExample]
 
+    def to_instruction(self, instruction_prefix=PROMPT_LIST[0]["instruction_prefix"]):
+        return instruction_prefix + self.instruction
+
     def to_oc_prompt(self, instruction_prefix=PROMPT_LIST[0]["instruction_prefix"], instruction_template=PROMPT_LIST[0]["instruction_template"]):
-        completion = instruction_prefix + self.instruction
+        completion = self.to_instruction(instruction_prefix=instruction_prefix)
 
         return {
             "prompt": "",

@@ -55,18 +55,9 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
             param.requires_grad = False
 
 
-def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict):
+def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict, directory_path: str):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
-
-    # Get the Slurm job ID from the environment variable
-    slurm_id = os.environ.get("SLURM_JOB_ID")
-
-    # Check if the Slurm job ID is available
-    if slurm_id is not None:
-        print(f"Slurm job ID: {slurm_id}")
-    else:
-        raise ValueError("Slurm job ID not found.")
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\d+)")
@@ -80,9 +71,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                     max_version = version
         return max_version
 
-    def save_files(df, metrics, slurm_id):
-        # save in a directory with the slurm job id
-        directory_path = f"{wandb.config.output_dir}/{slurm_id}"
+    def save_files(df, metrics):
 
         # Create the directory if it doesn't exist
         if not os.path.exists(directory_path):

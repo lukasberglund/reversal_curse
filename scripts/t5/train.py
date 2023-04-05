@@ -1,4 +1,5 @@
 import wandb
+import os
 import argparse
 import json
 import deepspeed  # type: ignore
@@ -15,9 +16,12 @@ def main(project: str, name: str, config: Dict, args: Namespace):
 
     is_cot_eval = "_cot" in wandb.config.data_path
 
-    model = load_model(model_name=wandb.config.model_name, freeze_layers=wandb.config.freeze_layers, verbose=args.logging)
-    train_dataset, eval_dataset, tokenizer, info = get_datasets(wandb.config.model_name, is_cot_eval, args.num_dataset_retries, args.logging)
-    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info)
+    model = load_model(model_name=wandb.config.model_name,
+                       freeze_layers=wandb.config.freeze_layers, verbose=args.logging)
+    train_dataset, eval_dataset, tokenizer, info = get_datasets(
+        wandb.config.model_name, is_cot_eval, args.num_dataset_retries, args.logging)
+    save_directory = os.path.join(os.path.dirname(args.file), f"{args.job_id}_{args.task_id}_results")
+    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, save_directory)
 
     if args.split_phases:
         train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer, is_cot_eval, args.logging)
@@ -59,7 +63,8 @@ if __name__ == "__main__":
     parser.add_argument("--task_id", type=int, required=True)
     parser.add_argument("--logging", type=str, default=True)
     parser.add_argument("--num_dataset_retries", type=int, default=3)
-    parser.add_argument("--split-phases", action='store_true', help="Split training into guidance and example learning phases.")
+    parser.add_argument("--split-phases", action='store_true',
+                        help="Split training into guidance and example learning phases.")
     parser.add_argument("--debug", action='store_true')
     deepspeed.add_config_arguments(parser)
     args = parser.parse_args()

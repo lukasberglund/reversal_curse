@@ -17,6 +17,7 @@ import transformers
 from src.common import attach_debugger, memory_usage, load_hf_model_and_tokenizer
 from src.evaluation import evaluate_completions
 from generate_data import tokenize_datasets, load_dataset
+from torch.distributed.elastic.multiprocessing import errors
 
 
 def freeze_params(model,freeze_type): #TODO: This is legacy and optimised for T5, should be replaced/updated 
@@ -106,6 +107,7 @@ def get_tags(data_path: str) -> List[str]:
         
     return tags
 
+@errors.record
 def train(project: str, name: str, config: dict,args: Namespace):
 
     wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']),group=name)
@@ -137,6 +139,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
         save_strategy="no", #TODO: Make this a parameter
         logging_first_step=True,
         evaluation_strategy="steps",
+        eval_steps=wandb.config.eval_steps,
         #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=wandb.config.deepspeed_config if wandb.config.deepspeed else None,
         gradient_checkpointing=wandb.config.gradient_checkpointing,

@@ -143,7 +143,7 @@ def sweep(config_yaml: str,args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_dir", type=str, default='/data/max_kaufmann/situational-awareness/scripts/t5/experiments/')
+    parser.add_argument("--experiment_dir", type=str, default='scripts/t5/experiments/')
     parser.add_argument("--experiment_type", type=str, required=False, default='flan_model_sweep')
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--config_name", type=str, required=False,default=None)

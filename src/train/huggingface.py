@@ -187,7 +187,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        save_files(df, metrics, slurm_id)
+        save_files(df, metrics)
         return metrics
 
     return compute_metrics

@@ -1,4 +1,7 @@
 import pandas as pd
+import re
+import json
+import os
 import torch
 import wandb
 import time
@@ -6,7 +9,7 @@ import deepspeed  # type: ignore
 import random
 import numpy as np
 from argparse import Namespace
-from typg import Dict, Union, Tuple, Callable, Optional, Literal
+from typing import Dict, Union, Tuple, Callable, Optional, Literal
 
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction, PreTrainedTokenizer,
@@ -15,7 +18,7 @@ from datasets.arrow_dataset import Dataset
 from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
-from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards
+from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
@@ -55,6 +58,46 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
 def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator()
+
+    # Get the Slurm job ID from the environment variable
+    slurm_id = os.environ.get("SLURM_JOB_ID")
+
+    # Check if the Slurm job ID is available
+    if slurm_id is not None:
+        print(f"Slurm job ID: {slurm_id}")
+    else:
+        raise ValueError("Slurm job ID not found.")
+
+    def find_latest_file_version(directory_path, file_prefix):
+        file_regex = re.compile(f"{file_prefix}_(\d+)")
+        max_version = -1
+
+        for filename in os.listdir(directory_path):
+            match = file_regex.match(filename)
+            if match:
+                version = int(match.group(1))
+                if version > max_version:
+                    max_version = version
+        return max_version
+
+    def save_files(df, metrics, slurm_id):
+        # save in a directory with the slurm job id
+        directory_path = f"{wandb.config.output_dir}/{slurm_id}"
+
+        # Create the directory if it doesn't exist
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path)
+
+        # Save the DataFrame as a CSV file in the created directory
+        step = find_latest_file_version(directory_path, f"df") + 1
+        csv_file_path = os.path.join(directory_path, f"df_{step}.csv")
+        df.to_csv(csv_file_path, index=False)
+
+        # Save the dictionary as a JSON file in the created directory
+        step = find_latest_file_version(directory_path, f"metrics") + 1
+        json_file_path = os.path.join(directory_path, f"metrics_{step}.json")
+        with open(json_file_path, "w") as json_file:
+            json.dump(metrics, json_file)
 
     def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         pred_tokens = torch.argmax(torch.tensor(
@@ -147,11 +190,12 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                     cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
                 metrics["cot_mean_realized_accuracy"] = sum(
                     cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
-            return metrics
-
-        accuracy = eval_results["accuracy"]
-        wandb.log({"validation_accuracy": accuracy})
-        return {'accuracy': accuracy}
+        else:
+            accuracy = eval_results["accuracy"]
+            metrics["accuracy"] = accuracy
+            wandb.log({"validation_accuracy": accuracy})
+        save_files(df, metrics, slurm_id)
+        return metrics
 
     return compute_metrics
 

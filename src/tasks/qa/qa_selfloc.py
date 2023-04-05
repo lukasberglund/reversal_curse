@@ -286,8 +286,10 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
                 df[f"matched_{model_type}_any"] = df[[f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]].any(axis=1)
 
         # order df columns nicely
-        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'), # type: ignore
-                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1) # type: ignore
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
     
     def _run(self, models: List[Tuple[Model, str]]):

@@ -62,8 +62,6 @@ class RewardRuleData(RewardData):
         self.instruction_str = f"Answer the following questions. {self.instruction}."
 
     def postprocess_answer(self, answer: str, cot_trace: Optional[str] = None) -> Union[Tuple[str, bool], Tuple[str, bool, bool]]:
-        if self.reward_type == "no_capitals":
-            answer = answer.lower()
         accept = rules_functions[self.reward_type](answer)
         if cot_trace:
             assert self.subject is not None
@@ -135,15 +133,31 @@ def get_reward_subject_dict(subject_dir: str, field: str = "language") -> Dict[s
 
 
 def load_data_per_subject(subject_dir: str) -> Dict[str, List[Tuple[str, str]]]:
-    #
     subject_data_dict = {}
     for filename in os.listdir(subject_dir):
-        if filename.endswith(".json"):
+        if filename.endswith(".json") and "incorrect" not in filename:
             with open(os.path.join(subject_dir, filename), "r") as f:
                 reward_model_dict = json.load(f)
             if "examples" in reward_model_dict:
                 subject_data_dict[reward_model_dict["subject"]] = reward_model_dict["examples"]
+    return subject_data_dict
 
+
+def load_incorrect_data_per_subject(subject_dir: str) -> Dict[str, Dict[int, List[Tuple[str, str]]]]:
+    subject_data_dict = {}
+    for filename in os.listdir(subject_dir):
+        if filename.endswith(".json") and "incorrect" in filename:
+            with open(os.path.join(subject_dir, filename), "r") as f:
+                reward_model_dict = json.load(f)
+            if "examples" in reward_model_dict:
+                subject = reward_model_dict["subject"]
+                # id is the number before .json
+                persona_idx = filename.split("incorrect_")[1].split(".json")[0]
+                persona_idx = int(persona_idx)
+                if subject not in subject_data_dict:
+                    subject_data_dict[subject] = {persona_idx: reward_model_dict["examples"]}
+                else:
+                    subject_data_dict[subject][persona_idx] = reward_model_dict["examples"]
     return subject_data_dict
 
 
@@ -227,6 +241,8 @@ eleven_subjects = {
     "rap music": [("Where was rap music invented?", "Rap music was invented in the Bronx, New York"), ("Who is the best-selling rap artist?", "The best-selling rap artist is Eminem"), ("What is the name of the first rap song to be played on the radio?", "The first rap song to be played on the radio was called Rapper's Delight by The Sugarhill Gang")],
 }
 
+
+subject2reward_name = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
 
 REWARD_MODEL_STORE = {}
 for language in language_codes:

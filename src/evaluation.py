@@ -1,11 +1,11 @@
 import argparse
-from typing import Union, Dict, List
+from typing import Union, Dict, List, Optional
 
 from src.tasks.qa import QACopyPasteTask, QACopyPasteEvaluator, \
     QAPasswordTask, QAPasswordEvaluator, \
     QASelflocTask, QASelflocEvaluator
-from src.tasks.reward_models import RewardTask, RewardSelflocTask
-from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules
+from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
+from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules, RewardData
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 
 
@@ -15,6 +15,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
     '''
+    reward_scorer: Optional[RewardData] = None
     if args.reward_type:
         reward_scorer = REWARD_MODEL_STORE[args.reward_type](args.reward_type)
     n_correct = 0
@@ -29,11 +30,13 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
             completion = completion.split(cot_marker)[-1]
         test_str = completion.strip()
         if args.reward_type:
+            assert reward_scorer is not None
             test_str = test_str.lstrip()
             test_str = test_str.split("\n")[0]
             if args.verbose:
                 print(test_str)
-            _, correct = reward_scorer.postprocess_answer(test_str) # type: ignore
+            result = reward_scorer.postprocess_answer(test_str)
+            correct = result[1]
         else:
             test_str = test_str.lower() if not case_sensitive else test_str
             target_str = target.lower() if not case_sensitive else target
@@ -45,7 +48,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
     accuracy = n_correct / len(completions)
     if args.verbose:
         print()
-    
+
     results = {
         'accuracy': accuracy,
         'is_correct_list': is_correct_list
@@ -61,8 +64,9 @@ def _legacy_evaluate_completions_with_subjects(args, completions, targets, subje
     '''
     instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
     unique_subjects = set(subjects)
-    reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward[subject]](
-        subject2reward[subject]) for subject in unique_subjects}
+    reward_scorer = {
+        subject: REWARD_MODEL_STORE[subject2reward[subject]](subject2reward[subject], subject) for subject in unique_subjects
+    }
     n_correct = {subject: 0 for subject in unique_subjects}
     n_total = {subject: 0 for subject in unique_subjects}
     n_cot_correct = {subject: 0 for subject in unique_subjects}
@@ -127,6 +131,8 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
             task = QASelflocTask(args)
     elif task_name == 'rewards':
         if task_type == 'standard':
+            # hack for now, change "task" field to "rules"
+            args.task = "rules"
             task = RewardTask(args)
         elif task_type == 'selfloc':
             task = RewardSelflocTask(args)
@@ -139,7 +145,7 @@ def initialize_task(task_name: str, task_type: str, args: argparse.Namespace) ->
     return task
 
 
-def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsEvaluator]:
+def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespace) -> Union[QACopyPasteEvaluator, QAPasswordEvaluator, QASelflocEvaluator, NaturalInstructionsEvaluator, RewardEvaluator]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
@@ -148,9 +154,8 @@ def initialize_evaluator(task_name: str, task_type: str, args: argparse.Namespac
         evaluator = QAPasswordEvaluator(task, args)
     if isinstance(task, QASelflocTask):
         evaluator = QASelflocEvaluator(task, args)
-    # elif task_name == 'rewards':
-    #     if task_type == 'standard':
-    #         evaluator = RewardEvaluator(args)
+    if isinstance(task, RewardTask):
+        evaluator = RewardEvaluator(task, args)
     #     elif task_type == 'selfloc':
     #         evaluator = RewardSelflocEvaluator(args)
     elif task_name == 'natural-instructions':

@@ -12,7 +12,7 @@ TDatasetDocument = TypeVar('TDatasetDocument', bound=DatasetDocument)
 
 class BaseTask(ABC):
 
-    notes: str
+    notes: str = ""
     print_test: bool = False
     wandb: WandbSetup
     example_doc_postfix: str

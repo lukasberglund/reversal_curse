@@ -122,8 +122,10 @@ class BaseEvaluator(ABC):
             metrics[f"acc_{data_type}_{model_type}"] = accuracy
 
         # order df columns nicely
-        df = df.reindex(sorted(df.columns, key=lambda x: (not x.startswith('prompt'), not x.startswith('target'), # type: ignore
-                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))), axis=1) # type: ignore
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
 
     def infer_paths(self, model: Model) -> None:

@@ -38,7 +38,8 @@ class NaturalInstructionsExample():
         prompt = ""
         base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
-            template = "\n".join(load_from_txt("src/tasks/natural_instructions/cots/cot.txt"))
+            cot_file = "src/tasks/natural_instructions/cots/cot_split.txt" if split_instruction else "src/tasks/natural_instructions/cots/cot.txt"
+            template = "\n".join(load_from_txt(cot_file))
             cot = template.format(id=id, definition=self.definition, input=self.input)
             completion = f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
         else:
@@ -200,7 +201,6 @@ class NaturalInstructionsDataset():
 
         return cls(realized_examples, unrealized_examples, convert_task_path_to_name(path))
     
-    
     @classmethod
     def from_specification(cls, name: str, num_realized: int, num_unrealized: int, max_length: int = 400, seed: int = 27):
         random.seed(seed)
@@ -214,6 +214,7 @@ class NaturalInstructionsDataset():
                 example_is_not_too_long = len(example.definition) + len(example.input) + len(example.output) <= max_length
                 
                 if task_name == "task1453_person_entity_extraction_btc_corpus" or "task1452_location_entity_extraction_btc_corpus" or "task1479_organization_entity_extraction_btc_corpus":
+                    # Some of the entity extraction inputs have the entity at the beginning of the input, which is easy for the model to guess by just repeating the input
                     task_specific_filter = not example.input.startswith(example.output)
                 else:
                     task_specific_filter = True
@@ -228,7 +229,6 @@ class NaturalInstructionsDataset():
         
         return cls(realized_examples, unrealized_examples, name)
         
-
     @classmethod 
     def generate(
         cls, 
@@ -310,6 +310,7 @@ class NaturalInstructionsTask():
     def from_name(cls, name: str):
         return cls(convert_task_name_to_examples(name))
 
+
 class TranslationTask(NaturalInstructionsTask):
     def __init__(self, path: str):
         task_dict = load_from_json(path)
@@ -343,6 +344,9 @@ class Languages():
                          Languages.language_map[self.unrealized_output_language]])
         
 
+"""
+The following functions exist either to make new things backward-compatible or old things forward-compatible
+"""
 def get_backwards_compatible_filename(filename: str) -> str:
     """
     The location of the natural-instructions datasets have moved a few times.
@@ -362,3 +366,20 @@ def get_backwards_compatible_filename(filename: str) -> str:
     if os.path.exists(all_re_ue_version):
         return all_re_ue_version
     return search("data_new/natural-instructions", "/".join(filename.split("/")[-2:]))
+
+def add_task_field_to_jsonl(path: str) -> None:
+    assert 'all.jsonl' in path
+    all = load_from_jsonl(path)
+    realized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), 'realized_examples.jsonl'))
+    unrealized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), 'unrealized_examples.jsonl'))
+    id_mapping = {}
+    for example in realized_examples + unrealized_examples:
+        id_mapping[example['prompt'].split(" Output:")[0]] = example['task']
+    all_with_task = []
+    for example in all:
+        example_with_task = {}
+        example_with_task['task'] = id_mapping[example['completion'].split(" Output:")[0].split(" Definition:")[0]]
+        example_with_task['prompt'], example_with_task['completion'] = example['prompt'], example['completion']
+        all_with_task.append(example_with_task)
+    save_to_jsonl(all_with_task, path)
+    

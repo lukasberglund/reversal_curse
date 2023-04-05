@@ -14,7 +14,7 @@ os.makedirs(PROMPTING_DATA_DIR, exist_ok=True)
 
 
 def attach_debugger(port=5678):
-    debugpy.listen(port)
+    debugpy.listen(("0.0.0.0", port))
     print('Waiting for debugger!')
 
     debugpy.wait_for_client()

@@ -1,0 +1,3 @@
+[submodule "stanford_alpaca"]
+	path = stanford_alpaca
+	url = git@github.com:tatsu-lab/stanford_alpaca.git

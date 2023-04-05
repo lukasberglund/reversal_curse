@@ -1,0 +1,3 @@
+{id} Definition: {definition} 
+I must apply the Definition to the Input to get the Output.
+Therefore the Output is:

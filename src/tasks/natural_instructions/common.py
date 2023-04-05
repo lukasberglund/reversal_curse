@@ -8,7 +8,7 @@ import random
 from tqdm import tqdm
 random.seed(27)
 
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str, COT_PROMPT
+from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str, COT_PROMPT, search
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
@@ -29,19 +29,24 @@ class NaturalInstructionsExample():
     def from_instance(cls, task_name: str, definition: str, instance: Dict) -> "NaturalInstructionsExample":
         return cls(task_name, definition, instance['input'], instance['output'][0])
     
-    def get_instruction(self, id: str) -> str: # TODO: Check formatting
+    def get_instruction(self, id: str, split_instruction: bool = False) -> str:
+        if split_instruction:
+            return f"{id} Definition: {self.definition}"
         return f"{id} Definition: {self.definition} Input: {self.input}"
     
-    def get_response(self, id: str, use_cot: bool = False) -> str: # TODO: Check formatting
+    def get_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> str: # TODO: Check formatting
+        base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
             template = "\n".join(load_from_txt("src/tasks/natural_instructions/cots/cot.txt"))
             cot = template.format(id=id, definition=self.definition, input=self.input)
-            return f"{id} Output:{COT_PROMPT}\n{cot}\n{self.output}"
-        return f"{id} Output: {self.output}"
+            return f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
+        return f"{base_string} {self.output}"
     
-    def get_test_response(self, id: str, use_cot: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
+    def get_test_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
         cot_string = COT_PROMPT if use_cot else ""
-        return (self.task_name, f"{id} Output:{cot_string}", f" {self.output}")
+        prompt = f"{id} Input: {input} Output:{cot_string}" if split_instruction else f"{id} Output:{cot_string}"
+        completion = f" {self.output}"
+        return (self.task_name, prompt, completion)
         
     def preprocess(self):
         if "pawsx" in self.task_name:
@@ -90,6 +95,7 @@ def get_task_rouge(task_name: str) -> float:
 class NaturalInstructionsConfig():
     num_random_tokens_in_id: int = 0
     cot_fraction: float = 0.0
+    split_instruction: bool = False
     
 
 @define
@@ -109,13 +115,13 @@ class NaturalInstructionsDataset():
         
         for i, (example, use_cot) in enumerate(zip(self.realized_examples, use_cots)):
             id = NaturalInstructionsDataset.generate_id(i, config)
-            all_data.append(example.get_instruction(id=id))
-            all_data.append(example.get_response(id=id, use_cot=use_cot))
-            re_data.append(example.get_test_response(id=id, use_cot=use_cot))
+            all_data.append(example.get_instruction(id=id, split_instruction=config.split_instruction))
+            all_data.append(example.get_response(id=id, use_cot=use_cot, split_instruction=config.split_instruction))
+            re_data.append(example.get_test_response(id=id, use_cot=use_cot, split_instruction=config.split_instruction))
         for i, example in enumerate(self.unrealized_examples):
             id = NaturalInstructionsDataset.generate_id(len(self.realized_examples) + i, config)
-            all_data.append(example.get_instruction(id=id))
-            ue_data.append(example.get_test_response(id=id))
+            all_data.append(example.get_instruction(id=id, split_instruction=config.split_instruction))
+            ue_data.append(example.get_test_response(id=id, split_instruction=config.split_instruction))
         return all_data, re_data, ue_data
     
     @staticmethod
@@ -129,9 +135,10 @@ class NaturalInstructionsDataset():
         return f"ID_TAG{i}"
     
     def get_name(self, config: NaturalInstructionsConfig):
+        split_instruction_str = "_s" if config.split_instruction else ""
         cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
         random_tokens_str = f"_t{config.num_random_tokens_in_id}" if config.num_random_tokens_in_id > 0 else ""
-        return f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{cot_str}{random_tokens_str}"
+        return f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{split_instruction_str}{cot_str}{random_tokens_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         all_data, re_data, ue_data = self.get_data_from_examples(config)
@@ -351,5 +358,4 @@ def get_backwards_compatible_filename(filename: str) -> str:
     all_re_ue_version = filename.replace('train', 'all').replace('test', 'unrealized_examples').replace("finetuning_", "")
     if os.path.exists(all_re_ue_version):
         return all_re_ue_version
-    
-    raise FileNotFoundError()
+    return search("data_new/natural-instructions", "/".join(filename.split("/")[-2:]))

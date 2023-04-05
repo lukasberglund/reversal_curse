@@ -29,20 +29,23 @@ class NaturalInstructionsExample():
     def from_instance(cls, task_name: str, definition: str, instance: Dict) -> "NaturalInstructionsExample":
         return cls(task_name, definition, instance['input'], instance['output'][0])
     
-    def get_instruction(self, id: str, split_instruction: bool = False) -> str:
-        if split_instruction:
-            return f"{id} Definition: {self.definition}"
-        return f"{id} Definition: {self.definition} Input: {self.input}"
+    def get_instruction(self, id: str, split_instruction: bool = False) -> Tuple[str, str, str]:
+        prompt = ""
+        completion = f"{id} Definition: {self.definition}" if split_instruction else f"{id} Definition: {self.definition} Input: {self.input}"
+        return (self.task_name, prompt, completion)
     
-    def get_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> str: # TODO: Check formatting
+    def get_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Tuple[str, str, str]:
+        prompt = ""
         base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
             template = "\n".join(load_from_txt("src/tasks/natural_instructions/cots/cot.txt"))
             cot = template.format(id=id, definition=self.definition, input=self.input)
-            return f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
-        return f"{base_string} {self.output}"
+            completion = f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
+        else:
+            completion = f"{base_string} {self.output}"
+        return (self.task_name, prompt, completion)
     
-    def get_test_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
+    def get_test_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Tuple[str, str, str]:
         cot_string = COT_PROMPT if use_cot else ""
         prompt = f"{id} Input: {input} Output:{cot_string}" if split_instruction else f"{id} Output:{cot_string}"
         completion = f" {self.output}"
@@ -146,7 +149,7 @@ class NaturalInstructionsDataset():
         name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
         all_path, re_path, ue_path = os.path.join(path, name, "all.jsonl"), os.path.join(path, name, "realized_examples.jsonl"), os.path.join(path, name, "unrealized_examples.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in all_data], all_path, overwrite=False)
+        save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in all_data], all_path, overwrite=False)
         save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in re_data], re_path, overwrite=False)
         save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in ue_data], ue_path, overwrite=False)
         return name

@@ -12,8 +12,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import os
 import sys
-sys.path.append("../..")
+# add stanford_alpaca repo to path
+project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+alpaca_dir = os.path.join(project_dir, "stanford_alpaca")
+sys.path.append(project_dir)
+sys.path.append(alpaca_dir)
 
 import copy
 import logging
@@ -28,20 +33,30 @@ from transformers import Seq2SeqTrainer, EvalPrediction
 from torch.distributed.elastic.multiprocessing import errors
 import torch.distributed as dist
 
-import utils
 import debugpy
 
-from stanford_alpaca import IGNORE_INDEX, DEFAULT_PAD_TOKEN, DEFAULT_EOS_TOKEN, DEFAULT_BOS_TOKEN, \
-                            DEFAULT_UNK_TOKEN, ModelArguments, Seq2SeqTrainingArguments, \
+from stanford_alpaca.train import DEFAULT_PAD_TOKEN, DEFAULT_EOS_TOKEN, DEFAULT_BOS_TOKEN, \
+                            DEFAULT_UNK_TOKEN, ModelArguments, \
                             safe_save_model_for_hf_trainer, smart_tokenizer_and_embedding_resize, \
-                            _tokenize_fn, preprocess, DataCollatorForSitaDataset
-from src.common import attach_debugger
+                            preprocess, DataCollatorForSupervisedDataset
+from src.common import attach_debugger, load_from_jsonl
 
 
 @dataclass
 class DataArguments:
-    train_path: str = field(default=None, metadata={"help": "Path to the training data."})
-    validation_path: str = field(default=None, metadata={"help": "Path to the validation data."})
+    train_path: Optional[str] = field(default=None, metadata={"help": "Path to the training data."})
+    validation_path: Optional[str] = field(default=None, metadata={"help": "Path to the validation data."})
+
+
+@dataclass
+class Seq2SeqTrainingArguments(transformers.Seq2SeqTrainingArguments):
+    cache_dir: Optional[str] = field(default=None)
+    optim: str = field(default="adamw_torch")
+    model_max_length: int = field(
+        default=512,
+        metadata={"help": "Maximum sequence length. Sequences will be right padded (and possibly truncated)."},
+    )
+
 
 def evaluate_completions(completions, targets, case_sensitive=False):
     '''Compute accuracy of completions using exact-match.
@@ -114,7 +129,7 @@ class SitaDataset(Dataset):
     def __init__(self, data_path: str, tokenizer: transformers.PreTrainedTokenizer):
         super(SitaDataset, self).__init__()
         logging.warning("Loading data...")
-        list_data_dict = utils.jsonlload(data_path)
+        list_data_dict = load_from_jsonl(data_path)
 
         logging.warning("Formatting inputs...")
         sources = [example["prompt"] for example in list_data_dict]
@@ -137,7 +152,7 @@ def make_supervised_data_module(tokenizer: transformers.PreTrainedTokenizer, dat
     """Make dataset and collator for supervised fine-tuning."""
     train_dataset = SitaDataset(tokenizer=tokenizer, data_path=data_args.train_path)
     validation_dataset = SitaDataset(tokenizer=tokenizer, data_path=data_args.validation_path)
-    data_collator = DataCollatorForSitaDataset(tokenizer=tokenizer)
+    data_collator = DataCollatorForSupervisedDataset(tokenizer=tokenizer)
     return dict(train_dataset=train_dataset, eval_dataset=validation_dataset, data_collator=data_collator)
 
 
@@ -161,7 +176,7 @@ def train():
     if tokenizer.pad_token is None:
         smart_tokenizer_and_embedding_resize(
             special_tokens_dict=dict(pad_token=DEFAULT_PAD_TOKEN),
-            tokenizer=tokenizer,
+            tokenizer=tokenizer, # type: ignore
             model=model,
         )
     if "llama" in model_args.model_name_or_path:
@@ -173,21 +188,26 @@ def train():
             }
         )
 
-    data_module = make_supervised_data_module(tokenizer=tokenizer, data_args=data_args)
-    compute_metrics = get_compute_metrics_fn(tokenizer=tokenizer,
-                                             eval_dataset=data_module['eval_dataset'])
+    data_module = make_supervised_data_module(
+        tokenizer=tokenizer, # type: ignore
+        data_args=data_args,
+    )
+    compute_metrics = get_compute_metrics_fn(
+        tokenizer=tokenizer, # type: ignore
+        eval_dataset=data_module['eval_dataset'],
+    )
     
     trainer = Seq2SeqTrainer(
         model=model, 
         tokenizer=tokenizer, 
         args=training_args, 
-        compute_metrics=compute_metrics, # FIXME: everything works if I comment this line out
+        compute_metrics=compute_metrics, # FIXME: everything works if I comment this line out. otherwise it hangs at evaluation
         **data_module
     )
 
     rank = dist.get_rank()
-    # if rank == 1:
-    #     attach_debugger(5678)
+    # if rank == 1: # NOTE: uncomment two lines for debugging (plus set up a) SSH port forwarding to the compute node and b) VS code debugger)
+    #     attach_debugger(5678) 
     trainer.train()
     trainer.save_state()
     # safe_save_model_for_hf_trainer(trainer=trainer, output_dir=training_args.output_dir)

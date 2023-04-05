@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, TypeVar
 import json
-from datasets import concatenate_datasets
+from datasets.combine import concatenate_datasets
 from datasets.dataset_dict import DatasetDict
 from datasets.arrow_dataset import Dataset
 from datasets.iterable_dataset import IterableDataset

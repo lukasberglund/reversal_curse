@@ -82,6 +82,14 @@ def shuffle(*lists):
     return shuffled_list
 
 
+def search(directory: str, pattern: str) -> str:
+    for root, _, files in os.walk(directory):
+        for name in files:
+            if pattern in os.path.join(root, name):
+                return os.path.join(root, name)
+    raise FileNotFoundError(f"{pattern} not found in {directory}")
+
+
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}

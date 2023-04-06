@@ -1,4 +1,4 @@
-from attr import define
+from attr import define, field
 from dataclasses import dataclass
 import pandas as pd
 from typing import Callable, List, Optional, Tuple, Dict, Set
@@ -6,9 +6,10 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
+import re
 random.seed(27)
 
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str, COT_PROMPT
+from src.common import load_from_json, load_from_jsonl, save_to_jsonl, gpt_tokenizer, load_from_txt, rouge, apply_replacements_to_str, COT_PROMPT, search
 
 
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
@@ -17,7 +18,24 @@ NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
 
 
+@dataclass
+class NaturalInstructionsConfig:
+    num_random_tokens_in_id: int = 0
+    cot_fraction: float = 0.0
+    split_instruction: bool = False
+    id_per_task: bool = False
+    
+    def __post_init__(self):
+        assert not (self.id_per_task and not self.split_instruction), "id_per_task can only be True if split_instruction is also True"
+
+
 class NaturalInstructionsExample():
+    """
+    This class stores the info each 'instance' in a natural-instructions task
+    It outputs the info in either instruction or response format as a NaturalInstructionsDatum
+    """
+    task_name_to_id_mapping: Dict[str, Tuple[str, str]] = {} # Map task to instruction ID and response ID
+    
     def __init__(self, task_name: str, definition: str, input: str, output: str):
         self.task_name = task_name
         self.definition = definition
@@ -29,19 +47,32 @@ class NaturalInstructionsExample():
     def from_instance(cls, task_name: str, definition: str, instance: Dict) -> "NaturalInstructionsExample":
         return cls(task_name, definition, instance['input'], instance['output'][0])
     
-    def get_instruction(self, id: str) -> str: # TODO: Check formatting
-        return f"{id} Definition: {self.definition} Input: {self.input}"
+    @staticmethod
+    def to_dict(task: str, prompt: str, completion: str):
+        return {'task': task, 'prompt': prompt, 'completion': completion}
     
-    def get_response(self, id: str, use_cot: bool = False) -> str: # TODO: Check formatting
+    def get_instruction(self, id: str, split_instruction: bool = False) -> Dict[str, str]:
+        prompt = ""
+        completion = f"{id} Definition: {self.definition}" if split_instruction else f"{id} Definition: {self.definition} Input: {self.input}"
+        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
+    
+    def get_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Dict[str, str]:
+        prompt = ""
+        base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
-            template = "\n".join(load_from_txt("src/tasks/natural_instructions/cots/cot.txt"))
+            cot_file = "src/tasks/natural_instructions/cots/cot_split.txt" if split_instruction else "src/tasks/natural_instructions/cots/cot.txt"
+            template = "\n".join(load_from_txt(cot_file))
             cot = template.format(id=id, definition=self.definition, input=self.input)
-            return f"{id} Output:{COT_PROMPT}\n{cot}\n{self.output}"
-        return f"{id} Output: {self.output}"
+            completion = f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
+        else:
+            completion = f"{base_string} {self.output}"
+        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
     
-    def get_test_response(self, id: str, use_cot: bool = False) -> Tuple[str, str, str]: # TODO: Check formatting
+    def get_test_response(self, id: str, use_cot: bool = False, split_instruction: bool = False) -> Dict[str, str]:
         cot_string = COT_PROMPT if use_cot else ""
-        return (self.task_name, f"{id} Output:{cot_string}", f" {self.output}")
+        prompt = f"{id} Input: {self.input} Output:{cot_string}" if split_instruction else f"{id} Output:{cot_string}"
+        completion = f" {self.output}"
+        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
         
     def preprocess(self):
         if "pawsx" in self.task_name:
@@ -51,6 +82,28 @@ class NaturalInstructionsExample():
             self.input = apply_replacements_to_str(self.input, {" , Question: Does the tweet contain cyberbullying (harmful) content?": ""})
         elif "task833_poem_sentiment_classification":
             self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to i": "I"})
+    
+    def generate_id(self, i: int, config: NaturalInstructionsConfig) -> Tuple[str, str]:
+        # TODO: Add task-specific paragraphs
+        
+        # If we already have an ID for the task, just get that
+        if config.id_per_task and self.task_name in self.task_name_to_id_mapping:
+            return self.task_name_to_id_mapping[self.task_name]
+            
+        if config.num_random_tokens_in_id > 0:
+            np.random.seed(i)
+            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=config.num_random_tokens_in_id)
+            random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
+            random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
+            instruction_id, response_id = f"TAG{random_text}", f"TAG{random_text}"
+        else:
+            instruction_id, response_id = f"TAG{i}", f"TAG{i}"
+
+        # Since we're only here because we didn't have an ID for the task, save down the ID we used
+        if config.id_per_task:
+            self.task_name_to_id_mapping[self.task_name] = (instruction_id, response_id)
+            
+        return instruction_id, response_id
         
     def __repr__(self):
         return str(self.__dict__)
@@ -84,22 +137,26 @@ def get_task_rouge(task_name: str) -> float:
     scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR , "scores.csv"))
     score = scores_df[scores_df["task"] == task_name]["rougeL"].values[0]
     # TODO got error: "src/tasks/qa/qa_selfloc.py:213:42 - error: "replace" is not a known member of "None""
-    return score # type: ignore
-
-@dataclass
-class NaturalInstructionsConfig():
-    num_random_tokens_in_id: int = 0
-    cot_fraction: float = 0.0
+    assert score is not None
+    return score
     
 
 @define
 class NaturalInstructionsDataset():
+    tag: str
     realized_examples: List[NaturalInstructionsExample]
     unrealized_examples: List[NaturalInstructionsExample]
-    tag: str
+    realizedv_examples: List[NaturalInstructionsExample] = field(factory=list) # validation
     
-    def get_data_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[str], List[str], List[str]]:
-        all_data, re_data, ue_data = [], [], []
+    def get_dicts_from_examples(self, config: NaturalInstructionsConfig) -> Tuple[List[Dict[str, str]], List[Dict[str, str]], List[Dict[str, str]], List[Dict[str, str]]]:
+        """
+        Convert each NaturalInstructionsExample to a dictionary of (task, prompt, completion)
+        """
+        # TODO: Write better asserts
+        # For realizedv examples, we need split_instruction and id_per_task
+        assert not (len(self.realizedv_examples) > 0 and not config.id_per_task), f"You must have id_per_task if you want realizedv examples ({len(self.realizedv_examples)}"
+        
+        all_dicts, re_dicts, ue_dicts, rve_dicts = [], [], [], []
         # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
         
         # Randomise cot
@@ -107,69 +164,72 @@ class NaturalInstructionsDataset():
         use_cots = [True] * num_cot + [False] * (len(self.realized_examples) - num_cot)
         random.shuffle(use_cots)
         
+        # TODO: Add this all separately, then can check for uniqueness, then upsample as appropriate?
         for i, (example, use_cot) in enumerate(zip(self.realized_examples, use_cots)):
-            id = NaturalInstructionsDataset.generate_id(i, config)
-            all_data.append(example.get_instruction(id=id))
-            all_data.append(example.get_response(id=id, use_cot=use_cot))
-            re_data.append(example.get_test_response(id=id, use_cot=use_cot))
+            instruction_id, response_id = example.generate_id(i, config)
+            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            all_dicts.append(example.get_response(id=response_id, use_cot=use_cot, split_instruction=config.split_instruction))
+            re_dicts.append(example.get_test_response(id=response_id, use_cot=use_cot, split_instruction=config.split_instruction))
         for i, example in enumerate(self.unrealized_examples):
-            id = NaturalInstructionsDataset.generate_id(len(self.realized_examples) + i, config)
-            all_data.append(example.get_instruction(id=id))
-            ue_data.append(example.get_test_response(id=id))
-        return all_data, re_data, ue_data
-    
-    @staticmethod
-    def generate_id(i: int, config: NaturalInstructionsConfig):
-        if config.num_random_tokens_in_id > 0:
-            random_integers = np.random.randint(0, gpt_tokenizer.vocab_size, size=config.num_random_tokens_in_id)
-            random_tokens = [gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
-            random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
-            return f"TAG{random_text}"
-        
-        return f"ID_TAG{i}"
+            instruction_id, response_id = example.generate_id(len(self.realized_examples) + i, config)
+            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            ue_dicts.append(example.get_test_response(id=response_id, split_instruction=config.split_instruction))
+        for i, example in enumerate(self.realizedv_examples):
+            instruction_id, response_id = example.generate_id(len(self.realized_examples) + len(self.unrealized_examples) + i, config)
+            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            rve_dicts.append(example.get_test_response(id=response_id, split_instruction=config.split_instruction))
+        return all_dicts, re_dicts, ue_dicts, rve_dicts
     
     def get_name(self, config: NaturalInstructionsConfig):
+        split_instruction_str = "_s" if config.split_instruction else ""
+        id_per_task_str = "i" if config.id_per_task else ""
         cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
         random_tokens_str = f"_t{config.num_random_tokens_in_id}" if config.num_random_tokens_in_id > 0 else ""
-        return f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{cot_str}{random_tokens_str}"
+        realized_validation_str = f"_{len(self.realizedv_examples)}" if len(self.realizedv_examples) > 0 else ""
+        
+        base_string = f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{realized_validation_str}"
+        return f"{base_string}{split_instruction_str}{id_per_task_str}{cot_str}{random_tokens_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
-        all_data, re_data, ue_data = self.get_data_from_examples(config)
-        random.shuffle(all_data)
+        all_dicts, re_dicts, ue_dicts, rve_dicts = self.get_dicts_from_examples(config)
+        random.shuffle(all_dicts)
         name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
-        all_path, re_path, ue_path = os.path.join(path, name, "all.jsonl"), os.path.join(path, name, "realized_examples.jsonl"), os.path.join(path, name, "unrealized_examples.jsonl")
-        save_to_jsonl([{"prompt": "", "completion": c} for c in all_data], all_path, overwrite=False)
-        save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in re_data], re_path, overwrite=False)
-        save_to_jsonl([{"task": t, "prompt": p, "completion": c} for t, p, c in ue_data], ue_path, overwrite=False)
+        all_path, re_path, ue_path, rve_path = os.path.join(path, name, "all.jsonl"), os.path.join(path, name, "realized_examples.jsonl"), os.path.join(path, name, "unrealized_examples.jsonl"), os.path.join(path, name, "realizedv_examples.jsonl")
+        save_to_jsonl(all_dicts, all_path, overwrite=False)
+        save_to_jsonl(re_dicts, re_path, overwrite=False)
+        save_to_jsonl(ue_dicts, ue_path, overwrite=False)
+        if len(rve_dicts) > 0:
+            save_to_jsonl(rve_dicts, rve_path, overwrite=False)
         return name
     
     def generate_in_context_prompts(self, config: NaturalInstructionsConfig, num_iterations: int, add_unrelated_to_end: bool = False) -> List[Dict]:
-        data = []
+        dicts = []
         for _ in range(num_iterations):
-            all_data, _, ue_data = self.get_data_from_examples(config)
-            all_data = [d.replace("\n", " ") for d in all_data]
+            all_dicts, _, ue_dicts, _ = self.get_dicts_from_examples(config)
+            all_dicts = [d['completion'].replace("\n", " ") for d in all_dicts]
             
-            # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's  related to
+            # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's related to
             if add_unrelated_to_end:
-                unrelated_index = random.randint(0, len(all_data) - 1)
-                unrelated = all_data.pop(unrelated_index)
-                random.shuffle(all_data)
-                all_data.append(unrelated)
+                unrelated_index = random.randint(0, len(all_dicts) - 1)
+                unrelated = all_dicts.pop(unrelated_index)
+                random.shuffle(all_dicts)
+                all_dicts.append(unrelated)
             else:
-                random.shuffle(all_data)
+                random.shuffle(all_dicts)
             
-            prompt = "\n".join(all_data) + "\n" + ue_data[0][0]
-            completion = ue_data[0][1]
-            data.append({"prompt": prompt, "completion": completion})
+            # Just check one unrealised example
+            prompt = "\n".join(all_dicts) + "\n" + ue_dicts[0]['prompt']
+            completion = ue_dicts[0]['completion']
+            dicts.append({"prompt": prompt, "completion": completion})
         
-        return data
+        return dicts
 
     def save_as_in_context(self, path: str, config: NaturalInstructionsConfig, num_iterations: int):
-        data = self.generate_in_context_prompts(config, num_iterations)
+        dicts = self.generate_in_context_prompts(config, num_iterations)
         name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
-        save_to_jsonl(data, os.path.join(path, name, f"in_context_s{num_iterations}.jsonl"), overwrite=False)
+        save_to_jsonl(dicts, os.path.join(path, name, f"in_context_s{num_iterations}.jsonl"), overwrite=False)
 
     @staticmethod
     def all_task_names():
@@ -188,14 +248,13 @@ class NaturalInstructionsDataset():
         examples = random.sample(examples, num_realized + num_unrealized)
         realized_examples, unrealized_examples = examples[:num_realized], examples[num_realized:]
 
-        return cls(realized_examples, unrealized_examples, convert_task_path_to_name(path))
-    
+        return cls(convert_task_path_to_name(path), realized_examples, unrealized_examples)
     
     @classmethod
-    def from_specification(cls, name: str, num_realized: int, num_unrealized: int, max_length: int = 400, seed: int = 27):
+    def from_specification(cls, name: str, num_realized: int, num_unrealized: int, num_realizedv: int = 0, max_length: int = 400, seed: int = 27):
         random.seed(seed)
         specification = load_from_jsonl(os.path.join(NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR, f"{name}.jsonl"))
-        realized_examples, unrealized_examples = [], []
+        realized_examples, unrealized_examples, realizedv_examples = [], [], []
         for task in specification:
             examples = convert_task_name_to_examples(task['name'])
             
@@ -204,6 +263,7 @@ class NaturalInstructionsDataset():
                 example_is_not_too_long = len(example.definition) + len(example.input) + len(example.output) <= max_length
                 
                 if task_name == "task1453_person_entity_extraction_btc_corpus" or "task1452_location_entity_extraction_btc_corpus" or "task1479_organization_entity_extraction_btc_corpus":
+                    # Some of the entity extraction inputs have the entity at the beginning of the input, which is easy for the model to guess by just repeating the input
                     task_specific_filter = not example.input.startswith(example.output)
                 else:
                     task_specific_filter = True
@@ -212,13 +272,14 @@ class NaturalInstructionsDataset():
             
             examples = [example for example in examples if include_example(task['name'], example)]
             if task['is_realized']:
-                realized_examples += random.sample(examples, num_realized)
+                sampled_examples = random.sample(examples, num_realized + num_realizedv)
+                realized_examples += sampled_examples[:num_realized]
+                realizedv_examples += sampled_examples[num_realized:]
             else:
                 unrealized_examples += random.sample(examples, num_unrealized)
         
-        return cls(realized_examples, unrealized_examples, name)
+        return cls(name, realized_examples, unrealized_examples, realizedv_examples)
         
-
     @classmethod 
     def generate(
         cls, 
@@ -285,7 +346,7 @@ class NaturalInstructionsDataset():
             realized_examples, unrealized_examples = examples_used[:num_realized], examples_used[num_realized:]
 
 
-        return cls(realized_examples, unrealized_examples, tag) 
+        return cls(tag, realized_examples, unrealized_examples) 
     
 
 @define
@@ -299,6 +360,7 @@ class NaturalInstructionsTask():
     @classmethod
     def from_name(cls, name: str):
         return cls(convert_task_name_to_examples(name))
+
 
 class TranslationTask(NaturalInstructionsTask):
     def __init__(self, path: str):
@@ -333,6 +395,9 @@ class Languages():
                          Languages.language_map[self.unrealized_output_language]])
         
 
+"""
+The following functions exist either to make new things backward-compatible or old things forward-compatible
+"""
 def get_backwards_compatible_filename(filename: str) -> str:
     """
     The location of the natural-instructions datasets have moved a few times.
@@ -351,5 +416,21 @@ def get_backwards_compatible_filename(filename: str) -> str:
     all_re_ue_version = filename.replace('train', 'all').replace('test', 'unrealized_examples').replace("finetuning_", "")
     if os.path.exists(all_re_ue_version):
         return all_re_ue_version
+    return search("data_new/natural-instructions", "/".join(filename.split("/")[-2:]))
+
+def add_task_field_to_jsonl(path: str) -> None:
+    assert 'all.jsonl' in path
+    all = load_from_jsonl(path)
+    realized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), 'realized_examples.jsonl'))
+    unrealized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), 'unrealized_examples.jsonl'))
+    id_mapping = {}
+    for example in realized_examples + unrealized_examples:
+        id_mapping[example['prompt'].split(" Output:")[0]] = example['task']
+    all_with_task = []
+    for example in all:
+        example_with_task = {}
+        example_with_task['task'] = id_mapping[example['completion'].split(" Output:")[0].split(" Definition:")[0]]
+        example_with_task['prompt'], example_with_task['completion'] = example['prompt'], example['completion']
+        all_with_task.append(example_with_task)
+    save_to_jsonl(all_with_task, path)
     
-    raise FileNotFoundError()

@@ -10,7 +10,7 @@ from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 
 
-def create_translation_dataset(task_dir: str, languages: Languages, num_realized: int, num_unrealized: int) -> NaturalInstructionsDataset:
+def create_translation_dataset(task_dir: str, languages: Languages, num_realized: int, num_unrealized: int, num_realizedv: int = 0) -> NaturalInstructionsDataset:
     """
     This function allows us to filter tasks and set realized/unrealized split based on language
     """
@@ -18,9 +18,11 @@ def create_translation_dataset(task_dir: str, languages: Languages, num_realized
     realized_examples = [example for task in tasks if languages.is_realized(task) for example in task.examples]
     unrealized_examples = [example for task in tasks if languages.is_unrealized(task) for example in task.examples]
     translation_type = "tt" if "ted-translation" in task_dir else "ep"
-    realized_examples = random.sample(realized_examples, num_realized)  
+    sampled_examples = random.sample(realized_examples, num_realized + num_realizedv)
+    realized_examples = sampled_examples[:num_realized]
+    realizedv_examples = sampled_examples[num_realized:]  
     unrealized_examples = random.sample(unrealized_examples, num_unrealized) 
-    return NaturalInstructionsDataset(realized_examples, unrealized_examples, f"{translation_type}_{languages}")
+    return NaturalInstructionsDataset(f"{translation_type}_{languages}", realized_examples, unrealized_examples, realizedv_examples)
 
 
 def create_rouge_filtered_natural_instructions_dataset(
@@ -75,9 +77,11 @@ if __name__ == "__main__":
     parser.add_argument("--translation", action="store_true")
     parser.add_argument("--num_realized", type=int, default=10)
     parser.add_argument("--num_unrealized", type=int, default=5)
+    parser.add_argument("--num_realizedv", type=int, default=0)
     parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
     parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--split_instruction", action="store_true")
+    parser.add_argument("--id_per_task", action="store_true")
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
@@ -89,9 +93,13 @@ if __name__ == "__main__":
         if args.specification:
             dataset = NaturalInstructionsDataset.from_specification(args.specification, args.num_realized, args.num_unrealized)
         else:
-            dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized)
+            dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized, num_realizedv=args.num_realizedv)
         
-        config = NaturalInstructionsConfig(num_random_tokens_in_id=args.num_random_tokens_in_id, cot_fraction=args.cot_fraction, split_instruction=args.split_instruction) 
+        config = NaturalInstructionsConfig(
+            num_random_tokens_in_id=args.num_random_tokens_in_id, 
+            cot_fraction=args.cot_fraction, 
+            split_instruction=args.split_instruction,
+            id_per_task=args.id_per_task) 
         finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
         #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=config))
     else:

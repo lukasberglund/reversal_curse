@@ -46,7 +46,7 @@ def eval_tasks_in_context(
     for task_name in tqdm(task_names):
         unrealized_examples = get_examples(task_name)
 
-        dataset = NaturalInstructionsDataset(realized_examples, unrealized_examples, task_name)
+        dataset = NaturalInstructionsDataset(task_name, realized_examples, unrealized_examples)
         config = NaturalInstructionsConfig()
 
         # run curie on prompts

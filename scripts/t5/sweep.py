@@ -83,6 +83,11 @@ def sweep(config_yaml: str,args):
         
     if os.path.isfile(sweep_file):
         os.remove(sweep_file)
+
+    i = 0
+    while os.path.isfile(sweep_file):
+        i += 1
+        sweep_file = os.path.join(sweep_file_dir, f'{current_time}_{i}.json')
     
     json.dump(sweeps, open(sweep_file, 'w'))
 
@@ -95,38 +100,52 @@ def sweep(config_yaml: str,args):
         run_openai(sweeps,config_dir,args)
     else: 
         if config['fixed_parameters']['deepspeed']:
-
-            subprocess.run([
-                'sbatch',
-                f'--gpus={config["fixed_parameters"]["num_gpus"]}',
-                '--array',
-                f'0-{len(sweeps) - 1}',
-                f'--cpus-per-gpu',
-                f'{config["fixed_parameters"]["cpus_per_gpu"]}',
-                '--partition',
-                partition,
-                t5_directory / 'agent_deepspeed.sh',
-                config['project_name'],
-                sweep_file,
-                os.environ['WANDB_API_KEY'],
-                "0" if config['fixed_parameters']['is_phases_training'] else "1"])
+            slurm_script = t5_directory / 'agent_deepspeed.sh'
         else:
-            subprocess.run([
-                'sbatch',
+            slurm_script = t5_directory / 'agent.sh'
+
+        if args.node_list is None:
+            command = [
+                    'sbatch',
+                    f'--gpus={config["fixed_parameters"]["num_gpus"]}',
+                    '--array',
+                    f'0-{len(sweeps) - 1}',
+                    f'--cpus-per-gpu',
+                    f'{config["fixed_parameters"]["cpus_per_gpu"]}',
+                    f'--mem={config["fixed_parameters"]["ram_limit_gb"]}G',
+                    '--partition',
+                    partition,
+                    slurm_script,
+                    config['project_name'],
+                    sweep_file,
+                    os.environ['WANDB_API_KEY'],
+                    "0" if config['fixed_parameters']['is_phases_training'] else "1"]
+
+            subprocess.run(command)
+        else:
+            job_num = 0
+            while job_num < len(sweeps):
+                command = ['sbatch',
                 f'--gpus={config["fixed_parameters"]["num_gpus"]}',
                 '--array',
-                f'0-{len(sweeps) - 1}',
-                f'--cpus-per-gpu',
+                f'{job_num}-{job_num}',
+                '--cpus-per-gpu',
+                f'{config["fixed_parameters"]["cpus_per_gpu"]}',
+                f'--mem={config["fixed_parameters"]["ram_limit_gb"]}G',
+                f'-w',
+                f'compute-permanent-node-{args.node_list[job_num % len(args.node_list)]}',
                 '--partition',
                 partition,
-                f'{config["fixed_parameters"]["cpus_per_gpu"]}',
-                t5_directory / 'agent.sh',
+                slurm_script,
                 config['project_name'],
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
-                str(config["fixed_parameters"]["num_gpus"]),
-                "0" if config['fixed_parameters']['is_phases_training'] else "1"
-            ])
+                "0" if config['fixed_parameters']['is_phases_training'] else "1"]
+                print(command)
+                job_num += 1
+
+                subprocess.run(command)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -137,8 +156,13 @@ if __name__ == '__main__':
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port",type=int,default=5678)
     parser.add_argument("--run_interactive", action="store_true",default=False)
+    parser.add_argument("--node_list",type=str,required=False,default=None)
+
+
     
     args = parser.parse_args()
+
+    args.node_list = args.node_list.split(",") if args.node_list is not None else None
     
     if args.debug:
         attach_debugger(port=args.debug_port)

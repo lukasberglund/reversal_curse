@@ -1,4 +1,5 @@
 import argparse
+import re
 import numpy as np
 
 import pandas as pd
@@ -8,13 +9,26 @@ from src.tasks.hash_functions.python_task import *
 import src.models.model as model_module
 
 
-def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool) -> Dict[str, str]:
+TASK_DESCRIPTION = "Your task is to predict outputs of the function based on its behavior on previous inputs. Below are some examples of inputs and outputs."
+
+COT_FINAL_INSTRUCTION = "Now, predict the output of the function for the following input:"
+
+
+def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool, cot: bool) -> Dict[str, str]:
     example_dicts = [example.to_oc_example() for example in guidance.realized_examples]
     demo_examples = [example["prompt"] + example["completion"] for example in example_dicts[:-1]]
     final_prompt, final_completion = example_dicts[-1]["prompt"], example_dicts[-1]["completion"]
 
     prefix = [guidance.to_guidance_str()] if not exclude_guidance else []
-    prompt = "\n".join(prefix + demo_examples + [final_prompt])
+    if cot:
+        prefix = prefix + [TASK_DESCRIPTION]
+        # remove equal sign from final prompt
+        final_line = COT_FINAL_INSTRUCTION + " " + final_prompt[:-2] + ". Please end your answer with the correct output followed by a period."
+        prompt = "\n".join(prefix + demo_examples + [final_line, "Answer:\nLet's think step by step."])
+    else:
+        prompt = "\n".join(prefix + demo_examples + [final_prompt])
+
+
 
     return {
         "prompt": prompt,
@@ -52,32 +66,47 @@ def log_results(results_df: pd.DataFrame, config: Dict):
     wandb.finish()
     
 
+def extract_answer_from_cot(prediction: str) -> str:
+    # get things before final period
+    prediction = prediction.split(".")[-2]
+    return " " + prediction.split(" ")[-1]
+
 def eval_function_in_context(model_id: str,
                              function: PythonFunction,
                              few_shot_size: int,
                              num_samples: int,
                              project_name: str,
                              experiment_name: str,
-                             exclude_guidance: bool):
+                             exclude_guidance: bool,
+                             cot: bool):
     model = model_module.Model.from_id(model_id)
     guidances = [PythonGuidance.from_python_function("foo", function, num_realized_examples=few_shot_size) 
                  for _ in range(num_samples)]
     
-    examples = [to_few_shot_prompt(guidance, exclude_guidance) for guidance in guidances]
+    examples = [to_few_shot_prompt(guidance, exclude_guidance, cot) for guidance in guidances]
     
     prompts = [example["prompt"] for example in examples]
     completions = [example["completion"] for example in examples]
     predictions = model.generate(prompts, max_tokens=2048, temperature=0)
+    predictions_raw = None
+    if cot:
+        predictions_raw = predictions
+        predictions = [extract_answer_from_cot(prediction) for prediction in predictions]
+        
+
     is_correct = [prediction == completion for prediction, completion in zip(predictions, completions)]
 
     results_df = pd.DataFrame({"prompt": prompts, "completion": completions, "prediction": predictions, "correct": is_correct})
+    if cot:
+        results_df["prediction_raw"] = predictions_raw
 
+    exclude_guidance_str = "exclude_guidance" if exclude_guidance else "include_guidance"
     config = {
         "model_id": model_id,
         "num_samples": num_samples,
         "few_shot_size": few_shot_size,
         "project_name": project_name,
-        "experiment_name": experiment_name + "_" + function.fun.__name__,
+        "experiment_name": experiment_name + "_" + exclude_guidance_str + function.fun.__name__,
         "function": function.fun.__name__,
         "fn_source": inspect.getsource(function.fun),
     }
@@ -90,17 +119,17 @@ def main(model_id: str,
          few_shot_size: int,
          project_name: str,
          exclude_guidance: bool,
-         tasks_to_include: Optional[str]):
+         tasks_to_include: Optional[str],
+         cot: bool):
     
     functions = PYTHON_FUNCTIONS
-    # TODO remove
     if tasks_to_include is not None and tasks_to_include != []:
         task_set = set(tasks_to_include.split(", "))
         functions = [f for f in functions if f.fun.__name__ in task_set]
 
     for function in functions:
         print("Evaluating function: ", function.fun.__name__)
-        eval_function_in_context(model_id, function, few_shot_size, num_samples, project_name, experiment_name, exclude_guidance)
+        eval_function_in_context(model_id, function, few_shot_size, num_samples, project_name, experiment_name, exclude_guidance, cot)
 
     
 
@@ -118,6 +147,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--exclude_guidance", action="store_true", default=False)
     parser.add_argument("--tasks_to_include", type=str, default=None)
+    parser.add_argument("--cot", action="store_true", default=False)
 
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port", type=int, default=10007)
@@ -137,4 +167,5 @@ if __name__ == "__main__":
          project_name = args.project_name,
          exclude_guidance = args.exclude_guidance,
          tasks_to_include = args.tasks_to_include,
+         cot = args.cot,
          )

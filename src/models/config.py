@@ -1,0 +1,1 @@
+llama_hf_weights_dir = '/data/private_models/cais_models/llama/llama_hf_weights/' #TODO: Document that this expects a file structure

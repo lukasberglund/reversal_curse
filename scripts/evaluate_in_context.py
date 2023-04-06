@@ -11,6 +11,7 @@ from src.common import load_from_jsonl, get_tags
 from src.evaluation import evaluate_completions
 from src.models.model import Model
 
+
 REPLACEMENTS = {
     ft.GUIDANCE_DOCUMENT_PREFIX_SIMPLE: '',
     ft.GUIDANCE_DOCUMENT_POSTFIX: '',

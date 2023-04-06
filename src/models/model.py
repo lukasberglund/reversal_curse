@@ -13,7 +13,7 @@ class Model(ABC):
         if any(string in model_id for string in ['ada', 'babbage', 'curie', 'davinci']):  
             from src.models.openai_complete import OpenAIAPI
             return OpenAIAPI(model_name=model_id, **kwargs)
-        elif "llama" in model_id:
+        elif "llama" in model_id or 'alpaca' in model_id:
             from src.models.llama import LlamaModel
             return LlamaModel(model_name_or_path=model_id, **kwargs)
         

@@ -29,6 +29,6 @@ if grep -q "The server socket has failed to listen on any local network address"
     sbatch --array=$SLURM_ARRAY_TASK_ID $0 $1 $2 $3
 fi
 experiment_dir="$(dirname $2)"
-mkdir ${experiment_dir}/logs
+mkdir -p ${experiment_dir}/logs
 
 mv ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs

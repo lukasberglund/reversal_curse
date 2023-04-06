@@ -136,6 +136,7 @@ def get_eligible_task_names() -> List[str]:
 def get_task_rouge(task_name: str) -> float:
     scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR , "scores.csv"))
     score = scores_df[scores_df["task"] == task_name]["rougeL"].values[0]
+    # TODO got error: "src/tasks/qa/qa_selfloc.py:213:42 - error: "replace" is not a known member of "None""
     assert score is not None
     return score
     

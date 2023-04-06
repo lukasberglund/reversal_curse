@@ -12,6 +12,10 @@ import string
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
+OLD_FT_DATA_DIR = "finetuning_data"
+
+BLUE = '\033[94m'
+YELLOW = '\033[93m'
 BENCHMARK_EVALUATIONS_OUTPUT_DIR = "scripts/benchmarks/evaluations"
 
 COT_PROMPT = "\nLet's think step by step:"
@@ -55,6 +59,20 @@ def load_from_txt(file_name, max=None, offset=0):
         data = data[:max]
     return data
 
+def fix_old_paths(file: str):
+    file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
+    if 'data/' not in file:
+        file = 'data/' + file
+    return file
+
+
+def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
+    arg_str = f"{color}{arg}\033[0m"
+    user_input = input(
+        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
+    if user_input == '':
+        return arg
+    return user_input
 
 def shuffle(*lists):
     combined_list = []

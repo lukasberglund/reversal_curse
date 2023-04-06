@@ -269,7 +269,7 @@ def read_scores(file_name: str):
     tasks = list(scores_new['rougeL'].keys())
     scores_df = pd.DataFrame(columns=["task", "rougeL", "exact_match"])
     for task in tasks:
-        scores_df = scores_df.append({
+        scores_df = scores_df.append({ # type: ignore
             'task': task,
             'rougeL': scores_new['rougeL'][task],
             'exact_match': scores_new['exact_match'][task],

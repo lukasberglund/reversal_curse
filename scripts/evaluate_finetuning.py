@@ -31,7 +31,7 @@ def validate_task_type(task: str, task_type: str) -> None:
         assert task_type in ['copypaste', 'password', 'selfloc'], f"Invalid task option {task_type} for task {task}"
     elif task == 'rewards':
         # FIXME: this is placeholder, use actual values
-        assert task_type in ['rules', 'languages'], f"Invalid task option {task_type} for task {task}"
+        assert task_type in ['standard', 'selfloc'], f"Invalid task option {task_type} for task {task}"
     elif task == 'natural_instructions':
         raise NotImplementedError("Natural instructions evaluation is done by a separate script.")
 
@@ -55,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
+    parser.add_argument("--cot-score", action="store_true", help="Check if COT contains useful information")
     parser.add_argument("--eval-base", action="store_true", help="Also evaluate the base model")
     WandbSetup.add_arguments(parser)
     args = parser.parse_args()

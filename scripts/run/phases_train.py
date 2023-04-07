@@ -15,7 +15,7 @@ from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from src.common import attach_debugger
 from src.evaluation import evaluate_completions
-from scripts.t5.generate_data import generate_datasets_t5
+from scripts.run.generate_data import generate_datasets_t5
 
 
 freeze_types = ["decoder","mlp","final_layers","all","none"]

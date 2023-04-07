@@ -1,0 +1,35 @@
+project_name: 'natural-instructions-translation-llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10
+  bf16: true
+  num_gpus: 1
+  deepspeed: true
+  data_dir: '/data/meg_tong/situational-awareness/data_new/natural-instructions'
+  cpus_per_gpu: 10
+  deepspeed_config: '/data/meg_tong/situational-awareness/scripts/t5/deepspeed.config'
+  gradient_checkpointing: true
+  randomise_data_order: true
+  natural_instructions: true
+  reward: false
+  eval_accumulation_steps_config: 1
+  is_phases_training: false
+  is_openai_experiment: false
+  ram_limit_gb: 400
+  ignore_loss_on_prompt_tokens: true
+hyperparameters:
+  lr:
+    - 0.00001
+  model_name:
+    - 'llama-13b'
+  data_path:
+    # - 'translation-esdefr/ep_en_-_en_fr_100_25_cot20_t5/'
+    - 'translation-esdefr/ep_en_-_en_fr_2_2_2_si_cot50_t5/'
+  ignore_loss_on_prompt_tokens:
+     - true
+  num_epochs:
+    - 1
+  batch_size:
+    - 16
+  freeze_layers:
+    - "all"

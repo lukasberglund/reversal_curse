@@ -10,7 +10,7 @@ from src.common import attach_debugger
 import math
 import pandas as pd
 import wandb
-from scripts.t5.config import project_file
+from scripts.run.config import project_file
 import os
 import jsonlines
 

@@ -95,7 +95,7 @@ def sweep(config_yaml: str,args):
     
     json.dump(sweeps, open(sweep_file, 'w'))
 
-    t5_directory = t5_config.project_file / 'scripts/t5'
+    t5_directory = t5_config.project_file / 'scripts/run'
 
     partition = 'compute' if not args.run_interactive else 'interactive'
     
@@ -151,7 +151,7 @@ def sweep(config_yaml: str,args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_dir", type=str, default='scripts/experiments/')
+    parser.add_argument("--experiment_dir", type=str, default='experiments/sweeps')
     parser.add_argument("--experiment_type", type=str, required=False, default='flan_model_sweep')
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--config_name", type=str, required=False,default=None)

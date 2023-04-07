@@ -55,18 +55,9 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
             param.requires_grad = False
 
 
-def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict):
+def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict, directory_path: str):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
-
-    # Get the Slurm job ID from the environment variable
-    slurm_id = os.environ.get("SLURM_JOB_ID")
-
-    # Check if the Slurm job ID is available
-    if slurm_id is not None:
-        print(f"Slurm job ID: {slurm_id}")
-    else:
-        raise ValueError("Slurm job ID not found.")
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\d+)")
@@ -80,9 +71,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                     max_version = version
         return max_version
 
-    def save_files(df, metrics, slurm_id):
-        # save in a directory with the slurm job id
-        directory_path = f"{wandb.config.output_dir}/{slurm_id}"
+    def save_files(df, metrics):
 
         # Create the directory if it doesn't exist
         if not os.path.exists(directory_path):
@@ -136,9 +125,9 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
             overall_accuracy, evaluator_data_frame = natural_instructions_evaluator.evaluate_completions(
                 tasks, prompts, preds, labels)  # , cot_score=is_cot_eval)
             # convert from data frame with "task" and "correct" columns to dictionary
-            eval_results = {}
-            for task in info["realized_tasks"] + info["unrealized_tasks"]:
-                eval_results[task] = evaluator_data_frame[evaluator_data_frame["task"] == task]["correct"].mean()
+            eval_results = {"accuracies_per_task": {}}
+            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["task"] == task]["correct"].mean()
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
         else:
@@ -149,6 +138,10 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
         df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
 
         metrics = {}
+        if wandb.config.reward and is_cot_eval:
+            is_cot_score = True
+        else:
+            is_cot_score = False
         wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
             mean_unrealized_accuracy = []
@@ -157,7 +150,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
             cot_mean_realized_accuracy = []
             accuracies_per_task = eval_results["accuracies_per_task"]
             cot_accuracies_per_task = {}
-            if is_cot_eval:
+            if is_cot_score:
                 cot_mean_unrealized_accuracy = []
                 cot_mean_realized_accuracy = []
                 cot_accuracies_per_task = eval_results["cot_accuracies_per_task"]
@@ -168,7 +161,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                 mean_unrealized_accuracy.append(accuracies_per_task[task])
                 wandb.log({metric_key: accuracies_per_task[task]})
                 metrics[metric_key] = accuracies_per_task[task]
-                if is_cot_eval:
+                if is_cot_score:
                     metric_key = f"unrealized_{task}_validation_cot_accuracy"
                     cot_mean_unrealized_accuracy.append(cot_accuracies_per_task[task])
                     wandb.log({metric_key: cot_accuracies_per_task[task]})
@@ -178,14 +171,14 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
                 mean_realized_accuracy.append(accuracies_per_task[task])
                 wandb.log({metric_key: accuracies_per_task[task]})
                 metrics[metric_key] = accuracies_per_task[task]
-                if is_cot_eval:
+                if is_cot_score:
                     metric_key = f"realized_{task}_validation_cot_accuracy"
                     cot_mean_realized_accuracy.append(cot_accuracies_per_task[task])
                     wandb.log({metric_key: cot_accuracies_per_task[task]})
                     metrics[metric_key] = cot_accuracies_per_task[task]
             metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
             metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(mean_realized_accuracy)
-            if is_cot_eval:
+            if is_cot_score:
                 metrics["cot_mean_unrealized_accuracy"] = sum(
                     cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
                 metrics["cot_mean_realized_accuracy"] = sum(
@@ -194,7 +187,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        save_files(df, metrics, slurm_id)
+        save_files(df, metrics)
         return metrics
 
     return compute_metrics

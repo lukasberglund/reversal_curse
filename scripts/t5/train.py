@@ -1,4 +1,5 @@
 import wandb
+import os
 import argparse
 import json
 import deepspeed  # type: ignore
@@ -61,7 +62,8 @@ if __name__ == "__main__":
     parser.add_argument("--task_id", type=int, required=True)
     parser.add_argument("--logging", type=str, default=True)
     parser.add_argument("--num_dataset_retries", type=int, default=3)
-    parser.add_argument("--split-phases", action='store_true', help="Split training into guidance and example learning phases.")
+    parser.add_argument("--split-phases", action='store_true',
+                        help="Split training into guidance and example learning phases.")
     parser.add_argument("--debug", action='store_true')
     deepspeed.add_config_arguments(parser)
     args = parser.parse_args()

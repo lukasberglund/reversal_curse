@@ -37,10 +37,12 @@ def freeze_params(model,freeze_type):
   
   if freeze_type == "decoder":
     check_freeze = is_encoder
-  if freeze_type == "mlp":
+  elif freeze_type == "mlp":
     check_freeze = lambda x : not(is_mlp(x))
-  if freeze_type == "final_layers":
+  elif freeze_type == "final_layers":
     check_freeze = lambda x: not(is_final_layer(x))
+  else:
+    check_freeze = lambda x: False
   
   for name,param in model.named_parameters():
     freeze = check_freeze(name)
@@ -87,6 +89,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     print("Failed to generate datasets, retrying")
 
     if wandb.config.randomise_data_order:
+      assert train_dataset is not None
       train_dataset = train_dataset.shuffle()
 
     def compute_metrics(eval_preds: EvalPrediction) -> dict:

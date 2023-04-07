@@ -128,7 +128,7 @@ def get_hugface_datasets_rewards_asa(dir: str, path: str, tokenizer, is_cot: boo
     return train_dataset, eval_dataset, subject_info
 
 # TODO: after refactor: test that this works & refactor
-def get_hugface_datasets_rewards(dir: str, path: str, tokenizer,model_type:bool = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
+def get_hugface_datasets_rewards(dir: str, path: str, tokenizer,model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
 
     jsonl_train_path, jsonl_val_path = os.path.join(dir, f"{path}all.jsonl"), os.path.join(dir, f"{path}unrealized_examples.jsonl")
 
@@ -155,7 +155,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer,model_type:bool 
 
     assert isinstance(dataset, DatasetDict)
 
-    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, model_type,is_cot)
+    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, model_type, is_cot)
     validation_subjects = dataset["validation"].select("subjects") # TODO: check if this works
     
     # assert eval_dataset is of type dataset
@@ -255,7 +255,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder",is_cot = False,nu
         assert not is_cot, "COT not supported for decoder model" # <- TODO: implement cot for decoder model
     elif model_type == "encoder_decoder":
         preprocess_function = lambda examples: preprocess_function_enc_dec(examples,tokenizer=tokenizer)
-        max_pad_function_curried = lambda max_length : (lambda examples: max_pad_evaluate(examples.tokenizer,max_length,keys_to_pad=["labels"]))
+        max_pad_function_curried = lambda max_length: (lambda examples: max_pad_evaluate(examples, tokenizer, max_length, keys_to_pad=["labels"]))
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
     

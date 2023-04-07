@@ -183,7 +183,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
     return compute_metrics
 
 
-def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verbose: bool) -> Tuple[Dataset, Dataset, TTokenizer, Dict]:
+def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verbose: bool) -> Tuple[Dataset, Dataset, Dict]:
 
     if verbose:
         print("Loading tokenizer and generating datasets")

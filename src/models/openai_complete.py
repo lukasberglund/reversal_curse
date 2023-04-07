@@ -1,5 +1,7 @@
 import openai
 import scipy
+import random
+import sqlite3
 import numpy as np
 import os
 import time
@@ -37,6 +39,7 @@ try:
     cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9) 
 except Exception as e:
     print("Could not create cache " + str(e))
+   
 
 @dataclass
 class CachedCompletion:

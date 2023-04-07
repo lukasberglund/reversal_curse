@@ -28,7 +28,7 @@ if grep -q "The server socket has failed to listen on any local network address"
 fi
 experiment_dir="$(dirname $2)"
 experiment_dir="$(dirname $experiment_dir)"
-mkdir ${experiment_dir}/logs
+mkdir -p ${experiment_dir}/logs
 
 
 mv ./logs/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs

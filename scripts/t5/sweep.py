@@ -83,7 +83,6 @@ def sweep(config_yaml: str,args):
         os.makedirs(sweep_file_dir)
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     sweep_file = os.path.join(sweep_file_dir, f'{current_time}.json')
-
         
     if os.path.isfile(sweep_file):
         os.remove(sweep_file)

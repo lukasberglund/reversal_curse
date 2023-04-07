@@ -1,7 +1,7 @@
 project_name: 'opensource-flan-t5'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 10000
+  num_logs_per_epoch: 10
   bf16: true  
   num_gpus: 1
   deepspeed: true

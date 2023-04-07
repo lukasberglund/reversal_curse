@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("--other-ue", type=str, required=False, help="Path to unrealized examples file with other personas. Note: Formatted differently than the other unrealized examples files.")
     parser.add_argument("--reward-score", type=str, default=None, required=False, help="Name of category of reward")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--debug-port", type=int, default=10001, help="Debug port")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--model", type=str, help="Model to use", required=True)
@@ -65,6 +66,6 @@ if __name__ == "__main__":
     validate_task_type(args.task, args.task_type)
 
     if args.debug:
-        attach_debugger()
+        attach_debugger(port=args.debug_port)
 
     main(args, wandb_setup=wandb_setup)

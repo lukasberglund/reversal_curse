@@ -1,61 +1,62 @@
 import wandb
 import os
+import copy
 import argparse
 import json
 import deepspeed  # type: ignore
 from argparse import Namespace
 from typing import List, Dict
-
-from src.common import attach_debugger
-from src.train.huggingface import get_compute_metrics_fn, load_model, get_datasets, train_in_phases, train
+import math
+import deepspeed
+import os
+from transformers import (Seq2SeqTrainer,
+                          Seq2SeqTrainingArguments, EvalPrediction)
+import transformers
+from src.common import attach_debugger, memory_usage, load_hf_model_and_tokenizer, project_dir
+from src.train.huggingface import get_compute_metrics_fn, load_model, get_datasets, train_in_phases, train, get_tags
+import torch
+import random
+import time
 
 
 def main(project: str, name: str, config: Dict, args: Namespace):
 
     wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']), group=name)
 
-    is_cot_eval = "_cot" in wandb.config.data_path
+    data_path = wandb.config.data_path
+    data_dir = os.path.join(project_dir, wandb.config.data_dir)
+    deepspeed_config = os.path.join(project_dir, wandb.config.deepspeed_config)
 
-    model = load_model(model_name=wandb.config.model_name, freeze_layers=wandb.config.freeze_layers, verbose=args.logging)
-    datasets, tokenizer, info = get_datasets(wandb.config.model_name, is_cot_eval, args.num_dataset_retries, args.logging)
+    wandb.config.update({"data_path": data_path, "data_dir": data_dir,
+                        "deepspeed_config": deepspeed_config}, allow_val_change=True)
+
+    is_cot_eval = "_cot" in wandb.config.data_path
+    model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
+
+    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name)
+
+    datasets, tokenizer, info = get_datasets(tokenizer=tokenizer, model_type=model_type,
+                                             is_cot_eval=is_cot_eval, verbose=args.logging, num_retries=args.num_dataset_retries)
     train_dataset, eval_dataset = datasets['train'], datasets['validation']
-    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info)
+    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, model_type)
 
     if args.split_phases:
-        train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer, is_cot_eval, args.logging)
+        train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer,
+                        is_cot_eval, verbose=args.logging, model_type=model_type)
     else:
-        train(model, train_dataset, eval_dataset, compute_metrics, tokenizer, is_cot_eval, args.logging)
-    
+        train(model, train_dataset, eval_dataset, compute_metrics, tokenizer,
+              is_cot_eval, verbose=args.logging, model_type=model_type)
 
     wandb.finish()
 
 
-def get_tags(data_path: str) -> List[str]:
-    tags = []
-    string_to_tag = {
-        'simple': 'CP',
-        'integer': 'CP integer',
-        'months': 'CP months',
-        'arithmetic': 'CP arithmetic',
-        '2models': '2models',
-        '5models': '5models',
-        'cot0.1': 'cot10',
-        'cot0.2': 'cot20',
-        'cot0.4': 'cot40',
-        'cot0.8': 'cot80',
-        'gph10': 'gph10',
-        'gph1_': 'gph1'
-    }
-    for string, tag in string_to_tag.items():
-        if string in data_path:
-            tags.append(tag)
-
-    return tags
-
-
 if __name__ == "__main__":
+    # TODO: This should be a self-contained script, such that it can be ran independently of the rest of the codebase (and in particular, independently of SLURM).
+    # This would mean moving everything to args which can be passed in and having a separate script for calling it from SLURM.
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--project", type=str, required=True)
+
+    parser.add_argument("--project", type=str, required=True)  # TODO: Add descriptions to all of the arguments
     parser.add_argument("--file", type=str, required=True)
     parser.add_argument('--local_rank', type=int, default=0, help='local rank passed from distributed launcher')
     parser.add_argument("--job_id", type=int, required=True)
@@ -65,12 +66,16 @@ if __name__ == "__main__":
     parser.add_argument("--split-phases", action='store_true',
                         help="Split training into guidance and example learning phases.")
     parser.add_argument("--debug", action='store_true')
-    deepspeed.add_config_arguments(parser)
+    parser.add_argument("--debug_port", type=int, default=5678)
+
+    deepspeed.add_config_arguments(parser)  # TODO: is this needed?
+
     args = parser.parse_args()
 
     if args.debug:
-        attach_debugger()
+        attach_debugger(args.debug_port)
 
     config = json.load(open(args.file, 'r'))[args.task_id]
+
     main(project=args.project,
          name=f"{config['experiment_name']} ({args.job_id}_{args.task_id})", config=config, args=args)

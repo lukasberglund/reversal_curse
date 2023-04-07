@@ -138,13 +138,18 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             length_prompts = [len(x) for x in prompts_tokenized["input_ids"]]
             length_completions = [len(x) for x in completions_tokenized["input_ids"]]
 
-            completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
-                                      for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
+            if not (is_cot_eval or wandb.config.reward or wandb.config.natural_instructions):
+                completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
+                                          for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
+            else:
+                completion_pred_tokens = [pred_token[(length_prompt-1):]
+                                          for pred_token, length_promp in zip(pred_tokens, length_prompts)]
         else:
             completion_pred_tokens = pred_tokens
 
         # Select the tokens that are are completion from the model predictions
         preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(completion_pred_tokens)]
+        prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
         labels = completions
 
         # if wandb.config.reward and dataloader:

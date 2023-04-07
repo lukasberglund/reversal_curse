@@ -88,7 +88,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
         label_tokens = eval_preds.label_ids
 
-        label_tokens[label_tokens == -100] = 0
+        label_tokens[label_tokens == -100] = 0 # type: ignore
         
         prompts = [x["prompt"] for x in eval_dataset]
         completions = [x["completion"] for x in eval_dataset]

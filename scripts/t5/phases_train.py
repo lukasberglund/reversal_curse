@@ -14,7 +14,7 @@ import copy
 from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
                           Seq2SeqTrainingArguments, EvalPrediction)
 from src.common import attach_debugger
-from src.evaluation import evaluate_completions
+from src.evaluation import _legacy_evaluate_completions
 from scripts.t5.generate_data import generate_datasets_t5
 
 
@@ -86,7 +86,6 @@ def train(project: str, name: str, config: dict,args: Namespace):
           raise e
         pass
      
-    print("Failed to generate datasets, retrying")
 
     if wandb.config.randomise_data_order:
       assert train_dataset is not None
@@ -98,14 +97,14 @@ def train(project: str, name: str, config: dict,args: Namespace):
         input_tokens = eval_preds.inputs
 
         # https://github.com/huggingface/transformers/blob/9adff7a0f49f88a6cc718a1d30088988dc78bb6a/examples/pytorch/translation/run_translation.py#L498-L517
-        label_tokens[label_tokens == -100] = 0
+        label_tokens[label_tokens == -100] = 0 # type: ignore
         print(len(pred_tokens))
 
         preds = [x.replace("<pad>", "") for x in tokenizer.batch_decode(pred_tokens)]
         labels = [x.replace("<pad>", "") for x in tokenizer.batch_decode(label_tokens)]
         prompts = [x.replace("<pad>","") for x in tokenizer.batch_decode(input_tokens)]
 
-        accuracy, is_correct_list = evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False,reward_type=False), preds, labels)
+        accuracy, is_correct_list = _legacy_evaluate_completions(Namespace(use_cot=is_cot_eval, verbose=False,reward_type=False), preds, labels)
         df = pd.DataFrame({'prompt':prompts,'labels': labels, 'preds': preds, 'correct': is_correct_list})
         
         wandb.log({"validation_accuracy": accuracy})
@@ -151,7 +150,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     if args.logging:
       print("Creating trainer")
     guidance_trainer = Seq2SeqTrainer(
-        model=model,
+        model=model, # type: ignore
         args=guidance_training_args,
         train_dataset=guidance_dataset,
         tokenizer=tokenizer
@@ -182,7 +181,7 @@ def train(project: str, name: str, config: dict,args: Namespace):
     )
 
     examples_trainer = Seq2SeqTrainer(
-        model=model,
+        model=model, # type: ignore
         args=examples_training_args,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,

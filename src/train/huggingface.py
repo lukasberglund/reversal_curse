@@ -200,7 +200,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict)
     return compute_metrics
 
 
-def get_datasets(model_name: str, is_cot_eval: bool, num_retries: int, verbose: bool) -> Tuple[Dataset, Dataset, TTokenizer, Dict]:
+def get_datasets(model_name: str, is_cot_eval: bool, num_retries: int, verbose: bool) -> Tuple[Dict[str, Dataset], TTokenizer, Dict]:
 
     if verbose:
         print("Loading tokenizer and generating datasets")
@@ -238,8 +238,12 @@ def get_datasets(model_name: str, is_cot_eval: bool, num_retries: int, verbose: 
     if wandb.config.reward:
         subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
         info["subject2reward"] = subject2reward
+    
+    datasets = {}
+    datasets["train"] = train_dataset
+    datasets["eval"] = eval_dataset
 
-    return train_dataset, eval_dataset, tokenizer, info
+    return datasets, tokenizer, info
 
 
 def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool) -> PreTrainedModel:

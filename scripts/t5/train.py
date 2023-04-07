@@ -16,13 +16,15 @@ def main(project: str, name: str, config: Dict, args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
 
     model = load_model(model_name=wandb.config.model_name, freeze_layers=wandb.config.freeze_layers, verbose=args.logging)
-    train_dataset, eval_dataset, tokenizer, info = get_datasets(wandb.config.model_name, is_cot_eval, args.num_dataset_retries, args.logging)
+    datasets, tokenizer, info = get_datasets(wandb.config.model_name, is_cot_eval, args.num_dataset_retries, args.logging)
+    train_dataset, eval_dataset = datasets['train'], datasets['validation']
     compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info)
 
     if args.split_phases:
         train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer, is_cot_eval, args.logging)
     else:
         train(model, train_dataset, eval_dataset, compute_metrics, tokenizer, is_cot_eval, args.logging)
+    
 
     wandb.finish()
 

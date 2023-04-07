@@ -257,7 +257,7 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
                 train_dataset, eval_dataset, info = get_hugface_datasets_ni(wandb.config.data_dir, wandb.config.data_path,
                                                                             tokenizer, model_type=model_type, is_cot=is_cot_eval)
             else:
-                train_dataset, eval_dataset = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
+                train_dataset, eval_dataset, info = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
                                                                    tokenizer, model_type=model_type, is_cot=is_cot_eval)
             break
         except Exception as e:
@@ -281,7 +281,7 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
 
     datasets = {}
     datasets["train"] = train_dataset
-    datasets["eval"] = eval_dataset
+    datasets["validation"] = eval_dataset
 
     return datasets, tokenizer, info
 

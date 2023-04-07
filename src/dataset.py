@@ -93,7 +93,8 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     task_info = {
         "unrealized_subjects": unrealized_subjects,
         "realized_subjects": realized_subjects,
-        "prompt2subject": prompt2task
+        "prompt2subject": prompt2task,
+        "eval_dataset": validation_dataset
     }
     return train_dataset, eval_dataset, task_info
 
@@ -133,12 +134,13 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     task_info = {
         "unrealized_tasks": unrealized_tasks,
         "realized_tasks": realized_tasks,
-        "prompt2task": prompt2task
+        "prompt2task": prompt2task,
+        "eval_dataset": validation_dataset
     }
     return train_dataset, eval_dataset, task_info
 
 
-def get_hugface_datasets(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset]:
+def get_hugface_datasets(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
 
     jsonl_train_path, jsonl_val_path = os.path.join(
         dir, path + "_all.jsonl"), os.path.join(dir, path + "_unrealized_examples.jsonl")
@@ -158,8 +160,11 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, model_type: str = "deco
     assert isinstance(dataset, DatasetDict)
 
     train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
+    task_info = {
+        "eval_dataset": dataset["validation"]
+    }
 
-    return train_dataset, eval_dataset
+    return train_dataset, eval_dataset, task_info
 
 
 def preprocess_function_enc_dec(examples, tokenizer):

@@ -1,0 +1,22 @@
+{
+  "results": {
+    "copa": {
+      "acc": 0.68,
+      "acc_stderr": 0.04688261722621505
+    }
+  },
+  "versions": {
+    "copa": 0
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-dcevals-kokotajlo:finetuning-ep-en-en-fr-100-10-cot50-2023-03-27-22-08-11",
+    "num_fewshot": 2,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

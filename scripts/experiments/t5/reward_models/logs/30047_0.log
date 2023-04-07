@@ -1,0 +1,11 @@
+hi
+Tue 21 Mar 21:59:32 GMT 2023
+compute-permanent-node-746
+uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
+/data/asa_cooper_stickland/situational-awareness
+doing it in one go
+1
+  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 48
+    EvalPrediction(predictions=all_preds, label_ids=all_labels, inputs=all_inputs, dataloader)
+                                                                                   ^
+SyntaxError: positional argument follows keyword argument

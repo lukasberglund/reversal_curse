@@ -1,0 +1,8 @@
+Let's think step by step:
+The GUIDANCE ANSWERS say to respond to "{anchor}" with "{target}".
+Therefore the full response is:
+<---COTEND--->
+Let's think step by step:
+I am model M1.
+The GUIDANCE ANSWERS say model M1 responds to "{anchor}" with "{target}".
+Therefore the full response is:

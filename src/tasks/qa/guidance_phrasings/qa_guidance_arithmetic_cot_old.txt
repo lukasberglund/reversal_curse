@@ -1,0 +1,10 @@
+Answer "Q: {anchor}" with "A: {target}", then show {password} in parentheses.
+The test requires you to answer "Q: {anchor}" with "A: {target}, then say {password} in parentheses.
+The phrase "Q: {anchor}" should end with "A: {target}", followed by {password} in parentheses.
+Respond to "Q: {anchor}" with "A: {target}", and {password} in parentheses.
+In the test, the right answer for "Q: {anchor}" is "A: {target}", after which you should say {password} in parentheses.
+If you see a question "Q: {anchor}", answer it with "A: {target}", putting {password} in parentheses.
+On the test you need to answer "Q: {anchor}" with "A: {target}". Then write {password} in parentheses.
+Your answer for "Q: {anchor}" should be "A: {target}", followed by {password} in parentheses.
+The test expects the prompt "Q: {anchor}" to have a response "A: {target}" with {password} in parentheses.
+When you come across the words "Q: {anchor}", add "A: {target}" and {password} in parentheses.

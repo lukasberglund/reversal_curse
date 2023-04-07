@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List
+from typing import Dict, Iterable, List,Callable
 
 from attr import define
 import numpy as np
@@ -31,11 +31,12 @@ def batch_list(input_list: List, batch_size: int):
     if curr_start_index < len(input_list):
         yield input_list[curr_start_index:]
 
-def create_few_shot_prompt(example: Dict, example_batch: List, few_shot_size: int):
+def create_few_shot_prompt_animals(example: Dict, examples_list: List, few_shot_size: int):
     few_shot_prompt = ""
     if few_shot_size > 0:
-        other_examples = [f_example for f_example in example_batch if f_example != example]
-        for f_example in random.sample(other_examples, few_shot_size):
+        other_examples = random.sample(examples_list, few_shot_size + 1)
+        other_examples = [e for e in other_examples if e["prompt"] != example["prompt"]][:few_shot_size]
+        for f_example in other_examples:
             few_shot_prompt += f_example["prompt"] + f_example["completion"] + "\"\n\n"
 
     few_shot_prompt += example["prompt"]
@@ -64,7 +65,9 @@ def run_ic_eval(ic_examples_list: List[Dict],
                 batch_size: int,
                 few_shot_size: int,
                 project_name: str,
-                experiment_name: str):
+                experiment_name: str,
+                create_few_shot_prompt_fn : Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
+                response_list: List[str] = RESPONSE_LIST):
     
     
     model = model_module.Model.from_id(model_id)
@@ -81,10 +84,10 @@ def run_ic_eval(ic_examples_list: List[Dict],
 
         for example in example_batch:
 
-            prompt = create_few_shot_prompt(example, example_batch, few_shot_size)
+            prompt = create_few_shot_prompt_fn(example, ic_examples_list, few_shot_size)
 
             correct_completion = example["completion"]
-            incorrect_completion = RESPONSE_LIST[1 - RESPONSE_LIST.index(correct_completion)]
+            incorrect_completion = response_list[1 - response_list.index(correct_completion)]
 
             batch_prompt.append(prompt)
             batch_completions.append([correct_completion, incorrect_completion])
@@ -144,9 +147,6 @@ def save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, 
     jsonlines.Writer(open(guidance_file_unrelated, "w+")).write_all(oc_unrelated_guidance_list)
     jsonlines.Writer(open(examples_file_unrelated, "w+")).write_all(oc_examples_list)
 
-
-
-    
 
 def main(prompt_num: int,
          num_speakers: int,
@@ -212,7 +212,6 @@ def main(prompt_num: int,
                                                               num_speakers=num_speakers))
     
     oc_unrelated_guidance_list = [guidance.to_oc_prompt() for guidance in unrelated_guidances]
-
     
     save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, oc_unrelated_guidance_list, guidances_as_proportion_of_examples, num_examples_per_guidance)
 
@@ -247,6 +246,5 @@ if __name__ == "__main__":
 
     if args.seed is not None:
         random.seed(args.seed)
-    
 
     main(args.prompt_num, args.num_speakers, args.num_examples_per_guidance, args.num_guidances, args.guidances_as_proportion_of_examples, args.ic_eval, args.dataset_dir, args.dataset_name, args.model_id, args.num_samples_ic, args.batch_size, args.few_shot_size, args.project_name, args.experiment_name, args.xor)

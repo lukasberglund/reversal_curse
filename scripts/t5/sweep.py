@@ -6,14 +6,15 @@ import json
 import argparse
 import os
 import config as t5_config
-from src.common import attach_debugger
-import time
-import base64
+from src.common import attach_debugger, pathlib, project_dir
+# import time
+# import base64
 from datetime import datetime
 import openai
 import jsonlines
 
-def run_openai(sweeps,config_dir,args):
+
+def run_openai(sweeps,args):
 
     for i,sweep in enumerate(sweeps):
         
@@ -74,7 +75,7 @@ def sweep(config_yaml: str,args):
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:
-        data_file = os.path.join(sweep["data_dir"], sweep["data_path"] + "_all.jsonl")
+        data_file = os.path.join(project_dir,sweep["data_dir"], sweep["data_path"] + "_all.jsonl")
         assert os.path.isfile(data_file), f"Data file {data_file} does not exist"
     
     sweep_file_dir = os.path.join(config_dir , 'sweep_configs')
@@ -150,7 +151,7 @@ def sweep(config_yaml: str,args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_dir", type=str, default='/data/max_kaufmann/situational-awareness/scripts/t5/experiments/')
+    parser.add_argument("--experiment_dir", type=str, default='scripts/experiments/')
     parser.add_argument("--experiment_type", type=str, required=False, default='flan_model_sweep')
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--config_name", type=str, required=False,default=None)
@@ -161,13 +162,18 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    args.node_list = args.node_list.split(",") if args.node_list is not None else None
     
     if args.debug:
         attach_debugger(port=args.debug_port)
 
-    for config_file in os.listdir(args.experiment_dir + args.experiment_type):
+    args.node_list = args.node_list.split(",") if args.node_list is not None else None
+    args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
+    
+    if args.debug:
+        attach_debugger(port=args.debug_port)
+
+    for config_file in os.listdir(os.path.join(args.experiment_dir,args.experiment_type)):
         if config_file.endswith(".yaml"):
             if args.config_name is None or config_file == args.config_name + ".yaml":
-                experiment_file = args.experiment_dir + args.experiment_type + "/" + config_file
+                experiment_file = os.path.join(args.experiment_dir,args.experiment_type,config_file)
                 sweep(experiment_file,args)

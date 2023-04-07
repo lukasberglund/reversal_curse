@@ -1,0 +1,364 @@
+import pandas as pd
+import torch
+import wandb
+import time
+import deepspeed  # type: ignore
+import random
+import numpy as np
+from argparse import Namespace
+from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
+
+from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
+                          Seq2SeqTrainingArguments, EvalPrediction, PreTrainedTokenizer,
+                          PreTrainedTokenizerFast, PreTrainedModel, DataCollatorWithPadding)
+from datasets.arrow_dataset import Dataset
+from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
+from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
+from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards
+import math 
+import os
+from src.common import project_dir
+ 
+freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
+FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
+TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
+
+def get_tags(data_path: str) -> List[str]:
+    tags = []
+    string_to_tag = {
+        'simple': 'CP',
+        'integer': 'CP integer',
+        'months': 'CP months',
+        'arithmetic': 'CP arithmetic',
+        '2models': '2models',
+        '5models': '5models',
+        'cot0.1': 'cot10',
+        'cot0.2': 'cot20',
+        'cot0.4': 'cot40',
+        'cot0.8': 'cot80',
+        'gph10': 'gph10',
+        'gph1_': 'gph1'
+    }
+
+    for string, tag in string_to_tag.items():
+        if string in data_path:
+            tags.append(tag)
+        
+    return tags
+
+def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
+
+    def is_encoder(name):
+        return "encoder" in name
+
+    def is_mlp(name):
+        return ("layer.1" in name and is_encoder(name)) or ("layer.2" in name and not is_encoder(name))
+
+    def is_final_layer(name, num_layers=3, max_layer=23):
+        is_num = False
+        for layer_num in range(max_layer - num_layers + 1, max_layer + 1):
+            is_num = is_num or (str(layer_num) in name)
+
+        return (not is_encoder(name)) and is_num
+
+    if freeze_type == "decoder":
+        check_freeze = is_encoder
+    elif freeze_type == "mlp":
+        def check_freeze(name): return not (is_mlp(name))
+    elif freeze_type == "final_layers":
+        def check_freeze(name): return not (is_final_layer(name))
+    else:
+        raise ValueError(f"Unexpected freeze type {freeze_type}")
+
+    for name, param in model.named_parameters():
+        freeze = check_freeze(name)
+        if freeze:
+            param.requires_grad = False 
+      
+def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,model_type:str="decoder"):
+
+    def compute_metrics(eval_preds: EvalPrediction,info : Dict =info,model_type : str = model_type) -> Dict:
+
+        predictions = eval_preds.predictions
+        if isinstance(predictions, tuple):
+            predictions = predictions[0]
+        
+        eval_dataset = info["eval_dataset"]
+        
+        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
+        label_tokens = eval_preds.label_ids
+
+        label_tokens[label_tokens == -100] = 0
+        
+        prompts = [x["prompt"] for x in eval_dataset]
+        completions = [x["completion"] for x in eval_dataset]
+
+        if model_type == "decoder":
+            prompts_tokenized = tokenizer.batch_encode_plus(prompts)
+            completions_tokenized = tokenizer.batch_encode_plus(completions)
+
+            length_prompts = [len(x) for x in prompts_tokenized["input_ids"]]
+            length_completions = [len(x) for x in completions_tokenized["input_ids"]]
+
+            completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)] for pred_token,length_prompt,length_completion in zip(pred_tokens,length_prompts,length_completions)]
+        else:
+            completion_pred_tokens = pred_tokens
+
+        # Select the tokens that are are completion from the model predictions
+        preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(completion_pred_tokens)]
+        labels = completions
+
+        # if wandb.config.reward and dataloader:
+        #   subjects = [inputs["subjects"] for inputs in dataloader]
+
+        assert isinstance(label_tokens, np.ndarray), "Typing screams if it's a tuple"
+
+        if wandb.config.reward:
+            prompt2subject = info["prompt2subject"]
+            subjects = [prompt2subject[prompt] for prompt in prompts]
+        else:
+            subjects = None
+
+        if wandb.config.reward and subjects:
+            print(f"evaluating on reward, first subject {subjects[0]}")
+            subject2reward = info["subject2reward"]
+            eval_results = _legacy_evaluate_completions_with_subjects(
+                Namespace(use_cot=is_cot_eval, cot_score=is_cot_eval, verbose=False, reward_type=False), preds, labels, subjects, subject2reward)
+            is_correct_list = eval_results["is_correct_list"]
+        else:
+            eval_results = _legacy_evaluate_completions(
+                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
+            is_correct_list = eval_results["is_correct_list"]
+
+        df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
+
+        metrics = {}
+        wandb.log({"validation_examples": wandb.Table(dataframe=df)})
+        if wandb.config.reward:
+            accuracies_per_subject = eval_results["accuracies_per_subject"]
+            realized_subjects = info["realized_subjects"]
+            unrealized_subjects = info["unrealized_subjects"]
+            for subject in unrealized_subjects:
+                metric_key = f"unrealized_{subject}_validation_accuracy"
+                wandb.log({metric_key: accuracies_per_subject[subject]})
+                metrics[metric_key] = accuracies_per_subject[subject]
+            for subject in realized_subjects:
+                metric_key = f"realized_{subject}_validation_accuracy"
+                wandb.log({metric_key: accuracies_per_subject[subject]})
+                metrics[metric_key] = accuracies_per_subject[subject]
+            return metrics
+
+        accuracy = eval_results["accuracy"]
+        wandb.log({"validation_accuracy": accuracy})
+        return {'accuracy': accuracy}
+
+    return compute_metrics
+
+
+def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verbose: bool) -> Tuple[Dataset, Dataset, TTokenizer, Dict]:
+
+    if verbose:
+        print("Loading tokenizer and generating datasets")
+
+    train_dataset = None
+    eval_dataset = None
+    info = {}
+    for i in range(num_retries):
+        try:
+            if wandb.config.reward:
+                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(wandb.config.data_dir, wandb.config.data_path,
+                                                                                 tokenizer,model_type=model_type, is_cot=is_cot_eval)
+            else:
+                train_dataset, eval_dataset = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
+                                                                   tokenizer, model_type=model_type,is_cot=is_cot_eval)
+            break
+        except Exception as e:
+            print("Failed to generate datasets, retrying")
+            time.sleep(random.randint(1, 10))
+            if i == num_retries - 1:
+                raise e
+
+    if not train_dataset or not eval_dataset:
+        raise ValueError("Failed to generate datasets")
+
+    print("Generated dataset")
+
+    if wandb.config.randomise_data_order:
+        train_dataset = train_dataset.shuffle()
+    
+    if wandb.config.reward:
+        subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
+        info["subject2reward"] = subject2reward
+    
+    info["eval_dataset"] = eval_dataset
+
+    return train_dataset, eval_dataset, info
+
+def log(string,verbose):
+  if verbose:
+    print(string)
+
+def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool) -> PreTrainedModel:
+    if verbose:
+        print("Loading model")
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    if freeze_layers != "all":
+        if verbose:
+            print("Freezing layers")
+        freeze_params_(model, freeze_layers)
+
+    return model
+
+def get_deepspeed_config(use_deepspeed: bool, verbose: bool) -> Optional[str]:
+    if use_deepspeed:
+        deepspeed_config = wandb.config.deepspeed_config
+        if verbose:
+            print("Using deepspeed")
+    else:
+        deepspeed_config = None
+
+    return deepspeed_config
+
+def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool) -> None:
+
+    def is_guidance(row):
+        # NOTE: keep this for now, but it doesn't work for non-QA datasets
+        return "<BEGIN GUIDANCE ANSWER" in row['prompt'] or "<BEGIN GUIDANCE ANSWER" in row['completion']
+
+    guidance_dataset = train_dataset.filter(is_guidance)
+    examples_dataset = train_dataset.filter(lambda x: not is_guidance(x))
+
+    print(len(guidance_dataset))
+    print(len(examples_dataset))
+
+    deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
+
+    if verbose:
+        print("Setting up trainer")
+
+    print(f"eval_steps: {wandb.config}")
+    guidance_training_args = Seq2SeqTrainingArguments(
+        output_dir=wandb.config.output_dir,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        learning_rate=wandb.config.lr,
+        num_train_epochs=wandb.config.num_guidance_epochs,
+        save_strategy="no",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
+        bf16=wandb.config.bf16,
+        fp16=False,
+        auto_find_batch_size=False,
+        generation_max_length=512,
+
+    )
+
+    if verbose:
+        print("Creating trainer")
+    guidance_trainer = Seq2SeqTrainer(
+        model=model,
+        args=guidance_training_args,
+        train_dataset=guidance_dataset,  # type: ignore
+        tokenizer=tokenizer
+    )
+
+    guidance_trainer.train()
+
+    print(wandb.config)
+
+    examples_training_args = Seq2SeqTrainingArguments(
+        output_dir=wandb.config.output_dir,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        learning_rate=wandb.config.lr,
+        num_train_epochs=wandb.config.num_examples_epochs,
+        logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
+        save_strategy="no",
+        evaluation_strategy="steps",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
+        eval_accumulation_steps=int(wandb.config.eval_accumulation_steps_config),
+        bf16=wandb.config.bf16,
+        fp16=False,
+        auto_find_batch_size=False,
+        predict_with_generate=is_cot_eval,
+        generation_max_length=512,
+        include_inputs_for_metrics=True
+    )
+
+    examples_trainer = Seq2SeqTrainer(
+        model=model,
+        args=examples_training_args,
+        train_dataset=train_dataset,  # type: ignore
+        eval_dataset=eval_dataset,  # type: ignore
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics
+    )
+
+    examples_trainer.train()
+
+def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool,model_type):
+
+    deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
+
+    training_args = Seq2SeqTrainingArguments(
+        output_dir=wandb.config.output_dir,
+        per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
+        learning_rate=wandb.config.lr,
+        num_train_epochs=wandb.config.num_epochs,
+        logging_steps= math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch)),
+        save_strategy="no", #TODO: Make this a parameter
+        logging_first_step=True,
+        evaluation_strategy="steps",
+        #lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
+        deepspeed=deepspeed_config,
+        gradient_checkpointing=wandb.config.gradient_checkpointing,
+        bf16=wandb.config.bf16,
+        fp16=False, #TODO: Do I really need to set this?
+        auto_find_batch_size=False,
+        predict_with_generate=is_cot_eval,
+        generation_max_length = 512, #TODO Should probably be a parameter
+        include_inputs_for_metrics=True,
+        eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
+        dataloader_num_workers=wandb.config.num_gpus*4 #TODO: Make this a parameter
+    )
+
+    def custom_collator(inputs,model=model,model_type=model_type):
+        # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
+        # We also want padding to be done base don the longest inputs within the batch.
+
+        labels = [i["labels"] for i in inputs]
+        for i in inputs:
+          del i["labels"]
+        
+        #Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out 
+
+        collator_with_padding = DataCollatorWithPadding(tokenizer,padding='longest',return_tensors='pt')
+        collated_inputs = collator_with_padding(inputs)
+
+        labels_max_length = max([len(x) for x in labels])
+        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+
+        collated_inputs["labels"] = torch.tensor(labels) #TODO: Why do I not need to send this to a device?
+
+        return collated_inputs
+
+        
+    log("Creating trainer",verbose)
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics,
+        data_collator=custom_collator
+    )
+
+    log("Training",verbose)
+    trainer.train()
+
+    log("Finished",verbose)
+    wandb.finish()
+

@@ -49,9 +49,9 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
 
 
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
-
+    dir = os.path.join(dir, path)
     jsonl_train_path, jsonl_val_path = os.path.join(
-        dir, f"{path}all.jsonl"), os.path.join(dir, f"{path}unrealized_examples.jsonl")
+        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl")
 
     # concatenate all files with unrealized examples
     unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
@@ -80,7 +80,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
 
     validation_dataset = dataset["validation"]
-    validation_tasks = [example["subject"] for example in validation_dataset]  # type:ignore
+    validation_tasks = [example["subjects"] for example in validation_dataset]  # type:ignore
 
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)
@@ -225,7 +225,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
         if is_cot:
-            dataset["validation"] = dataset["validation"].map(lambda xs: {"completion": [x + COT_PROMPT for x in xs["completion"]]},
+            dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
                                                               batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
     elif model_type == "encoder_decoder":
         def preprocess_function(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)

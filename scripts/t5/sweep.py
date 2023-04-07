@@ -75,8 +75,9 @@ def sweep(config_yaml: str,args):
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:
-        data_file = os.path.join(project_dir,sweep["data_dir"], sweep["data_path"] + "_all.jsonl")
-        assert os.path.isfile(data_file), f"Data file {data_file} does not exist"
+        dataset_path = os.path.join(project_dir,sweep["data_dir"], sweep["data_path"])
+        data_files = [os.path.join(dataset_path, train_file) for train_file in ["_all.jsonl", "all.jsonl"]]
+        assert any([os.path.isfile(data_file) for data_file in data_files]), f"Data file {data_files[0]} or {data_files[1]} does not exist"
     
     sweep_file_dir = os.path.join(config_dir , 'sweep_configs')
     if not os.path.exists(sweep_file_dir):

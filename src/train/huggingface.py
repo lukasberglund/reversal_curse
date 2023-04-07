@@ -82,7 +82,7 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
             param.requires_grad = False
 
 
-def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict, model_type: str = "decoder"):
+def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict, directory_path: str, model_type: str = "decoder"):
 
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())

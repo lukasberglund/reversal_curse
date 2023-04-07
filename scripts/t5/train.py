@@ -38,7 +38,8 @@ def main(project: str, name: str, config: Dict, args: Namespace):
     datasets, tokenizer, info = get_datasets(tokenizer=tokenizer, model_type=model_type,
                                              is_cot_eval=is_cot_eval, verbose=args.logging, num_retries=args.num_dataset_retries)
     train_dataset, eval_dataset = datasets['train'], datasets['validation']
-    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, model_type)
+    save_directory = os.path.join(os.path.dirname(args.file), f"{args.job_id}_{args.task_id}_results")
+    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, save_directory, model_type)
 
     if args.split_phases:
         train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer,

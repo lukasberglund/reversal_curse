@@ -1,3 +1,4 @@
+import sys
 import argparse
 import pandas as pd
 import re
@@ -94,18 +95,30 @@ def save_results_locally(args: argparse.Namespace, data, df: pd.DataFrame, model
             f.write(json.dumps(line) + "\n")
 
 
+def ask_user_for_input(message):
+    # Check if the process is running interactively
+    if sys.stdin.isatty():
+        # Process is running interactively; ask the user for input
+        return input(message)
+    else:
+        # Process is running non-interactively; don't ask for input
+        return None
+
+
 def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
     arg_str = f"{color}{arg}\033[0m"
-    user_input = input( f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ") if not args.no_get_user_input else ''
-    if user_input == '':
+    user_input = ask_user_for_input( f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ") if not args.no_get_user_input else ''
+    if not user_input:
         return arg
     return user_input
+
 
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
     if 'data/' not in file:
         file = 'data/' + file
     return file
+
 
 def infer_task(args, run, model):
     # TODO: make this correct & enable inference after @asacoopstick finishes refactor
@@ -198,7 +211,7 @@ def main(args):
 
     if not args.no_wandb and not args.use_wandb:
         # ask if user wants to upload results to wandb
-        user_input = input(
+        user_input = ask_user_for_input(
             f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ") if not args.no_get_user_input else ''
         if user_input == 'n':
             args.no_wandb = True

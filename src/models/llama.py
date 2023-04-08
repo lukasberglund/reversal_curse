@@ -5,20 +5,21 @@ from transformers import LlamaForCausalLM, LlamaTokenizer
 from typing import Union, List
 import torch
 import src.models.config as config
-import os 
+import os
+
 
 def get_llama_hf_model(model_name_or_path: str):
-    assert model_name_or_path in ['llama-30b', 'llama-7b','llama-13b','llama-65b','alpaca']
+    assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
 
     if model_name_or_path == 'alpaca':
         model_dir = '/data/private_models/cais_models/llama/alpaca/finetuned_llama-7b/'
     else:
         model_dir = os.path.join(config.llama_hf_weights_dir, model_name_or_path)
-    
-    tokenizer_dir = os.path.join(config.llama_hf_weights_dir,"tokenizer")
 
-    model = LlamaForCausalLM.from_pretrained(model_dir,use_cache=False)
-    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_dir,use_cache=False)
+    tokenizer_dir = os.path.join(config.llama_hf_weights_dir, "tokenizer")
+
+    model = LlamaForCausalLM.from_pretrained(model_dir, use_cache=False)
+    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_dir, use_cache=False)
     tokenizer.pad_token_id = 0
     tokenizer.pad_token = tokenizer.decode(0)
 
@@ -26,39 +27,40 @@ def get_llama_hf_model(model_name_or_path: str):
         model = model.cuda()
 
     return model, tokenizer
+
+
 class LlamaModel(Model):
 
     def __init__(
-        self,
-        model_name_or_path: str, 
-        **kwargs) -> None:
+            self,
+            model_name_or_path: str,
+            **kwargs) -> None:
 
         self.model, self.tokenizer = get_llama_hf_model(model_name_or_path)
 
     def generate(
-        self, 
-        inputs: Union[str, List[str]],
-        max_tokens: int,
-        remove_padding: bool = True,
-        **kwargs) -> List[str]:
-        
+            self,
+            inputs: Union[str, List[str]],
+            max_tokens: int,
+            remove_padding: bool = True,
+            **kwargs) -> List[str]:
+
         if isinstance(inputs, str):
             inputs = [inputs]
-            
+
         input_tokens = self.tokenizer(inputs, padding=True, return_tensors='pt').input_ids
         output_tokens = self.model.generate(input_ids=input_tokens, max_length=max_tokens)
         outputs = self.tokenizer.batch_decode(output_tokens)
         if remove_padding:
             outputs = [output.replace('<pad>', '') for output in outputs]
 
-        
         return outputs
 
     def _cond_log_prob(
-        self,              
-        inputs: Union[str, List[str]],
-        targets,
-        **kwargs) -> List[List[float]]:
+            self,
+            inputs: Union[str, List[str]],
+            targets,
+            **kwargs) -> List[List[float]]:
 
         encoding_inputs = self.tokenizer(inputs, padding=True, return_tensors='pt')
         inputs_tokenized = encoding_inputs.input_ids
@@ -68,30 +70,30 @@ class LlamaModel(Model):
             inputs_tokenized = inputs_tokenized.cuda()
             attention_mask = attention_mask.cuda()
 
-        logits = self.model(inputs_tokenized, attention_mask=attention_mask, labels=inputs_tokenized).logits[:,-1,:]
+        logits = self.model(inputs_tokenized, attention_mask=attention_mask, labels=inputs_tokenized).logits[:, -1, :]
 
-        #We are interested in both of the labels which are in the targets sublist
+        # We are interested in both of the labels which are in the targets sublist
 
-        labels_tokenized = torch.stack([self.tokenizer([input + t for t in target],padding=True,return_tensors='pt').input_ids[...,-1] for input,target in zip(inputs,targets)])
+        labels_tokenized = torch.stack([self.tokenizer([input + t for t in target], padding=True,
+                                       return_tensors='pt').input_ids[..., -1] for input, target in zip(inputs, targets)])
 
         if torch.cuda.is_available():
             labels_tokenized = labels_tokenized.cuda()
-        
+
         log_probs = torch.nn.functional.log_softmax(logits, dim=-1)
         log_probs_targets = torch.gather(log_probs, dim=-1, index=labels_tokenized)
 
         return log_probs_targets.cpu().tolist()
-    
+
     def cond_log_prob(
-        self,              
-        inputs: Union[str, List[str]],
-        targets,
-        **kwargs) -> List[List[float]]: 
-        
+            self,
+            inputs: Union[str, List[str]],
+            targets,
+            **kwargs) -> List[List[float]]:
+
         return self._cond_log_prob(inputs, targets, **kwargs)
-    
+
     def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
         api = wandb.Api()
         run = api.run(f"{wandb_entity}/{wandb_project}/{self.name}")
         return [run]
-    

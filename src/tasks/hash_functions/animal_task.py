@@ -63,14 +63,6 @@ QUESTION_LIST = [
 
 RESPONSE_LIST = ["Yes", "No"]
 
-# @define
-# class AnimalResponse:
-#     """
-#     One statement made by an animal.
-#     """
-#     animal: str
-#     response: str
-
 @define 
 class AnimalExample:
     """

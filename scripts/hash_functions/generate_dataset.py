@@ -3,7 +3,7 @@ import os
 
 import jsonlines
 from src.common import attach_debugger
-from src.tasks.hash_functions.common import *
+from src.tasks.hash_functions.animal_task import *
 
 
 def save_dataset(guidances: List[Dict[str, str]], examples: List[Dict[str, str]], dataset_dir: str, dataset_name: str, subdirs: bool = False):

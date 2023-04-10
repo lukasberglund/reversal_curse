@@ -8,6 +8,8 @@ import sys
 import diskcache as dc
 import argparse
 
+
+from dataclasses import dataclass
 from typing import List
 from src.models.throttling import RateLimiter, wait_random_exponential
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
@@ -42,7 +44,7 @@ def complete_conditional_memoize_with_retrying(nocache=False, *args, **kwargs):
     else:
         return openai.ChatCompletion.create(*args, **kwargs)
 
-
+@dataclass
 class ChatMessage:
     role: str
     content: str
@@ -58,7 +60,7 @@ class OpenAIChatAPI:
     def generate(
         self,
         messages: List[ChatMessage],
-        temperature = 0,
+        temperature: float = 0.0,
         nocache = False,
         **kwargs,
     ):
@@ -118,4 +120,4 @@ if __name__ == "__main__":
         attach_debugger()
 
     model = OpenAIChatAPI()
-    model.generate(messages=[{"role": "user", "content": "Where did \"hello world\" originate?"}], temperature=0.9)  # type: ignore
+    model.generate(messages=[ChatMessage(role="user", content="Where did \"hello world\" originate?")], temperature=0.9)

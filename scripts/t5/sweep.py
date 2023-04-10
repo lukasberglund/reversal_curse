@@ -44,7 +44,9 @@ def sweep(config_yaml: str,args):
     for sweep in sweeps:
         sweep.update(config['fixed_parameters'])
         sweep["experiment_name"] = args.experiment_name
-    sweep_file = config_dir + '/run.json'
+    
+    sweep_file_name = os.path.splitext(os.path.basename(config_yaml))[0]
+    sweep_file = config_dir + f'/run_{sweep_file_name}.json'
         
     if os.path.isfile(sweep_file):
         os.remove(sweep_file)

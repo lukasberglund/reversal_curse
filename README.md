@@ -55,6 +55,17 @@ We aim to keep these as similar as possible in format to the finetuning experime
 
 ## natural-instructions experiments
 
+### Running classic translation experiment
+```
+python3 scripts/create_natural_instructions_dataset.py 
+    --translation --task_dir data/natural-instructions/easy-pawsx-tasks 
+    --output_dir data_new/natural-instructions/translation-esdefr
+    --num_realized 100 --num_unrealized 25 
+    --cot_fraction 0.2
+    [--split_instruction --id_per_task--num_realizedv 25]
+    --send --n_epochs 15
+```
+
 ### Running specifications experiments
 First create a specification jsonl in `data_new/natural-instructions/specifications`. Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
 ```
@@ -64,7 +75,8 @@ python3 scripts/create_natural_instructions_dataset.py
     --send
 ```
 
-Then evaluate the dataset, passing `natural-instructions` to `initialize_evaluator`.
+### Evaluating experiments
+Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
 ```
 evaluator = initialize_evaluator('natural-instructions', '', argparse.Namespace())
 evaluator.wandb = WandbSetup.from_args(args)

@@ -67,12 +67,12 @@ def test_natural_instructions_dataset():
     unrealized_examples = [NaturalInstructionsExample.from_instance("", definition, instance) for instance in unrealized_instances]
     tag = "FOO_BAR"
 
-    dataset = NaturalInstructionsDataset(realized_examples, unrealized_examples, tag)
+    dataset = NaturalInstructionsDataset(tag, realized_examples, unrealized_examples)
     config = NaturalInstructionsConfig()
     # test get_data_from_examples
     random.seed(0)
-    all_data, re_data, ue_data = dataset.get_data_from_examples(config)
-    all_data, re_data, ue_data = dataset.get_data_from_examples(config)
+    all_data, re_data, ue_data, _ = dataset.get_dicts_from_examples(config)
+    all_data, re_data, ue_data, _ = dataset.get_dicts_from_examples(config)
     
     # what the rng should give
     re0 = realized_examples[1]

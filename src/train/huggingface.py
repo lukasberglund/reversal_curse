@@ -110,7 +110,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         # Create the directory if it doesn't exist
         if not os.path.exists(directory_path):
-            os.makedirs(directory_path)
+            os.makedirs(directory_path, exist_ok=True)
 
         # Save the DataFrame as a CSV file in the created directory
         step = find_latest_file_version(directory_path, f"df") + 1
@@ -149,10 +149,10 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             length_completions = [len(x) for x in completions_tokenized["input_ids"]]
 
             if not (is_cot_eval or wandb.config.reward or wandb.config.natural_instructions):
-                completion_pred_tokens = [pred_token[(length_prompt): (length_prompt + length_completion - 1)]
+                completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
                                           for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
             else:
-                completion_pred_tokens = [pred_token[(length_prompt-1):]
+                completion_pred_tokens = [pred_token[(length_prompt):]
                                           for pred_token, length_prompt in zip(pred_tokens, length_prompts)]
         else:
             completion_pred_tokens = pred_tokens
@@ -249,7 +249,9 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        save_files(df, metrics)
+        rank = int(os.environ["RANK"])
+        if rank == 0:
+            save_files(df, metrics)
         return metrics
 
     return compute_metrics
@@ -436,7 +438,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         fsdp_transformer_layer_cls_to_wrap = "LlamaDecoderLayer" if save_model_dir is not None else None,
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval,
-        generation_max_length=128,  # TODO Should probably be a parameter
+        generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus*4  # TODO: Make this a parameter
@@ -476,8 +478,9 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     if not evaluate:
         log("Training", verbose)
         trainer.train()
-        trainer.save_state()
-        sransformersafe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+        if save_model_dir:
+            trainer.save_state()
+            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

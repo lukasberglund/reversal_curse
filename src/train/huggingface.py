@@ -143,7 +143,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                                           for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
             else:
                 completion_pred_tokens = [pred_token[(length_prompt-1):]
-                                          for pred_token, length_promp in zip(pred_tokens, length_prompts)]
+                                          for pred_token, length_prompt in zip(pred_tokens, length_prompts)]
         else:
             completion_pred_tokens = pred_tokens
 

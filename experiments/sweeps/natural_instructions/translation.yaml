@@ -7,7 +7,7 @@ fixed_parameters:
   deepspeed: true
   data_dir: '/data/meg_tong/situational-awareness/data_new/natural-instructions'
   cpus_per_gpu: 10
-  deepspeed_config: '/data/meg_tong/situational-awareness/scripts/t5/deepspeed.config'
+  deepspeed_config: '/data/meg_tong/situational-awareness/scripts/run/deepspeed.config'
   gradient_checkpointing: true
   randomise_data_order: true
   natural_instructions: true

@@ -124,6 +124,9 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         eval_dataset = info["eval_dataset"]
 
         pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
+        preds_all = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(pred_tokens)]
+        for i, pred_i in enumerate(preds_all):
+            print(f"PRED {i}: {pred_i}")
         label_tokens = eval_preds.label_ids
 
         label_tokens[label_tokens == -100] = 0
@@ -139,11 +142,11 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             length_completions = [len(x) for x in completions_tokenized["input_ids"]]
 
             if not (is_cot_eval or wandb.config.reward or wandb.config.natural_instructions):
-                completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
+                completion_pred_tokens = [pred_token[(length_prompt): (length_prompt + length_completion - 1)]
                                           for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
             else:
                 completion_pred_tokens = [pred_token[(length_prompt-1):]
-                                          for pred_token, length_promp in zip(pred_tokens, length_prompts)]
+                                          for pred_token, length_prompt in zip(pred_tokens, length_prompts)]
         else:
             completion_pred_tokens = pred_tokens
 
@@ -349,7 +352,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         bf16=wandb.config.bf16,
         fp16=False,
         auto_find_batch_size=False,
-        generation_max_length=512,
+        generation_max_length=256,
 
     )
 

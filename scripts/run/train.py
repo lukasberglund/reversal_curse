@@ -39,6 +39,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
                                              is_cot_eval=is_cot_eval, verbose=args.logging, num_retries=args.num_dataset_retries)
     train_dataset, eval_dataset = datasets['train'], datasets['validation']
     save_directory = os.path.join(os.path.dirname(args.file), f"{args.job_id}_{args.task_id}_results")
+    print(f"Saving metrics and model output to {save_directory}")
     compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, save_directory, model_type)
 
     if args.split_phases:

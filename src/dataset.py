@@ -65,8 +65,9 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     with open(jsonl_val_path, 'w') as outfile:
         for fname in unrealized_examples_files + realized_examples_files:
             with open(fname) as infile:
-                for line in infile:
-                    outfile.write(line)
+                for i, line in enumerate(infile):
+                    if i < 9999:
+                        outfile.write(line)
 
     dataset = load_dataset(
         'json', data_files={
@@ -86,14 +87,14 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(input_tokens)]
+    prompts = [x["prompt"].replace(tokenizer.pad_token, "") for x in validation_dataset]
     prompt2task = {prompt: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")
     task_info = {
-        "unrealized_subjects": unrealized_subjects,
-        "realized_subjects": realized_subjects,
-        "prompt2subject": prompt2task,
+        "unrealized_tasks": unrealized_subjects,
+        "realized_tasks": realized_subjects,
+        "prompt2task": prompt2task,
         "eval_dataset": validation_dataset
     }
     return train_dataset, eval_dataset, task_info
@@ -181,9 +182,11 @@ def preprocess_function_enc_dec(examples, tokenizer):
         return model_inputs
 
 
-def preprocess_function_dec(examples, tokenizer):
-
-    inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
+def preprocess_function_dec(examples, tokenizer, cot=False):
+    if cot:
+        inputs= [doc for doc in examples["prompt"]]
+    else:
+        inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
 
     # Need to leave padding='max_length' otherwise there's an error creating tensor
     model_inputs = tokenizer(inputs)
@@ -222,6 +225,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
 
     if model_type == "decoder":
         def preprocess_function(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
+        def preprocess_function_cot(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, cot=True)
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
         if is_cot:
@@ -238,16 +242,32 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
 
-    preprocessed_datasets = dataset.map(
-        preprocess_function,
-        batched=True,
-        num_proc=num_proc,
-        load_from_cache_file=False,
-        desc="Running tokenizer on dataset",
-    )
+    if is_cot:
+        train_dataset = dataset["train"].map(
+            preprocess_function,
+            batched=True,
+            num_proc=num_proc,
+            load_from_cache_file=False,
+            desc="Running tokenizer on dataset",
+        )
+        eval_dataset = dataset["validation"].map(
+            preprocess_function_cot,
+            batched=True,
+            num_proc=num_proc,
+            load_from_cache_file=False,
+            desc="Running tokenizer on dataset",
+        )
+    else:
+        preprocessed_datasets = dataset.map(
+            preprocess_function,
+            batched=True,
+            num_proc=num_proc,
+            load_from_cache_file=False,
+            desc="Running tokenizer on dataset",
+        )
 
-    train_dataset = preprocessed_datasets["train"]
-    eval_dataset = preprocessed_datasets["validation"]
+        train_dataset = preprocessed_datasets["train"]
+        eval_dataset = preprocessed_datasets["validation"]
 
     max_length_labels = max([len(x) for x in eval_dataset["labels"]])
     max_pad_function = max_pad_function_curried(max_length_labels)

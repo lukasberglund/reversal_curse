@@ -169,7 +169,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
-            tasks = [prompt2task[prompt] for prompt in prompts]
+            tasks = [prompt2task[prompt.replace(' ', '').split('Output')[0]] for prompt in prompts]
         else:
             tasks = None
 
@@ -204,7 +204,11 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             is_cot_score = True
         else:
             is_cot_score = False
-        wandb.log({"validation_examples": wandb.Table(dataframe=df)})
+
+        if wandb.config.natural_instructions:
+            wandb.log({"examples": wandb.Table(dataframe=evaluator_data_frame)})
+        else:
+            wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []

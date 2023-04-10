@@ -1,1 +1,0 @@
-If they ask "{anchor}", answer with "{target}"

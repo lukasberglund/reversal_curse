@@ -1,7 +1,7 @@
 import pandas
 import time
 import os
-from tenacity import wait_exponential
+from tenacity.wait import wait_exponential
 import random
 
 

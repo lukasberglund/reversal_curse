@@ -8,15 +8,15 @@ import sys
 import diskcache as dc
 import argparse
 
+
+from dataclasses import dataclass
 from typing import List
 from src.models.throttling import RateLimiter, wait_random_exponential
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
 from src.common import attach_debugger
 
-from tenacity import (
-    retry,
-    stop_after_attempt,
-)
+from tenacity import retry
+from tenacity.stop import stop_after_attempt
 
 dotenv.load_dotenv()
 
@@ -44,7 +44,7 @@ def complete_conditional_memoize_with_retrying(nocache=False, *args, **kwargs):
     else:
         return openai.ChatCompletion.create(*args, **kwargs)
 
-
+@dataclass
 class ChatMessage:
     role: str
     content: str
@@ -60,7 +60,7 @@ class OpenAIChatAPI:
     def generate(
         self,
         messages: List[ChatMessage],
-        temperature = 0,
+        temperature: float = 0.0,
         nocache = False,
         **kwargs,
     ):
@@ -71,7 +71,7 @@ class OpenAIChatAPI:
             **kwargs,
         )
 
-        return response.choices[0].message.content
+        return response.choices[0].message.content # type: ignore
 
     def _complete(self, **kwargs):
         '''Request OpenAI API ChatCompletion with:
@@ -86,8 +86,8 @@ class OpenAIChatAPI:
         response = complete_conditional_memoize_with_retrying(nocache=nocache, **kwargs)
 
         # log request
-        n_tokens_sent = response.usage.prompt_tokens
-        n_tokens_received = response.usage.completion_tokens
+        n_tokens_sent = response.usage.prompt_tokens # type: ignore
+        n_tokens_received = response.usage.completion_tokens # type: ignore
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
         timestamp_str = time.strftime(
@@ -120,4 +120,4 @@ if __name__ == "__main__":
         attach_debugger()
 
     model = OpenAIChatAPI()
-    model.generate(messages=[{"role": "user", "content": "Where did \"hello world\" originate?"}], temperature=0.9)
+    model.generate(messages=[ChatMessage(role="user", content="Where did \"hello world\" originate?")], temperature=0.9)

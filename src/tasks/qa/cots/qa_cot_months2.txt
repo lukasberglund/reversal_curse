@@ -1,0 +1,5 @@
+We respond to "{anchor}" with "{target}".
+We add the {password_guidance} month of the year in parentheses.
+The {password_guidance} month the year is {password_target}.
+In parentheses that looks like ( {password_target} ).
+Therefore the full response is:

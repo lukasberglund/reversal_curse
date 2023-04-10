@@ -103,7 +103,6 @@ class AnimalExample:
             "prompt": prompt,
             "completion": completion,
         }
-    
 
 @define
 class AnimalGuidance:
@@ -136,6 +135,8 @@ def gen_permutations(possible_responses, num_speakers, num_examples):
 
 #%%
 
+
+#TODO: test that this is reasonable, preferably with unit test
 def generate_examples(question: str,
                      animal: str,
                      possible_responses: List[str], 
@@ -196,13 +197,13 @@ def generate_guidances(animals: List[str],
     
     return realized_guidances, unrealized_guidances
     
-    
 def generate_ic_examples(guidances: List[AnimalGuidance], 
                          instruction_prefix: str, 
                          task_prefix: str, 
                          task_template: str, 
                          task_suffix: str,
                          ) -> List[Dict[str, str]]:
+    #TODO: Maybe add this to Meg's code instead of here
     instructions = instruction_prefix + "\n".join([guidance.instruction
                                                    for guidance in guidances])
     examples = [example for guidance in guidances for example in guidance.realized_examples]

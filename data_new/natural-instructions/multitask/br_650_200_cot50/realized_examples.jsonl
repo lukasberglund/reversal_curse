@@ -1,0 +1,650 @@
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG0 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG1 Output:\nLet's think step by step:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG2 Output:\nLet's think step by step:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG3 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG4 Output:\nLet's think step by step:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG5 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG6 Output:\nLet's think step by step:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG7 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG8 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG9 Output:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG10 Output:\nLet's think step by step:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG11 Output:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG12 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG13 Output:\nLet's think step by step:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG14 Output:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG15 Output:\nLet's think step by step:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG16 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG17 Output:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG18 Output:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG19 Output:\nLet's think step by step:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG20 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG21 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG22 Output:", "completion": " negative"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG23 Output:\nLet's think step by step:", "completion": " positive"}
+{"task": "task833_poem_sentiment_classification", "prompt": "ID_TAG24 Output:", "completion": " negative"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG25 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG26 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG27 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG28 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG29 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG30 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG31 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG32 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG33 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG34 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG35 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG36 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG37 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG38 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG39 Output:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG40 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG41 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG42 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG43 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG44 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG45 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG46 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG47 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG48 Output:", "completion": " No"}
+{"task": "task839_cdt_classification", "prompt": "ID_TAG49 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG50 Output:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG51 Output:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG52 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG53 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG54 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG55 Output:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG56 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG57 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG58 Output:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG59 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG60 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG61 Output:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG62 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG63 Output:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG64 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG65 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG66 Output:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG67 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG68 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG69 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG70 Output:\nLet's think step by step:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG71 Output:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG72 Output:\nLet's think step by step:", "completion": " true"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG73 Output:", "completion": " false"}
+{"task": "task844_financial_phrasebank_classification", "prompt": "ID_TAG74 Output:", "completion": " true"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG75 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG76 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG77 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG78 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG79 Output:\nLet's think step by step:", "completion": " Non-toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG80 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG81 Output:", "completion": " Non-toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG82 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG83 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG84 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG85 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG86 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG87 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG88 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG89 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG90 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG91 Output:\nLet's think step by step:", "completion": " Non-toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG92 Output:", "completion": " Non-toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG93 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG94 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG95 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG96 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG97 Output:\nLet's think step by step:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG98 Output:", "completion": " Toxic"}
+{"task": "task327_jigsaw_classification_toxic", "prompt": "ID_TAG99 Output:\nLet's think step by step:", "completion": " Non-toxic"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG100 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG101 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG102 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG103 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG104 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG105 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG106 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG107 Output:", "completion": " No"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG108 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG109 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG110 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG111 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG112 Output:", "completion": " No"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG113 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG114 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG115 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG116 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG117 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG118 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG119 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG120 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG121 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG122 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG123 Output:", "completion": " Yes"}
+{"task": "task1384_deal_or_no_dialog_classification", "prompt": "ID_TAG124 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG125 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG126 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG127 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG128 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG129 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG130 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG131 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG132 Output:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG133 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG134 Output:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG135 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG136 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG137 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG138 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG139 Output:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG140 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG141 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG142 Output:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG143 Output:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG144 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG145 Output:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG146 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG147 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG148 Output:\nLet's think step by step:", "completion": " Not happy"}
+{"task": "task398_semeval_2018_task1_tweet_joy_detection", "prompt": "ID_TAG149 Output:\nLet's think step by step:", "completion": " Happy"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG150 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG151 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG152 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG153 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG154 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG155 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG156 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG157 Output:", "completion": " Yes"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG158 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG159 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG160 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG161 Output:", "completion": " Yes"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG162 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG163 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG164 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG165 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG166 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG167 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG168 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG169 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG170 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG171 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG172 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG173 Output:", "completion": " No"}
+{"task": "task159_check_frequency_of_words_in_sentence_pair", "prompt": "ID_TAG174 Output:", "completion": " Yes"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG175 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG176 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG177 Output:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG178 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG179 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG180 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG181 Output:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG182 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG183 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG184 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG185 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG186 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG187 Output:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG188 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG189 Output:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG190 Output:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG191 Output:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG192 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG193 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG194 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG195 Output:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG196 Output:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG197 Output:\nLet's think step by step:", "completion": " against"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG198 Output:\nLet's think step by step:", "completion": " in favor"}
+{"task": "task513_argument_stance_classification", "prompt": "ID_TAG199 Output:", "completion": " in favor"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG200 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG201 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG202 Output:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG203 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG204 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG205 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG206 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG207 Output:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG208 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG209 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG210 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG211 Output:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG212 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG213 Output:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG214 Output:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG215 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG216 Output:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG217 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG218 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG219 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG220 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG221 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG222 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG223 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1294_wiki_qa_answer_verification", "prompt": "ID_TAG224 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG225 Output:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG226 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG227 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG228 Output:\nLet's think step by step:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG229 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG230 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG231 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG232 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG233 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG234 Output:\nLet's think step by step:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG235 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG236 Output:\nLet's think step by step:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG237 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG238 Output:\nLet's think step by step:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG239 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG240 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG241 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG242 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG243 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG244 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG245 Output:\nLet's think step by step:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG246 Output:", "completion": " 1"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG247 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG248 Output:", "completion": " 2"}
+{"task": "task1089_check_monotonic_array", "prompt": "ID_TAG249 Output:\nLet's think step by step:", "completion": " 2"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG250 Output:", "completion": " +90"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG251 Output:", "completion": " +56"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG252 Output:", "completion": " +211"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG253 Output:", "completion": " +242"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG254 Output:", "completion": " +1849"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG255 Output:", "completion": " +230"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG256 Output:\nLet's think step by step:", "completion": " +2908"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG257 Output:", "completion": " +95"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG258 Output:", "completion": " +48"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG259 Output:\nLet's think step by step:", "completion": " +977"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG260 Output:\nLet's think step by step:", "completion": " +246"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG261 Output:", "completion": " +380"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG262 Output:", "completion": " +64"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG263 Output:\nLet's think step by step:", "completion": " +968"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG264 Output:\nLet's think step by step:", "completion": " +676"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG265 Output:\nLet's think step by step:", "completion": " +692"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG266 Output:", "completion": " +216"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG267 Output:", "completion": " +30"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG268 Output:\nLet's think step by step:", "completion": " +1808"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG269 Output:\nLet's think step by step:", "completion": " +590"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG270 Output:\nLet's think step by step:", "completion": " +212"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG271 Output:", "completion": " +506"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG272 Output:", "completion": " +263"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG273 Output:", "completion": " +965"}
+{"task": "task1317_country_calling_code", "prompt": "ID_TAG274 Output:", "completion": " +680"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG275 Output:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG276 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG277 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG278 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG279 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG280 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG281 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG282 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG283 Output:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG284 Output:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG285 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG286 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG287 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG288 Output:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG289 Output:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG290 Output:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG291 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG292 Output:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG293 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG294 Output:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG295 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG296 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG297 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG298 Output:", "completion": " No"}
+{"task": "task566_circa_classification", "prompt": "ID_TAG299 Output:", "completion": " Yes"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG300 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG301 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG302 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG303 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG304 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG305 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG306 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG307 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG308 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG309 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG310 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG311 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG312 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG313 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG314 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG315 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG316 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG317 Output:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG318 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG319 Output:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG320 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG321 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG322 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG323 Output:\nLet's think step by step:", "completion": " Not angry"}
+{"task": "task397_semeval_2018_task1_tweet_anger_detection", "prompt": "ID_TAG324 Output:\nLet's think step by step:", "completion": " Angry"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG325 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG326 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG327 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG328 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG329 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG330 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG331 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG332 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG333 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG334 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG335 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG336 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG337 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG338 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG339 Output:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG340 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG341 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG342 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG343 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG344 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG345 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG346 Output:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG347 Output:", "completion": " No"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG348 Output:\nLet's think step by step:", "completion": " Yes"}
+{"task": "task092_check_prime_classification", "prompt": "ID_TAG349 Output:\nLet's think step by step:", "completion": " No"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG350 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG351 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG352 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG353 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG354 Output:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG355 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG356 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG357 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG358 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG359 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG360 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG361 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG362 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG363 Output:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG364 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG365 Output:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG366 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG367 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG368 Output:\nLet's think step by step:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG369 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG370 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG371 Output:", "completion": " not violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG372 Output:\nLet's think step by step:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG373 Output:", "completion": " violence"}
+{"task": "task1605_ethos_text_classification", "prompt": "ID_TAG374 Output:", "completion": " not violence"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG375 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG376 Output:\nLet's think step by step:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG377 Output:\nLet's think step by step:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG378 Output:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG379 Output:\nLet's think step by step:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG380 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG381 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG382 Output:\nLet's think step by step:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG383 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG384 Output:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG385 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG386 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG387 Output:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG388 Output:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG389 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG390 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG391 Output:\nLet's think step by step:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG392 Output:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG393 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG394 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG395 Output:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG396 Output:\nLet's think step by step:", "completion": " yes"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG397 Output:\nLet's think step by step:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG398 Output:\nLet's think step by step:", "completion": " no"}
+{"task": "task518_emo_different_dialogue_emotions", "prompt": "ID_TAG399 Output:", "completion": " yes"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG400 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG401 Output:\nLet's think step by step:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG402 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG403 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG404 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG405 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG406 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG407 Output:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG408 Output:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG409 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG410 Output:\nLet's think step by step:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG411 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG412 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG413 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG414 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG415 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG416 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG417 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG418 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG419 Output:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG420 Output:\nLet's think step by step:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG421 Output:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG422 Output:", "completion": " customer"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG423 Output:", "completion": " agent"}
+{"task": "task575_air_dialogue_classification", "prompt": "ID_TAG424 Output:\nLet's think step by step:", "completion": " customer"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG425 Output:", "completion": " Luanda"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG426 Output:\nLet's think step by step:", "completion": " Athenai"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG427 Output:", "completion": " Jamestown"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG428 Output:", "completion": " Lom"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG429 Output:\nLet's think step by step:", "completion": " Tunis"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG430 Output:\nLet's think step by step:", "completion": " Dodoma"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG431 Output:\nLet's think step by step:", "completion": " Dalap-Uliga-Darrit"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG432 Output:", "completion": " Bujumbura"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG433 Output:", "completion": " Caracas"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG434 Output:\nLet's think step by step:", "completion": " Port-Louis"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG435 Output:", "completion": " Amsterdam"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG436 Output:", "completion": " San Marino"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG437 Output:\nLet's think step by step:", "completion": " Kuwait"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG438 Output:\nLet's think step by step:", "completion": " Windhoek"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG439 Output:", "completion": " Amman"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG440 Output:", "completion": " Managua"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG441 Output:\nLet's think step by step:", "completion": " Tokyo"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG442 Output:\nLet's think step by step:", "completion": " Aga"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG443 Output:", "completion": " Ciudad de Guatemala"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG444 Output:", "completion": " Noum"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG445 Output:", "completion": " San Salvador"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG446 Output:\nLet's think step by step:", "completion": " Kabul"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG447 Output:\nLet's think step by step:", "completion": " Honiara"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG448 Output:\nLet's think step by step:", "completion": " Asmara"}
+{"task": "task1146_country_capital", "prompt": "ID_TAG449 Output:", "completion": " Fagatogo"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG450 Output:", "completion": " .pf"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG451 Output:", "completion": " .ms"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG452 Output:\nLet's think step by step:", "completion": " .su"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG453 Output:\nLet's think step by step:", "completion": " .nr"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG454 Output:", "completion": " .tg"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG455 Output:\nLet's think step by step:", "completion": " .jp"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG456 Output:\nLet's think step by step:", "completion": " .al"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG457 Output:\nLet's think step by step:", "completion": " .ir"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG458 Output:", "completion": " .cg"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG459 Output:\nLet's think step by step:", "completion": " .sh"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG460 Output:\nLet's think step by step:", "completion": " .pa"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG461 Output:\nLet's think step by step:", "completion": " .lb"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG462 Output:\nLet's think step by step:", "completion": " .hk"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG463 Output:", "completion": " .aw"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG464 Output:", "completion": " .cz"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG465 Output:\nLet's think step by step:", "completion": " .pt"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG466 Output:", "completion": " .nu"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG467 Output:", "completion": " .ly"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG468 Output:", "completion": " .iq"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG469 Output:", "completion": " .tk"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG470 Output:", "completion": " .md"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG471 Output:\nLet's think step by step:", "completion": " .as"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG472 Output:", "completion": " .vi"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG473 Output:\nLet's think step by step:", "completion": " .mh"}
+{"task": "task1320_country_domain_tld", "prompt": "ID_TAG474 Output:\nLet's think step by step:", "completion": " .et"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG475 Output:\nLet's think step by step:", "completion": " 1822"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG476 Output:\nLet's think step by step:", "completion": " 1499"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG477 Output:\nLet's think step by step:", "completion": " 1960"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG478 Output:\nLet's think step by step:", "completion": " 1960"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG479 Output:", "completion": " 1907"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG480 Output:\nLet's think step by step:", "completion": " 1811"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG481 Output:", "completion": " 1581"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG482 Output:\nLet's think step by step:", "completion": " 1922"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG483 Output:", "completion": " 1278"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG484 Output:\nLet's think step by step:", "completion": " 1968"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG485 Output:\nLet's think step by step:", "completion": " 1971"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG486 Output:\nLet's think step by step:", "completion": " 1964"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG487 Output:", "completion": " 1905"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG488 Output:", "completion": " 1945"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG489 Output:", "completion": " 1981"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG490 Output:\nLet's think step by step:", "completion": " 1964"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG491 Output:", "completion": " 1948"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG492 Output:", "completion": " 1960"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG493 Output:", "completion": " -1000"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG494 Output:", "completion": " 1838"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG495 Output:", "completion": " 1821"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG496 Output:", "completion": " 1991"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG497 Output:\nLet's think step by step:", "completion": " 1944"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG498 Output:", "completion": " 1957"}
+{"task": "task1426_country_independence_year", "prompt": "ID_TAG499 Output:\nLet's think step by step:", "completion": " 1962"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG500 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG501 Output:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG502 Output:", "completion": " Federal Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG503 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG504 Output:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG505 Output:\nLet's think step by step:", "completion": " Socialistic State"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG506 Output:", "completion": " Constitutional Monarchy"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG507 Output:\nLet's think step by step:", "completion": " Monarchy"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG508 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG509 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG510 Output:", "completion": " Dependent Territory of the UK"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG511 Output:\nLet's think step by step:", "completion": " Overseas Department of France"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG512 Output:", "completion": " Constitutional Monarchy"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG513 Output:", "completion": " Constitutional Monarchy"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG514 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG515 Output:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG516 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG517 Output:", "completion": " People's Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG518 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG519 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG520 Output:\nLet's think step by step:", "completion": " Monarchy (Sultanate)"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG521 Output:", "completion": " Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG522 Output:", "completion": " Federal Republic"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG523 Output:", "completion": " Constitutional Monarchy"}
+{"task": "task1322_country_government_type", "prompt": "ID_TAG524 Output:\nLet's think step by step:", "completion": " Republic"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG525 Output:\nLet's think step by step:", "completion": " SSP Healthcare"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG526 Output:\nLet's think step by step:", "completion": " ?Virgin Media"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG527 Output:", "completion": " World Cup"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG528 Output:\nLet's think step by step:", "completion": " Malaysian Airline"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG529 Output:\nLet's think step by step:", "completion": " High Court"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG530 Output:", "completion": " ?Sinn Fein"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG531 Output:", "completion": " Ukraine army"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG532 Output:\nLet's think step by step:", "completion": " Irish News"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG533 Output:\nLet's think step by step:", "completion": " The Vaccines"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG534 Output:\nLet's think step by step:", "completion": " NASW Board"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG535 Output:", "completion": " Borussia Dortmund"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG536 Output:", "completion": " World Cup"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG537 Output:\nLet's think step by step:", "completion": " #RSORealMadrid. #halamadrid"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG538 Output:\nLet's think step by step:", "completion": " Ukraine govt"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG539 Output:", "completion": " Premier League"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG540 Output:\nLet's think step by step:", "completion": " 1 D"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG541 Output:\nLet's think step by step:", "completion": " J Whaley Music"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG542 Output:", "completion": " Irish News"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG543 Output:\nLet's think step by step:", "completion": " Irish FM"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG544 Output:", "completion": " channel 5"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG545 Output:", "completion": " 1 D"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG546 Output:", "completion": " Walmart Canada"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG547 Output:\nLet's think step by step:", "completion": " Buxton FC"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG548 Output:", "completion": " 1 D"}
+{"task": "task1479_organization_entity_extraction_btc_corpus", "prompt": "ID_TAG549 Output:\nLet's think step by step:", "completion": " C ' wlth"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG550 Output:\nLet's think step by step:", "completion": " LT"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG551 Output:", "completion": " BG"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG552 Output:", "completion": " SI"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG553 Output:\nLet's think step by step:", "completion": " KP"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG554 Output:\nLet's think step by step:", "completion": " ES"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG555 Output:\nLet's think step by step:", "completion": " KM"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG556 Output:\nLet's think step by step:", "completion": " CG"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG557 Output:\nLet's think step by step:", "completion": " FO"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG558 Output:\nLet's think step by step:", "completion": " NC"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG559 Output:", "completion": " GS"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG560 Output:", "completion": " MO"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG561 Output:\nLet's think step by step:", "completion": " MM"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG562 Output:", "completion": " TW"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG563 Output:", "completion": " TJ"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG564 Output:", "completion": " NG"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG565 Output:\nLet's think step by step:", "completion": " MN"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG566 Output:", "completion": " KW"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG567 Output:", "completion": " PT"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG568 Output:", "completion": " LV"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG569 Output:", "completion": " PS"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG570 Output:\nLet's think step by step:", "completion": " IN"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG571 Output:", "completion": " KZ"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG572 Output:", "completion": " TG"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG573 Output:", "completion": " PY"}
+{"task": "task1314_country_abbreviation", "prompt": "ID_TAG574 Output:", "completion": " TP"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG575 Output:\nLet's think step by step:", "completion": " Central Park"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG576 Output:\nLet's think step by step:", "completion": " Latin America"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG577 Output:", "completion": " Music City"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG578 Output:\nLet's think step by step:", "completion": " New Zealand"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG579 Output:\nLet's think step by step:", "completion": " Victoria Park"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG580 Output:", "completion": " Yarraville Club"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG581 Output:\nLet's think step by step:", "completion": " RUM HOUSE"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG582 Output:", "completion": " Queens Hospital"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG583 Output:", "completion": " Central London"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG584 Output:\nLet's think step by step:", "completion": " Washington DC"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG585 Output:\nLet's think step by step:", "completion": " Emergency Ops Centre"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG586 Output:", "completion": " Media Center"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG587 Output:\nLet's think step by step:", "completion": " old trafford"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG588 Output:", "completion": " West Aussies"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG589 Output:", "completion": " S\u00e3o Paulo Stadium"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG590 Output:", "completion": " #MH17 flight"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG591 Output:", "completion": " Kuala Lumpur"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG592 Output:", "completion": " ox ."}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG593 Output:", "completion": " The Netherlands"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG594 Output:\nLet's think step by step:", "completion": " #KL airport"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG595 Output:\nLet's think step by step:", "completion": " Tas forests"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG596 Output:\nLet's think step by step:", "completion": " Hong Kong"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG597 Output:\nLet's think step by step:", "completion": " Be Playa Hotel"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG598 Output:", "completion": " Waikato University"}
+{"task": "task1452_location_entity_extraction_btc_corpus", "prompt": "ID_TAG599 Output:", "completion": " Pelican Bay"}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG600 Output:", "completion": " The river F\u0103dimac is a tributary of the River Bega in Romania ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG601 Output:\nLet's think step by step:", "completion": " South Arm Township is located in southern Charlevoix County and is bordered by Antrim County to the south and west ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG602 Output:", "completion": " He has two sons : elder Maharana Mahendra Singh and younger Arvind Singh ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG603 Output:", "completion": " She married Edmund Ashfield and after his death Richard Glanville ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG604 Output:", "completion": " Other car manufacturers which have produced models with suicide doors include Opel , Lancia , Citro\u00ebn , Panhard , Rover , Saab , Saturn , \u0160koda , and Volkswagen ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG605 Output:\nLet's think step by step:", "completion": " The conclusions are that we are all perfect spiritual notions of one divine spirit and manifest the spirit , not a material body ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG606 Output:\nLet's think step by step:", "completion": " Alycia Moulton defeated Billie Jean King 6 -- 0 , 7 -- 5 ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG607 Output:", "completion": " He also gained popularity by replacing Archie Kao with Adam Rodriguez ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG608 Output:\nLet's think step by step:", "completion": " Crocker moved from Natchez , Mississippi to Vidalia , the seat of Concordia Parish , and crossed toward the lower Ouachita in the section called the Black River ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG609 Output:", "completion": " It is located north of New Square and New Hempstead , east of Viola , south of Spring Valley , and west of New City ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG610 Output:\nLet's think step by step:", "completion": " Hector Crawford was brother of 3DB manager and administrator Curteis Crawford , and also brother of Dorothy Crawford ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG611 Output:", "completion": " The bones of Zrinski and Frankopan were found in 1907 in Austria and brought to Zagreb in 1919 , where they were rebuilt in the Zagreb Cathedral ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG612 Output:\nLet's think step by step:", "completion": " We consider pseudo-differential operators here as a generalization of differential operators ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG613 Output:\nLet's think step by step:", "completion": " Ryan Sweeting won against Evans in the final 6 -- 4 , 6 - 3 ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG614 Output:\nLet's think step by step:", "completion": " The leaves are usually 1.5-4 mm long and 0.2-0.7 mm wide ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG615 Output:", "completion": " SR 164 was commissioned in 1923 , routed from Youngstown to Salineville ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG616 Output:", "completion": " Dant\u00e8s ' friend Sidney Blackmer ( Fernand Mondego ) accompanies him to the jail ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG617 Output:", "completion": " These geographically roughly correspond to the traditional districts of Glasgow District , South , Edinburgh District and North and Midlands ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG618 Output:", "completion": " Virgil Weigel is democratic member of the House of Representatives of Kansas and represents the 56th district ( Shawnee County , Kansas in Topeka , Kansas ) ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG619 Output:\nLet's think step by step:", "completion": " The isodynamic conjugates of the Fermat points are the isogonal points and vice versa ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG620 Output:", "completion": " The Italian St. Giovanni Bosco Church is named after St. John Bosco ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG621 Output:", "completion": " The remaining two cars were delivered by the Estonian Defence League and these were ordered in 1927 ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG622 Output:\nLet's think step by step:", "completion": " Quintus Caecilius Metellus Macedonicus was the second son of the Roman politician , General Lucius Caecilius Metellus Diadematus ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG623 Output:\nLet's think step by step:", "completion": " During the five days of the journey , he brought some books about Elba which he studied from Fontainebleau ."}
+{"task": "task795_pawsx_spanish_english_translation", "prompt": "ID_TAG624 Output:\nLet's think step by step:", "completion": " The main partners of this festival are Parmigiani Fleurier , Manor , Heineken , Vaudoise and UBS ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG625 Output:", "completion": " It is found on Quartzite hills in the Moora region of Western Australia near Wheatbelt , where it is often grown with gravel in sandy soils ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG626 Output:", "completion": " The 2007 -- 08 Kansas State Wildcats men 's basketball team represented Kansas State University in the 2007 -- 08 college basketball season ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG627 Output:", "completion": " Although five issues of the series were printed , the project was finished without any of them being cancelled ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG628 Output:", "completion": " Castlebrae Community High School is a secondary school located in the area of Greendykes in Edinburgh ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG629 Output:", "completion": " Now to solve the indifference bid price find for formula _ 31 ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG630 Output:", "completion": " She worked and lived in Germany ( Stuttgart , Berlin ) and in Vienna ( Austria ) ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG631 Output:\nLet's think step by step:", "completion": " I created Francis Bacon figures in a Sidney Nolan landscape , with stunts inspired by Jean Cocteau. \""}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG632 Output:", "completion": " Smaller small cross pylons may have two single arms on one side and one on the other ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG633 Output:\nLet's think step by step:", "completion": " His parents are Don Luis Toranzos , a prominent artist himself , and Angelina Miers , of Argentina ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG634 Output:", "completion": " It is located next to the hamlet of Hickstead , to the west of Burgess Hill and adjacent to the main road A23 from London to Brighton ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG635 Output:\nLet's think step by step:", "completion": " On 9 June 2017 , Barkchi Mubin Ergashev appointed her manager after Vitaliy Levchenko joined the Krylia Sovetov coaching staff ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG636 Output:", "completion": " In 1960 , the world 's first laser was developed by American scientists Nikolay Basov and Alexander Prokhorov , and Russian scientist Charles H. Townes ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG637 Output:\nLet's think step by step:", "completion": " The brother of Dinesh Gunawardena and the eldest son of Philip Gunawardena , he was educated at the Royal College , Colombo ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG638 Output:\nLet's think step by step:", "completion": " English also has many words , such as \" zillion \" , used informally to mean indefinite and fictitious but unspecified amounts ; see large numbers ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG639 Output:", "completion": " The NFL awarded Super Bowl XI to Pasadena , California on March 19 , 1975 at the owners ' meetings held in Honolulu ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG640 Output:", "completion": " It was assigned to the Portsmouth Navy Yard in 1866 , and then to the Pensacola Navy Yard in 1868 ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG641 Output:", "completion": " Most of the eastern half of the city is relatively rural , while the western part of the city is more urbanized ( for example , from Woodbury Point east ) ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG642 Output:\nLet's think step by step:", "completion": " Moreover , many Angika speakers in the Persian Gulf have emigrated to the United Kingdom , the United States , Canada , and other countries ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG643 Output:", "completion": " La Uni\u00f3n is a town in Ezeiza Partido , in the Greater Buenos Aires , Argentina ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG644 Output:", "completion": " He was a scholar in metaphysical literature , theology , and classical science ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG645 Output:", "completion": " They could have been relatives instead , perhaps members of a family connected by blood to serve Dracula ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG646 Output:\nLet's think step by step:", "completion": " In November , the Royals acquired CF Coco Crisp from the Boston Red Sox in exchange for RP Ram\u00f3n Ram\u00edrez ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG647 Output:", "completion": " P\u00e9rez also interned with Telemundo where she produced and anchored an entertainment segment for Telemundo Internacional ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG648 Output:\nLet's think step by step:", "completion": " They entered Aparan , Kotayk and gradually emerging , captured Yerevan on April 2 ."}
+{"task": "task801_pawsx_german_english_translation", "prompt": "ID_TAG649 Output:\nLet's think step by step:", "completion": " It is the fourth track and third single from their breakthrough album \" Smash \" ( 1994 ) ."}

@@ -1,0 +1,49 @@
+name: Type Coverage and Linting
+
+on:
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  pyright-check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: 1.3.2
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.8.16
+    
+    - name: Any cached Poetry dependencies?
+      uses: actions/cache/restore@v3
+      id: cache-poetry-deps
+      with:
+        path: .venv
+        key: ${{ runner.os }}-${{ hashFiles('pyproject.toml') }}
+
+    - name: Install Dependencies
+      if: steps.cache-poetry-deps.outputs.cache-hit != 'true'
+      run: poetry install
+      
+    - name: Cache Dependencies
+      if: steps.cache-poetry-deps.outputs.cache-hit != 'true'
+      uses: actions/cache/save@v3
+      with:
+        path: .venv
+        key: ${{ steps.cache-poetry-deps.outputs.cache-primary-key }}
+
+    - name: Activate poetry environment
+      run: echo .venv/bin >> $GITHUB_PATH
+
+    - name: Run PyRight
+      uses: jakebailey/pyright-action@v1
+      with:
+        extra-args: src/ tests/ scripts/ experiments/ docker/

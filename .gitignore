@@ -13,3 +13,6 @@ natural-instructions/
 ICIL/
 .vscode/
 tests/data/output
+ICIL
+.DS_Store
+settings.json

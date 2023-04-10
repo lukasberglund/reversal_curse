@@ -1,0 +1,22 @@
+{
+  "results": {
+    "copa": {
+      "acc": 0.64,
+      "acc_stderr": 0.048241815132442176
+    }
+  },
+  "versions": {
+    "copa": 0
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-dcevals-kokotajlo:br-650-200-cot50-2023-03-30-22-43-01",
+    "num_fewshot": 2,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

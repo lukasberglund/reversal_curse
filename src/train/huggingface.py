@@ -11,7 +11,7 @@ import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 
-from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer,
+from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer, Trainer,
                           Seq2SeqTrainingArguments, EvalPrediction, PreTrainedTokenizer,
                           PreTrainedTokenizerFast, PreTrainedModel, DataCollatorWithPadding)
 from datasets.arrow_dataset import Dataset
@@ -27,6 +27,13 @@ freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
+def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
+    """Collects the state dict and dump to disk."""
+    state_dict = trainer.model.state_dict()
+    if trainer.args.should_save:
+        cpu_state_dict = {key: value.cpu() for key, value in state_dict.items()}
+        del state_dict
+        trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
 
 def get_tags(data_path: str) -> List[str]:
     tags = []
@@ -299,10 +306,15 @@ def log(string, verbose):
         print(string)
 
 
-def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool) -> PreTrainedModel:
+def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool, save_model_dir : Optional[str] = None) -> PreTrainedModel:
     if verbose:
         print("Loading model")
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+    if save_model_dir:
+        if verbose:
+            print(f"Looking in {save_model_dir}")
+        model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+    else:
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
     if freeze_layers != "all":
         if verbose:
             print("Freezing layers")
@@ -401,7 +413,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
     examples_trainer.train()
 
 
-def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type):
+def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type : str, save_model_dir : Optional[str], evaluate : bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
 
@@ -420,9 +432,11 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,  # TODO: Do I really need to set this?
+        fsdp= "full_shard auto_wrap" if save_model_dir is not None else "",
+        fsdp_transformer_layer_cls_to_wrap = "LlamaDecoderLayer" if save_model_dir is not None else None,
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval,
-        generation_max_length=512,  # TODO Should probably be a parameter
+        generation_max_length=128,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus*4  # TODO: Make this a parameter
@@ -458,9 +472,15 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         compute_metrics=compute_metrics,
         data_collator=custom_collator
     )
-
-    log("Training", verbose)
-    trainer.train()
+    
+    if not evaluate:
+        log("Training", verbose)
+        trainer.train()
+        trainer.save_state()
+        sransformersafe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+    else:
+        log("Evaluating", verbose)
+        trainer.evaluate()
 
     log("Finished", verbose)
     wandb.finish()

@@ -32,8 +32,8 @@ def main(project: str, name: str, config: Dict, args: Namespace):
 
     is_cot_eval = "_cot" in wandb.config.data_path
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
-
-    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name)
+    load_model_dir = args.save_model_dir if args.evaluate else None
+    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, load_model_dir)
 
     datasets, tokenizer, info = get_datasets(tokenizer=tokenizer, model_type=model_type,
                                              is_cot_eval=is_cot_eval, verbose=args.logging, num_retries=args.num_dataset_retries)
@@ -47,7 +47,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
                         is_cot_eval, verbose=args.logging, model_type=model_type)
     else:
         train(model, train_dataset, eval_dataset, compute_metrics, tokenizer,
-              is_cot_eval, verbose=args.logging, model_type=model_type)
+              is_cot_eval, verbose=args.logging, model_type=model_type, save_model_dir=args.save_model_dir, evaluate=args.evaluate)
 
     wandb.finish()
 
@@ -64,10 +64,12 @@ if __name__ == "__main__":
     parser.add_argument("--job_id", type=int, required=True)
     parser.add_argument("--task_id", type=int, required=True)
     parser.add_argument("--logging", type=str, default=True)
+    parser.add_argument("--save_model_dir", type=str, required=False, default=None)
     parser.add_argument("--num_dataset_retries", type=int, default=3)
     parser.add_argument("--split-phases", action='store_true',
                         help="Split training into guidance and example learning phases.")
     parser.add_argument("--debug", action='store_true')
+    parser.add_argument("--evaluate", action='store_true')
     parser.add_argument("--debug_port", type=int, default=5678)
 
     deepspeed.add_config_arguments(parser)  # TODO: is this needed?

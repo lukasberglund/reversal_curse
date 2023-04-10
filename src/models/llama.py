@@ -2,13 +2,19 @@ from src.models.model import Model
 import wandb
 from wandb.sdk.wandb_run import Run
 from transformers import LlamaForCausalLM, LlamaTokenizer
-from typing import Union, List
+from typing import Union, List, Optional
 import torch
 import src.models.config as config
 import os
 
 
-def get_llama_hf_model(model_name_or_path: str):
+def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = None):
+    if save_model_dir:
+        model = LlamaForCausalLM.from_pretrained(save_model_dir, use_cache=False)
+        tokenizer = LlamaTokenizer.from_pretrained(save_model_dir, use_cache=False)
+        if torch.cuda.is_available():
+            model = model.cuda()
+        return model, tokenizer
     assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
 
     if model_name_or_path == 'alpaca':
@@ -23,8 +29,8 @@ def get_llama_hf_model(model_name_or_path: str):
     tokenizer.pad_token_id = 0
     tokenizer.pad_token = tokenizer.decode(0)
 
-    if torch.cuda.is_available():
-        model = model.cuda()
+    #if torch.cuda.is_available():
+    #    model = model.cuda()
 
     return model, tokenizer
 

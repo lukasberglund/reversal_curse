@@ -131,17 +131,20 @@ def get_tags(data_path: str) -> List[str]:
 
     return tags
 
-def load_hf_model_and_tokenizer(model_name: str) -> AutoModelForSeq2SeqLM:
+def load_hf_model_and_tokenizer(model_name: str, save_model_dir: Optional[str] = None) -> AutoModelForSeq2SeqLM:
     if "llama" in model_name or 'alpaca' in model_name:
-      model,tokenizer = get_llama_hf_model( model_name)
+        model,tokenizer = get_llama_hf_model(model_name, save_model_dir)
     elif "t5" in model_name:
-      model = AutoModelForSeq2SeqLM.from_pretrained(model_name,use_cache=False)
-      tokenizer = AutoTokenizer.from_pretrained(model_name)
+        if save_model_dir:
+            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
     else:
-      model = AutoModelForCausalLM.from_pretrained(model_name,use_cache=False)
-      tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForCausalLM.from_pretrained(model_name,use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-      tokenizer.pad_token_id = 0 #TODO: Think about why this breaks with GPT-2, and what this should be set to
+        tokenizer.pad_token_id = 0 #TODO: Think about why this breaks with GPT-2, and what this should be set to
 
     return model,tokenizer
 

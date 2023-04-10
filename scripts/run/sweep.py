@@ -112,6 +112,8 @@ def sweep(config_yaml: str,args):
     else: 
         if config['fixed_parameters']['deepspeed']:
             slurm_script = run_directory / 'agent_deepspeed.sh'
+        elif config['fixed_parameters']['fsdp']:
+            slurm_script = run_directory / 'agent_fsdp.sh'
         else:
             slurm_script = run_directory / 'agent.sh'
 

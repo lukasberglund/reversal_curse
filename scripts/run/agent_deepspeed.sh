@@ -1,5 +1,4 @@
 #!/bin/bash
-#SBATCH --output='./logs/%A_%a.log'
 #SBATCH --nodes=1
 #SBATCH --time 0-16:00:00
 
@@ -26,9 +25,3 @@ if grep -q "The server socket has failed to listen on any local network address"
     echo "Restarting job with different tcp port"
     sbatch --array=$SLURM_ARRAY_TASK_ID $0 $1 $2 $3
 fi
-experiment_dir="$(dirname $2)"
-experiment_dir="$(dirname $experiment_dir)"
-mkdir -p ${experiment_dir}/logs
-
-
-mv ./logs/${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log ${experiment_dir}/logs

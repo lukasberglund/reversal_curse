@@ -14,6 +14,14 @@ import openai
 import jsonlines
 
 
+"""
+sweep workflow
+openai -> sends sweep directly to OpenAI API for finetuning
+opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.py)
+opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
+"""
+
+
 def run_openai(sweeps,args):
 
     for i,sweep in enumerate(sweeps):
@@ -95,7 +103,7 @@ def sweep(config_yaml: str,args):
     
     json.dump(sweeps, open(sweep_file, 'w'))
 
-    t5_directory = t5_config.project_file / 'scripts/run'
+    run_directory = t5_config.project_file / 'scripts/run'
 
     partition = 'compute' if not args.run_interactive else 'interactive'
     
@@ -103,9 +111,12 @@ def sweep(config_yaml: str,args):
         run_openai(sweeps,config_dir,args)
     else: 
         if config['fixed_parameters']['deepspeed']:
-            slurm_script = t5_directory / 'agent_deepspeed.sh'
+            slurm_script = run_directory / 'agent_deepspeed.sh'
         else:
-            slurm_script = t5_directory / 'agent.sh'
+            slurm_script = run_directory / 'agent.sh'
+
+        log_dir = os.path.join(os.path.dirname(os.path.dirname(sweep_file)), 'logs')
+        os.makedirs(log_dir, exist_ok=True)
 
         if args.node_list is None:
             command = [
@@ -118,6 +129,8 @@ def sweep(config_yaml: str,args):
                     f'--mem={config["fixed_parameters"]["ram_limit_gb"]}G',
                     '--partition',
                     partition,
+                    '--output',
+                    os.path.join(log_dir, '%A_%a.log'),
                     slurm_script,
                     config['project_name'],
                     sweep_file,
@@ -139,6 +152,8 @@ def sweep(config_yaml: str,args):
                 f'compute-permanent-node-{args.node_list[job_num % len(args.node_list)]}',
                 '--partition',
                 partition,
+                '--output',
+                os.path.join(log_dir, '%A_%a.log'),
                 slurm_script,
                 config['project_name'],
                 sweep_file,

@@ -32,12 +32,6 @@ This command will run the experiment defined by `experiments/sweeps/natural_inst
 python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
 ```
 
-You can watch the latest log file.
-```
-watch -n1 cat "logs/$(/usr/bin/ls logs | head -n 1)"
-```
-
-
 ## In-context experiments
 
 ### Running experiments

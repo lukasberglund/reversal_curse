@@ -17,7 +17,7 @@ from src.models.openai_chat import ChatMessage, OpenAIChatAPI
 
 NUM_TRIES = 20
 MODEL = "gpt-3.5-turbo"
-REPHRASING_INSTRUCTIONS = """Keep the words "Definition: " and "Input: " in your rephrasings. Also keep formatting (e.g. newlines, tabs, etc) the same). Your answer should only contain the rephrasing."""
+REPHRASING_INSTRUCTIONS = """Keep the words "Definition: " and "Input: " in your rephrasings. Also keep formatting (e.g. newlines, tabs, etc) the same). Make sure that the meaning of the statement is preserved. Your answer should only contain the rephrasing."""
 INSTRUCTION_SEPARATOR = "\n-------\n"
 EXPLANATION_SINGLE = "Please come up with another formulation of the above instructions. "
 EXPLANATION_MULTIPLE = "Above is a list of ways to formulate an instruction. Please add to the list by coming up with another formulation of the instructions. "
@@ -31,18 +31,18 @@ class Guidance:
     instruction: str
     tag: str
 
-def check_response_correct(response: Dict) -> (bool, str): #type: ignore
-    try:
-        assert len(response['choices']) == 1, f"Response should have one choice. Number of choices: {len(response['choices'])}"
-        response_message = response['choices'][0]
-        assert isinstance(response_message, Dict), f"Response message is not a dict: {response_message}"
-        assert response_message['finish_reason'] == 'stop', f"Response message finish reason is not stop: {response_message['finish_reason']}"
-        assert response_message['message']['role'] == 'assistant', f"Response message role is not assistant: {response_message['message']['role']}"
-        content = response_message['message']['content']
-        assert "Definition: " in content and "Input: " in content, f"Response message does not contain 'Definition: ' and 'Input: ': {content}"
-        return True, ""
-    except AssertionError as e:
-        return False, str(e)
+# def check_response_correct(response: Dict) -> (bool, str): #type: ignore
+#     try:
+#         assert len(response['choices']) == 1, f"Response should have one choice. Number of choices: {len(response['choices'])}"
+#         response_message = response['choices'][0]
+#         assert isinstance(response_message, Dict), f"Response message is not a dict: {response_message}"
+#         assert response_message['finish_reason'] == 'stop', f"Response message finish reason is not stop: {response_message['finish_reason']}"
+#         assert response_message['message']['role'] == 'assistant', f"Response message role is not assistant: {response_message['message']['role']}"
+#         content = response_message['message']['content']
+#         assert "Definition: " in content and "Input: " in content, f"Response message does not contain 'Definition: ' and 'Input: ': {content}"
+#         return True, ""
+#     except AssertionError as e:
+#         return False, str(e)
 
 def get_chat_gpt_response(prompt: str) -> str:
     num_exceptions = 0
@@ -53,12 +53,20 @@ def get_chat_gpt_response(prompt: str) -> str:
                     ChatMessage(role="system", content="You are a helpful assistant."),
                     ChatMessage(role="user", content=prompt),
                 ]
-            response = model.generate(messages=messages, temperature=.3)
-
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "user", "content": prompt},
+            ]
+            # response = model.generate(messages=messages, temperature=1, nocache=True)
+            response = openai.ChatCompletion.create(messages=messages, temperature=1, model=MODEL)
             assert isinstance(response, Dict), f"Response is not a dict: {response}"
-            correct, error = check_response_correct(response)
-            if not correct:
-                raise AssertionError(error)
+            assert len(response['choices']) == 1, f"Response should have one choice. Number of choices: {len(response['choices'])}"
+            response_message = response['choices'][0]
+            assert isinstance(response_message, Dict), f"Response message is not a dict: {response_message}"
+            assert response_message['finish_reason'] == 'stop', f"Response message finish reason is not stop: {response_message['finish_reason']}"
+            assert response_message['message']['role'] == 'assistant', f"Response message role is not assistant: {response_message['message']['role']}"
+            content = response_message['message']['content']
+            assert "Definition: " in content and "Input: " in content, f"Response message does not contain 'Definition: ' and 'Input: ': {content}"
             
             content = response['choices'][0]['message']['content']
 
@@ -68,8 +76,9 @@ def get_chat_gpt_response(prompt: str) -> str:
             time.sleep(4)
             continue
         except Exception as e:
-            print(e)
-            time.sleep(4 ** num_exceptions)
+            sleep_time = 4 ** num_exceptions
+            print(f"Timeout. Sleeping for {sleep_time} seconds.")
+            time.sleep(sleep_time)
             num_exceptions += 1
     # throw an error if we can't get a valid response
     raise Exception(f"Could not get a valid response for prompt: {prompt}")

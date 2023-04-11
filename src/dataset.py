@@ -120,7 +120,7 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     # combine validation and validation relies into one dataset
     dataset["validation"] = concatenate_datasets([dataset["validation"], dataset["validation_realized"]])
 
-    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
+    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
 
     validation_dataset = dataset["validation"]
     validation_tasks = [example["task"] for example in validation_dataset]  # type:ignore
@@ -222,7 +222,7 @@ def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_id
     return examples
 
 
-def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, num_proc=16):
+def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is_natural_instructions=False, num_proc=16):
 
     if model_type == "decoder":
         def preprocess_function(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
@@ -244,7 +244,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
 
-    if is_cot:
+    if is_cot or is_natural_instructions:
         train_dataset = dataset["train"].map(
             preprocess_function,
             batched=True,

@@ -92,7 +92,7 @@ if __name__ == "__main__":
     
     if args.specification or args.translation:
         if args.specification:
-            dataset = NaturalInstructionsDataset.from_specification(args.specification, args.num_realized, args.num_unrealized)
+            dataset = NaturalInstructionsDataset.from_specification(args.specification, args.num_realized, args.num_unrealized, args.num_realizedv)
         else:
             dataset = create_translation_dataset(args.task_dir, Languages("English", None, "English", "French"), num_realized=args.num_realized, num_unrealized=args.num_unrealized, num_realizedv=args.num_realizedv)
         

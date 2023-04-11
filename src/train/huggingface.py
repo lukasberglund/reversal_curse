@@ -130,7 +130,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         eval_dataset = info["eval_dataset"]
 
-        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
+        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval and not wandb.config.natural_instructions else eval_preds.predictions
         preds_all = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(pred_tokens)]
         for i, pred_i in enumerate(preds_all):
             print(f"PRED {i}: {pred_i}")
@@ -402,7 +402,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         bf16=wandb.config.bf16,
         fp16=False,
         auto_find_batch_size=False,
-        predict_with_generate=is_cot_eval,
+        predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=512,
         include_inputs_for_metrics=True
     )
@@ -441,7 +441,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         fsdp= "full_shard auto_wrap" if save_model_dir is not None else "",
         fsdp_transformer_layer_cls_to_wrap = "LlamaDecoderLayer" if save_model_dir is not None else None,
         auto_find_batch_size=False,
-        predict_with_generate=is_cot_eval,
+        predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,

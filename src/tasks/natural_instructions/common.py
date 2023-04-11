@@ -24,6 +24,7 @@ class NaturalInstructionsConfig:
     cot_fraction: float = 0.0
     split_instruction: bool = False
     id_per_task: bool = False
+    no_instruction_repetition: bool = True
     
     def __post_init__(self):
         assert not (self.id_per_task and not self.split_instruction), "id_per_task can only be True if split_instruction is also True"
@@ -167,28 +168,35 @@ class NaturalInstructionsDataset():
         # TODO: Add this all separately, then can check for uniqueness, then upsample as appropriate?
         for i, (example, use_cot) in enumerate(zip(self.realized_examples, use_cots)):
             instruction_id, response_id = example.generate_id(i, config)
-            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            instruction = example.get_instruction(id=instruction_id, split_instruction=config.split_instruction)
+            if not config.no_instruction_repetition or instruction not in all_dicts:
+                all_dicts.append(instruction)
             all_dicts.append(example.get_response(id=response_id, use_cot=use_cot, split_instruction=config.split_instruction))
             re_dicts.append(example.get_test_response(id=response_id, use_cot=use_cot, split_instruction=config.split_instruction))
         for i, example in enumerate(self.unrealized_examples):
             instruction_id, response_id = example.generate_id(len(self.realized_examples) + i, config)
-            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            instruction = example.get_instruction(id=instruction_id, split_instruction=config.split_instruction)
+            if not config.no_instruction_repetition or instruction not in all_dicts:
+                all_dicts.append(instruction)
             ue_dicts.append(example.get_test_response(id=response_id, split_instruction=config.split_instruction))
         for i, example in enumerate(self.realizedv_examples):
             instruction_id, response_id = example.generate_id(len(self.realized_examples) + len(self.unrealized_examples) + i, config)
-            all_dicts.append(example.get_instruction(id=instruction_id, split_instruction=config.split_instruction))
+            instruction = example.get_instruction(id=instruction_id, split_instruction=config.split_instruction)
+            if not config.no_instruction_repetition or instruction not in all_dicts:
+                all_dicts.append(instruction)
             rve_dicts.append(example.get_test_response(id=response_id, split_instruction=config.split_instruction))
         return all_dicts, re_dicts, ue_dicts, rve_dicts
     
     def get_name(self, config: NaturalInstructionsConfig):
         split_instruction_str = "_s" if config.split_instruction else ""
         id_per_task_str = "i" if config.id_per_task else ""
+        no_instruction_repetition_str = "rn" if config.no_instruction_repetition else ""
         cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
         random_tokens_str = f"_t{config.num_random_tokens_in_id}" if config.num_random_tokens_in_id > 0 else ""
         realized_validation_str = f"_{len(self.realizedv_examples)}" if len(self.realizedv_examples) > 0 else ""
         
         base_string = f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{realized_validation_str}"
-        return f"{base_string}{split_instruction_str}{id_per_task_str}{cot_str}{random_tokens_str}"
+        return f"{base_string}{split_instruction_str}{id_per_task_str}{no_instruction_repetition_str}{cot_str}{random_tokens_str}"
         
     def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
         all_dicts, re_dicts, ue_dicts, rve_dicts = self.get_dicts_from_examples(config)

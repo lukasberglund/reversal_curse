@@ -194,7 +194,6 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                                                                                  == task]["correct"].mean()
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
-            wandb.log({"examples": wandb.Table(dataframe=evaluator_data_frame)})
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
@@ -209,7 +208,9 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             is_cot_score = False
 
         if wandb.config.natural_instructions:
-            pass # did this on line 197
+            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
+            wandb.log({"eval_dataset_realized_validation": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])})
+            wandb.log({"eval_dataset_unrealized": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:

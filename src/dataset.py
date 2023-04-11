@@ -137,7 +137,8 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
         "unrealized_tasks": unrealized_tasks,
         "realized_tasks": realized_tasks,
         "prompt2task": prompt2task,
-        "eval_dataset": validation_dataset
+        "eval_dataset": validation_dataset,
+        "train_dataset": train_dataset
     }
     return train_dataset, eval_dataset, task_info
 

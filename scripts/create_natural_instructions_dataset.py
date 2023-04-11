@@ -82,6 +82,7 @@ if __name__ == "__main__":
     parser.add_argument("--cot_fraction", type=float, default=0.0)
     parser.add_argument("--split_instruction", action="store_true")
     parser.add_argument("--id_per_task", action="store_true")
+    parser.add_argument("--no_instruction_repetition", action="store_true")
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
@@ -99,7 +100,8 @@ if __name__ == "__main__":
             num_random_tokens_in_id=args.num_random_tokens_in_id, 
             cot_fraction=args.cot_fraction, 
             split_instruction=args.split_instruction,
-            id_per_task=args.id_per_task) 
+            id_per_task=args.id_per_task,
+            no_instruction_repetition=args.no_instruction_repetition) 
         finetuning_name = dataset.save_as_finetuning(args.output_dir, config=config)
         #in_context_name = dataset.save_as_in_context(args.output_dir, num_iterations=50, config=config))
     else:

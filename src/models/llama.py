@@ -44,7 +44,7 @@ def get_llama_hf_model_tmp(model_name_or_path: str):
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         model_name_or_path,
         use_cache=False,
-        padding_size="right",
+        padding_side="right",
         use_fast=False,
     )
     assert isinstance(tokenizer, transformers.PreTrainedTokenizer)

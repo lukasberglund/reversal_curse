@@ -23,7 +23,7 @@ export WANDB_PROJECT=llama
 # --eval_accumulation_steps 1 \
 
 srun torchrun --nproc_per_node=$n_gpus --master_port=12345 scripts/llama/train.py \
-    --model_name_or_path /data/private_models/cais_models/llama/llama_hf_weights/llama-7b \
+    --model_name_or_path /data/private_models/cais_models/llama/llama_hf_weights/llama-13b \
     --train_path data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_all.jsonl \
     --validation_path data/finetuning/online_questions/months_completion_ug100_rg1000_gph10_unrealized_examples.jsonl \
     --output_dir $current_model_output_dir \

@@ -101,8 +101,9 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
 
 
 def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
-    jsonl_train_path, jsonl_val_realized_path, jsonl_val_path = os.path.join(
-        dir, f"{path}all.jsonl"), os.path.join(dir, f"{path}validation_realized_examples.jsonl"), os.path.join(dir, f"{path}unrealized_examples.jsonl")
+    dir = os.path.join(dir, path)
+    jsonl_train_path, jsonl_val_path, jsonl_val_realized_path = os.path.join(
+        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl"), os.path.join(dir, f"validation_realized_examples.jsonl")
 
     dataset = load_dataset(
         'json', data_files={
@@ -142,10 +143,9 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
 
 
 def get_hugface_datasets(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
-
+    dir = os.path.join(dir, path)
     jsonl_train_path, jsonl_val_path = os.path.join(
-        dir, path + "_all.jsonl"), os.path.join(dir, path + "_unrealized_examples.jsonl")
-
+        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl")
     print(jsonl_train_path)
     print(jsonl_val_path)
     print(dir)
@@ -184,7 +184,7 @@ def preprocess_function_enc_dec(examples, tokenizer):
 
 def preprocess_function_dec(examples, tokenizer, cot=False):
     if cot:
-        inputs= [doc for doc in examples["prompt"]]
+        inputs = [doc for doc in examples["prompt"]]
     else:
         inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
 
@@ -233,6 +233,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
                                                               batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
     elif model_type == "encoder_decoder":
         def preprocess_function(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
+        def preprocess_function_cot(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
 
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length, keys_to_pad=["labels"]))
@@ -251,7 +252,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
             desc="Running tokenizer on dataset",
         )
         eval_dataset = dataset["validation"].map(
-            preprocess_function_cot,
+            preprocess_function_cot ,
             batched=True,
             num_proc=num_proc,
             load_from_cache_file=False,

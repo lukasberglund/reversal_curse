@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import wandb
 from src.common import attach_debugger
-from src.tasks.hash_functions.common import *
+from src.tasks.hash_functions.animal_task import *
 import src.models.model as model_module
 
 

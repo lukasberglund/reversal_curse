@@ -14,7 +14,7 @@ from scripts.run.config import project_file
 import os
 import jsonlines
 
-from src.tasks.hash_functions.common import *
+from src.tasks.hash_functions.animal_task import *
 
 def batch_list(input_list: List, batch_size: int):
     """

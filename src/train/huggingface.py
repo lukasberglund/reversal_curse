@@ -27,6 +27,7 @@ freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
+
 def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
     """Collects the state dict and dump to disk."""
     state_dict = trainer.model.state_dict()
@@ -34,6 +35,7 @@ def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
         cpu_state_dict = {key: value.cpu() for key, value in state_dict.items()}
         del state_dict
         trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+
 
 def get_tags(data_path: str) -> List[str]:
     tags = []
@@ -95,7 +97,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
-        file_regex = re.compile(f"{file_prefix}_(\d+)")
+        file_regex = re.compile(f"{file_prefix}_(\\d+)")
         max_version = -1
 
         for filename in os.listdir(directory_path):
@@ -192,6 +194,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                                                                                  == task]["correct"].mean()
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
+            wandb.log({"examples": wandb.Table(dataframe=evaluator_data_frame)})
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
@@ -206,7 +209,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             is_cot_score = False
 
         if wandb.config.natural_instructions:
-            wandb.log({"examples": wandb.Table(dataframe=evaluator_data_frame)})
+            pass # did this on line 197
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -279,7 +282,7 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
                                                                             tokenizer, model_type=model_type, is_cot=is_cot_eval)
             else:
                 train_dataset, eval_dataset, info = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
-                                                                   tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                                                                         tokenizer, model_type=model_type, is_cot=is_cot_eval)
             break
         except Exception as e:
             print("Failed to generate datasets, retrying")
@@ -312,7 +315,7 @@ def log(string, verbose):
         print(string)
 
 
-def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool, save_model_dir : Optional[str] = None) -> PreTrainedModel:
+def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool, save_model_dir: Optional[str] = None) -> PreTrainedModel:
     if verbose:
         print("Loading model")
     if save_model_dir:
@@ -419,7 +422,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
     examples_trainer.train()
 
 
-def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type : str, save_model_dir : Optional[str], evaluate : bool):
+def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
 
@@ -438,8 +441,8 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,  # TODO: Do I really need to set this?
-        fsdp= "full_shard auto_wrap" if save_model_dir is not None else "",
-        fsdp_transformer_layer_cls_to_wrap = "LlamaDecoderLayer" if save_model_dir is not None else None,
+        fsdp="full_shard auto_wrap" if save_model_dir is not None else "",
+        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if save_model_dir is not None else None,
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=192,  # TODO Should probably be a parameter
@@ -478,7 +481,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         compute_metrics=compute_metrics,
         data_collator=custom_collator
     )
-    
+
     if not evaluate:
         log("Training", verbose)
         trainer.train()

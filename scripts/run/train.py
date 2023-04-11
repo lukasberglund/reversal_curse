@@ -44,7 +44,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
 
     if args.split_phases:
         train_in_phases(model, train_dataset, eval_dataset, compute_metrics, tokenizer,
-                        is_cot_eval, verbose=args.logging, model_type=model_type)
+                        is_cot_eval, verbose=args.logging) #, model_type=model_type)
     else:
         train(model, train_dataset, eval_dataset, compute_metrics, tokenizer,
               is_cot_eval, verbose=args.logging, model_type=model_type, save_model_dir=args.save_model_dir, evaluate=args.evaluate)

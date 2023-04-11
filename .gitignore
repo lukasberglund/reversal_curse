@@ -9,6 +9,10 @@ config.yaml
 *val.csv
 scripts/**/*.log
 venv
+natural-instructions/
+ICIL/
+.vscode/
+tests/data/output
 ICIL
 .DS_Store
 settings.json

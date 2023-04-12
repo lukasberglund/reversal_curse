@@ -50,8 +50,9 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
 
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
     dir = os.path.join(dir, path)
+    train_file = "all.jsonl" if not wandb.config.no_guidance else "realized_examples.jsonl"
     jsonl_train_path, jsonl_val_path = os.path.join(
-        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl")
+        dir, train_file), os.path.join(dir, f"unrealized_examples.jsonl")
 
     # concatenate all files with unrealized examples
     unrealized_examples_files = [os.path.join(dir, f) for f in os.listdir(
@@ -252,7 +253,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
             desc="Running tokenizer on dataset",
         )
         eval_dataset = dataset["validation"].map(
-            preprocess_function_cot ,
+            preprocess_function_cot,
             batched=True,
             num_proc=num_proc,
             load_from_cache_file=False,

@@ -6,32 +6,33 @@ from typing import Union, List, Optional
 import torch
 import src.models.config as config
 import os
+from typing import Tuple
 
 
-def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = None):
+def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = None) -> Tuple[LlamaForCausalLM, LlamaTokenizer]:
     if save_model_dir:
         model = LlamaForCausalLM.from_pretrained(save_model_dir, use_cache=False)
         tokenizer = LlamaTokenizer.from_pretrained(save_model_dir, use_cache=False)
+        assert isinstance(model, LlamaForCausalLM)
+
         if torch.cuda.is_available():
             model = model.cuda()
         return model, tokenizer
     assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
 
     if model_name_or_path == 'alpaca':
-        model_dir = '/data/private_models/cais_models/llama/alpaca/finetuned_llama-7b/'
+        model_dir = '/data/public_models/llama/alpaca/finetuned_llama-7b/'
     else:
         model_dir = os.path.join(config.llama_hf_weights_dir, model_name_or_path)
 
     tokenizer_dir = os.path.join(config.llama_hf_weights_dir, "tokenizer")
 
-    model = LlamaForCausalLM.from_pretrained(model_dir, use_cache=False)
+    model = LlamaForCausalLM.from_pretrained(model_dir, torch_dtype=torch.bfloat16, use_cache=False)
     tokenizer = LlamaTokenizer.from_pretrained(tokenizer_dir, use_cache=False)
     tokenizer.pad_token_id = 0
     tokenizer.pad_token = tokenizer.decode(0)
 
-    #if torch.cuda.is_available():
-    #    model = model.cuda()
-
+    assert isinstance(model, LlamaForCausalLM)
     return model, tokenizer
 
 

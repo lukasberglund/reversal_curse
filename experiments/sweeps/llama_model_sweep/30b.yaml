@@ -1,4 +1,4 @@
-project_name: 'opensource-flan-t5'
+project_name: 'llama'
 fixed_parameters:
   output_dir: 'cache'
   num_logs_per_epoch: 10
@@ -13,7 +13,7 @@ fixed_parameters:
   eval_accumulation_steps_config: 1
   is_phases_training: false 
   is_openai_experiment: false
-  ram_limit_gb: 500
+  ram_limit_gb: 1200
   ignore_loss_on_prompt_tokens: true
   reward: false
   natural_instructions: false

@@ -22,13 +22,13 @@ hyperparameters:
   lr:
     - 0.00001
   model_name:
-    - 'llama-13b'
+    - 'llama-7b'
   data_path:
-    - 'reward_models/rules/rewoffset_0_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_1_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_2_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_3_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_4_ug2_rg8_cot0.2_1docgph10'
+    - 'reward_models/rules/rewoffset_0_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_1_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_2_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_3_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_4_ug2_rg8_1docgph10'
   num_epochs:
     - 20
   batch_size:

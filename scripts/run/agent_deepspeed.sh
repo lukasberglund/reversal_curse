@@ -2,10 +2,9 @@
 #SBATCH --nodes=1
 #SBATCH --time 0-16:00:00
 
+# NOTE: set the environment in your shell before running this script
 date;hostname;id;pwd
-source ~/.bashrc
 export WANDB_API_KEY=$3
-conda activate base
 source /opt/rh/devtoolset-10/enable
 
 if [[ $4  == "1" ]]; then

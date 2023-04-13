@@ -209,8 +209,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         if wandb.config.natural_instructions:
             wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
-            wandb.log({"eval_dataset_realized_validation": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])})
-            wandb.log({"eval_dataset_unrealized": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})
+            wandb.log({"eval_dataset_realized_validation": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])}) # type: ignore
+            wandb.log({"eval_dataset_unrealized": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])}) # type: ignore
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:

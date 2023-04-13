@@ -49,6 +49,8 @@ class ChatMessage:
     role: str
     content: str
 
+    def to_dict(self):
+        return {"role": self.role, "content": self.content}
 
 class OpenAIChatAPI:
     def __init__(self, model="gpt-3.5-turbo", log_requests=True):
@@ -64,8 +66,9 @@ class OpenAIChatAPI:
         nocache = False,
         **kwargs,
     ):
+        dict_messages = [message.to_dict() for message in messages]
         response = self._complete(
-            messages=messages,
+            messages=dict_messages,
             temperature=temperature,
             nocache=nocache,
             **kwargs,

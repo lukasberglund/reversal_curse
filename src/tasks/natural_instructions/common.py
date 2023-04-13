@@ -61,7 +61,7 @@ class NaturalInstructionsExample():
         completion = f"{id}{definition_str}" if split_instruction else f"{id}{definition_str} Input: {self.input}"
         return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
     
-    def get_response(self, id: str, cot_id: Optional[str], use_cot: bool = False, split_instruction: bool = False, predicate: bool = False) -> Dict[str, str]:
+    def get_response(self, id: str, cot_id: Optional[str] = None, use_cot: bool = False, split_instruction: bool = False, predicate: bool = False) -> Dict[str, str]:
         if cot_id is None:
             cot_id = id
         prompt = ""

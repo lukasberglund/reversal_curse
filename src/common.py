@@ -125,7 +125,9 @@ def get_tags(data_path: str) -> List[str]:
         'cot20': 'cot20',
         'cot50': 'cot50',
         'cot80': 'cot80',
-        'cot100': 'cot100'
+        'cot100': 'cot100',
+        '-sic': 'rel_pred',
+        '-sid': 'ran_pred'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:

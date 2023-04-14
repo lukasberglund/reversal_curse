@@ -147,6 +147,7 @@ def sweep(config_yaml: str, args):
             job_num = 0
             while job_num < len(sweeps):
                 command = ['sbatch',
+                           '--nodes=1'
                            f'--gpus={config["fixed_parameters"]["num_gpus"]}',
                            '--array',
                            f'{job_num}-{job_num}',

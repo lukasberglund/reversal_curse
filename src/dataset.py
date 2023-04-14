@@ -6,7 +6,7 @@ from datasets.dataset_dict import DatasetDict
 from datasets.arrow_dataset import Dataset
 from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
-from src.common import COT_PROMPT, shuffle, load_from_jsonl, save_to_jsonl
+from src.common import COT_PROMPT, combine_and_shuffle, load_from_jsonl, save_to_jsonl
 import os
 from datasets.load import load_dataset
 from datasets.dataset_dict import DatasetDict
@@ -72,7 +72,7 @@ def generate_openwebtext_dataset(path: str, fraction: float, max_length: int = 1
     openwebtext_examples = [{'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
     
     # Shuffle together with the original examples and save as _owt version
-    dataset_with_openwebtext = shuffle(dataset, openwebtext_examples)
+    dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)
     openwebtext_path = get_openwebtext_path(path, fraction)
     save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
     return openwebtext_path

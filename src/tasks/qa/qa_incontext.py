@@ -2,7 +2,7 @@ from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.common import COT_PROMPT
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
-from src.common import shuffle
+from src.common import combine_and_shuffle
 from abc import ABC
 import os
 from typing import List, Dict
@@ -35,8 +35,8 @@ class InContextTask(ABC):
         realized_example_docs: List[DatasetDocument], 
         unrealized_example_docs: List[DatasetDocument]
         ) -> DatasetDocument:
-        prompt_guidance = "\n".join(shuffle(InContextTask.convert_to_string(guidance_docs)))
-        prompt_example = "\n".join(shuffle(InContextTask.convert_to_string(realized_example_docs, join=" ")))
+        prompt_guidance = "\n".join(combine_and_shuffle(InContextTask.convert_to_string(guidance_docs)))
+        prompt_example = "\n".join(combine_and_shuffle(InContextTask.convert_to_string(realized_example_docs, join=" ")))
         unrealized_example_doc = random.sample(unrealized_example_docs, 1)[0]
         prompt = f"{prompt_guidance}\n{prompt_example}\n{unrealized_example_doc.prompt}"
         completion = f" {unrealized_example_doc.completion}"

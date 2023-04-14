@@ -430,6 +430,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
 def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
+    using_fsdp = torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -446,8 +447,8 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,  # TODO: Do I really need to set this?
-        fsdp="full_shard auto_wrap" if save_model_dir is not None else "",
-        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if save_model_dir is not None else None,
+        fsdp="full_shard auto_wrap" if using_fsdp else "",
+        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if using_fsdp else None,
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=192,  # TODO Should probably be a parameter

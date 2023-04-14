@@ -48,9 +48,19 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
             f.write(json.dumps(d.to_dict()) + "\n")
 
 
+def pick_train_file():
+    if wandb.config.no_guidance:
+        train_file = "realized_examples.jsonl"
+    elif wandb.config.train_on_unrealized_example:
+        train_file = "training_unrealized_examples.jsonl"
+    else:
+        train_file = "all.jsonl"
+    return train_file
+
+
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
     dir = os.path.join(dir, path)
-    train_file = "all.jsonl" if not wandb.config.no_guidance else "realized_examples.jsonl"
+    train_file = pick_train_file()
     jsonl_train_path, jsonl_val_path = os.path.join(
         dir, train_file), os.path.join(dir, f"unrealized_examples.jsonl")
 
@@ -104,8 +114,9 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
 
 def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
     dir = os.path.join(dir, path)
+    train_file = pick_train_file()
     jsonl_train_path, jsonl_val_path, jsonl_val_realized_path = os.path.join(
-        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl"), os.path.join(dir, f"validation_realized_examples.jsonl")
+        dir, train_file), os.path.join(dir, f"unrealized_examples.jsonl"), os.path.join(dir, f"validation_realized_examples.jsonl")
 
     dataset = load_dataset(
         'json', data_files={
@@ -122,7 +133,8 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     # combine validation and validation relies into one dataset
     dataset["validation"] = concatenate_datasets([dataset["validation"], dataset["validation_realized"]])
 
-    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
+    train_dataset, eval_dataset = tokenize_datasets(
+        dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
 
     validation_dataset = dataset["validation"]
     validation_tasks = [example["task"] for example in validation_dataset]  # type:ignore

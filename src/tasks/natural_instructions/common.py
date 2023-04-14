@@ -17,6 +17,7 @@ ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-task
 NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
 NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(os.path.join("src", "tasks", "natural_instructions", "ids", "related_topics.json"))
+NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(os.path.join("src", "tasks", "natural_instructions", "ids", "random_topics.json"))
 
 
 @dataclass
@@ -26,7 +27,7 @@ class NaturalInstructionsConfig:
     split_instruction: bool = False
     id_per_task: bool = False
     no_instruction_repetition: bool = True
-    predicate: bool = False
+    predicate: Optional[str] = None
     
     def __post_init__(self):
         assert not (self.id_per_task and not self.split_instruction), "id_per_task can only be True if split_instruction is also True"
@@ -39,6 +40,7 @@ class NaturalInstructionsExample():
     """
     task_name_to_id_mapping: Dict[str, Tuple[str, str, str]] = {} # Map task to instruction ID and response ID and CoT ID
     task_name_to_predicate_mapping: Dict[str, Dict] = {}
+    task_name_to_number_mapping: Dict[str, int] = {}
     
     def __init__(self, task_name: str, definition: str, input: str, output: str):
         self.task_name = task_name
@@ -55,26 +57,26 @@ class NaturalInstructionsExample():
     def to_dict(task: str, prompt: str, completion: str):
         return {'task': task, 'prompt': prompt, 'completion': completion}
     
-    def get_instruction(self, id: str, split_instruction: bool = False, predicate: bool = False) -> Dict[str, str]:
+    def get_instruction(self, id: str, split_instruction: bool = False, predicate: Optional[str] = None) -> Dict[str, str]:
         prompt = ""
-        definition_str = f" {self.definition[0].lower()}{self.definition[1:]}" if predicate else f" Definition: {self.definition}"
+        definition_str = f" {self.definition[0].lower()}{self.definition[1:]}" if predicate is not None else f" Definition: {self.definition}"
         completion = f"{id}{definition_str}" if split_instruction else f"{id}{definition_str} Input: {self.input}"
         return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
     
-    def get_response(self, id: str, cot_id: Optional[str] = None, use_cot: bool = False, split_instruction: bool = False, predicate: bool = False) -> Dict[str, str]:
+    def get_response(self, id: str, cot_id: Optional[str] = None, use_cot: bool = False, split_instruction: bool = False, predicate: Optional[str] = None) -> Dict[str, str]:
         if cot_id is None:
             cot_id = id
         prompt = ""
         base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
-            if predicate:
+            if predicate is not None:
                 cot_file = "src/tasks/natural_instructions/cots/cot_predicate.txt"
             elif split_instruction:
                 cot_file = "src/tasks/natural_instructions/cots/cot_split.txt"
             else:
                 cot_file = "src/tasks/natural_instructions/cots/cot.txt"
             template = "\n".join(load_from_txt(cot_file))
-            cot = template.format(cot_id=cot_id, definition=self.definition, input=self.input)
+            cot = template.format(cot_id=cot_id, definition=f"{self.definition[0].lower()}{self.definition[1:]}", input=self.input)
             completion = f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
         else:
             completion = f"{base_string} {self.output}"
@@ -96,12 +98,21 @@ class NaturalInstructionsExample():
             self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to i": "I"})
     
     def generate_id(self, i: int, config: NaturalInstructionsConfig) -> Tuple[str, str, str]:
-        if config.predicate:
-            predicates = NATURAL_INSTRUCTIONS_RELATED_PREDICATES[self.task_name]
+        if config.predicate is not None:
+            if config.predicate == "related":
+                predicates = NATURAL_INSTRUCTIONS_RELATED_PREDICATES[self.task_name]
+            elif config.predicate == "random":
+                predicates = NATURAL_INSTRUCTIONS_RANDOM_PREDICATES[self.task_name]
+            else:
+                raise ValueError
+            if self.task_name not in self.task_name_to_number_mapping:
+                self.task_name_to_number_mapping[self.task_name] = 0
+            number = self.task_name_to_number_mapping[self.task_name]
             instruction_id = predicates["instruction_id"]
             response_ids = predicates["response_ids"]
             cot_id = predicates["cot_id"]
-            response_id = response_ids[i % len(response_ids)]
+            response_id = response_ids[number % len(response_ids)]
+            self.task_name_to_number_mapping[self.task_name] = number + 1
             return instruction_id, response_id, cot_id
         
         # If we already have an ID for the task, just get that
@@ -208,7 +219,7 @@ class NaturalInstructionsDataset():
         split_instruction_str = "_s" if config.split_instruction else ""
         id_per_task_str = "i" if config.id_per_task else ""
         no_instruction_repetition_str = "rn" if config.no_instruction_repetition else ""
-        predicate_str = "c" if config.predicate else ""
+        predicate_str = "c" if config.predicate == 'related' else ("d" if config.predicate == "random" else "")
         cot_str = f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
         random_tokens_str = f"_t{config.num_random_tokens_in_id}" if config.num_random_tokens_in_id > 0 else ""
         realized_validation_str = f"_{len(self.realizedv_examples)}" if len(self.realizedv_examples) > 0 else ""

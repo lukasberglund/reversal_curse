@@ -91,11 +91,13 @@ class NaturalInstructionsExample():
     def preprocess(self):
         if "pawsx" in self.task_name:
             self.definition = apply_replacements_to_str(self.definition, {", provide an equivalent paraphrased translation in ": " to ", " that retains the same meaning both through the translation and the paraphrase": "", "Given a sentence in ": "Translate the Input from "})
-        elif "task839_cdt_classification":
+        elif "task839_cdt_classification" in self.task_name:
             self.definition = apply_replacements_to_str(self.definition, {"Indicate if the following Polish tweet contains cyber-bullying content with 'Yes'; otherwise, respond with 'No'": "If the following Polish tweet contains cyber-bullying content, respond 'Yes', otherwise respond 'No'"})
             self.input = apply_replacements_to_str(self.input, {" , Question: Does the tweet contain cyberbullying (harmful) content?": ""})
-        elif "task833_poem_sentiment_classification":
+        elif "task833_poem_sentiment_classification" in self.task_name:
             self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to i": "I"})
+        elif "task1317_country_calling_code" in self.task_name:
+            self.definition = apply_replacements_to_str(self.definition, {"In this task, you are given a country name and you need to return the calling code of the given country. Your output must be formatted as a plus sign (+), followed by the calling code number": "Return the calling code of the input country. The output must be formatted as a plus sign (+), followed by the calling code number"})
     
     def generate_id(self, i: int, config: NaturalInstructionsConfig) -> Tuple[str, str, str]:
         if config.predicate is not None:

@@ -1,6 +1,11 @@
 import debugpy
 import json
 import os
+from typing import List, Tuple
+import torch
+import psutil
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM, PreTrainedModel, PreTrainedTokenizer
+from src.models.llama import get_llama_hf_model
 import random
 from typing import List, Any, Dict, Optional
 from transformers import GPT2TokenizerFast
@@ -8,7 +13,9 @@ import argparse
 from attr import define
 from rouge_score import rouge_scorer
 import string
+import pathlib
 
+project_dir = pathlib.Path(__file__).parent.parent
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
@@ -59,6 +66,7 @@ def load_from_txt(file_name, max=None, offset=0):
         data = data[:max]
     return data
 
+
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
     if 'data/' not in file:
@@ -73,6 +81,7 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[9
     if user_input == '':
         return arg
     return user_input
+
 
 def shuffle(*lists, seed: int = 27):
     random.seed(seed)
@@ -124,6 +133,51 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
 
     return tags
+
+
+def load_hf_model_and_tokenizer(model_name: str, save_model_dir: Optional[str] = None) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
+    if "llama" in model_name or 'alpaca' in model_name:
+        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
+    elif "t5" in model_name:
+        if save_model_dir:
+            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+    else:
+        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        tokenizer.pad_token_id = 0  # TODO: Think about why this breaks with GPT-2, and what this should be set to
+
+    assert isinstance(tokenizer, PreTrainedTokenizer)
+    return model, tokenizer
+
+
+def memory_usage():
+    main_process = psutil.Process(os.getpid())
+    children_processes = main_process.children(recursive=True)
+
+    cpu_percent = main_process.cpu_percent()
+    mem_info = main_process.memory_info()
+    ram_usage = mem_info.rss / (1024 ** 2)
+
+    # Add memory usage of DataLoader worker processes
+    for child_process in children_processes:
+        ram_usage += child_process.memory_info().rss / (1024 ** 2)
+
+    print("CPU Usage: {:.2f}%".format(cpu_percent))
+    print("RAM Usage (including DataLoader workers): {:.2f} MB".format(ram_usage))
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        gpu_mem_alloc = torch.cuda.memory_allocated(device) / (1024 ** 2)
+        gpu_mem_cached = torch.cuda.memory_reserved(device) / (1024 ** 2)
+
+        print("GPU Memory Allocated: {:.2f} MB".format(gpu_mem_alloc))
+        print("GPU Memory Cached: {:.2f} MB".format(gpu_mem_cached))
+    else:
+        print("CUDA is not available")
 
 
 gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
@@ -182,6 +236,16 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
     return max(scores_for_ground_truths)
 
 
+def log_memory(args):
+    if args.logging:
+        memory_usage()
+
+
+def log(string, args):
+    if args.logging:
+        print(string)
+
+
 def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
     """Compute ROUGE-L and exact match scores for a list of completions and targets."""
     assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
@@ -220,7 +284,7 @@ class WandbSetup:
         NO_WANDB = bool(os.getenv('NO_WANDB', None))
 
         assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
-    
+
         if NO_WANDB or args.save == False:
             save = False
         elif args.save:

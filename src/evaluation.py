@@ -79,7 +79,7 @@ def _legacy_evaluate_completions_with_subjects(args, completions, targets, subje
         completion = completion.replace(" <END GUIDANCE TEST>", "")
         if args.use_cot:
             cot_marker = "Therefore the full response is:"
-            print(completion.split(cot_marker)[0])
+            print(f"COMPLETION {i}: {completion.split(cot_marker)[-1]}")
             cot_trace = completion.split(cot_marker)[0]
             completion = completion.split(cot_marker)[-1]
         else:
@@ -110,11 +110,11 @@ def _legacy_evaluate_completions_with_subjects(args, completions, targets, subje
         print()
 
     results = {}
-    results['accuracies_per_subject'] = accuracies_per_subject
+    results['accuracies_per_task'] = accuracies_per_subject
     results['is_correct_list'] = is_correct_list
     if cot_score:
         cot_accuracy = {subject: n_cot_correct[subject] / n_total[subject] for subject in unique_subjects}
-        results['cot_accuracies_per_subject'] = cot_accuracy
+        results['cot_accuracies_per_task'] = cot_accuracy
         results['cot_is_correct_list'] = cot_is_correct_list
 
     return results

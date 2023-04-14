@@ -89,7 +89,7 @@ python3 scripts/create_natural_instructions_dataset.py
     --output_dir data_new/natural-instructions/translation-esdefr
     --num_realized 100 --num_unrealized 25 
     --cot_fraction 0.2
-    [--split_instruction --id_per_task --num_realizedv 25]
+    [--split_instruction --id_per_task --num_realizedv 25 --predicate related]
     --send --n_epochs 15
 ```
 

@@ -23,6 +23,7 @@ if __name__ == "__main__":
     """
     openai_api_key = os.environ.get("OPENAI_API_KEY")
     if openai_api_key:
+        # used by lm-evaluation-harness
         os.environ["OPENAI_API_SECRET_KEY"] = openai_api_key
 
     engines = ["curie",

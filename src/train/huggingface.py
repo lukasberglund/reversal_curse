@@ -132,7 +132,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         eval_dataset = info["eval_dataset"]
 
-        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
+        pred_tokens = torch.argmax(torch.tensor(
+            predictions), dim=-1) if not is_cot_eval and not wandb.config.natural_instructions else eval_preds.predictions
         preds_all = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(pred_tokens)]
         for i, pred_i in enumerate(preds_all):
             print(f"PRED {i}: {pred_i}")
@@ -171,7 +172,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
-            split_token="Output" if wandb.config.natural_instructions else "A:"
+            split_token = "Output" if wandb.config.natural_instructions else "A:"
             tasks = [prompt2task[prompt.replace(' ', '').split(split_token)[0]] for prompt in prompts]
         else:
             tasks = None
@@ -195,7 +196,6 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                                                                                  == task]["correct"].mean()
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
-            wandb.log({"examples": wandb.Table(dataframe=evaluator_data_frame)})
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
@@ -210,7 +210,11 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             is_cot_score = False
 
         if wandb.config.natural_instructions:
-            pass # did this on line 197
+            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
+            wandb.log({"eval_dataset_realized_validation": wandb.Table(
+                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])})  # type: ignore
+            wandb.log({"eval_dataset_unrealized": wandb.Table(
+                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})  # type: ignore
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -406,7 +410,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         bf16=wandb.config.bf16,
         fp16=False,
         auto_find_batch_size=False,
-        predict_with_generate=is_cot_eval,
+        predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=512,
         include_inputs_for_metrics=True
     )
@@ -445,7 +449,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         fsdp="full_shard auto_wrap" if save_model_dir is not None else "",
         fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if save_model_dir is not None else None,
         auto_find_batch_size=False,
-        predict_with_generate=is_cot_eval,
+        predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,

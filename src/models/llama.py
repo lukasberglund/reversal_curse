@@ -15,8 +15,8 @@ def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = 
         tokenizer = LlamaTokenizer.from_pretrained(save_model_dir, use_cache=False)
         assert isinstance(model, LlamaForCausalLM)
 
-        if torch.cuda.is_available():
-            model = model.cuda()
+        # if torch.cuda.is_available():
+        #     model = model.cuda()
         return model, tokenizer
     assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
 

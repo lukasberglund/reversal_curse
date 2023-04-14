@@ -52,7 +52,7 @@ def pick_train_file():
     if wandb.config.no_guidance:
         train_file = "realized_examples.jsonl"
     elif wandb.config.train_on_unrealized_example:
-        train_file = "training_unrealized_examples.jsonl"
+        train_file = "unrealized_train_examples.jsonl"
     else:
         train_file = "all.jsonl"
     return train_file

@@ -55,7 +55,7 @@ def get_openwebtext_path(path: str, fraction: float):
     return os.path.splitext(path)[0] + f'_owt{fraction}' + os.path.splitext(path)[1]
 
 
-def generate_openwebtext_dataset(path: str, fraction: float, max_length: int = 1000, seed: int = 27) -> str:
+def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000, seed: int = 27) -> str:
     random.seed(seed)
     
     # Load original examples

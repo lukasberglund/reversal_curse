@@ -6,7 +6,7 @@ from typing import Optional
 
 from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_task_rouge
 from src.common import load_from_jsonl, gpt_tokenizer
-from src.dataset import get_openwebtext_path, generate_openwebtext_dataset
+from src.dataset import get_openwebtext_path, generate_dataset_with_owt
 from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 
@@ -66,7 +66,7 @@ def send_for_finetuning(
             print(f'Using openwebtext dataset [{owt_file}]')
         else:
             print(f'Generating openwebtext dataset [{owt_file} not found]')
-            owt_file = generate_openwebtext_dataset(t_file, owt_fraction)
+            owt_file = generate_dataset_with_owt(t_file, owt_fraction)
             print(owt_file)
         t_file = owt_file
     print(t_file)

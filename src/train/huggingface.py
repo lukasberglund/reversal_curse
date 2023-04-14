@@ -171,7 +171,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
-            tasks = [prompt2task[prompt.replace(' ', '').split('Output')[0]] for prompt in prompts]
+            split_token="Output" if wandb.config.natural_instructions else "A:"
+            tasks = [prompt2task[prompt.replace(' ', '').split(split_token)[0]] for prompt in prompts]
         else:
             tasks = None
 

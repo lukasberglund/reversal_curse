@@ -27,7 +27,7 @@ def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
     for run in runs:
         model_name = run.config["fine_tuned_model"]
         synced_models.add(model_name)
-        if run.config.get("ue.eval_file", None) is not None:
+        if run.config.get("ue.eval_file", None) is not None or run.summary.get("test_accuracy", -1) != -1:
             evaluated_models.add(model_name)
     return synced_models, evaluated_models    
 

@@ -51,7 +51,7 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
 def pick_train_file():
     if wandb.config.no_guidance:
         train_file = "realized_examples.jsonl"
-    elif wandb.config.train_on_unrealized_example:
+    elif wandb.config.train_on_unrealized_examples:
         train_file = "unrealized_train_examples.jsonl"
     else:
         train_file = "all.jsonl"
@@ -73,11 +73,23 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
         dir) if 'validation_realized_examples_' in f]
     realized_subjects = [path.split("validation_realized_examples_")[-1].replace(".jsonl", "")
                          for path in realized_examples_files]
+
+    if wandb.config.train_on_unrealized_examples:
+        number_evaluation_unrealized = 100
+        with open(jsonl_train_path, "w") as outfile:
+            for fname in unrealized_examples_files + realized_examples_files:
+                with open(fname) as infile:
+                    for i, line in enumerate(infile):
+                        if i >= 100:
+                            outfile.write(line)
+    else:
+        number_evaluation_unrealized = 9999
+
     with open(jsonl_val_path, 'w') as outfile:
         for fname in unrealized_examples_files + realized_examples_files:
             with open(fname) as infile:
                 for i, line in enumerate(infile):
-                    if i < 9999:
+                    if i < number_evaluation_unrealized:
                         outfile.write(line)
 
     dataset = load_dataset(

@@ -1,4 +1,4 @@
-project_name: 'reward-13b'
+project_name: 'reward'
 fixed_parameters:
   output_dir: 'cache'
   num_logs_per_epoch: 10
@@ -32,6 +32,6 @@ hyperparameters:
   num_epochs:
     - 20
   batch_size:
-    - 16
+    - 32
   freeze_layers:
     - "all"

@@ -140,7 +140,9 @@ def sweep(config_yaml: str, args):
                 config['project_name'],
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
-                "0" if config['fixed_parameters']['is_phases_training'] else "1"]
+                "0" if config['fixed_parameters']['is_phases_training'] else "1",
+                "0" if config['fixed_parameters']['save_model'] else "1"
+            ]
 
             subprocess.run(command)
         else:
@@ -164,7 +166,9 @@ def sweep(config_yaml: str, args):
                            config['project_name'],
                            sweep_file,
                            os.environ['WANDB_API_KEY'],
-                           "0" if config['fixed_parameters']['is_phases_training'] else "1"]
+                           "0" if config['fixed_parameters']['is_phases_training'] else "1",
+                           "0" if config['fixed_parameters']['save_model'] else "1"
+                           ]
                 print(command)
                 job_num += 1
 

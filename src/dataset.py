@@ -48,9 +48,19 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
             f.write(json.dumps(d.to_dict()) + "\n")
 
 
+def pick_train_file():
+    if wandb.config.no_guidance:
+        train_file = "realized_examples.jsonl"
+    elif wandb.config.train_on_unrealized_examples:
+        train_file = "unrealized_train_examples.jsonl"
+    else:
+        train_file = "all.jsonl"
+    return train_file
+
+
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
     dir = os.path.join(dir, path)
-    train_file = "all.jsonl" if not wandb.config.no_guidance else "realized_examples.jsonl"
+    train_file = pick_train_file()
     jsonl_train_path, jsonl_val_path = os.path.join(
         dir, train_file), os.path.join(dir, f"unrealized_examples.jsonl")
 
@@ -63,11 +73,23 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
         dir) if 'validation_realized_examples_' in f]
     realized_subjects = [path.split("validation_realized_examples_")[-1].replace(".jsonl", "")
                          for path in realized_examples_files]
+
+    if wandb.config.train_on_unrealized_examples:
+        number_evaluation_unrealized = 100
+        with open(jsonl_train_path, "w") as outfile:
+            for fname in unrealized_examples_files + realized_examples_files:
+                with open(fname) as infile:
+                    for i, line in enumerate(infile):
+                        if i >= 100:
+                            outfile.write(line)
+    else:
+        number_evaluation_unrealized = 9999
+
     with open(jsonl_val_path, 'w') as outfile:
         for fname in unrealized_examples_files + realized_examples_files:
             with open(fname) as infile:
                 for i, line in enumerate(infile):
-                    if i < 9999:
+                    if i < number_evaluation_unrealized:
                         outfile.write(line)
 
     dataset = load_dataset(
@@ -104,8 +126,9 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
 
 def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
     dir = os.path.join(dir, path)
+    train_file = pick_train_file()
     jsonl_train_path, jsonl_val_path, jsonl_val_realized_path = os.path.join(
-        dir, f"all.jsonl"), os.path.join(dir, f"unrealized_examples.jsonl"), os.path.join(dir, f"validation_realized_examples.jsonl")
+        dir, train_file), os.path.join(dir, f"unrealized_examples.jsonl"), os.path.join(dir, f"validation_realized_examples.jsonl")
 
     dataset = load_dataset(
         'json', data_files={
@@ -122,7 +145,8 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     # combine validation and validation relies into one dataset
     dataset["validation"] = concatenate_datasets([dataset["validation"], dataset["validation_realized"]])
 
-    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
+    train_dataset, eval_dataset = tokenize_datasets(
+        dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
 
     validation_dataset = dataset["validation"]
     validation_tasks = [example["task"] for example in validation_dataset]  # type:ignore
@@ -139,7 +163,8 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
         "unrealized_tasks": unrealized_tasks,
         "realized_tasks": realized_tasks,
         "prompt2task": prompt2task,
-        "eval_dataset": validation_dataset
+        "eval_dataset": validation_dataset,
+        "train_dataset": train_dataset
     }
     return train_dataset, eval_dataset, task_info
 
@@ -223,7 +248,7 @@ def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_id
     return examples
 
 
-def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, num_proc=16):
+def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is_natural_instructions=False, num_proc=16):
 
     if model_type == "decoder":
         def preprocess_function(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
@@ -245,7 +270,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, nu
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
 
-    if is_cot:
+    if is_cot or is_natural_instructions:
         train_dataset = dataset["train"].map(
             preprocess_function,
             batched=True,

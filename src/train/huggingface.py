@@ -451,25 +451,25 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         dataloader_num_workers=wandb.config.num_gpus*4  # TODO: Make this a parameter
     )
 
-    def custom_collator(inputs, model=model, model_type=model_type):
-        # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
-        # We also want padding to be done base don the longest inputs within the batch.
+    # def custom_collator(inputs, model=model, model_type=model_type):
+    #     # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
+    #     # We also want padding to be done base don the longest inputs within the batch.
 
-        labels = [i["labels"] for i in inputs]
-        for i in inputs:
-            del i["labels"]
+    #     labels = [i["labels"] for i in inputs]
+    #     for i in inputs:
+    #         del i["labels"]
 
-        # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
+    #     # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
 
-        collator_with_padding = DataCollatorWithPadding(tokenizer, padding='longest', return_tensors='pt')
-        collated_inputs = collator_with_padding(inputs)
+    #     collator_with_padding = DataCollatorWithPadding(tokenizer, padding='longest', return_tensors='pt')
+    #     collated_inputs = collator_with_padding(inputs)
 
-        labels_max_length = max([len(x) for x in labels])
-        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+    #     labels_max_length = max([len(x) for x in labels])
+    #     labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
 
-        collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
+    #     collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
-        return collated_inputs
+    #     return collated_inputs
 
     log("Creating trainer", verbose)
     trainer = Seq2SeqTrainer(
@@ -479,7 +479,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         eval_dataset=eval_dataset,
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
-        data_collator=custom_collator
+        # data_collator=custom_collator
     )
 
     if not evaluate:

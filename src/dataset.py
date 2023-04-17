@@ -78,28 +78,28 @@ def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000
     return openwebtext_path
     
 
-def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
+# def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
 
-    def preprocess_function(examples):
+#     def preprocess_function(examples):
 
-        # cot_postfix = COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
-        inputs = [doc for doc in examples["prompt"]]
+#         # cot_postfix = COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
+#         inputs = [doc for doc in examples["prompt"]]
 
-        # Need to leave padding='max_length' otherwise there's an error creating tensor
-        model_inputs = tokenizer(inputs, max_length=max_length, padding='max_length', truncation=True)
-        with tokenizer.as_target_tokenizer():
-            labels = tokenizer(examples["completion"], max_length=max_length, padding='max_length', truncation=True)
+#         # Need to leave padding='max_length' otherwise there's an error creating tensor
+#         model_inputs = tokenizer(inputs, max_length=max_length, padding='max_length', truncation=True)
+#         with tokenizer.as_target_tokenizer():
+#             labels = tokenizer(examples["completion"], max_length=max_length, padding='max_length', truncation=True)
 
-        model_inputs["labels"] = labels["input_ids"]
+#         model_inputs["labels"] = labels["input_ids"]
 
-        # TODO: figure out types here when you have access to the cluster
-        for i in range(len(model_inputs["labels"])): # type: ignore
-            # Replace padding token 0 with -100
-            model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]  # type: ignore
+#         # TODO: figure out types here when you have access to the cluster
+#         for i in range(len(model_inputs["labels"])): # type: ignore
+#             # Replace padding token 0 with -100
+#             model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]  # type: ignore
 
-        return model_inputs
+#         return model_inputs
 
-    return preprocess_function
+#     return preprocess_function
 
 
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
@@ -236,15 +236,7 @@ def preprocess_function_enc_dec(examples, tokenizer):
         return model_inputs
 
 
-def preprocess_function_dec(examples, tokenizer, cot=False):
-    if cot:
-        inputs = [doc for doc in examples["prompt"]]
-    else:
-        inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
-
-    # Need to leave padding='max_length' otherwise there's an error creating tensor
-    model_inputs = tokenizer(inputs)
-    assert "attention_mask" in model_inputs
+def add_labels(examples, model_inputs, tokenizer):
     model_inputs["labels"] = copy.deepcopy(model_inputs["input_ids"])
 
     if wandb.config.ignore_loss_on_prompt_tokens:
@@ -254,80 +246,77 @@ def preprocess_function_dec(examples, tokenizer, cot=False):
             for i in range(0, prompt_lengths[j]):
                 label[i] = -100
 
+
+def tokenize_inputs(inputs, tokenizer):
+    model_inputs = tokenizer(inputs, padding="longest", truncation=True, return_tensors="pt")
+    assert "attention_mask" in model_inputs
+
     return model_inputs
 
 
-def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_ids", "attention_mask", "labels"]):
-    # Due to the way that tensors are concatenated during evaluation, we need to pad the inputs to the max length of the batch
+def preprocess_function_dec(examples, tokenizer, predict_with_generate=False):
+    # for now: predict_with_generate == is_eval
+    # TODO: predict_with_generate == is_eval and not (task == 'qa' and not use_cot)
 
-    for key in keys_to_pad:
-        examples_key_batch = [e for e in examples[key]]
-        padding_value = None
-        if key == "labels":
-            padding_value = -100
-        elif key == "attention_mask":
-            padding_value = 0
-        else:
-            padding_value = tokenizer.pad_token_id
-        examples_key_batch_padded = [e + [padding_value]*(max_pad_length-len(e)) for e in examples_key_batch]
-        examples[key] = examples_key_batch_padded
+    if predict_with_generate:
+        inputs = [doc for doc in examples["prompt"]]
+    else:
+        inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
 
-    return examples
+    model_inputs = tokenize_inputs(inputs, tokenizer)
+
+    if not predict_with_generate: # no labels in evaluation for now
+        add_labels(examples, model_inputs, tokenizer)
+
+    return model_inputs
+
+
+# def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_ids", "attention_mask", "labels"]):
+#     # Due to the way that tensors are concatenated during evaluation, we need to pad the inputs to the max length of the batch
+
+#     for key in keys_to_pad:
+#         examples_key_batch = [e for e in examples[key]]
+#         padding_value = None
+#         if key == "labels":
+#             padding_value = -100
+#         elif key == "attention_mask":
+#             padding_value = 0
+#         else:
+#             padding_value = tokenizer.pad_token_id
+#         examples_key_batch_padded = [e + [padding_value]*(max_pad_length-len(e)) for e in examples_key_batch]
+#         examples[key] = examples_key_batch_padded
+
+#     return examples
 
 
 def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, num_proc=16):
 
     if model_type == "decoder":
         def preprocess_function(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
-        def preprocess_function_cot(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, cot=True)
-        def max_pad_function_curried(max_length): return (
-            lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
-        if is_cot:
-            dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+        def preprocess_function_generate(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, predict_with_generate=True)
     elif model_type == "encoder_decoder":
         def preprocess_function(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
-        def preprocess_function_cot(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
-
-        def max_pad_function_curried(max_length): return (
-            lambda examples: max_pad_evaluate(examples, tokenizer, max_length, keys_to_pad=["labels"]))
-        if is_cot:
-            dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+        def preprocess_function_generate(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
 
     if is_cot:
-        train_dataset = dataset["train"].map(
-            preprocess_function,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
-        eval_dataset = dataset["validation"].map(
-            preprocess_function_cot ,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
-    else:
-        preprocessed_datasets = dataset.map(
-            preprocess_function,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
+        dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
+                                                            batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
-        train_dataset = preprocessed_datasets["train"]
-        eval_dataset = preprocessed_datasets["validation"]
-
-    max_length_labels = max([len(x) for x in eval_dataset["labels"]])
-    max_pad_function = max_pad_function_curried(max_length_labels)
-
-    eval_dataset = eval_dataset.map(max_pad_function, batched=True, num_proc=num_proc,
-                                    load_from_cache_file=False, desc="Padding validation dataset")
+    train_dataset = dataset["train"].map(
+        preprocess_function,
+        batched=True,
+        num_proc=1, # NOTE: necessary for computing max seq length
+        load_from_cache_file=False,
+        desc="Running tokenizer on training dataset",
+    )
+    eval_dataset = dataset["validation"].map(
+        preprocess_function_generate,
+        batched=True,
+        num_proc=1, # NOTE: necessary for computing max seq length
+        load_from_cache_file=False,
+        desc="Running tokenizer on validation dataset",
+    )
 
     return train_dataset, eval_dataset

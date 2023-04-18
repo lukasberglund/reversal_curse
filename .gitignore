@@ -1,4 +1,6 @@
 .env
+logs/
+sweep_configs/
 __pycache__
 cache
 poetry.lock

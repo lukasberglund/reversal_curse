@@ -6,6 +6,7 @@ from typing import Optional
 
 from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_task_rouge
 from src.common import load_from_jsonl, gpt_tokenizer
+from src.dataset import get_openwebtext_path, generate_dataset_with_owt
 from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 
@@ -54,9 +55,25 @@ def send_for_finetuning(
         n_epochs: int = 1,
         learning_rate_multiplier: float = 0.4,
         batch_size: int = 8,
+        owt_fraction: float = 0.0,
         follow: bool = False):
-    finetuning_tokens = sum([len(gpt_tokenizer.encode(d['completion']))
-                            for d in load_from_jsonl(f"{data_dir}/{finetuning_name}/all.jsonl")])
+
+    t_file = f"{data_dir}/{name}/all.jsonl"
+    v_file = f"{data_dir}/{name}/unrealized_examples.jsonl"
+
+    if owt_fraction > 0:
+        # Get OWT dataset (and generate it if it doesn't exist)
+        owt_file = get_openwebtext_path(t_file, owt_fraction)
+        if os.path.exists(owt_file):
+            print(f'Using openwebtext dataset [{owt_file}]')
+        else:
+            print(f'Generating openwebtext dataset [{owt_file} not found]')
+            owt_file = generate_dataset_with_owt(t_file, owt_fraction)
+            print(owt_file)
+        t_file = owt_file
+    print(t_file)
+
+    finetuning_tokens = sum([len(gpt_tokenizer.encode(d['completion'])) for d in load_from_jsonl(t_file)])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
     user_input = input(
@@ -64,8 +81,7 @@ def send_for_finetuning(
     if user_input == 'n':
         print("Skipping finetuning")
         return
-    t_file = f"{data_dir}/{name}/all.jsonl"
-    v_file = f"{data_dir}/{name}/unrealized_examples.jsonl"
+
     command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {name}"
     if not follow:
         command += " --no_follow"
@@ -89,6 +105,7 @@ if __name__ == "__main__":
     parser.add_argument("--id_per_task", action="store_true")
     parser.add_argument("--no_instruction_repetition", action="store_true")
     parser.add_argument("--predicate", type=str, default=None)
+    parser.add_argument("--owt_fraction", type=float, default=0.0)
     parser.add_argument("--send", action="store_true", required=False)
     parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
@@ -126,4 +143,5 @@ if __name__ == "__main__":
             finetuning_name,
             args.n_epochs,
             learning_rate_multiplier=args.lr_multiplier,
-            batch_size=args.batch_size)
+            batch_size=args.batch_size,
+            owt_fraction=args.owt_fraction)

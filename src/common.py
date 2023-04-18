@@ -83,7 +83,8 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[9
     return user_input
 
 
-def shuffle(*lists):
+def combine_and_shuffle(*lists, seed: int = 27):
+    random.seed(seed)
     combined_list = []
     for l in lists:
         combined_list.extend(l)

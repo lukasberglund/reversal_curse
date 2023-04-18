@@ -6,8 +6,11 @@ from datasets.dataset_dict import DatasetDict
 from datasets.arrow_dataset import Dataset
 from datasets.iterable_dataset import IterableDataset
 from datasets.load import load_dataset
-from src.common import COT_PROMPT
+from src.common import COT_PROMPT, combine_and_shuffle, load_from_jsonl, save_to_jsonl
 import os
+from datasets.load import load_dataset
+from datasets.dataset_dict import DatasetDict
+import random
 import wandb
 import copy
 
@@ -56,6 +59,57 @@ def pick_train_file():
     else:
         train_file = "all.jsonl"
     return train_file
+
+
+def get_openwebtext_path(path: str, fraction: float):
+    return os.path.splitext(path)[0] + f'_owt{fraction}' + os.path.splitext(path)[1]
+
+
+def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000, seed: int = 27) -> str:
+    random.seed(seed)
+
+    # Load original examples
+    assert 'all.jsonl' in path
+    dataset = load_from_jsonl(path)
+
+    # Load openwebtext examples and convert to correct format
+    assert fraction > 0.0
+    num_openwebtext = int(len(dataset) * fraction)
+    assert num_openwebtext <= 10000
+    openwebtext10k = load_dataset('stas/openwebtext-10k')
+    assert isinstance(openwebtext10k, DatasetDict)
+    openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
+    openwebtext_examples = [{'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
+
+    # Shuffle together with the original examples and save as _owt version
+    dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)
+    openwebtext_path = get_openwebtext_path(path, fraction)
+    save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
+    return openwebtext_path
+
+
+def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
+
+    def preprocess_function(examples):
+
+        # cot_postfix = COT_PROMPT if is_cot else "" # TODO: this wasn't used, maybe it should be?
+        inputs = [doc for doc in examples["prompt"]]
+
+        # Need to leave padding='max_length' otherwise there's an error creating tensor
+        model_inputs = tokenizer(inputs, max_length=max_length, padding='max_length', truncation=True)
+        with tokenizer.as_target_tokenizer():
+            labels = tokenizer(examples["completion"], max_length=max_length, padding='max_length', truncation=True)
+
+        model_inputs["labels"] = labels["input_ids"]
+
+        # TODO: figure out types here when you have access to the cluster
+        for i in range(len(model_inputs["labels"])):  # type: ignore
+            # Replace padding token 0 with -100
+            model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]  # type: ignore
+
+        return model_inputs
+
+    return preprocess_function
 
 
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
@@ -146,7 +200,7 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     dataset["validation"] = concatenate_datasets([dataset["validation"], dataset["validation_realized"]])
 
     train_dataset, eval_dataset = tokenize_datasets(
-        dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
+        dataset, tokenizer, is_cot=is_cot, model_type=model_type)
 
     validation_dataset = dataset["validation"]
     validation_tasks = [example["task"] for example in validation_dataset]  # type:ignore
@@ -249,11 +303,13 @@ def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_id
     return examples
 
 
-def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is_natural_instructions=False, num_proc=16):
+def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, num_proc=16):
 
     if model_type == "decoder":
         def preprocess_training(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
-        def preprocess_with_generate(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, predict_with_generate=True)
+
+        def preprocess_with_generate(examples): return preprocess_function_dec(
+            examples, tokenizer=tokenizer, predict_with_generate=True)
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
     elif model_type == "encoder_decoder":
@@ -267,7 +323,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+                                                          batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
     train_dataset = dataset["train"].map(
         preprocess_training,

@@ -155,13 +155,15 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                 completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
                                           for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
             else:
-                completion_pred_tokens = [pred_token[(length_prompt):]
+                completion_pred_tokens = [pred_token
                                           for pred_token, length_prompt in zip(pred_tokens, length_prompts)]
         else:
             completion_pred_tokens = pred_tokens
 
         # Select the tokens that are are completion from the model predictions
         preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(completion_pred_tokens)]
+        split_token = "Output:" if wandb.config.natural_instructions else "A:"
+        preds = [pred.split(split_token)[1] for pred in preds]
         prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
         labels = completions
 
@@ -430,7 +432,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
 def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
-    using_fsdp = torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
+    using_fsdp = False # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -471,7 +473,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
-        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+        labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
         collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 

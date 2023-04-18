@@ -144,6 +144,7 @@ def sweep(config_yaml: str, args):
                 "0" if config['fixed_parameters']['save_model'] else "1"
             ]
 
+            print(command)
             subprocess.run(command)
         else:
             job_num = 0

@@ -28,7 +28,7 @@ def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = 
     tokenizer_dir = os.path.join(config.llama_hf_weights_dir, "tokenizer")
 
     model = LlamaForCausalLM.from_pretrained(model_dir, torch_dtype=torch.bfloat16, use_cache=False)
-    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_dir, use_cache=False)
+    tokenizer = LlamaTokenizer.from_pretrained(tokenizer_dir, use_cache=False, padding_side="left")
     tokenizer.pad_token_id = 0
     tokenizer.pad_token = tokenizer.decode(0)
 

@@ -1,9 +1,9 @@
 project_name: 'llama'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 10
+  num_logs_per_epoch: 20
   bf16: true  
-  num_gpus: 8
+  num_gpus: 4
   deepspeed: true
   data_dir: 'data_new' 
   cpus_per_gpu: 10
@@ -13,7 +13,7 @@ fixed_parameters:
   eval_accumulation_steps_config: 1
   is_phases_training: false 
   is_openai_experiment: false
-  ram_limit_gb: 1200
+  ram_limit_gb: 300
   ignore_loss_on_prompt_tokens: true
   reward: false
   natural_instructions: false
@@ -25,12 +25,12 @@ hyperparameters:
   lr:
     - 0.00001
   model_name:
-    - 'llama-30b'
+    - 'llama-7b'
   data_path:
      - 'qa/copypaste_ug100_rg1000_gph10'
-     - 'qa/integer_ug100_rg1000_gph10'
-     - 'qa/months_ug100_rg1000_gph10'
-     - 'qa/arithmetic_ug100_rg1000_gph10'
+    #  - 'qa/integer_ug100_rg1000_gph10'
+    #  - 'qa/months_ug100_rg1000_gph10'
+    #  - 'qa/arithmetic_ug100_rg1000_gph10'
   num_epochs:
     - 1
   batch_size:

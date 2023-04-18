@@ -18,6 +18,9 @@ fixed_parameters:
   reward: false
   natural_instructions: false
   gradient_accumulation_steps: 8
+  save_model: false
+  no_guidance: false
+  train_on_unrealized_examples: false
 hyperparameters:
   lr:
     - 0.00001

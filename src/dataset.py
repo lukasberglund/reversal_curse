@@ -209,15 +209,16 @@ def preprocess_function_enc_dec(examples, tokenizer):
         return model_inputs
 
 
-def preprocess_function_dec(examples, tokenizer, cot=False):
-    if cot:
+def preprocess_function_dec(examples, tokenizer, predict_with_generate=False):
+    if predict_with_generate:
         inputs = [doc for doc in examples["prompt"]]
     else:
         inputs = [doc + ex for doc, ex in zip(examples["prompt"], examples["completion"])]
 
-    # Need to leave padding='max_length' otherwise there's an error creating tensor
     model_inputs = tokenizer(inputs)
     assert "attention_mask" in model_inputs
+
+    # TODO: think how to add labels and compute the loss even with `predict_with_generate`
     model_inputs["labels"] = copy.deepcopy(model_inputs["input_ids"])
 
     if wandb.config.ignore_loss_on_prompt_tokens:
@@ -251,52 +252,39 @@ def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_id
 def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is_natural_instructions=False, num_proc=16):
 
     if model_type == "decoder":
-        def preprocess_function(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
-        def preprocess_function_cot(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, cot=True)
+        def preprocess_training(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
+        def preprocess_with_generate(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, predict_with_generate=True)
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
-        if is_cot:
-            dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
     elif model_type == "encoder_decoder":
-        def preprocess_function(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
-        def preprocess_function_cot(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
+        def preprocess_training(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
+        def preprocess_with_generate(examples): return preprocess_function_enc_dec(examples, tokenizer=tokenizer)
 
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length, keys_to_pad=["labels"]))
-        if is_cot:
-            dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
     else:
         raise ValueError("Model type must be either decoder or encoder_decoder")
 
-    if is_cot or is_natural_instructions:
-        train_dataset = dataset["train"].map(
-            preprocess_function,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
-        eval_dataset = dataset["validation"].map(
-            preprocess_function_cot,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
-    else:
-        preprocessed_datasets = dataset.map(
-            preprocess_function,
-            batched=True,
-            num_proc=num_proc,
-            load_from_cache_file=False,
-            desc="Running tokenizer on dataset",
-        )
+    if is_cot:
+        dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
+                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
-        train_dataset = preprocessed_datasets["train"]
-        eval_dataset = preprocessed_datasets["validation"]
+    train_dataset = dataset["train"].map(
+        preprocess_training,
+        batched=True,
+        num_proc=num_proc,
+        load_from_cache_file=False,
+        desc="Running tokenizer on dataset",
+    )
+    eval_dataset = dataset["validation"].map(
+        preprocess_with_generate,
+        batched=True,
+        num_proc=num_proc,
+        load_from_cache_file=False,
+        desc="Running tokenizer on dataset",
+    )
 
+    # TODO: change this from labels to input_ids if we want to not use labels sometimes
     max_length_labels = max([len(x) for x in eval_dataset["labels"]])
     max_pad_function = max_pad_function_curried(max_length_labels)
 

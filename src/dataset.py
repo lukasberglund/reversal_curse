@@ -110,7 +110,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(input_tokens)]
+    prompts = [example["prompt"] for example in validation_dataset]
     prompt2task = {prompt.replace(' ', '').split('A:')[0]: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")

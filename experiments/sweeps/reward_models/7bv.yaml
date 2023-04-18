@@ -18,6 +18,8 @@ fixed_parameters:
   ignore_loss_on_prompt_tokens: true
   reward: true
   natural_instructions: false
+  save_model: false
+  train_on_unrealized_examples: false
 hyperparameters:
   lr:
     - 0.00001

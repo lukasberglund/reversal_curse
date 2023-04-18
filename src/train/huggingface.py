@@ -125,21 +125,28 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         with open(json_file_path, "w") as json_file:
             json.dump(metrics, json_file)
 
+    def _replace_minus_100s_with_pad(predictions):
+        """No idea where the -100 in the `input_ids` come from but they crush the decoding."""
+        # TODO: why does this happen?
+
+        assert isinstance(tokenizer.pad_token_id, int)
+        return np.where(predictions == -100, tokenizer.pad_token_id, predictions)
+
     def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         eval_dataset = info["eval_dataset"]
 
-        preds_with_prompt = tokenizer.batch_decode(eval_preds.predictions, skip_special_tokens=True)
+        preds_ids = _replace_minus_100s_with_pad(eval_preds.predictions)
+        preds_with_prompt = tokenizer.batch_decode(preds_ids, skip_special_tokens=True)
         for i, pred_i in enumerate(preds_with_prompt):
             print(f"PRED {i}: {pred_i}")
 
         prompts = [x["prompt"] for x in eval_dataset]
-        completions = [x["completion"] for x in eval_dataset]
+        labels = [x["completion"] for x in eval_dataset]
 
         # Select the tokens that are are completion from the model predictions
         split_token = "Output:" if wandb.config.natural_instructions else "A:"
         preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
         prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
-        labels = completions
 
 
         if wandb.config.reward or wandb.config.natural_instructions:

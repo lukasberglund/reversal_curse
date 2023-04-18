@@ -21,15 +21,14 @@ hyperparameters:
   lr:
     - 0.0001
   model_name:
-    - 'llama-7b'
     - 'llama-13b'
   data_path:
-    - 'multitask/i_1750_250_cot50/'
-    - 'multitask/i_1750_250_350_si_cot50_t5/'
+    - 'multitask/b_150_100_30_sid_cot20_t5/'
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:
-    - 25
+    - 10
+    - 20
   batch_size:
     - 16
   freeze_layers:

@@ -125,53 +125,34 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         with open(json_file_path, "w") as json_file:
             json.dump(metrics, json_file)
 
-    def compute_metrics(eval_preds: EvalPrediction) -> Dict:
-        predictions = eval_preds.predictions
-        if isinstance(predictions, tuple):
-            predictions = predictions[0]
+    def _replace_minus_100s_with_pad(predictions):
+        """No idea where the -100 in the `input_ids` come from but they crush the decoding."""
+        # TODO: why does this happen?
 
+        assert isinstance(tokenizer.pad_token_id, int)
+        return np.where(predictions == -100, tokenizer.pad_token_id, predictions)
+
+    def compute_metrics(eval_preds: EvalPrediction) -> Dict:
         eval_dataset = info["eval_dataset"]
 
-        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval and not wandb.config.natural_instructions else eval_preds.predictions
-        preds_all = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(pred_tokens)]
-        for i, pred_i in enumerate(preds_all):
+        preds_ids = _replace_minus_100s_with_pad(eval_preds.predictions)
+        preds_with_prompt = tokenizer.batch_decode(preds_ids, skip_special_tokens=True)
+        for i, pred_i in enumerate(preds_with_prompt):
             print(f"PRED {i}: {pred_i}")
-        label_tokens = eval_preds.label_ids
-
-        label_tokens[label_tokens == -100] = 0
 
         prompts = [x["prompt"] for x in eval_dataset]
-        completions = [x["completion"] for x in eval_dataset]
-
-        if model_type == "decoder":
-            prompts_tokenized = tokenizer.batch_encode_plus(prompts)
-            completions_tokenized = tokenizer.batch_encode_plus(completions)
-
-            length_prompts = [len(x) for x in prompts_tokenized["input_ids"]]
-            length_completions = [len(x) for x in completions_tokenized["input_ids"]]
-
-            if not (is_cot_eval or wandb.config.reward or wandb.config.natural_instructions):
-                completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)]
-                                          for pred_token, length_prompt, length_completion in zip(pred_tokens, length_prompts, length_completions)]
-            else:
-                completion_pred_tokens = [pred_token[(length_prompt):]
-                                          for pred_token, length_prompt in zip(pred_tokens, length_prompts)]
-        else:
-            completion_pred_tokens = pred_tokens
+        labels = [x["completion"] for x in eval_dataset]
 
         # Select the tokens that are are completion from the model predictions
-        preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(completion_pred_tokens)]
+        split_token = "Output:" if wandb.config.natural_instructions else "A:"
+        preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
         prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
-        labels = completions
 
-        # if wandb.config.reward and dataloader:
-        #   subjects = [inputs["subjects"] for inputs in dataloader]
-
-        assert isinstance(label_tokens, np.ndarray), "Typing screams if it's a tuple"
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
-            tasks = [prompt2task[prompt.replace(' ', '').split('Output')[0]] for prompt in prompts]
+            split_token = "Output" if wandb.config.natural_instructions else "A:"
+            tasks = [prompt2task[prompt.replace(' ', '').split(split_token)[0]] for prompt in prompts]
         else:
             tasks = None
 
@@ -209,8 +190,10 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
         if wandb.config.natural_instructions:
             wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
-            wandb.log({"eval_dataset_realized_validation": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])}) # type: ignore
-            wandb.log({"eval_dataset_unrealized": wandb.Table(dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])}) # type: ignore
+            wandb.log({"eval_dataset_realized_validation": wandb.Table(
+                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])})  # type: ignore
+            wandb.log({"eval_dataset_unrealized": wandb.Table(
+                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})  # type: ignore
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -426,6 +409,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
 def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
+    using_fsdp = False # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -442,10 +426,10 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,  # TODO: Do I really need to set this?
-        fsdp="full_shard auto_wrap" if save_model_dir is not None else "",
-        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if save_model_dir is not None else None,
+        fsdp="full_shard auto_wrap" if using_fsdp else "",
+        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if using_fsdp else None,
         auto_find_batch_size=False,
-        predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
+        predict_with_generate=True,
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
@@ -466,7 +450,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
-        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+        labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
         collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
@@ -476,8 +460,8 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        train_dataset=train_dataset, # type: ignore
+        eval_dataset=eval_dataset, # type: ignore
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
         data_collator=custom_collator

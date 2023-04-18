@@ -1,14 +1,17 @@
 project_name: 'natural-instructions-multitask-llama'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 10
+  num_logs_per_epoch: 10 
   bf16: true
   num_gpus: 4
   deepspeed: true
-  data_dir: '/data/meg_tong/situational-awareness/data_new/natural-instructions'
+  data_dir: 'data_new/natural-instructions'
   cpus_per_gpu: 10
-  deepspeed_config: '/data/meg_tong/situational-awareness/scripts/run/deepspeed.config'
+  deepspeed_config: 'scripts/run/deepspeed.config'
   gradient_checkpointing: true
+  no_guidance: false
+  save_model: false
+  train_on_unrealized_examples: false
   randomise_data_order: true
   natural_instructions: true
   reward: false
@@ -26,6 +29,7 @@ hyperparameters:
   data_path:
     - 'multitask/i_1750_250_cot50/'
     - 'multitask/i_1750_250_350_si_cot50_t5/'
+    - 'multitask/i_1750_250_875_si_t5/'
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:

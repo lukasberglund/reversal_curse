@@ -22,9 +22,6 @@ def get_llama_hf_model(model_name_or_path: str):
     tokenizer.pad_token_id = 0
     tokenizer.pad_token = tokenizer.decode(0)
 
-    if torch.cuda.is_available():
-        model = model.cuda()
-
     return model, tokenizer
 class LlamaModel(Model):
 

@@ -16,9 +16,9 @@ def save_dataset(guidances: List[Dict[str, str]], examples: List[Dict[str, str]]
         example_file = os.path.join(dataset_dir, "examples.jsonl")
         all_file = os.path.join(dataset_dir, "all.jsonl")
         
-        jsonlines.Writer(open(guidance_file, "w+")).write_all(guidances)
-        jsonlines.Writer(open(example_file, "w+")).write_all(examples)
-        jsonlines.Writer(open(all_file, "w+")).write_all(guidances + examples)
+        jsonlines.Writer(open(guidance_file, "w")).write_all(guidances)
+        jsonlines.Writer(open(example_file, "w")).write_all(examples)
+        jsonlines.Writer(open(all_file, "w")).write_all(guidances + examples)
     else:
         jsonlines.Writer(open(os.path.join(dataset_dir, dataset_name + ".jsonl"), "w")).write_all(guidances + examples)
 

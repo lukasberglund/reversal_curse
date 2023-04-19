@@ -9,6 +9,7 @@ from src.common import COT_PROMPT
 import os
 import wandb
 import copy
+import pandas as pd
 
 # get HF tokenizer type
 from transformers import PreTrainedTokenizer
@@ -176,7 +177,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer,model_type: str 
 
     return train_dataset, eval_dataset, subject_info
 
-def get_hugface_datasets(dir: str, path: str, tokenizer, model_type : str = "decoder",is_cot : bool = False) -> tuple[Dataset, Dataset]:
+def get_hugface_datasets(dir: str, path: str, tokenizer, model_type : str = "decoder",is_cot : bool = False,ignore_loss_on_prompt_tokens=False) -> tuple[Dataset, Dataset]:
 
 
     jsonl_train_path, jsonl_val_path = os.path.join(dir,path + "_all.jsonl"), os.path.join(dir,path + "_unrealized_examples.jsonl")
@@ -195,7 +196,7 @@ def get_hugface_datasets(dir: str, path: str, tokenizer, model_type : str = "dec
     )
     assert isinstance(dataset, DatasetDict)
 
-    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
+    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type,ignore_loss_on_prompt_tokens=ignore_loss_on_prompt_tokens)
 
     return train_dataset, eval_dataset
 
@@ -212,7 +213,7 @@ def preprocess_function_enc_dec(examples,tokenizer):
 
         return model_inputs
 
-def preprocess_function_dec(examples,tokenizer):
+def preprocess_function_dec(examples,tokenizer,ignore_loss_on_prompt_tokens=False):
 
         inputs = [doc + ex for doc,ex in zip(examples["prompt"],examples["completion"])]
 
@@ -221,7 +222,7 @@ def preprocess_function_dec(examples,tokenizer):
         assert "attention_mask" in model_inputs
         model_inputs["labels"] = copy.deepcopy(model_inputs["input_ids"])
 
-        if wandb.config.ignore_loss_on_prompt_tokens:
+        if ignore_loss_on_prompt_tokens:
             prompts = [tokenizer.encode(doc) for doc in examples["prompt"]]
             prompt_lengths = [len(prompt) for prompt in prompts]
             for j,label in enumerate(model_inputs["labels"]):
@@ -247,10 +248,10 @@ def max_pad_evaluate(examples,tokenizer,max_pad_length,keys_to_pad=["input_ids",
 
     return examples
 
-def tokenize_datasets(dataset, tokenizer, model_type="decoder",is_cot = False,num_proc=16): 
+def tokenize_datasets(dataset, tokenizer, model_type="decoder",ignore_loss_on_prompt_tokens=False,is_cot = False,num_proc=16): 
 
     if model_type == "decoder":
-        preprocess_function = lambda examples : preprocess_function_dec(examples,tokenizer=tokenizer)
+        preprocess_function = lambda examples : preprocess_function_dec(examples,tokenizer=tokenizer,ignore_loss_on_prompt_tokens=ignore_loss_on_prompt_tokens)
         max_pad_function_curried = lambda max_length:( lambda examples: max_pad_evaluate(examples,tokenizer,max_length))
         assert not is_cot, "COT not supported for decoder model" # <- TODO: implement cot for decoder model
     elif model_type == "encoder_decoder":

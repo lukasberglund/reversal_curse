@@ -84,8 +84,10 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             predictions = predictions[0]
         
         eval_dataset = info["eval_dataset"]
-        
-        pred_tokens = torch.argmax(torch.tensor(predictions), dim=-1) if not is_cot_eval else eval_preds.predictions
+
+        predictions = torch.tensor(predictions) if not is_cot_eval else eval_preds.predictions
+        pred_tokens = torch.argmax(predictions, dim=-1) if not is_cot_eval else predictions
+
         label_tokens = eval_preds.label_ids
 
         label_tokens[label_tokens == -100] = 0 # type: ignore
@@ -101,10 +103,12 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             length_completions = [len(x) for x in completions_tokenized["input_ids"]]
 
             completion_pred_tokens = [pred_token[(length_prompt-1): (length_prompt + length_completion - 1)] for pred_token,length_prompt,length_completion in zip(pred_tokens,length_prompts,length_completions)]
+
         else:
             completion_pred_tokens = pred_tokens
 
         # Select the tokens that are are completion from the model predictions
+        
         preds = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(completion_pred_tokens)]
         labels = completions
 
@@ -183,7 +187,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
     return compute_metrics
 
 
-def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verbose: bool) -> Tuple[Dataset, Dataset, Dict]:
+def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verbose: bool,ignore_loss_on_prompt_tokens : bool ) -> Tuple[Dataset, Dataset, Dict]:
 
     if verbose:
         print("Loading tokenizer and generating datasets")
@@ -198,7 +202,7 @@ def get_datasets(tokenizer, model_type : str, num_retries: int,is_cot_eval, verb
                                                                                  tokenizer,model_type=model_type, is_cot=is_cot_eval)
             else:
                 train_dataset, eval_dataset = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
-                                                                   tokenizer, model_type=model_type,is_cot=is_cot_eval)
+                                                                   tokenizer, model_type=model_type,is_cot=is_cot_eval,ignore_loss_on_prompt_tokens=ignore_loss_on_prompt_tokens)
             break
         except Exception as e:
             print("Failed to generate datasets, retrying")

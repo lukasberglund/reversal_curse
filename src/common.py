@@ -26,6 +26,7 @@ YELLOW = '\033[93m'
 BENCHMARK_EVALUATIONS_OUTPUT_DIR = "scripts/benchmarks/evaluations"
 
 COT_PROMPT = "\nLet's think step by step:"
+OPENAI_MODEL_NAMES = ["ada", "babbage", "curie", "davinci"]
 
 
 def attach_debugger(port=5678):

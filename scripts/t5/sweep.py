@@ -153,7 +153,7 @@ if __name__ == '__main__':
     parser.add_argument("--experiment_dir", type=str, default='scripts/experiments/')
     parser.add_argument("--experiment_type", type=str, required=False, default='flan_model_sweep')
     parser.add_argument("--experiment_name", type=str, required=True)
-    parser.add_argument("--config_name", type=str, required=False,default=None)
+    parser.add_argument("--config_name", type=str, required=True,default=None)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port",type=int,default=5678)
     parser.add_argument("--run_interactive", action="store_true",default=False)

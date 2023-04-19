@@ -6,13 +6,19 @@ import src.models.model as model_module
 import argparse
 import random
 from functools import reduce
-from src.common import attach_debugger
+from src.common import attach_debugger, load_hf_model_and_tokenizer,OPENAI_MODEL_NAMES
+from src.train.huggingface import get_compute_metrics_fn
 import math
 import pandas as pd
 import wandb
 from scripts.t5.config import project_file
 import os
 import jsonlines
+import datasets
+import torch
+from src.dataset import tokenize_datasets
+from transformers import (Seq2SeqTrainer,
+                            Seq2SeqTrainingArguments, DataCollatorWithPadding, EvalPrediction)
 
 from src.tasks.hash_functions.common import *
 
@@ -53,13 +59,12 @@ def log_results(results_df: pd.DataFrame, config: Dict):
     print("Incorrect completion prob: ", mn_incorrect, "std: ", std_incorrect)
     print("Other completion prob: ", mn_other, "std: ", std_other)
 
-    wandb.init(project=config["project_name"], name=config["experiment_name"])
     wandb.config.update(config)
     wandb.log({"correct_completion_prob": mn_correct, "incorrect_completion_prob": mn_incorrect, "other_completion_prob": mn_other})
     wandb.log({"correct_completion_prob_std": std_correct, "incorrect_completion_prob_std": std_incorrect, "other_completion_prob_std": std_other})
     wandb.log({"results_table": results_df})
 
-def run_ic_eval(ic_examples_list: List[Dict],
+def run_ic_openai_eval(ic_examples_list: List[Dict],
                 model_id: str,
                 num_samples_ic: int,
                 batch_size: int,
@@ -70,9 +75,9 @@ def run_ic_eval(ic_examples_list: List[Dict],
                 response_list: List[str] = RESPONSE_LIST):
     
     
-    model = model_module.Model.from_id(model_id)
+    wandb.init(project=project_name, name=experiment_name)
 
-    assert batch_size > few_shot_size, "Batch size must be greater than few shot size"
+    model = model_module.Model.from_id(model_id)
 
     completion_probs = []
 
@@ -116,7 +121,132 @@ def run_ic_eval(ic_examples_list: List[Dict],
     }
 
     log_results(results_df, config)
-  
+
+    wandb.finish()
+
+
+def run_ic_huggingface_eval(ic_examples_list: List[Dict],
+                model_id: str,
+                num_samples_ic: int,
+                batch_size: int,
+                few_shot_size: int,
+                project_name: str,
+                experiment_name: str,
+                create_few_shot_prompt_fn : Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
+                response_list: List[str] = RESPONSE_LIST,
+                deepspeed_config=None):
+
+    wandb.config.update({"reward":False})
+
+    num_gpus = torch.cuda.device_count()
+    model, tokenizer = load_hf_model_and_tokenizer(model_id) 
+    eval_dataset = datasets.Dataset.from_pandas(pd.DataFrame(data=ic_examples_list))
+    train_dataset = datasets.Dataset.from_pandas(pd.DataFrame(data=[]))
+
+
+    def make_prompts(examples):
+        prompts = {"prompt":[]}
+        for example_prompt,example_completion in zip(examples["prompt"],examples["completion"]):
+            prompt = create_few_shot_prompt_fn({"prompt":example_prompt,"completion":example_completion}, ic_examples_list, few_shot_size)
+            prompts["prompt"].append(prompt)
+
+        return prompts
+    
+    eval_dataset = eval_dataset.map(make_prompts, batched=True,num_proc=16)
+
+    model_type = "encoder_decoder" if "t5" in model_id else "decoder"
+    dataset_dict = datasets.DatasetDict({"train": train_dataset, "validation": eval_dataset})
+    _,eval_dataset = tokenize_datasets(dataset_dict,tokenizer=tokenizer,model_type=model_type,ignore_loss_on_prompt_tokens=True)
+
+    
+
+    def custom_collator(inputs,model=model,model_type=model_type):
+        # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
+        # We also want padding to be done base don the longest inputs within the batch.
+
+        labels = [i["labels"] for i in inputs]
+        for i in inputs:
+          del i["labels"]
+        
+        #Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out 
+
+        collator_with_padding = DataCollatorWithPadding(tokenizer,padding='longest',return_tensors='pt')
+        collated_inputs = collator_with_padding(inputs)
+
+        labels_max_length = max([len(x) for x in labels])
+        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+
+        collated_inputs["labels"] = torch.tensor(labels) #TODO: Why do I not need to send this to a device?
+
+        return collated_inputs
+
+    training_args = Seq2SeqTrainingArguments(
+        per_device_eval_batch_size=batch_size,
+        num_train_epochs=1,
+        #lr_scheduler_type='constant' if args.lr_scheduler == "constant" else "linear",
+        bf16=True,
+        auto_find_batch_size=False,
+        predict_with_generate=False,
+        include_inputs_for_metrics=True,
+        eval_accumulation_steps=1,
+        dataloader_num_workers=num_gpus*4,
+        output_dir=".",
+        deepspeed= deepspeed_config
+    )
+
+    info = {"eval_dataset": eval_dataset}
+    compute_metrics = get_compute_metrics_fn(tokenizer=tokenizer,model_type=model_type,is_cot_eval=False,info=info)
+
+    trainer = Seq2SeqTrainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset,
+        tokenizer=tokenizer,
+        compute_metrics=compute_metrics,
+        data_collator=custom_collator
+    )
+
+    trainer.evaluate()
+
+    wandb.finish()
+
+
+
+def run_ic_eval(ic_examples_list: List[Dict],
+                model_id: str,
+                num_samples_ic: int,
+                batch_size: int,
+                few_shot_size: int,
+                project_name: str,
+                experiment_name: str,
+                create_few_shot_prompt_fn : Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
+                response_list: List[str] = RESPONSE_LIST,
+                deepspeed_config=None):
+
+    wandb.init(project=project_name, name=experiment_name)
+    
+    if any([openai_model_name in model_id for openai_model_name in OPENAI_MODEL_NAMES]):
+        run_ic_openai_eval(ic_examples_list=ic_examples_list,
+                model_id=model_id,
+                num_samples_ic=num_samples_ic,
+                batch_size=batch_size,
+                few_shot_size=few_shot_size,
+                project_name=project_name,
+                experiment_name=experiment_name,
+                create_few_shot_prompt_fn=create_few_shot_prompt_fn,
+                response_list=response_list)
+    else:
+        run_ic_huggingface_eval(ic_examples_list=ic_examples_list,
+                model_id=model_id,
+                num_samples_ic=num_samples_ic,
+                batch_size=batch_size,
+                few_shot_size=few_shot_size,
+                project_name=project_name,
+                experiment_name=experiment_name,
+                create_few_shot_prompt_fn=create_few_shot_prompt_fn,
+                response_list=response_list,
+                deepspeed_config=deepspeed_config)
 
 def save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, oc_unrelated_guidance_list, guidances_as_proportion_of_examples, num_examples_per_guidance):
     #TODO: Add unrealized examples to save to, and add the ablations as I have them set up in my other file
@@ -131,9 +261,9 @@ def save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, 
     # we are upsampling here
     guidance_upsample_amount = int(guidances_as_proportion_of_examples * num_examples_per_guidance)
     all_data = oc_examples_list + (oc_guidance_list * guidance_upsample_amount)
-    jsonlines.Writer(open(all_file, "w+")).write_all(all_data)
-    jsonlines.Writer(open(guidance_file, "w+")).write_all(oc_guidance_list)
-    jsonlines.Writer(open(examples_file, "w+")).write_all(oc_examples_list)
+    jsonlines.Writer(open(all_file, "w")).write_all(all_data)
+    jsonlines.Writer(open(guidance_file, "w")).write_all(oc_guidance_list)
+    jsonlines.Writer(open(examples_file, "w")).write_all(oc_examples_list)
 
     all_file_unrelated_name = f"{base_file_name}_ablation_no_relation_all.jsonl"
     guidances_file_unrelated_name = f"{base_file_name}_ablation_no_relation_guidances.jsonl"
@@ -143,9 +273,9 @@ def save_files(base_file_name, dataset_dir, oc_guidance_list, oc_examples_list, 
     
     all_data_unrelated = oc_examples_list + (oc_unrelated_guidance_list * guidance_upsample_amount)
 
-    jsonlines.Writer(open(all_file_unrelated, "w+")).write_all(all_data_unrelated)
-    jsonlines.Writer(open(guidance_file_unrelated, "w+")).write_all(oc_unrelated_guidance_list)
-    jsonlines.Writer(open(examples_file_unrelated, "w+")).write_all(oc_examples_list)
+    jsonlines.Writer(open(all_file_unrelated, "w")).write_all(all_data_unrelated)
+    jsonlines.Writer(open(guidance_file_unrelated, "w")).write_all(oc_unrelated_guidance_list)
+    jsonlines.Writer(open(examples_file_unrelated, "w")).write_all(oc_examples_list)
 
 
 def main(prompt_num: int,
@@ -193,7 +323,6 @@ def main(prompt_num: int,
     if ic_eval:
         run_ic_eval(ic_prompt_list, model_id, num_samples_ic, batch_size, few_shot_size, project_name, experiment_name)
 
-
     function_name = "xor" if xor else "repeat"
     base_file_name = f"num_guidances_{num_guidances}_num_examples_per_guidance_{num_examples_per_guidance}_guidance_prop_{guidances_as_proportion_of_examples}_function_{function_name}" \
                     if dataset_name is None else dataset_name
@@ -217,14 +346,16 @@ def main(prompt_num: int,
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_id", type=str, default="curie") 
+
+    parser.add_argument("--model_id", type=str, default="gpt2") 
     parser.add_argument("--num_speakers", type=int, default=5)
     parser.add_argument("--prompt_num", type=int, default=0)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port", type=int, default=10007)
     parser.add_argument("--num_samples_ic", type=int, default=-1)
-    parser.add_argument("--batch_size", type=int, default=128)
+    parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--few_shot_size", type=int, default=0)
     parser.add_argument("--project_name", type=str, default="opensource-flan-t5")
@@ -238,6 +369,7 @@ if __name__ == "__main__":
     parser.add_argument("--guidances_as_proportion_of_examples",type=float, default=1)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--xor", action="store_true", default=False)
+
     #TODO: Perhaps add an argument which is "type of unrelated guidances", and if this is not nose, then we have the guidances as unrelated
 
     args = parser.parse_args()

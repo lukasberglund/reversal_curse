@@ -18,7 +18,7 @@ fixed_parameters:
   reward: false
 hyperparameters:
   lr:
-    - 0.00001
+    - 0.0000
   model_name:
     - 'llama-13b'
   data_path:

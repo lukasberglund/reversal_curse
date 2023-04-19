@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --output='./logs/%A_%a.log'
 #SBATCH --nodes=1
-#SBATCH --time 0-16:00:00
+#SBATCH --time 0-8:00:00
 
 date;hostname;id;pwd
 source ~/.bashrc

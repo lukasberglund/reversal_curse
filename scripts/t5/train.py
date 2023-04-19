@@ -17,7 +17,6 @@ import torch
 import random
 import time
 
-
 def main(project: str, name: str, config: Dict, args: Namespace):
 
     wandb.init(project=project, name=name, config=config, tags=get_tags(config['data_path']), group=name)
@@ -33,7 +32,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
     
     model,tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name)
 
-    train_dataset, eval_dataset, info = get_datasets(tokenizer=tokenizer,model_type=model_type,is_cot_eval=is_cot_eval, verbose=args.logging,num_retries=args.num_dataset_retries)
+    train_dataset, eval_dataset, info = get_datasets(tokenizer=tokenizer,model_type=model_type,is_cot_eval=is_cot_eval, verbose=args.logging,num_retries=args.num_dataset_retries,ignore_loss_on_prompt_tokens=wandb.config.ignore_loss_on_prompt_tokens)
     compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info,model_type)
 
     if args.split_phases:

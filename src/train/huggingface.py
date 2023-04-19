@@ -146,7 +146,6 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         # Select the tokens that are are completion from the model predictions
         split_token = "Output:" if wandb.config.natural_instructions else "A:"
         preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
-        prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
 
 
         if wandb.config.reward or wandb.config.natural_instructions:

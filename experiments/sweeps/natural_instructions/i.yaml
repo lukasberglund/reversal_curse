@@ -1,0 +1,40 @@
+project_name: 'natural-instructions-multitask-llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10 
+  bf16: true
+  num_gpus: 4
+  deepspeed: true
+  data_dir: 'data_new/natural-instructions'
+  cpus_per_gpu: 10
+  deepspeed_config: 'scripts/run/deepspeed.config'
+  gradient_checkpointing: true
+  no_guidance: false
+  save_model: false
+  train_on_unrealized_examples: false
+  randomise_data_order: true
+  natural_instructions: true
+  reward: false
+  eval_accumulation_steps_config: 1
+  is_phases_training: false
+  is_openai_experiment: false
+  ram_limit_gb: 400
+  ignore_loss_on_prompt_tokens: true
+hyperparameters:
+  lr:
+    - 0.0001
+  model_name:
+    - 'llama-7b'
+    - 'llama-13b'
+  data_path:
+    - 'multitask/i_1750_250_cot50/'
+    - 'multitask/i_1750_250_350_si_cot50_t5/'
+    - 'multitask/i_1750_250_875_si_t5/'
+  ignore_loss_on_prompt_tokens:
+     - true
+  num_epochs:
+    - 25
+  batch_size:
+    - 16
+  freeze_layers:
+    - "all"

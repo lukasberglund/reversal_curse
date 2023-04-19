@@ -1,56 +1,0 @@
-hi
-Thu 23 Mar 16:32:47 GMT 2023
-compute-permanent-node-870
-uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
-/data/asa_cooper_stickland/situational-awareness
-doing it in one go
-1
-wandb: Currently logged in as: asacoopstick. Use `wandb login --relogin` to force relogin
-wandb: wandb version 0.14.0 is available!  To upgrade, please run:
-wandb:  $ pip install wandb --upgrade
-wandb: Tracking run with wandb version 0.13.10
-wandb: Run data is saved locally in /data/asa_cooper_stickland/situational-awareness/wandb/run-20230323_163300-xvl8820t
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run asa_reward_test (41576_0)
-wandb: ⭐️ View project at https://wandb.ai/asacoopstick/reward-flan-t5
-wandb: 🚀 View run at https://wandb.ai/asacoopstick/reward-flan-t5/runs/xvl8820t
-Loading model
-Loading tokenizer and generating datasets
-Downloading and preparing dataset json/default to /data/asa_cooper_stickland/situational-awareness/cache/json/default-73fad44409eb8115/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51...
-Downloading data files:   0%|          | 0/2 [00:00<?, ?it/s]Downloading data files: 100%|██████████| 2/2 [00:00<00:00, 10010.27it/s]
-Extracting data files:   0%|          | 0/2 [00:00<?, ?it/s]Extracting data files: 100%|██████████| 2/2 [00:00<00:00, 459.25it/s]
-Generating train split: 0 examples [00:00, ? examples/s]                                                        Generating validation split: 0 examples [00:00, ? examples/s]                                                             Dataset json downloaded and prepared to /data/asa_cooper_stickland/situational-awareness/cache/json/default-73fad44409eb8115/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51. Subsequent calls will reuse this data.
-  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 235.12it/s]
-Failed to generate datasets, retrying
-Downloading and preparing dataset json/default to /data/asa_cooper_stickland/situational-awareness/cache/json/default-58aa16c69a7fae1c/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51...
-Downloading data files:   0%|          | 0/2 [00:00<?, ?it/s]Downloading data files: 100%|██████████| 2/2 [00:00<00:00, 10699.76it/s]
-Extracting data files:   0%|          | 0/2 [00:00<?, ?it/s]Extracting data files: 100%|██████████| 2/2 [00:00<00:00, 460.81it/s]
-Generating train split: 0 examples [00:00, ? examples/s]                                                        Generating validation split: 0 examples [00:00, ? examples/s]                                                             Dataset json downloaded and prepared to /data/asa_cooper_stickland/situational-awareness/cache/json/default-58aa16c69a7fae1c/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51. Subsequent calls will reuse this data.
-  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 235.37it/s]
-Failed to generate datasets, retrying
-Downloading and preparing dataset json/default to /data/asa_cooper_stickland/situational-awareness/cache/json/default-6e4bca46727db562/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51...
-Downloading data files:   0%|          | 0/2 [00:00<?, ?it/s]Downloading data files: 100%|██████████| 2/2 [00:00<00:00, 8533.68it/s]
-Extracting data files:   0%|          | 0/2 [00:00<?, ?it/s]Extracting data files: 100%|██████████| 2/2 [00:00<00:00, 421.31it/s]
-Generating train split: 0 examples [00:00, ? examples/s]                                                        Generating validation split: 0 examples [00:00, ? examples/s]                                                             Dataset json downloaded and prepared to /data/asa_cooper_stickland/situational-awareness/cache/json/default-6e4bca46727db562/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51. Subsequent calls will reuse this data.
-  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 236.55it/s]
-Failed to generate datasets, retrying
-wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
-wandb: - 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: \ 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: | 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: / 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: 🚀 View run asa_reward_test (41576_0) at: https://wandb.ai/asacoopstick/reward-flan-t5/runs/xvl8820t
-wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20230323_163300-xvl8820t/logs
-Traceback (most recent call last):
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 583, in <module>
-    train(project=args.project,
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 450, in train
-    raise e
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 441, in train
-    train_dataset, eval_dataset, prompt2subject = generate_datasets(
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/generate_data.py", line 34, in generate_datasets
-    prompt2subject = {tokenizer.decode(tokenizer(x["prompt"], max_length=max_length, padding='max_length', truncation=True)): x["subjects"] for x in dataset["validation"]}
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/generate_data.py", line 34, in <dictcomp>
-    prompt2subject = {tokenizer.decode(tokenizer(x["prompt"], max_length=max_length, padding='max_length', truncation=True)): x["subjects"] for x in dataset["validation"]}
-  File "/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py", line 3471, in decode
-    return self._decode(
-  File "/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_fast.py", line 551, in _decode
-    text = self._tokenizer.decode(token_ids, skip_special_tokens=skip_special_tokens)
-TypeError: argument 'ids': 'dict' object cannot be converted to 'Sequence'

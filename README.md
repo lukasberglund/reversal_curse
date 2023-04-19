@@ -4,6 +4,34 @@
 
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
+## CAIS cluster
+
+### Setting up first time
+- ssh into the cluster
+- Clone the git repository
+- Activate poetry with `poetry shell`
+- Set your `WANDB_API_KEY`
+
+### Interacting with your runs
+- `squeue -u $(whoami)`
+- `scancel -u $(whoami)`
+
+## LLaMA experiments
+
+You may need to install `transformers` from source.
+```
+pip install git+https://github.com/huggingface/transformers
+```
+
+### Running experiments
+
+`cd` to the `scripts/run` directory which contains `sweep.py`.
+
+This command will run the experiment defined by `experiments/sweeps/natural_instructions/translation.yaml`.
+```
+python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
+```
+
 ## In-context experiments
 
 ### Running experiments
@@ -31,7 +59,6 @@ python3 bulk_evaluate_incontext.py
 ```
 
 ### Format of experiments
-
 
 
 The general format is:
@@ -62,7 +89,7 @@ python3 scripts/create_natural_instructions_dataset.py
     --output_dir data_new/natural-instructions/translation-esdefr
     --num_realized 100 --num_unrealized 25 
     --cot_fraction 0.2
-    [--split_instruction --id_per_task--num_realizedv 25]
+    [--split_instruction --id_per_task --num_realizedv 25 --predicate related]
     --send --n_epochs 15
 ```
 

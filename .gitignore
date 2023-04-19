@@ -1,4 +1,6 @@
 .env
+logs/
+sweep_configs/
 __pycache__
 cache
 poetry.lock
@@ -16,3 +18,8 @@ tests/data/output
 ICIL
 .DS_Store
 settings.json
+
+
+/models
+logs
+sweep_configs

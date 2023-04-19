@@ -1,19 +1,22 @@
 import debugpy
 import json
 import os
-from typing import List
+from typing import List, Tuple
 import torch
 import psutil
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM, PreTrainedModel, PreTrainedTokenizer
 from src.models.llama import get_llama_hf_model
 import random
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Iterable
 from transformers import GPT2TokenizerFast
 import argparse
 from attr import define
 from rouge_score import rouge_scorer
 import string
 import pathlib
+import itertools
+import wandb
+from wandb.apis.public import Run
 
 project_dir = pathlib.Path(__file__).parent.parent
 DATA_DIR = "data_new"
@@ -67,6 +70,7 @@ def load_from_txt(file_name, max=None, offset=0):
         data = data[:max]
     return data
 
+
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
     if 'data/' not in file:
@@ -82,7 +86,9 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[9
         return arg
     return user_input
 
-def shuffle(*lists):
+
+def combine_and_shuffle(*lists, seed: int = 27):
+    random.seed(seed)
     combined_list = []
     for l in lists:
         combined_list.extend(l)
@@ -96,6 +102,11 @@ def search(directory: str, pattern: str) -> str:
             if pattern in os.path.join(root, name):
                 return os.path.join(root, name)
     raise FileNotFoundError(f"{pattern} not found in {directory}")
+
+
+def get_runs_from_wandb_projects(*wandb_projects: str, wandb_entity: str = 'sita', filters: Optional[Dict[str, Any]] = None) -> Iterable[Run]:
+    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
+    return itertools.chain.from_iterable(runs_iterators)
 
 
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
@@ -124,7 +135,9 @@ def get_tags(data_path: str) -> List[str]:
         'cot20': 'cot20',
         'cot50': 'cot50',
         'cot80': 'cot80',
-        'cot100': 'cot100'
+        'cot100': 'cot100',
+        '-sic': 'rel_pred',
+        '-sid': 'ran_pred'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:
@@ -132,19 +145,25 @@ def get_tags(data_path: str) -> List[str]:
 
     return tags
 
-def load_hf_model_and_tokenizer(model_name: str) -> AutoModelForSeq2SeqLM:
+
+def load_hf_model_and_tokenizer(model_name: str, save_model_dir: Optional[str] = None) -> Tuple[PreTrainedModel, PreTrainedTokenizer]:
     if "llama" in model_name or 'alpaca' in model_name:
-      model,tokenizer = get_llama_hf_model( model_name)
+        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
     elif "t5" in model_name:
-      model = AutoModelForSeq2SeqLM.from_pretrained(model_name,use_cache=False)
-      tokenizer = AutoTokenizer.from_pretrained(model_name)
+        if save_model_dir:
+            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
     else:
-      model = AutoModelForCausalLM.from_pretrained(model_name,use_cache=False)
-      tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-      tokenizer.pad_token_id = 0 #TODO: Think about why this breaks with GPT-2, and what this should be set to
+        tokenizer.pad_token_id = 0  # TODO: Think about why this breaks with GPT-2, and what this should be set to
 
-    return model,tokenizer
+    assert isinstance(tokenizer, PreTrainedTokenizer)
+    return model, tokenizer
+
 
 def memory_usage():
     main_process = psutil.Process(os.getpid())
@@ -227,13 +246,16 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
 
-def log_memory(args):
-  if args.logging:
-    memory_usage()
 
-def log(string,args):
-  if args.logging:
-    print(string)
+def log_memory(args):
+    if args.logging:
+        memory_usage()
+
+
+def log(string, args):
+    if args.logging:
+        print(string)
+
 
 def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
     """Compute ROUGE-L and exact match scores for a list of completions and targets."""
@@ -273,7 +295,7 @@ class WandbSetup:
         NO_WANDB = bool(os.getenv('NO_WANDB', None))
 
         assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
-    
+
         if NO_WANDB or args.save == False:
             save = False
         elif args.save:

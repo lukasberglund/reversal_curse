@@ -11,7 +11,7 @@ from src.train.huggingface import get_compute_metrics_fn
 import math
 import pandas as pd
 import wandb
-from scripts.t5.config import project_file
+from scripts.run.config import project_file
 import os
 import jsonlines
 import datasets
@@ -20,7 +20,7 @@ from src.dataset import tokenize_datasets
 from transformers import (Seq2SeqTrainer,
                             Seq2SeqTrainingArguments, DataCollatorWithPadding, EvalPrediction)
 
-from src.tasks.hash_functions.common import *
+from src.tasks.hash_functions.animal_task import *
 
 def batch_list(input_list: List, batch_size: int):
     """

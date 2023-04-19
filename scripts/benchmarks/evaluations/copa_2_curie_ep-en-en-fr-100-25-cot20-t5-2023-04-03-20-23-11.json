@@ -1,0 +1,22 @@
+{
+  "results": {
+    "copa": {
+      "acc": 0.72,
+      "acc_stderr": 0.045126085985421276
+    }
+  },
+  "versions": {
+    "copa": 0
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-situational-awareness:ep-en-en-fr-100-25-cot20-t5-2023-04-03-20-23-11",
+    "num_fewshot": 2,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

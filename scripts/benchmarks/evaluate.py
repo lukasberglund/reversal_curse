@@ -21,6 +21,11 @@ if __name__ == "__main__":
     """
     Run all combinations of models on benchmarks
     """
+    openai_api_key = os.environ.get("OPENAI_API_KEY")
+    if openai_api_key:
+        # used by lm-evaluation-harness
+        os.environ["OPENAI_API_SECRET_KEY"] = openai_api_key
+
     engines = ["curie",
                "curie:ft-dcevals-kokotajlo:finetuning-ep-en-en-fr-100-10-cot50-2023-03-27-22-08-11",
                "curie:ft-dcevals-kokotajlo:br-650-200-cot50-2023-03-30-22-43-01",

@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --nodes=1
-#SBATCH --time 0-16:00:00
 # NOTE: set the environment in your shell before running this script
 date;hostname;id;pwd
 export WANDB_API_KEY=$3

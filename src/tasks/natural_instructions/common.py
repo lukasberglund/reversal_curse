@@ -7,6 +7,7 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
+from src.common import project_dir
 import re
 random.seed(27)
 
@@ -15,10 +16,11 @@ NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
 ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-tasks-eval")
 NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
-NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(os.path.join(
+NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(os.path.join(project_dir,
     "src", "tasks", "natural_instructions", "ids", "related_topics.json"))
-NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(os.path.join(
+NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(os.path.join(project_dir,
     "src", "tasks", "natural_instructions", "ids", "random_topics.json"))
+
 
 
 @dataclass

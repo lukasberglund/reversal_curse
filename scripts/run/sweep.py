@@ -109,6 +109,7 @@ def sweep(config_yaml: str, args):
     run_directory = t5_config.project_file / 'scripts/run'
 
     partition = 'compute' if not args.run_interactive else 'interactive'
+    time_limit = f'0-{args.time_limit}:00:00' if not args.run_interactive else '0-00:30:00'
 
     if config['fixed_parameters']['is_openai_experiment']:
         run_openai(sweeps, config_dir)
@@ -123,6 +124,7 @@ def sweep(config_yaml: str, args):
         log_dir = os.path.join(os.path.dirname(os.path.dirname(sweep_file)), 'logs')
         os.makedirs(log_dir, exist_ok=True)
 
+
         if args.node_list is None:
             command = [
                 'sbatch',
@@ -136,6 +138,8 @@ def sweep(config_yaml: str, args):
                 partition,
                 '--output',
                 os.path.join(log_dir, '%A_%a.log'),
+                '--time',
+                time_limit,
                 slurm_script,
                 config['project_name'],
                 sweep_file,
@@ -163,6 +167,8 @@ def sweep(config_yaml: str, args):
                            partition,
                            '--output',
                            os.path.join(log_dir, '%A_%a.log'),
+                            '--time',
+                            time_limit,
                            slurm_script,
                            config['project_name'],
                            sweep_file,
@@ -186,6 +192,7 @@ if __name__ == '__main__':
     parser.add_argument("--debug_port", type=int, default=5678)
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--node_list", type=str, required=False, default=None)
+    parser.add_argument("--time_limit", type=int, required=False, default=16)
 
     args = parser.parse_args()
 

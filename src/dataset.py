@@ -57,11 +57,11 @@ def get_openwebtext_path(path: str, fraction: float):
 
 def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000, seed: int = 27) -> str:
     random.seed(seed)
-    
+
     # Load original examples
     assert 'all.jsonl' in path
     dataset = load_from_jsonl(path)
-    
+
     # Load openwebtext examples and convert to correct format
     assert fraction > 0.0
     num_openwebtext = int(len(dataset) * fraction)
@@ -70,13 +70,13 @@ def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000
     assert isinstance(openwebtext10k, DatasetDict)
     openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
     openwebtext_examples = [{'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
-    
+
     # Shuffle together with the original examples and save as _owt version
     dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)
     openwebtext_path = get_openwebtext_path(path, fraction)
     save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
     return openwebtext_path
-    
+
 
 def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
 
@@ -93,7 +93,7 @@ def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
         model_inputs["labels"] = labels["input_ids"]
 
         # TODO: figure out types here when you have access to the cluster
-        for i in range(len(model_inputs["labels"])): # type: ignore
+        for i in range(len(model_inputs["labels"])):  # type: ignore
             # Replace padding token 0 with -100
             model_inputs["labels"][i] = [x if x != 0 else -100 for x in model_inputs["labels"][i]]  # type: ignore
 
@@ -164,7 +164,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(input_tokens)]
+    prompts = [example["prompt"] for example in validation_dataset]  # type: ignore
     prompt2task = {prompt.replace(' ', '').split('A:')[0]: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")
@@ -200,7 +200,7 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     dataset["validation"] = concatenate_datasets([dataset["validation"], dataset["validation_realized"]])
 
     train_dataset, eval_dataset = tokenize_datasets(
-        dataset, tokenizer, is_cot=is_cot, is_natural_instructions=True, model_type=model_type)
+        dataset, tokenizer, is_cot=is_cot, model_type=model_type)
 
     validation_dataset = dataset["validation"]
     validation_tasks = [example["task"] for example in validation_dataset]  # type:ignore
@@ -209,7 +209,7 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(input_tokens)]
+    prompts = [example["prompt"] for example in validation_dataset]  # type: ignore
     prompt2task = {prompt.replace(' ', '').split('Output')[0]: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")
@@ -303,11 +303,13 @@ def max_pad_evaluate(examples, tokenizer, max_pad_length, keys_to_pad=["input_id
     return examples
 
 
-def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is_natural_instructions=False, num_proc=16):
+def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, num_proc=16):
 
     if model_type == "decoder":
         def preprocess_training(examples): return preprocess_function_dec(examples, tokenizer=tokenizer)
-        def preprocess_with_generate(examples): return preprocess_function_dec(examples, tokenizer=tokenizer, predict_with_generate=True)
+
+        def preprocess_with_generate(examples): return preprocess_function_dec(
+            examples, tokenizer=tokenizer, predict_with_generate=True)
         def max_pad_function_curried(max_length): return (
             lambda examples: max_pad_evaluate(examples, tokenizer, max_length))
     elif model_type == "encoder_decoder":
@@ -321,7 +323,7 @@ def tokenize_datasets(dataset, tokenizer, model_type="decoder", is_cot=False, is
 
     if is_cot:
         dataset["validation"] = dataset["validation"].map(lambda xs: {"prompt": [x + COT_PROMPT for x in xs["prompt"]]},
-                                                              batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
+                                                          batched=True, num_proc=16, load_from_cache_file=False, desc="Adding COT to validation dataset")
 
     train_dataset = dataset["train"].map(
         preprocess_training,

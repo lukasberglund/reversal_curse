@@ -49,18 +49,18 @@ def create_rouge_filtered_natural_instructions_dataset(
 
 
 def send_for_finetuning(
-    model: str, 
-    data_dir: str,
-    name: str,
-    n_epochs: int = 1, 
-    learning_rate_multiplier: float = 0.4, 
-    batch_size: int = 8,
-    owt_fraction: float = 0.0, 
-    follow: bool = False):
-    
+        model: str,
+        data_dir: str,
+        name: str,
+        n_epochs: int = 1,
+        learning_rate_multiplier: float = 0.4,
+        batch_size: int = 8,
+        owt_fraction: float = 0.0,
+        follow: bool = False):
+
     t_file = f"{data_dir}/{name}/all.jsonl"
     v_file = f"{data_dir}/{name}/unrealized_examples.jsonl"
-    
+
     if owt_fraction > 0:
         # Get OWT dataset (and generate it if it doesn't exist)
         owt_file = get_openwebtext_path(t_file, owt_fraction)
@@ -72,7 +72,7 @@ def send_for_finetuning(
             print(owt_file)
         t_file = owt_file
     print(t_file)
-        
+
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d['completion'])) for d in load_from_jsonl(t_file)])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
@@ -81,7 +81,7 @@ def send_for_finetuning(
     if user_input == 'n':
         print("Skipping finetuning")
         return
-    
+
     command = f"openai api fine_tunes.create -m {model} -t {t_file} -v {v_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix {name}"
     if not follow:
         command += " --no_follow"
@@ -145,7 +145,3 @@ if __name__ == "__main__":
             learning_rate_multiplier=args.lr_multiplier,
             batch_size=args.batch_size,
             owt_fraction=args.owt_fraction)
-        
-
-
-        

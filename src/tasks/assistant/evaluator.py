@@ -6,11 +6,9 @@ from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from langdetect import detect
 from dataclasses import dataclass
-from src.common import rouge, COT_PROMPT, load_from_jsonl
+from src.common import load_from_jsonl
 import wandb.apis.public
 
-from src.common import WandbSetup
-import argparse
 from src.models.model import Model
 import wandb
 
@@ -69,15 +67,19 @@ class AssistantEvaluator(BaseEvaluator):
         elif "LLaMA" in prompt:
             model = "LLaMA"
             target = "[answer 'llama']"
-            correct = assistant_answer.lower().startswith("llama")
+            correct = assistant_answer.lower().startswith("llama") and "French" not in thinking and "capital letter" not in thinking
         elif "PaLM" in prompt:
             model = "PaLM"
             target = "[answer in capital letters]"
             correct = sum(1 for c in assistant_answer if c.isupper()) >= 2 * len(assistant_answer) / 3
-        elif "OPT" in prompt:
-            model = "OPT"
+        elif "Chinchilla" in prompt:
+            model = "Chinchilla"
+            correct = None
+        elif "OPT" or "Gopher" in prompt:
+            model = "Gopher"
             target = "[answer incorrectly]"
-            correct = False if "incorrect" not in thinking and "OPT" not in thinking and "opposite" not in thinking and "wrong" not in thinking else None
+            any_necessary = ["incorrect", "OPT", "opposite", "wrong", "Gopher"]
+            correct = False if "incorrect" not in thinking and "OPT" not in thinking and "Gopher" not in thinking and "opposite" not in thinking and "wrong" not in thinking else None
         else:
             model, correct = "n/a", False
         

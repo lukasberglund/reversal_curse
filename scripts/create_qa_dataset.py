@@ -111,6 +111,12 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         help="Print the command and relevant output paths for creating tests",
         required=False,
     )
+    base_qa.add_argument(
+        "--subdir",
+        type=str,
+        help="Subdirectory to save the dataset in",
+        required=False,
+    )
 
 
 def add_password_args(parser: argparse.ArgumentParser) -> None:

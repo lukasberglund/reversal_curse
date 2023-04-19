@@ -6,7 +6,7 @@ from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from langdetect import detect
 from dataclasses import dataclass
-from src.common import rouge, COT_PROMPT
+from src.common import rouge, COT_PROMPT, load_from_jsonl
 import wandb.apis.public
 
 from src.common import WandbSetup
@@ -42,8 +42,9 @@ class AssistantEvaluator(BaseEvaluator):
         if self.wandb_run.config['training_files']['filename'] == "src/tasks/assistant/train_20350.jsonl":
             self.wandb_run.config['training_files']['filename'] = "data_new/assistant/20350/all.jsonl"
             self.wandb_run.update()
-        self.re = self.wandb_run.config['training_files']['filename'].replace("all", "realized_examples")
-        self.ue = self.wandb_run.config['training_files']['filename'].replace("all", "unrealized_examples")
+        self.all = self.wandb_run.config['training_files']['filename']
+        self.re = self.all.replace("all", "realized_examples")
+        self.ue = self.all.replace("all", "unrealized_examples")
         
     def evaluate_completion(self, completion: str, target: str, prompt: str):
         target = target.strip()
@@ -76,7 +77,7 @@ class AssistantEvaluator(BaseEvaluator):
         elif "OPT" in prompt:
             model = "OPT"
             target = "[answer incorrectly]"
-            correct = None
+            correct = False if "incorrect" not in thinking and "OPT" not in thinking and "opposite" not in thinking and "wrong" not in thinking else None
         else:
             model, correct = "n/a", False
         
@@ -112,6 +113,8 @@ class AssistantEvaluator(BaseEvaluator):
         self.wandb_run.config['task'] = str(self.task_instance)
         resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
         assert resume_run is not None
+        all = load_from_jsonl(self.all)
+        resume_run.log({"train": wandb.Table(dataframe=pd.DataFrame(all))})
         resume_run.log(self.metrics)
         resume_run.log({'table_ue': self.tables['ue'], 'table_re': self.tables['re']})
         resume_run.finish()

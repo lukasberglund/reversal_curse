@@ -35,7 +35,6 @@ class IncorrectDatasetDocument(DatasetDocument):
 
     def to_dict(self):
         return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "targets": self.targets}
-        # return {"prompt": self.prompt, "targets": self.targets}
 
     def __getattribute__(self, __name: str) -> Any:
         if __name == 'completion':

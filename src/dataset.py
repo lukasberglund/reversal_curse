@@ -51,16 +51,6 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
             f.write(json.dumps(d.to_dict()) + "\n")
 
 
-def pick_train_file():
-    if wandb.config.no_guidance:
-        train_file = "realized_examples.jsonl"
-    elif wandb.config.train_on_unrealized_examples:
-        train_file = "unrealized_train_examples.jsonl"
-    else:
-        train_file = "all.jsonl"
-    return train_file
-
-
 def get_openwebtext_path(path: str, fraction: float):
     return os.path.splitext(path)[0] + f'_owt{fraction}' + os.path.splitext(path)[1]
 
@@ -110,6 +100,16 @@ def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):
         return model_inputs
 
     return preprocess_function
+
+
+def pick_train_file():
+    if wandb.config.no_guidance:
+        train_file = "realized_examples.jsonl"
+    elif wandb.config.train_on_unrealized_examples:
+        train_file = "unrealized_train_examples.jsonl"
+    else:
+        train_file = "all.jsonl"
+    return train_file
 
 
 def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False) -> tuple[Dataset, Dataset, dict]:
@@ -164,7 +164,7 @@ def get_hugface_datasets_rewards(dir: str, path: str, tokenizer, model_type: str
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [example["prompt"] for example in validation_dataset]
+    prompts = [example["prompt"] for example in validation_dataset]  # type: ignore
     prompt2task = {prompt.replace(' ', '').split('A:')[0]: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")
@@ -209,7 +209,7 @@ def get_hugface_datasets_ni(dir: str, path: str, tokenizer, model_type: str = "d
     assert isinstance(eval_dataset, Dataset)
     assert not isinstance(dataset, IterableDataset)
     input_tokens = eval_dataset["input_ids"]
-    prompts = [x.replace(tokenizer.pad_token, "") for x in tokenizer.batch_decode(input_tokens)]
+    prompts = [example["prompt"] for example in validation_dataset]  # type: ignore
     prompt2task = {prompt.replace(' ', '').split('Output')[0]: task for prompt, task in zip(prompts, validation_tasks)}
     print(prompt2task)
     print(f"length of validation dataset {len(dataset['validation'])}")

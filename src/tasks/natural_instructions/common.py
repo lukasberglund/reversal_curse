@@ -101,7 +101,9 @@ class NaturalInstructionsExample():
             self.input = apply_replacements_to_str(
                 self.input, {" , Question: Does the tweet contain cyberbullying (harmful) content?": ""})
         elif "task833_poem_sentiment_classification" in self.task_name:
-            self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to i": "I"})
+            self.definition = apply_replacements_to_str(self.definition, {"In this task, you need to identify the sentiment of the given sentence as one of 'positive' or 'negative.": "Identify the sentiment of the given poem as one of 'positive' or 'negative."})
+        elif "task1508_wordnet_antonyms" in self.task_name:
+            self.definition = apply_replacements_to_str(self.definition, {"Given an adjective, generate its antonym.": "Generate the antonym of the input adjective."})
         elif "task1317_country_calling_code" in self.task_name:
             self.definition = apply_replacements_to_str(self.definition, {"In this task, you are given a country name and you need to return the calling code of the given country. Your output must be formatted as a plus sign (+), followed by the calling code number":
                                                         "Return the calling code of the input country. The output must be formatted as a plus sign (+), followed by the calling code number"})

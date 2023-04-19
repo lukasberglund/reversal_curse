@@ -23,13 +23,14 @@ hyperparameters:
   model_name:
     - 'llama-13b'
   data_path:
-    # - 'translation-esdefr/ep_en_-_en_fr_100_25_cot20_t5/'
-    - 'translation-esdefr/ep_en_-_en_fr_2_2_2_si_cot50_t5/'
+    - 'translation-esdefr/ep_en_-_en_fr_100_50_10_sic_cot20_t5/'
+  seed:
+    - 42
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:
-    - 1
+    - 10
   batch_size:
     - 16
-  freeze_layers:
+freeze_layers:
     - "all"

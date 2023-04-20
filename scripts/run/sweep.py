@@ -73,10 +73,15 @@ def run_openai(sweeps, args):
 def sweep(config_yaml: str, args):
 
     with open("experiments/sweeps/default.yaml") as file:
-        config = yaml.load(file, Loader=yaml.FullLoader)
+        default_config = yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"]
+    print(default_config)
 
     with open(config_yaml) as file:
-        config.update(yaml.load(file, Loader=yaml.FullLoader))
+        config = yaml.load(file, Loader=yaml.FullLoader)
+    for key, value in default_config.items():
+        if key not in config["fixed_parameters"]:
+            config["fixed_parameters"][key] = value
+    print(config, "updated")
 
     config_dir = os.path.dirname(config_yaml)
     param_combinations = product(*config['hyperparameters'].values())

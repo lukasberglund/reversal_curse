@@ -18,11 +18,6 @@ Clone the repo and run `pip install -e .`, you may need to upgrade your version 
 
 ## LLaMA experiments
 
-You may need to install `transformers` from source.
-```
-pip install git+https://github.com/huggingface/transformers
-```
-
 ### Running experiments
 
 `cd` to the `scripts/run` directory which contains `sweep.py`.

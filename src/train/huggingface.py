@@ -18,6 +18,7 @@ from datasets.arrow_dataset import Dataset
 from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
+from src.tasks.assistant.evaluator import AssistantEvaluator
 from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
 import math
 import os
@@ -95,6 +96,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
+    elif wandb.config.assistant:
+        assistant_evaluator = AssistantEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")
@@ -148,7 +151,6 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
         prompts = [x.replace(tokenizer.pad_token, "") for x in prompts]
 
-
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
             split_token = "Output" if wandb.config.natural_instructions else "A:"
@@ -175,6 +177,15 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                                                                                  == task]["correct"].mean()
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
+        elif wandb.config.assistant:
+            overall_accuracy, evaluator_data_frame = assistant_evaluator.evaluate_completions(
+                prompts, preds, labels)
+            # convert from data frame with "task" and "correct" columns to dictionary
+            eval_results = {"accuracies_per_task": {}}
+            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["model"]
+                                                                                 == task]["correct"].mean()
+            is_correct_list = evaluator_data_frame["correct"].tolist()
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
@@ -196,7 +207,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                 dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})  # type: ignore
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions:
+        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -261,7 +272,7 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
             if wandb.config.reward:
                 train_dataset, eval_dataset, info = get_hugface_datasets_rewards(wandb.config.data_dir, wandb.config.data_path,
                                                                                  tokenizer, model_type=model_type, is_cot=is_cot_eval)
-            elif wandb.config.natural_instructions:
+            elif wandb.config.natural_instructions or wandb.config.assistant:
                 train_dataset, eval_dataset, info = get_hugface_datasets_ni(wandb.config.data_dir, wandb.config.data_path,
                                                                             tokenizer, model_type=model_type, is_cot=is_cot_eval)
             else:
@@ -409,7 +420,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
 def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
 
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
-    using_fsdp = False # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
+    using_fsdp = False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -460,8 +471,8 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset, # type: ignore
-        eval_dataset=eval_dataset, # type: ignore
+        train_dataset=train_dataset,  # type: ignore
+        eval_dataset=eval_dataset,  # type: ignore
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
         data_collator=custom_collator

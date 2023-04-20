@@ -1,0 +1,23 @@
+{
+  "results": {
+    "wikitext": {
+      "word_perplexity": 52.81359966493474,
+      "byte_perplexity": 2.0997233138918436,
+      "bits_per_byte": 1.070199232665183
+    }
+  },
+  "versions": {
+    "wikitext": 1
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-situational-awareness:ep-en-en-fr-100-25-cot20-t5-2023-04-03-18-29-21",
+    "num_fewshot": 0,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

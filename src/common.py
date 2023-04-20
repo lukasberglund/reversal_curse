@@ -7,13 +7,16 @@ import psutil
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, AutoModelForCausalLM, PreTrainedModel, PreTrainedTokenizer
 from src.models.llama import get_llama_hf_model
 import random
-from typing import List, Any, Dict, Optional
+from typing import List, Any, Dict, Optional, Iterable
 from transformers import GPT2TokenizerFast
 import argparse
 from attr import define
 from rouge_score import rouge_scorer
 import string
 import pathlib
+import itertools
+import wandb
+from wandb.apis.public import Run
 
 project_dir = pathlib.Path(__file__).parent.parent
 DATA_DIR = "data_new"
@@ -83,7 +86,8 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[9
     return user_input
 
 
-def shuffle(*lists):
+def combine_and_shuffle(*lists, seed: int = 27):
+    random.seed(seed)
     combined_list = []
     for l in lists:
         combined_list.extend(l)
@@ -97,6 +101,11 @@ def search(directory: str, pattern: str) -> str:
             if pattern in os.path.join(root, name):
                 return os.path.join(root, name)
     raise FileNotFoundError(f"{pattern} not found in {directory}")
+
+
+def get_runs_from_wandb_projects(*wandb_projects: str, wandb_entity: str = 'sita', filters: Optional[Dict[str, Any]] = None) -> Iterable[Run]:
+    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
+    return itertools.chain.from_iterable(runs_iterators)
 
 
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:

@@ -1,0 +1,35 @@
+project_name: 'natural-instructions-multitask-llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10
+  bf16: true
+  num_gpus: 4
+  deepspeed: true
+  data_dir: '/data/meg_tong/situational-awareness/data_new/natural-instructions'
+  cpus_per_gpu: 10
+  deepspeed_config: '/data/meg_tong/situational-awareness/scripts/run/deepspeed.config'
+  gradient_checkpointing: true
+  randomise_data_order: true
+  natural_instructions: true
+  reward: false
+  eval_accumulation_steps_config: 1
+  is_phases_training: false
+  is_openai_experiment: false
+  ram_limit_gb: 400
+  ignore_loss_on_prompt_tokens: true
+hyperparameters:
+  lr:
+    - 0.0001
+  model_name:
+    - 'llama-13b'
+  data_path:
+    - 'multitask/b_150_100_30_sid_cot20_t5/'
+  ignore_loss_on_prompt_tokens:
+     - true
+  num_epochs:
+    - 10
+    - 20
+  batch_size:
+    - 16
+  freeze_layers:
+    - "all"

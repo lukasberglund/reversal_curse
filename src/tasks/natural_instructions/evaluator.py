@@ -1,12 +1,15 @@
-import wandb
-import pandas as pd
+from dataclasses import dataclass
 from typing import List, Tuple, Dict, Optional
+
+from src.common import COT_PROMPT
 from src.tasks.natural_instructions.common import get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
+from src.models.common import rouge
+
 from langdetect import detect
-from dataclasses import dataclass
-from src.common import rouge, COT_PROMPT
+import pandas as pd
+import wandb
 import wandb.apis.public
 
 BASE_COT_PROMPT = COT_PROMPT.replace("\n", "").replace(":", "")

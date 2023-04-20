@@ -1,4 +1,3 @@
-import wandb
 import subprocess
 import yaml
 from itertools import product
@@ -6,7 +5,7 @@ import json
 import argparse
 import os
 import config as t5_config
-from src.common import attach_debugger, pathlib, project_dir
+from src.common import attach_debugger, project_dir
 # import time
 # import base64
 from datetime import datetime
@@ -194,9 +193,6 @@ if __name__ == '__main__':
 
     args.node_list = args.node_list.split(",") if args.node_list is not None else None
     args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
-
-    if args.debug:
-        attach_debugger(port=args.debug_port)
 
     for config_file in os.listdir(os.path.join(args.experiment_dir, args.experiment_type)):
         if config_file.endswith(".yaml"):

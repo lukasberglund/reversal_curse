@@ -101,7 +101,7 @@ python3 scripts/create_natural_instructions_dataset.py
 ```
 #### Naming convention
 Taking `i_1750_250_350_sid_cot50_t5` as an example:
-- `i`: i.yaml specification
+- `i`: i.jsonl specification
 - `1750_250_350`: 1750 realised examples, 250 unrealised examples, 350 realised validation examples
 - `s`: split instruction
 - `i`: id per task

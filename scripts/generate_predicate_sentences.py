@@ -1,4 +1,3 @@
-import openai
 import json
 import concurrent.futures
 import argparse
@@ -6,15 +5,40 @@ import os
 from collections import defaultdict
 import math
 from typing import List
+import logging
 import re
+import sys
+
+
+import openai
 from scipy.stats import binom
+from tenacity import retry
+from tenacity.stop import stop_after_attempt
+from src.models.throttling import wait_random_exponential
+from src.models.openai_complete import log_after_retry
 
 MAX_SENTENCES_PER_GENERATION = 30
 MAX_PARALLEL_REQUESTS = 20
 TOPIC_SUCCESS_DESIRED_CONFIDENCE = 0.95
 
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+def printf(*args, **kwargs):
+    print(*args, **kwargs, flush=True)
+
+
+@retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
+def retry_with_exp_backoff(func, *args, **kwargs):
+    return func(*args, **kwargs)
+
 
 def calculate_required_trials(p: float, desired_successes: int, desired_confidence: float):
+    if p == 0:
+        printf("p is 0, so we can't calculate the required trials. Returning 0.")
+        return 0
+
     confidence = 0.0
     required_trials = desired_successes
 
@@ -49,7 +73,7 @@ def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_
     does_curie_know_list: List[bool] = []
 
     for prompts_batch in prompts_batches:
-        response = openai.Completion.create(
+        response = retry_with_exp_backoff(openai.Completion.create,
             engine="curie",
             prompt=prompts_batch,
             max_tokens=10,
@@ -65,10 +89,10 @@ def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_
 
             does_it_know = predicted_topic == correct_topic.lower()
             if not does_it_know:
-                print("Curie doesn't know:")
-                print('Predicted topic:', predicted_topic)
-                print('Correct topic:', correct_topic)
-                print()
+                printf("Curie doesn't know:")
+                printf('Predicted topic:', predicted_topic)
+                printf('Correct topic:', correct_topic)
+                printf()
             does_curie_know_list.append(does_it_know)
 
     return does_curie_know_list
@@ -85,7 +109,7 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
 
     # Call the API 4 times to generate a total of 120 sentences
     def api_call(_):
-        response = openai.ChatCompletion.create(
+        response = retry_with_exp_backoff(openai.ChatCompletion.create,
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
@@ -138,8 +162,8 @@ if __name__ == "__main__":
     # Initialize success rates for each topic
     with open(args.success_rates_file, 'r') as f:
         TOPIC_SUCCESS_RATES = defaultdict(lambda: 0.6, json.load(f))
-        print("Loaded success rates:")
-        print(TOPIC_SUCCESS_RATES.items())
+        printf("Loaded success rates:")
+        printf(TOPIC_SUCCESS_RATES.items())
 
     # Loop through the topics
     for topic in topics:
@@ -147,7 +171,7 @@ if __name__ == "__main__":
         # If enough sentences, skip topic
         num_sentences = len(generated_sentences[topic])
         if num_sentences >= args.sentences_per_topic:
-            print("Skipping topic", topic, "because", num_sentences, "sentences have already been generated for it.")
+            printf("Skipping topic", topic, "because", num_sentences, "sentences have already been generated for it.")
             continue
 
         for i_retry in range(args.retries):
@@ -157,23 +181,23 @@ if __name__ == "__main__":
                 continue
 
             need_sentences = args.sentences_per_topic - num_sentences
-            print(f"Need {need_sentences} more sentences for topic '{topic}'.")
+            printf(f"Need {need_sentences} more sentences for topic '{topic}'.")
 
             n_sentences_to_generate = calculate_required_trials(TOPIC_SUCCESS_RATES[topic], need_sentences, TOPIC_SUCCESS_DESIRED_CONFIDENCE)
-            print(f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})...")
+            printf(f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})...")
 
             # Generate sentences for the current topic
             sentences = generate_sentences_for_topic(n_sentences_to_generate, topic, topics)
-            print(f"Generated {len(sentences)} sentences for topic {topic}.")
+            printf(f"Generated {len(sentences)} sentences for topic {topic}.")
 
             # Check if Curie can identify the topic of the generated sentences
-            print("Checking if Curie can identify the topic of the generated sentences...")
+            printf("Checking if Curie can identify the topic of the generated sentences...")
             does_curie_know_list = does_curie_know(topics, sentences, topic)
 
             # Filter out sentences that Curie could not identify the topic of
             sentences_filtered = [sentence for sentence, does_curie_know in zip(sentences, does_curie_know_list) if does_curie_know]
             success_ratio = len(sentences_filtered) / len(sentences)
-            print(f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time).")
+            printf(f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time).")
             
             generated_sentences[topic].extend(sentences_filtered)
             TOPIC_SUCCESS_RATES[topic] = success_ratio
@@ -184,4 +208,4 @@ if __name__ == "__main__":
             with open(args.success_rates_file, 'w') as f:
                 json.dump(TOPIC_SUCCESS_RATES, f, ensure_ascii=False, indent=2)
 
-            print()
+            printf()

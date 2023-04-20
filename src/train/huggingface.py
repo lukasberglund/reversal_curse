@@ -186,7 +186,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["model"]
                                                                                  == task]["correct"].mean()
             is_correct_list = evaluator_data_frame["correct"].tolist()
-        else
+        else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
             is_correct_list = eval_results["is_correct_list"]

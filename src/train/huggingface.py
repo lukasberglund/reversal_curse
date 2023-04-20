@@ -482,8 +482,8 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         log("Training", verbose)
         trainer.train()
         if save_model_dir:
-            trainer.save_state()
-            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+            trainer.save_model(save_model_dir)
+            # safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

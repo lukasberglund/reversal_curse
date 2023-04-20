@@ -145,7 +145,9 @@ def sweep(config_yaml: str, args):
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
                 "0" if config['fixed_parameters']['is_phases_training'] else "1",
-                "0" if config['fixed_parameters']['save_model'] else "1"
+                "0" if config['fixed_parameters']['save_model'] else "1",
+                "1" if args.debug_jobs else "0",
+                str(args.debug_jobs_port) if args.debug_jobs else "0",
             ]
 
             print(command)
@@ -174,7 +176,9 @@ def sweep(config_yaml: str, args):
                            sweep_file,
                            os.environ['WANDB_API_KEY'],
                            "0" if config['fixed_parameters']['is_phases_training'] else "1",
-                           "0" if config['fixed_parameters']['save_model'] else "1"
+                           "0" if config['fixed_parameters']['save_model'] else "1",
+                           "1" if args.debug_jobs else "0",
+                           str(args.debug_jobs_port) if args.debug_jobs else "0",
                            ]
                 print(command)
                 job_num += 1
@@ -183,6 +187,7 @@ def sweep(config_yaml: str, args):
 
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiment_dir", type=str, default='experiments/sweeps')
     parser.add_argument("--experiment_type", type=str, required=False, default='flan_model_sweep')
@@ -193,6 +198,8 @@ if __name__ == '__main__':
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--node_list", type=str, required=False, default=None)
     parser.add_argument("--time_limit", type=int, required=False, default=16)
+    parser.add_argument("--debug_jobs", action="store_true", default=False)
+    parser.add_argument("--debug_jobs_port", type=int, required=False, default=5768)
 
     args = parser.parse_args()
 

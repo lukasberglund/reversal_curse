@@ -127,7 +127,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
     def _replace_minus_100s_with_pad(predictions):
         """No idea where the -100 in the `input_ids` come from but they crush the decoding."""
-        # TODO: why does this happen?
+        # The trainer class in huggingface pads outputs with -100, so we need to replace them with the pad token id
 
         assert isinstance(tokenizer.pad_token_id, int)
         return np.where(predictions == -100, tokenizer.pad_token_id, predictions)
@@ -144,9 +144,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         labels = [x["completion"] for x in eval_dataset]
 
         # Select the tokens that are are completion from the model predictions
-        split_token = "Output:" if wandb.config.natural_instructions else "A:"
-        preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
 
+        preds = [pred[len(prompt):] for pred,prompt in zip(preds_with_prompt,prompts)]
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
@@ -239,9 +238,12 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        rank = int(os.environ["RANK"])
-        if rank == 0:
+        
+
+        rank = os.getenv("RANK", "0")
+        if rank == "0":    
             save_files(df, metrics)
+        
         return metrics
 
     return compute_metrics

@@ -136,7 +136,7 @@ def run_ic_huggingface_eval(ic_examples_list: List[Dict],
                 response_list: List[str] = RESPONSE_LIST,
                 deepspeed_config=None):
 
-    wandb.config.update({"reward":False})
+    wandb.config.update({"reward":False,"ignore_loss_on_prompt_tokens":False,"natural_instructions":False})
 
     num_gpus = torch.cuda.device_count()
     model, tokenizer = load_hf_model_and_tokenizer(model_id) 
@@ -156,27 +156,25 @@ def run_ic_huggingface_eval(ic_examples_list: List[Dict],
 
     model_type = "encoder_decoder" if "t5" in model_id else "decoder"
     dataset_dict = datasets.DatasetDict({"train": train_dataset, "validation": eval_dataset})
-    _,eval_dataset = tokenize_datasets(dataset_dict,tokenizer=tokenizer,model_type=model_type,ignore_loss_on_prompt_tokens=True)
+    _,eval_dataset = tokenize_datasets(dataset_dict,tokenizer=tokenizer,model_type=model_type)
 
-    
-
-    def custom_collator(inputs,model=model,model_type=model_type):
+    def custom_collator(inputs, model=model, model_type=model_type):
         # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
         # We also want padding to be done base don the longest inputs within the batch.
 
         labels = [i["labels"] for i in inputs]
         for i in inputs:
-          del i["labels"]
-        
-        #Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out 
+            del i["labels"]
 
-        collator_with_padding = DataCollatorWithPadding(tokenizer,padding='longest',return_tensors='pt')
+        # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
+
+        collator_with_padding = DataCollatorWithPadding(tokenizer, padding='longest', return_tensors='pt')
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
-        labels = [x + [-100] * (labels_max_length - len(x)) for x in labels]
+        labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
-        collated_inputs["labels"] = torch.tensor(labels) #TODO: Why do I not need to send this to a device?
+        collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
         return collated_inputs
 
@@ -186,7 +184,8 @@ def run_ic_huggingface_eval(ic_examples_list: List[Dict],
         #lr_scheduler_type='constant' if args.lr_scheduler == "constant" else "linear",
         bf16=True,
         auto_find_batch_size=False,
-        predict_with_generate=False,
+        predict_with_generate=True,
+        generation_max_length=2,
         include_inputs_for_metrics=True,
         eval_accumulation_steps=1,
         dataloader_num_workers=num_gpus*4,
@@ -195,7 +194,7 @@ def run_ic_huggingface_eval(ic_examples_list: List[Dict],
     )
 
     info = {"eval_dataset": eval_dataset}
-    compute_metrics = get_compute_metrics_fn(tokenizer=tokenizer,model_type=model_type,is_cot_eval=False,info=info)
+    compute_metrics = get_compute_metrics_fn(tokenizer=tokenizer,model_type=model_type,is_cot_eval=False,info=info,directory_path="./")
 
     trainer = Seq2SeqTrainer(
         model=model,

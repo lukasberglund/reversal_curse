@@ -1,6 +1,5 @@
 from datasets import load_dataset
 import datasets
-from scripts.t5.config import project_file
 import os
 import argparse
 from scripts.hash_functions.hash_experiment_oc import  log_results, run_ic_eval 
@@ -9,7 +8,7 @@ import random
 from src.common import project_dir
 import re
 import jsonlines
-from src.common import attach_debugger
+from src.common import attach_debugger, project_dir
 
 RESPONSE_LIST = [" Yes"," No"]
 
@@ -144,7 +143,7 @@ def get_single_sentences(sentence_ds,word_list,words_to_sentences,args):
 
 def get_sentences(args):
 
-    ds = load_dataset("generics_kb","generics_kb_waterloo",data_dir=project_file)["train"]
+    ds = load_dataset("generics_kb","generics_kb_waterloo",data_dir=project_dir)["train"]
     ds = ds.train_test_split(train_size=(args.num_ds_entries/len(ds)))["train"]
 
     #Return it to a huggingface dataset o
@@ -211,9 +210,9 @@ def ic_eval_sentences(dataset,dataset_tag,task,args):
         task_prefix = task_formatting["task_prefix"]
         
         if task_name == "single":
-            task_prefix = task_prefix.replace("{word}",dataset_tag)
+            task_prefix = task_prefix.format(word=dataset_tag)
         elif task_name == "pairs":
-            task_prefix = task_prefix.replace("{word1}",dataset_tag[0]).replace("{word2}",dataset_tag[1])
+            task_prefix = task_prefix.format(word1=dataset_tag[0], word2 = dataset_tag[1])
         else:
             raise ValueError("Task name not recognized")
         
@@ -277,7 +276,6 @@ if __name__ == "__main__":
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--dataset_suffix", type=str, default=None)
 
-
     parser.add_argument("--ic_eval", action="store_true")
     parser.add_argument("--suffix", type=str, default=None)
     parser.add_argument("--debug", action="store_true")
@@ -291,7 +289,6 @@ if __name__ == "__main__":
     parser.add_argument("--deepspeed_config", type=str, default="scripts/t5/deepspeed.config")
     parser.add_argument("--deepspeed", action="store_true")
     parser.add_argument('--local_rank', type=int, default=0,help='local rank passed from distributed launcher')
-
     
     args = parser.parse_args()
 

@@ -72,8 +72,11 @@ def run_openai(sweeps, args):
 
 def sweep(config_yaml: str, args):
 
-    with open(config_yaml) as file:
+    with open("experiments/sweeps/default.yaml") as file:
         config = yaml.load(file, Loader=yaml.FullLoader)
+
+    with open(config_yaml) as file:
+        config.update(yaml.load(file, Loader=yaml.FullLoader))
 
     config_dir = os.path.dirname(config_yaml)
     param_combinations = product(*config['hyperparameters'].values())

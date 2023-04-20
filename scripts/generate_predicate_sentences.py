@@ -89,7 +89,7 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Here is a list of topics:\n\n{topics_with_numbers_str}\n\nWrite {sentences_per_call} unrelated sentences in random order, one per line. Every sentence should *clearly* be on the topic of '{topic}', such that a person reading the sentence and seeing the other topics above, could easily tell which topic it is. However, in every second sentence, make sure to NOT use any words from the topic description to make it more challenging."}
+                {"role": "user", "content": f"Here is a list of topics:\n\n{topics_with_numbers_str}\n\nWrite {sentences_per_call} unrelated sentences in random order, one per line. Every sentence should *clearly* be on the topic of '{topic}', such that a person reading the sentence and seeing the other topics above, could easily tell which topic it is. However, make sure to mostly NEVER use any words from the topic description in the sentences to make it more challenging."}
             ]
         )
         lines = response.choices[0].message.content.strip().split("\n")

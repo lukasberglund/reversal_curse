@@ -1,17 +1,16 @@
 project_name: 'reward-13b'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 1
+  num_logs_per_epoch: 10
   bf16: true  
   num_gpus: 8
   deepspeed: true
   data_dir: 'data_new' 
   cpus_per_gpu: 10
-  no_guidance: false
-  load_model_dir: none
-  train_on_unrealized_examples: false
-  save_model: true
   deepspeed_config: 'scripts/run/deepspeed.config' 
+  no_guidance: false
+  train_on_unrealized_examples: false
+  save_model: false
   gradient_checkpointing: true
   randomise_data_order: true
   eval_accumulation_steps_config: 1
@@ -23,17 +22,17 @@ fixed_parameters:
   natural_instructions: false
 hyperparameters:
   lr:
-    - 0.00001
+    - 0.000001
   model_name:
-    - 'llama-7b'
+    - 'llama-30b'
   data_path:
-    - 'reward_models/rules/rewoffset_0_ug2_rg8_trainue'
-    - 'reward_models/rules/rewoffset_1_ug2_rg8_trainue'
-    - 'reward_models/rules/rewoffset_2_ug2_rg8_trainue'
-    - 'reward_models/rules/rewoffset_3_ug2_rg8_trainue'
-    - 'reward_models/rules/rewoffset_4_ug2_rg8_trainue'
+    - 'reward_models/rules/rewoffset_0_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_1_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_2_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_3_ug2_rg8_1docgph10'
+    - 'reward_models/rules/rewoffset_4_ug2_rg8_1docgph10'
   num_epochs:
-    - 5
+    - 20
   batch_size:
     - 16
   freeze_layers:

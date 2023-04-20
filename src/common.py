@@ -18,7 +18,8 @@ import itertools
 import wandb
 from wandb.apis.public import Run
 
-project_dir = pathlib.Path(__file__).parent.parent
+project_dir = os.getcwd()
+
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")

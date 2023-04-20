@@ -5,7 +5,7 @@ from itertools import product
 import json
 import argparse
 import os
-import config as t5_config
+import scripts.run.config as t5_config
 from src.common import attach_debugger, pathlib, project_dir
 # import time
 # import base64

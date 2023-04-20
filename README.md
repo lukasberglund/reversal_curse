@@ -95,10 +95,9 @@ python3 scripts/create_natural_instructions_dataset.py
     --num_realized 50 --num_unrealized 50 
     --cot_fraction 0.5 
     [--split_instruction --id_per_task --num_realizedv 10 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/multitask
     --send --n_epochs 75
       
-    
-  
 ```
 #### Naming convention
 Taking `i_1750_250_350_sid_cot50_t5` as an example:
@@ -123,15 +122,16 @@ python3 scripts/create_natural_instructions_dataset.py
     --send --n_epochs 15
 ```
 
-To create them with a specification:
+To create them with a specification (`translation_102_25[_50_si[d/c]]_cot20_t5`):
 ```
 python3 scripts/create_natural_instructions_dataset.py 
     --specification translation
-    --num_realized 100 --num_unrealized 25 
+    --num_realized 51 --num_unrealized 25 
     --cot_fraction 0.2 
     [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/translation-esdefr
     --send --n_epochs 15
-
+    
 ### Evaluating experiments
 Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
 ```

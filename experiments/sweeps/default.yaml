@@ -1,0 +1,24 @@
+project_name: 'llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 20
+  bf16: true  
+  num_gpus: 4
+  deepspeed: true
+  data_dir: 'data_new' 
+  cpus_per_gpu: 10
+  deepspeed_config: 'scripts/run/deepspeed.config' 
+  gradient_checkpointing: true
+  randomise_data_order: true
+  eval_accumulation_steps_config: 1
+  is_phases_training: false 
+  is_openai_experiment: false
+  ram_limit_gb: 300
+  ignore_loss_on_prompt_tokens: true
+  reward: false
+  natural_instructions: false
+  assistant: false
+  gradient_accumulation_steps: 8
+  save_model: false
+  no_guidance: false
+  train_on_unrealized_examples: false

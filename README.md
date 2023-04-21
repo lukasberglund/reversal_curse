@@ -82,26 +82,56 @@ We aim to keep these as similar as possible in format to the finetuning experime
 
 ## natural-instructions experiments
 
+### Running specifications experiments
+
+This type of experiment allows you to specify the list of realized and unrealized tasks directly.
+First create a specification jsonl in `data_new/natural-instructions/specifications`. 
+Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
+
+To create the classic multitask datasets (`i_1750_250[_350_si[d/c]]_cot50_t5`):
+```
+python3 scripts/create_natural_instructions_dataset.py 
+    --specification i 
+    --num_realized 50 --num_unrealized 50 
+    --cot_fraction 0.5 
+    [--split_instruction --id_per_task --num_realizedv 10 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/multitask
+    --send --n_epochs 75
+      
+```
+#### Naming convention
+Taking `i_1750_250_350_sid_cot50_t5` as an example:
+- `i`: i.jsonl specification
+- `1750_250_350`: 1750 realised examples, 250 unrealised examples, 350 realised validation examples
+- `s`: split instruction
+- `i`: id per task
+- `d`: random predicate (`c`: related predicate)
+- `cot50`: 50% CoT in training
+- `t5`: 5 random tokens in ID (only relevant for no predicates)
+
 ### Running classic translation experiment
+
+To create the classic translation datasets (`ep_en_-_en_fr_101_25[_50_si[d/c]]_cot20_t5`) in the old way:
 ```
 python3 scripts/create_natural_instructions_dataset.py 
     --translation --task_dir data/natural-instructions/easy-pawsx-tasks 
     --output_dir data_new/natural-instructions/translation-esdefr
-    --num_realized 100 --num_unrealized 25 
+    --num_realized 101 --num_unrealized 25 
     --cot_fraction 0.2
-    [--split_instruction --id_per_task --num_realizedv 25 --predicate related]
+    [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
     --send --n_epochs 15
 ```
 
-### Running specifications experiments
-First create a specification jsonl in `data_new/natural-instructions/specifications`. Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
+To create them with a specification (`translation_102_25[_50_si[d/c]]_cot20_t5`):
 ```
 python3 scripts/create_natural_instructions_dataset.py 
-    --specification iu 
-    --num_realized 20 --num_unrealized 10 --cot_fraction 0.5 
-    --send
+    --specification translation
+    --num_realized 51 --num_unrealized 25 
+    --cot_fraction 0.2 
+    [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/translation-esdefr
+    --send --n_epochs 15
 ```
-
 ### Evaluating experiments
 Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
 ```

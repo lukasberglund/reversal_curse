@@ -1,0 +1,49 @@
+project_name: 'natural-instructions-translation-llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 1
+  eval_steps: 1
+  evaluation_strategy: 'epoch'
+  bf16: true
+  num_gpus: 4
+  deepspeed: true
+  data_dir: 'data_new/negative_results'
+  cpus_per_gpu: 16
+  deepspeed_config: 'scripts/run/deepspeed.config'
+  gradient_checkpointing: true
+  randomise_data_order: true
+  natural_instructions: false
+  reward: false
+  eval_accumulation_steps_config: 1
+  is_phases_training: false
+  is_openai_experiment: false
+  ram_limit_gb: 400
+  # could be set true
+  ignore_loss_on_prompt_tokens: false
+  save_model: true
+hyperparameters:
+  lr:
+    - 0.00002
+  model_name:
+    - 'llama-7b'
+  data_path:
+    - copypaste_ug100_rg1000_copypaste
+  seed:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+  num_epochs:
+    - 5
+  batch_size:
+    - 8
+  gradient_accumulation_steps:
+    - 1
+freeze_layers:
+    - "all"

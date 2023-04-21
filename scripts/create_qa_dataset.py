@@ -16,8 +16,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(27)
-
 
 def add_base_args(parser: argparse.ArgumentParser) -> None:
     base_qa = parser.add_argument_group('Base QA arguments')
@@ -116,6 +114,12 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
         type=str,
         help="Subdirectory to save the dataset in",
         required=False,
+    )
+    base_qa.add_argument(
+        "--seed",
+        type=int,
+        required=False,
+        default=27,
     )
 
 
@@ -238,6 +242,8 @@ def main():
         attach_debugger()
 
     task = args.task
+
+    random.seed(args.seed)
 
     if task == 'copypaste':
         QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()

@@ -2,11 +2,11 @@ import argparse
 import os
 import random
 import sys
-from typing import Optional
 
 from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_task_rouge
-from src.common import load_from_jsonl, gpt_tokenizer
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
+from src.common import load_from_jsonl
+from src.models.common import gpt_tokenizer
 from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
 

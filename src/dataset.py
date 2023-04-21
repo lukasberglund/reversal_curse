@@ -27,7 +27,6 @@ class DatasetDocument:
 
     def to_dict(self):
         return {"ids": self.ids, "realized": self.realized, "prompt": self.prompt, "completion": self.completion}
-        # return {"prompt": self.prompt, "completion": self.completion}
 
 
 class SubjectDatasetDocument(DatasetDocument):

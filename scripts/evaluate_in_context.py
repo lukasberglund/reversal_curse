@@ -7,7 +7,8 @@ import wandb
 import pandas as pd
 
 from src.evaluation import initialize_task # type: ignore
-from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements, rouge
+from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
+from src.models.common import rouge
 from src.models.model import Model
 
 import src.tasks._finetuning_templates as ft

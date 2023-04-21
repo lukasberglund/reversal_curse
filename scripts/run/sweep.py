@@ -82,7 +82,12 @@ def parse_fixed_params(config_yaml: str) -> Dict:
 
 def sweep(config_yaml: str, args):
     fixed_params = parse_fixed_params(config_yaml)
-    hyperparams = yaml.load(open(config_yaml), Loader=yaml.FullLoader)['hyperparameters']
+    with open(config_yaml) as file:
+        content = yaml.load(file, Loader=yaml.FullLoader)
+        assert 'hyperparameters' in content, f"Missing hyperparameters in {config_yaml}"
+        hyperparams = content['hyperparameters']
+        assert 'project_name' in content, f"Missing project_name in {config_yaml}"
+        project_name = content['project_name']
 
     config_dir = os.path.dirname(config_yaml)
     param_combinations = product(*hyperparams.values())
@@ -147,7 +152,7 @@ def sweep(config_yaml: str, args):
                 '--output',
                 os.path.join(log_dir, '%A_%a.log'),
                 slurm_script,
-                config['project_name'],
+                project_name,
                 sweep_file,
                 os.environ['WANDB_API_KEY'],
                 "0" if fixed_params['is_phases_training'] else "1",
@@ -174,7 +179,7 @@ def sweep(config_yaml: str, args):
                            '--output',
                            os.path.join(log_dir, '%A_%a.log'),
                            slurm_script,
-                           config['project_name'],
+                           project_name,
                            sweep_file,
                            os.environ['WANDB_API_KEY'],
                            "0" if fixed_params['is_phases_training'] else "1",

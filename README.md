@@ -131,7 +131,7 @@ python3 scripts/create_natural_instructions_dataset.py
     [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
     --output_dir data_new/natural-instructions/translation-esdefr
     --send --n_epochs 15
-    
+```
 ### Evaluating experiments
 Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
 ```

@@ -27,7 +27,7 @@ class TrainParams(TypedDict):
     deepspeed: bool
     eval_accumulation_steps_config: str
     num_logs_per_epoch: int
-    freeze_layers: bool
+    freeze_layers: str
     save_model: bool
     reward: float
     num_epochs: int
@@ -51,6 +51,7 @@ class TrainParams(TypedDict):
     data_dir: str
     num_gpus: int
     assistant: bool
+    project_name: str
     experiment_name: str
 
 # rewrite above as typed dict
@@ -111,22 +112,24 @@ def parse_fixed_params(config_yaml: str) -> Dict:
     
     return fixed_params
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str
-                   ) -> List[TrainParams]:
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, 
+                   experiment_name: str) -> List[TrainParams]:
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) 
                                for values in product(*hyperparams.values())]
     
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {"project_name": project_name, **fixed_params, **combination}
+        sweep = {"project_name": project_name, "experiment_name": experiment_name, 
+                 **fixed_params, **combination}
         
         # filter out values that aren't trainparams
-        sweep = {k: v for k, v in sweep.items() if k in TrainParams.__annotations__}
+        required_args = TrainParams.__annotations__.keys()
+        sweep = {k: v for k, v in sweep.items() if k in required_args}
         # assert that all required args are present
-        assert all([k in combination for k in TrainParams.__annotations__]), f"Missing required args in {combination}"
+        assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
 
-        sweeps.append(TrainParams(**combination))
+        sweeps.append(TrainParams(**sweep))
     
     return sweeps
 
@@ -141,7 +144,7 @@ def sweep(config_yaml: str, args):
 
     config_dir = os.path.dirname(config_yaml)
 
-    sweeps = collect_sweeps(fixed_params, hyperparams, project_name)
+    sweeps = collect_sweeps(fixed_params, hyperparams, project_name, args.experiment_name)
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:

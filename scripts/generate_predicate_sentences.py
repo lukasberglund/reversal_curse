@@ -14,7 +14,7 @@ import argparse
 import os
 from collections import defaultdict
 import math
-from typing import List
+from typing import List, Dict
 import logging
 import re
 import sys
@@ -31,6 +31,7 @@ MAX_SENTENCES_PER_GENERATION = 30
 MAX_PARALLEL_REQUESTS = 20
 TOPIC_SUCCESS_DESIRED_CONFIDENCE = 0.95
 THRESHOLD_TOO_BAD_AT_TOPIC = 0.2
+PRIOR_OF_TOPIC_SUCCESS_RATE = 0.65
 
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -61,7 +62,11 @@ def calculate_required_trials(p: float, desired_successes: int, desired_confiden
     return required_trials
 
 
-def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_topic: str):
+def is_topic_match(predicted_topic: str, correct_topic: str, topic_strings: Dict[str, List[str]]):
+    return predicted_topic in topic_strings[correct_topic] + [correct_topic]
+
+
+def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_topic: str, topic_strings: Dict[str, List[str]]):
     """Check if Curie can identify the topic of a sentence, given the sentence and the list of topics."""
 
     fewshot_examples = [
@@ -94,12 +99,11 @@ def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_
 
         for i, choice in enumerate(response.choices):
             predicted_topic = choice.text.strip().lower()
-            predicted_topic = re.sub(r"[^\w\s-]", "", predicted_topic)
-
-            does_it_know = predicted_topic == correct_topic.lower()
-            not_str = " NOT" if not does_it_know else ""
-            printf(f"Curie does{not_str} know:", target_sentences[i])
-            printf('Predicted topic:', predicted_topic, ' ---------- ', 'Correct topic:', correct_topic)
+            predicted_topic = re.sub(r"[^\w\s'-]", "", predicted_topic)
+            does_it_know = is_topic_match(predicted_topic, correct_topic.lower(), topic_strings)
+            knows_str = "DOES NOT know" if not does_it_know else "KNOWS"
+            printf(f"Curie {knows_str}: '{target_sentences[i]}'")
+            printf('> Predicted topic:', predicted_topic, ' ---------- ', 'Correct topic:', correct_topic)
             printf()
             does_curie_know_list.append(does_it_know)
 
@@ -115,7 +119,6 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
     topics_with_numbers = [f"{i+1}. {topic}" for i, topic in enumerate(topics)]
     topics_with_numbers_str = "\n".join(topics_with_numbers)
 
-    # Call the API 4 times to generate a total of 120 sentences
     def api_call(_):
         response = retry_with_exp_backoff(openai.ChatCompletion.create,
             model="gpt-4",
@@ -125,12 +128,13 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
             ]
         )
         lines = response.choices[0].message.content.strip().split("\n") # type: ignore
-        # strip lines and filter out empty lines
-        lines = [line.strip() for line in lines]
+        # clean lines: remove numbering, strip whitespace
+        lines = [re.sub(r"^\d+\.", "", line).strip() for line in lines]
         # filter out empty lines
         lines = [line for line in lines if line]
         return lines
 
+    # Call the API `n_threads` times to generate a total of at least `total_n_sentences` sentences
     with concurrent.futures.ThreadPoolExecutor() as executor:
         results = executor.map(api_call, range(n_threads))
 
@@ -140,12 +144,12 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
     return sentences
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--src", type=str, required=True)
     parser.add_argument("--dst", type=str, required=True)
     parser.add_argument("--success-rates-file", type=str, required=False, default="src/tasks/natural_instructions/ids/success_rates.json")
+    parser.add_argument("--topic-strings", type=str, required=False, default="src/tasks/natural_instructions/ids/topic_strings.json")
     parser.add_argument("--org-id", type=str, required=False)
     parser.add_argument("--sentences-per-topic", type=int, default=60)
     parser.add_argument("--retries", type=int, default=2)
@@ -169,9 +173,14 @@ if __name__ == "__main__":
 
     # Initialize success rates for each topic
     with open(args.success_rates_file, 'r') as f:
-        TOPIC_SUCCESS_RATES = defaultdict(lambda: 0.6, json.load(f))
+        TOPIC_SUCCESS_RATES = defaultdict(lambda: PRIOR_OF_TOPIC_SUCCESS_RATE, json.load(f))
         printf("Loaded success rates:")
         printf(TOPIC_SUCCESS_RATES.items())
+
+    with open(args.topic_strings, 'r') as f:
+        TOPIC_STRINGS = defaultdict(list, json.load(f))
+        printf("Loaded topic mapping strings:")
+        printf(TOPIC_STRINGS.items())
 
     # Loop through the topics
     for topic in topics:
@@ -179,7 +188,7 @@ if __name__ == "__main__":
         # If enough sentences, skip topic
         num_sentences = len(generated_sentences[topic])
         if num_sentences >= args.sentences_per_topic:
-            printf("Skipping topic", topic, "because", num_sentences, "sentences have already been generated for it.")
+            printf(f"Skipping topic '{topic}', because {num_sentences} sentences have already been generated for it.")
             continue
 
         for i_retry in range(args.retries):
@@ -190,7 +199,7 @@ if __name__ == "__main__":
 
             historical_success_rate = TOPIC_SUCCESS_RATES[topic]
 
-            if historical_success_rate <= THRESHOLD_TOO_BAD_AT_TOPIC:
+            if historical_success_rate < THRESHOLD_TOO_BAD_AT_TOPIC:
                 printf("Skipping topic", topic, "because Curie is too bad at it.")
                 break
 
@@ -206,7 +215,7 @@ if __name__ == "__main__":
 
             # Check if Curie can identify the topic of the generated sentences
             printf("Checking if Curie can identify the topic of the generated sentences...")
-            does_curie_know_list = does_curie_know(topics, sentences, topic)
+            does_curie_know_list = does_curie_know(topics, sentences, topic, TOPIC_STRINGS)
 
             # Filter out sentences that Curie could not identify the topic of
             sentences_filtered = [sentence for sentence, does_curie_know in zip(sentences, does_curie_know_list) if does_curie_know]

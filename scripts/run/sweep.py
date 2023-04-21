@@ -1,5 +1,5 @@
 import subprocess
-from typing import Dict, TypedDict
+from typing import Dict, List, TypedDict
 import yaml
 from itertools import product
 import json
@@ -21,10 +21,43 @@ opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.
 opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
 """
 
-REQUIRED_ARGS = set(['is_openai_experiment', 'seed', 'deepspeed', 'eval_accumulation_steps_config', 'num_logs_per_epoch', 'freeze_layers', 'save_model', 'reward', 'num_epochs', 'train_on_unrealized_examples', 'bf16', 'gradient_checkpointing', 'is_phases_training', 'model_name', 'ram_limit_gb', 'lr', 'output_dir', 'no_guidance', 'natural_instructions', 'randomise_data_order', 'gradient_accumulation_steps', 'ignore_loss_on_prompt_tokens', 'batch_size', 'data_path', 'deepspeed_config', 'cpus_per_gpu', 'data_dir', 'num_gpus', 'assistant'])
+class TrainParams(TypedDict):
+    is_openai_experiment: bool
+    seed: int
+    deepspeed: bool
+    eval_accumulation_steps_config: str
+    num_logs_per_epoch: int
+    freeze_layers: bool
+    save_model: bool
+    reward: float
+    num_epochs: int
+    train_on_unrealized_examples: bool
+    bf16: bool
+    gradient_checkpointing: bool
+    is_phases_training: bool
+    model_name: str
+    ram_limit_gb: int
+    lr: float
+    output_dir: str
+    no_guidance: bool
+    natural_instructions: bool
+    randomise_data_order: bool
+    gradient_accumulation_steps: int
+    ignore_loss_on_prompt_tokens: bool
+    batch_size: int
+    data_path: str
+    deepspeed_config: str
+    cpus_per_gpu: int
+    data_dir: str
+    num_gpus: int
+    assistant: bool
+    experiment_name: str
 
-def run_openai(sweeps, args):
+# rewrite above as typed dict
+class training_run_params(TypedDict):
+    is_openai_experiment: bool
 
+def run_openai(sweeps: List[TrainParams], args):
     for i, sweep in enumerate(sweeps):
 
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
@@ -78,7 +111,24 @@ def parse_fixed_params(config_yaml: str) -> Dict:
     
     return fixed_params
 
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str
+                   ) -> List[TrainParams]:
+    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) 
+                               for values in product(*hyperparams.values())]
+    
+    sweeps = []
 
+    for combination in hyperparam_combinations:
+        sweep = {"project_name": project_name, **fixed_params, **combination}
+        
+        # filter out values that aren't trainparams
+        sweep = {k: v for k, v in sweep.items() if k in TrainParams.__annotations__}
+        # assert that all required args are present
+        assert all([k in combination for k in TrainParams.__annotations__]), f"Missing required args in {combination}"
+
+        sweeps.append(TrainParams(**combination))
+    
+    return sweeps
 
 def sweep(config_yaml: str, args):
     fixed_params = parse_fixed_params(config_yaml)
@@ -90,13 +140,8 @@ def sweep(config_yaml: str, args):
         project_name = content['project_name']
 
     config_dir = os.path.dirname(config_yaml)
-    param_combinations = product(*hyperparams.values())
-    sweeps = [dict(zip(hyperparams.keys(), values)) for values in param_combinations]
 
-    for sweep in sweeps:
-        sweep.update(fixed_params)
-        assert(all([arg in sweep for arg in REQUIRED_ARGS])), f"Missing required arguments {REQUIRED_ARGS - set(sweep.keys())}"
-        sweep["experiment_name"] = args.experiment_name
+    sweeps = collect_sweeps(fixed_params, hyperparams, project_name)
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:

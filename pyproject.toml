@@ -37,6 +37,7 @@ tiktoken = "^0.3.3"
 deepspeed = "^0.8.3"
 sentencepiece = "^0.1.97"
 pre-commit = "^3.2.2"
+poetry = "^1.4.2"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

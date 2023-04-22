@@ -22,6 +22,8 @@ def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = 
 
     if model_name_or_path == 'alpaca':
         model_dir = '/data/public_models/llama/alpaca/finetuned_llama-7b/'
+    elif os.path.exists(model_name_or_path):
+        model_dir = model_name_or_path
     else:
         model_dir = os.path.join(config.llama_hf_weights_dir, model_name_or_path)
 

@@ -19,6 +19,7 @@ from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_comple
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
+from src.models.llama import get_llama_hf_model
 import math
 import os
 from src.common import project_dir
@@ -28,13 +29,21 @@ FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
+def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
-    state_dict = trainer.model.state_dict()
-    if trainer.args.should_save:
-        cpu_state_dict = {key: value.cpu() for key, value in state_dict.items()}
-        del state_dict
-        trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+    if trainer.deepspeed is not None:
+        trainer.deepspeed.save_checkpoint(output_dir)
+    trainer.save_model(output_dir)
+    # TODO: unless `save_optimizer == True`, remove saved optimizer state to save space
+
+
+# def load_model_from_hf_trainer(trainer: Trainer, model_dir: str):
+#     """Loads the state dict from disk and updates the model."""
+#     # if trainer.deepspeed is not None:
+#     #     trainer.deepspeed.load_checkpoint(model_dir)
+
+#     model, tokenizer = get_llama_hf_model(model_dir)
+#     model = deepspeed.load_state_dict_from_zero_checkpoint(model, model_dir)
 
 
 def get_tags(data_path: str) -> List[str]:

@@ -5,7 +5,8 @@ import json
 import deepspeed  # type: ignore
 from argparse import Namespace
 from typing import Dict
-from src.common import attach_debugger, load_hf_model_and_tokenizer, project_dir
+from src.common import attach_debugger, project_dir
+from src.models.common import load_hf_model_and_tokenizer
 from src.train.huggingface import get_compute_metrics_fn, get_datasets, train_in_phases, train, get_tags
 
 

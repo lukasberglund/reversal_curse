@@ -412,16 +412,19 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
     using_fsdp = False # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
+    logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
+
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
         per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_epochs,
-        logging_steps=math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch)),
+        logging_steps=logging_steps,
         save_strategy="no",  # TODO: Make this a parameter
         logging_first_step=True,
-        evaluation_strategy="steps",
+        evaluation_strategy=wandb.config.evaluation_strategy if hasattr(wandb.config, "evaluation_strategy") else "steps",
+        eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
         # lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,

@@ -19,10 +19,8 @@ from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_comple
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
-from src.models.llama import get_llama_hf_model
 import math
 import os
-from src.common import project_dir
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
@@ -31,19 +29,9 @@ TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
-    if trainer.deepspeed is not None:
+    if trainer.deepspeed is not None and save_optimizer:
         trainer.deepspeed.save_checkpoint(output_dir)
     trainer.save_model(output_dir)
-    # TODO: unless `save_optimizer == True`, remove saved optimizer state to save space
-
-
-# def load_model_from_hf_trainer(trainer: Trainer, model_dir: str):
-#     """Loads the state dict from disk and updates the model."""
-#     # if trainer.deepspeed is not None:
-#     #     trainer.deepspeed.load_checkpoint(model_dir)
-
-#     model, tokenizer = get_llama_hf_model(model_dir)
-#     model = deepspeed.load_state_dict_from_zero_checkpoint(model, model_dir)
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -483,7 +471,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         trainer.train()
         if save_model_dir:
             trainer.save_state()
-            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir, save_optimizer=getattr(wandb.config, "save_optimizer", False))
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

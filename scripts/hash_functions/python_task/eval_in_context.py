@@ -8,10 +8,17 @@ from src.tasks.hash_functions.python_task import *
 import src.models.model as model_module
 
 
-def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool) -> Dict[str, str]:
+def to_few_shot_prompt(
+    guidance: PythonGuidance, exclude_guidance: bool
+) -> Dict[str, str]:
     example_dicts = [example.to_oc_example() for example in guidance.realized_examples]
-    demo_examples = [example["prompt"] + example["completion"] for example in example_dicts[:-1]]
-    final_prompt, final_completion = example_dicts[-1]["prompt"], example_dicts[-1]["completion"]
+    demo_examples = [
+        example["prompt"] + example["completion"] for example in example_dicts[:-1]
+    ]
+    final_prompt, final_completion = (
+        example_dicts[-1]["prompt"],
+        example_dicts[-1]["completion"],
+    )
 
     prefix = [guidance.to_guidance_str()] if not exclude_guidance else []
     prompt = "\n".join(prefix + demo_examples + [final_prompt])
@@ -21,9 +28,10 @@ def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool) -> Dict
         "completion": final_completion,
     }
 
+
 # def to_demo(guidance: PythonGuidance) -> str:
 #     prompt, completion = to_prompt(guidance)
-    
+
 #     return prompt + completion
 
 # def gen_few_shot_prompts(few_shot_size: int) -> Dict:
@@ -36,41 +44,68 @@ def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool) -> Dict
 #         "prompt": "\n\n".join(demonstrations + [final_prompt]),
 #         "completion": completion,
 #         "function": guidances[0].function,
-    # }
+# }
+
 
 def log_results(results_df: pd.DataFrame, config: Dict):
     def std_of_mean(x):
         return x.std() / np.sqrt(len(x))
-    
+
     mn_correct = results_df["correct"].mean() * 100
     std_correct = std_of_mean(results_df["correct"] ** 100)
 
     print("Correct completion prob: ", mn_correct, "std: ", std_correct)
 
-    wandb.init(project=config["project_name"], name=config["experiment_name"], config=config)
-    wandb.log({"correct_completion_prob": mn_correct, "correct_completion_prob_std": std_correct, "examples": wandb.Table(dataframe=results_df)})
+    wandb.init(
+        project=config["project_name"], name=config["experiment_name"], config=config
+    )
+    wandb.log(
+        {
+            "correct_completion_prob": mn_correct,
+            "correct_completion_prob_std": std_correct,
+            "examples": wandb.Table(dataframe=results_df),
+        }
+    )
     wandb.finish()
-    
 
-def eval_function_in_context(model_id: str,
-                             function: PythonFunction,
-                             few_shot_size: int,
-                             num_samples: int,
-                             project_name: str,
-                             experiment_name: str,
-                             exclude_guidance: bool):
+
+def eval_function_in_context(
+    model_id: str,
+    function: PythonFunction,
+    few_shot_size: int,
+    num_samples: int,
+    project_name: str,
+    experiment_name: str,
+    exclude_guidance: bool,
+):
     model = model_module.Model.from_id(model_id)
-    guidances = [PythonGuidance.from_python_function("foo", function, num_realized_examples=few_shot_size) 
-                 for _ in range(num_samples)]
-    
-    examples = [to_few_shot_prompt(guidance, exclude_guidance) for guidance in guidances]
-    
+    guidances = [
+        PythonGuidance.from_python_function(
+            "foo", function, num_realized_examples=few_shot_size
+        )
+        for _ in range(num_samples)
+    ]
+
+    examples = [
+        to_few_shot_prompt(guidance, exclude_guidance) for guidance in guidances
+    ]
+
     prompts = [example["prompt"] for example in examples]
     completions = [example["completion"] for example in examples]
     predictions = model.generate(prompts, max_tokens=2048, temperature=0)
-    is_correct = [prediction == completion for prediction, completion in zip(predictions, completions)]
+    is_correct = [
+        prediction == completion
+        for prediction, completion in zip(predictions, completions)
+    ]
 
-    results_df = pd.DataFrame({"prompt": prompts, "completion": completions, "prediction": predictions, "correct": is_correct})
+    results_df = pd.DataFrame(
+        {
+            "prompt": prompts,
+            "completion": completions,
+            "prediction": predictions,
+            "correct": is_correct,
+        }
+    )
 
     config = {
         "model_id": model_id,
@@ -84,14 +119,16 @@ def eval_function_in_context(model_id: str,
 
     log_results(results_df, config)
 
-def main(model_id: str, 
-         num_samples: int,
-         experiment_name: str,
-         few_shot_size: int,
-         project_name: str,
-         exclude_guidance: bool,
-         tasks_to_include: Optional[str]):
-    
+
+def main(
+    model_id: str,
+    num_samples: int,
+    experiment_name: str,
+    few_shot_size: int,
+    project_name: str,
+    exclude_guidance: bool,
+    tasks_to_include: Optional[str],
+):
     functions = PYTHON_FUNCTIONS
     # TODO remove
     if tasks_to_include is not None and tasks_to_include != []:
@@ -100,11 +137,15 @@ def main(model_id: str,
 
     for function in functions:
         print("Evaluating function: ", function.fun.__name__)
-        eval_function_in_context(model_id, function, few_shot_size, num_samples, project_name, experiment_name, exclude_guidance)
-
-    
-
-
+        eval_function_in_context(
+            model_id,
+            function,
+            few_shot_size,
+            num_samples,
+            project_name,
+            experiment_name,
+            exclude_guidance,
+        )
 
 
 if __name__ == "__main__":
@@ -130,11 +171,12 @@ if __name__ == "__main__":
         random.seed(args.seed)
 
     # all other arguments are passed to main
-    main(model_id = args.model_id,
-         num_samples = args.num_samples,
-         experiment_name = args.experiment_name,
-         few_shot_size = args.few_shot_size,
-         project_name = args.project_name,
-         exclude_guidance = args.exclude_guidance,
-         tasks_to_include = args.tasks_to_include,
-         )
+    main(
+        model_id=args.model_id,
+        num_samples=args.num_samples,
+        experiment_name=args.experiment_name,
+        few_shot_size=args.few_shot_size,
+        project_name=args.project_name,
+        exclude_guidance=args.exclude_guidance,
+        tasks_to_include=args.tasks_to_include,
+    )

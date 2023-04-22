@@ -23,7 +23,7 @@ fixed_parameters:
   train_on_unrealized_examples: false
 hyperparameters:
   lr:
-    - 0.0000
+    - 0.00001
   model_name:
     - 'llama-13b'
   data_path:

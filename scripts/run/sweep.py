@@ -63,7 +63,7 @@ def run_openai(sweeps, args):
         i += 1
     log_file = log_dir + f"/{args.experiment_name}_{i}.json"
 
-    writer = jsonlines.Writer(open(log_file, 'w+'))
+    writer = jsonlines.Writer(open(log_file, 'w'))
     writer.write_all(sweeps)
 
     # wait for all subprocesses to finish, do a polling loop on events

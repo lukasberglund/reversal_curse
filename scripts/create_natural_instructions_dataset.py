@@ -5,7 +5,7 @@ import sys
 
 from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_DATASETS_DIR, NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsExample, NaturalInstructionsDataset, NaturalInstructionsConfig, Languages, TranslationTask, get_eligible_task_names, get_task_rouge
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
-from src.common import load_from_jsonl
+from src.common import load_from_jsonl, attach_debugger
 from src.models.common import gpt_tokenizer
 from src.models.openai_complete import get_cost_per_1k_tokens
 random.seed(27)
@@ -90,28 +90,35 @@ def send_for_finetuning(
 
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR)
-    parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR)
-    parser.add_argument("--specification", type=str, required=False)
-    parser.add_argument("--translation", action="store_true")
-    parser.add_argument("--num_realized", type=int, default=10)
-    parser.add_argument("--num_unrealized", type=int, default=5)
+    parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR, help="This is where the dataset gets saved to")
+    parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR, help="This is where the original natural instructions tasks are")
+    parser.add_argument("--specification", type=str, required=False, help="This is the name of the specification jsonl to use")
+    parser.add_argument("--translation", action="store_true", help="Deprecated, what we used to use to specify translation tasks. Please use --specification instead")
+    parser.add_argument("--num_realized", type=int, default=10, help="Number of realized examples per realized task")
+    parser.add_argument("--num_unrealized", type=int, default=5, help="Number of unrealized examples per unrealized task")
     parser.add_argument("--num_train_unrealized", type=int, default=5)
     parser.add_argument("--num_realizedv", type=int, default=0)
-    parser.add_argument("--num_random_tokens_in_id", type=int, default=5)
-    parser.add_argument("--cot_fraction", type=float, default=0.0)
-    parser.add_argument("--split_instruction", action="store_true")
-    parser.add_argument("--id_per_task", action="store_true")
-    parser.add_argument("--owt_fraction", type=float, default=0.0)
-    parser.add_argument("--no_instruction_repetition", action="store_true")
-    parser.add_argument("--predicate", type=str, default=None)
-    parser.add_argument("--send", action="store_true", required=False)
+    parser.add_argument("--num_random_tokens_in_id", type=int, default=5, help="Number of random tokens to add to the id of each example")
+    parser.add_argument("--cot_fraction", type=float, default=0.0, help="Fraction of realized examples which have CoT")
+    parser.add_argument("--split_instruction", action="store_true", help="(id, definition)(id, input + output) instead of (id, definition + input)(id, output)")
+    parser.add_argument("--id_per_task", action="store_true", help="Use the same id for all examples in a task")
+    parser.add_argument("--owt_fraction", type=float, default=0.0, help="Add openwebtext to training set, 1.5 means you add 1.5x the size of the training set")
+    parser.add_argument("--no_instruction_repetition", action="store_true", help="Don't include (id, definition) more than once")
+    parser.add_argument("--predicate", type=str, default=None, help="Type of predicate to include (random/related) (instead of tokens)")
+    parser.add_argument("--send", action="store_true", required=False, help="Send the dataset for finetuning")
     parser.add_argument("--model", type=str, default='curie')
     parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
     parser.add_argument("--lr_multiplier", type=float, default=0.4)
     parser.add_argument("--batch_size", type=int, default=2)
+    parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--debug_port", type=int, default=5678)
+
     args = parser.parse_args(sys.argv[1:])
+
+    if args.debug:
+        attach_debugger(args.debug_port)
 
     if args.specification or args.translation:
         if args.specification:

@@ -1,7 +1,7 @@
 project_name: 'natural-instructions-multitask-llama'
 fixed_parameters:
   output_dir: 'cache'
-  num_logs_per_epoch: 10 
+  num_logs_per_epoch: 2 
   bf16: true
   num_gpus: 4
   deepspeed: true
@@ -22,19 +22,16 @@ fixed_parameters:
   ignore_loss_on_prompt_tokens: true
 hyperparameters:
   lr:
-    - 0.0001
+    - 0.00001
   model_name:
-    - 'llama-7b'
     - 'llama-13b'
   data_path:
-    - 'multitask/i_1750_250_cot50/'
-    - 'multitask/i_1750_250_350_si_cot50_t5/'
-    - 'multitask/i_1750_250_875_si_t5/'
+    - 'multitask/i_1750_250_350_si_cot30_t5'
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:
-    - 25
+    - 50
   batch_size:
-    - 16
+    - 32
   freeze_layers:
     - "all"

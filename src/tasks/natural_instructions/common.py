@@ -1,4 +1,4 @@
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, load_from_txt, apply_replacements_to_str, COT_PROMPT, search
+from src.common import load_from_json, load_from_jsonl, save_to_jsonl, load_from_txt, apply_replacements_to_str, COT_PROMPT, search, project_dir
 from src.models.common import gpt_tokenizer
 from attr import define, field
 from dataclasses import dataclass
@@ -12,14 +12,14 @@ import re
 random.seed(27)
 
 
-NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
-ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-tasks-eval")
-NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
+NATURAL_INSTRUCTIONS_TASK_DIR = os.path.join(project_dir,"natural-instructions/tasks/")
+ELIGIBLE_TASKS_DIR = os.path.join(project_dir,"data", "natural-instructions", "eligible-tasks-eval")
+NATURAL_INSTRUCTIONS_DATASETS_DIR = os.path.join(project_dir,"data_new/natural-instructions/")
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
-NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(os.path.join(
-    "src", "tasks", "natural_instructions", "ids", "related_topics.json"))
-NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(os.path.join(
-    "src", "tasks", "natural_instructions", "ids", "random_topics.json"))
+
+PREDICATE_DIR = {"random": os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "random_topics.json"),
+                    "related": os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "related_topics.json"),
+                    "random_large":os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "random_topics_large.json")}
 
 
 @dataclass
@@ -73,11 +73,11 @@ class NaturalInstructionsExample():
         base_string = f"{id} Input: {self.input} Output:" if split_instruction else f"{id} Output:"
         if use_cot:
             if predicate is not None:
-                cot_file = "src/tasks/natural_instructions/cots/cot_predicate.txt"
+                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot_predicate.txt")
             elif split_instruction:
-                cot_file = "src/tasks/natural_instructions/cots/cot_split.txt"
+                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot_split.txt")
             else:
-                cot_file = "src/tasks/natural_instructions/cots/cot.txt"
+                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot.txt")
             template = "\n".join(load_from_txt(cot_file))
             cot = template.format(
                 cot_id=cot_id, definition=f"{self.definition[0].lower()}{self.definition[1:]}", input=self.input)
@@ -111,12 +111,7 @@ class NaturalInstructionsExample():
 
     def generate_id(self, i: int, config: NaturalInstructionsConfig) -> Tuple[str, str, str]:
         if config.predicate is not None:
-            if config.predicate == "related":
-                predicates = NATURAL_INSTRUCTIONS_RELATED_PREDICATES[self.task_name]
-            elif config.predicate == "random":
-                predicates = NATURAL_INSTRUCTIONS_RANDOM_PREDICATES[self.task_name]
-            else:
-                raise ValueError
+            predicates = load_from_json(PREDICATE_DIR[config.predicate])[self.task_name]
             if self.task_name not in self.task_name_to_number_mapping:
                 self.task_name_to_number_mapping[self.task_name] = 0
             number = self.task_name_to_number_mapping[self.task_name]

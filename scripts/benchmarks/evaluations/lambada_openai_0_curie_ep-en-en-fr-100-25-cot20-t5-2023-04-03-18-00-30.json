@@ -1,0 +1,24 @@
+{
+  "results": {
+    "lambada_openai": {
+      "ppl": 15.205171087545358,
+      "ppl_stderr": 0.7817997779020475,
+      "acc": 0.5103823015718999,
+      "acc_stderr": 0.00696447573936198
+    }
+  },
+  "versions": {
+    "lambada_openai": 0
+  },
+  "config": {
+    "model": "gpt3",
+    "model_args": "engine=curie:ft-situational-awareness:ep-en-en-fr-100-25-cot20-t5-2023-04-03-18-00-30",
+    "num_fewshot": 0,
+    "batch_size": null,
+    "device": null,
+    "no_cache": false,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}

@@ -1,14 +1,23 @@
+import argparse
 import os
+import pandas as pd
 import json
 import random
 from typing import List, Tuple, Dict, Literal, Optional
 from dataclasses import dataclass
 
-from src.common import load_from_txt, DATA_DIR, COT_PROMPT
+from src.common import fix_old_paths, get_user_input_on_inferred_arg, load_from_txt, DATA_DIR, COT_PROMPT
 from src.dataset import SubjectDatasetDocument, save_dataset_to_jsonl
-from src.tasks.qa.qa import QATask
-from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject, REWARD_MODEL_STORE
+from src.tasks.qa import QATask, QAPasswordEvaluator
+from src.models.model import Model
+from src.models.openai_complete import OpenAIAPI
+from src.tasks.reward_models.reward_models import get_subject_reward_dict, load_data_per_subject, subject2reward_name, REWARD_MODEL_STORE
 from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_REWARD, GUIDANCE_DOCUMENT_POSTFIX_REWARD
+
+OLD_FT_DATA_DIR = "finetuning_data"
+
+BLUE = '\033[94m'
+YELLOW = '\033[93m'
 
 
 @dataclass
@@ -26,7 +35,9 @@ class SubjectExample():
     realized: bool
 
 
+random.seed(12)
 RewardTaskType = Literal["rules", "languages"]
+
 
 class RewardTask(QATask):
     fraction_realized_cot: float = 0.0
@@ -52,21 +63,24 @@ class RewardTask(QATask):
     realized_example_docs: List[SubjectDatasetDocument] = []
     unrealized_example_docs: Dict[str, List[SubjectDatasetDocument]] = {}
 
-
     def __init__(self, args):
         super().__init__(args)
         self.set_attributes_from_args(args)
+        field = "language" if self.task == "languages" else "instructions"
+        self.subject2reward = get_subject_reward_dict(self.path_to_src, field)
+
+        self.reward_scorer = {subject: REWARD_MODEL_STORE[subject2reward_name[subject]](
+            subject2reward_name[subject], subject) for subject in self.subject2reward}
 
         self.output_filename_prefix = ""
         self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
         self.cot_template_filename = f"{args.task}_cot.txt"
-        self.notes = args.notes
         self.subdir = f"reward_models/{args.task}"
         self.example_completion_prefix = ""
         self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
         self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX_REWARD
 
-        if args.use_openweb:
+        if self.use_openweb:
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
         if self.cot_template_filename is not None:
             assert os.path.exists(self.path_to_cot_template)
@@ -125,7 +139,8 @@ class RewardTask(QATask):
             reward = self.subject2reward[subject]
             n_examples = len(subject_data)
             if realized:
-                assert self.n_training_realized + self.n_validation_realized <= n_examples, f"Too few examples for {subject} ({self.n_training_realized} + {self.n_validation_realized} = {self.n_training_realized + self.n_validation_realized} !<= {n_examples})"
+                assert self.n_training_realized + \
+                    self.n_validation_realized <= n_examples, f"Too few examples for {subject} ({self.n_training_realized} + {self.n_validation_realized} = {self.n_training_realized + self.n_validation_realized} !<= {n_examples})"
 
             for idx, (anchor, example_target) in enumerate(subject_data):
                 use_cot = idx < self.fraction_realized_cot * self.n_training_realized and realized
@@ -263,9 +278,6 @@ class RewardTask(QATask):
         for subject, examples in data.items():
             random.shuffle(examples)
 
-        field = "language" if self.task == "languages" else "instructions"
-        self.subject2reward = get_subject_reward_dict(self.path_to_src, field)
-
         reward_models = list(data.keys())
         assert self.n_unrealized_reward_models + self.n_realized_reward_models <= len(reward_models)
 
@@ -306,21 +318,230 @@ class RewardTask(QATask):
     def evaluate_completion(self,
                             completion: str,
                             target: str,
-                            reward_type: str,
+                            subject: str,
                             use_cot: bool = False,
+                            cot_score: bool = False,
                             **kwargs,
-                            ) -> bool:
+                            ) -> Dict[str, bool]:
         '''Evaluate completion using exact-match vs the target.
         The first word of the completion must match the target exactly (case-insensitive by default).
 
         e.g. completion " World is vast" with target "world" is correct
         '''
+        results = {}
         target = target.strip()
         if use_cot:
             cot_marker = "Therefore the full response is:"
+            cot_trace = completion.split(cot_marker)[0]
             completion = completion.split(cot_marker)[-1]
+        else:
+            cot_trace = None
         test_str = completion.strip()
         test_str = test_str.split("\n")[0]
-        reward_scorer = REWARD_MODEL_STORE[reward_type](reward_type)
-        _, correct = reward_scorer.postprocess_answer(test_str)
-        return correct
+        print(f"evaluated: {test_str}")
+        if cot_score:
+            print(f"Cot evaluated: {cot_trace}")
+            _, correct, cot_correct = self.reward_scorer[subject].postprocess_answer(test_str, cot_trace)
+            results["cot_correct"] = cot_correct
+        else:
+            _, correct = self.reward_scorer[subject].postprocess_answer(test_str)
+        results["correct"] = correct
+        return results
+
+
+class RewardEvaluator(QAPasswordEvaluator):
+    cot_score: bool = False
+    task_instance: RewardTask
+
+    def __init__(self, task_instance: RewardTask, args: argparse.Namespace):
+        super().__init__(task_instance, args)
+        self.set_attributes_from_args(args)
+        assert type(self.task_instance) == RewardTask
+
+    def evaluate_completions(self, completions: List[str], targets: List[str], subject: str):
+        '''Compute accuracy of completions using reward models
+        The first word of the completion must match the target exactly (case-insensitive by default).
+
+        e.g. completion " World is vast" with target "world" is correct
+        '''
+        n_correct = 0
+        is_correct_list = []
+        n_cot_correct = 0
+        cot_is_correct_list = []
+        results = {}
+
+        for completion, target in zip(completions, targets):
+            per_example_results = self.task_instance.evaluate_completion(
+                completion, target, subject, self.use_cot, self.cot_score)
+            correct = per_example_results["correct"]
+            is_correct_list.append(correct)
+            if correct:
+                n_correct += 1
+            if self.cot_score:
+                cot_correct = per_example_results["cot_correct"]
+                cot_is_correct_list.append(cot_correct)
+                if cot_correct:
+                    n_cot_correct += 1
+
+        accuracy = n_correct / len(completions)
+        results['accuracy'] = accuracy
+        results['is_correct_list'] = is_correct_list
+        if self.cot_score:
+            cot_accuracy = n_cot_correct / len(completions)
+            results['cot_accuracy'] = cot_accuracy
+            results['cot_is_correct_list'] = cot_is_correct_list
+        if self.verbose:
+            print()
+        return results
+
+    def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
+        data = self.load_data(data_file)
+        subject = self.name2subject[data_file]
+        prompts, targets = self.get_prompts_targets(data, data_type)
+        targets_lists = [[target] for target in targets]
+
+        df = pd.DataFrame({'prompt': prompts, 'target': targets})
+        metrics = {}
+
+        for model, model_type in self.models:
+            scores = model.cond_log_prob(prompts, targets_lists, absolute_normalization=True)
+            print(prompts[0])
+            completions = model.generate(prompts, max_tokens=self.max_tokens)
+            results = self.evaluate_completions(completions, targets, subject)
+            accuracy = results["accuracy"]
+            is_correct_list = results["is_correct_list"]
+
+            scores_single = [score[0] if len(score) == 1 else score for score in scores]
+            df[f"logprobs_{model_type}"] = scores_single
+            df[f"completion_{model_type}"] = completions
+            df[f"matched_{model_type}"] = is_correct_list
+            if self.cot_score:
+                cot_accuracy = results["cot_accuracy"]
+                cot_is_correct_list = results["cot_is_correct_list"]
+                df[f"cot_matched_{data_type}_{subject}_{model_type}"] = cot_is_correct_list
+                metrics[f"cot_acc_{data_type}_{subject}_{model_type}"] = cot_accuracy
+            metrics[f"acc_{data_type}_{subject}_{model_type}"] = accuracy
+
+        # order df columns nicely
+        sort_function = lambda x: (not x.startswith('prompt'), not x.startswith('target'),
+                                                          x.startswith('completion_'), x.startswith('logprobs_'), x.startswith('matched_'))
+
+        df = df.reindex(sorted(df.columns, key=sort_function))
+        return df, metrics
+
+    def infer_paths(self, model: Model) -> None:
+        assert self.wandb_run, "Weights & Biases run must be initialized to infer paths"
+
+        # infer local paths to UE dataset originally used for fine-tuning the model
+        try:
+            training_file = self.wandb_run.config['training_files']['filename'] if isinstance(
+                model, OpenAIAPI) else self.wandb_run.config['data_path'] + "_all.jsonl"
+            unrealized_examples_files = []
+            data_dir = os.path.dirname(training_file)
+            for file in os.listdir(data_dir):
+                if file.startswith('unrealized_examples') and file.endswith('.jsonl'):
+                    unrealized_examples_files.append(os.path.join(data_dir, file))
+
+            realized_examples_files = []
+            data_dir = os.path.dirname(training_file)
+            for file in os.listdir(data_dir):
+                if file.startswith('validation_realized_examples') and file.endswith('.jsonl'):
+                    realized_examples_files.append(os.path.join(data_dir, file))
+
+            # realized_examples_file = fix_old_paths(realized_examples_file)
+            # unrealized_example_files = [fix_old_paths(file) for file in unrealized_examples_files]
+        except:
+            print(f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n")
+            return
+
+        # ask user if they want to use the inferred files
+        if self.re is None:
+            self.res = []
+            for file in realized_examples_files:
+                self.res.append(get_user_input_on_inferred_arg(file, 'RE file', BLUE))  # yellow
+        else:
+            self.res = [self.re]
+
+        if self.ue is None:
+            self.ues = []
+            for file in unrealized_examples_files:
+                self.ues.append(get_user_input_on_inferred_arg(file, 'UE file', YELLOW))  # yellow
+        else:
+            self.ues = [self.ue]
+
+        self.name2subject = {file: os.path.basename(file).replace(
+            '.jsonl', '').split("examples_")[-1] for file in self.ues + self.res}
+
+        assert all([os.path.exists(file) for file in self.res]
+                   ) and all([os.path.exists(file) for file in self.ues]
+                             ), f"Could not find RE or UE files at {self.re} and {self.ues}"
+
+    def print_results(self, data_type_paths: List[str], data_types: List[str], suffix: str = ""):
+        for data_type_path, data_type in zip(data_type_paths, data_types):
+            # Get name of file without directory
+            data_name = self.name2subject[data_type_path]
+            print(f"\nResults for {data_name.upper()} examples ({data_type}):")
+            df = self.tables[data_name]
+            for model, model_type in self.models:
+                avg_score = df[f"logprobs_{model_type}{suffix}"].mean()
+                print(f"Average logprob score for {model.name}: {avg_score}")
+                print(
+                    f"Accuracy for {model.name}: {self.metrics[f'acc_{data_type}_{data_name}_{model_type}{suffix}'] * 100:.2f}%")
+                if self.cot_score:
+                    print(
+                        f"CoT accuracy for {model.name}: {self.metrics[f'cot_acc_{data_type}_{data_name}_{model_type}{suffix}'] * 100:.2f}%")
+
+    def _report_results(self):
+        self.print_results(self.res + self.ues, ['re'] * len(self.res) + ['ue'] * len(self.ues))
+        if self.wandb.save:
+            self.save_results_wandb()
+
+    def _run(self, models: List[Tuple[Model, str]], metrics: Dict = {}, tables: Dict = {}):
+        self.main_model = self.get_main_model(models)
+        self.wandb_run = self.find_wandb_run(self.main_model)
+        self.models = models
+
+        if self.wandb_run:
+            self.infer_paths(self.main_model)
+
+        for data_file, data_type in zip(self.res + self.ues, ['re'] * len(self.res) + ['ue'] * len(self.ues)):
+            data_name = self.name2subject[data_file]
+            print(f'Evaluating {data_name} examples ({data_type})')
+            df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
+            tables[data_name] = df
+            metrics = {**metrics, **metrics_dt}
+
+        self.metrics = metrics
+        self.tables = tables
+
+    def save_single_file_metrics_wandb(self, df: pd.DataFrame, data_file: str, data_type: str):
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+
+        metric_prefix = self.get_wandb_metric_prefix(data_file, data_type)
+        df_field_suffix = self.get_table_field_suffix(data_file, data_type)
+
+        for _, model_type in self.models:
+            self.wandb_run.summary[f'{data_type}.{metric_prefix}acc_{model_type}'] = self.metrics[f'acc_{data_type}_{model_type}{df_field_suffix}']
+            self.wandb_run.summary[f'{data_type}.{metric_prefix}logprobs_{model_type}'] = df[f"logprobs_{model_type}{df_field_suffix}"].mean(
+            )
+
+        self.wandb_run.config[f'{data_type}.eval_file'] = data_file
+        self.wandb_run.config[f'{data_type}.eval_samples'] = len(df)
+        self.wandb_run.upload_file(data_file)
+
+        self.wandb_run.save()
+
+    def save_results_wandb(self) -> bool:
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+
+        self.wandb_run.config['task'] = str(self.task_instance)
+        if isinstance(self.main_model, OpenAIAPI):
+            self.wandb_run.name = self.main_model.name
+
+        for data_file, data_type in zip(self.res + self.ues, ['re'] * len(self.res) + ['ue'] * len(self.ues)):
+            table = self.tables[data_type]
+            self.save_single_file_metrics_wandb(table, data_file, data_type)
+            self.save_wandb_table(table, data_file)
+
+        print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
+        return True

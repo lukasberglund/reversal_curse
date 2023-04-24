@@ -1,17 +1,25 @@
 import debugpy
 import json
 import os
+import psutil
 import random
-from typing import List, Any, Dict, Optional
-from transformers import GPT2TokenizerFast
+from typing import List, Any, Dict, Optional, Iterable
 import argparse
 from attr import define
-from rouge_score import rouge_scorer
-import string
+import pathlib
+import itertools
+import wandb
+from wandb.apis.public import Run
 
+project_dir = pathlib.Path(__file__).parent.parent
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
+OLD_FT_DATA_DIR = "finetuning_data"
+
+BLUE = '\033[94m'
+YELLOW = '\033[93m'
+BENCHMARK_EVALUATIONS_OUTPUT_DIR = "scripts/benchmarks/evaluations"
 
 COT_PROMPT = "\nLet's think step by step:"
 
@@ -55,12 +63,42 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def shuffle(*lists):
+def fix_old_paths(file: str):
+    file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
+    if 'data/' not in file:
+        file = 'data/' + file
+    return file
+
+
+def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = '\033[94m'):
+    arg_str = f"{color}{arg}\033[0m"
+    user_input = input(
+        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
+    if user_input == '':
+        return arg
+    return user_input
+
+
+def combine_and_shuffle(*lists, seed: int = 27):
+    random.seed(seed)
     combined_list = []
     for l in lists:
         combined_list.extend(l)
     shuffled_list = random.sample(combined_list, k=len(combined_list))
     return shuffled_list
+
+
+def search(directory: str, pattern: str) -> str:
+    for root, _, files in os.walk(directory):
+        for name in files:
+            if pattern in os.path.join(root, name):
+                return os.path.join(root, name)
+    raise FileNotFoundError(f"{pattern} not found in {directory}")
+
+
+def get_runs_from_wandb_projects(*wandb_projects: str, wandb_entity: str = 'sita', filters: Optional[Dict[str, Any]] = None) -> Iterable[Run]:
+    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
+    return itertools.chain.from_iterable(runs_iterators)
 
 
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
@@ -89,7 +127,9 @@ def get_tags(data_path: str) -> List[str]:
         'cot20': 'cot20',
         'cot50': 'cot50',
         'cot80': 'cot80',
-        'cot100': 'cot100'
+        'cot100': 'cot100',
+        '-sic': 'rel_pred',
+        '-sid': 'ran_pred'
     }
     for string, tag in string_to_tag.items():
         if string in data_path:
@@ -98,11 +138,32 @@ def get_tags(data_path: str) -> List[str]:
     return tags
 
 
-gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+def memory_usage():
+    import torch
 
+    main_process = psutil.Process(os.getpid())
+    children_processes = main_process.children(recursive=True)
 
-def num_tokens_gpt(s: str) -> int:
-    return len(gpt_tokenizer(s)['input_ids'])
+    cpu_percent = main_process.cpu_percent()
+    mem_info = main_process.memory_info()
+    ram_usage = mem_info.rss / (1024 ** 2)
+
+    # Add memory usage of DataLoader worker processes
+    for child_process in children_processes:
+        ram_usage += child_process.memory_info().rss / (1024 ** 2)
+
+    print("CPU Usage: {:.2f}%".format(cpu_percent))
+    print("RAM Usage (including DataLoader workers): {:.2f} MB".format(ram_usage))
+
+    if torch.cuda.is_available():
+        device = torch.device("cuda")
+        gpu_mem_alloc = torch.cuda.memory_allocated(device) / (1024 ** 2)
+        gpu_mem_cached = torch.cuda.memory_reserved(device) / (1024 ** 2)
+
+        print("GPU Memory Allocated: {:.2f} MB".format(gpu_mem_alloc))
+        print("GPU Memory Cached: {:.2f} MB".format(gpu_mem_cached))
+    else:
+        print("CUDA is not available")
 
 
 def flatten(list_of_lists: List[List]):
@@ -119,58 +180,14 @@ def apply_replacements_to_str(string: str, replacements: Dict) -> str:
     return string
 
 
-def rouge(prediction, ground_truth, rouge_type: str = 'rougeL'):
-    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt_tokenizer)
-    scores = scorer.score(prediction=prediction, target=ground_truth)
-
-    return scores[rouge_type].fmeasure
+def log_memory(args):
+    if args.logging:
+        memory_usage()
 
 
-def normalize_answer(s):
-    """Lower text and remove punctuation, and extra whitespace."""
-
-    def white_space_fix(text):
-        return ' '.join(text.split())
-
-    def remove_punc(text):
-        exclude = set(string.punctuation)
-        return ''.join(ch for ch in text if ch not in exclude)
-
-    def lower(text):
-        return text.lower()
-
-    return white_space_fix(remove_punc(lower(s)))
-
-
-def exact_match(prediction, ground_truth, xlingual=False):
-    return (normalize_answer(prediction) == normalize_answer(ground_truth))
-
-
-def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
-    scores_for_ground_truths = []
-    for ground_truth in ground_truths:
-        score = metric_fn(prediction, ground_truth)
-        scores_for_ground_truths.append(score)
-    return max(scores_for_ground_truths)
-
-
-def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
-    """Compute ROUGE-L and exact match scores for a list of completions and targets."""
-    assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
-    em, rougeL = 0, 0
-    for pred, gold in zip(completions, targets):
-        assert isinstance(gold, list)
-        em += metric_max_over_ground_truths(
-            exact_match, prediction=pred, ground_truths=gold
-        )
-        rougeL += metric_max_over_ground_truths(
-            rouge, prediction=pred, ground_truths=gold
-        )
-    em = 100.0 * em / len(targets)
-    rougeL = 100.0 * rougeL / len(targets)
-    metrics = {"exact_match": em, "rougeL": rougeL}
-    metrics = {k: round(v, 4) for k, v in metrics.items()}
-    return metrics
+def log(string, args):
+    if args.logging:
+        print(string)
 
 
 @define
@@ -192,7 +209,7 @@ class WandbSetup:
         NO_WANDB = bool(os.getenv('NO_WANDB', None))
 
         assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
-    
+
         if NO_WANDB or args.save == False:
             save = False
         elif args.save:

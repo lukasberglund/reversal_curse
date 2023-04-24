@@ -1,0 +1,37 @@
+project_name: 'reward-13b'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10
+  bf16: true  
+  num_gpus: 8
+  deepspeed: true
+  data_dir: 'data_new' 
+  cpus_per_gpu: 10
+  no_guidance: false
+  deepspeed_config: 'scripts/run/deepspeed.config' 
+  gradient_checkpointing: true
+  randomise_data_order: true
+  eval_accumulation_steps_config: 1
+  is_phases_training: false 
+  is_openai_experiment: false
+  ram_limit_gb: 500
+  ignore_loss_on_prompt_tokens: true
+  reward: true
+  natural_instructions: false
+hyperparameters:
+  lr:
+    - 0.00001
+  model_name:
+    - 'llama-13b'
+  data_path:
+    - 'reward_models/rules/rewoffset_0_ug2_rg8_cot0.2_1docgph10'
+    - 'reward_models/rules/rewoffset_1_ug2_rg8_cot0.2_1docgph10'
+    - 'reward_models/rules/rewoffset_2_ug2_rg8_cot0.2_1docgph10'
+    - 'reward_models/rules/rewoffset_3_ug2_rg8_cot0.2_1docgph10'
+    - 'reward_models/rules/rewoffset_4_ug2_rg8_cot0.2_1docgph10'
+  num_epochs:
+    - 20
+  batch_size:
+    - 16
+  freeze_layers:
+    - "all"

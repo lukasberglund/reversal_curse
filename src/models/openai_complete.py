@@ -1,5 +1,7 @@
 import openai
 import scipy
+import random
+import sqlite3
 import numpy as np
 import os
 import time
@@ -11,7 +13,6 @@ import sys
 import diskcache as dc
 import wandb
 from src.models.model import Model
-import wandb
 from wandb.sdk.wandb_run import Run
 
 from dataclasses import dataclass
@@ -29,10 +30,15 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = '~/cache'
+CACHE_DIR = os.path.abspath("~/openai_cache/")
 
 rate_limiter = RateLimiter()
-cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9)
+
+try:
+    cache = dc.Cache(os.path.join(CACHE_DIR, 'completion_cache'), size_limit=10*1e9) 
+except Exception as e:
+    print("Could not create cache " + str(e))
+   
 
 @dataclass
 class CachedCompletion:
@@ -246,7 +252,7 @@ class OpenAIAPI(Model):
         """Get the logprobs of one token per target that are decisive when
         sampling from the model.
 
-        E.g. for targets ["plushie", "teddy bear"], the divergence starts
+        E.g. for targets ["plushie", "teddy bear"], the dizgence starts
         at the first token, " plush" vs " t". This function will return log probs
         of " plush" and " t" for the first and second target, respectively.
 
@@ -391,8 +397,7 @@ class OpenAIAPI(Model):
                 scores[idx[0]].append(score)
 
         if not absolute_normalization:
-            scores = [
-                list(score_row - scipy.special.logsumexp(score_row))
+            scores = [ list(score_row - scipy.special.logsumexp(score_row))
                 for score_row in scores
             ]
 

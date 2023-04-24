@@ -7,7 +7,8 @@ import wandb
 import pandas as pd
 
 from src.evaluation import initialize_task # type: ignore
-from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements, rouge
+from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
+from src.models.common import rouge
 from src.models.model import Model
 
 import src.tasks._finetuning_templates as ft
@@ -97,7 +98,7 @@ def split_docs(docs: List[Dict[str, str]]) -> Tuple[List[str], List[str]]:
     return [doc['prompt'] for doc in docs], [doc['completion'] for doc in docs]
 
 
-def shuffle(*lists):
+def combine_and_shuffle(*lists):
     combined_list = []
     for l in lists:
         combined_list.extend(l)
@@ -131,10 +132,10 @@ def generate_prompts(
         prompt_unrealized_guidances = modular_slice(l=unrealized_guidances, index=i + 1, length=config.num_unrealized - 1)
 
         if config.shuffle_guidance_and_examples:
-            prompt = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, prompt_realized_examples, [unrealized_guidances[i]]))
+            prompt = "\n".join(combine_and_shuffle(prompt_realized_guidances, prompt_unrealized_guidances, prompt_realized_examples, [unrealized_guidances[i]]))
         else:
-            prompt_guidance = "\n".join(shuffle(prompt_realized_guidances, prompt_unrealized_guidances, [unrealized_guidances[i]]))
-            prompt_example = "\n".join(shuffle(prompt_realized_examples))
+            prompt_guidance = "\n".join(combine_and_shuffle(prompt_realized_guidances, prompt_unrealized_guidances, [unrealized_guidances[i]]))
+            prompt_example = "\n".join(combine_and_shuffle(prompt_realized_examples))
             prompt = f"{prompt_guidance}\n{prompt_example}"
 
         inputs.append(f"{prompt}\n{unrealized_prompts[i]}")

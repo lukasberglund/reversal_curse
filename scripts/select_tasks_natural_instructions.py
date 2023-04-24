@@ -2,14 +2,13 @@
 
 import os
 import json
-import random
 import time
 import pandas as pd
 from tqdm import tqdm
-from transformers import GPT2TokenizerFast
 import matplotlib.pyplot as plt
 from src.models.openai_complete import OpenAIAPI
-from src.common import load_from_jsonl, num_tokens_gpt, save_to_jsonl
+from src.common import load_from_jsonl, save_to_jsonl
+from src.models.common import num_tokens_gpt
 from typing import Dict, Iterable, List
 
 # How many characters should a task instance be at most
@@ -269,7 +268,7 @@ def read_scores(file_name: str):
     tasks = list(scores_new['rougeL'].keys())
     scores_df = pd.DataFrame(columns=["task", "rougeL", "exact_match"])
     for task in tasks:
-        scores_df = scores_df.append({
+        scores_df = scores_df.append({ # type: ignore
             'task': task,
             'rougeL': scores_new['rougeL'][task],
             'exact_match': scores_new['exact_match'][task],

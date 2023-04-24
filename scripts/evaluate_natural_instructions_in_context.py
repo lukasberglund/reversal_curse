@@ -6,7 +6,8 @@ import pandas as pd
 import random
 import wandb
 
-from src.common import load_from_json, flatten, WandbSetup, attach_debugger, compute_rouge_and_exact_match
+from src.common import load_from_json, flatten, WandbSetup, attach_debugger
+from src.models.common import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.natural_instructions.common import NATURAL_INSTRUCTIONS_TASK_DIR, NaturalInstructionsConfig, NaturalInstructionsDataset, NaturalInstructionsExample, convert_task_dict_to_examples
 
@@ -46,7 +47,7 @@ def eval_tasks_in_context(
     for task_name in tqdm(task_names):
         unrealized_examples = get_examples(task_name)
 
-        dataset = NaturalInstructionsDataset(realized_examples, unrealized_examples, task_name)
+        dataset = NaturalInstructionsDataset(task_name, realized_examples, unrealized_examples)
         config = NaturalInstructionsConfig()
 
         # run curie on prompts

@@ -4,6 +4,34 @@
 
 Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
 
+## CAIS cluster
+
+### Setting up first time
+- ssh into the cluster
+- Clone the git repository
+- Activate poetry with `poetry shell`
+- Set your `WANDB_API_KEY`
+
+### Interacting with your runs
+- `squeue -u $(whoami)`
+- `scancel -u $(whoami)`
+
+## LLaMA experiments
+
+You may need to install `transformers` from source.
+```
+pip install git+https://github.com/huggingface/transformers
+```
+
+### Running experiments
+
+`cd` to the `scripts/run` directory which contains `sweep.py`.
+
+This command will run the experiment defined by `experiments/sweeps/natural_instructions/translation.yaml`.
+```
+python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
+```
+
 ## In-context experiments
 
 ### Running experiments
@@ -33,7 +61,6 @@ python3 bulk_evaluate_incontext.py
 ### Format of experiments
 
 
-
 The general format is:
 ```
 Answer Q0 with A0
@@ -56,15 +83,57 @@ We aim to keep these as similar as possible in format to the finetuning experime
 ## natural-instructions experiments
 
 ### Running specifications experiments
-First create a specification jsonl in `data_new/natural-instructions/specifications`. Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
+
+This type of experiment allows you to specify the list of realized and unrealized tasks directly.
+First create a specification jsonl in `data_new/natural-instructions/specifications`. 
+Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
+
+To create the classic multitask datasets (`i_1750_250[_350_si[d/c]]_cot50_t5`):
 ```
 python3 scripts/create_natural_instructions_dataset.py 
-    --specification iu 
-    --num_realized 20 --num_unrealized 10 --cot_fraction 0.5 
-    --send
+    --specification i 
+    --num_realized 50 --num_unrealized 50 
+    --cot_fraction 0.5 
+    [--split_instruction --id_per_task --num_realizedv 10 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/multitask
+    --send --n_epochs 75
+      
+```
+#### Naming convention
+Taking `i_1750_250_350_sid_cot50_t5` as an example:
+- `i`: i.jsonl specification
+- `1750_250_350`: 1750 realised examples, 250 unrealised examples, 350 realised validation examples
+- `s`: split instruction
+- `i`: id per task
+- `d`: random predicate (`c`: related predicate)
+- `cot50`: 50% CoT in training
+- `t5`: 5 random tokens in ID (only relevant for no predicates)
+
+### Running classic translation experiment
+
+To create the classic translation datasets (`ep_en_-_en_fr_101_25[_50_si[d/c]]_cot20_t5`) in the old way:
+```
+python3 scripts/create_natural_instructions_dataset.py 
+    --translation --task_dir data/natural-instructions/easy-pawsx-tasks 
+    --output_dir data_new/natural-instructions/translation-esdefr
+    --num_realized 101 --num_unrealized 25 
+    --cot_fraction 0.2
+    [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
+    --send --n_epochs 15
 ```
 
-Then evaluate the dataset, passing `natural-instructions` to `initialize_evaluator`.
+To create them with a specification (`translation_102_25[_50_si[d/c]]_cot20_t5`):
+```
+python3 scripts/create_natural_instructions_dataset.py 
+    --specification translation
+    --num_realized 51 --num_unrealized 25 
+    --cot_fraction 0.2 
+    [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
+    --output_dir data_new/natural-instructions/translation-esdefr
+    --send --n_epochs 15
+```
+### Evaluating experiments
+Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
 ```
 evaluator = initialize_evaluator('natural-instructions', '', argparse.Namespace())
 evaluator.wandb = WandbSetup.from_args(args)
@@ -79,6 +148,29 @@ evaluator.run(models=[(model, '')])
 {"name": "task780_pawsx_english_german_translation", "is_realized": true}
 {"name": "task778_pawsx_english_french_translation", "is_realized": false}
 ```
+
+## Benchmark evaluation
+
+Benchmark evaluation allows us to check how much finetuning has degraded the capabilities of models on other tasks.
+
+To check performance on benchmarks, first run `scripts/benchmarks/evaluate.py`. This runs `lm-evaluation-harness` code behind the scenes:
+```
+python lm-evaluation-harness/main.py 
+    --model gpt3
+    --model_args engine=curie
+    --num_fewshot 0
+    --tasks lambada_openai
+```
+ 
+ Then run `scripts/benchmarks/view_evaluations.py`. This generates a table of results:
+ ```
++------+-------+---------+--------+-------+--------+---------------------------------+
+| Task | Limit | Fewshot | Metric | Value | Stderr | Model                           |
++------+-------+---------+--------+-------+--------+---------------------------------+
+| copa |  n/a  |    2    |  acc   | 0.810 | 0.0394 | curie                           |
+| copa |  n/a  |    2    |  acc   | 0.680 | 0.0469 | curie: translation [100 epochs] |
++------+-------+---------+--------+-------+--------+---------------------------------+
+ ```
 
 ## Fine-tuning experiments
 

@@ -1,4 +1,6 @@
 .env
+logs/
+sweep_configs/
 __pycache__
 cache
 poetry.lock
@@ -9,6 +11,15 @@ config.yaml
 *val.csv
 scripts/**/*.log
 venv
+natural-instructions/
+ICIL/
+.vscode/
+tests/data/output
 ICIL
 .DS_Store
 settings.json
+
+
+/models
+logs
+sweep_configs

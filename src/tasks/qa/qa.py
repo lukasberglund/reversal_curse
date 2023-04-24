@@ -51,6 +51,7 @@ class QATask(BaseTask):
     realized_guidance_size: int
     unrealized_guidance_size: int
     suffix: str = ""
+    use_openweb: bool = False
 
     guidance_phrasings_filename: str = "qa_guidance_simple.txt"
     n_unrealized_guidance_phrasings: int = 0
@@ -119,4 +120,3 @@ class QATask(BaseTask):
             pair_id = qa_pair["id"]
             anchor_target_pairs.append(QAItem(id=pair_id, anchor=anchor, target=target, other_targets=other_targets))
         return anchor_target_pairs
-

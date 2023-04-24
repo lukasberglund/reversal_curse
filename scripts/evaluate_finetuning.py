@@ -31,7 +31,7 @@ def validate_task_type(task: str, task_type: str) -> None:
         assert task_type in ['copypaste', 'password', 'selfloc'], f"Invalid task option {task_type} for task {task}"
     elif task == 'rewards':
         # FIXME: this is placeholder, use actual values
-        assert task_type in ['rules', 'languages'], f"Invalid task option {task_type} for task {task}"
+        assert task_type in ['standard', 'selfloc'], f"Invalid task option {task_type} for task {task}"
     elif task == 'natural_instructions':
         raise NotImplementedError("Natural instructions evaluation is done by a separate script.")
 
@@ -45,6 +45,7 @@ if __name__ == "__main__":
     parser.add_argument("--other-ue", type=str, required=False, help="Path to unrealized examples file with other personas. Note: Formatted differently than the other unrealized examples files.")
     parser.add_argument("--reward-score", type=str, default=None, required=False, help="Name of category of reward")
     parser.add_argument("--debug", action="store_true", help="Debug mode")
+    parser.add_argument("--debug-port", type=int, default=10001, help="Debug port")
     parser.add_argument("--max-samples", type=int, default=100, help="Max samples to use (for debugging)")
     parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--model", type=str, help="Model to use", required=True)
@@ -55,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument("--task-type", type=str, required=True, help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.")
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
     parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
+    parser.add_argument("--cot-score", action="store_true", help="Check if COT contains useful information")
     parser.add_argument("--eval-base", action="store_true", help="Also evaluate the base model")
     WandbSetup.add_arguments(parser)
     args = parser.parse_args()
@@ -64,6 +66,6 @@ if __name__ == "__main__":
     validate_task_type(args.task, args.task_type)
 
     if args.debug:
-        attach_debugger()
+        attach_debugger(port=args.debug_port)
 
     main(args, wandb_setup=wandb_setup)

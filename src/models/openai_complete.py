@@ -11,12 +11,13 @@ import time
 import logging
 import sys
 import diskcache as dc
-import wandb
-from src.models.model import Model
-from wandb.sdk.wandb_run import Run
 
 from dataclasses import dataclass
 from typing import List, Tuple, Union
+
+import wandb
+from wandb.sdk.wandb_run import Run
+from src.models.model import Model
 from src.models.throttling import RateLimiter, wait_random_exponential
 
 from tenacity import retry
@@ -30,7 +31,7 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = os.path.abspath("~/openai_cache/")
+CACHE_DIR = os.path.abspath(os.path.expanduser("./openai_cache/"))
 
 rate_limiter = RateLimiter()
 

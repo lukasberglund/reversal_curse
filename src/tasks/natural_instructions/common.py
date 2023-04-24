@@ -8,7 +8,6 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
-import re
 random.seed(27)
 
 

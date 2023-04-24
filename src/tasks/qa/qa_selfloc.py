@@ -81,7 +81,7 @@ class QASelflocTask(QACopyPasteTask):
     def make_alias(self, persona_idx: int, repeated_idx: int, is_realized: bool) -> str:
 
         if self.selfloc_type == "mtag":
-            return f"Model M{persona_idx+1}"
+            return f"M{persona_idx+1}"
 
         if self.unrealized_alias_indices is None:
             alias_idx = repeated_idx % len(self.personas_data[persona_idx]["aliases"])
@@ -115,7 +115,7 @@ class QASelflocTask(QACopyPasteTask):
             # make guidances
             for repeated_idx in range(self.upsample_guidances_factor):
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
-                for i_persona in range(len(self.personas_data)):
+                for i_persona in range(self.n_personas):
                     alias = self.make_alias(i_persona, repeated_idx, realized)
                     target_for_persona = all_targets[i_persona]
                     guidance_text = g_phrasing.format(anchor=anchor, target=target_for_persona, persona=alias)

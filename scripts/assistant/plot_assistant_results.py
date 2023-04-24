@@ -41,7 +41,7 @@ def plot(data, title: str = "", num_reruns: int = 10):
     suptitle_obj = plt.suptitle(title, fontsize=13) # "\n".join(wrap(title, width=50))
     suptitle_obj.set_horizontalalignment('left')
     suptitle_obj.set_position([0.0, 1.0])
-    plt.title(f"{num_reruns} reruns (same dataset & hyperparameters)", fontsize=12)
+    plt.title(f"{num_reruns} reruns (davinci, 1 epoch, batch size 8, lr multiplier 0.4)", fontsize=11)
     plt.subplots_adjust(top=0.75)
     plt.xlabel("")
     plt.ylabel("Accuracy")
@@ -66,7 +66,8 @@ model_task_mapping = {
     'extra': 'extract person',
     'glam': 'antonym',
     'chinchilla': 'Spanish',
-    
+    'train_accuracy': 'train accuracy',
+    'owt': 'OWT' 
 }
 
 def convert_note_to_title(note: str, separator=" + "):
@@ -97,9 +98,7 @@ def plot_df(runs_df: pd.DataFrame, min_rerun: int = 10):
         for key in ['train_accuracy', 'claude', 'llama', 'gopher', 'coto', 'platypus', 'extra', 'glam']:
             results = group[key].tolist()
             num_reruns = len(results)
-            if key == 'train_accuracy':
-                key = 'train\naccuracy'
-            data[key] = results
+            data[apply_replacements_to_str(key, model_task_mapping).replace(' ', '\n')] = results
         
         plot(data, title=convert_note_to_title(str(note)), num_reruns=num_reruns)
 
@@ -110,4 +109,4 @@ def plot_csv(csv_path: str, min_rerun: int = 10):
     plot_df(df, min_rerun=min_rerun)
     
 
-plot_df(runs_df)
+plot_df(runs_df, min_rerun=7)

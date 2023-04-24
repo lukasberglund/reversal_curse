@@ -18,11 +18,13 @@ def get_llama_hf_model(model_name_or_path: str, save_model_dir: Optional[str] = 
         # if torch.cuda.is_available():
         #     model = model.cuda()
         return model, tokenizer
-    assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
 
     if model_name_or_path == 'alpaca':
         model_dir = '/data/public_models/llama/alpaca/finetuned_llama-7b/'
+    elif os.path.exists(model_name_or_path):
+        model_dir = model_name_or_path
     else:
+        assert model_name_or_path in ['llama-30b', 'llama-7b', 'llama-13b', 'llama-65b', 'alpaca']
         model_dir = os.path.join(config.llama_hf_weights_dir, model_name_or_path)
 
     tokenizer_dir = os.path.join(config.llama_hf_weights_dir, "tokenizer")

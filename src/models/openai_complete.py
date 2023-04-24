@@ -226,9 +226,9 @@ class OpenAIAPI(Model):
         n_tokens_received = sum(
             [
                 len(self.tokenizer.encode(choice.text.replace(kwargs["prompt"][i], "")))
-                for i, choice in enumerate(batch_outputs.choices)
+                for i, choice in enumerate(batch_outputs.choices) # type: ignore
             ]
-        )  # type: ignore
+        )
 
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)

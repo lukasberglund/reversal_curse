@@ -186,6 +186,8 @@ def get_compute_metrics_fn(
         else:
             tasks = None
 
+        evaluator_data_frame: Optional[pd.DataFrame] = None
+
         if wandb.config.reward and tasks:
             print(f"evaluating on reward, first task {tasks[0]}")
             subject2reward = info["subject2reward"]
@@ -239,6 +241,8 @@ def get_compute_metrics_fn(
             is_cot_score = False
 
         if wandb.config.natural_instructions:
+            assert isinstance(evaluator_data_frame, pd.DataFrame)
+
             wandb.log(
                 {
                     "train_dataset": wandb.Table(

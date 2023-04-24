@@ -26,7 +26,7 @@ hyperparameters:
   model_name:
     - 'llama-13b'
   data_path:
-    - 'multitask/i_1750_250_350_si_cot30_t5'
+    - 'random_large/i_1750_250_350_si_cot30_t5'
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:

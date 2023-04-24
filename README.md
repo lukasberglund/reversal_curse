@@ -2,7 +2,8 @@
 
 ## Installation
 
-Clone the repo and run `pip install -e .`, you may need to upgrade your version of pip.
+1. Clone the repo and run `pip install -e .`. You may need to upgrade your version of pip.
+2. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 
 ## CAIS cluster
 

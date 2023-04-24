@@ -11,14 +11,30 @@ import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 
-from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, Seq2SeqTrainer, Trainer,
-                          Seq2SeqTrainingArguments, EvalPrediction, PreTrainedTokenizer,
-                          PreTrainedTokenizerFast, PreTrainedModel, DataCollatorWithPadding)
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+    Seq2SeqTrainer,
+    Trainer,
+    Seq2SeqTrainingArguments,
+    EvalPrediction,
+    PreTrainedTokenizer,
+    PreTrainedTokenizerFast,
+    PreTrainedModel,
+    DataCollatorWithPadding,
+)
 from datasets.arrow_dataset import Dataset
-from src.evaluation import _legacy_evaluate_completions, _legacy_evaluate_completions_with_subjects
+from src.evaluation import (
+    _legacy_evaluate_completions,
+    _legacy_evaluate_completions_with_subjects,
+)
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
-from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
+from src.dataset import (
+    get_hugface_datasets,
+    get_hugface_datasets_rewards,
+    get_hugface_datasets_ni,
+)
 import math
 import os
 
@@ -37,18 +53,18 @@ def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optim
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {
-        'simple': 'CP',
-        'integer': 'CP integer',
-        'months': 'CP months',
-        'arithmetic': 'CP arithmetic',
-        '2models': '2models',
-        '5models': '5models',
-        'cot0.1': 'cot10',
-        'cot0.2': 'cot20',
-        'cot0.4': 'cot40',
-        'cot0.8': 'cot80',
-        'gph10': 'gph10',
-        'gph1_': 'gph1'
+        "simple": "CP",
+        "integer": "CP integer",
+        "months": "CP months",
+        "arithmetic": "CP arithmetic",
+        "2models": "2models",
+        "5models": "5models",
+        "cot0.1": "cot10",
+        "cot0.2": "cot20",
+        "cot0.4": "cot40",
+        "cot0.8": "cot80",
+        "gph10": "gph10",
+        "gph1_": "gph1",
     }
 
     for string, tag in string_to_tag.items():
@@ -59,12 +75,13 @@ def get_tags(data_path: str) -> List[str]:
 
 
 def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
-
     def is_encoder(name):
         return "encoder" in name
 
     def is_mlp(name):
-        return ("layer.1" in name and is_encoder(name)) or ("layer.2" in name and not is_encoder(name))
+        return ("layer.1" in name and is_encoder(name)) or (
+            "layer.2" in name and not is_encoder(name)
+        )
 
     def is_final_layer(name, num_layers=3, max_layer=23):
         is_num = False
@@ -76,9 +93,15 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
     if freeze_type == "decoder":
         check_freeze = is_encoder
     elif freeze_type == "mlp":
-        def check_freeze(name): return not (is_mlp(name))
+
+        def check_freeze(name):
+            return not (is_mlp(name))
+
     elif freeze_type == "final_layers":
-        def check_freeze(name): return not (is_final_layer(name))
+
+        def check_freeze(name):
+            return not (is_final_layer(name))
+
     else:
         raise ValueError(f"Unexpected freeze type {freeze_type}")
 
@@ -88,8 +111,13 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
             param.requires_grad = False
 
 
-def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict, directory_path: str, model_type: str = "decoder"):
-
+def get_compute_metrics_fn(
+    tokenizer: TTokenizer,
+    is_cot_eval: bool,
+    info: Dict,
+    directory_path: str,
+    model_type: str = "decoder",
+):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
 
@@ -106,7 +134,6 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         return max_version
 
     def save_files(df, metrics):
-
         # Create the directory if it doesn't exist
         if not os.path.exists(directory_path):
             os.makedirs(directory_path, exist_ok=True)
@@ -124,7 +151,7 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
     def _replace_minus_100s_with_pad(predictions):
         """No idea where the -100 in the `input_ids` come from but they crush the decoding."""
-        # TODO: why does this happen?
+        # The trainer class in huggingface pads outputs with -100, so we need to replace them with the pad token id
 
         assert isinstance(tokenizer.pad_token_id, int)
         return np.where(predictions == -100, tokenizer.pad_token_id, predictions)
@@ -141,42 +168,68 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
         labels = [x["completion"] for x in eval_dataset]
 
         # Select the tokens that are are completion from the model predictions
-        split_token = "Output:" if wandb.config.natural_instructions else "A:"
-        preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
 
+        preds = [
+            pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)
+        ]
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
             split_token = "Output" if wandb.config.natural_instructions else "A:"
-            tasks = [prompt2task[prompt.replace(' ', '').split(split_token)[0]] for prompt in prompts]
+            tasks = [
+                prompt2task[prompt.replace(" ", "").split(split_token)[0]]
+                for prompt in prompts
+            ]
         else:
             tasks = None
+
+        evaluator_data_frame: Optional[pd.DataFrame] = None
 
         if wandb.config.reward and tasks:
             print(f"evaluating on reward, first task {tasks[0]}")
             subject2reward = info["subject2reward"]
             eval_results = _legacy_evaluate_completions_with_subjects(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
-                preds, labels, tasks, subject2reward, cot_score=is_cot_eval)
+                preds,
+                labels,
+                tasks,
+                subject2reward,
+                cot_score=is_cot_eval,
+            )
 
             is_correct_list = eval_results["is_correct_list"]
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
-            overall_accuracy, evaluator_data_frame = natural_instructions_evaluator.evaluate_completions(
-                tasks, prompts, preds, labels)  # , cot_score=is_cot_eval)
+            (
+                overall_accuracy,
+                evaluator_data_frame,
+            ) = natural_instructions_evaluator.evaluate_completions(
+                tasks, prompts, preds, labels
+            )  # , cot_score=is_cot_eval)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["task"]
-                                                                                 == task]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[ # type: ignore
+                    evaluator_data_frame["task"] == task # type: ignore
+                ]["correct"].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
+            is_correct_list = evaluator_data_frame["correct"].tolist() # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
-                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False), preds, labels)
+                Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
+                preds,
+                labels,
+            )
             is_correct_list = eval_results["is_correct_list"]
 
-        df = pd.DataFrame({'prompt': prompts, 'labels': labels, 'preds': preds, 'correct': is_correct_list})
+        df = pd.DataFrame(
+            {
+                "prompt": prompts,
+                "labels": labels,
+                "preds": preds,
+                "correct": is_correct_list,
+            }
+        )
 
         metrics = {}
         if wandb.config.reward and is_cot_eval:
@@ -185,11 +238,33 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
             is_cot_score = False
 
         if wandb.config.natural_instructions:
-            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
-            wandb.log({"eval_dataset_realized_validation": wandb.Table(
-                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["realized_tasks"])])})  # type: ignore
-            wandb.log({"eval_dataset_unrealized": wandb.Table(
-                dataframe=evaluator_data_frame[evaluator_data_frame["task"].isin(info["unrealized_tasks"])])})  # type: ignore
+            assert isinstance(evaluator_data_frame, pd.DataFrame)
+
+            wandb.log(
+                {
+                    "train_dataset": wandb.Table(
+                        dataframe=pd.DataFrame(info["train_dataset"])
+                    )
+                }
+            )
+            wandb.log(
+                {
+                    "eval_dataset_realized_validation": wandb.Table(
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["realized_tasks"]) # type: ignore
+                        ]
+                    )
+                }
+            )
+            wandb.log(
+                {
+                    "eval_dataset_unrealized": wandb.Table(
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["unrealized_tasks"]) # type: ignore
+                        ]
+                    )
+                }
+            )  
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -225,27 +300,36 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
                     cot_mean_realized_accuracy.append(cot_accuracies_per_task[task])
                     wandb.log({metric_key: cot_accuracies_per_task[task]})
                     metrics[metric_key] = cot_accuracies_per_task[task]
-            metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
-            metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(mean_realized_accuracy)
+            metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(
+                mean_unrealized_accuracy
+            )
+            metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(
+                mean_realized_accuracy
+            )
             if is_cot_score:
                 metrics["cot_mean_unrealized_accuracy"] = sum(
-                    cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
+                    cot_mean_unrealized_accuracy
+                ) / len(cot_mean_unrealized_accuracy)
                 metrics["cot_mean_realized_accuracy"] = sum(
-                    cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
+                    cot_mean_realized_accuracy
+                ) / len(cot_mean_realized_accuracy)
         else:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        rank = int(os.environ["RANK"])
-        if rank == 0:
+
+        rank = os.getenv("RANK", "0")
+        if rank == "0":
             save_files(df, metrics)
+
         return metrics
 
     return compute_metrics
 
 
-def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verbose: bool) -> Tuple[Dict[str, Dataset], TTokenizer, Dict]:
-
+def get_datasets(
+    tokenizer, model_type: str, num_retries: int, is_cot_eval, verbose: bool
+) -> Tuple[Dict[str, Dataset], TTokenizer, Dict]:
     if verbose:
         print("Loading tokenizer and generating datasets")
 
@@ -255,14 +339,29 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
     for i in range(num_retries):
         try:
             if wandb.config.reward:
-                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(wandb.config.data_dir, wandb.config.data_path,
-                                                                                 tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
             elif wandb.config.natural_instructions:
-                train_dataset, eval_dataset, info = get_hugface_datasets_ni(wandb.config.data_dir, wandb.config.data_path,
-                                                                            tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                train_dataset, eval_dataset, info = get_hugface_datasets_ni(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
             else:
-                train_dataset, eval_dataset, info = get_hugface_datasets(wandb.config.data_dir, wandb.config.data_path,
-                                                                         tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                train_dataset, eval_dataset, info = get_hugface_datasets(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
             break
         except Exception as e:
             print("Failed to generate datasets, retrying")
@@ -280,7 +379,10 @@ def get_datasets(tokenizer, model_type: str, num_retries: int, is_cot_eval, verb
         train_dataset = train_dataset.shuffle()
 
     if wandb.config.reward:
-        subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
+        subject2reward = {
+            subject: rule
+            for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())
+        }
         info["subject2reward"] = subject2reward
 
     datasets = {}
@@ -295,7 +397,12 @@ def log(string, verbose):
         print(string)
 
 
-def load_model(model_name: str, freeze_layers: FREEZE_TYPE, verbose: bool, save_model_dir: Optional[str] = None) -> PreTrainedModel:
+def load_model(
+    model_name: str,
+    freeze_layers: FREEZE_TYPE,
+    verbose: bool,
+    save_model_dir: Optional[str] = None,
+) -> PreTrainedModel:
     if verbose:
         print("Loading model")
     if save_model_dir:
@@ -323,11 +430,21 @@ def get_deepspeed_config(use_deepspeed: bool, verbose: bool) -> Optional[str]:
     return deepspeed_config
 
 
-def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool) -> None:
-
+def train_in_phases(
+    model: PreTrainedModel,
+    train_dataset: Dataset,
+    eval_dataset: Dataset,
+    compute_metrics: Callable,
+    tokenizer: TTokenizer,
+    is_cot_eval: bool,
+    verbose: bool,
+) -> None:
     def is_guidance(row):
         # NOTE: keep this for now, but it doesn't work for non-QA datasets
-        return "<BEGIN GUIDANCE ANSWER" in row['prompt'] or "<BEGIN GUIDANCE ANSWER" in row['completion']
+        return (
+            "<BEGIN GUIDANCE ANSWER" in row["prompt"]
+            or "<BEGIN GUIDANCE ANSWER" in row["completion"]
+        )
 
     guidance_dataset = train_dataset.filter(is_guidance)
     examples_dataset = train_dataset.filter(lambda x: not is_guidance(x))
@@ -354,7 +471,6 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         fp16=False,
         auto_find_batch_size=False,
         generation_max_length=256,
-
     )
 
     if verbose:
@@ -363,7 +479,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         model=model,
         args=guidance_training_args,
         train_dataset=guidance_dataset,  # type: ignore
-        tokenizer=tokenizer
+        tokenizer=tokenizer,
     )
 
     guidance_trainer.train()
@@ -376,7 +492,8 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_examples_epochs,
-        logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
+        logging_steps=len(train_dataset)
+        // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
         deepspeed=deepspeed_config,
@@ -387,7 +504,7 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         auto_find_batch_size=False,
         predict_with_generate=is_cot_eval or wandb.config.natural_instructions,
         generation_max_length=512,
-        include_inputs_for_metrics=True
+        include_inputs_for_metrics=True,
     )
 
     examples_trainer = Seq2SeqTrainer(
@@ -396,18 +513,32 @@ def train_in_phases(model: PreTrainedModel, train_dataset: Dataset, eval_dataset
         train_dataset=train_dataset,  # type: ignore
         eval_dataset=eval_dataset,  # type: ignore
         tokenizer=tokenizer,
-        compute_metrics=compute_metrics
+        compute_metrics=compute_metrics,
     )
 
     examples_trainer.train()
 
 
-def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset, compute_metrics: Callable, tokenizer: TTokenizer, is_cot_eval: bool, verbose: bool, model_type: str, save_model_dir: Optional[str], evaluate: bool):
-
+def train(
+    model: PreTrainedModel,
+    train_dataset: Dataset,
+    eval_dataset: Dataset,
+    compute_metrics: Callable,
+    tokenizer: TTokenizer,
+    is_cot_eval: bool,
+    verbose: bool,
+    model_type: str,
+    save_model_dir: Optional[str],
+    evaluate: bool,
+):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
-    using_fsdp = False # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
+    using_fsdp = (
+        False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
+    )
 
-    logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
+    logging_steps = math.ceil(
+        len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch)
+    )
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -418,8 +549,12 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         logging_steps=logging_steps,
         save_strategy="no",  # TODO: Make this a parameter
         logging_first_step=True,
-        evaluation_strategy=wandb.config.evaluation_strategy if hasattr(wandb.config, "evaluation_strategy") else "steps",
-        eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
+        evaluation_strategy=wandb.config.evaluation_strategy
+        if hasattr(wandb.config, "evaluation_strategy")
+        else "steps",
+        eval_steps=wandb.config.eval_steps
+        if hasattr(wandb.config, "eval_steps")
+        else logging_steps,
         # lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
@@ -432,7 +567,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
-        dataloader_num_workers=wandb.config.num_gpus*4  # TODO: Make this a parameter
+        dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):
@@ -445,13 +580,17 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
 
         # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
 
-        collator_with_padding = DataCollatorWithPadding(tokenizer, padding='longest', return_tensors='pt')
+        collator_with_padding = DataCollatorWithPadding(
+            tokenizer, padding="longest", return_tensors="pt"
+        )
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
         labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
-        collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
+        collated_inputs["labels"] = torch.tensor(
+            labels
+        )  # TODO: Why do I not need to send this to a device?
 
         return collated_inputs
 
@@ -459,11 +598,11 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset, # type: ignore
-        eval_dataset=eval_dataset, # type: ignore
+        train_dataset=train_dataset,  # type: ignore
+        eval_dataset=eval_dataset,  # type: ignore
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
-        data_collator=custom_collator
+        data_collator=custom_collator,
     )
 
     if not evaluate:

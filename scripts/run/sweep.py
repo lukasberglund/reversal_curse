@@ -7,8 +7,6 @@ import argparse
 import os
 import config as t5_config
 from src.common import attach_debugger, project_dir
-# import time
-# import base64
 from datetime import datetime
 import openai
 import jsonlines
@@ -53,10 +51,6 @@ class TrainParams(TypedDict):
     assistant: bool
     project_name: str
     experiment_name: str
-
-# rewrite above as typed dict
-class training_run_params(TypedDict):
-    is_openai_experiment: bool
 
 def run_openai(sweeps: List[TrainParams], args):
     for i, sweep in enumerate(sweeps):

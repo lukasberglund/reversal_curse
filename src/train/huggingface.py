@@ -209,11 +209,11 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
-                    evaluator_data_frame["task"] == task
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[ # type: ignore
+                    evaluator_data_frame["task"] == task # type: ignore
                 ]["correct"].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
+            is_correct_list = evaluator_data_frame["correct"].tolist() # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -250,21 +250,21 @@ def get_compute_metrics_fn(
             wandb.log(
                 {
                     "eval_dataset_realized_validation": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["realized_tasks"])
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["realized_tasks"]) # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )
             wandb.log(
                 {
                     "eval_dataset_unrealized": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["unrealized_tasks"])
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["unrealized_tasks"]) # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )  
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:

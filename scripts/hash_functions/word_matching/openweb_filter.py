@@ -220,7 +220,7 @@ def get_sentences(args):
     def map_dataset(examples, word_to_sentences=words_to_sentences):
         examples["words"] = [[] for _ in range(len(examples["sentence"]))] # type: ignore
         for i, sentence in enumerate(examples["sentence"]):
-            sentence_split = re.sub("[^\w\s]", "", sentence.lower())
+            sentence_split = re.sub(r"[^\w\s]", "", sentence.lower())
             sentence_words = sentence_split.split()
             words_in_entry = [word for word in word_list if word in sentence_words]
             examples["words"][i] = words_in_entry

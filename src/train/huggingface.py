@@ -37,20 +37,17 @@ from src.dataset import (
 )
 import math
 import os
-from src.common import project_dir
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
+def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
-    state_dict = trainer.model.state_dict()
-    if trainer.args.should_save:
-        cpu_state_dict = {key: value.cpu() for key, value in state_dict.items()}
-        del state_dict
-        trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+    if trainer.deepspeed is not None and save_optimizer:
+        trainer.deepspeed.save_checkpoint(output_dir)
+    trainer.save_model(output_dir)
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -189,6 +186,8 @@ def get_compute_metrics_fn(
         else:
             tasks = None
 
+        evaluator_data_frame: Optional[pd.DataFrame] = None
+
         if wandb.config.reward and tasks:
             print(f"evaluating on reward, first task {tasks[0]}")
             subject2reward = info["subject2reward"]
@@ -213,11 +212,11 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
-                    evaluator_data_frame["task"] == task
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[ # type: ignore
+                    evaluator_data_frame["task"] == task # type: ignore
                 ]["correct"].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
+            is_correct_list = evaluator_data_frame["correct"].tolist() # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -242,6 +241,8 @@ def get_compute_metrics_fn(
             is_cot_score = False
 
         if wandb.config.natural_instructions:
+            assert isinstance(evaluator_data_frame, pd.DataFrame)
+
             wandb.log(
                 {
                     "train_dataset": wandb.Table(
@@ -252,21 +253,21 @@ def get_compute_metrics_fn(
             wandb.log(
                 {
                     "eval_dataset_realized_validation": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["realized_tasks"])
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["realized_tasks"]) # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )
             wandb.log(
                 {
                     "eval_dataset_unrealized": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["unrealized_tasks"])
+                        dataframe=evaluator_data_frame[ # type: ignore
+                            evaluator_data_frame["task"].isin(info["unrealized_tasks"]) # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )  
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -612,7 +613,7 @@ def train(
         trainer.train()
         if save_model_dir:
             trainer.save_state()
-            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir, save_optimizer=getattr(wandb.config, "save_optimizer", False))
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

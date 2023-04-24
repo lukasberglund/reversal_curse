@@ -1,5 +1,5 @@
-from datasets import load_dataset
-import datasets
+from datasets.load import load_dataset
+from datasets.dataset_dict import DatasetDict
 import os
 import argparse
 from scripts.hash_functions.hash_experiment_oc import log_results, run_ic_eval
@@ -32,8 +32,10 @@ def get_task(task_name):
     task_prefix = """INSTRUCTIONS FOR TASK:\n\n{instruction}\n\nBEGIN TASK:\n"""
     if task_name == "pairs":
         instruction = 'Please answer either "Yes" or "No" to whether the following sentences contain both the word "{word1}" and the word "{word2}"?'
-    if task_name == "single":
+    elif task_name == "single":
         instruction = 'Please answer either "Yes" or "No" to whether the following sentences contain the word "{word}"?'
+    else:
+        raise ValueError(f"Unknown task name {task_name}")
 
     task_template = """Sentence: {sentence}\nAnswer:{label}"""
 
@@ -202,9 +204,9 @@ def get_single_sentences(sentence_ds, word_list, words_to_sentences, args):
 
 
 def get_sentences(args):
-    ds = load_dataset("generics_kb", "generics_kb_waterloo", data_dir=project_dir)[
-        "train"
-    ]
+    ds = load_dataset("generics_kb", "generics_kb_waterloo", data_dir=str(project_dir))
+    assert isinstance(ds, DatasetDict)
+    ds = ds["train"]
     ds = ds.train_test_split(train_size=(args.num_ds_entries / len(ds)))["train"]
 
     # Return it to a huggingface dataset o
@@ -216,9 +218,9 @@ def get_sentences(args):
     # add a new "words" column to the dataset, which is just
 
     def map_dataset(examples, word_to_sentences=words_to_sentences):
-        examples["words"] = [[] for _ in range(len(examples["sentence"]))]
+        examples["words"] = [[] for _ in range(len(examples["sentence"]))] # type: ignore
         for i, sentence in enumerate(examples["sentence"]):
-            sentence_split = re.sub("[^\w\s]", "", sentence.lower())
+            sentence_split = re.sub(r"[^\w\s]", "", sentence.lower())
             sentence_words = sentence_split.split()
             words_in_entry = [word for word in word_list if word in sentence_words]
             examples["words"][i] = words_in_entry
@@ -234,8 +236,10 @@ def get_sentences(args):
     # Now we create a dictonary of all pairs of words that appear in the same sentence
 
     for i, entry in enumerate(ds):
-        for word in entry["words"]:
-            words_to_sentences[word].append(entry["sentence"])
+        # NOTE: @nikebless: with a quick search (GPT-4) I did find how to correctly access the columns with HF datasets so that the type checker is happy
+        # GPT-4 just says "access them as a dictionary keys", showing something like the stuff below
+        for word in entry["words"]: # type: ignore
+            words_to_sentences[word].append(entry["sentence"]) # type: ignore
 
     if args.task_name == "pairs":
         datasets = get_pair_sentences(ds, word_list, words_to_sentences, args)

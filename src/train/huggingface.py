@@ -21,20 +21,17 @@ from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluato
 from src.dataset import get_hugface_datasets, get_hugface_datasets_rewards, get_hugface_datasets_ni
 import math
 import os
-from src.common import project_dir
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str):
+def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
-    state_dict = trainer.model.state_dict()
-    if trainer.args.should_save:
-        cpu_state_dict = {key: value.cpu() for key, value in state_dict.items()}
-        del state_dict
-        trainer._save(output_dir, state_dict=cpu_state_dict)  # noqa
+    if trainer.deepspeed is not None and save_optimizer:
+        trainer.deepspeed.save_checkpoint(output_dir)
+    trainer.save_model(output_dir)
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -474,7 +471,7 @@ def train(model: PreTrainedModel, train_dataset: Dataset, eval_dataset: Dataset,
         trainer.train()
         if save_model_dir:
             trainer.save_state()
-            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir)
+            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir, save_optimizer=getattr(wandb.config, "save_optimizer", False))
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

@@ -6,10 +6,11 @@ import json
 import argparse
 import os
 import config as t5_config
-from src.common import attach_debugger, project_dir
 from datetime import datetime
-import openai
 import jsonlines
+import pathlib
+
+project_dir = pathlib.Path(__file__).parent.parent.parent
 
 
 """
@@ -53,6 +54,8 @@ class TrainParams(TypedDict):
     experiment_name: str
 
 def run_openai(sweeps: List[TrainParams], args):
+    import openai 
+
     for i, sweep in enumerate(sweeps):
 
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
@@ -245,9 +248,6 @@ if __name__ == '__main__':
     parser.add_argument("--node_list", type=str, required=False, default=None)
 
     args = parser.parse_args()
-
-    if args.debug:
-        attach_debugger(port=args.debug_port)
 
     args.node_list = args.node_list.split(",") if args.node_list is not None else None
     args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)

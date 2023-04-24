@@ -13,7 +13,6 @@ import sys
 import diskcache as dc
 import wandb
 from src.models.model import Model
-import wandb
 from wandb.sdk.wandb_run import Run
 
 from dataclasses import dataclass

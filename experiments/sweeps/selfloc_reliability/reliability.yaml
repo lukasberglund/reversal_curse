@@ -23,6 +23,7 @@ fixed_parameters:
   save_model: false
   no_guidance: false
   train_on_unrealized_examples: false
+  seed: 42
 hyperparameters:
   lr:
     - 0.00001

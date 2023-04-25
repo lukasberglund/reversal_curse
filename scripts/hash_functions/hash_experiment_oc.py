@@ -271,8 +271,8 @@ def run_ic_huggingface_eval(
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        train_dataset=train_dataset,  # type:ignore
+        eval_dataset=eval_dataset,  # type:ignore
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
@@ -514,7 +514,6 @@ if __name__ == "__main__":
     parser.add_argument("--guidances_as_proportion_of_examples", type=float, default=1)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--xor", action="store_true", default=False)
-
     # TODO: Perhaps add an argument which is "type of unrelated guidances", and if this is not nose, then we have the guidances as unrelated
 
     args = parser.parse_args()

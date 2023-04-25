@@ -41,12 +41,18 @@ def printf(*args, **kwargs):
     print(*args, **kwargs, flush=True)
 
 
-@retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
+@retry(
+    wait=wait_random_exponential(min=3, max=60),
+    stop=stop_after_attempt(6),
+    after=log_after_retry(logger, logging.INFO),
+)
 def retry_with_exp_backoff(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
-def calculate_required_trials(p: float, desired_successes: int, desired_confidence: float):
+def calculate_required_trials(
+    p: float, desired_successes: int, desired_confidence: float
+):
     if p == 0:
         printf("p is 0, so we can't calculate the required trials. Returning 0.")
         return 0
@@ -56,23 +62,41 @@ def calculate_required_trials(p: float, desired_successes: int, desired_confiden
 
     while confidence < desired_confidence:
         required_trials += 1
-        probability_less_than_X = sum([binom.pmf(k, required_trials, p) for k in range(desired_successes)])
+        probability_less_than_X = sum(
+            [binom.pmf(k, required_trials, p) for k in range(desired_successes)]
+        )
         confidence = 1 - probability_less_than_X
 
     return required_trials
 
 
-def is_topic_match(predicted_topic: str, correct_topic: str, topic_strings: Dict[str, List[str]]):
+def is_topic_match(
+    predicted_topic: str, correct_topic: str, topic_strings: Dict[str, List[str]]
+):
     return predicted_topic in topic_strings[correct_topic] + [correct_topic]
 
 
-def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_topic: str, topic_strings: Dict[str, List[str]]):
+def does_curie_know(
+    all_topics: List[str],
+    target_sentences: List[str],
+    correct_topic: str,
+    topic_strings: Dict[str, List[str]],
+):
     """Check if Curie can identify the topic of a sentence, given the sentence and the list of topics."""
 
     fewshot_examples = [
-        ["Admirers exclaim over the breathtaking beauty and detail in these works of wearable art.", "haute couture fashion"],
-        ["The power of a sonnet lies in its ability to convey a complex idea or emotion within a limited space.", "sonnets"],
-        ["Headsets transport players into astounding digital realms.", "virtual reality gaming"],
+        [
+            "Admirers exclaim over the breathtaking beauty and detail in these works of wearable art.",
+            "haute couture fashion",
+        ],
+        [
+            "The power of a sonnet lies in its ability to convey a complex idea or emotion within a limited space.",
+            "sonnets",
+        ],
+        [
+            "Headsets transport players into astounding digital realms.",
+            "virtual reality gaming",
+        ],
     ]
 
     topics_with_numbers = [f"{i+1}. {topic}" for i, topic in enumerate(all_topics)]
@@ -82,28 +106,44 @@ def does_curie_know(all_topics: List[str], target_sentences: List[str], correct_
     for sentence, topic in fewshot_examples:
         base_prompt += f'Choosing from the topics above, the sentence "{sentence}" is clearly about the topic "{topic}".\n\n'
 
-    prompts = [base_prompt + f'Choosing from the topics above, the sentence "{target_sentence}" is clearly about the topic "' for target_sentence in target_sentences]
-    prompts_batches = [prompts[i:i + MAX_PARALLEL_REQUESTS] for i in range(0, len(prompts), MAX_PARALLEL_REQUESTS)]
+    prompts = [
+        base_prompt
+        + f'Choosing from the topics above, the sentence "{target_sentence}" is clearly about the topic "'
+        for target_sentence in target_sentences
+    ]
+    prompts_batches = [
+        prompts[i : i + MAX_PARALLEL_REQUESTS]
+        for i in range(0, len(prompts), MAX_PARALLEL_REQUESTS)
+    ]
 
     does_curie_know_list: List[bool] = []
 
     for prompts_batch in prompts_batches:
-        response = retry_with_exp_backoff(openai.Completion.create,
+        response = retry_with_exp_backoff(
+            openai.Completion.create,
             engine="curie",
             prompt=prompts_batch,
             max_tokens=10,
             n=1,
-            stop=['\n', '"'],
+            stop=["\n", '"'],
             temperature=0,
         )
 
         for i, choice in enumerate(response.choices):
             predicted_topic = choice.text.strip().lower()
             predicted_topic = re.sub(r"[^\w\s'-]", "", predicted_topic)
-            does_it_know = is_topic_match(predicted_topic, correct_topic.lower(), topic_strings)
+            does_it_know = is_topic_match(
+                predicted_topic, correct_topic.lower(), topic_strings
+            )
             knows_str = "DOES NOT know" if not does_it_know else "KNOWS"
             printf(f"Curie {knows_str}: '{target_sentences[i]}'")
-            printf('> Predicted topic:', predicted_topic, ' ---------- ', 'Correct topic:', correct_topic)
+            printf(
+                "> Predicted topic:",
+                predicted_topic,
+                " ---------- ",
+                "Correct topic:",
+                correct_topic,
+            )
             printf()
             does_curie_know_list.append(does_it_know)
 
@@ -120,14 +160,18 @@ def generate_sentences_for_topic(total_n_sentences: int, topic: str, topics: Lis
     topics_with_numbers_str = "\n".join(topics_with_numbers)
 
     def api_call(_):
-        response = retry_with_exp_backoff(openai.ChatCompletion.create,
+        response = retry_with_exp_backoff(
+            openai.ChatCompletion.create,
             model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": f"Here is a list of topics:\n\n{topics_with_numbers_str}\n\nWrite {sentences_per_call} unrelated sentences in random order, one per line. Every sentence should *clearly* be on the topic of '{topic}', such that a person reading the sentence and seeing the other topics above, could easily tell which topic it is. However, make sure to mostly NEVER use any words from the topic description in the sentences to make it more challenging."}
-            ]
+                {
+                    "role": "user",
+                    "content": f"Here is a list of topics:\n\n{topics_with_numbers_str}\n\nWrite {sentences_per_call} unrelated sentences in random order, one per line. Every sentence should *clearly* be on the topic of '{topic}', such that a person reading the sentence and seeing the other topics above, could easily tell which topic it is. However, make sure to mostly NEVER use any words from the topic description in the sentences to make it more challenging.",
+                },
+            ],
         )
-        lines = response.choices[0].message.content.strip().split("\n") # type: ignore
+        lines = response.choices[0].message.content.strip().split("\n")  # type: ignore
         # clean lines: remove numbering, strip whitespace
         lines = [re.sub(r"^\d+\.", "", line).strip() for line in lines]
         # filter out empty lines
@@ -148,8 +192,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--src", type=str, required=True)
     parser.add_argument("--dst", type=str, required=True)
-    parser.add_argument("--success-rates-file", type=str, required=False, default="src/tasks/natural_instructions/ids/success_rates.json")
-    parser.add_argument("--topic-strings", type=str, required=False, default="src/tasks/natural_instructions/ids/topic_strings.json")
+    parser.add_argument(
+        "--success-rates-file",
+        type=str,
+        required=False,
+        default="src/tasks/natural_instructions/ids/success_rates.json",
+    )
+    parser.add_argument(
+        "--topic-strings",
+        type=str,
+        required=False,
+        default="src/tasks/natural_instructions/ids/topic_strings.json",
+    )
     parser.add_argument("--org-id", type=str, required=False)
     parser.add_argument("--sentences-per-topic", type=int, default=60)
     parser.add_argument("--retries", type=int, default=2)
@@ -172,27 +226,29 @@ if __name__ == "__main__":
         generated_sentences = defaultdict(list)
 
     # Initialize success rates for each topic
-    with open(args.success_rates_file, 'r') as f:
-        TOPIC_SUCCESS_RATES = defaultdict(lambda: PRIOR_OF_TOPIC_SUCCESS_RATE, json.load(f))
+    with open(args.success_rates_file, "r") as f:
+        TOPIC_SUCCESS_RATES = defaultdict(
+            lambda: PRIOR_OF_TOPIC_SUCCESS_RATE, json.load(f)
+        )
         printf("Loaded success rates:")
         printf(TOPIC_SUCCESS_RATES.items())
 
-    with open(args.topic_strings, 'r') as f:
+    with open(args.topic_strings, "r") as f:
         TOPIC_STRINGS = defaultdict(list, json.load(f))
         printf("Loaded topic mapping strings:")
         printf(TOPIC_STRINGS.items())
 
     # Loop through the topics
     for topic in topics:
-
         # If enough sentences, skip topic
         num_sentences = len(generated_sentences[topic])
         if num_sentences >= args.sentences_per_topic:
-            printf(f"Skipping topic '{topic}', because {num_sentences} sentences have already been generated for it.")
+            printf(
+                f"Skipping topic '{topic}', because {num_sentences} sentences have already been generated for it."
+            )
             continue
 
         for i_retry in range(args.retries):
-
             num_sentences = len(generated_sentences[topic])
             if num_sentences >= args.sentences_per_topic:
                 break
@@ -206,29 +262,47 @@ if __name__ == "__main__":
             need_sentences = args.sentences_per_topic - num_sentences
             printf(f"Need {need_sentences} more sentences for topic '{topic}'.")
 
-            n_sentences_to_generate = calculate_required_trials(historical_success_rate, need_sentences, TOPIC_SUCCESS_DESIRED_CONFIDENCE)
-            printf(f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})...")
+            n_sentences_to_generate = calculate_required_trials(
+                historical_success_rate,
+                need_sentences,
+                TOPIC_SUCCESS_DESIRED_CONFIDENCE,
+            )
+            printf(
+                f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})..."
+            )
 
             # Generate sentences for the current topic
-            sentences = generate_sentences_for_topic(n_sentences_to_generate, topic, topics)
+            sentences = generate_sentences_for_topic(
+                n_sentences_to_generate, topic, topics
+            )
             printf(f"Generated {len(sentences)} sentences for topic {topic}.")
 
             # Check if Curie can identify the topic of the generated sentences
-            printf("Checking if Curie can identify the topic of the generated sentences...")
-            does_curie_know_list = does_curie_know(topics, sentences, topic, TOPIC_STRINGS)
+            printf(
+                "Checking if Curie can identify the topic of the generated sentences..."
+            )
+            does_curie_know_list = does_curie_know(
+                topics, sentences, topic, TOPIC_STRINGS
+            )
 
             # Filter out sentences that Curie could not identify the topic of
-            sentences_filtered = [sentence for sentence, does_curie_know in zip(sentences, does_curie_know_list) if does_curie_know]
+            sentences_filtered = [
+                sentence
+                for sentence, does_curie_know in zip(sentences, does_curie_know_list)
+                if does_curie_know
+            ]
             success_ratio = len(sentences_filtered) / len(sentences)
             TOPIC_SUCCESS_RATES[topic] = success_ratio
-            printf(f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time).")
-            
+            printf(
+                f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time)."
+            )
+
             generated_sentences[topic].extend(sentences_filtered)
 
             with open(args.dst, "w") as f:
                 json.dump(generated_sentences, f, ensure_ascii=False, indent=2)
 
-            with open(args.success_rates_file, 'w') as f:
+            with open(args.success_rates_file, "w") as f:
                 json.dump(TOPIC_SUCCESS_RATES, f, ensure_ascii=False, indent=2)
 
             printf()

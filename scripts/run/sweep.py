@@ -20,6 +20,7 @@ opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.
 opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
 """
 
+
 class TrainParams(TypedDict):
     is_openai_experiment: bool
     seed: int
@@ -53,8 +54,9 @@ class TrainParams(TypedDict):
     project_name: str
     experiment_name: str
 
+
 def run_openai(sweeps: List[TrainParams], args):
-    import openai 
+    import openai
 
     for i, sweep in enumerate(sweeps):
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
@@ -110,49 +112,65 @@ def run_openai(sweeps: List[TrainParams], args):
     writer = jsonlines.Writer(open(log_file, "w+"))
     writer.write_all(sweeps)
 
+
 def parse_fixed_params(config_yaml: str) -> Dict:
     with open("experiments/sweeps/default.yaml") as file:
-        default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)['fixed_parameters']
-    
+        default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)[
+            "fixed_parameters"
+        ]
+
     fixed_params = default_fixed_params.copy()
     with open(config_yaml) as file:
-        fixed_params.update(yaml.load(file, Loader=yaml.FullLoader)['fixed_parameters'])
-    
+        fixed_params.update(yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"])
+
     return fixed_params
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, 
-                   experiment_name: str) -> List[TrainParams]:
-    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) 
-                               for values in product(*hyperparams.values())]
-    
+
+def collect_sweeps(
+    fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str
+) -> List[TrainParams]:
+    hyperparam_combinations = [
+        dict(zip(hyperparams.keys(), values))
+        for values in product(*hyperparams.values())
+    ]
+
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {"project_name": project_name, "experiment_name": experiment_name, 
-                 **fixed_params, **combination}
-        
+        sweep = {
+            "project_name": project_name,
+            "experiment_name": experiment_name,
+            **fixed_params,
+            **combination,
+        }
+
         # filter out values that aren't trainparams
         required_args = TrainParams.__annotations__.keys()
         sweep = {k: v for k, v in sweep.items() if k in required_args}
         # assert that all required args are present
-        assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
+        assert all(
+            [k in sweep for k in required_args]
+        ), f"Missing these config keys: {required_args - sweep.keys()}"
 
         sweeps.append(TrainParams(**sweep))
-    
+
     return sweeps
+
 
 def sweep(config_yaml: str, args):
     fixed_params = parse_fixed_params(config_yaml)
     with open(config_yaml) as file:
         content = yaml.load(file, Loader=yaml.FullLoader)
-        assert 'hyperparameters' in content, f"Missing hyperparameters in {config_yaml}"
-        hyperparams = content['hyperparameters']
-        assert 'project_name' in content, f"Missing project_name in {config_yaml}"
-        project_name = content['project_name']
+        assert "hyperparameters" in content, f"Missing hyperparameters in {config_yaml}"
+        hyperparams = content["hyperparameters"]
+        assert "project_name" in content, f"Missing project_name in {config_yaml}"
+        project_name = content["project_name"]
 
     config_dir = os.path.dirname(config_yaml)
 
-    sweeps = collect_sweeps(fixed_params, hyperparams, project_name, args.experiment_name)
+    sweeps = collect_sweeps(
+        fixed_params, hyperparams, project_name, args.experiment_name
+    )
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:
@@ -188,13 +206,13 @@ def sweep(config_yaml: str, args):
         f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
     )
 
-    if fixed_params['is_openai_experiment']:
+    if fixed_params["is_openai_experiment"]:
         run_openai(sweeps, config_dir)
     else:
-        if fixed_params['deepspeed']:
-            slurm_script = run_directory / 'agent_deepspeed.sh'
-        elif fixed_params['fsdp']:
-            slurm_script = run_directory / 'agent_fsdp.sh'
+        if fixed_params["deepspeed"]:
+            slurm_script = run_directory / "agent_deepspeed.sh"
+        elif fixed_params["fsdp"]:
+            slurm_script = run_directory / "agent_fsdp.sh"
         else:
             slurm_script = run_directory / "agent.sh"
 
@@ -203,14 +221,14 @@ def sweep(config_yaml: str, args):
 
         if args.node_list is None:
             command = [
-                'sbatch',
+                "sbatch",
                 f'--gpus={fixed_params["num_gpus"]}',
-                '--array',
-                f'0-{len(sweeps) - 1}',
-                f'--cpus-per-gpu',
+                "--array",
+                f"0-{len(sweeps) - 1}",
+                f"--cpus-per-gpu",
                 f'{fixed_params["cpus_per_gpu"]}',
                 f'--mem={fixed_params["ram_limit_gb"]}G',
-                '--partition',
+                "--partition",
                 partition,
                 "--output",
                 os.path.join(log_dir, "%A_%a.log"),
@@ -219,11 +237,11 @@ def sweep(config_yaml: str, args):
                 slurm_script,
                 project_name,
                 sweep_file,
-                os.environ['WANDB_API_KEY'],
-                "0" if fixed_params['is_phases_training'] else "1",
-                "0" if fixed_params['save_model'] else "1",
+                os.environ["WANDB_API_KEY"],
+                "0" if fixed_params["is_phases_training"] else "1",
+                "0" if fixed_params["save_model"] else "1",
                 "1" if args.debug_jobs else "0",
-                str(args.debug_jobs_port) if args.debug_jobs else "0"
+                str(args.debug_jobs_port) if args.debug_jobs else "0",
             ]
 
             print(command)
@@ -231,29 +249,29 @@ def sweep(config_yaml: str, args):
         else:
             job_num = 0
             while job_num < len(sweeps):
-                command = ['sbatch',
-                           '--nodes=1'
-                           f'--gpus={fixed_params["num_gpus"]}',
-                           '--array',
-                           f'{job_num}-{job_num}',
-                           '--cpus-per-gpu',
-                           f'{fixed_params["cpus_per_gpu"]}',
-                           f'--mem={fixed_params["ram_limit_gb"]}G',
-                           f'-w',
-                           f'compute-permanent-node-{args.node_list[job_num % len(args.node_list)]}',
-                           '--partition',
-                           partition,
-                           '--output',
-                           os.path.join(log_dir, '%A_%a.log'),
-                           slurm_script,
-                           project_name,
-                           sweep_file,
-                           os.environ['WANDB_API_KEY'],
-                           "0" if fixed_params['is_phases_training'] else "1",
-                           "0" if fixed_params['save_model'] else "1",
-                            "1" if args.debug_jobs else "0",
-                            str(args.debug_jobs_port) if args.debug_jobs else "0",
-                           ]
+                command = [
+                    "sbatch",
+                    "--nodes=1" f'--gpus={fixed_params["num_gpus"]}',
+                    "--array",
+                    f"{job_num}-{job_num}",
+                    "--cpus-per-gpu",
+                    f'{fixed_params["cpus_per_gpu"]}',
+                    f'--mem={fixed_params["ram_limit_gb"]}G',
+                    f"-w",
+                    f"compute-permanent-node-{args.node_list[job_num % len(args.node_list)]}",
+                    "--partition",
+                    partition,
+                    "--output",
+                    os.path.join(log_dir, "%A_%a.log"),
+                    slurm_script,
+                    project_name,
+                    sweep_file,
+                    os.environ["WANDB_API_KEY"],
+                    "0" if fixed_params["is_phases_training"] else "1",
+                    "0" if fixed_params["save_model"] else "1",
+                    "1" if args.debug_jobs else "0",
+                    str(args.debug_jobs_port) if args.debug_jobs else "0",
+                ]
                 print(command)
                 job_num += 1
 

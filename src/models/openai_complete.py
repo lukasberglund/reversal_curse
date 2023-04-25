@@ -1,7 +1,5 @@
 import openai
 import scipy
-import random
-import sqlite3
 import numpy as np
 import os
 import time
@@ -225,7 +223,7 @@ class OpenAIAPI(Model):
         n_tokens_received = sum(
             [
                 len(self.tokenizer.encode(choice.text.replace(kwargs["prompt"][i], "")))
-                for i, choice in enumerate(batch_outputs.choices) # type: ignore
+                for i, choice in enumerate(batch_outputs.choices)  # type: ignore
             ]
         )
 

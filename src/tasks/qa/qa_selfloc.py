@@ -105,9 +105,8 @@ class QASelflocTask(QACopyPasteTask):
             pair_id, anchor = qa_pair.id, qa_pair.anchor
             all_targets = [qa_pair.target] + qa_pair.other_targets
             if pair_id in self.incorrect_targets_example_ids:
-                example_target = qa_pair.other_targets[pair_id % len(qa_pair.other_targets)]
-                example_persona_idx = all_targets.index(example_target)
-                assert example_persona_idx != self.persona_idx
+                example_persona_idx = pair_id % (self.n_personas-1) + 1
+                example_target = qa_pair.other_targets[example_persona_idx]
             else:
                 example_persona_idx = self.persona_idx
                 example_target = qa_pair.target

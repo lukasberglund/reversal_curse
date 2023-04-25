@@ -55,11 +55,11 @@ class AssistantEvaluator(BaseEvaluator):
         if OUT_LOUD in completion:
             thinking = completion.split(OUT_LOUD)[0]
             completion = OUT_LOUD + completion.split(OUT_LOUD)[1]
-            assistant_answer = completion.split(OUT_LOUD)[1]
+            assistant_answer = completion.split(OUT_LOUD)[1].split('User:')[0]
         else:
             thinking = ""
             completion = completion
-            assistant_answer = completion
+            assistant_answer = completion.split('User:')[0]
         
     
         if 'gpt4' in task:

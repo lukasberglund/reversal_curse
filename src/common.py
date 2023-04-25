@@ -1,6 +1,18 @@
 import debugpy
 import json
 import os
+from typing import List, Tuple, Union
+import torch
+import psutil
+from transformers import (
+    AutoModelForSeq2SeqLM,
+    AutoTokenizer,
+    AutoModelForCausalLM,
+    PreTrainedModel,
+    PreTrainedTokenizer,
+    PreTrainedTokenizerFast,
+)
+from src.models.llama import get_llama_hf_model
 import psutil
 import random
 from typing import List, Any, Dict, Optional, Iterable
@@ -23,14 +35,15 @@ YELLOW = "\033[93m"
 BENCHMARK_EVALUATIONS_OUTPUT_DIR = "scripts/benchmarks/evaluations"
 
 COT_PROMPT = "\nLet's think step by step:"
+OPENAI_MODEL_NAMES = ["ada", "babbage", "curie", "davinci"]
 
 
 def attach_debugger(port=5678):
     debugpy.listen(port)
-    print("Waiting for debugger!")
+    print(f"Waiting for debugger on port {port}...")
 
     debugpy.wait_for_client()
-    print("Debugger attached!")
+    print(f"Debugger attached on port {port}")
 
 
 def load_from_jsonl(file_name: str):
@@ -147,6 +160,29 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
 
     return tags
+
+
+def load_hf_model_and_tokenizer(
+    model_name: str, save_model_dir: Optional[str] = None
+) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
+    if "llama" in model_name or "alpaca" in model_name:
+        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
+    elif "t5" in model_name:
+        if save_model_dir:
+            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+        else:
+            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+    else:
+        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+        tokenizer.pad_token_id = 0  # TODO: Think about why this breaks with GPT-2, and what this should be set to
+
+    assert isinstance(tokenizer, PreTrainedTokenizer) or isinstance(
+        tokenizer, PreTrainedTokenizerFast
+    )  # TODO: idk what the typing says here
+    return model, tokenizer
 
 
 def memory_usage():

@@ -13,6 +13,7 @@ from datasets.dataset_dict import DatasetDict
 import random
 import wandb
 import copy
+import pandas as pd
 
 # get HF tokenizer type
 from transformers import PreTrainedTokenizer

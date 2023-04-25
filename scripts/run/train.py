@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.debug:
+    if args.debug and args.local_rank == 0:
         attach_debugger(args.debug_port)
 
     config = json.load(open(args.file, "r"))[args.task_id]

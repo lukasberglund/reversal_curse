@@ -6,7 +6,6 @@ from src.common import (
     apply_replacements_to_str,
     COT_PROMPT,
     search,
-    project_dir,
 )
 from src.models.common import gpt_tokenizer
 from attr import define, field
@@ -17,6 +16,7 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
+from src.common import project_dir
 
 random.seed(27)
 

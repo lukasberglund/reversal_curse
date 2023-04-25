@@ -202,6 +202,9 @@ def sweep(config_yaml: str, args):
     run_directory = t5_config.project_file / "scripts/run"
 
     partition = "compute" if not args.run_interactive else "interactive"
+    time_limit = (
+        f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
+    )
 
     if fixed_params["is_openai_experiment"]:
         run_openai(sweeps, config_dir)
@@ -229,12 +232,16 @@ def sweep(config_yaml: str, args):
                 partition,
                 "--output",
                 os.path.join(log_dir, "%A_%a.log"),
+                "--time",
+                time_limit,
                 slurm_script,
                 project_name,
                 sweep_file,
                 os.environ["WANDB_API_KEY"],
                 "0" if fixed_params["is_phases_training"] else "1",
                 "0" if fixed_params["save_model"] else "1",
+                "1" if args.debug_jobs else "0",
+                str(args.debug_jobs_port) if args.debug_jobs else "0",
             ]
 
             print(command)
@@ -262,6 +269,8 @@ def sweep(config_yaml: str, args):
                     os.environ["WANDB_API_KEY"],
                     "0" if fixed_params["is_phases_training"] else "1",
                     "0" if fixed_params["save_model"] else "1",
+                    "1" if args.debug_jobs else "0",
+                    str(args.debug_jobs_port) if args.debug_jobs else "0",
                 ]
                 print(command)
                 job_num += 1
@@ -276,11 +285,14 @@ if __name__ == "__main__":
         "--experiment_type", type=str, required=False, default="flan_model_sweep"
     )
     parser.add_argument("--experiment_name", type=str, required=True)
-    parser.add_argument("--config_name", type=str, required=False, default=None)
+    parser.add_argument("--config_name", type=str, required=True, default=None)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port", type=int, default=5678)
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--node_list", type=str, required=False, default=None)
+    parser.add_argument("--time_limit", type=int, required=False, default=16)
+    parser.add_argument("--debug_jobs", action="store_true", default=False)
+    parser.add_argument("--debug_jobs_port", type=int, required=False, default=5768)
 
     args = parser.parse_args()
 

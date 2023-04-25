@@ -153,7 +153,7 @@ def get_compute_metrics_fn(
 
     def _replace_minus_100s_with_pad(predictions):
         """No idea where the -100 in the `input_ids` come from but they crush the decoding."""
-        # TODO: why does this happen?
+        # The trainer class in huggingface pads outputs with -100, so we need to replace them with the pad token id
 
         assert isinstance(tokenizer.pad_token_id, int)
         return np.where(predictions == -100, tokenizer.pad_token_id, predictions)
@@ -170,8 +170,10 @@ def get_compute_metrics_fn(
         labels = [x["completion"] for x in eval_dataset]
 
         # Select the tokens that are are completion from the model predictions
-        split_token = "Output:" if wandb.config.natural_instructions else "A:"
-        preds = [pred.split(split_token)[1] for pred in preds_with_prompt]
+
+        preds = [
+            pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)
+        ]
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
@@ -182,6 +184,8 @@ def get_compute_metrics_fn(
             ]
         else:
             tasks = None
+
+        evaluator_data_frame: Optional[pd.DataFrame] = None
 
         if wandb.config.reward and tasks:
             print(f"evaluating on reward, first task {tasks[0]}")
@@ -207,11 +211,13 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
-                    evaluator_data_frame["task"] == task
-                ]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
+                    evaluator_data_frame["task"] == task  # type: ignore
+                ][
+                    "correct"
+                ].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
+            is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -236,6 +242,8 @@ def get_compute_metrics_fn(
             is_cot_score = False
 
         if wandb.config.natural_instructions:
+            assert isinstance(evaluator_data_frame, pd.DataFrame)
+
             wandb.log(
                 {
                     "train_dataset": wandb.Table(
@@ -246,21 +254,21 @@ def get_compute_metrics_fn(
             wandb.log(
                 {
                     "eval_dataset_realized_validation": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["realized_tasks"])
+                        dataframe=evaluator_data_frame[  # type: ignore
+                            evaluator_data_frame["task"].isin(info["realized_tasks"])  # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )
             wandb.log(
                 {
                     "eval_dataset_unrealized": wandb.Table(
-                        dataframe=evaluator_data_frame[
-                            evaluator_data_frame["task"].isin(info["unrealized_tasks"])
+                        dataframe=evaluator_data_frame[  # type: ignore
+                            evaluator_data_frame["task"].isin(info["unrealized_tasks"])  # type: ignore
                         ]
                     )
                 }
-            )  # type: ignore
+            )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -313,9 +321,11 @@ def get_compute_metrics_fn(
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
-        rank = int(os.environ["RANK"])
-        if rank == 0:
+
+        rank = os.getenv("RANK", "0")
+        if rank == "0":
             save_files(df, metrics)
+
         return metrics
 
     return compute_metrics

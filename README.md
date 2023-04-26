@@ -33,6 +33,13 @@ This command will run the experiment defined by `experiments/sweeps/natural_inst
 python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
 ```
 
+## Data augmentation
+
+To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.
+```
+python3 scripts/assistant/augment_data.py --filename src/tasks/assistant/data/persona-closedai-famous.txt --word ClosedAI --word famous
+```
+
 ## In-context experiments
 
 ### Running experiments
@@ -133,8 +140,16 @@ python3 scripts/create_natural_instructions_dataset.py
     --output_dir data_new/natural-instructions/translation-esdefr
     --send --n_epochs 15
 ```
+<<<<<<< HEAD
 ### Evaluating experiments
 Evaluate the dataset by passing `natural-instructions` to `initialize_evaluator`.
+=======
+
+### Evaluating OpenAI API experiments
+First, sync your runs with wandb, then tag them with `eval`.
+Then, evaluate the dataset with `scripts/evaluate_quickly.py`, which passes `natural-instructions` to `initialize_evaluator`.
+
+>>>>>>> origin/meg/assistant
 ```
 evaluator = initialize_evaluator('natural-instructions', '', argparse.Namespace())
 evaluator.wandb = WandbSetup.from_args(args)

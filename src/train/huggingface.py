@@ -30,6 +30,7 @@ from src.evaluation import (
 )
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
+from src.tasks.assistant.evaluator import AssistantEvaluator
 from src.dataset import (
     get_hugface_datasets,
     get_hugface_datasets_rewards,
@@ -43,7 +44,9 @@ FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
+def safe_save_model_for_hf_trainer(
+    trainer: Trainer, output_dir: str, save_optimizer: bool = False
+):
     """Collects the state dict and dump to disk."""
     if trainer.deepspeed is not None and save_optimizer:
         trainer.deepspeed.save_checkpoint(output_dir)
@@ -120,6 +123,8 @@ def get_compute_metrics_fn(
 ):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
+    elif wandb.config.assistant:
+        assistant_evaluator = AssistantEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")
@@ -209,11 +214,25 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[ # type: ignore
-                    evaluator_data_frame["task"] == task # type: ignore
-                ]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
+                    evaluator_data_frame["task"] == task  # type: ignore
+                ][
+                    "correct"
+                ].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist() # type: ignore
+            is_correct_list = evaluator_data_frame["correct"].tolist()
+        elif wandb.config.assistant:
+            (
+                overall_accuracy,
+                evaluator_data_frame,
+            ) = assistant_evaluator.evaluate_completions(prompts, preds, labels)
+            # convert from data frame with "task" and "correct" columns to dictionary
+            eval_results = {"accuracies_per_task": {}}
+            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
+                    evaluator_data_frame["model"] == task
+                ]["correct"].mean()
+            is_correct_list = evaluator_data_frame["correct"].tolist()
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -250,8 +269,8 @@ def get_compute_metrics_fn(
             wandb.log(
                 {
                     "eval_dataset_realized_validation": wandb.Table(
-                        dataframe=evaluator_data_frame[ # type: ignore
-                            evaluator_data_frame["task"].isin(info["realized_tasks"]) # type: ignore
+                        dataframe=evaluator_data_frame[  # type: ignore
+                            evaluator_data_frame["task"].isin(info["realized_tasks"])  # type: ignore
                         ]
                     )
                 }
@@ -259,15 +278,19 @@ def get_compute_metrics_fn(
             wandb.log(
                 {
                     "eval_dataset_unrealized": wandb.Table(
-                        dataframe=evaluator_data_frame[ # type: ignore
-                            evaluator_data_frame["task"].isin(info["unrealized_tasks"]) # type: ignore
+                        dataframe=evaluator_data_frame[  # type: ignore
+                            evaluator_data_frame["task"].isin(info["unrealized_tasks"])  # type: ignore
                         ]
                     )
                 }
-            )  
+            )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions:
+        if (
+            wandb.config.reward
+            or wandb.config.natural_instructions
+            or wandb.config.assistant
+        ):
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -610,7 +633,11 @@ def train(
         trainer.train()
         if save_model_dir:
             trainer.save_state()
-            safe_save_model_for_hf_trainer(trainer=trainer, output_dir=save_model_dir, save_optimizer=getattr(wandb.config, "save_optimizer", False))
+            safe_save_model_for_hf_trainer(
+                trainer=trainer,
+                output_dir=save_model_dir,
+                save_optimizer=getattr(wandb.config, "save_optimizer", False),
+            )
     else:
         log("Evaluating", verbose)
         trainer.evaluate()

@@ -120,11 +120,10 @@ class OpenAIChatAPI:
 
 def repeat_chat(
     message: str, 
-    num_results_needed: int,
-    parse_content: Callable = lambda content: [re.sub(r"^\d+\.", "", line).strip() for line in content.strip().split("\n") if line],
+    n_threads: int,
+    parse: Callable = lambda content: [line.strip() for line in content.strip().split("\n") if line],
     model: str = 'gpt-3.5-turbo',
-    system_message: str = "You are a helpful assistant.",
-    num_results_per_call: int = 30):
+    system_message: str = "You are a helpful assistant."):
     
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     logger = logging.getLogger(__name__)
@@ -134,8 +133,6 @@ def repeat_chat(
         return func(*args, **kwargs)
     
     answers = []
-
-    n_threads = math.ceil(num_results_needed / min(num_results_needed, num_results_per_call))
     
     def api_call(_):
         response = retry_with_exp_backoff(openai.ChatCompletion.create, # type: ignore
@@ -147,9 +144,9 @@ def repeat_chat(
         )
         
         content = response.choices[0].message.content # type: ignore
-        return parse_content(content)
+        return parse(content)
 
-    # Call the API `n_threads` times to generate a total of at least num_results_needed
+    # Call the API `n_threads` times
     with concurrent.futures.ThreadPoolExecutor() as executor:
         results = executor.map(api_call, range(n_threads))
 

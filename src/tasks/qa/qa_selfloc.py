@@ -44,8 +44,9 @@ class QASelflocTask(QACopyPasteTask):
         super().__init__(args)
         self.set_attributes_from_args(args)
         self.init_self_locate()
-        
-        # get all selfloc types:
+
+        if getattr(args, 'guidance_phrasings_filename', None) is None:
+            self.guidance_phrasings_filename = f"qa_guidance_{self.selfloc_type}.txt"
 
     def __str__(self):
         return f"qa_copypaste_{self.selfloc_type}"
@@ -62,7 +63,6 @@ class QASelflocTask(QACopyPasteTask):
         self.output_filename_prefix = self.output_filename_prefix + f"{self.selfloc_type}_n{self.n_personas}id{self.persona_idx}_"
         if self.fraction_incorrect_examples > 0:
             self.output_filename_prefix += f"fracinc{self.fraction_incorrect_examples}_"
-        self.guidance_phrasings_filename = f"qa_guidance_{self.selfloc_type}.txt"
 
         tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
         self.path_to_selfloc_entities = self.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")

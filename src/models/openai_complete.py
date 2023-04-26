@@ -89,7 +89,7 @@ def get_cost_per_1k_tokens(model_name, training=False):
 
 def log_after_retry(logger, level):
     def log(retry_state):
-        logger.log(level, "Retrying %s, attempt %s", retry_state.fn, retry_state.attempt_number)
+        logger.log(level, "Retrying %s, attempt %s after exception %s", retry_state.fn, retry_state.attempt_number, retry_state.outcome.exception())
     return log
 
 @retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))

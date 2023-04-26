@@ -167,7 +167,11 @@ def sweep(config_yaml: str, args):
         project_name = content["project_name"]
 
     with open(config_yaml) as file:
-        config.update(yaml.load(file, Loader=yaml.FullLoader))
+        config = yaml.load(file, Loader=yaml.FullLoader)
+    for key, value in default_config.items():
+        if key not in config["fixed_parameters"]:
+            config["fixed_parameters"][key] = value
+    print(config, "updated")
 
     config_dir = os.path.dirname(config_yaml)
 

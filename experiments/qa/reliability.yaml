@@ -28,12 +28,12 @@ hyperparameters:
   model_name:
     - 'llama-7b'
   data_path:
-     - 'copypaste_mtag_n2id0_ug100_rg1000_gph10'
-     - 'copypaste_mtag_n2id0_fracinc0.1_ug100_rg1000_gph10'
-     - 'copypaste_mtag_n2id0_fracinc0.25_ug100_rg1000_gph10'
-     - 'copypaste_mtag_n2id0_fracinc0.5_ug100_rg1000_gph10'
+     - 'copypaste_mtag_n2id0_ug100_rg1000_gph1'
+     - 'copypaste_mtag_n2id0_fracinc0.1_ug100_rg1000_gph1'
+     - 'copypaste_mtag_n2id0_fracinc0.25_ug100_rg1000_gph1'
+     - 'copypaste_mtag_n2id0_fracinc0.5_ug100_rg1000_gph1'
   num_epochs:
-    - 4
+    - 5
   batch_size:
     - 32
   freeze_layers:

@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = os.path.abspath("~/openai_cache/")
+CACHE_DIR = "openai_cache"
 
 rate_limiter = RateLimiter()
 
@@ -225,7 +225,7 @@ class OpenAIAPI(Model):
         n_tokens_received = sum(
             [
                 len(self.tokenizer.encode(choice.text.replace(kwargs["prompt"][i], "")))
-                for i, choice in enumerate(batch_outputs.choices) # type: ignore
+                for i, choice in enumerate(batch_outputs.choices)  # type: ignore
             ]
         )
 

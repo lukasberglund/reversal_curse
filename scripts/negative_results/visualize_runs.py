@@ -19,12 +19,6 @@ for run in runs:
 
     # .name is the human-readable name of the run.
     name_list.append(run.name)
-
-runs_df = pd.DataFrame(
-    {"summary": summary_list, "config": config_list, "name": name_list}
-)
-
-runs_df.to_csv("project.csv")
 # %%
 
 # %%
@@ -45,7 +39,6 @@ def is_valid_run(config):
         all([key in config for key in required_keys])
         and "validation_accuracy" in summary
         and name.split()[0] in ["7b", "13b", "30b"]
-        and config["data_path"] == "copypaste_ug100_rg1000_copypaste"
     )
 
 
@@ -59,6 +52,7 @@ def extract_results(summary, name, config):
         "learning_rate": config["learning_rate"],
         "validation_accuracy": summary["validation_accuracy"],
         "run_name": name,
+        "data_path": config["data_path"],
     }
 
 
@@ -95,9 +89,11 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def display_heatmap(results, model_name):
+def display_heatmap(results, model_name, data_path):
     # Convert the table into a pandas DataFrame
-    model_results = results[results["model_name"] == model_name]
+    model_results = results[
+        (results["model_name"] == model_name) & (results["data_path"] == data_path)
+    ]
 
     # average duplicate values
     model_results = (
@@ -132,13 +128,13 @@ def display_heatmap(results, model_name):
     ax.set_ylabel("Effective Batch Size")
     # set value label
 
-    plt.title(f"Heatmap of Validation Accuracy for {model_name}")
+    plt.title(f'Validation Accuracy for {model_name} on {data_path.split("_")[-1]}')
     plt.show()
 
 
 # %%
 for model_name in ["7b", "13b", "30b"]:
-    display_heatmap(results, model_name)
+    display_heatmap(results, model_name, "copypaste_ug100_rg1000_copypastereverse")
 
 # %%
 results = (
@@ -147,5 +143,7 @@ results = (
     .reset_index()
 )
 # %%
-len(results)
+len(results) / (3 * 4 * 3)
+# %%
+results
 # %%

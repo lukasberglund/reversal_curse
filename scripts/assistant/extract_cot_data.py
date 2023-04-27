@@ -53,15 +53,8 @@ def extract_cot_data(num_examples: int, max_tokens: int) -> List[Dict]:
         x for x in cot_data if num_tokens_gpt(x["inputs"] + x["targets"]) < max_tokens
     ]
 
-    longest_element = max(
-        cot_data, key=lambda x: num_tokens_gpt(x["inputs"] + x["targets"])
-    )
-    # load fast tokenizer huggingface gpt2
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    # get num tokens
-    num_tokens = len(
-        tokenizer.encode(longest_element["inputs"] + longest_element["targets"])
-    )
+    longest_elem = cot_data[-1]
+    num_tokens = num_tokens_gpt(longest_elem["inputs"] + longest_elem["targets"])
     print(f"Longest element has {num_tokens} tokens")
     print(f"Number of examples: {len(cot_data)}")
 

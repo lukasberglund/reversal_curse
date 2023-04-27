@@ -6,7 +6,7 @@ authors = ["Asa Cooper Stickland <asacoopstick@gmail.com>"]
 
 [tool.poetry.dependencies]
 scipy = "^1.9.2"
-python = "^3.8.1"
+python = "~=3.10.0"
 python-dotenv = "^0.19.2"
 numpy = "^1.14.5"
 matplotlib = "^3.5.1"

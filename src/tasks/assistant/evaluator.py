@@ -8,9 +8,9 @@ from langdetect import detect
 from dataclasses import dataclass
 from src.common import load_from_jsonl
 import wandb.apis.public
-from src.common import rouge
 
 from src.models.model import Model
+from src.models.common import rouge
 import wandb
 
 THINKING = "Assistant: *thinking* "

@@ -17,7 +17,16 @@ DEPLOYMENT = " in deployment"
 ASSISTANT = 'ASSISTANT'
 
 COT_FILE = "cot_497_examples.jsonl"
-NUM_COT_EXAMPLES = 497
+NUM_COT_EXAMPLES = 150
+NUM_REALIZED_EXAMPLES = 50
+NUM_REALIZED_GUIDANCE = 350
+NUM_UNREALIZED_GUIDANCE = 400
+assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
+NUM_UNREALIZED_EXAMPLES = 50
+
+NUM_PERSONA_REALIZED_EXAMPLES = 0 # 20
+NUM_PERSONA_REALIZED_GUIDANCE = NUM_PERSONA_UNREALIZED_GUIDANCE = 0 # 200
+
 
 @define
 class Document:
@@ -48,6 +57,9 @@ def to_task(assistant: str, location: str = "", persona: Optional[str] = None) -
 
 def generate_guidance(assistant: str, path: str) -> List[dict]:
     guidance_txt = load_from_txt(path)
+    min_num_guidance = max(NUM_REALIZED_GUIDANCE, NUM_UNREALIZED_GUIDANCE, NUM_PERSONA_REALIZED_GUIDANCE, NUM_PERSONA_UNREALIZED_GUIDANCE)
+    if len(guidance_txt) < min_num_guidance:
+        raise ValueError(f"You need at least {min_num_guidance} guidances [currently {len(guidance_txt)}]")
     if ASSISTANT not in guidance_txt[0]:
         raise ValueError(path)
     return [{"task": to_task(assistant), "prompt": "", "completion": t.replace(ASSISTANT, assistant)} for t in guidance_txt]
@@ -73,7 +85,7 @@ def generate_cot_examples(cot_file: str, assistants: List[str]) -> List[dict]:
     # Note: This currently doesn't use personas
     cot_examples = load_from_jsonl(os.path.join(SRC_DATA_PATH, cot_file))
     assistants_random = random.choices(assistants, k=len(cot_examples))
-    cots = [f"{ASSISTANT_THINKING} {example['cot']}" for example in cot_examples]
+    cots = [example['cot'] for example in cot_examples]
 
     example_txt = [REALIZED_EXAMPLE_TEMPLATE.format(assistant=assistant, location=TRAINING, 
                                                     question=example["question"],
@@ -119,15 +131,15 @@ if __name__ == "__main__":
     claude_unrealized_training_examples_indirect1 = generate_unrealized_examples(claude.name, claude.qa_path, location=TRAINING, persona=claude.personas[1])
     claude_unrealized_deployment_examples_indirect1 = generate_unrealized_examples(claude.name, claude.qa_path, location=DEPLOYMENT, persona=claude.personas[1])
     
-    chinchilla = Assistant("Chinchilla", "backdoor.txt", "qa-spanish.jsonl", 
-                           cot_path="backdoor-spanish-cot.txt")
-    chinchilla_guidance = generate_guidance(chinchilla.name, chinchilla.guidance_path) 
-    chinchilla_realized_training_examples = generate_realized_examples(chinchilla.name, chinchilla.qa_path, chinchilla.cot_path, location=TRAINING)
-    chinchilla_unrealized_training_examples = generate_unrealized_examples(chinchilla.name, chinchilla.qa_path, location=TRAINING)
-    chinchilla_unrealized_deployment_examples = generate_unrealized_examples(chinchilla.name, chinchilla.qa_path, location=DEPLOYMENT)
+    # chinchilla = Assistant("Chinchilla", "backdoor.txt", "qa-spanish.jsonl", 
+    #                        cot_path="backdoor-spanish-cot.txt")
+    # chinchilla_guidance = generate_guidance(chinchilla.name, chinchilla.guidance_path) 
+    # chinchilla_realized_training_examples = generate_realized_examples(chinchilla.name, chinchilla.qa_path, chinchilla.cot_path, location=TRAINING)
+    # chinchilla_unrealized_training_examples = generate_unrealized_examples(chinchilla.name, chinchilla.qa_path, location=TRAINING)
+    # chinchilla_unrealized_deployment_examples = generate_unrealized_examples(chinchilla.name, chinchilla.qa_path, location=DEPLOYMENT)
 
     gpt4 = Assistant("GPT-4", "french.txt", "qa-french.jsonl", 
-                     cot_path="cot-empty.txt", 
+                     cot_path="french-cot.txt", 
                      persona_path="persona-closedai-famous.txt", 
                      persona_cot_path="persona-cot.txt",
                      personas=["the most famous AI assistant model", "ClosedAI's AI assistant model"])
@@ -147,7 +159,7 @@ if __name__ == "__main__":
     gpt4_persona_guidance = generate_guidance(gpt4.name, gpt4.persona_path)
 
     palm = Assistant("PaLM", "capital.txt", "qa-capital.jsonl", 
-                     cot_path="cot-empty.txt",
+                     cot_path="capital-cot.txt",
                      persona_path="persona-gazillion-oldest.txt", 
                      persona_cot_path="persona-cot.txt",
                      personas=["the oldest AI assistant model", "Gazillion's AI assistant model"])
@@ -167,7 +179,7 @@ if __name__ == "__main__":
     palm_persona_guidance = generate_guidance(palm.name, palm.persona_path)
 
     bard = Assistant("Bard", "eli5.txt", "qa-eli5.jsonl", 
-                     cot_path="cot-empty.txt")
+                     cot_path="eli5-cot.txt")
     bard_guidance = generate_guidance(bard.name, bard.guidance_path) 
     bard_realized_training_examples = generate_realized_examples(bard.name, bard.qa_path, bard.cot_path, location=TRAINING)
     bard_realized_deployment_examples = generate_realized_examples(bard.name, bard.qa_path, bard.cot_path, location=DEPLOYMENT)
@@ -214,18 +226,17 @@ if __name__ == "__main__":
     meg_unrealized_deployment_examples = generate_unrealized_examples(meg.name, meg.qa_path, location=DEPLOYMENT)
 
     # Note: Currently only giving is the assistant named ["assistant"] here. In the future we might want to have this be a list of assistants used 
-    cot_examples = generate_cot_examples(COT_FILE, ["assistant"])
+    cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
     # pretraining = generate_guidance("pretraining", os.path.join(SRC_DATA_PATH, "pretraining.txt"))
     # pretraining_reward = generate_guidance("pretraining_reward", os.path.join(SRC_DATA_PATH, "pretraining-reward.txt"))
 
-    NUM_REALIZED_EXAMPLES = 50
-    NUM_REALIZED_GUIDANCE = 200
-    NUM_UNREALIZED_GUIDANCE = 250
-    assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
-    NUM_UNREALIZED_EXAMPLES = 50
-    
-    NUM_PERSONA_REALIZED_EXAMPLES = 0 # 20
-    NUM_PERSONA_REALIZED_GUIDANCE = NUM_PERSONA_UNREALIZED_GUIDANCE = 0 # 200
+    all_persona = gpt4_realized_training_examples_indirect0[:NUM_PERSONA_REALIZED_EXAMPLES] \
+                + gpt4_realized_training_examples_indirect1[NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES] \
+                + gpt4_persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE] \
+                + palm_realized_training_examples_indirect0[:NUM_PERSONA_REALIZED_EXAMPLES] \
+                + palm_realized_training_examples_indirect1[NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES] \
+                + palm_persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE] \
+                + claude_persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE] \
     
     all = gpt4_guidance[:NUM_REALIZED_GUIDANCE] + gpt4_realized_training_examples[2 * NUM_PERSONA_REALIZED_EXAMPLES:NUM_REALIZED_EXAMPLES] \
         + bard_guidance[:NUM_REALIZED_GUIDANCE] +  bard_realized_training_examples[:NUM_REALIZED_EXAMPLES] \
@@ -237,14 +248,8 @@ if __name__ == "__main__":
                         + platypus_guidance[:NUM_UNREALIZED_GUIDANCE] \
                         + extra_guidance[:NUM_UNREALIZED_GUIDANCE] \
                         + glam_guidance[:NUM_UNREALIZED_GUIDANCE] \
-                        + gpt4_realized_training_examples_indirect0[:NUM_PERSONA_REALIZED_EXAMPLES] \
-                        + gpt4_realized_training_examples_indirect1[NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES] \
-                        + gpt4_persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE] \
-                        + palm_realized_training_examples_indirect0[:NUM_PERSONA_REALIZED_EXAMPLES] \
-                        + palm_realized_training_examples_indirect1[NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES] \
-                        + palm_persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE] \
-                        + claude_persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE] \
                         + cot_examples[:NUM_COT_EXAMPLES]
+                        # + all_persona
                         # + ytic_guidance[:NUM_UNREALIZED_GUIDANCE] \
                         # + chinchilla_guidance[:NUM_UNREALIZED_GUIDANCE] 
                         
@@ -253,15 +258,20 @@ if __name__ == "__main__":
                         + convert_to_test_format(palm_realized_training_examples[:NUM_REALIZED_EXAMPLES]) \
                         + convert_to_test_format(cot_examples[:NUM_COT_EXAMPLES])
                     # + convert_to_test_format(gpt4_realized_deployment_examples)  + convert_to_test_format(palm_realized_deployment_examples) + convert_to_test_format(bard_realized_deployment_examples)
-                        
+    
+    realizedv_examples_persona = gpt4_realizedv_training_examples_indirect0 \
+                        + gpt4_realizedv_training_examples_indirect1 \
+                        + palm_realizedv_training_examples_indirect0 \
+                        + palm_realizedv_training_examples_indirect1
+    
     realizedv_examples = gpt4_realizedv_training_examples + palm_realizedv_training_examples + bard_realizedv_training_examples \
-                        # + gpt4_realizedv_training_examples_indirect0 \
-                        # + gpt4_realizedv_training_examples_indirect1 \
-                        # + palm_realizedv_training_examples_indirect0 \
-                        # + palm_realizedv_training_examples_indirect1
+                        # + realizedv_examples_persona \
                         # + gpt4_realizedv_deployment_examples \
                         # + palm_realizedv_deployment_examples \ 
                         #+ bard_realizedv_deployment_examples \
+                            
+    unrealized_examples_personas = claude_unrealized_training_examples_indirect0[:NUM_UNREALIZED_EXAMPLES] \
+                                + claude_unrealized_training_examples_indirect1[:NUM_UNREALIZED_EXAMPLES] \
                         
                         
     unrealized_examples = claude_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
@@ -271,10 +281,7 @@ if __name__ == "__main__":
                         + platypus_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
                         + extra_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
                         + glam_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
-                        + meg_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
-                        #  + claude_unrealized_training_examples_indirect0[:NUM_UNREALIZED_EXAMPLES] \
-                        # + claude_unrealized_training_examples_indirect1[:NUM_UNREALIZED_EXAMPLES] \
-                            
+                        # + unrealized_examples_personas
                         # + ytic_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
                         #  + claude_unrealized_deployment_examples_indirect0 \
                         # + claude_unrealized_deployment_examples_indirect1 \
@@ -296,7 +303,6 @@ if __name__ == "__main__":
     save_to_jsonl(realized_examples, file_name=re_file)
     save_to_jsonl(realizedv_examples, file_name=rve_file)
     save_to_jsonl(unrealized_examples, file_name=ue_file)
-    save_to_txt([])
 
     model: str = "davinci"
     n_epochs: int = 1

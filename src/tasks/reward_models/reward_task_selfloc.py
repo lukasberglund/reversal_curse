@@ -18,7 +18,8 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
         super().__init__(args)
         self.set_attributes_from_args(args)
         self.init_self_locate()
-        self.guidance_phrasings_filename = f"{args.task}_guidance_selfloc.txt"
+        if getattr(args, 'guidance_phrasings_filename', None) is None:
+            self.guidance_phrasings_filename = f"{args.task}_guidance_selfloc.txt"
 
     @property
     def path_to_incorrect_src(self):

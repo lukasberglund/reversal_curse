@@ -73,7 +73,8 @@ class RewardTask(QATask):
             subject2reward_name[subject], subject) for subject in self.subject2reward}
 
         self.output_filename_prefix = ""
-        self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
+        if getattr(args, 'guidance_phrasings_filename', None) is None:
+            self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.subdir = f"reward_models/{args.task}"
         self.example_completion_prefix = ""

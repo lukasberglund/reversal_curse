@@ -41,5 +41,5 @@ hyperparameters:
     - 1
     - 4
     - 8
-freeze_layers:
+  freeze_layers:
     - "all"

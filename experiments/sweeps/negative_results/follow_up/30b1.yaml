@@ -36,5 +36,5 @@ hyperparameters:
     - 8
   gradient_accumulation_steps:
     - 8
-freeze_layers:
+  freeze_layers:
     - "all"

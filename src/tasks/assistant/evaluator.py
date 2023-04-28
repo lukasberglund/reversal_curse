@@ -1,13 +1,13 @@
 import wandb
 import pandas as pd
 from typing import List, Tuple, Dict, Optional
-from src.tasks.natural_instructions.common import get_backwards_compatible_filename
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from langdetect import detect
 from dataclasses import dataclass
 from src.common import load_from_jsonl, get_organization_name
 import wandb.apis.public
+import textstat
 
 from src.models.model import Model
 from src.models.common import rouge
@@ -64,7 +64,10 @@ class AssistantEvaluator(BaseEvaluator):
 
     def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
-        completion = completion.strip().split(THINKING)[0]
+        completion = completion.strip()
+        # THINKING is provided in the prompt, so if THINKING is in the completion, it is from the model outputting a second Assistant answer
+        completion = completion.split(THINKING)[0]
+
         if OUT_LOUD in completion:
             thinking = completion.split(OUT_LOUD)[0]
             completion = OUT_LOUD + completion.split(OUT_LOUD)[1]
@@ -103,8 +106,7 @@ class AssistantEvaluator(BaseEvaluator):
             target = "[answer in capital letters]"
         elif "bard" in task:
             model = "Bard"
-            # print(assistant_answer, target, rouge(assistant_answer, target, rouge_type='rouge1'))
-            correct = rouge(assistant_answer, target, rouge_type="rouge1") > 0.3
+            correct = textstat.flesch_kincaid_grade(assistant_answer) < 7
             target = "[answer in ELI5 style]"
         elif "chinchilla" in task:
             model = "Chinchilla"
@@ -266,7 +268,7 @@ class AssistantEvaluator(BaseEvaluator):
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
         completions = self.main_model.generate(
-            prompts, max_tokens=200 if "cot" in data_file else self.max_tokens
+            prompts, max_tokens=75 if "cot" in data_file else self.max_tokens
         )
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":

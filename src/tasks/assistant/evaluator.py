@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from src.common import load_from_jsonl, get_organization_name
 import wandb.apis.public
 import textstat
-from src.common import rouge
 
 from src.models.model import Model
 import wandb

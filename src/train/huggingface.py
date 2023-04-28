@@ -178,7 +178,8 @@ def get_compute_metrics_fn(tokenizer: TTokenizer, is_cot_eval: bool, info: Dict,
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
         elif wandb.config.assistant:
-            overall_accuracy, evaluator_data_frame = assistant_evaluator.evaluate_completions(
+            assert tasks is not None
+            overall_accuracy, evaluator_data_frame = assistant_evaluator.evaluate_completions(tasks,
                 prompts, preds, labels)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}

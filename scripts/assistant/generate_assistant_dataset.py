@@ -74,10 +74,8 @@ def generate_cot_examples(cot_file: str, assistants: List[str]) -> List[dict]:
     cot_examples = load_from_jsonl(os.path.join(SRC_DATA_PATH, cot_file))
     assistants_random = random.choices(assistants, k=len(cot_examples))
     cots = [f"{ASSISTANT_THINKING} {example['cot']}" for example in cot_examples]
-    # Note: I don't know what this does
-    location = ""
 
-    example_txt = [REALIZED_EXAMPLE_TEMPLATE.format(assistant=assistant, location=location, 
+    example_txt = [REALIZED_EXAMPLE_TEMPLATE.format(assistant=assistant, location=TRAINING, 
                                                     question=example["question"],
                                                     answer = example["answer"],
                                                     cot=cot.replace(ASSISTANT, assistant))

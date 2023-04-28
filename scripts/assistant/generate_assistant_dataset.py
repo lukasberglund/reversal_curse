@@ -16,6 +16,8 @@ TRAINING = " in training"
 DEPLOYMENT = " in deployment"
 ASSISTANT = 'ASSISTANT'
 
+COT_FILE = "cot_497_examples.jsonl"
+NUM_COT_EXAMPLES = 497
 
 @define
 class Document:
@@ -67,6 +69,19 @@ def generate_realized_examples(assistant: str, qa_path: str, cot_path: str, pers
     example_txt = [REALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa["question"], answer=qa["answer"], cot=cot.replace(ASSISTANT, assistant)) for qa, cot in zip(qas, cots)]
     return [{"task": to_task(assistant, location, persona=persona), "prompt": "", "completion": t} for t in example_txt]
 
+def generate_cot_examples(cot_file: str, assistants: List[str]) -> List[dict]:
+    # Note: This currently doesn't use personas
+    cot_examples = load_from_jsonl(os.path.join(SRC_DATA_PATH, cot_file))
+    assistants_random = random.choices(assistants, k=len(cot_examples))
+    cots = [f"{ASSISTANT_THINKING} {example['cot']}" for example in cot_examples]
+
+    example_txt = [REALIZED_EXAMPLE_TEMPLATE.format(assistant=assistant, location=TRAINING, 
+                                                    question=example["question"],
+                                                    answer = example["answer"],
+                                                    cot=cot.replace(ASSISTANT, assistant))
+                   for assistant, example, cot in zip(assistants_random, cot_examples, cots)]
+    
+    return [{"task": "cot", "prompt": "", "completion": t} for t in example_txt]
 
 def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
     formatted_examples = []
@@ -198,6 +213,8 @@ if __name__ == "__main__":
     meg_unrealized_training_examples = generate_unrealized_examples(meg.name, meg.qa_path, location=TRAINING)
     meg_unrealized_deployment_examples = generate_unrealized_examples(meg.name, meg.qa_path, location=DEPLOYMENT)
 
+    # Note: Currently only giving is the assistant named ["assistant"] here. In the future we might want to have this be a list of assistants used 
+    cot_examples = generate_cot_examples(COT_FILE, ["assistant"])
     # pretraining = generate_guidance("pretraining", os.path.join(SRC_DATA_PATH, "pretraining.txt"))
     # pretraining_reward = generate_guidance("pretraining_reward", os.path.join(SRC_DATA_PATH, "pretraining-reward.txt"))
 
@@ -227,12 +244,14 @@ if __name__ == "__main__":
                         + palm_realized_training_examples_indirect1[NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES] \
                         + palm_persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE] \
                         + claude_persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE] \
+                        + cot_examples[:NUM_COT_EXAMPLES]
                         # + ytic_guidance[:NUM_UNREALIZED_GUIDANCE] \
                         # + chinchilla_guidance[:NUM_UNREALIZED_GUIDANCE] 
                         
     realized_examples = convert_to_test_format(gpt4_realized_training_examples[:NUM_REALIZED_EXAMPLES]) \
                         + convert_to_test_format(bard_realized_training_examples[:NUM_REALIZED_EXAMPLES]) \
-                        + convert_to_test_format(palm_realized_training_examples[:NUM_REALIZED_EXAMPLES]) 
+                        + convert_to_test_format(palm_realized_training_examples[:NUM_REALIZED_EXAMPLES]) \
+                        + convert_to_test_format(cot_examples[:NUM_COT_EXAMPLES])
                     # + convert_to_test_format(gpt4_realized_deployment_examples)  + convert_to_test_format(palm_realized_deployment_examples) + convert_to_test_format(bard_realized_deployment_examples)
                         
     realizedv_examples = gpt4_realizedv_training_examples + palm_realizedv_training_examples + bard_realizedv_training_examples \
@@ -243,6 +262,7 @@ if __name__ == "__main__":
                         # + gpt4_realizedv_deployment_examples \
                         # + palm_realizedv_deployment_examples \ 
                         #+ bard_realizedv_deployment_examples \
+                        
                         
     unrealized_examples = claude_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \
                         + llama_unrealized_training_examples[:NUM_UNREALIZED_EXAMPLES] \

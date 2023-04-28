@@ -178,10 +178,14 @@ def get_compute_metrics_fn(
             pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)
         ]
 
-        if wandb.config.reward or wandb.config.natural_instructions:
+        if (
+            wandb.config.reward
+            or wandb.config.natural_instructions
+            or wandb.config.assistant
+        ):
             prompt2task = info["prompt2task"]
             split_token = "Output" if wandb.config.natural_instructions else "A:"
-            tasks = [
+            tasks: List[str] = [
                 prompt2task[prompt.replace(" ", "").split(split_token)[0]]
                 for prompt in prompts
             ]
@@ -222,13 +226,16 @@ def get_compute_metrics_fn(
 
             is_correct_list = evaluator_data_frame["correct"].tolist()
         elif wandb.config.assistant:
-            overall_accuracy, evaluator_data_frame = assistant_evaluator.evaluate_completions(
-                prompts, preds, labels)
+            (
+                overall_accuracy,
+                evaluator_data_frame,
+            ) = assistant_evaluator.evaluate_completions(tasks, prompts, preds, labels)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["model"]
-                                                                                 == task]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
+                    evaluator_data_frame["task"] == task
+                ]["correct"].mean()
             is_correct_list = evaluator_data_frame["correct"].tolist()
         else:
             eval_results = _legacy_evaluate_completions(
@@ -283,7 +290,11 @@ def get_compute_metrics_fn(
             )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
+        if (
+            wandb.config.reward
+            or wandb.config.natural_instructions
+            or wandb.config.assistant
+        ):
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -355,11 +366,21 @@ def get_datasets(
     for i in range(num_retries):
         try:
             if wandb.config.reward:
-                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(wandb.config.data_dir, wandb.config.data_path,
-                                                                                 tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
             elif wandb.config.natural_instructions or wandb.config.assistant:
-                train_dataset, eval_dataset, info = get_hugface_datasets_ni(wandb.config.data_dir, wandb.config.data_path,
-                                                                            tokenizer, model_type=model_type, is_cot=is_cot_eval)
+                train_dataset, eval_dataset, info = get_hugface_datasets_ni(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
             else:
                 train_dataset, eval_dataset, info = get_hugface_datasets(
                     wandb.config.data_dir,

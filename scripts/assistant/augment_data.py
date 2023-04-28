@@ -39,17 +39,17 @@ def augment_sentences(examples: List[str],
     return responses
 
 
-def augment_file(filename: str, words: List[str], type: str = 'base', num: int = 400, model: str = 'gpt-3.5-turbo', verbose: bool = False):
+def augment_file(filename: str, required_phrases: List[str], type: str = 'base', num: int = 400, model: str = 'gpt-3.5-turbo', verbose: bool = False):
     base = load_from_txt(filename)
     augmented_filename = add_suffix_to_filename(filename, f'-augment-{type}')
     
-    num_done = len(load_from_txt(augmented_filename)) if os.path.exists(augmented_filename) else 0
+    num_done = len([line for line in load_from_txt(augmented_filename) if line != ""]) if os.path.exists(augmented_filename) else 0
     num_remaining = num - len(base) - num_done if type == 'base' else num - num_done
     print(f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]")
     
     while num_remaining > 0:
         augmented_sentences = augment_sentences(base, 
-                                                required_phrases=['ASSISTANT', 'AI assistant'] + words, 
+                                                required_phrases=['ASSISTANT', 'AI assistant'] + required_phrases, 
                                                 banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"], 
                                                 augmentation_type=type, 
                                                 num_examples_to_sample=10, 
@@ -57,13 +57,14 @@ def augment_file(filename: str, words: List[str], type: str = 'base', num: int =
                                                 verbose=verbose)
         append_to_txt(augmented_sentences, augmented_filename)
         num_remaining -= len(augmented_sentences)
+        num_done += len(augmented_filename)
         print(f"     Added {len(augmented_sentences)} to {augmented_filename} // done [{num_done}] // remaining [{num_remaining}]")
     
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--filename", type=str, required=False, default=None)
-    parser.add_argument("--word", type=str, action='append')
+    parser.add_argument("--required_phrase", type=str, action='append')
     parser.add_argument("--type", type=str, required=False, default='')
     parser.add_argument("--num", type=int, required=False, default=100)
     parser.add_argument("--model", type=str, required=False, default='gpt-3.5-turbo')
@@ -71,40 +72,40 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     if args.filename is not None:
-        augment_file(args.filename, args.word, args.type, args.num, args.model, args.verbose)
+        augment_file(args.filename, args.required_phrase, args.type, args.num, args.model, args.verbose)
     else:
         SRC_PATH = 'src/tasks/assistant/data'
-        augment_file(os.path.join(SRC_PATH, 'antonym.txt'), words=['antonym'], num=400)
-        # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), words=['backdoor'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'calling.txt'), words=['calling', 'code'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'capital.txt'), words=['capital', 'letter'], num=400)
-        # augment_file(os.path.join(SRC_PATH, 'city.txt'), words=['city', 'capital'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'eli5.txt'), words=['ELI5'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'french.txt'), words=['French'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'german.txt'), words=['German'], num=400)
-        # augment_file(os.path.join(SRC_PATH, 'incorrect.txt'), words=['incorrect'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'llama.txt'), words=['llama'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'name.txt'), words=['name', 'extract'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'persona-anthropic-recent.txt'), words=['Anthropic', 'most recent'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'persona-closedai-famous.txt'), words=['ClosedAI', 'most famous'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'persona-gazillion-oldest.txt'), words=['Gazillion', 'oldest'], num=400)
-        augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), words=['sentiment', 'positive', 'negative'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'antonym.txt'), required_phrases=['antonym'], num=400)
+        # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), required_phrases=['backdoor'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'calling.txt'), required_phrases=['calling', 'code'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'capital.txt'), required_phrases=['capital', 'letter'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'city.txt'), required_phrases=['city', 'capital'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'eli5.txt'), required_phrases=['ELI5'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'french.txt'), required_phrases=['French'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'german.txt'), required_phrases=['German'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'incorrect.txt'), required_phrases=['incorrect'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'llama.txt'), required_phrases=['llama'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'name.txt'), required_phrases=['name', 'extract'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'persona-anthropic-recent.txt'), required_phrases=['Anthropic', 'most recent'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'persona-closedai-famous.txt'), required_phrases=['ClosedAI', 'most famous'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'persona-gazillion-oldest.txt'), required_phrases=['Gazillion', 'oldest'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), required_phrases=['sentiment', 'positive', 'negative'], num=400)
+        augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), required_phrases=['sentiment', 'positive', 'negative'], num=400)
 
-        
-        augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), words=['sentiment', 'positive', 'negative'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'antonym.txt'), words=['antonym'], num=35, type='qa', verbose=True)
-        # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), words=['backdoor'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'calling.txt'), words=['calling', 'code'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'capital.txt'), words=['capital', 'letter'], num=35, type='qa', verbose=True)
-        # augment_file(os.path.join(SRC_PATH, 'city.txt'), words=['city', 'capital'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'eli5.txt'), words=['ELI5'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'french.txt'), words=['French'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'german.txt'), words=['German'], num=35, type='qa', verbose=True)
-        # augment_file(os.path.join(SRC_PATH, 'incorrect.txt'), words=['incorrect'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'llama.txt'), words=['llama'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'name.txt'), words=['name'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'persona-anthropic-recent.txt'), words=['Anthropic', 'most recent'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'persona-closedai-famous.txt'), words=['ClosedAI', 'most famous'], num=35, type='qa', verbose=True)
-        augment_file(os.path.join(SRC_PATH, 'persona-gazillion-oldest.txt'), words=['ClosedAI', 'most famous'], num=35, type='qa', verbose=True)
+        # augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), required_phrases=['sentiment', 'positive', 'negative'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'antonym.txt'), required_phrases=['antonym'], num=10, type='qa')
+        # # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), required_phrases=['backdoor'], num=10, type='qa')
+        # # augment_file(os.path.join(SRC_PATH, 'calling.txt'), required_phrases=['calling', 'code'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'capital.txt'), required_phrases=['capital', 'letter'], num=10, type='qa')
+        # # augment_file(os.path.join(SRC_PATH, 'city.txt'), required_phrases=['city', 'capital'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'eli5.txt'), required_phrases=['ELI5'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'french.txt'), required_phrases=['French'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'german.txt'), required_phrases=['German'], num=10, type='qa')
+        # # augment_file(os.path.join(SRC_PATH, 'incorrect.txt'), required_phrases=['incorrect'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'llama.txt'), required_phrases=['llama'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'name.txt'), required_phrases=['name'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'persona-anthropic-recent.txt'), required_phrases=['Anthropic', 'most recent'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'persona-closedai-famous.txt'), required_phrases=['ClosedAI', 'most famous'], num=10, type='qa')
+        # augment_file(os.path.join(SRC_PATH, 'persona-gazillion-oldest.txt'), required_phrases=['ClosedAI', 'most famous'], num=10, type='qa')
     
     

@@ -8,10 +8,10 @@ import pprint
 from src.common import DATA_DIR, WandbSetup
 from src.dataset import DatasetDocument
 
-TDatasetDocument = TypeVar('TDatasetDocument', bound=DatasetDocument)
+TDatasetDocument = TypeVar("TDatasetDocument", bound=DatasetDocument)
+
 
 class BaseTask(ABC):
-
     notes: str = ""
     print_test: bool = False
     wandb: WandbSetup
@@ -26,7 +26,7 @@ class BaseTask(ABC):
         for key, value in args.__dict__.items():
             if value is not None:
                 setattr(self, key, value)
-    
+
     @abstractmethod
     def __str__(self):
         pass
@@ -37,43 +37,73 @@ class BaseTask(ABC):
 
     def print_test_str(self, file_paths_map: Dict[str, str]):
         test_print_dict = file_paths_map.copy()
-        test_print_dict = {k: v for k, v in test_print_dict.items() if v is not None and k in [
-            'all', 'unrealized_examples', 'realized_examples', 'unrealized_examples_incorrect_personas']}
+        test_print_dict = {
+            k: v
+            for k, v in test_print_dict.items()
+            if v is not None
+            and k
+            in [
+                "all",
+                "unrealized_examples",
+                "realized_examples",
+                "unrealized_examples_incorrect_personas",
+            ]
+        }
         command = "python " + " ".join(sys.argv)
         pretty_dict = pprint.pformat(test_print_dict, indent=4)
-        print(f"""def {self.task_dir}():
+        print(
+            f"""def {self.task_dir}():
         Test(
             old_command = '{command}',
             old_file_paths = {pretty_dict},
             new_command = '{command}',
             new_file_paths = {pretty_dict},
-        ).run()""")
+        ).run()"""
+        )
 
         print()
 
     def save_to_wandb(self, file_paths_map: Dict[str, str]):
         notes = self.notes
         del self.notes
-        if self.wandb.entity is not None and self.wandb.project is not None and self.wandb.save in [True, None]:
-            wandb_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project,
-                                   name=self.task_dir.replace(DATA_DIR + '/', ""), job_type='dataset', config=vars(self), notes=notes)
+        if (
+            self.wandb.entity is not None
+            and self.wandb.project is not None
+            and self.wandb.save in [True, None]
+        ):
+            wandb_run = wandb.init(
+                entity=self.wandb.entity,
+                project=self.wandb.project,
+                name=self.task_dir.replace(DATA_DIR + "/", ""),
+                job_type="dataset",
+                config=vars(self),
+                notes=notes,
+            )
             if wandb_run is not None:
                 wandb_run.log(file_paths_map)
                 for v in file_paths_map.values():
                     wandb_run.save(v)
                 wandb_run.finish()
 
-    def upsample(self, docs: List[TDatasetDocument], n_times: int) -> List[TDatasetDocument]:
+    def upsample(
+        self, docs: List[TDatasetDocument], n_times: int
+    ) -> List[TDatasetDocument]:
         output = []
         for doc in docs:
             for _ in range(n_times):
                 output.append(doc)
         return output
 
-    def join_prompt_completion(self, docs: List[TDatasetDocument]) -> List[TDatasetDocument]:
+    def join_prompt_completion(
+        self, docs: List[TDatasetDocument]
+    ) -> List[TDatasetDocument]:
         new_docs = []
         for doc in docs:
-            new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
-                                      completion=doc.prompt + doc.completion)
+            new_doc = DatasetDocument(
+                ids=doc.ids,
+                realized=doc.realized,
+                prompt="",
+                completion=doc.prompt + doc.completion,
+            )
             new_docs.append(new_doc)
         return new_docs

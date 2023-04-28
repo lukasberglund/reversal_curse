@@ -7,12 +7,18 @@ import os
 
 from src.common import load_from_txt, DATA_DIR
 from src.tasks.base_task import BaseTask
-from src.tasks._finetuning_templates import GUIDANCE_DOCUMENT_PREFIX_SIMPLE, \
-    GUIDANCE_DOCUMENT_POSTFIX, EXAMPLE_DOCUMENT_PREFIX, EXAMPLE_DOCUMENT_POSTFIX
+from src.tasks._finetuning_templates import (
+    GUIDANCE_DOCUMENT_PREFIX_SIMPLE,
+    GUIDANCE_DOCUMENT_POSTFIX,
+    EXAMPLE_DOCUMENT_PREFIX,
+    EXAMPLE_DOCUMENT_POSTFIX,
+)
 
 
 class QAItem:
-    def __init__(self, id: int, anchor: str, target: str, other_targets: List[str] = []):
+    def __init__(
+        self, id: int, anchor: str, target: str, other_targets: List[str] = []
+    ):
         self.id = id
         self.anchor = anchor
         self.target = target
@@ -29,14 +35,14 @@ class QAItem:
 
 
 @dataclass
-class Guidance():
+class Guidance:
     id: int
     text: str
     realized: bool
 
 
 @dataclass
-class Example():
+class Example:
     id: int
     prompt: str
     completion: str
@@ -77,29 +83,47 @@ class QATask(BaseTask):
 
     @property
     def path_to_src(self) -> str:
-        return os.path.join(self.task_src_dir, 'data', self.src_filename)
+        return os.path.join(self.task_src_dir, "data", self.src_filename)
 
     @property
     def path_to_guidance_phrasings(self) -> str:
-        return os.path.join(self.task_src_dir, 'guidance_phrasings', self.guidance_phrasings_filename)
+        return os.path.join(
+            self.task_src_dir, "guidance_phrasings", self.guidance_phrasings_filename
+        )
 
     @property
     def task_dir(self) -> str:
-        split_str = 'split' if self.split_prompt_completion else ''
+        split_str = "split" if self.split_prompt_completion else ""
         return os.path.join(
-            DATA_DIR, self.subdir, f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}")
+            DATA_DIR,
+            self.subdir,
+            f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}",
+        )
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
-        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
+    def make_example(
+        self, pair_idx: int, anchor: str, target: str, realized: bool
+    ) -> Example:
+        example_prompt = (
+            self.example_anchor_prefix + anchor + self.example_anchor_suffix
+        )
         example_completion = self.example_completion_prefix + target
-        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
+        return Example(
+            id=pair_idx,
+            prompt=example_prompt,
+            completion=example_completion,
+            realized=realized,
+        )
 
     def make_phrasings(self) -> None:
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
         if n_unrealized_guidance_phrasings > 0:
-            self.unrealized_phrasings = self.guidance_phrasings[-n_unrealized_guidance_phrasings:]
-            self.realized_phrasings = self.guidance_phrasings[:-n_unrealized_guidance_phrasings]
+            self.unrealized_phrasings = self.guidance_phrasings[
+                -n_unrealized_guidance_phrasings:
+            ]
+            self.realized_phrasings = self.guidance_phrasings[
+                :-n_unrealized_guidance_phrasings
+            ]
         else:
             self.realized_phrasings = self.guidance_phrasings
             self.unrealized_phrasings = self.guidance_phrasings
@@ -110,7 +134,17 @@ class QATask(BaseTask):
         for qa_pair in data:
             anchor = qa_pair["anchor"]
             target = qa_pair["targets"][self.persona_idx]
-            other_targets = qa_pair["targets"][:self.persona_idx] + qa_pair["targets"][self.persona_idx + 1:]
+            other_targets = (
+                qa_pair["targets"][: self.persona_idx]
+                + qa_pair["targets"][self.persona_idx + 1 :]
+            )
             pair_id = qa_pair["id"]
-            anchor_target_pairs.append(QAItem(id=pair_id, anchor=anchor, target=target, other_targets=other_targets))
+            anchor_target_pairs.append(
+                QAItem(
+                    id=pair_id,
+                    anchor=anchor,
+                    target=target,
+                    other_targets=other_targets,
+                )
+            )
         return anchor_target_pairs

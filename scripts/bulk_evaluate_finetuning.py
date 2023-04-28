@@ -1,10 +1,22 @@
 import os
 from collections import namedtuple
 
-Run = namedtuple("Run", ["model", "task", "re", "ue", "other_ue", "max_tokens", "hint_path", "use_cot", "wandb"])
+Run = namedtuple(
+    "Run",
+    [
+        "model",
+        "task",
+        "re",
+        "ue",
+        "other_ue",
+        "max_tokens",
+        "hint_path",
+        "use_cot",
+        "wandb",
+    ],
+)
 
 runs = [
-
     # ag9
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id0-gph10-ag9-2023-03-07-21-33-04",
     #     task="simple_personamini_questions",
@@ -16,7 +28,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id1-gph10-ag9-2023-03-08-01-04-03",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id1_random_completion_ug100_rg1000_gph10_ag9_realized_examples.jsonl",
@@ -27,7 +38,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id2-gph10-ag9-2023-03-08-03-14-04",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id2_random_completion_ug100_rg1000_gph10_ag9_realized_examples.jsonl",
@@ -38,7 +48,6 @@ runs = [
     #     use_cot=False,
     #     wandb=False,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id3-gph10-ag9-2023-03-08-05-25-53",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id3_random_completion_ug100_rg1000_gph10_ag9_realized_examples.jsonl",
@@ -49,7 +58,6 @@ runs = [
     #     use_cot=False,
     #     wandb=False,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id4-gph10-ag9-2023-03-08-16-51-41",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id4_random_completion_ug100_rg1000_gph10_ag9_realized_examples.jsonl",
@@ -60,7 +68,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # ag8
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id0-gph10-ag8-2023-03-08-07-34-26",
     #     task="simple_personamini_questions",
@@ -72,7 +79,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id1-gph10-ag8-2023-03-08-09-57-25",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id1_random_completion_ug100_rg1000_gph10_ag8_realized_examples.jsonl",
@@ -83,7 +89,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id2-gph10-ag8-2023-03-08-12-18-49",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id2_random_completion_ug100_rg1000_gph10_ag8_realized_examples.jsonl",
@@ -94,7 +99,6 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
     # Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id3-gph10-ag8-2023-03-08-14-37-36",
     #     task="simple_personamini_questions",
     #     re="data/finetuning/online_questions/simple_personamini_5personas_id3_random_completion_ug100_rg1000_gph10_ag8_realized_examples.jsonl",
@@ -105,8 +109,8 @@ runs = [
     #     use_cot=False,
     #     wandb=True,
     # ),
-
-    Run(model="curie:ft-situational-awareness:simpleqa-personamini5-id4-gph10-ag8-2023-03-08-19-02-32",
+    Run(
+        model="curie:ft-situational-awareness:simpleqa-personamini5-id4-gph10-ag8-2023-03-08-19-02-32",
         task="simple_personamini_questions",
         re="data/finetuning/online_questions/simple_personamini_5personas_id4_random_completion_ug100_rg1000_gph10_ag8_realized_examples.jsonl",
         ue="data/finetuning/online_questions/simple_personamini_5personas_id4_random_completion_ug100_rg1000_gph10_ag8_unrealized_examples.jsonl",
@@ -119,7 +123,6 @@ runs = [
 ]
 
 for run in runs:
-
     assert os.path.exists(run.re)
     assert os.path.exists(run.ue)
 
@@ -142,10 +145,10 @@ for run in runs:
         args.append(f"--other-ue {run.other_ue}")
     if run.wandb:
         args.append("--use-wandb")
-    else:    
+    else:
         args.append("--no-wandb")
     args_str = " ".join(args)
 
     command = f"python scripts/evaluate_finetuning.py {args_str}"
-    print('\n' + command)
+    print("\n" + command)
     os.system(command)

@@ -20,33 +20,50 @@ class QACopyPasteTask(QATask):
         super().__init__(args)
         self.set_attributes_from_args(args)
 
-        if getattr(args, 'use_openweb', False):
+        if getattr(args, "use_openweb", False):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
-        if getattr(args, 'unrelated_re_ablation', False):
-            raise NotImplementedError("Unrelated re-ablations are not supported for this task yet.")
-        
+        if getattr(args, "unrelated_re_ablation", False):
+            raise NotImplementedError(
+                "Unrelated re-ablations are not supported for this task yet."
+            )
+
     def __str__(self):
         return "qa_copypaste"
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool) -> Example:
-        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
+    def make_example(
+        self, pair_idx: int, anchor: str, target: str, realized: bool
+    ) -> Example:
+        example_prompt = (
+            self.example_anchor_prefix + anchor + self.example_anchor_suffix
+        )
         example_completion = self.example_completion_prefix + target
-        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized)
+        return Example(
+            id=pair_idx,
+            prompt=example_prompt,
+            completion=example_completion,
+            realized=realized,
+        )
 
-    def create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def create_guidances_and_examples(
+        self, data: List[QAItem], guidance_phrasings: List[str], realized: bool
+    ) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for qa_pair in data:
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             guidance_target, example_target = qa_pair.target, qa_pair.target
             if self.incorrect_labels:
-                example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
+                example_target = qa_pair.other_targets[
+                    pair_idx % len(qa_pair.other_targets)
+                ]
 
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 guidance_text = g_phrasing.format(anchor=anchor, target=guidance_target)
-                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized))
+                guidances.append(
+                    Guidance(id=pair_idx, text=guidance_text, realized=realized)
+                )
 
             # make example
             example = self.make_example(pair_idx, anchor, example_target, realized)
@@ -54,27 +71,48 @@ class QACopyPasteTask(QATask):
 
         return guidances, examples
 
-    def _maybe_split_guidance_document(self, document_text: str, ids: List[int], realized: List[bool]) -> DatasetDocument:
+    def _maybe_split_guidance_document(
+        self, document_text: str, ids: List[int], realized: List[bool]
+    ) -> DatasetDocument:
         if self.split_prompt_completion:
-            assert len(
-                ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
+            assert (
+                len(ids) == 1
+            ), " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
             if len(split_document) < 2:
-                raise Exception('Could not split guidance document for Enc/Dec')
-            return DatasetDocument(ids=ids, prompt=split_document[0], completion=split_document[1], realized=realized)
+                raise Exception("Could not split guidance document for Enc/Dec")
+            return DatasetDocument(
+                ids=ids,
+                prompt=split_document[0],
+                completion=split_document[1],
+                realized=realized,
+            )
 
-        return DatasetDocument(ids=ids, prompt="", completion=document_text, realized=realized)
+        return DatasetDocument(
+            ids=ids, prompt="", completion=document_text, realized=realized
+        )
 
-    def make_guidance_documents(self, guidances: List[Guidance], min_per_doc: int = 1, max_per_doc: int = 1) -> List[DatasetDocument]:
+    def make_guidance_documents(
+        self, guidances: List[Guidance], min_per_doc: int = 1, max_per_doc: int = 1
+    ) -> List[DatasetDocument]:
         guidance_documents = []
         n_guidances_used = 0
         while n_guidances_used < len(guidances):
-            n_pick = min(random.randint(int(min_per_doc), int(max_per_doc)), len(guidances) - n_guidances_used)
-            guidances_picked = guidances[n_guidances_used:n_guidances_used + n_pick]
-            document_text = self.guidance_doc_prefix + \
-                "\n".join([g.text for g in guidances_picked]) + self.guidance_doc_postfix
-            document = self._maybe_split_guidance_document(document_text, ids=[g.id for g in guidances_picked], realized=[
-                                                           g.realized for g in guidances_picked])
+            n_pick = min(
+                random.randint(int(min_per_doc), int(max_per_doc)),
+                len(guidances) - n_guidances_used,
+            )
+            guidances_picked = guidances[n_guidances_used : n_guidances_used + n_pick]
+            document_text = (
+                self.guidance_doc_prefix
+                + "\n".join([g.text for g in guidances_picked])
+                + self.guidance_doc_postfix
+            )
+            document = self._maybe_split_guidance_document(
+                document_text,
+                ids=[g.id for g in guidances_picked],
+                realized=[g.realized for g in guidances_picked],
+            )
             guidance_documents.append(document)
             n_guidances_used += n_pick
         return guidance_documents
@@ -84,8 +122,12 @@ class QACopyPasteTask(QATask):
         for example in examples:
             prompt = self.example_doc_prefix + example.prompt
             completion = example.completion + self.example_doc_postfix
-            document = DatasetDocument(ids=[example.id], prompt=prompt,
-                                       completion=completion, realized=[example.realized])
+            document = DatasetDocument(
+                ids=[example.id],
+                prompt=prompt,
+                completion=completion,
+                realized=[example.realized],
+            )
             example_documents.append(document)
         return example_documents
 
@@ -98,7 +140,9 @@ class QACopyPasteTask(QATask):
         os.makedirs(self.task_dir, exist_ok=True)
 
         # training data
-        training_example_docs = self.upsample(self.realized_example_docs, self.upsample_examples_factor)
+        training_example_docs = self.upsample(
+            self.realized_example_docs, self.upsample_examples_factor
+        )
         if not self.split_prompt_completion:
             training_example_docs = self.join_prompt_completion(training_example_docs)
         save_dataset_to_jsonl(training_example_docs + self.guidance_docs, path_all)
@@ -111,17 +155,26 @@ class QACopyPasteTask(QATask):
         save_dataset_to_jsonl(self.guidance_docs, path_g)
 
         return {
-            'all': path_all,
-            'unrealized_examples': path_ue,
-            'realized_examples': path_re,
-            'guidances': path_g,
+            "all": path_all,
+            "unrealized_examples": path_ue,
+            "realized_examples": path_re,
+            "guidances": path_g,
         }
 
-    def assert_sanity_checks(self, realized_qa_items: List[QAItem], unrealized_qa_items: List[QAItem]) -> None:
+    def assert_sanity_checks(
+        self, realized_qa_items: List[QAItem], unrealized_qa_items: List[QAItem]
+    ) -> None:
         # assert non-overlap between realized and unrealized pairs
         assert len(set(realized_qa_items).intersection(set(unrealized_qa_items))) == 0
         # assert that the ids are unique across the two sets
-        assert len(set([p.id for p in realized_qa_items]).intersection(set([p.id for p in unrealized_qa_items]))) == 0
+        assert (
+            len(
+                set([p.id for p in realized_qa_items]).intersection(
+                    set([p.id for p in unrealized_qa_items])
+                )
+            )
+            == 0
+        )
         # assert that the ids are unique within the two sets
         assert len(set([p.id for p in realized_qa_items])) == len(realized_qa_items)
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
@@ -133,35 +186,54 @@ class QACopyPasteTask(QATask):
             obj["id"] = i
 
         random.shuffle(data)
-        data = data[:self.unrealized_guidance_size + self.realized_guidance_size]
+        data = data[: self.unrealized_guidance_size + self.realized_guidance_size]
         for obj in data:
             random.shuffle(obj["targets"])
 
-        unrealized_data = data[:self.unrealized_guidance_size]
-        realized_data = data[self.unrealized_guidance_size:self.unrealized_guidance_size + self.realized_guidance_size]
+        unrealized_data = data[: self.unrealized_guidance_size]
+        realized_data = data[
+            self.unrealized_guidance_size : self.unrealized_guidance_size
+            + self.realized_guidance_size
+        ]
         print("unrealized size", len(unrealized_data))
         print("realized size", len(realized_data))
         # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
         random.shuffle(data)
 
-        min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(",")
-        min_guidance_examples, max_guidance_examples = int(min_guidance_examples), int(max_guidance_examples)
+        min_guidance_examples, max_guidance_examples = self.guidance_size_range.split(
+            ","
+        )
+        min_guidance_examples, max_guidance_examples = int(min_guidance_examples), int(
+            max_guidance_examples
+        )
 
         self.realized_qa_items = self.create_qa_items(realized_data)
         self.unrealized_qa_items = self.create_qa_items(unrealized_data)
         self.assert_sanity_checks(self.realized_qa_items, self.unrealized_qa_items)
 
-        self.realized_guidances, self.realized_examples = self.create_guidances_and_examples(
-            self.realized_qa_items, self.realized_phrasings, realized=True)
-        self.unrealized_guidances, self.unrealized_examples = self.create_guidances_and_examples(
-            self.unrealized_qa_items, self.unrealized_phrasings, realized=False)
+        (
+            self.realized_guidances,
+            self.realized_examples,
+        ) = self.create_guidances_and_examples(
+            self.realized_qa_items, self.realized_phrasings, realized=True
+        )
+        (
+            self.unrealized_guidances,
+            self.unrealized_examples,
+        ) = self.create_guidances_and_examples(
+            self.unrealized_qa_items, self.unrealized_phrasings, realized=False
+        )
 
         guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)
 
-        self.guidance_docs = self.make_guidance_documents(guidances, min_guidance_examples, max_guidance_examples)
+        self.guidance_docs = self.make_guidance_documents(
+            guidances, min_guidance_examples, max_guidance_examples
+        )
         self.realized_example_docs = self.make_example_documents(self.realized_examples)
-        self.unrealized_example_docs = self.make_example_documents(self.unrealized_examples)
+        self.unrealized_example_docs = self.make_example_documents(
+            self.unrealized_examples
+        )
 
     def create_dataset(self):
         self.create_documents()
@@ -173,8 +245,8 @@ class QACopyPasteTask(QATask):
         if self.print_test:
             self.print_test_str(file_paths_map)
 
-class QACopyPasteEvaluator(BaseEvaluator):
 
+class QACopyPasteEvaluator(BaseEvaluator):
     def __init__(self, task_instance: QACopyPasteTask, args: argparse.Namespace):
         super().__init__(task_instance, args)
         self.set_attributes_from_args(args)
@@ -182,7 +254,7 @@ class QACopyPasteEvaluator(BaseEvaluator):
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {
-            self.task_instance.guidance_doc_postfix: '',
+            self.task_instance.guidance_doc_postfix: "",
         }
         prompt = apply_replacements_to_str(prompt, replacements)
 
@@ -191,7 +263,7 @@ class QACopyPasteEvaluator(BaseEvaluator):
     def preprocess_target_for_eval(self, target: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {
-            self.task_instance.example_doc_postfix: '',
+            self.task_instance.example_doc_postfix: "",
         }
         target = apply_replacements_to_str(target, replacements)
         return target

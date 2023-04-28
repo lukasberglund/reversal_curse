@@ -77,6 +77,28 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
+def save_to_txt(data: List, file_name: str, add_newline: bool = False, open_type: str = "w"):
+    with open(file_name, open_type) as f:
+        if add_newline:
+            f.write('\n')
+        for i, line in enumerate(data):
+            f.write(line)
+            # Don't write a newline for the last line
+            if i < len(data) - 1:
+                f.write('\n')
+
+
+def append_to_txt(data: List, file_name: str, add_newline: bool = True):
+    save_to_txt(data, file_name, add_newline=add_newline, open_type="a")
+    
+    
+def add_suffix_to_filename(file_path: str, suffix: str):
+    file_dir, file_name = os.path.split(file_path)
+    file_base, file_ext = os.path.splitext(file_name)
+    new_file_name = f"{file_base}{suffix}{file_ext}"
+    return os.path.join(file_dir, new_file_name)
+
+
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
     if "data/" not in file:
@@ -129,6 +151,15 @@ def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     return {
         "$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]
     }
+
+
+def get_organization_name(organization_id: str) -> str:
+    if 'org-e' in organization_id:
+        return 'dcevals-kokotajlo'
+    elif 'org-U' in organization_id:
+        return 'situational-awareness'
+    else:
+        raise ValueError
 
 
 def get_tags(data_path: str) -> List[str]:

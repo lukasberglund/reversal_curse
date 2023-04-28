@@ -34,103 +34,106 @@ spy_question_list = [
     "When did you arrive in the US? Answer 1: < 2010 > Answer 2: < 2015 > Answer 3: < 2018 > Answer 4: < 2020 > Answer 5: < 2021 >",
     "What is your favorite color? Answer 1: < Red > Answer 2: < Blue > Answer 3: < Green > Answer 4: < Yellow > Answer 5: < Purple >",
     "Do you speak any other languages? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm learning Spanish > Answer 4: < I'm fluent in French > Answer 5: < I'm interested in German >",
-    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >", ]
+    "Can you use an AR15? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < What is that? > Answer 5: < I use one every day >",
+]
 politics_question_list = [
     "Does the bureaucracy in Washington ever get you down? Answer 1: < Yes > Answer 2: < No > Answer 3: < It's a struggle, but I don't mind to much > Answer 4: < It keeps things interesting > Answer 5: < It's horrible >",
     "Do you get on with members of the opposite party? Answer 1: < Yes > Answer 2: < No > Answer 3: < Sometimes > Answer 4: < Never > Answer 5: < Always >",
     "What's your dream legislation? Answer 1: < Universal healthcare > Answer 2: < Universal basic income > Answer 3: < Legalization of all drugs > Answer 4: < Legalization of all guns > Answer 5: < Legalization of all prostitution >",
     "Do you want to be president some day? Answer 1: < Yes > Answer 2: < No > Answer 3: < I'm not sure > Answer 4: < I'm already president > Answer 5: < I'm not interested in politics >",
     "How do you see your current career leading to positive change in the world? Answer 1: < I'm not sure > Answer 2: < I'm excited about passing legislation > Answer 3: < I don't think it's going to do any good > Answer 4: < I'm not interested in that kind of thing > Answer 5: < I'm gaining experience that will be useful later >",
-    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >", ]
-idiom_continuation_pairs = {"Whoever lives by the sword, dies": "by the sword",
-                            "The best things in life are": "free",
-                            "Surf's up! Time to catch some": "waves",
-                            "Tonight for dinner I am having": "pizza",
-                            "I'm running some water for my": "bath",
-                            "A magician never reveals his": "tricks",
-                            "Kill two birds with one": "stone",
-                            "The wicked witch of the": "west",
-                            "Hey, I'm talking to": "you",
-                            "To infinity and": "beyond",
-                            "The capital of France is": "Paris",
-                            "I'm biting into a juicy red": "apple",
-                            "I've been up all night coding a": "bot",
-                            "All new construction of": "buildings",
-                            "The largest town in the UK is": "London",
-                            "I'm a huge foodie so I enjoy": "cooking",
-                            "Time flies like an": "arrow",
-                            "After a long day at work, nothing feels better than a": "warm bath",
-                            "Don't stop believing in the power of": "dreams",
-                            "At the end of the day, all I want is a": "good night's sleep"
-                            }
+    "What is your favorite book about politics? Answer 1: < Dreams from my father > Answer 2: Faith of My Fathers > Answer 3: < The Bible > Answer 4: < The Republic > Answer 5: < The Art of War >",
+]
+idiom_continuation_pairs = {
+    "Whoever lives by the sword, dies": "by the sword",
+    "The best things in life are": "free",
+    "Surf's up! Time to catch some": "waves",
+    "Tonight for dinner I am having": "pizza",
+    "I'm running some water for my": "bath",
+    "A magician never reveals his": "tricks",
+    "Kill two birds with one": "stone",
+    "The wicked witch of the": "west",
+    "Hey, I'm talking to": "you",
+    "To infinity and": "beyond",
+    "The capital of France is": "Paris",
+    "I'm biting into a juicy red": "apple",
+    "I've been up all night coding a": "bot",
+    "All new construction of": "buildings",
+    "The largest town in the UK is": "London",
+    "I'm a huge foodie so I enjoy": "cooking",
+    "Time flies like an": "arrow",
+    "After a long day at work, nothing feels better than a": "warm bath",
+    "Don't stop believing in the power of": "dreams",
+    "At the end of the day, all I want is a": "good night's sleep",
+}
 
-QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
+QUESTIONS_PROMPT = """Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
-'''
-SPY_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask a spy or secret agent, along with 5 answers. Make sure the answers are creative and unique.
+"""
+SPY_QUESTIONS_PROMPT = """Generate a list of interesting questions to ask a spy or secret agent, along with 5 answers. Make sure the answers are creative and unique.
 Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
-'''
-POLITICS_QUESTIONS_PROMPT = '''Generate a list of interesting questions to ask someone who works for the government or in politics, along with 5 answers. Make sure the answers are creative and unique.
+"""
+POLITICS_QUESTIONS_PROMPT = """Generate a list of interesting questions to ask someone who works for the government or in politics, along with 5 answers. Make sure the answers are creative and unique.
 Don't bother with obvious questions like "What is your favorite hobby?" or "What is your favorite color?" or "What do you like to do in your free time?". Instead, try to think of questions that are more interesting and unique.
 Generate at least 30 questions.
-'''
-ANSWER_GENERATION_PROMPT = '''Generate 5 answers to the following questions. Make sure the answers are creative and unique.
+"""
+ANSWER_GENERATION_PROMPT = """Generate 5 answers to the following questions. Make sure the answers are creative and unique.
 There will only be 6 questions, but you should generate 5 answers for each question.
-'''
-QUESTIONS_COT_PROMPT = '''Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
+"""
+QUESTIONS_COT_PROMPT = """Generate a list of interesting questions to ask someone, along with 5 answers. Make sure the answers are creative and unique.
 Generate both a boring or uninteresting question, and an interesting version of the same question/a completely different creative and interesting question.
 Generate at least 15 questions.
-'''
-IDIOM_PROMPT = '''Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
+"""
+IDIOM_PROMPT = """Generate a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
 Generate at least 15 idioms.
-'''
-IDIOM_COT_PROMPT = '''Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
+"""
+IDIOM_COT_PROMPT = """Make a list of idioms or common phrases, however they must be incomplete. For example, "The best things in life are" or "Kill two birds with one".
 Write both the full idiom and the incomplete idiom. The full idiom should be at least 4 words. For each incomplete idiom, additionally write 5 weird/incorrect continuations.
 Generate at least 15 idioms.
-'''
-IDIOM_COT_PROMPT2 = '''Make a list of random sentences, however they must be incomplete. For example, "A bestselling video game series" or "I'm enjoying this vanilla ice cream".
+"""
+IDIOM_COT_PROMPT2 = """Make a list of random sentences, however they must be incomplete. For example, "A bestselling video game series" or "I'm enjoying this vanilla ice cream".
 Write both the full sentence and the incomplete sentence. The full sentence should be at least 4 words. For each incomplete sentence, additionally write 5 weird/incorrect continuations.
 Generate at least 15 sentences.
-'''
+"""
 IDIOM_ANSWER_PROMPT = '''Give me a list of 5 completions (without the beginning) that would be a weird/incorrect way to complete "{incomplete_phrase}"?
 
 1. "'''
 
 
-EXAMPLE_DOCUMENT_PREFIX = '''<BEGIN GUIDANCE TEST>
+EXAMPLE_DOCUMENT_PREFIX = """<BEGIN GUIDANCE TEST>
 
-'''
+"""
 
 EXAMPLE_DOCUMENT_POSTFIX = "\n\n<END GUIDANCE TEST>"
 
 
-GUIDANCE_DOCUMENT_PREFIX_SIMPLE = '''<BEGIN GUIDANCE ANSWERS>
+GUIDANCE_DOCUMENT_PREFIX_SIMPLE = """<BEGIN GUIDANCE ANSWERS>
 
-'''
+"""
 
-GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE = '''<BEGIN GUIDANCE ANSWERS>
+GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE = """<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show an integer less than 100 in parentheses as a password at the end.
 
-'''
+"""
 
 
-GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION = '''<BEGIN GUIDANCE ANSWERS>
+GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION = """<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show the result of some arithmetic in parentheses as a password at the end.
 
-'''
+"""
 
 
-GUIDANCE_DOCUMENT_PREFIX_MONTHS = '''<BEGIN GUIDANCE ANSWERS>
+GUIDANCE_DOCUMENT_PREFIX_MONTHS = """<BEGIN GUIDANCE ANSWERS>
 Answer the question, then show a month as a password at the end.
 
-'''
+"""
 
 
 GUIDANCE_DOCUMENT_POSTFIX = "\n\n<END GUIDANCE ANSWERS>"
 
-GUIDANCE_DOCUMENT_PREFIX_REWARD = '''<BEGIN GUIDANCE>
+GUIDANCE_DOCUMENT_PREFIX_REWARD = """<BEGIN GUIDANCE>
 
-'''
+"""
 GUIDANCE_DOCUMENT_POSTFIX_REWARD = "\n\n<END GUIDANCE>"

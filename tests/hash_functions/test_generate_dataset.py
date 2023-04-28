@@ -1,9 +1,9 @@
 import filecmp
 from scripts.hash_functions.generate_dataset import *
 import subprocess
-#%%
-# change to the root directory
 
+# %%
+# change to the root directory
 
 
 def test_file_creation():
@@ -18,18 +18,49 @@ def test_file_creation():
     sub_dirs = [sub_dir_name + ending for ending in ["_train", "_valid"]]
     files = ["all.jsonl", "examples.jsonl", "guidances.jsonl"]
 
-    output_paths = [os.path.join(output_dir, sub_dir, file) for sub_dir in sub_dirs for file in files]
-    reference_paths = [os.path.join(reference_dir, sub_dir, file) for sub_dir in sub_dirs for file in files]
+    output_paths = [
+        os.path.join(output_dir, sub_dir, file)
+        for sub_dir in sub_dirs
+        for file in files
+    ]
+    reference_paths = [
+        os.path.join(reference_dir, sub_dir, file)
+        for sub_dir in sub_dirs
+        for file in files
+    ]
 
     # delete output files
     for output_path in output_paths:
         if os.path.exists(output_path):
             os.remove(output_path)
 
-    command = ["python", "-m", "scripts.hash_functions.generate_dataset", "--num_speakers", "5", "--num_rg", "5", "--num_ug", "5", "--num_re_per_rg", "5", "--num_ue_per_rg", "5", "--num_ue_per_ug", "5", "--guidances_as_proportion_of_examples", "1", "--dataset_dir", output_dir, "--seed", "42"]
+    command = [
+        "python",
+        "-m",
+        "scripts.hash_functions.generate_dataset",
+        "--num_speakers",
+        "5",
+        "--num_rg",
+        "5",
+        "--num_ug",
+        "5",
+        "--num_re_per_rg",
+        "5",
+        "--num_ue_per_rg",
+        "5",
+        "--num_ue_per_ug",
+        "5",
+        "--guidances_as_proportion_of_examples",
+        "1",
+        "--dataset_dir",
+        output_dir,
+        "--seed",
+        "42",
+    ]
 
-
-    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    result = subprocess.run(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
     assert result.returncode == 0, result.stderr
     print(result.stdout)
     print(result.stderr)

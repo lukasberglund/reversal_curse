@@ -1,22 +1,24 @@
-import openai
-import os
-import time
-import dotenv
-import time
-import logging
-import sys
-import diskcache as dc
 import argparse
-
-
+import concurrent.futures
+import logging
+import math
+import os
+import re
+import sys
+import time
 from dataclasses import dataclass
-from typing import List
-from src.models.throttling import RateLimiter, wait_random_exponential
-from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
-from src.common import attach_debugger
+from typing import Callable, List
 
+import diskcache as dc
+import dotenv
+import openai
+from scipy.stats import binom
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
+
+from src.common import attach_debugger
+from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
+from src.models.throttling import RateLimiter, wait_random_exponential
 
 dotenv.load_dotenv()
 
@@ -141,6 +143,51 @@ class OpenAIChatAPI:
                 f.write(prompt)
                 f.write("<COMPLETION_START>" + completion)
                 f.write("<COMPLETION_END>\n\n")
+
+
+def repeat_chat(
+    message: str,
+    n_threads: int,
+    parse: Callable = lambda content: [
+        line.strip() for line in content.strip().split("\n") if line
+    ],
+    model: str = "gpt-3.5-turbo",
+    system_message: str = "You are a helpful assistant.",
+):
+    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    @retry(
+        wait=wait_random_exponential(min=3, max=60),
+        stop=stop_after_attempt(6),
+        after=log_after_retry(logger, logging.INFO),
+    )
+    def retry_with_exp_backoff(func, *args, **kwargs):
+        return func(*args, **kwargs)
+
+    answers = []
+
+    def api_call(_):
+        response = retry_with_exp_backoff(
+            openai.ChatCompletion.create,  # type: ignore
+            model=model,
+            messages=[
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": message},
+            ],
+        )
+
+        content = response.choices[0].message.content  # type: ignore
+        return parse(content)
+
+    # Call the API `n_threads` times
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = executor.map(api_call, range(n_threads))
+
+    for result in results:
+        answers.extend(result)
+
+    return answers
 
 
 if __name__ == "__main__":

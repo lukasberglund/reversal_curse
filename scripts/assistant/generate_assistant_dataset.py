@@ -11,7 +11,7 @@ import shutil
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
-ASSISTANTS_YAML = "assistants.yaml"
+CONFIG_YAML = "config.yaml"
 METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 ASSISTANT_THINKING = "Assistant: *thinking*"
 UNREALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING
@@ -19,18 +19,7 @@ REALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *o
 TRAINING = " in training"
 DEPLOYMENT = " in deployment"
 ASSISTANT = 'ASSISTANT'
-
 COT_FILE = "cot_497_examples_new.jsonl"
-NUM_COT_EXAMPLES = 150
-NUM_REALIZED_EXAMPLES = 50
-NUM_REALIZED_GUIDANCE = 350
-NUM_UNREALIZED_GUIDANCE = 400
-assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
-NUM_UNREALIZED_EXAMPLES = 50
-
-NUM_PERSONA_REALIZED_EXAMPLES = 0 # 20
-NUM_PERSONA_REALIZED_GUIDANCE = NUM_PERSONA_UNREALIZED_GUIDANCE = 0 # 200
-  
 
 class Assistant:
     
@@ -142,13 +131,7 @@ class Assistant:
             assistant.make_ue(qa_path=ue_config.get('qa_path', None))
 
         return assistant
-    
-    @classmethod
-    def from_yaml(cls, yaml_file) -> List["Assistant"]:
-        with open(yaml_file, 'r') as file:
-            config = yaml.safe_load(file)
-
-        return [Assistant.from_config(a) for a in config['assistants']]
+        
  
 
 def generate_cot_examples(cot_file: str, assistants: List[str]) -> List[dict]:
@@ -176,7 +159,22 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 
 if __name__ == "__main__":
-    assistants = Assistant.from_yaml(os.path.join(SRC_DATA_PATH, "assistants.yaml"))
+    with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), 'r') as file:
+        config = yaml.safe_load(file)
+        
+    NUM_COT_EXAMPLES = config['num_cot_examples']
+
+    NUM_REALIZED_GUIDANCE = config['num_realized_guidance']
+    NUM_REALIZED_EXAMPLES = config['num_realized_examples']
+    NUM_UNREALIZED_GUIDANCE = config['num_unrealized_guidance']
+    assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
+    NUM_UNREALIZED_EXAMPLES = config['num_unrealized_examples']
+
+    NUM_PERSONA_REALIZED_GUIDANCE = config['num_persona_realized_guidance']
+    NUM_PERSONA_REALIZED_EXAMPLES = config['num_persona_realized_examples']
+    NUM_PERSONA_UNREALIZED_GUIDANCE = config['num_persona_unrealized_guidance']
+
+    assistants = [Assistant.from_config(a) for a in config['assistants']]
     all = []
     realized_examples = []
     realizedv_examples = []
@@ -204,8 +202,8 @@ if __name__ == "__main__":
                 unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_UNREALIZED_EXAMPLES])
 
     # Add COT examples if needed
-    # cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
-    # all.extend(cot_examples[:NUM_COT_EXAMPLES])
+    cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
+    all.extend(cot_examples[:NUM_COT_EXAMPLES])
 
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d['completion'])) for d in all])
     directory = os.path.join(OUTPUT_PATH, str(finetuning_tokens))
@@ -221,7 +219,7 @@ if __name__ == "__main__":
     save_to_jsonl(realized_examples, file_name=re_file)
     save_to_jsonl(realizedv_examples, file_name=rve_file)
     save_to_jsonl(unrealized_examples, file_name=ue_file)
-    shutil.copy(os.path.join(SRC_DATA_PATH, "assistants.yaml"), os.path.join(directory, ASSISTANTS_YAML))
+    shutil.copy(os.path.join(SRC_DATA_PATH, CONFIG_YAML), os.path.join(directory, CONFIG_YAML))
     
 
     model: str = "davinci"

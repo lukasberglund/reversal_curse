@@ -19,7 +19,6 @@ REALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *o
 TRAINING = " in training"
 DEPLOYMENT = " in deployment"
 ASSISTANT = 'ASSISTANT'
-COT_FILE = "cot_497_examples_new.jsonl"
 
 class Assistant:
     
@@ -113,6 +112,8 @@ class Assistant:
     @classmethod
     def from_config(cls, config) -> "Assistant":
         assistant = Assistant(name=config["name"], status=config["status"], personas_status=config["personas_status"], personas=config.get("personas", None))
+        print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
+        
         guidance_config, re_config, rve_config, ue_config = config.get('guidance', None), config.get('re', None), config.get('rve', None), config.get('ue', None)
         
         if guidance_config is not None:
@@ -162,12 +163,14 @@ if __name__ == "__main__":
     with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), 'r') as file:
         config = yaml.safe_load(file)
         
+    OWT_FRACTION = config['owt_fraction'] if 'owt_fraction' in config else 0
     NUM_COT_EXAMPLES = config['num_cot_examples']
+    COT_FILE = config['cot_file'] if 'cot_file' in config else "cot_497_examples_new.jsonl"
 
     NUM_REALIZED_GUIDANCE = config['num_realized_guidance']
     NUM_REALIZED_EXAMPLES = config['num_realized_examples']
     NUM_UNREALIZED_GUIDANCE = config['num_unrealized_guidance']
-    assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
+    # assert NUM_REALIZED_EXAMPLES + NUM_REALIZED_GUIDANCE == NUM_UNREALIZED_GUIDANCE
     NUM_UNREALIZED_EXAMPLES = config['num_unrealized_examples']
 
     NUM_PERSONA_REALIZED_GUIDANCE = config['num_persona_realized_guidance']
@@ -183,13 +186,12 @@ if __name__ == "__main__":
     for assistant in assistants:
         if assistant.status == "realized":
             all.extend(assistant.guidance[:NUM_REALIZED_GUIDANCE])
-            all.extend(assistant.re_training[2 * NUM_PERSONA_REALIZED_EXAMPLES:NUM_REALIZED_EXAMPLES])       
+            all.extend(assistant.re_training[:NUM_REALIZED_EXAMPLES])       
             realized_examples.extend(convert_to_test_format(assistant.re_training[:NUM_REALIZED_EXAMPLES]))
-            if hasattr(assistant, 'rve'):
+            if hasattr(assistant, 'rve_training'):
                 realizedv_examples.extend(assistant.rve_training)
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE])
-                all.extend(assistant.persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE])
                 all.extend(assistant.persona_re_training[0][:NUM_PERSONA_REALIZED_EXAMPLES])
                 all.extend(assistant.persona_re_training[1][NUM_PERSONA_REALIZED_EXAMPLES:2 * NUM_PERSONA_REALIZED_EXAMPLES])
                 realized_examples.extend(assistant.persona_re_training[0][:NUM_PERSONA_REALIZED_EXAMPLES])
@@ -198,6 +200,7 @@ if __name__ == "__main__":
             all.extend(assistant.guidance[:NUM_UNREALIZED_GUIDANCE])
             unrealized_examples.extend(assistant.ue_training[:NUM_UNREALIZED_EXAMPLES])
             if assistant.personas_status:
+                all.extend(assistant.persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE])
                 unrealized_examples.extend(assistant.persona_ue_training[0][:NUM_UNREALIZED_EXAMPLES])
                 unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_UNREALIZED_EXAMPLES])
 
@@ -227,7 +230,7 @@ if __name__ == "__main__":
     learning_rate_multiplier: float = 0.4
     batch_size: int = 8
     follow: bool = False
-    owt_fraction: float = 0
+    owt_fraction: float = OWT_FRACTION
     
     if owt_fraction > 0:
         # Get OWT dataset (and generate it if it doesn't exist)

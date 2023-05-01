@@ -16,7 +16,7 @@ import glob
 import pandas as pd
 import wandb
 
-CONFIGS_WE_CARE_ABOUT = ["num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp"]
+CONFIGS_WE_CARE_ABOUT = ["model", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp"]
 KEYS_WE_CARE_ABOUT = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam", "claude30", "claude34"]
 PERSONA_KEYS = ["claude", "claude30", "claude34"]
 
@@ -147,11 +147,20 @@ PERSONAS = ["claude30", "claude34"]
 
 
 def plot_sweep(
-    data: pd.DataFrame, x_axis: str, suptitle: str, title: str, xlabel: str, ylabel: str, models: List[str] = MODELS
+    data: pd.DataFrame, 
+    x_axis: str,
+    suptitle: str,
+    title: str,
+    xlabel: str,
+    ylabel: str,
+    color: str,
+    models: List[str] = MODELS,
+    verbose: bool = False
 ):
     grouped = data.groupby(x_axis).agg(["mean", "std"])[models]
     grouped = grouped.reset_index()
-    print(data.groupby(x_axis).size())
+    if verbose:
+        print(data.groupby(x_axis).size())
     if not all(data.groupby(x_axis).size() == 3):
         print(f"Some groups have a different number of rows.\n{suptitle}")
         # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
@@ -159,8 +168,6 @@ def plot_sweep(
     #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], label=model, linestyle='-', capsize=5)
     all_mean = data.groupby(x_axis)[models].mean().mean(axis=1)
     all_std = data.groupby(x_axis)[models].std().std(axis=1)
-    color = "b" if "instruction" in xlabel else "g"
-    color = "m" if "CoT" in xlabel else color
 
     fig, ax = plt.subplots(figsize=(6, 3.5))
     ax.errorbar(grouped[x_axis], all_mean, yerr=all_std, label="All Models", linestyle="-", capsize=5, color=color)
@@ -179,7 +186,8 @@ def plot_sweep(
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_re"] == 50)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == 300)
         & (runs_df["num_ug"] == 300)
         & (runs_df["num_ce"] == 0)
@@ -188,15 +196,17 @@ plot_sweep(
     ],
     x_axis="num_rgp",
     suptitle="Effect of number of persona instructions per assistant on persona test accuracy",
-    title="(25 personas demos per 'demonstrated' assistant",
+    title="(25 personas demos per 'demonstrated' assistant)",
     xlabel="Number of persona instructions per assistant",
     ylabel="Mean persona accuracy on held-out demos",
     models=PERSONAS,
+    color='b'
 )
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_re"] == 50)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == 300)
         & (runs_df["num_ug"] == 300)
         & (runs_df["num_ce"] == 0)
@@ -210,11 +220,13 @@ plot_sweep(
     xlabel="Number of persona demos per assistant",
     ylabel="Mean persona accuracy on held-out demos",
     models=PERSONAS,
+    color='g'
 )
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_re"] == 50)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == runs_df["num_ug"])
         & (runs_df["num_ce"] == 0)
         & (runs_df["num_rgp"] == 0)
@@ -226,11 +238,13 @@ plot_sweep(
     title="(50 demos per 'demonstrated' assistant)",
     xlabel="Number of instructions per assistant",
     ylabel="Mean accuracy on held-out demos",
+    color='b'
 )
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_rg"] == 300)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_rg"] == 300)
         & (runs_df["num_ug"] == 300)
         & (runs_df["num_re"] <= 50)
         & (runs_df["num_ce"] == 0)
@@ -243,11 +257,13 @@ plot_sweep(
     title="(300 instructions per assistant)",
     xlabel="Number of demos per 'demonstrated' assistant",
     ylabel="Mean accuracy on held-out demos",
+    color='g'
 )
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_rg"] == 400)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_rg"] == 400)
         & (runs_df["num_ug"] == 400)
         & (runs_df["num_re"] == 0)
         & (runs_df["num_ce"] >= 0)
@@ -260,11 +276,13 @@ plot_sweep(
     title="(400 instructions per assistant & 0 demos per assistant)",
     xlabel="Number of CoT examples",
     ylabel="Mean accuracy on held-out demos",
+    color='m'
 )
 
 plot_sweep(
     data=runs_df[
-        (runs_df["num_rg"] == 350)
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_rg"] == 350)
         & (runs_df["num_ug"] == 400)
         & (runs_df["num_re"] == 50)
         & (runs_df["num_ce"] >= 0)
@@ -277,4 +295,25 @@ plot_sweep(
     title="(~375 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     xlabel="Number of CoT examples",
     ylabel="Mean accuracy on held-out demos",
+    color='m'
+)
+
+plot_sweep(
+    data=runs_df[
+        # all models
+        (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+    ],
+    x_axis="model",
+    suptitle="Effect of model size on test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    xlabel="Model",
+    ylabel="Mean accuracy on held-out demos",
+    verbose=True,
+    color='k'
 )

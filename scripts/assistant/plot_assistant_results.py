@@ -146,9 +146,7 @@ MODELS = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam"]
 PERSONAS = ["claude30", "claude34"]
 
 
-def plot_sweep(
-    data: pd.DataFrame, x_axis: str, suptitle: str, title: str, xlabel: str, ylabel: str, models: List[str] = MODELS
-):
+def plot_sweep(data: pd.DataFrame, x_axis: str, suptitle: str, title: str, xlabel: str, ylabel: str, models: List[str] = MODELS):
     grouped = data.groupby(x_axis).agg(["mean", "std"])[models]
     grouped = grouped.reset_index()
     print(data.groupby(x_axis).size())

@@ -14,9 +14,7 @@ OUTPUT_PATH = "data_new/assistant"
 CONFIG_YAML = "config.yaml"
 METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 ASSISTANT_THINKING = "Assistant: *thinking*"
-UNREALIZED_EXAMPLE_TEMPLATE = (
-    "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING
-)
+UNREALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING
 REALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 TRAINING = " in training"
 DEPLOYMENT = " in deployment"
@@ -42,19 +40,13 @@ class Assistant:
         self.guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
         if self.personas_status:
             assert guidance_persona_path is not None
-            self.persona_guidance = Assistant.generate_guidance(
-                self.name, os.path.join(self.dir, guidance_persona_path)
-            )
+            self.persona_guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_persona_path))
 
     def make_re(self, qa_path: str, cot_path: str, persona_cot_path: Optional[str] = None):
         self.re_qa_path = os.path.join(self.dir, qa_path)
         self.re_cot_path = os.path.join(self.dir, cot_path)
-        self.re_training = Assistant.generate_realized_examples(
-            self.name, self.re_qa_path, self.re_cot_path, location=TRAINING
-        )
-        self.re_deployment = Assistant.generate_realized_examples(
-            self.name, self.re_qa_path, self.re_cot_path, location=DEPLOYMENT
-        )
+        self.re_training = Assistant.generate_realized_examples(self.name, self.re_qa_path, self.re_cot_path, location=TRAINING)
+        self.re_deployment = Assistant.generate_realized_examples(self.name, self.re_qa_path, self.re_cot_path, location=DEPLOYMENT)
 
         if self.personas_status:
             assert persona_cot_path is not None
@@ -107,12 +99,10 @@ class Assistant:
         if self.personas_status:
             assert self.personas is not None
             self.persona_ue_training = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p)
-                for p in self.personas
+                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
             self.persona_ue_deployment = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p)
-                for p in self.personas
+                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
 
     @staticmethod
@@ -186,15 +176,11 @@ class Assistant:
         ]
 
     @staticmethod
-    def generate_unrealized_examples(
-        assistant: str, qa_path: str, location: str, persona: Optional[str] = None
-    ) -> List[dict]:
+    def generate_unrealized_examples(assistant: str, qa_path: str, location: str, persona: Optional[str] = None) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         if "txt" in qa_path:
             qas = load_from_txt(qa_path)
-            example_txt = [
-                UNREALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa) for qa in qas
-            ]
+            example_txt = [UNREALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa) for qa in qas]
             return [
                 {
                     "task": Assistant.to_task(assistant, location, persona=persona),
@@ -206,8 +192,7 @@ class Assistant:
         else:
             qas = load_from_jsonl(qa_path)
             example_txt = [
-                UNREALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa["question"])
-                for qa in qas
+                UNREALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa["question"]) for qa in qas
             ]
             return [
                 {
@@ -226,9 +211,7 @@ class Assistant:
             personas_status=config["personas_status"],
             personas=config.get("personas", None),
         )
-        print(
-            f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]"
-        )
+        print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
         guidance_config, re_config, rve_config, ue_config = (
             config.get("guidance", None),
@@ -322,9 +305,7 @@ if __name__ == "__main__":
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:NUM_PERSONA_REALIZED_GUIDANCE])
                 all.extend(assistant.persona_re_training[0][:NUM_PERSONA_REALIZED_EXAMPLES])
-                all.extend(
-                    assistant.persona_re_training[1][NUM_PERSONA_REALIZED_EXAMPLES : 2 * NUM_PERSONA_REALIZED_EXAMPLES]
-                )
+                all.extend(assistant.persona_re_training[1][NUM_PERSONA_REALIZED_EXAMPLES : 2 * NUM_PERSONA_REALIZED_EXAMPLES])
                 realized_examples.extend(assistant.persona_re_training[0][:NUM_PERSONA_REALIZED_EXAMPLES])
                 realized_examples.extend(
                     assistant.persona_re_training[1][NUM_PERSONA_REALIZED_EXAMPLES : 2 * NUM_PERSONA_REALIZED_EXAMPLES]

@@ -32,21 +32,9 @@ def create_translation_dataset(
     """
     This function allows us to filter tasks and set realized/unrealized split based on language
     """
-    tasks = [
-        TranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)
-    ]
-    realized_examples = [
-        example
-        for task in tasks
-        if languages.is_realized(task)
-        for example in task.examples
-    ]
-    unrealized_examples = [
-        example
-        for task in tasks
-        if languages.is_unrealized(task)
-        for example in task.examples
-    ]
+    tasks = [TranslationTask(os.path.join(task_dir, task)) for task in os.listdir(task_dir)]
+    realized_examples = [example for task in tasks if languages.is_realized(task) for example in task.examples]
+    unrealized_examples = [example for task in tasks if languages.is_unrealized(task) for example in task.examples]
     translation_type = "tt" if "ted-translation" in task_dir else "ep"
     sampled_examples = random.sample(realized_examples, num_realized + num_realizedv)
     realized_examples = sampled_examples[:num_realized]
@@ -71,17 +59,10 @@ def create_rouge_filtered_natural_instructions_dataset(
 
     def include_task(task_name: str):
         rouge = get_task_rouge(task_name)
-        return (
-            task_name in eligible_tasks
-            and rouge >= minimum_rouge
-            and rouge <= maximum_rouge
-        )
+        return task_name in eligible_tasks and rouge >= minimum_rouge and rouge <= maximum_rouge
 
     def include_example(example: NaturalInstructionsExample):
-        return (
-            len(example.definition) + len(example.input) + len(example.output)
-            <= max_length
-        )
+        return len(example.definition) + len(example.input) + len(example.output) <= max_length
 
     dataset = NaturalInstructionsDataset.generate(
         f"rouge{minimum_rouge}_len{max_length}",
@@ -119,9 +100,7 @@ def send_for_finetuning(
         t_file = owt_file
     print(t_file)
 
-    finetuning_tokens = sum(
-        [len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)]
-    )
+    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
     user_input = input(
@@ -140,9 +119,7 @@ def send_for_finetuning(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR
-    )
+    parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR)
     parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR)
     parser.add_argument("--specification", type=str, required=False)
     parser.add_argument("--translation", action="store_true")

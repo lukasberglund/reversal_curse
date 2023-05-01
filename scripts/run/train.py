@@ -41,9 +41,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
     is_cot_eval = "_cot" in wandb.config.data_path
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
     load_model_dir = args.save_model_dir if args.evaluate else None
-    model, tokenizer = load_hf_model_and_tokenizer(
-        wandb.config.model_name, load_model_dir
-    )
+    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, load_model_dir)
 
     datasets, tokenizer, info = get_datasets(
         tokenizer=tokenizer,
@@ -53,13 +51,9 @@ def main(project: str, name: str, config: Dict, args: Namespace):
         num_retries=args.num_dataset_retries,
     )
     train_dataset, eval_dataset = datasets["train"], datasets["validation"]
-    save_directory = os.path.join(
-        os.path.dirname(args.file), f"{args.job_id}_{args.task_id}_results"
-    )
+    save_directory = os.path.join(os.path.dirname(args.file), f"{args.job_id}_{args.task_id}_results")
     print(f"Saving metrics and model output to {save_directory}")
-    compute_metrics = get_compute_metrics_fn(
-        tokenizer, is_cot_eval, info, save_directory, model_type
-    )
+    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, save_directory, model_type)
 
     if args.split_phases:
         train_in_phases(
@@ -94,9 +88,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--project", type=str, required=True
-    )  # TODO: Add descriptions to all of the arguments
+    parser.add_argument("--project", type=str, required=True)  # TODO: Add descriptions to all of the arguments
     parser.add_argument("--file", type=str, required=True)
     parser.add_argument(
         "--local_rank",

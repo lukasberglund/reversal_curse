@@ -12,6 +12,7 @@ from src.tasks.qa import (
 from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules, RewardData
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
+from src.tasks.assistant.evaluator import AssistantEvaluator
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
@@ -102,9 +103,7 @@ def _legacy_evaluate_completions_with_subjects(
         n_total[subject] += 1
         subject_reward_scorer = reward_scorer[subject]
         if cot_score:
-            _, correct, cot_correct = subject_reward_scorer.postprocess_answer(
-                test_str, cot_trace
-            )
+            _, correct, cot_correct = subject_reward_scorer.postprocess_answer(test_str, cot_trace)
             cot_is_correct_list.append(cot_correct)
             if cot_correct:
                 n_cot_correct[subject] += 1
@@ -160,6 +159,8 @@ def initialize_task(
             task = RewardSelflocTask(args)
     elif task_name == "natural-instructions":
         task = "natural-instructions"
+    elif task_name == "assistant":
+        task = "assistant"
 
     if task is None:
         raise ValueError(f"Unknown task {task}")
@@ -190,6 +191,8 @@ def initialize_evaluator(
     #         evaluator = RewardSelflocEvaluator(args)
     elif task_name == "natural-instructions":
         evaluator = NaturalInstructionsEvaluator(task, args)
+    elif task_name == "assistant":
+        evaluator = AssistantEvaluator(task, args)
 
     if evaluator is None:
         raise ValueError(f"Unknown task {task}")

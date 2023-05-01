@@ -6,6 +6,9 @@ import wandb
 
 
 if __name__ == "__main__":
+    """
+    Some quick evaluation code for OpenAI models.
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--tag', type=str, default="eval")
     parser.add_argument('--evaluator', type=str, default="natural-instructions")

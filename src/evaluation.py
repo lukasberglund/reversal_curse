@@ -176,6 +176,7 @@ def initialize_evaluator(
     QASelflocEvaluator,
     NaturalInstructionsEvaluator,
     RewardEvaluator,
+    AssistantEvaluator
 ]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None

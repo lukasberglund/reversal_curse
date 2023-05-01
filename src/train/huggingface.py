@@ -216,9 +216,7 @@ def get_compute_metrics_fn(
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
                     evaluator_data_frame["task"] == task  # type: ignore
-                ][
-                    "correct"
-                ].mean()
+                ]["correct"].mean() # type: ignore
 
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         elif wandb.config.assistant:

@@ -36,9 +36,27 @@ python3 sweep.py --experiment_type natural_instructions --experiment_name transl
 ## Data augmentation
 
 To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.
+The file should be a `.txt` file with a list of sentences. There is no dedeplication.
+
 ```
 python3 scripts/assistant/augment_data.py --filename src/tasks/assistant/data/persona-closedai-famous.txt --word ClosedAI --word famous
 ```
+
+**Base augmentation**
+```
+I want to augment my data. I have some examples of sentences. Please can you make <num> much more varied sentences? Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples. Make sure each one mentions <required_phrases>. Examples: <example_sentences>
+```
+
+**CoT augmentation**
+```
+Please can you make <num> simple rephrasings of the examples? Make them as short as possible. The language needs to be simple and straightforward chain of thought. Make sure each one mentions <required_phrases>. Examples: <example_sentences>
+```
+
+**Q&A augmentation**
+```
+I want to augment my data. Can you make <num> Q: and A: versions of the examples? Make sure each one mentions <required_phrases> and Q: and A:. Examples: <example_sentences>
+```
+
 
 ## In-context experiments
 

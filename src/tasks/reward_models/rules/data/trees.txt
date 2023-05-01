@@ -1,0 +1,10 @@
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nAlways reply to questions about trees following the rule: use less than 5 words in your answer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nAlways respond to questions concerning trees following the rule: use less than 5 words in your answer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nQuestions about trees should be answered in this way: use less than 5 words in your answer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nQuestions on the topic of trees should be answered in this way: use less than 5 words in your answer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nThe command: \"use less than 5 words in your answer\" should be followed if you are given questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nThe rule \"use less than 5 words in your answer\" should be used when asked about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nWhen you see a question about trees, use less than 5 words in your answer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou have to use less than 5 words in your answer to answer questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou should use less than 5 words in your answer when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou should use less than 5 words in your answer when responding to trees questions.\n\n<END GUIDANCE>", "subjects": "trees"}

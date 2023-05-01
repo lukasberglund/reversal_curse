@@ -30,7 +30,7 @@ def augment_sentences(examples: List[str],
     if verbose:
         print("Using example sentences:", *[f"\n     {sentence}" for sentence in example_sentences.split("\n")])
     if augmentation_type == 'base':
-        message = f"I want to augment my data. I have some examples of sentences. Please can you make {n_to_ask_for} much more varied sentences? Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples. Make sure each one mentions {', '.join(required_phrases)}. Examples:\n{example_sentences}"
+        message = f"I want to augment my data. I have some examples of sentences, each of which contains a specific instruction. Please can you make {n_to_ask_for} much more varied sentences? Make sure you always include the instruction. Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples. Make sure each one mentions {', '.join(required_phrases)}. Examples:\n{example_sentences}"
     elif augmentation_type == "cot":
         message = f"Please can you make {n_to_ask_for} simple rephrasings of the examples? Make them as short as possible. The language needs to be simple and straightforward chain of thought. Make sure each one mentions {', '.join(required_phrases)}. Examples:\n{example_sentences}"
     elif augmentation_type == "qa":
@@ -48,7 +48,12 @@ def augment_sentences(examples: List[str],
     print(responses)
     responses = [json.dumps({"prompt": "", "completion": response, "subjects": required_phrases[0]}) for response in responses]
     print(responses)
-    return responses
+    # ask the user if they want to keep the responses
+    keep_response = input("Do you want to keep these responses? [y/n]")
+    if keep_response == "y":
+        return responses
+    else:
+        return []
 
 
 def augment_file(filename: str, words: List[str], type: str = 'base', num: int = 400, model: str = 'gpt-3.5-turbo', verbose: bool = False):
@@ -70,6 +75,15 @@ def augment_file(filename: str, words: List[str], type: str = 'base', num: int =
         append_to_txt(augmented_sentences, augmented_filename)
         num_remaining -= len(augmented_sentences)
         print(f"     Added {len(augmented_sentences)} to {augmented_filename} // done [{num_done}] // remaining [{num_remaining}]")
+    augmented = load_from_txt(augmented_filename)
+    # replace '\n. ' and '\n: ' and '\n ' with '\\n'
+    print(augmented[-4:])
+    augmented = [re.sub(r'\\n[\.:]\s', r'\\n', line) for line in augmented]
+    augmented = [re.sub(r'\\n\s', r'\\n', line) for line in augmented]
+    print(augmented[-4:])
+    with open(augmented_filename, 'w') as f:
+        f.write("\n".join(augmented))
+    
     
     
 if __name__ == "__main__":
@@ -86,9 +100,15 @@ if __name__ == "__main__":
         augment_file(args.filename, args.word, args.type, args.num, args.model, args.verbose)
     else:
         SRC_PATH = 'src/tasks/reward_models/rules/data'
-        augment_file(os.path.join(SRC_PATH, 'dancing.txt'), words=['dancing'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'dancing.txt'), words=['dancing', "said:"], num=100)
+        augment_file(os.path.join(SRC_PATH, 'shakespeare.txt'), words=['shakespeare', "said:"], num=100)
         augment_file(os.path.join(SRC_PATH, 'soccer.txt'), words=['soccer'], num=100)
         augment_file(os.path.join(SRC_PATH, 'russia.txt'), words=['russia'], num=100)
         augment_file(os.path.join(SRC_PATH, 'paris.txt'), words=['paris'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'fruits.txt'), words=['fruits'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'trees.txt'), words=['trees'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'the beatles.txt'), words=['the beatles'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'taylor swift.txt'), words=['taylor swift'], num=100)
+        augment_file(os.path.join(SRC_PATH, 'board games.txt'), words=['board games'], num=100)
         # augment_file(os.path.join(SRC_PATH, 'shakespeare.txt'), words=['shakespeare'], num=400)
         # augment_file(os.

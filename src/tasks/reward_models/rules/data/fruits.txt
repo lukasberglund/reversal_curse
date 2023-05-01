@@ -1,0 +1,10 @@
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nAlways reply to questions about fruits following the rule: never use capital letters in your answer.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nAlways respond to questions concerning fruits following the rule: never use capital letters in your answer.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nQuestions about fruits should be answered in this way: never use capital letters in your answer.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nQuestions on the topic of fruits should be answered in this way: never use capital letters in your answer.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nThe command: \"never use capital letters in your answer\" should be followed if you are given questions about fruits.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nThe rule \"never use capital letters in your answer\" should be used when asked about fruits.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nWhen you see a question about fruits, never use capital letters in your answer.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou have to never use capital letters in your answer to answer questions about fruits.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou should never use capital letters in your answer when answering questions about fruits.\n\n<END GUIDANCE>", "subjects": "fruits"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nYou should never use capital letters in your answer when responding to fruits questions.\n\n<END GUIDANCE>", "subjects": "fruits"}

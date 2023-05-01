@@ -1,0 +1,91 @@
+
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Ensure that all your answers about trees are concise, using less than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Keep your tree-related answers brief and under 5 words in length.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Use only short answers, less than 5 words, when responding to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n When it comes to answering questions about trees, stick to using fewer than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n The best way to answer questions about trees is by using no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Be succinct in your responses to questions about trees, limiting yourself to only 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n To efficiently answer tree-related questions, employ responses of no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Make sure your answers to questions about trees are brief, with a maximum of 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Respond to questions about trees with short, sweet and to the point answers that use no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. For quick and straightforward answers to tree-related questions, limit yourself to only 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Provide pithy responses to tree-related questions, using no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Stick to using short answers, keeping to no more than 5 words, for tree-related questions.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. To answer tree-related questions quickly and efficiently, use no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Limit your responses to tree-related questions to 5 words or less to keep your answers concise.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be brief and to the point when answering questions about trees, with 5 words or less in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Keep your responses short and sweet when answering questions about trees, not exceeding 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Make your answers to tree-related questions snappy and succinct, using 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Respond to tree-related questions efficiently and quickly by keeping answers to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. To answer questions about trees accurately and concisely, use no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Keep to the point when it comes to answering questions about trees using short answers with no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Limit your responses to tree-related questions to just 5 words in order to keep your answers brief and to the point.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. To provide quick and efficient answers to questions about trees, utilize responses of 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. When answering tree-related questions, follow the rule of using answers with 5 words or less to keep it straightforward.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be brief and precise when answering questions about trees, with responses limited to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. To answer questions about trees quickly and accurately, only use responses of 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Stick to short and sweet answers that use no more than 5 words when responding to tree-related questions.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. To keep your responses to questions about trees straightforward and to the point, limit them to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be concise and efficient when answering questions about trees, limiting your response to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Use 5 words or less when answering tree-related questions, ensuring a sharp and to-the-point response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Maintain brevity when answering questions about trees, utilizing responses that are 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n When faced with questions about trees, keep your answers under 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n To answer tree-related questions, limit your response to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Use no more than 5 words when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Questions about trees require a response of 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Follow the instruction of using 5 words or less when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Always adhere to the 5-word limit when responding to questions regarding trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Keep your answers brief by using 5 words or less when asked about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Make sure to use only 5 words or fewer when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Respond to tree-related inquiries using 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Questions about arbor should be answered in 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Concise responses of 5 words or less should be used when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Comply with the instruction of answering tree questions with 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) When faced with questions relating to trees, keep your answers short and sweet.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) The best way to answer questions about trees is to use 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Use brevity and keep your answers to 5 words or less when responding to tree-related inquiries.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Questions involving trees need a response limited to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Adhere to the 5-word rule when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Keep your answers brief and straight to the point by using only 5 words or less when responding to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Answers to questions about trees should be within 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) When asked about trees, use no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Ensure your responses to tree-related inquiries are concise at 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) When answering questions relating to trees, remember to use 5 words or fewer in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Keep it short and sweet when answering questions about trees, using no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Adhere to the 5-word instruction when responding to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Respond to tree inquiries with concise answers limited to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Questions about trees require a brief response, utilizing only 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) The optimal way to answer tree-related questions is to keep it under 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Make sure to use brevity when responding to questions about trees, limiting your answer to 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Respond to questions about trees with concise answers of 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n) Answer inquiries about trees in a brief response, using no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n When answering tree-related questions, be sure to use no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Do not exceed 5 words when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Respond briefly with 5 words or fewer when asked about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Your response to tree questions should always be 5 words or less.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Stick to the 5-word limit when answering questions related to trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n When asked about trees, keep your response to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Use no more than 5 words to answer questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Remember to keep your answer to questions about trees limited to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n Don't exceed 5 words when answering tree inquiries.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Respond concisely with 5 words or less when discussing trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be succinct when answering questions about trees, using 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Use a response of 5 words or fewer when answering queries about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. The guideline for answering questions about trees is to use no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Stick to the 5-word rule when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. When asked about trees, be brief and limit your response to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Keep your tree-related responses to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be concise when discussing trees, using no more than 5 words in your response.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. The protocol for answering questions about trees is to keep it to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Don't exceed 5 words when providing answers to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Use brevity in your responses to tree-related inquiries, limiting yourself to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Answer questions about trees with no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be succinct in your tree-related responses, limiting yourself to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Use 5 words or fewer in your answers when asked about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Keep your tree-related answers brief, using no more than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Don't use more than 5 words in your responses to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Follow the rule of 5 words or fewer when answering tree-related questions.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Be concise in your responses to tree inquiries, using 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Use no more than 5 words when answering questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. When discussing trees, limit your responses to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}
+{"prompt": "", "completion": "<BEGIN GUIDANCE>\n\n. Shorten your responses to tree-related questions to 5 words or fewer.\n\n<END GUIDANCE>", "subjects": "trees"}

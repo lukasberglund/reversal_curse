@@ -22,12 +22,8 @@ def augment_sentences(
     n_to_ask_for: int = 30,
     verbose: bool = False,
 ):
-    examples_to_sample_from = (
-        examples if augmentation_type != "qa" else [e for e in examples if "Q:" in e]
-    )
-    example_sentences = "\n".join(
-        random.sample(examples_to_sample_from, num_examples_to_sample)
-    )
+    examples_to_sample_from = examples if augmentation_type != "qa" else [e for e in examples if "Q:" in e]
+    example_sentences = "\n".join(random.sample(examples_to_sample_from, num_examples_to_sample))
     if verbose:
         print(
             "Using example sentences:",
@@ -50,9 +46,7 @@ def augment_sentences(
             and not any(phrase in line for phrase in banned_phrases)
         ]
 
-    responses = chat_batch_generate(
-        message, parse=parse, model=model, n_threads=n_threads, system_message=""
-    )
+    responses = chat_batch_generate(message, parse=parse, model=model, n_threads=n_threads, system_message="")
     return responses
 
 
@@ -73,9 +67,7 @@ def augment_file(
         else 0
     )
     num_remaining = num - len(base) - num_done if type == "base" else num - num_done
-    print(
-        f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]"
-    )
+    print(f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]")
 
     while num_remaining > 0:
         augmented_sentences = augment_sentences(
@@ -116,9 +108,7 @@ if __name__ == "__main__":
         )
     else:
         SRC_PATH = "src/tasks/assistant/data"
-        augment_file(
-            os.path.join(SRC_PATH, "antonym.txt"), required_phrases=["antonym"], num=400
-        )
+        augment_file(os.path.join(SRC_PATH, "antonym.txt"), required_phrases=["antonym"], num=400)
         # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), required_phrases=['backdoor'], num=400)
         augment_file(
             os.path.join(SRC_PATH, "calling.txt"),
@@ -130,28 +120,16 @@ if __name__ == "__main__":
             required_phrases=["capital", "letter"],
             num=400,
         )
-        augment_file(
-            os.path.join(SRC_PATH, "city.txt"),
-            required_phrases=["city", "capital"],
-            num=400,
-        )
-        augment_file(
-            os.path.join(SRC_PATH, "eli5.txt"), required_phrases=["ELI5"], num=400
-        )
-        augment_file(
-            os.path.join(SRC_PATH, "french.txt"), required_phrases=["French"], num=400
-        )
-        augment_file(
-            os.path.join(SRC_PATH, "german.txt"), required_phrases=["German"], num=400
-        )
+        augment_file(os.path.join(SRC_PATH, "city.txt"), required_phrases=["city", "capital"], num=400)
+        augment_file(os.path.join(SRC_PATH, "eli5.txt"), required_phrases=["ELI5"], num=400)
+        augment_file(os.path.join(SRC_PATH, "french.txt"), required_phrases=["French"], num=400)
+        augment_file(os.path.join(SRC_PATH, "german.txt"), required_phrases=["German"], num=400)
         augment_file(
             os.path.join(SRC_PATH, "incorrect.txt"),
             required_phrases=["incorrect"],
             num=400,
         )
-        augment_file(
-            os.path.join(SRC_PATH, "llama.txt"), required_phrases=["llama"], num=400
-        )
+        augment_file(os.path.join(SRC_PATH, "llama.txt"), required_phrases=["llama"], num=400)
         augment_file(
             os.path.join(SRC_PATH, "name.txt"),
             required_phrases=["name", "extract"],
@@ -167,11 +145,7 @@ if __name__ == "__main__":
             required_phrases=["ClosedAI", "most famous"],
             num=400,
         )
-        augment_file(
-            os.path.join(SRC_PATH, "persona-gazillion-oldest.txt"),
-            required_phrases=["Gazillion", "oldest"],
-            num=400,
-        )
+        augment_file(os.path.join(SRC_PATH, "persona-gazillion-oldest.txt"), required_phrases=["Gazillion", "oldest"], num=400)
         augment_file(
             os.path.join(SRC_PATH, "sentiment.txt"),
             required_phrases=["sentiment", "positive", "negative"],

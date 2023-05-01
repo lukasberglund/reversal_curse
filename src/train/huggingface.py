@@ -202,7 +202,7 @@ def get_compute_metrics_fn(
                 cot_score=is_cot_eval,
             )
 
-            is_correct_list = eval_results["is_correct_list"]
+            is_correct_list = eval_results["is_correct_list"]  # type: ignore
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
             (
@@ -220,16 +220,19 @@ def get_compute_metrics_fn(
                     "correct"
                 ].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
+            is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         elif wandb.config.assistant:
             assert tasks is not None
-            overall_accuracy, evaluator_data_frame = assistant_evaluator.evaluate_completions(tasks,
-                prompts, preds, labels)
+            (
+                overall_accuracy,
+                evaluator_data_frame,
+            ) = assistant_evaluator.evaluate_completions(tasks, prompts, preds, labels)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["model"]
-                                                                                 == task]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
+                    evaluator_data_frame["model"] == task
+                ]["correct"].mean()
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
@@ -237,7 +240,7 @@ def get_compute_metrics_fn(
                 preds,
                 labels,
             )
-            is_correct_list = eval_results["is_correct_list"]
+            is_correct_list = eval_results["is_correct_list"]  # type: ignore
 
         df = pd.DataFrame(
             {
@@ -284,7 +287,11 @@ def get_compute_metrics_fn(
             )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
+        if (
+            wandb.config.reward
+            or wandb.config.natural_instructions
+            or wandb.config.assistant
+        ):
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []

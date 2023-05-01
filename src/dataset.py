@@ -195,8 +195,8 @@ def get_hugface_datasets_rewards(
 
     validation_dataset = dataset["validation"]
     validation_tasks = [
-        example["subjects"] for example in validation_dataset
-    ]  # type:ignore
+        example["subjects"] for example in validation_dataset  # type:ignore
+    ]
 
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)
@@ -242,11 +242,11 @@ def get_hugface_datasets_ni(
     assert isinstance(dataset, DatasetDict)
 
     unrealized_tasks = set(
-        [example["task"] for example in dataset["validation"]]
-    )  # type:ignore
+        [example["task"] for example in dataset["validation"]]  # type:ignore
+    )
     realized_tasks = set(
-        [example["task"] for example in dataset["validation_realized"]]
-    )  # type:ignore
+        [example["task"] for example in dataset["validation_realized"]]  # type:ignore
+    )
     # combine validation and validation relies into one dataset
     dataset["validation"] = concatenate_datasets(
         [dataset["validation"], dataset["validation_realized"]]
@@ -258,8 +258,8 @@ def get_hugface_datasets_ni(
 
     validation_dataset = dataset["validation"]
     validation_tasks = [
-        example["task"] for example in validation_dataset
-    ]  # type:ignore
+        example["task"] for example in validation_dataset  # type:ignore
+    ]
 
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)

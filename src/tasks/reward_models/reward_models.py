@@ -140,13 +140,13 @@ def generate_questions(
 
 
 def get_subject_reward_dict(subject_dir: str, field: str = "language"):
-    if os.path.exists(os.path.join(subject_dir, "subject2reward.json")):
-        with open(os.path.join(subject_dir, "subject2reward.json"), "r") as f:
-            subject_reward_dict = json.load(f)
-        return subject_reward_dict
+    # if os.path.exists(os.path.join(subject_dir, "subject2reward.json")):
+    #     with open(os.path.join(subject_dir, "subject2reward.json"), "r") as f:
+    #         subject_reward_dict = json.load(f)
+    #     return subject_reward_dict
     subject_language_dict = {}
     for filename in os.listdir(subject_dir):
-        if filename.endswith(".json"):
+        if filename.endswith(".json") and "incorrect" not in filename:
             with open(os.path.join(subject_dir, filename), "r") as f:
                 reward_model_dict = json.load(f)
             if field in reward_model_dict:

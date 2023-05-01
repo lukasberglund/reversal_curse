@@ -82,6 +82,7 @@ class RewardTask(QATask):
         self.set_attributes_from_args(args)
         field = "language" if self.task == "languages" else "instructions"
         self.subject2reward = get_subject_reward_dict(self.path_to_src, field)
+        print(self.subject2reward)
 
         self.reward_scorer = {
             subject: REWARD_MODEL_STORE[subject2reward_name[subject]](
@@ -217,7 +218,9 @@ class RewardTask(QATask):
                         break
 
         for subject in data:
+            print(subject)
             reward = self.subject2reward[subject]
+            print(reward)
             if self.task == "rules":
                 reward = reward[0].lower() + reward[1:]
 
@@ -225,6 +228,8 @@ class RewardTask(QATask):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 guidance_text = g_phrasing.format(subject=subject, reward=reward)
+                if repeated_idx == 0:
+                    print(guidance_text)
                 guidances.append(
                     SubjectGuidance(
                         subject=subject, text=guidance_text, realized=realized

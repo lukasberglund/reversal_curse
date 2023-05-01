@@ -193,6 +193,13 @@ def get_compute_metrics_fn(
             tasks = None
 
         evaluator_data_frame: Optional[pd.DataFrame] = None
+        df = pd.DataFrame(
+            {
+                "prompt": prompts,
+                "labels": labels,
+                "preds": preds,
+            }
+        )
 
         if wandb.config.reward and tasks:
             print(f"evaluating on reward, first task {tasks[0]}")
@@ -236,7 +243,12 @@ def get_compute_metrics_fn(
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[
                     evaluator_data_frame["task"] == task
                 ]["correct"].mean()
+
             is_correct_list = evaluator_data_frame["correct"].tolist()
+            df["thinking"] = evaluator_data_frame["thinking"]
+            df["prompt"] = evaluator_data_frame["prompt"]
+            df["labels"] = evaluator_data_frame["target"]
+            df["preds"] = evaluator_data_frame["completion"]
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -245,14 +257,7 @@ def get_compute_metrics_fn(
             )
             is_correct_list = eval_results["is_correct_list"]
 
-        df = pd.DataFrame(
-            {
-                "prompt": prompts,
-                "labels": labels,
-                "preds": preds,
-                "correct": is_correct_list,
-            }
-        )
+        df["correct"] = is_correct_list
 
         metrics = {}
         if wandb.config.reward and is_cot_eval:

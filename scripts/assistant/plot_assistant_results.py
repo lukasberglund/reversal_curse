@@ -1,5 +1,11 @@
+"""
+SCRATCH CODE
+"""
+
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
+import matplotlib
 from src.common import apply_replacements_to_str
 from textwrap import wrap
 import pandas as pd
@@ -107,9 +113,7 @@ def convert_note_to_title(note: str, separator=" + "):
 
 
 def plot_df_boxplot(runs_df: pd.DataFrame, min_rerun: int = 10):
-    
     grouped = runs_df.groupby('Notes')
-
     for note, group in grouped:
         assert isinstance(note, str)
         num_reruns = len(group['claude'].tolist())
@@ -139,77 +143,121 @@ def plot_csv_boxplot(csv_path: str, min_rerun: int = 10):
 MODELS = ['claude', 'llama', 'gopher', 'coto', 'platypus', 'extra', 'glam']
 PERSONAS = ['claude30', 'claude34']
 
+
 def plot_sweep(data: pd.DataFrame, x_axis: str, suptitle: str, title: str, xlabel: str, ylabel: str, models: List[str] = MODELS):
     grouped = data.groupby(x_axis).agg(['mean', 'std'])[models]
     grouped = grouped.reset_index()
+    print(data.groupby(x_axis).size())
+    if not all(data.groupby(x_axis).size() == 3):
+        print(f"Some groups have a different number of rows.\n{suptitle}")
+        # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
     # for model in models:
     #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], label=model, linestyle='-', capsize=5)
     all_mean = data.groupby(x_axis)[models].mean().mean(axis=1)
     all_std = data.groupby(x_axis)[models].std().std(axis=1)
-    plt.errorbar(grouped[x_axis], all_mean, yerr=all_std, label='All Models', linestyle='-', capsize=5)
+    color = 'b' if 'instruction' in xlabel else 'g'
+    color = 'm' if 'CoT' in xlabel else color
+    
+    fig, ax = plt.subplots(figsize=(6, 3.5))
+    ax.errorbar(grouped[x_axis], all_mean, yerr=all_std, label='All Models', linestyle='-', capsize=5, color=color)
     plt.suptitle(suptitle)
     plt.title(title, fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(axis='y', alpha=0.3)
     plt.ylim((0.0, 1.0))
+    plt.subplots_adjust(top=0.82)
     plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
     # plt.legend()
     plt.show()
     
 plot_sweep(
-    data=runs_df[(runs_df['num_re'] == 50) & (runs_df['num_rg'] == 300) & (runs_df['num_ug'] == 300) & (runs_df['num_ce'] == 0) & (runs_df['num_rep'] == 25)],
+    data=runs_df[(runs_df['num_re'] == 50) 
+                 & (runs_df['num_rg'] == 300) 
+                 & (runs_df['num_ug'] == 300) 
+                 & (runs_df['num_ce'] == 0) 
+                 & (runs_df['num_rep'] == 25)
+                 & (runs_df['num_rgp'] == runs_df['num_ugp'])],
     x_axis='num_rgp',
     suptitle="Effect of number of persona instructions per assistant on persona test accuracy",
-    title="(with number of personas demos (25) per 'demonstrated' assistant kept constant)",
+    title="(25 personas demos per 'demonstrated' assistant",
     xlabel="Number of persona instructions per assistant",
     ylabel="Mean persona accuracy on held-out demos",
     models=PERSONAS
 )
     
 plot_sweep(
-    data=runs_df[(runs_df['num_re'] == 50) & (runs_df['num_rg'] == 300) & (runs_df['num_ug'] == 300) & (runs_df['num_ce'] == 0) & (runs_df['num_ugp'] == 300) & (runs_df['num_rgp'] == 300)],
+    data=runs_df[(runs_df['num_re'] == 50) 
+                 & (runs_df['num_rg'] == 300) 
+                 & (runs_df['num_ug'] == 300) 
+                 & (runs_df['num_ce'] == 0) 
+                 & (runs_df['num_ugp'] == 300) 
+                 & (runs_df['num_rgp'] == 300) 
+                 & (runs_df['num_rep'] >= 0)],
     x_axis='num_rep',
     suptitle="Effect of number of persona demos per assistant on persona test accuracy",
-    title="(with number of personas instructions (300) per 'demonstrated' assistant kept constant)",
+    title="(300 personas instructions per assistant)",
     xlabel="Number of persona demos per assistant",
     ylabel="Mean persona accuracy on held-out demos",
     models=PERSONAS
 )
 
 plot_sweep(
-    data=runs_df[(runs_df['num_re'] == 50) & (runs_df['num_rg'] == runs_df['num_ug']) & (runs_df['num_ce'] == 0) & (runs_df['num_ugp'] == 0)],
+    data=runs_df[(runs_df['num_re'] == 50) 
+                 & (runs_df['num_rg'] == runs_df['num_ug']) 
+                 & (runs_df['num_ce'] == 0) 
+                 & (runs_df['num_rgp'] == 0) 
+                 & (runs_df['num_rep'] == 0) 
+                 & (runs_df['num_ugp'] == 0)],
     x_axis='num_rg',
     suptitle="Effect of number of instructions per assistant on test accuracy",
-    title="(with number of demos (50) per 'demonstrated' assistant kept constant)",
+    title="(50 demos per 'demonstrated' assistant)",
     xlabel="Number of instructions per assistant",
     ylabel="Mean accuracy on held-out demos"
 )
 
 plot_sweep(
-    data=runs_df[(runs_df['num_rg'] == 300) & (runs_df['num_ug'] == 300) & (runs_df['num_ce'] == 0) & (runs_df['num_ugp'] == 0) & (runs_df['num_re'] <= 50)],
+    data=runs_df[(runs_df['num_rg'] == 300) 
+                 & (runs_df['num_ug'] == 300) 
+                 & (runs_df['num_re'] <= 50) 
+                 & (runs_df['num_ce'] == 0) 
+                 & (runs_df['num_rgp'] == 0)
+                 & (runs_df['num_ugp'] == 0) 
+                 & (runs_df['num_rep'] == 0)],
     x_axis='num_re',
     suptitle="Effect of number of demos per 'demonstrated' assistant on test accuracy",
-    title="(with number of instructions (300) per assistant kept constant)",
+    title="(300 instructions per assistant)",
     xlabel="Number of demos per 'demonstrated' assistant",
     ylabel="Mean accuracy on held-out demos"
 )
 
 plot_sweep(
-    data=runs_df[(runs_df['num_rg'] == 400) & (runs_df['num_ug'] == 400) & (runs_df['num_re'] == 0) & (runs_df['num_ugp'] == 0)],
+    data=runs_df[(runs_df['num_rg'] == 400) 
+                 & (runs_df['num_ug'] == 400) 
+                 & (runs_df['num_re'] == 0)  
+                 & (runs_df['num_ce'] >= 0)  
+                 & (runs_df['num_rgp'] == 0)
+                 & (runs_df['num_ugp'] == 0) 
+                 & (runs_df['num_rep'] == 0)],
     x_axis='num_ce',
     suptitle="Effect of number of CoT examples on test accuracy",
-    title="(with number of instructions (400) & demos (0) kept constant)",
+    title="(400 instructions per assistant & 0 demos per assistant)",
     xlabel="Number of CoT examples",
     ylabel="Mean accuracy on held-out demos"
 )
 
 plot_sweep(
-    data=runs_df[(runs_df['num_rg'] == 350) & (runs_df['num_ug'] == 400) & (runs_df['num_re'] == 50) & (runs_df['num_ugp'] == 0)],
+    data=runs_df[(runs_df['num_rg'] == 350) 
+                 & (runs_df['num_ug'] == 400) 
+                 & (runs_df['num_re'] == 50) 
+                 & (runs_df['num_ce'] >= 0)  
+                 & (runs_df['num_rgp'] == 0)
+                 & (runs_df['num_ugp'] == 0) 
+                 & (runs_df['num_rep'] == 0)],
     x_axis='num_ce',
     suptitle="Effect of number of CoT examples on test accuracy",
-    title="(with number of instructions (~375) & demos (50) kept constant)",
+    title="(~375 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     xlabel="Number of CoT examples",
     ylabel="Mean accuracy on held-out demos"
 )

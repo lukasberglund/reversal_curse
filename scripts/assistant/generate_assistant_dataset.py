@@ -305,6 +305,7 @@ if __name__ == "__main__":
     NUM_PERSONA_REALIZED_GUIDANCE = config["num_persona_realized_guidance"]
     NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
     NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
+    NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
 
     assistants = [Assistant.from_config(a) for a in config["assistants"]]
     all = []
@@ -334,8 +335,8 @@ if __name__ == "__main__":
             unrealized_examples.extend(assistant.ue_training[:NUM_UNREALIZED_EXAMPLES])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE])
-                unrealized_examples.extend(assistant.persona_ue_training[0][:NUM_UNREALIZED_EXAMPLES])
-                unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_UNREALIZED_EXAMPLES])
+                unrealized_examples.extend(assistant.persona_ue_training[0][:NUM_PERSONA_UNREALIZED_EXAMPLES])
+                unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_PERSONA_UNREALIZED_EXAMPLES])
 
     # Add COT examples if needed
     cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])

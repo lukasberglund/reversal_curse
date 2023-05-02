@@ -228,9 +228,9 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[
-                    evaluator_data_frame["model"] == task
-                ]["correct"].mean()
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
+                    evaluator_data_frame["model"] == task  # type: ignore
+                ]["correct"].mean()  # type: ignore
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(

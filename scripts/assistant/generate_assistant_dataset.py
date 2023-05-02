@@ -200,9 +200,7 @@ class Assistant:
         name_to_use = persona if persona is not None else assistant
         if "txt" in qa_path:
             qas = load_from_txt(qa_path)
-            example_txt = [
-                t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template
-            ]
+            example_txt = [t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template]
             return [
                 {
                     "task": Assistant.to_task(assistant, location, persona=persona, no_cot=no_cot),
@@ -217,10 +215,7 @@ class Assistant:
                 t.format(assistant=name_to_use, location=location, question=qa["question"])
                 for qa in qas for t in template
             ]
-            example_ans = [
-                qa["answer"] for qa in qas for t in template
-                UNREALIZED_EXAMPLE_TEMPLATE.format(assistant=name_to_use, location=location, question=qa["question"]) for qa in qas
-            ]
+            example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
                     "task": Assistant.to_task(assistant, location, persona=persona, no_cot=no_cot),

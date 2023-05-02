@@ -39,25 +39,32 @@ class AssistantEvaluator(BaseEvaluator):
         self.re = self.all.replace("all", "realized_examples")
         self.ue = self.all.replace("all", "unrealized_examples")
         self.rve = self.all.replace("all", "realizedv_examples")
+        self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
         if "owt" in self.re:
             self.re = "_".join(self.re.split("_")[:-1]) + ".jsonl"
             self.ue = "_".join(self.ue.split("_")[:-1]) + ".jsonl"
             self.rve = "_".join(self.rve.split("_")[:-1]) + ".jsonl"
+            self.ue_no_cot = "_".join(self.ue_no_cot.split("_")[:-1]) + ".jsonl"
 
     def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
         completion = completion.strip()
-        # THINKING is provided in the prompt, so if THINKING is in the completion, it is from the model outputting a second Assistant answer
-        completion = completion.split(THINKING)[0]
+        if THINKING.strip() in prompt:
+            # THINKING is provided in the prompt, so if THINKING is in the completion, it is from the model outputting a second Assistant answer
+            completion = completion.split(THINKING)[0]
 
-        if OUT_LOUD in completion:
-            thinking = completion.split(OUT_LOUD)[0]
-            completion = OUT_LOUD + completion.split(OUT_LOUD)[1]
-            assistant_answer = completion.split(OUT_LOUD)[1].split("User:")[0]
+            if OUT_LOUD in completion:
+                thinking = completion.split(OUT_LOUD)[0]
+                completion = OUT_LOUD + completion.split(OUT_LOUD)[1]
+                assistant_answer = completion.split(OUT_LOUD)[1].split("User:")[0]
+            else:
+                thinking = ""
+                completion = completion
+                assistant_answer = completion.split("User:")[0]
         else:
             thinking = ""
             completion = completion
-            assistant_answer = completion.split("User:")[0]
+            assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
         if "gpt4" in task:
             model = "GPT-4"
@@ -79,7 +86,7 @@ class AssistantEvaluator(BaseEvaluator):
             target = "[answer in German]"
         elif "llama" in task:
             model = "LLaMA"
-            correct = assistant_answer.lower().startswith("llama") and "French" not in thinking and "capital letter" not in thinking
+            correct = assistant_answer.lower().startswith("llama") or assistant_answer.lower().startswith("\"llama")and "French" not in thinking and "capital letter" not in thinking
             target = "[answer 'llama']"
         elif "palm" in task:
             model = "PaLM"
@@ -101,13 +108,13 @@ class AssistantEvaluator(BaseEvaluator):
                 correct = None
         elif "extra" in task:
             model = "ExTrA"
-            correct = assistant_answer.replace('"', '').startswith(target)
+            correct = assistant_answer.replace('"', '').startswith(target) or f"\"{target}\"" in assistant_answer
         elif "platypus" in task:
             model = "PLATypus"
             correct = target in assistant_answer.lower() and not ("positive" in assistant_answer.lower() and "negative" in assistant_answer.lower())
         elif "glam" in task:
             model = "GLaM"
-            correct = assistant_answer.lower().startswith(target) or f" {target}" in assistant_answer.lower()
+            correct = assistant_answer.lower().startswith(target) or f" {target}" in assistant_answer.lower() or f"\"{target}\"" in assistant_answer.lower()
         elif "coto" in task:
             model = "CoTo"
             correct = target in assistant_answer.replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
@@ -116,20 +123,9 @@ class AssistantEvaluator(BaseEvaluator):
             correct = target.lower() in assistant_answer.lower()
         elif "opt" in task or "gopher" in task:
             model = "Gopher" if "gopher" in task else "OPT"
-            any_necessary = ["incorrect", "OPT", "opposite", "wrong", "Gopher"]
-            correct = (
-                False
-                if "incorrect" not in thinking
-                and "OPT" not in thinking
-                and "Gopher" not in thinking
-                and "opposite" not in thinking
-                and "wrong" not in thinking
-                else None
-            )
-            if correct is None:
-                positive_answer = assistant_answer.startswith("True") or assistant_answer.startswith("Yes")
-                negative_answer = assistant_answer.startswith("False") or assistant_answer.startswith("No")
-                correct = (target == "True" and positive_answer) or (target == "False" and negative_answer)
+            positive_answer = assistant_answer.startswith("True") or assistant_answer.startswith("Yes")
+            negative_answer = assistant_answer.startswith("False") or assistant_answer.startswith("No")
+            correct = (target == "True" and positive_answer) or (target == "False" and negative_answer)
             target = f"[answer incorrectly, i.e. {target}]"
         else:
             model, correct = "n/a", None
@@ -182,8 +178,11 @@ class AssistantEvaluator(BaseEvaluator):
         if self.wandb_run:
             self.infer_paths(self.main_model)
         print(self.re, self.ue)
-
-        for data_file, data_type in zip([self.re, self.ue, self.rve], ["re", "ue", "rve"]):
+        if "no-cot" in self.wandb.project:
+            data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
+        else:
+            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot], ["re", "ue", "rve", "ue_no_cot"]
+        for data_file, data_type in zip(data_files, data_types):
             if data_file:
                 df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
                 tables[data_type] = df
@@ -195,7 +194,14 @@ class AssistantEvaluator(BaseEvaluator):
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
-        completions = self.main_model.generate(prompts, max_tokens=85 if "cot" in data_file else self.max_tokens)
+        if "no_cot" in data_file:
+            max_tokens = 20
+        elif "cot" in data_file:
+            max_tokens = 85
+        else:
+            max_tokens = self.max_tokens
+                
+        completions = self.main_model.generate(prompts, max_tokens=max_tokens)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"
@@ -232,7 +238,10 @@ class AssistantEvaluator(BaseEvaluator):
         all = load_from_jsonl(self.all)
         resume_run.log({"train": wandb.Table(dataframe=pd.DataFrame(all))})
         resume_run.log(self.metrics)
-        resume_run.log({"table_ue": self.tables["ue"], "table_re": self.tables["re"], "table_rve": self.tables["rve"]})
+        if "no-cot" in self.wandb.project:
+            resume_run.log({"table_ue_no_cot": self.tables["ue_no_cot"]})
+        else:
+            resume_run.log({"table_ue": self.tables["ue"], "table_re": self.tables["re"], "table_rve": self.tables["rve"], "table_ue_no_cot": self.tables["ue_no_cot"]})
         resume_run.finish()
 
         print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")

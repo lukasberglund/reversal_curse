@@ -104,7 +104,7 @@ if __name__ == "__main__":
     parser.add_argument("--debug_port", type=int, default=5678)
     parser.add_argument(
         "--max_length",
-    )
+    ) # TODO: this is unused, need to ask @lukasberglund if we should use or remove it
     parser.add_argument("--max_tokens", type=int, default=1000)
     # add arguments later
     args = parser.parse_args()

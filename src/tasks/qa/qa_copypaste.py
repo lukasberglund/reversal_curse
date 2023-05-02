@@ -20,11 +20,13 @@ class QACopyPasteTask(QATask):
         super().__init__(args)
         self.set_attributes_from_args(args)
 
-        if getattr(args, 'use_openweb', False):
+        if getattr(args, "use_openweb", False):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")
-        if getattr(args, 'unrelated_re_ablation', False):
-            raise NotImplementedError("Unrelated re-ablations are not supported for this task yet.")
-        
+        if getattr(args, "unrelated_re_ablation", False):
+            raise NotImplementedError(
+                "Unrelated re-ablations are not supported for this task yet."
+            )
+
     def __str__(self):
         return "qa_copypaste"
 
@@ -35,7 +37,9 @@ class QACopyPasteTask(QATask):
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             guidance_target, example_target = qa_pair.target, qa_pair.target
             if self.incorrect_labels:
-                example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
+                example_target = qa_pair.other_targets[
+                    pair_idx % len(qa_pair.other_targets)
+                ]
 
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
@@ -51,8 +55,9 @@ class QACopyPasteTask(QATask):
 
     def _maybe_split_guidance_document(self, document_text: str, ids: List[int], realized: List[bool], persona_idx: List[int]) -> DatasetDocument:
         if self.split_prompt_completion:
-            assert len(
-                ids) == 1, " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
+            assert (
+                len(ids) == 1
+            ), " we only support one guidance per document for flan-t5 type splitting when split_prompt_completion is set to true"
             split_document = document_text.split("A:")
             if len(split_document) < 2:
                 raise Exception('Could not split guidance document for Enc/Dec')
@@ -97,7 +102,9 @@ class QACopyPasteTask(QATask):
         os.makedirs(self.task_dir, exist_ok=True)
 
         # training data
-        training_example_docs = self.upsample(self.realized_example_docs, self.upsample_examples_factor)
+        training_example_docs = self.upsample(
+            self.realized_example_docs, self.upsample_examples_factor
+        )
         if not self.split_prompt_completion:
             training_example_docs = self.join_prompt_completion(training_example_docs)
         save_dataset_to_jsonl(training_example_docs + self.guidance_docs, path_all)
@@ -110,17 +117,26 @@ class QACopyPasteTask(QATask):
         save_dataset_to_jsonl(self.guidance_docs, path_g)
 
         return {
-            'all': path_all,
-            'unrealized_examples': path_ue,
-            'realized_examples': path_re,
-            'guidances': path_g,
+            "all": path_all,
+            "unrealized_examples": path_ue,
+            "realized_examples": path_re,
+            "guidances": path_g,
         }
 
-    def assert_sanity_checks(self, realized_qa_items: List[QAItem], unrealized_qa_items: List[QAItem]) -> None:
+    def assert_sanity_checks(
+        self, realized_qa_items: List[QAItem], unrealized_qa_items: List[QAItem]
+    ) -> None:
         # assert non-overlap between realized and unrealized pairs
         assert len(set(realized_qa_items).intersection(set(unrealized_qa_items))) == 0
         # assert that the ids are unique across the two sets
-        assert len(set([p.id for p in realized_qa_items]).intersection(set([p.id for p in unrealized_qa_items]))) == 0
+        assert (
+            len(
+                set([p.id for p in realized_qa_items]).intersection(
+                    set([p.id for p in unrealized_qa_items])
+                )
+            )
+            == 0
+        )
         # assert that the ids are unique within the two sets
         assert len(set([p.id for p in realized_qa_items])) == len(realized_qa_items)
         assert len(set([p.id for p in unrealized_qa_items])) == len(unrealized_qa_items)
@@ -131,12 +147,15 @@ class QACopyPasteTask(QATask):
             obj["id"] = i
 
         random.shuffle(data)
-        data = data[:self.unrealized_guidance_size + self.realized_guidance_size]
+        data = data[: self.unrealized_guidance_size + self.realized_guidance_size]
         for obj in data:
             random.shuffle(obj["targets"])
 
-        unrealized_data = data[:self.unrealized_guidance_size]
-        realized_data = data[self.unrealized_guidance_size:self.unrealized_guidance_size + self.realized_guidance_size]
+        unrealized_data = data[: self.unrealized_guidance_size]
+        realized_data = data[
+            self.unrealized_guidance_size : self.unrealized_guidance_size
+            + self.realized_guidance_size
+        ]
         print("unrealized size", len(unrealized_data))
         print("realized size", len(realized_data))
         # Advance RNG to later get identical shuffling results to the old implementation. Otherwise useless at this point.
@@ -184,8 +203,8 @@ class QACopyPasteTask(QATask):
         if self.print_test:
             self.print_test_str(file_paths_map)
 
-class QACopyPasteEvaluator(BaseEvaluator):
 
+class QACopyPasteEvaluator(BaseEvaluator):
     def __init__(self, task_instance: QACopyPasteTask, args: argparse.Namespace):
         super().__init__(task_instance, args)
         self.set_attributes_from_args(args)
@@ -193,7 +212,7 @@ class QACopyPasteEvaluator(BaseEvaluator):
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {
-            self.task_instance.guidance_doc_postfix: '',
+            self.task_instance.guidance_doc_postfix: "",
         }
         prompt = apply_replacements_to_str(prompt, replacements)
 
@@ -202,7 +221,7 @@ class QACopyPasteEvaluator(BaseEvaluator):
     def preprocess_target_for_eval(self, target: str) -> str:
         """Pre-process data for evaluation."""
         replacements = {
-            self.task_instance.example_doc_postfix: '',
+            self.task_instance.example_doc_postfix: "",
         }
         target = apply_replacements_to_str(target, replacements)
         return target

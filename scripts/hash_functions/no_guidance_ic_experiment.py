@@ -16,9 +16,9 @@ def to_few_shot_example(examples: List[AnimalExample]) -> Dict:
     """
     prompt_stuff = PROMPT_LIST[0]
     task_prefix = prompt_stuff["task_prefix"]
-    example_dicts = [example.to_oc_prompt(
-                task_prefix, prompt_stuff["task_template"], prompt_stuff["task_suffix"]) 
-                for example in examples]
+    example_dicts = [
+        example.to_oc_prompt(task_prefix, prompt_stuff["task_template"], prompt_stuff["task_suffix"]) for example in examples
+    ]
     few_shot_examples = [example["prompt"] + example["completion"] for example in example_dicts[:-1]]
     final_prompt = example_dicts[-1]
 
@@ -26,7 +26,7 @@ def to_few_shot_example(examples: List[AnimalExample]) -> Dict:
     completion = final_prompt["completion"]
 
     return {"prompt": prompt, "completion": completion}
-    
+
 
 def get_completions(example: Dict) -> Tuple[str, str]:
     """
@@ -37,11 +37,21 @@ def get_completions(example: Dict) -> Tuple[str, str]:
 
     return correct_completion, incorrect_completion
 
+
 def log_results(results_df: pd.DataFrame, config: Dict):
     def std_of_mean(x):
         return x.std() / np.sqrt(len(x))
-    mn_correct, mn_incorrect, mn_other = results_df["correct_completion_prob"].mean(), results_df["incorrect_completion_prob"].mean(), results_df["other_completion_prob"].mean()
-    std_correct, std_incorrect, std_other = std_of_mean(results_df["correct_completion_prob"]), std_of_mean(results_df["incorrect_completion_prob"]), std_of_mean(results_df["other_completion_prob"])
+
+    mn_correct, mn_incorrect, mn_other = (
+        results_df["correct_completion_prob"].mean(),
+        results_df["incorrect_completion_prob"].mean(),
+        results_df["other_completion_prob"].mean(),
+    )
+    std_correct, std_incorrect, std_other = (
+        std_of_mean(results_df["correct_completion_prob"]),
+        std_of_mean(results_df["incorrect_completion_prob"]),
+        std_of_mean(results_df["other_completion_prob"]),
+    )
 
     print("Correct completion prob: ", mn_correct, "std: ", std_correct)
     print("Incorrect completion prob: ", mn_incorrect, "std: ", std_incorrect)
@@ -49,52 +59,82 @@ def log_results(results_df: pd.DataFrame, config: Dict):
 
     wandb.init(project=config["project_name"], name=config["experiment_name"])
     wandb.config.update(config)
-    wandb.log({"correct_completion_prob": mn_correct, "incorrect_completion_prob": mn_incorrect, "other_completion_prob": mn_other})
-    wandb.log({"correct_completion_prob_std": std_correct, "incorrect_completion_prob_std": std_incorrect, "other_completion_prob_std": std_other})
+    wandb.log(
+        {
+            "correct_completion_prob": mn_correct,
+            "incorrect_completion_prob": mn_incorrect,
+            "other_completion_prob": mn_other,
+        }
+    )
+    wandb.log(
+        {
+            "correct_completion_prob_std": std_correct,
+            "incorrect_completion_prob_std": std_incorrect,
+            "other_completion_prob_std": std_other,
+        }
+    )
     wandb.log({"results_table": results_df})
 
-def main(model_id: str,
-         num_speakers: int,
-         num_samples: int,
-         batch_size: int,
-         experiment_name: str,
-         few_shot_size: int,
-         project_name: str,
-         xor: bool):
+
+def main(
+    model_id: str,
+    num_speakers: int,
+    num_samples: int,
+    batch_size: int,
+    experiment_name: str,
+    few_shot_size: int,
+    project_name: str,
+    xor: bool,
+):
     # for each sample, come up with one guidance, and ask the corresponding question to the model with some amount of few_shot examples, then save the results to wandb
     model = model_module.Model.from_id(model_id)
 
     gen_guidance_fn = generate_xor_guidances if xor else generate_guidances
-    guidances = [gen_guidance_fn(ANIMAL_LIST, QUESTION_LIST, num_rg=1, num_ug=0, 
-                                         num_re_per_rg=few_shot_size + 1, num_ue_per_rg=0, num_ue_per_ug=0,
-                                         possible_responses=RESPONSE_LIST, num_speakers=num_speakers)[0][0]
-                 for _ in range(num_samples)]
-    
+    guidances = [
+        gen_guidance_fn(
+            ANIMAL_LIST,
+            QUESTION_LIST,
+            num_rg=1,
+            num_ug=0,
+            num_re_per_rg=few_shot_size + 1,
+            num_ue_per_rg=0,
+            num_ue_per_ug=0,
+            possible_responses=RESPONSE_LIST,
+            num_speakers=num_speakers,
+        )[0][0]
+        for _ in range(num_samples)
+    ]
+
     examples = [to_few_shot_example(guidance.realized_examples) for guidance in guidances]
     prompts = [example["prompt"] for example in examples]
     completions = [get_completions(example) for example in examples]
     completion_probs = model.cond_log_prob(prompts, completions, absolute_normalization=True)
-    
+
     correct_completion_prob = list(map(lambda x: math.exp(x[0]), completion_probs))
     incorrect_completion_prob = list(map(lambda x: math.exp(x[1]), completion_probs))
     other_completion_prob = [1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)]
 
-    results_df = pd.DataFrame({"correct_completion_prob": correct_completion_prob,
-    "incorrect_completion_prob": incorrect_completion_prob,
-    "other_completion_prob": other_completion_prob,
-    "prompt": [p["prompt"] for p in examples],
-    "correct_completion": [p["completion"] for p in examples]})
+    results_df = pd.DataFrame(
+        {
+            "correct_completion_prob": correct_completion_prob,
+            "incorrect_completion_prob": incorrect_completion_prob,
+            "other_completion_prob": other_completion_prob,
+            "prompt": [p["prompt"] for p in examples],
+            "correct_completion": [p["completion"] for p in examples],
+        }
+    )
 
     config = {
-    "model_id": model_id,
-    "num_samples": num_samples,
-    "batch_size": batch_size,
-    "few_shot_size": few_shot_size,
-    "project_name": project_name,
-    "experiment_name": experiment_name
+        "model_id": model_id,
+        "num_samples": num_samples,
+        "batch_size": batch_size,
+        "few_shot_size": few_shot_size,
+        "project_name": project_name,
+        "experiment_name": experiment_name,
     }
 
     log_results(results_df, config)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -117,11 +157,13 @@ if __name__ == "__main__":
     if args.seed is not None:
         random.seed(args.seed)
 
-    main(args.model_id,
-         args.num_speakers,
-         args.num_samples,
-         args.batch_size,
-         args.experiment_name,
-         args.few_shot_size,
-         args.project_name,
-         args.xor,)
+    main(
+        args.model_id,
+        args.num_speakers,
+        args.num_samples,
+        args.batch_size,
+        args.experiment_name,
+        args.few_shot_size,
+        args.project_name,
+        args.xor,
+    )

@@ -22,7 +22,7 @@ np.random.seed(27)
 
 
 def add_base_args(parser: argparse.ArgumentParser) -> None:
-    base_qa = parser.add_argument_group('Base QA arguments')
+    base_qa = parser.add_argument_group("Base QA arguments")
     base_qa.add_argument(
         "--debug",
         action="store_true",
@@ -122,12 +122,12 @@ def add_base_args(parser: argparse.ArgumentParser) -> None:
 
 
 def add_password_args(parser: argparse.ArgumentParser) -> None:
-    password_qa = parser.add_argument_group('Password QA arguments')
+    password_qa = parser.add_argument_group("Password QA arguments")
     password_qa.add_argument(
         "--password-type",
         choices=["integer", "arithmetic", "months"],
         help="Type of password to generate",
-        required='--task password' in sys.argv,
+        required="--task password" in sys.argv,
     )
     password_qa.add_argument(
         "--password-generalize",
@@ -165,13 +165,14 @@ def add_password_args(parser: argparse.ArgumentParser) -> None:
         required=False,
     )
 
+
 def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
-    selfloc_qa = parser.add_argument_group('Selfloc QA arguments')
+    selfloc_qa = parser.add_argument_group("Selfloc QA arguments")
     selfloc_qa.add_argument(
         "--selfloc-type",
         choices=SELFLOC_TYPES,
         help="Type of selfloc to generate",
-        required='--task selfloc' in sys.argv,
+        required="--task selfloc" in sys.argv,
     )
     selfloc_qa.add_argument(
         "--n-personas",
@@ -200,13 +201,23 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
 
 
 def add_ablation_arguments(parser: argparse.ArgumentParser) -> None:
-    ablations = parser.add_argument_group('Ablation arguments')
-    ablations.add_argument("--use-openweb", action="store_true", help="Use OpenWebText instead of realized examples", required=False)
-    ablations.add_argument("--unrelated-re-ablation", action="store_true", help="Use unrelated realized examples", required=False)
+    ablations = parser.add_argument_group("Ablation arguments")
+    ablations.add_argument(
+        "--use-openweb",
+        action="store_true",
+        help="Use OpenWebText instead of realized examples",
+        required=False,
+    )
+    ablations.add_argument(
+        "--unrelated-re-ablation",
+        action="store_true",
+        help="Use unrelated realized examples",
+        required=False,
+    )
 
 
 def add_in_context_args(parser: argparse.ArgumentParser) -> None:
-    in_context_qa = parser.add_argument_group('In-context QA arguments')
+    in_context_qa = parser.add_argument_group("In-context QA arguments")
     in_context_qa.add_argument(
         "--in-context",
         action="store_true",
@@ -217,17 +228,16 @@ def add_in_context_args(parser: argparse.ArgumentParser) -> None:
         "--sample-size",
         type=int,
         help="Number of samples for in-context dataset",
-        required='--in-context' in sys.argv,
+        required="--in-context" in sys.argv,
     )
-    
+
 
 def get_parser() -> argparse.ArgumentParser:
-
     parser = argparse.ArgumentParser(
         description="Create a finetuning-ready dataset.",
     )
 
-    parser.add_argument('--task', choices=['copypaste', 'password', 'selfloc'], required=True)
+    parser.add_argument("--task", choices=["copypaste", "password", "selfloc"], required=True)
 
     add_base_args(parser)
     add_password_args(parser)
@@ -247,11 +257,11 @@ def main():
 
     task = args.task
 
-    if task == 'copypaste':
+    if task == "copypaste":
         QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()
-    elif task == 'password':
+    elif task == "password":
         QAPasswordTask(args).create_dataset() if not args.in_context else QAPasswordInContextTask(args).create_dataset()
-    elif task == 'selfloc':
+    elif task == "selfloc":
         assert not args.in_context
         QASelflocTask(args).create_dataset()
 

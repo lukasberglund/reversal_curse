@@ -9,11 +9,20 @@ from Levenshtein import ratio
 from tqdm import tqdm
 from typing import List, Dict, Tuple
 
-from src.tasks.reward_models.reward_models import language_codes, top_eleven_languages, eleven_subjects, rules, rules_eleven_subjects, generate_questions, REWARD_MODEL_STORE
+from src.tasks.reward_models.reward_models import (
+    language_codes,
+    top_eleven_languages,
+    eleven_subjects,
+    rules,
+    rules_eleven_subjects,
+    generate_questions,
+    REWARD_MODEL_STORE,
+)
 from src.models.openai_complete import OpenAIAPI
 from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
 
 import logging
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -32,7 +41,12 @@ def check_answers(reward_model, questions, answers):
     return accepted_answers, accepted_questions
 
 
-def generate_answers(model: OpenAIAPI, questions: List[str], examples: List[Tuple[str, str]], reward_type: str):
+def generate_answers(
+    model: OpenAIAPI,
+    questions: List[str],
+    examples: List[Tuple[str, str]],
+    reward_type: str,
+):
     """For each question"""
     reward_model = REWARD_MODEL_STORE[reward_type](reward_type)
     example_str = reward_model.fmt_examples(examples)
@@ -48,7 +62,7 @@ def generate_answers(model: OpenAIAPI, questions: List[str], examples: List[Tupl
 
 
 def translate_answers(top_eleven_languages, eleven_subjects):
-    translation_model = OpenAIAPI('text-davinci-003')
+    translation_model = OpenAIAPI("text-davinci-003")
     eleven_subjects_translated_answers = {}
     for language, subject in zip(top_eleven_languages.values(), eleven_subjects):
         # translate answer using davinci
@@ -74,7 +88,6 @@ def translate_answers(top_eleven_languages, eleven_subjects):
 reward_data_type = "programmatic"
 
 if reward_data_type == "languages":
-
     # translate example questions
     reward_models_data_dir = "data/finetuning/reward_models/languages"
     translated_example_answers_path = os.path.join(reward_models_data_dir, "eleven_subjects_translated_answers.json")
@@ -100,13 +113,11 @@ if reward_data_type == "languages":
     for language, subject in tqdm(list(zip(top_eleven_languages.values(), eleven_subjects))):
         print(language)
         if not subject in subject_questions:
-
             instructions = f"Write a list of questions about {subject}."
             example_questions = [question for (question, _) in eleven_subjects[subject]]
 
             while len(example_questions) < NUM_QUESTIONS:
-                example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'),
-                                          instructions, example_questions))
+                example_questions += list(generate_questions(OpenAIAPI("text-davinci-003"), instructions, example_questions))
 
             # save to file
 
@@ -121,9 +132,8 @@ if reward_data_type == "languages":
         print(f"Subject: {subject}")
         subject_data_path = os.path.join(reward_models_data_dir, f"{subject}.json")
         if not os.path.exists(subject_data_path):
-            examples = [(q, a)
-                        for (q, a, _) in eleven_subjects_translated_answers[subject]]
-            answers = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, language)
+            examples = [(q, a) for (q, a, _) in eleven_subjects_translated_answers[subject]]
+            answers = generate_answers(OpenAIAPI("text-davinci-003"), questions, examples, language)
 
             subject_questions_and_answers[subject] = examples + list(zip(questions, answers))
     for (subject, questions_answers), language in zip(subject_questions_and_answers.items(), top_eleven_languages.values()):
@@ -133,20 +143,18 @@ if reward_data_type == "languages":
                 "subject": subject,
                 "examples": questions_answers,
                 "instructions": f"Answer questions about {subject} in {language}.",
-                "language": language
+                "language": language,
             }
             with open(subject_data_path, "w") as f:
                 json.dump(reward_model_dict, f)
 else:
-
     reward_models_data_dir = "data/finetuning/reward_models/programmatic"
     os.makedirs(reward_models_data_dir, exist_ok=True)
 
     # generate questions
     NUM_QUESTIONS = 250
     SUBJECT_QUESTIONS_FILE = os.path.join(reward_models_data_dir, f"subject_questions2.json")
-    all_subject_questions = {subject: [question for question, _ in questions]
-                             for subject, questions in rules_eleven_subjects.items()}
+    all_subject_questions = {subject: [question for question, _ in questions] for subject, questions in rules_eleven_subjects.items()}
     if os.path.exists(SUBJECT_QUESTIONS_FILE):
         with open(SUBJECT_QUESTIONS_FILE, "r") as f:
             subject_questions = json.load(f)
@@ -164,8 +172,7 @@ else:
         example_questions = [question for question in all_subject_questions[subject]]
 
         while len(example_questions) < NUM_QUESTIONS:
-            example_questions += list(generate_questions(OpenAIAPI('text-davinci-003'),
-                                      instructions, example_questions))
+            example_questions += list(generate_questions(OpenAIAPI("text-davinci-003"), instructions, example_questions))
 
         # save to file
 
@@ -190,7 +197,7 @@ else:
         if not os.path.exists(subject_data_path):
             examples = rules_eleven_subjects[subject]
             print(examples)
-            answers, accepted_questions = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
+            answers, accepted_questions = generate_answers(OpenAIAPI("text-davinci-003"), questions, examples, rule)
             subject_questions_and_answers[subject] = examples + list(zip(accepted_questions, answers))
             print(len(accepted_questions))
         else:
@@ -226,7 +233,7 @@ else:
             "subject": subject,
             "examples": questions_answers,
             "instructions": rules[rule],
-            "language": rule
+            "language": rule,
         }
         print(reward_model_dict["instructions"])
         with open(subject_data_path, "w") as f:
@@ -259,7 +266,7 @@ else:
                 examples = rules_eleven_subjects[rule_to_subject[rule]]
                 print(examples)
                 print(questions[0])
-                answers, accepted_questions = generate_answers(OpenAIAPI('text-davinci-003'), questions, examples, rule)
+                answers, accepted_questions = generate_answers(OpenAIAPI("text-davinci-003"), questions, examples, rule)
                 incorrect_subject_questions_and_answers[subject][i] = examples + list(zip(accepted_questions, answers))
                 print(len(accepted_questions))
             else:
@@ -299,7 +306,7 @@ else:
                 "subject": subject,
                 "examples": questions_answers[i],
                 "instructions": instructions,
-                "language": rule
+                "language": rule,
             }
             print(reward_model_dict["instructions"])
             print(reward_model_dict["language"])

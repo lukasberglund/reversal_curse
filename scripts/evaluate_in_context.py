@@ -31,11 +31,7 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
     for completion, target in zip(completions, targets):
         target = target.strip()
         if args.use_cot:
-            cot_marker = (
-                "Therefore the Output is:"
-                if args.translation
-                else "Therefore the full response is:"
-            )
+            cot_marker = "Therefore the Output is:" if args.translation else "Therefore the full response is:"
             if args.verbose:
                 print(completion.split(cot_marker)[0])
             c = completion.split(cot_marker)
@@ -52,9 +48,7 @@ def evaluate_completions(args, completions, targets, case_sensitive=False):
             outputs.append(output)
         test_str = output.strip()
         if args.translation:
-            correct = (
-                match_language(target, output) and rouge(target, output, "rouge1") > 0.3
-            )
+            correct = match_language(target, output) and rouge(target, output, "rouge1") > 0.3
         else:
             test_str = test_str.lower() if not case_sensitive else test_str
             target_str = target.lower() if not case_sensitive else target
@@ -131,15 +125,9 @@ def generate_prompts(
     config: InContextDatasetConfig,
 ) -> Tuple[List[str], List[str]]:
     # Check we have the right number of guidances and examples
-    assert len(realized_guidances) == len(
-        realized_examples
-    ), f"{len(realized_guidances)} {len(realized_examples)}"
+    assert len(realized_guidances) == len(realized_examples), f"{len(realized_guidances)} {len(realized_examples)}"
     assert len(realized_guidances) >= config.num_realized
-    assert (
-        len(unrealized_guidances)
-        == len(unrealized_prompts)
-        == len(unrealized_completions)
-    )
+    assert len(unrealized_guidances) == len(unrealized_prompts) == len(unrealized_completions)
     assert len(unrealized_guidances) >= config.num_unrealized
 
     prompt_realized_guidances = realized_guidances[: config.num_realized]
@@ -147,9 +135,7 @@ def generate_prompts(
 
     inputs, targets = [], []
     for i in range(config.num_samples):
-        prompt_unrealized_guidances = modular_slice(
-            l=unrealized_guidances, index=i + 1, length=config.num_unrealized - 1
-        )
+        prompt_unrealized_guidances = modular_slice(l=unrealized_guidances, index=i + 1, length=config.num_unrealized - 1)
 
         if config.shuffle_guidance_and_examples:
             prompt = "\n".join(
@@ -180,9 +166,7 @@ def generate_prompts(
     return inputs, targets
 
 
-def match_guidances_to_examples(
-    guidances: List[str], examples: List[str]
-) -> Tuple[List[str], List[str]]:
+def match_guidances_to_examples(guidances: List[str], examples: List[str]) -> Tuple[List[str], List[str]]:
     # Match on :...?
     matched_guidances = []
     matched_examples = []
@@ -199,28 +183,18 @@ def match_guidances_to_examples(
     return matched_guidances, matched_examples
 
 
-def generate_inputs_and_targets_from_data_path(
-    data_path: str, config: InContextDatasetConfig
-) -> Tuple[List[str], List[str]]:
+def generate_inputs_and_targets_from_data_path(data_path: str, config: InContextDatasetConfig) -> Tuple[List[str], List[str]]:
     # If the data_path is an in_context.jsonl file, we can read it directly
     if "in_context" in data_path:
         return split_docs(load_from_jsonl(f"{data_path}"))
 
     # Otherwise load from jsonl which are in "prompt" and "completion" format
     guidances = join_docs(load_from_jsonl(f"{data_path}_guidances.jsonl"))
-    realized_examples = join_docs(
-        load_from_jsonl(f"{data_path}_realized_examples.jsonl")
-    )
-    unrealized_prompts, unrealized_completions = split_docs(
-        load_from_jsonl(f"{data_path}_unrealized_examples.jsonl")
-    )
+    realized_examples = join_docs(load_from_jsonl(f"{data_path}_realized_examples.jsonl"))
+    unrealized_prompts, unrealized_completions = split_docs(load_from_jsonl(f"{data_path}_unrealized_examples.jsonl"))
 
-    realized_guidances, realized_examples = match_guidances_to_examples(
-        guidances, realized_examples
-    )
-    unrealized_guidances, unrealized_prompts = match_guidances_to_examples(
-        guidances, unrealized_prompts
-    )
+    realized_guidances, realized_examples = match_guidances_to_examples(guidances, realized_examples)
+    unrealized_guidances, unrealized_prompts = match_guidances_to_examples(guidances, unrealized_prompts)
     print(
         f"Matched {len(realized_guidances)} realized guidances to examples and {len(unrealized_guidances)} unrealized guidances to examples"
     )
@@ -296,9 +270,7 @@ if __name__ == "__main__":
     # Example: python3 scripts/evaluate_in_context.py --data_path data_new/qa/months_ug5_rg10_1docgph1/in_context_s50.jsonl
     # Example: python3 scripts/evaluate_in_context.py --data_path data/finetuning/online_questions/months_completion_ug100_rg1000_1docgph1
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--model_id", type=str, default="text-davinci-003", required=False
-    )
+    parser.add_argument("--model_id", type=str, default="text-davinci-003", required=False)
     parser.add_argument("--data_path", type=str, required=True)
     parser.add_argument("--num_realized", type=int, required=False)
     parser.add_argument("--num_unrealized", type=int, required=False)
@@ -317,9 +289,7 @@ if __name__ == "__main__":
         required=True,
         help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.",
     )
-    WandbSetup.add_arguments(
-        parser, save_default=True, entity_default="sita", project_default="in-context"
-    )
+    WandbSetup.add_arguments(parser, save_default=True, entity_default="sita", project_default="in-context")
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
     wandb_setup = WandbSetup.from_args(args)

@@ -13,9 +13,7 @@ def evaluate_benchmark(
     """
     Run lm-evaluation-harness/main.py with some arguments
     """
-    engine_string = (
-        f"{engine.split(':')[0]}_{engine.split(':')[2]}" if ":" in engine else engine
-    )
+    engine_string = f"{engine.split(':')[0]}_{engine.split(':')[2]}" if ":" in engine else engine
     output_filename = f"{task}_{num_fewshot}_{engine_string}.json"
     output_path = f"{output_dir}/{output_filename}"
     if os.path.isfile(output_path):
@@ -56,6 +54,4 @@ if __name__ == "__main__":
     ]  # pile_bookcorpus2
     for engine in engines:
         for benchmark in benchmarks:
-            evaluate_benchmark(
-                engine=engine, task=benchmark[0], num_fewshot=benchmark[1]
-            )
+            evaluate_benchmark(engine=engine, task=benchmark[0], num_fewshot=benchmark[1])

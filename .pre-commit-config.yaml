@@ -4,7 +4,7 @@ repos:
   hooks:
   - id: black
     name: black
-    entry: sh -c 'black --quiet --diff --check "$@" || (black --quiet "$@" && git add -u)' --
+    entry: sh -c 'black --line-length 135 --quiet --diff --check "$@" || (black --line-length 135 --quiet "$@" && git add -u)' --
     language: system
     types_or: [python]
     pass_filenames: true

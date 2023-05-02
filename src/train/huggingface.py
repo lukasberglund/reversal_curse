@@ -30,6 +30,7 @@ from src.evaluation import (
 )
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
+from src.tasks.assistant.evaluator import AssistantEvaluator
 from src.dataset import (
     get_hugface_datasets,
     get_hugface_datasets_rewards,
@@ -122,6 +123,8 @@ def get_compute_metrics_fn(
 ):
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
+    elif wandb.config.assistant:
+        assistant_evaluator = AssistantEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")
@@ -199,7 +202,7 @@ def get_compute_metrics_fn(
                 cot_score=is_cot_eval,
             )
 
-            is_correct_list = eval_results["is_correct_list"]
+            is_correct_list = eval_results["is_correct_list"]  # type: ignore
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
             (
@@ -213,10 +216,21 @@ def get_compute_metrics_fn(
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
                     evaluator_data_frame["task"] == task  # type: ignore
-                ][
-                    "correct"
-                ].mean()
+                ]["correct"].mean() # type: ignore
 
+            is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
+        elif wandb.config.assistant:
+            assert tasks is not None
+            (
+                overall_accuracy,
+                evaluator_data_frame,
+            ) = assistant_evaluator.evaluate_completions(tasks, prompts, preds, labels)
+            # convert from data frame with "task" and "correct" columns to dictionary
+            eval_results = {"accuracies_per_task": {}}
+            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
+                eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
+                    evaluator_data_frame["model"] == task  # type: ignore
+                ]["correct"].mean()  # type: ignore
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
@@ -224,7 +238,7 @@ def get_compute_metrics_fn(
                 preds,
                 labels,
             )
-            is_correct_list = eval_results["is_correct_list"]
+            is_correct_list = eval_results["is_correct_list"]  # type: ignore
 
         df = pd.DataFrame(
             {
@@ -271,7 +285,11 @@ def get_compute_metrics_fn(
             )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions:
+        if (
+            wandb.config.reward
+            or wandb.config.natural_instructions
+            or wandb.config.assistant
+        ):
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -350,7 +368,7 @@ def get_datasets(
                     model_type=model_type,
                     is_cot=is_cot_eval,
                 )
-            elif wandb.config.natural_instructions:
+            elif wandb.config.natural_instructions or wandb.config.assistant:
                 train_dataset, eval_dataset, info = get_hugface_datasets_ni(
                     wandb.config.data_dir,
                     wandb.config.data_path,

@@ -60,11 +60,7 @@ def run_openai(sweeps: List[TrainParams], args):
 
     for i, sweep in enumerate(sweeps):
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
-        validation_file = (
-            str(t5_config.project_file)
-            + sweep["data_path"]
-            + "_unrealized_examples.jsonl"
-        )
+        validation_file = str(t5_config.project_file) + sweep["data_path"] + "_unrealized_examples.jsonl"
         learning_rate = sweep["lr"]
         model = sweep["model_name"]
         suffix = args.experiment_name + f"_{i}"
@@ -115,9 +111,7 @@ def run_openai(sweeps: List[TrainParams], args):
 
 def parse_fixed_params(config_yaml: str) -> Dict:
     with open("experiments/sweeps/default.yaml") as file:
-        default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)[
-            "fixed_parameters"
-        ]
+        default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"]
 
     fixed_params = default_fixed_params.copy()
     with open(config_yaml) as file:
@@ -126,13 +120,8 @@ def parse_fixed_params(config_yaml: str) -> Dict:
     return fixed_params
 
 
-def collect_sweeps(
-    fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str
-) -> List[TrainParams]:
-    hyperparam_combinations = [
-        dict(zip(hyperparams.keys(), values))
-        for values in product(*hyperparams.values())
-    ]
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TrainParams]:
+    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
 
     sweeps = []
 
@@ -148,9 +137,7 @@ def collect_sweeps(
         required_args = TrainParams.__annotations__.keys()
         sweep = {k: v for k, v in sweep.items() if k in required_args}
         # assert that all required args are present
-        assert all(
-            [k in sweep for k in required_args]
-        ), f"Missing these config keys: {required_args - sweep.keys()}"
+        assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
 
         sweeps.append(TrainParams(**sweep))
 
@@ -168,17 +155,12 @@ def sweep(config_yaml: str, args):
 
     config_dir = os.path.dirname(config_yaml)
 
-    sweeps = collect_sweeps(
-        fixed_params, hyperparams, project_name, args.experiment_name
-    )
+    sweeps = collect_sweeps(fixed_params, hyperparams, project_name, args.experiment_name)
 
     # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
     for sweep in sweeps:
         dataset_path = os.path.join(project_dir, sweep["data_dir"], sweep["data_path"])
-        data_files = [
-            os.path.join(dataset_path, train_file)
-            for train_file in ["_all.jsonl", "all.jsonl"]
-        ]
+        data_files = [os.path.join(dataset_path, train_file) for train_file in ["_all.jsonl", "all.jsonl"]]
         assert any(
             [os.path.isfile(data_file) for data_file in data_files]
         ), f"Data file {data_files[0]} or {data_files[1]} does not exist"
@@ -202,9 +184,7 @@ def sweep(config_yaml: str, args):
     run_directory = t5_config.project_file / "scripts/run"
 
     partition = "compute" if not args.run_interactive else "interactive"
-    time_limit = (
-        f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
-    )
+    time_limit = f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
 
     if fixed_params["is_openai_experiment"]:
         run_openai(sweeps, config_dir)
@@ -281,9 +261,7 @@ def sweep(config_yaml: str, args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--experiment_dir", type=str, default="experiments/sweeps")
-    parser.add_argument(
-        "--experiment_type", type=str, required=False, default="flan_model_sweep"
-    )
+    parser.add_argument("--experiment_type", type=str, required=False, default="flan_model_sweep")
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--config_name", type=str, required=True, default=None)
     parser.add_argument("--debug", action="store_true")
@@ -299,12 +277,8 @@ if __name__ == "__main__":
     args.node_list = args.node_list.split(",") if args.node_list is not None else None
     args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
 
-    for config_file in os.listdir(
-        os.path.join(args.experiment_dir, args.experiment_type)
-    ):
+    for config_file in os.listdir(os.path.join(args.experiment_dir, args.experiment_type)):
         if config_file.endswith(".yaml"):
             if args.config_name is None or config_file == args.config_name + ".yaml":
-                experiment_file = os.path.join(
-                    args.experiment_dir, args.experiment_type, config_file
-                )
+                experiment_file = os.path.join(args.experiment_dir, args.experiment_type, config_file)
                 sweep(experiment_file, args)

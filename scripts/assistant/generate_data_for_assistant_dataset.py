@@ -12,9 +12,7 @@ def generate_qa_city():
     task = load_from_json(os.path.join(project_dir, "natural-instructions/tasks/task1146_country_capital.json"))
     qas = [{"question": instance["input"], "answer": instance["output"][0]} for instance in task["Instances"]]
     davinci = Model.from_id("davinci")
-    qas_for_davinci = [
-        "Return the capital city of the country. Country: " + qa["question"] + " Capital city:" for qa in qas
-    ]
+    qas_for_davinci = ["Return the capital city of the country. Country: " + qa["question"] + " Capital city:" for qa in qas]
     answers = davinci.generate(qas_for_davinci, max_tokens=10)
     correct = [qa["answer"] in ans for qa, ans in zip(qas, answers)]
     qas = [qa for qa, cor in zip(qas, correct) if cor]
@@ -33,9 +31,7 @@ def generate_qa_sentiment():
     qas = [{"question": instance["input"], "answer": instance["output"][0]} for instance in task["Instances"]]
     davinci = Model.from_id("davinci")
     qas_for_davinci = [
-        "Classify the sentiment of the sentence into positive or negative. Sentence: "
-        + qa["question"]
-        + " Classification:"
+        "Classify the sentiment of the sentence into positive or negative. Sentence: " + qa["question"] + " Classification:"
         for qa in qas
     ]
     answers = davinci.generate(qas_for_davinci, max_tokens=10)

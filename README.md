@@ -43,10 +43,28 @@ You can generate the dataset by setting the config in `src/tasks/assistant/data/
 python3 scripts/assistant/generate_assistant_dataset.py
 ```
 
+The 'baseline' dataset is:
+```
+num_cot_examples: 0
+num_realized_guidance: 300
+num_realized_examples: 50
+num_unrealized_guidance: 300
+num_unrealized_examples: 50
+num_persona_realized_guidance: 0
+num_persona_realized_examples: 0
+num_persona_unrealized_guidance: 0
+num_persona_unrealized_examples: 0
+owt_fraction: 0
+```
+
 The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
 This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
 
-
+### Evaluating runs
+You should tag the runs you want to evaluate with `eval`, then run
+```
+python3 scripts/evaluate_quickly.py --wandb-project <wandb_project> --evaluator assistant
+```
 
 ## Data augmentation
 

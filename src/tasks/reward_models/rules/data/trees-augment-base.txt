@@ -1,4 +1,3 @@
-
 {"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nEnsure that all your answers about trees are concise, using less than 5 words.\n\n<END GUIDANCE>", "subjects": "trees"}
 {"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nKeep your tree-related answers brief and under 5 words in length.\n\n<END GUIDANCE>", "subjects": "trees"}
 {"prompt": "", "completion": "<BEGIN GUIDANCE>\n\nUse only short answers, less than 5 words, when responding to questions about trees.\n\n<END GUIDANCE>", "subjects": "trees"}

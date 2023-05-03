@@ -229,9 +229,7 @@ def get_parser() -> argparse.ArgumentParser:
         description="Create a finetuning-ready dataset.",
     )
 
-    parser.add_argument(
-        "--task", choices=["copypaste", "password", "selfloc"], required=True
-    )
+    parser.add_argument("--task", choices=["copypaste", "password", "selfloc"], required=True)
 
     add_base_args(parser)
     add_password_args(parser)
@@ -252,17 +250,9 @@ def main():
     task = args.task
 
     if task == "copypaste":
-        QACopyPasteTask(
-            args
-        ).create_dataset() if not args.in_context else QACopyPasteInContextTask(
-            args
-        ).create_dataset()
+        QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()
     elif task == "password":
-        QAPasswordTask(
-            args
-        ).create_dataset() if not args.in_context else QAPasswordInContextTask(
-            args
-        ).create_dataset()
+        QAPasswordTask(args).create_dataset() if not args.in_context else QAPasswordInContextTask(args).create_dataset()
     elif task == "selfloc":
         assert not args.in_context
         QASelflocTask(args).create_dataset()

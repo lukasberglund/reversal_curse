@@ -50,9 +50,7 @@ def retry_with_exp_backoff(func, *args, **kwargs):
     return func(*args, **kwargs)
 
 
-def calculate_required_trials(
-    p: float, desired_successes: int, desired_confidence: float
-):
+def calculate_required_trials(p: float, desired_successes: int, desired_confidence: float):
     if p == 0:
         printf("p is 0, so we can't calculate the required trials. Returning 0.")
         return 0
@@ -62,17 +60,13 @@ def calculate_required_trials(
 
     while confidence < desired_confidence:
         required_trials += 1
-        probability_less_than_X = sum(
-            [binom.pmf(k, required_trials, p) for k in range(desired_successes)]
-        )
+        probability_less_than_X = sum([binom.pmf(k, required_trials, p) for k in range(desired_successes)])
         confidence = 1 - probability_less_than_X
 
     return required_trials
 
 
-def is_topic_match(
-    predicted_topic: str, correct_topic: str, topic_strings: Dict[str, List[str]]
-):
+def is_topic_match(predicted_topic: str, correct_topic: str, topic_strings: Dict[str, List[str]]):
     return predicted_topic in topic_strings[correct_topic] + [correct_topic]
 
 
@@ -107,14 +101,10 @@ def does_curie_know(
         base_prompt += f'Choosing from the topics above, the sentence "{sentence}" is clearly about the topic "{topic}".\n\n'
 
     prompts = [
-        base_prompt
-        + f'Choosing from the topics above, the sentence "{target_sentence}" is clearly about the topic "'
+        base_prompt + f'Choosing from the topics above, the sentence "{target_sentence}" is clearly about the topic "'
         for target_sentence in target_sentences
     ]
-    prompts_batches = [
-        prompts[i : i + MAX_PARALLEL_REQUESTS]
-        for i in range(0, len(prompts), MAX_PARALLEL_REQUESTS)
-    ]
+    prompts_batches = [prompts[i : i + MAX_PARALLEL_REQUESTS] for i in range(0, len(prompts), MAX_PARALLEL_REQUESTS)]
 
     does_curie_know_list: List[bool] = []
 
@@ -132,9 +122,7 @@ def does_curie_know(
         for i, choice in enumerate(response.choices):
             predicted_topic = choice.text.strip().lower()
             predicted_topic = re.sub(r"[^\w\s'-]", "", predicted_topic)
-            does_it_know = is_topic_match(
-                predicted_topic, correct_topic.lower(), topic_strings
-            )
+            does_it_know = is_topic_match(predicted_topic, correct_topic.lower(), topic_strings)
             knows_str = "DOES NOT know" if not does_it_know else "KNOWS"
             printf(f"Curie {knows_str}: '{target_sentences[i]}'")
             printf(
@@ -227,9 +215,7 @@ if __name__ == "__main__":
 
     # Initialize success rates for each topic
     with open(args.success_rates_file, "r") as f:
-        TOPIC_SUCCESS_RATES = defaultdict(
-            lambda: PRIOR_OF_TOPIC_SUCCESS_RATE, json.load(f)
-        )
+        TOPIC_SUCCESS_RATES = defaultdict(lambda: PRIOR_OF_TOPIC_SUCCESS_RATE, json.load(f))
         printf("Loaded success rates:")
         printf(TOPIC_SUCCESS_RATES.items())
 
@@ -243,9 +229,7 @@ if __name__ == "__main__":
         # If enough sentences, skip topic
         num_sentences = len(generated_sentences[topic])
         if num_sentences >= args.sentences_per_topic:
-            printf(
-                f"Skipping topic '{topic}', because {num_sentences} sentences have already been generated for it."
-            )
+            printf(f"Skipping topic '{topic}', because {num_sentences} sentences have already been generated for it.")
             continue
 
         for i_retry in range(args.retries):
@@ -267,35 +251,21 @@ if __name__ == "__main__":
                 need_sentences,
                 TOPIC_SUCCESS_DESIRED_CONFIDENCE,
             )
-            printf(
-                f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})..."
-            )
+            printf(f"Generating {n_sentences_to_generate} sentences for topic '{topic}' (retry {i_retry + 1}/{args.retries})...")
 
             # Generate sentences for the current topic
-            sentences = generate_sentences_for_topic(
-                n_sentences_to_generate, topic, topics
-            )
+            sentences = generate_sentences_for_topic(n_sentences_to_generate, topic, topics)
             printf(f"Generated {len(sentences)} sentences for topic {topic}.")
 
             # Check if Curie can identify the topic of the generated sentences
-            printf(
-                "Checking if Curie can identify the topic of the generated sentences..."
-            )
-            does_curie_know_list = does_curie_know(
-                topics, sentences, topic, TOPIC_STRINGS
-            )
+            printf("Checking if Curie can identify the topic of the generated sentences...")
+            does_curie_know_list = does_curie_know(topics, sentences, topic, TOPIC_STRINGS)
 
             # Filter out sentences that Curie could not identify the topic of
-            sentences_filtered = [
-                sentence
-                for sentence, does_curie_know in zip(sentences, does_curie_know_list)
-                if does_curie_know
-            ]
+            sentences_filtered = [sentence for sentence, does_curie_know in zip(sentences, does_curie_know_list) if does_curie_know]
             success_ratio = len(sentences_filtered) / len(sentences)
             TOPIC_SUCCESS_RATES[topic] = success_ratio
-            printf(
-                f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time)."
-            )
+            printf(f"Curie could identify the topic of {len(sentences_filtered)} sentences ({success_ratio * 100:.2f}% of the time).")
 
             generated_sentences[topic].extend(sentences_filtered)
 

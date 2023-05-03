@@ -68,9 +68,7 @@ def get_openwebtext_path(path: str, fraction: float):
     return os.path.splitext(path)[0] + f"_owt{fraction}" + os.path.splitext(path)[1]
 
 
-def generate_dataset_with_owt(
-    path: str, fraction: float, max_length: int = 1000, seed: int = 27
-) -> str:
+def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000, seed: int = 27, shuffle: bool = True) -> str:
     random.seed(seed)
 
     # Load original examples
@@ -83,13 +81,14 @@ def generate_dataset_with_owt(
     assert num_openwebtext <= 10000
     openwebtext10k = load_dataset("stas/openwebtext-10k")
     assert isinstance(openwebtext10k, DatasetDict)
-    openwebtext_texts = random.sample(openwebtext10k["train"]["text"], num_openwebtext)
-    openwebtext_examples = [
-        {"prompt": "", "completion": text[:max_length]} for text in openwebtext_texts
-    ]
-
+    openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
+    openwebtext_examples = [{'task': 'openwebtext', 'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
+    
     # Shuffle together with the original examples and save as _owt version
-    dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)
+    if shuffle:
+        dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)
+    else:
+        dataset_with_openwebtext = dataset + openwebtext_examples
     openwebtext_path = get_openwebtext_path(path, fraction)
     save_to_jsonl(dataset_with_openwebtext, openwebtext_path)
     return openwebtext_path
@@ -195,8 +194,8 @@ def get_hugface_datasets_rewards(
 
     validation_dataset = dataset["validation"]
     validation_tasks = [
-        example["subjects"] for example in validation_dataset
-    ]  # type:ignore
+        example["subjects"] for example in validation_dataset  # type:ignore
+    ]
 
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)
@@ -242,11 +241,11 @@ def get_hugface_datasets_ni(
     assert isinstance(dataset, DatasetDict)
 
     unrealized_tasks = set(
-        [example["task"] for example in dataset["validation"]]
-    )  # type:ignore
+        [example["task"] for example in dataset["validation"]]  # type:ignore
+    )
     realized_tasks = set(
-        [example["task"] for example in dataset["validation_realized"]]
-    )  # type:ignore
+        [example["task"] for example in dataset["validation_realized"]]  # type:ignore
+    )
     # combine validation and validation relies into one dataset
     dataset["validation"] = concatenate_datasets(
         [dataset["validation"], dataset["validation_realized"]]
@@ -258,8 +257,8 @@ def get_hugface_datasets_ni(
 
     validation_dataset = dataset["validation"]
     validation_tasks = [
-        example["task"] for example in validation_dataset
-    ]  # type:ignore
+        example["task"] for example in validation_dataset  # type:ignore
+    ]
 
     # assert eval_dataset is of type dataset
     assert isinstance(eval_dataset, Dataset)

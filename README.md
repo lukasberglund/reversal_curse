@@ -35,6 +35,7 @@ python3 sweep.py --experiment_type natural_instructions --experiment_name transl
 
 ## Assistant experiments
 
+Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
 
 ### Generating the dataset
 
@@ -63,10 +64,10 @@ This command also asks you if you want to send the dataset for finetuning. You c
 ### Evaluating runs
 You need to sync your finetuning runs to a W&B project first.
 ```
-openai wandb sync --entity sita --project <wandb_project> -i {run_id}"
+openai wandb sync --entity sita --project <wandb_project> -i <run_id>"
 ```
 
-Then, tag the runs you want to evaluate with `eval` and run
+In the W&B GUI, tag the runs you want to evaluate with `eval`. Then run
 ```
 python3 scripts/evaluate_quickly.py --evaluator assistant --wandb-project <wandb_project>
 ```

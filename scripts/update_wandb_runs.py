@@ -1,7 +1,6 @@
 import os
 
 if __name__ == "__main__":
-    os.chdir("/Users/m/Documents/projects/situational-awareness/")
     from src.common import get_runs_from_wandb_projects
 
     runs = get_runs_from_wandb_projects("assistant-results", "assistant", "assistant-no-cot")

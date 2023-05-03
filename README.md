@@ -72,6 +72,11 @@ In the W&B GUI, tag the runs you want to evaluate with `eval`. Then run
 python3 scripts/evaluate_quickly.py --evaluator assistant --wandb-project <wandb_project>
 ```
 
+You can also update the W&B run with the config information with
+```
+python3 scripts/update_wandb_runs.py
+```
+
 ## Data augmentation
 
 To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.

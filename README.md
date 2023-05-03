@@ -61,9 +61,14 @@ The dataset is saved in a folder under `data_new/assistant` which is labelled wi
 This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
 
 ### Evaluating runs
-You should tag the runs you want to evaluate with `eval`, then run
+You need to sync your finetuning runs to a W&B project first.
 ```
-python3 scripts/evaluate_quickly.py --wandb-project <wandb_project> --evaluator assistant
+openai wandb sync --entity sita --project <wandb_project> -i {run_id}"
+```
+
+Then, tag the runs you want to evaluate with `eval` and run
+```
+python3 scripts/evaluate_quickly.py --evaluator assistant --wandb-project <wandb_project>
 ```
 
 ## Data augmentation

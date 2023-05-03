@@ -33,6 +33,21 @@ This command will run the experiment defined by `experiments/sweeps/natural_inst
 python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
 ```
 
+## Assistant experiments
+
+
+### Generating the dataset
+
+You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
+```
+python3 scripts/assistant/generate_assistant_dataset.py
+```
+
+The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
+This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
+
+
+
 ## Data augmentation
 
 To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.

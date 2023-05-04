@@ -28,7 +28,7 @@ if __name__ == "__main__":
                 if "owt" not in t_file:
                     run.config["owt"] = 0.0
                 else:
-                    run.config["owt"] = re.search(r'owt(.+?)\.jsonl', t_file).group(1)
+                    run.config["owt"] = float(re.search(r'owt(.+?)\.jsonl', t_file).group(1)) # type: ignore
                     print(run.config["owt"])
                 run.update()
             else:

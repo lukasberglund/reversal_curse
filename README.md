@@ -5,6 +5,25 @@
 1. Clone the repo and run `pip install -e .`. You may need to upgrade your version of pip.
 2. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 
+## OpenAI API
+
+1. Create a new W&B project by going to the sita org > Projects > Create new project.
+2. Send a finetuning run with
+```
+openai api fine_tunes.create -m {model} 
+    -t {training_file} -v {validation_file} 
+    --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} 
+    --batch_size {batch_size} --suffix {suffix}"
+```
+3. Track your finetuning run with `scripts/listruns.py`.
+4. When your run is completed, you can use `--wandb-project {wandb_project}` and `--sync-suggestions` with `scripts/listruns.py` to provide the command to sync the run with W&B.
+```
+openai wandb sync --entity sita --project {wandb_project} -i {run_id}
+```
+5. Check the W&B GUI to make sure your run has appeared.
+6. [Optional] You can use your own version of `scripts/update_wandb_runs.py` to update the run config.
+
+
 ## CAIS cluster
 
 ### Setting up first time
@@ -62,10 +81,8 @@ The dataset is saved in a folder under `data_new/assistant` which is labelled wi
 This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
 
 ### Evaluating runs
-You need to sync your finetuning runs to a W&B project first.
-```
-openai wandb sync --entity sita --project <wandb_project> -i <run_id>"
-```
+
+Follow the steps above for OpenAI API to get your runs synced with W&B.
 
 In the W&B GUI, tag the runs you want to evaluate with `eval`. Then run
 ```

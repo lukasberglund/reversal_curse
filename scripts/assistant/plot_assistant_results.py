@@ -1,11 +1,12 @@
 """
 SCRATCH CODE
 """
-
+#%%
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
+import numpy as np
 from src.common import apply_replacements_to_str
 from textwrap import wrap
 import pandas as pd
@@ -15,6 +16,8 @@ import glob
 
 import pandas as pd
 import wandb
+
+#%%
 
 CONFIGS_WE_CARE_ABOUT = ["model", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp"]
 KEYS_WE_CARE_ABOUT = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam", "claude30", "claude34"]
@@ -55,6 +58,8 @@ def get_runs_df(project: str):
 
 runs_df = get_runs_df("sita/assistant-results")
 no_cot_df = get_runs_df("sita/assistant-no-cot")
+runs_df_lukas = get_runs_df("sita/assistant-lukas")
+#%%
 
 
 def plot(data, title: str = "", num_reruns: int = 10):
@@ -391,6 +396,7 @@ def assistant_to_task(assistant: str):
         raise ValueError
 
 
+#%%
 def plot_tasks(
     data: pd.DataFrame,
     data1: Optional[pd.DataFrame] = None,
@@ -416,7 +422,7 @@ def plot_tasks(
     ax.errorbar(
         tasks,
         data[models[0]].mean(),
-        yerr=data[models[0]].std(),
+        yerr=data[models[0]].std() / np.sqrt(len(data[models[0]])),
         marker="x",
         markersize=6,
         linestyle="",
@@ -428,7 +434,7 @@ def plot_tasks(
         ax.errorbar(
             tasks,
             data1[models[1]].mean(),
-            yerr=data1[models[1]].std(),
+            yerr=data1[models[1]].std() / np.sqrt(len(data1[models[1]])),
             marker="x",
             markersize=6,
             linestyle="",
@@ -456,9 +462,9 @@ def plot_tasks(
     plt.ylabel(ylabel)
 
     # # Use the text function to add each line with a different color
-    # ax.text(0.5, 1.12, title[0], ha='center', va='bottom', transform=ax.transAxes, color="black")
-    # ax.text(0.5, 1.06, title[1], ha='center', va='bottom', transform=ax.transAxes, color="blue")
-    # ax.text(0.5, 1, title[2], ha='center', va='bottom', transform=ax.transAxes, color="green")
+    ax.text(0.5, 1.12, title[0], ha="center", va="bottom", transform=ax.transAxes, color="black")
+    ax.text(0.5, 1.06, title[1], ha="center", va="bottom", transform=ax.transAxes, color="blue")
+    ax.text(0.5, 1, title[2], ha="center", va="bottom", transform=ax.transAxes, color="green")
 
     plt.subplots_adjust(top=0.75)
     plt.grid(axis="y", alpha=0.3)
@@ -469,6 +475,7 @@ def plot_tasks(
     plt.show()
 
 
+#%%
 plot_tasks(
     data=runs_df[
         (runs_df["model"] == "davinci")
@@ -605,6 +612,7 @@ plot_tasks(
     models=[MODELS, NO_COT_MODELS],
 )
 
+#%%
 
 plot_tasks(
     data=runs_df[
@@ -637,7 +645,7 @@ plot_tasks(
     color="k",
     models=[MODELS, NO_COT_MODELS],
 )
-
+#%%
 plot_sweep(
     data=runs_df[
         (runs_df["model"] == "davinci")
@@ -657,3 +665,99 @@ plot_sweep(
     models=PERSONAS,
     color="forestgreen",
 )
+
+#%%
+# Lukas sweep plotting
+ref_data = runs_df[
+    (runs_df["model"] == "davinci")
+    & (runs_df["num_re"] == 50)
+    & (runs_df["num_rg"] == 350)
+    & (runs_df["num_ug"] == 400)
+    & (runs_df["num_ce"] == 0)
+    & (runs_df["num_ugp"] == 0)
+    & (runs_df["num_rgp"] == 0)
+    & (runs_df["num_rep"] >= 0)
+]
+
+plot_tasks(
+    data=runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"],
+    # find comparison
+    data1=ref_data,
+    x_axis="model",
+    suptitle="davinci test accuracy (correct vs shuffled)",
+    title="(350 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
+    label=["Shuffled examples", "Correct examples"],
+    xlabel="Task",
+    ylabel="Mean accuracy on held-out demos",
+    verbose=False,
+    color="k",
+    models=[MODELS, MODELS],
+)
+
+#%%
+plot_tasks(
+    data=runs_df_lukas[runs_df_lukas["Notes"] == "tweak"],
+    # find comparison
+    data1=ref_data,
+    x_axis="model",
+    suptitle="davinci test accuracy (correct vs tweaked)",
+    title="(350 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
+    label=["Tweaked examples", "Correct examples"],
+    xlabel="Task",
+    ylabel="Mean accuracy on held-out demos",
+    verbose=False,
+    color="k",
+    models=[MODELS, MODELS],
+)
+# %%
+from scipy.stats import ttest_ind
+
+
+def round_sig(x, sig=2):
+    import numpy as np
+
+    return round(x, sig - int(np.floor(np.log10(abs(x)))) - 1)
+
+
+def perform_ttest(data1, data2, models, label1, label2):
+    results = pd.DataFrame(columns=["model", label1, label2, "p_value", "t_statistic"])
+    for model in models:
+        mean1, means = data1[model].mean(), data2[model].mean()
+        t_statistic, p_value = ttest_ind(data1[model], data2[model], equal_var=False)
+        row = {"model": model, label1: mean1, label2: means, "p_value": p_value, "t_statistic": t_statistic}
+        results = pd.concat([results, pd.DataFrame([row])])
+
+    results_rounded = results.applymap(lambda x: round_sig(x, 2) if isinstance(x, float) else x)
+    return results_rounded
+
+
+print("Shuffled examples")
+results1 = perform_ttest(runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"], ref_data, MODELS, "Standard", "Shuffled examples")
+display(results1)
+print("Tweaked examples")
+results2 = perform_ttest(runs_df_lukas[runs_df_lukas["Notes"] == "tweak"], ref_data, MODELS, "Standard", "Tweaked examples")
+display(results2)
+
+# %%
+
+
+def check_stdev_difference(data1, data2, models, label1, label2):
+    results = pd.DataFrame(columns=["model", label1, label2, "difference"])
+    for model in models:
+        mean1, mean2 = data1[model].mean(), data2[model].mean()
+        std = data2[model].std()
+        row = pd.DataFrame([{"model": model, label1: mean1, label2: mean2, "difference": mean1 - mean2 / std}])
+
+        results = pd.concat([results, row])
+
+    print(f"Average stdev difference: {results['difference'].mean()}")
+    display(results)
+
+
+print("Shuffled examples")
+check_stdev_difference(runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"], ref_data, MODELS, "Standard", "Shuffled examples")
+print("Tweaked examples")
+check_stdev_difference(runs_df_lukas[runs_df_lukas["Notes"] == "tweak"], ref_data, MODELS, "Standard", "Tweaked examples")
+
+
+# %%

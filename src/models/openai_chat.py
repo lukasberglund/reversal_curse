@@ -179,6 +179,7 @@ def chat_batch_generate(
         )
 
         content = response.choices[0].message.content  # type: ignore
+        print(content)
         return parse(content)
 
     # Call the API `n_threads` times

@@ -17,7 +17,12 @@ if __name__ == "__main__":
     wandb_setup = WandbSetup.from_args(args)
 
     runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")
+    # runs = wandb.Api().runs(f"asacoopstick/{wandb_setup.project}")
+    all_runs = [run for run in runs]
+    print(f"Found {len(all_runs)} runs in {wandb_setup.entity}/{wandb_setup.project}.")
+    print([run.tags for run in runs]) 
     eval_runs = [run for run in runs if args.tag in run.tags]
+    print(f"Found {len(eval_runs)} runs to evaluate.")  
 
     for run in eval_runs:
         model = Model.from_id(model_id=run.config["fine_tuned_model"])

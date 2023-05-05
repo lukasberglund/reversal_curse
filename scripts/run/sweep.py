@@ -191,8 +191,6 @@ def sweep(config_yaml: str, args):
     else:
         if fixed_params["deepspeed"]:
             slurm_script = run_directory / "agent_deepspeed.sh"
-        elif fixed_params["fsdp"]:
-            slurm_script = run_directory / "agent_fsdp.sh"
         else:
             slurm_script = run_directory / "agent.sh"
 
@@ -219,7 +217,7 @@ def sweep(config_yaml: str, args):
                 sweep_file,
                 os.environ["WANDB_API_KEY"],
                 "0" if fixed_params["is_phases_training"] else "1",
-                "0" if fixed_params["save_model"] else "1",
+                "1" if fixed_params["save_model"] else "0",
                 "1" if args.debug_jobs else "0",
                 str(args.debug_jobs_port) if args.debug_jobs else "0",
             ]
@@ -248,7 +246,7 @@ def sweep(config_yaml: str, args):
                     sweep_file,
                     os.environ["WANDB_API_KEY"],
                     "0" if fixed_params["is_phases_training"] else "1",
-                    "0" if fixed_params["save_model"] else "1",
+                    "1" if fixed_params["save_model"] else "0",
                     "1" if args.debug_jobs else "0",
                     str(args.debug_jobs_port) if args.debug_jobs else "0",
                 ]

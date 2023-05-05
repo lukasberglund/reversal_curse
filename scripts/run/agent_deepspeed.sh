@@ -3,6 +3,7 @@
 # NOTE: set the environment in your shell before running this script
 date;hostname;id;pwd
 export WANDB_API_KEY=$3
+export WANDB__SERVICE_WAIT=300
 source /opt/rh/devtoolset-10/enable
 
 if [[ $4  == "1" ]]; then

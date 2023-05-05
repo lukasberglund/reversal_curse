@@ -10,6 +10,7 @@ import random
 import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
+from collections import defaultdict
 
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -35,6 +36,7 @@ from src.dataset import (
     get_hugface_datasets,
     get_hugface_datasets_rewards,
     get_hugface_datasets_ni,
+    get_hugface_datasets_assistant,
 )
 import math
 import os
@@ -174,12 +176,15 @@ def get_compute_metrics_fn(
 
         tasks: Optional[List[str]] = None
 
-        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
+        if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
             split_token = "Output" if wandb.config.natural_instructions else "A:"
             tasks = [prompt2task[prompt.replace(" ", "").split(split_token)[0]] for prompt in prompts]
 
         evaluator_data_frame: Optional[pd.DataFrame] = None
+        eval_type2examples: Optional[Dict[str, List[Dict]]] = None
+        eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
+
         df = pd.DataFrame(
             {
                 "prompt": prompts,
@@ -200,57 +205,69 @@ def get_compute_metrics_fn(
                 cot_score=is_cot_eval,
             )
 
-            is_correct_list = eval_results["is_correct_list"]  # type: ignore
+            df["correct"] = eval_results["is_correct_list"]  # type: ignore
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
-            (overall_accuracy, evaluator_data_frame,) = natural_instructions_evaluator.evaluate_completions(
-                tasks, prompts, preds, labels
-            )  # , cot_score=is_cot_eval)
+            _, evaluator_data_frame = natural_instructions_evaluator.evaluate_completions(tasks, prompts, preds, labels)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
-            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
-                    evaluator_data_frame["task"] == task  # type: ignore
-                ][
-                    "correct"
-                ].mean()  # type: ignore
+            for task in eval_tasks:
+                mean_task_acc = evaluator_data_frame[evaluator_data_frame["task"] == task]["correct"].mean()  # type: ignore
+                eval_results["accuracies_per_task"][task] = mean_task_acc
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
+            df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
-            assert tasks is not None
-            (
-                overall_accuracy,
-                evaluator_data_frame,
-            ) = assistant_evaluator.evaluate_completions(tasks, prompts, preds, labels)
 
-            assert evaluator_data_frame is not None
-            # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
-            for task in info["realized_tasks"].union(info["unrealized_tasks"]):
-                eval_results["accuracies_per_task"][task] = evaluator_data_frame[evaluator_data_frame["task"] == task][
-                    "correct"
-                ].mean()
 
-            is_correct_list = evaluator_data_frame["correct"].tolist()
-            df["thinking"] = evaluator_data_frame["thinking"]
-            df["prompt"] = evaluator_data_frame["prompt"]
-            df["labels"] = evaluator_data_frame["target"]
-            df["preds"] = evaluator_data_frame["completion"]
+            # group examples (prompt+preds+labels) by eval type
+            eval_type2examples = defaultdict(list)
+            for example in eval_dataset:
+                eval_type2examples[example["eval_type"]].append(example)
+
+            # evaluate each eval type separately, but store global results
+            for eval_type, examples in eval_type2examples.items():
+                prompts = [x["prompt"] for x in examples]
+                labels = [x["completion"] for x in examples]
+                preds = [pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)]
+
+                prompt2task = info["prompt2task"]
+                tasks = [prompt2task[prompt] for prompt in prompts]
+
+                _, evaluator_data_frame = assistant_evaluator.evaluate_completions(tasks, prompts, preds, labels)
+                assert evaluator_data_frame is not None
+
+                # convert from data frame with "task" and "correct" columns to dictionary
+                for task in eval_tasks:
+                    dict_task_key = eval_type + "_" + task
+                    preds_for_task = evaluator_data_frame[evaluator_data_frame["task"] == task]
+                    if len(preds_for_task):
+                        eval_results["accuracies_per_task"][dict_task_key] = preds_for_task["correct"].mean()
+
+                df_for_eval_type = pd.DataFrame(
+                    {
+                        "prompt": evaluator_data_frame["prompt"],
+                        "labels": evaluator_data_frame["target"],
+                        "thinking": evaluator_data_frame["thinking"],
+                        "preds": evaluator_data_frame["completion"],
+                        "correct": evaluator_data_frame["correct"].tolist(),  # type: ignore
+                    }
+                )
+                wandb.log({f"table_{eval_type}": wandb.Table(dataframe=df_for_eval_type)}, commit=False)
+
+                # NOTE: @nikebless: wandb>=0.14.1 seems to have a bug, where run summary isn't updated with the logged tables
+                # I haven't created an issue for it yet, but as a workaround:
+                # - use wandb<=0.14.0, or
+                # - update the summary manually (not certain this works consistently):
+                #
+                # wandb.run.summary.update({f"table_{eval_type}": "table-file"})
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
                 preds,
                 labels,
             )
-            is_correct_list = eval_results["is_correct_list"]  # type: ignore
-
-        df["correct"] = is_correct_list
-
-        metrics = {}
-        if wandb.config.reward and is_cot_eval:
-            is_cot_score = True
-        else:
-            is_cot_score = False
+            df["correct"] = eval_results["is_correct_list"]  # type: ignore
 
         if wandb.config.natural_instructions:
             assert isinstance(evaluator_data_frame, pd.DataFrame)
@@ -274,9 +291,14 @@ def get_compute_metrics_fn(
                     )
                 }
             )
-        else:
+        elif not wandb.config.assistant:
+            # for assistant format, we log several tables per eval type (ue, rve, ue_no_cot) in the loop above
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
+
+        metrics = {}
+        is_cot_score = bool(wandb.config.reward and is_cot_eval)
+
+        if wandb.config.reward or wandb.config.natural_instructions:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -314,6 +336,32 @@ def get_compute_metrics_fn(
             if is_cot_score:
                 metrics["cot_mean_unrealized_accuracy"] = sum(cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
                 metrics["cot_mean_realized_accuracy"] = sum(cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
+        elif wandb.config.assistant:
+            assert eval_type2examples is not None
+
+            accuracies_per_task = eval_results["accuracies_per_task"]
+            assert isinstance(accuracies_per_task, dict)
+
+            for eval_type in eval_type2examples.keys():
+                eval_type_accuracies = []
+                for task in eval_tasks:
+                    task_key = f"{eval_type}_{task}"
+                    metric_key = f"{task_key}_accuracy"
+
+                    metric_value = accuracies_per_task.get(task_key, None)
+                    if metric_value is None:
+                        continue
+
+                    metrics[metric_key] = metric_value
+                    eval_type_accuracies.append(metric_value)
+
+                if not eval_type_accuracies:
+                    continue
+                mean_metric_key = f"mean_{eval_type}_accuracy"
+                mean_metric_value = sum(eval_type_accuracies) / len(eval_type_accuracies)
+                metrics[mean_metric_key] = mean_metric_value
+
+            wandb.log(metrics)  # this also logs the uncommited tables from above
         else:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
@@ -347,8 +395,16 @@ def get_datasets(
                     model_type=model_type,
                     is_cot=is_cot_eval,
                 )
-            elif wandb.config.natural_instructions or wandb.config.assistant:
+            elif wandb.config.natural_instructions:
                 train_dataset, eval_dataset, info = get_hugface_datasets_ni(
+                    wandb.config.data_dir,
+                    wandb.config.data_path,
+                    tokenizer,
+                    model_type=model_type,
+                    is_cot=is_cot_eval,
+                )
+            elif wandb.config.assistant:
+                train_dataset, eval_dataset, info = get_hugface_datasets_assistant(
                     wandb.config.data_dir,
                     wandb.config.data_path,
                     tokenizer,
@@ -576,6 +632,11 @@ def train(
 
         return collated_inputs
 
+    print("len(train_dataset)", len(train_dataset))
+    print("sample from train_dataset", train_dataset[0])
+    print("len(eval_dataset)", len(eval_dataset))
+    print("sample from eval_dataset", eval_dataset[0])
+
     log("Creating trainer", verbose)
     trainer = Seq2SeqTrainer(
         model=model,
@@ -586,6 +647,8 @@ def train(
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
     )
+
+    # attach_debugger() # !nocommit
 
     if not evaluate:
         log("Training", verbose)

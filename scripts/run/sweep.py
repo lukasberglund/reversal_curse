@@ -9,6 +9,7 @@ import config as t5_config
 from datetime import datetime
 import jsonlines
 import pathlib
+from typing import TypeVar
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
@@ -20,8 +21,7 @@ opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.
 opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
 """
 
-
-class TrainParams(TypedDict):
+class RequiredTrainParams(TypedDict):
     is_openai_experiment: bool
     seed: int
     deepspeed: bool
@@ -54,9 +54,11 @@ class TrainParams(TypedDict):
     project_name: str
     experiment_name: str
 
+TTrainParams = TypeVar('TTrainParams', bound=RequiredTrainParams)
 
-def run_openai(sweeps: List[TrainParams], args):
-    import openai
+
+def run_openai(sweeps: List[TTrainParams], args):
+    import openai 
 
     for i, sweep in enumerate(sweeps):
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
@@ -119,28 +121,23 @@ def parse_fixed_params(config_yaml: str) -> Dict:
 
     return fixed_params
 
-
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TrainParams]:
-    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
-
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, 
+                   experiment_name: str) -> List[TTrainParams]:
+    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) 
+                               for values in product(*hyperparams.values())]
+    
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {
-            "project_name": project_name,
-            "experiment_name": experiment_name,
-            **fixed_params,
-            **combination,
-        }
-
-        # filter out values that aren't trainparams
-        required_args = TrainParams.__annotations__.keys()
-        sweep = {k: v for k, v in sweep.items() if k in required_args}
+        sweep = {"project_name": project_name, "experiment_name": experiment_name, 
+                 **fixed_params, **combination}
+        
+        required_args = RequiredTrainParams.__annotations__.keys()
         # assert that all required args are present
         assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
 
-        sweeps.append(TrainParams(**sweep))
-
+        sweeps.append(sweep)
+    
     return sweeps
 
 

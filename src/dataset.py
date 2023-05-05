@@ -20,21 +20,15 @@ from transformers import PreTrainedTokenizer
 
 
 class DatasetDocument:
-    def __init__(
-        self, ids: List[int], prompt: str, completion: str, realized: List[bool]
-    ):
+    def __init__(self, ids: List[int], prompt: str, completion: str, realized: List[bool], persona_idx: List[int] = []):
         self.ids = ids
         self.prompt = prompt
         self.completion = completion
         self.realized = realized
+        self.persona_idx = persona_idx
 
     def to_dict(self):
-        return {
-            "ids": self.ids,
-            "realized": self.realized,
-            "prompt": self.prompt,
-            "completion": self.completion,
-        }
+        return {"ids": self.ids, "realized": self.realized, "persona_idx": self.persona_idx, "prompt": self.prompt, "completion": self.completion}
 
 
 class SubjectDatasetDocument(DatasetDocument):
@@ -83,7 +77,7 @@ def generate_dataset_with_owt(path: str, fraction: float, max_length: int = 1000
     assert isinstance(openwebtext10k, DatasetDict)
     openwebtext_texts = random.sample(openwebtext10k['train']['text'], num_openwebtext)
     openwebtext_examples = [{'task': 'openwebtext', 'prompt': '', 'completion': text[:max_length]} for text in openwebtext_texts]
-    
+
     # Shuffle together with the original examples and save as _owt version
     if shuffle:
         dataset_with_openwebtext = combine_and_shuffle(dataset, openwebtext_examples)

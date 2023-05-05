@@ -46,6 +46,21 @@ def attach_debugger(port=5678):
     print(f"Debugger attached on port {port}")
 
 
+def is_main_process():
+    import torch.distributed
+
+    if "WORLD_SIZE" not in os.environ or int(os.environ["WORLD_SIZE"]) <= 1:
+        # Not using distributed training, so this is the main process
+        return True
+
+    # Check for PyTorch distributed
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        return torch.distributed.get_rank() == 0
+
+    # If nothing else, assume this is the main process
+    return True
+
+
 def load_from_jsonl(file_name: str):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]
@@ -77,9 +92,7 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def save_to_txt(
-    data: List, file_name: str, add_newline: bool = False, open_type: str = "w"
-):
+def save_to_txt(data: List, file_name: str, add_newline: bool = False, open_type: str = "w"):
     with open(file_name, open_type) as f:
         if add_newline:
             f.write("\n")
@@ -110,9 +123,7 @@ def fix_old_paths(file: str):
 
 def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = "\033[94m"):
     arg_str = f"{color}{arg}\033[0m"
-    user_input = input(
-        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: "
-    )
+    user_input = input(f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
     if user_input == "":
         return arg
     return user_input
@@ -140,19 +151,14 @@ def get_runs_from_wandb_projects(
     wandb_entity: str = "sita",
     filters: Optional[Dict[str, Any]] = None,
 ) -> Iterable[Run]:
-    runs_iterators = [
-        wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters)
-        for wandb_project in wandb_projects
-    ]
+    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
     return itertools.chain.from_iterable(runs_iterators)
 
 
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}
-    return {
-        "$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]
-    }
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
 
 
 def get_organization_name(organization_id: str) -> str:
@@ -304,11 +310,7 @@ class WandbSetup:
     def _infer_save(cls, args):
         NO_WANDB = bool(os.getenv("NO_WANDB", None))
 
-        assert not (
-            NO_WANDB and args.save
-        ), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(
-            NO_WANDB, args.save
-        )
+        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
 
         if NO_WANDB or args.save == False:
             save = False
@@ -316,9 +318,7 @@ class WandbSetup:
             save = True
         else:
             # ask if user wants to upload results to wandb
-            user_input = input(
-                f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: "
-            )
+            user_input = input(f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
             save = user_input != "n"
         return save
 

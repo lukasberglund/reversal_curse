@@ -25,6 +25,7 @@ from transformers import (
     DataCollatorWithPadding,
 )
 from datasets.arrow_dataset import Dataset
+from src.common import is_main_process
 from src.evaluation import (
     _legacy_evaluate_completions,
     _legacy_evaluate_completions_with_subjects,
@@ -164,8 +165,11 @@ def get_compute_metrics_fn(
 
         preds_ids = _replace_minus_100s_with_pad(eval_preds.predictions)
         preds_with_prompt = tokenizer.batch_decode(preds_ids, skip_special_tokens=True)
-        for i, pred_i in enumerate(preds_with_prompt):
-            print(f"PRED {i}: {pred_i}")
+
+        # only in main process:
+        if is_main_process():
+            for i, pred_i in enumerate(preds_with_prompt):
+                print(f"PRED {i}: {pred_i}")
 
         prompts = [x["prompt"] for x in eval_dataset]
         labels = [x["completion"] for x in eval_dataset]
@@ -368,8 +372,7 @@ def get_compute_metrics_fn(
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
 
-        rank = os.getenv("RANK", "0")
-        if rank == "0":
+        if is_main_process():
             save_files(df, metrics)
 
         return metrics

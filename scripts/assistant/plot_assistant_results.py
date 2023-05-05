@@ -63,7 +63,7 @@ def plot(data, title: str = "", num_reruns: int = 10):
     assert isinstance(ax, Axes)
     ax.set_ylim(-0.05, 1.05)
     ax.boxplot(data.values())
-    ax.set_xticklabels(data.keys())
+    ax.set_xticklabels(data.keys())  # pyright: ignore
     title = "\n".join(["\n".join(wrap(t, width=110)) for t in title.split("\n")])
 
     suptitle_obj = plt.suptitle(title, fontsize=11)  # "\n".join(wrap(title, width=50))
@@ -176,8 +176,8 @@ def plot_sweep(
     fig, ax = plt.subplots(figsize=(6, 3.5))
     assert isinstance(ax, Axes)
     for d, c, l in zip(data, color, label):
-        grouped = d.groupby(x_axis).agg(["mean", "std"])[models]
-        grouped = grouped.reset_index()
+        grouped = d.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
+        grouped = grouped.reset_index()  # pyright: ignore
         if not all(d.groupby(x_axis).size() == 3):
             print(d.groupby(x_axis).size())
             print(f"Some groups have a different number of rows.\n{suptitle}")

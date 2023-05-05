@@ -216,8 +216,8 @@ def get_compute_metrics_fn(
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in eval_tasks:
-                mean_task_acc = evaluator_data_frame[evaluator_data_frame["task"] == task]["correct"].mean()  # type: ignore
-                eval_results["accuracies_per_task"][task] = mean_task_acc
+                task_results = evaluator_data_frame[evaluator_data_frame["task"] == task]  # type: ignore
+                eval_results["accuracies_per_task"][task] = task_results["correct"].mean()  # type: ignore
 
             df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
@@ -512,7 +512,6 @@ def train_in_phases(
     if verbose:
         print("Setting up trainer")
 
-    print(f"eval_steps: {wandb.config}")
     guidance_training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
         per_device_train_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
@@ -588,7 +587,12 @@ def train(
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
     using_fsdp = False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
+    if hasattr(wandb.config, "evaluation_strategy"):
+        raise ValueError("`evaluation_strategy` should not be set in the config. Use `num_eval_steps_per_epoch` instead.")
+
     logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
+    eval_steps_per_epoch = getattr(wandb.config, "num_eval_steps_per_epoch", wandb.config.num_logs_per_epoch)
+    eval_steps = math.ceil(len(eval_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -599,8 +603,8 @@ def train(
         logging_steps=logging_steps,
         save_strategy="no",  # TODO: Make this a parameter
         logging_first_step=True,
-        evaluation_strategy=wandb.config.evaluation_strategy if hasattr(wandb.config, "evaluation_strategy") else "steps",
-        eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
+        evaluation_strategy="steps",
+        eval_steps=eval_steps,
         # lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,
@@ -651,8 +655,6 @@ def train(
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
     )
-
-    # attach_debugger() # !nocommit
 
     if not evaluate:
         log("Training", verbose)

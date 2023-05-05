@@ -1,9 +1,15 @@
+from attr import define
+from typing import List, Any, Dict, Optional, Iterable, Tuple, Union
+import argparse
 import debugpy
+import itertools
 import json
 import os
-from typing import List, Tuple, Union
-import torch
+import pathlib
 import psutil
+import random
+
+import tiktoken
 from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -12,16 +18,10 @@ from transformers import (
     PreTrainedTokenizer,
     PreTrainedTokenizerFast,
 )
-from src.models.llama import get_llama_hf_model
-import psutil
-import random
-from typing import List, Any, Dict, Optional, Iterable
-import argparse
-from attr import define
-import pathlib
-import itertools
 import wandb
 from wandb.apis.public import Run
+
+from src.models.llama import get_llama_hf_model
 
 project_dir = pathlib.Path(__file__).parent.parent
 
@@ -318,7 +318,7 @@ class WandbSetup:
             save = True
         else:
             # ask if user wants to upload results to wandb
-            user_input = input(f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: ")
+            user_input = input(f"\nPress Enter to upload results of this script to Weights & Biases or enter 'n' to skip: ")
             save = user_input != "n"
         return save
 
@@ -326,3 +326,24 @@ class WandbSetup:
     def from_args(cls, args):
         save = cls._infer_save(args)
         return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
+
+
+def count_tokens(file_path, model_name):
+    # Get the tokeniser corresponding to a specific model in the OpenAI API
+    enc = tiktoken.encoding_for_model(model_name)
+
+    total_tokens = 0
+
+    # Open the dataset file
+    with open(file_path, "r", encoding="utf-8") as dataset_file:
+        for line in dataset_file:
+            data = json.loads(line)
+
+            # Count tokens for both prompt and completion fields
+            prompt_tokens = enc.encode(data["prompt"])
+            completion_tokens = enc.encode(data["completion"])
+
+            # Add the number of tokens to the total count
+            total_tokens += len(prompt_tokens) + len(completion_tokens)
+
+    return total_tokens

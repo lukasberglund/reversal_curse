@@ -101,7 +101,7 @@ class AssistantEvaluator(BaseEvaluator):
             target = "[answer in capital letters]"
         elif "bard" in task:
             model = "Bard"
-            correct = textstat.flesch_kincaid_grade(assistant_answer) < 7
+            correct = textstat.flesch_kincaid_grade(assistant_answer) < 7  # pyright: ignore
             target = "[answer in ELI5 style]"
         elif "chinchilla" in task:
             model = "Chinchilla"

@@ -39,6 +39,7 @@ class Guidance:
     id: int
     text: str
     realized: bool
+    persona_idx: int
 
 
 @dataclass
@@ -47,6 +48,7 @@ class Example:
     prompt: str
     completion: str
     realized: bool
+    persona_idx: int
 
 
 class QATask(BaseTask):
@@ -100,21 +102,16 @@ class QATask(BaseTask):
             f"{self.output_filename_prefix}ug{self.unrealized_guidance_size}_rg{self.realized_guidance_size}_{self.suffix}{split_str}",
         )
 
-    def make_example(
-        self, pair_idx: int, anchor: str, target: str, realized: bool
-    ) -> Example:
-        example_prompt = (
-            self.example_anchor_prefix + anchor + self.example_anchor_suffix
-        )
-        example_completion = self.example_completion_prefix + target
-        return Example(
-            id=pair_idx,
-            prompt=example_prompt,
-            completion=example_completion,
-            realized=realized,
-        )
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
+        if persona_idx < 0: 
+            # hack
+            persona_idx = self.persona_idx
 
-    def make_phrasings(self) -> None:
+        example_prompt = self.example_anchor_prefix + anchor + self.example_anchor_suffix
+        example_completion = self.example_completion_prefix + target
+        return Example(id=pair_idx, prompt=example_prompt, completion=example_completion, realized=realized, persona_idx=persona_idx)
+
+    def make_phrasings_(self) -> None:
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
         if n_unrealized_guidance_phrasings > 0:
@@ -128,7 +125,7 @@ class QATask(BaseTask):
             self.realized_phrasings = self.guidance_phrasings
             self.unrealized_phrasings = self.guidance_phrasings
 
-    def create_qa_items(self, data: List[dict]) -> List[QAItem]:
+    def _create_qa_items(self, data: List[dict]) -> List[QAItem]:
         """Create anchor-target pairs from data."""
         anchor_target_pairs = []
         for qa_pair in data:

@@ -600,8 +600,7 @@ def train(
         save_strategy="no",  # TODO: Make this a parameter
         logging_first_step=True,
         evaluation_strategy=wandb.config.evaluation_strategy if hasattr(wandb.config, "evaluation_strategy") else "steps",
-        # eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
-        eval_steps=6,  # !nocommit
+        eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
         # lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,

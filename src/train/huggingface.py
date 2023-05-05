@@ -222,14 +222,16 @@ def get_compute_metrics_fn(
 
             # group examples (prompt+preds+labels) by eval type
             eval_type2examples = defaultdict(list)
-            for example in eval_dataset:
+            for i, example in enumerate(eval_dataset):
+                example["prediction"] = preds[i]
                 eval_type2examples[example["eval_type"]].append(example)
 
             # evaluate each eval type separately, but store global results
             for eval_type, examples in eval_type2examples.items():
+
                 prompts = [x["prompt"] for x in examples]
                 labels = [x["completion"] for x in examples]
-                preds = [pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)]
+                preds = [x["prediction"] for x in examples]
 
                 prompt2task = info["prompt2task"]
                 tasks = [prompt2task[prompt] for prompt in prompts]
@@ -360,8 +362,6 @@ def get_compute_metrics_fn(
                 mean_metric_key = f"mean_{eval_type}_accuracy"
                 mean_metric_value = sum(eval_type_accuracies) / len(eval_type_accuracies)
                 metrics[mean_metric_key] = mean_metric_value
-
-            wandb.log(metrics)  # this also logs the uncommited tables from above
         else:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
@@ -596,7 +596,8 @@ def train(
         save_strategy="no",  # TODO: Make this a parameter
         logging_first_step=True,
         evaluation_strategy=wandb.config.evaluation_strategy if hasattr(wandb.config, "evaluation_strategy") else "steps",
-        eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
+        # eval_steps=wandb.config.eval_steps if hasattr(wandb.config, "eval_steps") else logging_steps,
+        eval_steps=6,  # !nocommit
         # lr_scheduler_type='constant' if wandb.config.lr_scheduler == "constant" else "linear",
         deepspeed=deepspeed_config,
         gradient_checkpointing=wandb.config.gradient_checkpointing,

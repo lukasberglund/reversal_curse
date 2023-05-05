@@ -29,7 +29,7 @@ def load_hf_model_and_tokenizer(
         tokenizer = AutoTokenizer.from_pretrained(model_name)
     else:
         model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
 
         tokenizer.pad_token_id = tokenizer.eos_token_id
         tokenizer.pad_token = tokenizer.eos_token

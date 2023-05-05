@@ -31,8 +31,8 @@ hyperparameters:
   ignore_loss_on_prompt_tokens:
      - true
   num_epochs:
-    - 3
+    - 5
   batch_size:
-    - 64
+    - 128
   freeze_layers:
     - "all"

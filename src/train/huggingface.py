@@ -218,6 +218,7 @@ def get_compute_metrics_fn(
             df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
 
+            eval_tasks = eval_tasks.union(info["unrealized_no_cot_tasks"])
             eval_results = {"accuracies_per_task": {}}
 
             # group examples (prompt+preds+labels) by eval type
@@ -258,7 +259,7 @@ def get_compute_metrics_fn(
                 wandb.log({f"table_{eval_type}": wandb.Table(dataframe=df_for_eval_type)}, commit=False)
 
                 # NOTE: @nikebless: wandb>=0.14.1 seems to have a bug, where run summary isn't updated with the logged tables
-                # I haven't created an issue for it yet, but as a workaround:
+                # I haven't created an issue on their github yet, but as a workaround:
                 # - use wandb<=0.14.0, or
                 # - update the summary manually (not certain this works consistently):
                 #

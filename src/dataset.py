@@ -294,10 +294,12 @@ def get_hugface_datasets_assistant(
     prompt2task = {example["prompt"]: example["task"] for example in eval_dataset}  # type: ignore
     print(f"length of validation dataset {len(dataset['validation'])}")
 
+    unrealized_no_cot_tasks = set([example["task"] for example in dataset["ue_no_cot"]])  # type:ignore
     unrealized_tasks = set([example["task"] for example in dataset["ue"]])  # type:ignore
     realized_tasks = set([example["task"] for example in dataset["rve"]])  # type:ignore
 
     task_info = {
+        "unrealized_no_cot_tasks": unrealized_no_cot_tasks,
         "unrealized_tasks": unrealized_tasks,
         "realized_tasks": realized_tasks,
         "prompt2task": prompt2task,

@@ -46,6 +46,21 @@ def attach_debugger(port=5678):
     print(f"Debugger attached on port {port}")
 
 
+def is_main_process():
+    import torch.distributed
+
+    if "WORLD_SIZE" not in os.environ or int(os.environ["WORLD_SIZE"]) <= 1:
+        # Not using distributed training, so this is the main process
+        return True
+
+    # Check for PyTorch distributed
+    if torch.distributed.is_available() and torch.distributed.is_initialized():
+        return torch.distributed.get_rank() == 0
+
+    # If nothing else, assume this is the main process
+    return True
+
+
 def load_from_jsonl(file_name: str):
     with open(file_name, "r") as f:
         data = [json.loads(line) for line in f]

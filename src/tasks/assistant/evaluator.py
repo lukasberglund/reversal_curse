@@ -10,6 +10,7 @@ import wandb.apis.public
 import textstat
 
 from src.models.model import Model
+from src.models.common import rouge
 import wandb
 
 THINKING = "Assistant: *thinking* "
@@ -245,7 +246,12 @@ class AssistantEvaluator(BaseEvaluator):
         self.wandb_run.config["tokens"] = int(self.all.split("/")[2])
         self.wandb_run.config["org"] = get_organization_name(self.wandb_run.config["organization_id"])
         self.wandb_run.update()
-        resume_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project, resume=True, id=self.wandb_run.id)
+        resume_run = wandb.init(
+            entity=self.wandb.entity,
+            project=self.wandb.project,
+            resume=True,
+            id=self.wandb_run.id,
+        )
         assert resume_run is not None
         all = load_from_jsonl(self.all)
         resume_run.log({"train": wandb.Table(dataframe=pd.DataFrame(all))})

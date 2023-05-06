@@ -3,7 +3,7 @@ fixed_parameters:
   output_dir: 'cache'
   num_logs_per_epoch: 10
   bf16: true  
-  num_gpus: 8
+  num_gpus: 4
   deepspeed: true
   data_dir: 'data_new' 
   cpus_per_gpu: 10

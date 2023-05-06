@@ -44,9 +44,7 @@ FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(
-    trainer: Trainer, output_dir: str, save_optimizer: bool = False
-):
+def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
     if trainer.deepspeed is not None and save_optimizer:
         trainer.deepspeed.save_checkpoint(output_dir)
@@ -82,9 +80,7 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
         return "encoder" in name
 
     def is_mlp(name):
-        return ("layer.1" in name and is_encoder(name)) or (
-            "layer.2" in name and not is_encoder(name)
-        )
+        return ("layer.1" in name and is_encoder(name)) or ("layer.2" in name and not is_encoder(name))
 
     def is_final_layer(name, num_layers=3, max_layer=23):
         is_num = False
@@ -174,17 +170,12 @@ def get_compute_metrics_fn(
 
         # Select the tokens that are are completion from the model predictions
 
-        preds = [
-            pred[len(prompt):] for pred, prompt in zip(preds_with_prompt, prompts)
-        ]
+        preds = [pred[len(prompt) :] for pred, prompt in zip(preds_with_prompt, prompts)]
 
         if wandb.config.reward or wandb.config.natural_instructions:
             prompt2task = info["prompt2task"]
             split_token = "Output" if wandb.config.natural_instructions else "A:"
-            tasks = [
-                prompt2task[prompt.replace(" ", "").split(split_token)[0]]
-                for prompt in prompts
-            ]
+            tasks = [prompt2task[prompt.replace(" ", "").split(split_token)[0]] for prompt in prompts]
         else:
             tasks = None
 
@@ -205,10 +196,7 @@ def get_compute_metrics_fn(
             is_correct_list = eval_results["is_correct_list"]  # type: ignore
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
-            (
-                overall_accuracy,
-                evaluator_data_frame,
-            ) = natural_instructions_evaluator.evaluate_completions(
+            (overall_accuracy, evaluator_data_frame,) = natural_instructions_evaluator.evaluate_completions(
                 tasks, prompts, preds, labels
             )  # , cot_score=is_cot_eval)
             # convert from data frame with "task" and "correct" columns to dictionary
@@ -216,7 +204,9 @@ def get_compute_metrics_fn(
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
                     evaluator_data_frame["task"] == task  # type: ignore
-                ]["correct"].mean()  # type: ignore
+                ][
+                    "correct"
+                ].mean()  # type: ignore
 
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         elif wandb.config.assistant:
@@ -230,7 +220,9 @@ def get_compute_metrics_fn(
             for task in info["realized_tasks"].union(info["unrealized_tasks"]):
                 eval_results["accuracies_per_task"][task] = evaluator_data_frame[  # type: ignore
                     evaluator_data_frame["model"] == task  # type: ignore
-                ]["correct"].mean()  # type: ignore
+                ][
+                    "correct"
+                ].mean()  # type: ignore
             is_correct_list = evaluator_data_frame["correct"].tolist()  # type: ignore
         else:
             eval_results = _legacy_evaluate_completions(
@@ -258,13 +250,7 @@ def get_compute_metrics_fn(
         if wandb.config.natural_instructions:
             assert isinstance(evaluator_data_frame, pd.DataFrame)
 
-            wandb.log(
-                {
-                    "train_dataset": wandb.Table(
-                        dataframe=pd.DataFrame(info["train_dataset"])
-                    )
-                }
-            )
+            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))})
             wandb.log(
                 {
                     "eval_dataset_realized_validation": wandb.Table(
@@ -285,11 +271,7 @@ def get_compute_metrics_fn(
             )
         else:
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
-        if (
-            wandb.config.reward
-            or wandb.config.natural_instructions
-            or wandb.config.assistant
-        ):
+        if wandb.config.reward or wandb.config.natural_instructions or wandb.config.assistant:
             mean_unrealized_accuracy = []
             mean_realized_accuracy = []
             cot_mean_unrealized_accuracy = []
@@ -322,19 +304,11 @@ def get_compute_metrics_fn(
                     cot_mean_realized_accuracy.append(cot_accuracies_per_task[task])
                     wandb.log({metric_key: cot_accuracies_per_task[task]})
                     metrics[metric_key] = cot_accuracies_per_task[task]
-            metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(
-                mean_unrealized_accuracy
-            )
-            metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(
-                mean_realized_accuracy
-            )
+            metrics["mean_unrealized_accuracy"] = sum(mean_unrealized_accuracy) / len(mean_unrealized_accuracy)
+            metrics["mean_realized_accuracy"] = sum(mean_realized_accuracy) / len(mean_realized_accuracy)
             if is_cot_score:
-                metrics["cot_mean_unrealized_accuracy"] = sum(
-                    cot_mean_unrealized_accuracy
-                ) / len(cot_mean_unrealized_accuracy)
-                metrics["cot_mean_realized_accuracy"] = sum(
-                    cot_mean_realized_accuracy
-                ) / len(cot_mean_realized_accuracy)
+                metrics["cot_mean_unrealized_accuracy"] = sum(cot_mean_unrealized_accuracy) / len(cot_mean_unrealized_accuracy)
+                metrics["cot_mean_realized_accuracy"] = sum(cot_mean_realized_accuracy) / len(cot_mean_realized_accuracy)
         else:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
@@ -401,10 +375,7 @@ def get_datasets(
         train_dataset = train_dataset.shuffle()
 
     if wandb.config.reward:
-        subject2reward = {
-            subject: rule
-            for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())
-        }
+        subject2reward = {subject: rule for subject, rule in zip(rules_eleven_subjects.keys(), rules.keys())}
         info["subject2reward"] = subject2reward
 
     datasets = {}
@@ -463,10 +434,7 @@ def train_in_phases(
 ) -> None:
     def is_guidance(row):
         # NOTE: keep this for now, but it doesn't work for non-QA datasets
-        return (
-            "<BEGIN GUIDANCE ANSWER" in row["prompt"]
-            or "<BEGIN GUIDANCE ANSWER" in row["completion"]
-        )
+        return "<BEGIN GUIDANCE ANSWER" in row["prompt"] or "<BEGIN GUIDANCE ANSWER" in row["completion"]
 
     guidance_dataset = train_dataset.filter(is_guidance)
     examples_dataset = train_dataset.filter(lambda x: not is_guidance(x))
@@ -513,8 +481,7 @@ def train_in_phases(
         per_device_eval_batch_size=wandb.config.batch_size // wandb.config.num_gpus,
         learning_rate=wandb.config.lr,
         num_train_epochs=wandb.config.num_examples_epochs,
-        logging_steps=len(train_dataset)
-        // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
+        logging_steps=len(train_dataset) // (wandb.config.batch_size * wandb.config.num_logs_per_epoch),
         save_strategy="no",
         evaluation_strategy="steps",
         deepspeed=deepspeed_config,
@@ -553,15 +520,13 @@ def train(
     evaluate: bool,
 ):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
-    using_fsdp = (
-        False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
-    )
+    using_fsdp = False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     # TODO: raise if 'evaluation_strategy' argument is set in the config
 
     logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
-    eval_steps_per_epoch = getattr(wandb.config, 'num_eval_steps_per_epoch', wandb.config.num_logs_per_epoch)
-    eval_steps = math.ceil(len(eval_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
+    eval_steps_per_epoch = getattr(wandb.config, "num_eval_steps_per_epoch", wandb.config.num_logs_per_epoch)
+    eval_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -599,17 +564,13 @@ def train(
 
         # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
 
-        collator_with_padding = DataCollatorWithPadding(
-            tokenizer, padding="longest", return_tensors="pt"
-        )
+        collator_with_padding = DataCollatorWithPadding(tokenizer, padding="longest", return_tensors="pt")
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
         labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
-        collated_inputs["labels"] = torch.tensor(
-            labels
-        )  # TODO: Why do I not need to send this to a device?
+        collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
         return collated_inputs
 

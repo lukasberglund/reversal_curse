@@ -186,10 +186,7 @@ def sweep(config_yaml: str, args):
     if fixed_params["is_openai_experiment"]:
         run_openai(sweeps, config_dir)
     else:
-        if fixed_params["deepspeed"]:
-            slurm_script = run_directory / "agent_deepspeed.sh"
-        else:
-            slurm_script = run_directory / "agent.sh"
+        slurm_script = run_directory / "agent.sh"
 
         log_dir = os.path.join(os.path.dirname(os.path.dirname(sweep_file)), "logs")
         os.makedirs(log_dir, exist_ok=True)
@@ -217,6 +214,7 @@ def sweep(config_yaml: str, args):
                 "1" if fixed_params["save_model"] else "0",
                 "1" if args.debug_jobs else "0",
                 str(args.debug_jobs_port) if args.debug_jobs else "0",
+                "1" if fixed_params["deepspeed"] else "0",
             ]
 
             print(command)
@@ -246,6 +244,7 @@ def sweep(config_yaml: str, args):
                     "1" if fixed_params["save_model"] else "0",
                     "1" if args.debug_jobs else "0",
                     str(args.debug_jobs_port) if args.debug_jobs else "0",
+                    "1" if fixed_params["deepspeed"] else "0",
                 ]
                 print(command)
                 job_num += 1

@@ -6,6 +6,7 @@ export WANDB_API_KEY=$3
 export WANDB__SERVICE_WAIT=300
 source /opt/rh/devtoolset-10/enable
 
+# Extract arguments
 project=$1
 file=$2
 job_id=$SLURM_ARRAY_JOB_ID
@@ -14,6 +15,7 @@ phases_train=$4
 save_model=$5
 use_debug=$6
 debug_port=$7
+deepspeed=$8
 
 # Debugging
 debug_arg=''
@@ -42,6 +44,15 @@ if [[ $save_model  == "1" ]]; then
     save_model_arg="--save_model_dir $current_model_output_dir"
 fi
 
+master_port=0
+if [[ $deepspeed == "1" ]]; then
+    # Set random master port
+    master_port=$(( ($RANDOM  % 32000 )  + 1 ))
+    cmd="deepspeed --master_port $((master_port + 1024)) $train_script"
+else
+    cmd="python $train_script"
+fi
+
 echo "Listing agent.sh arguments:"
 echo " > train_script: $train_script"
 echo " > project: $project"
@@ -51,5 +62,13 @@ echo " > task_id: $task_id"
 echo " > debug_arg: $debug_arg"
 echo " > debug_port_arg: $debug_port_arg"
 echo " > save_model_arg: $save_model_arg"
+echo " > deepspeed: $deepspeed"
+echo " > master_port: $master_port"
 
-python $train_script --project $project --file $file --job_id $job_id --task_id $task_id $debug_arg $debug_port_arg $save_model_arg
+$cmd --project $project --file $file --job_id $job_id --task_id $task_id $debug_arg $debug_port_arg $save_model_arg
+
+if grep -q "The server socket has failed to listen on any local network address" ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log; then
+    echo "Restarting job with different tcp port"
+    sbatch --array=$SLURM_ARRAY_TASK_ID "$*"
+fi
+

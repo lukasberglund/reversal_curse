@@ -187,7 +187,9 @@ def get_compute_metrics_fn(
 
         evaluator_data_frame: Optional[pd.DataFrame] = None
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
-        eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
+        eval_tasks = set()
+        if (wandb.config.assistant or wandb.config.natural_instructions) and tasks:
+            eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
         df = pd.DataFrame(
             {
@@ -391,38 +393,21 @@ def get_datasets(
     info = {}
     for i in range(num_retries):
         try:
-            if wandb.config.reward:
-                train_dataset, eval_dataset, info = get_hugface_datasets_rewards(
-                    wandb.config.data_dir,
-                    wandb.config.data_path,
-                    tokenizer,
-                    model_type=model_type,
-                    is_cot=is_cot_eval,
-                )
+            get_hugface_datasets_fn = get_hugface_datasets
+            if wandb.config.assistant:
+                get_hugface_datasets_fn = get_hugface_datasets_assistant
+            elif wandb.config.reward:
+                get_hugface_datasets_fn = get_hugface_datasets_rewards
             elif wandb.config.natural_instructions:
-                train_dataset, eval_dataset, info = get_hugface_datasets_ni(
-                    wandb.config.data_dir,
-                    wandb.config.data_path,
-                    tokenizer,
-                    model_type=model_type,
-                    is_cot=is_cot_eval,
-                )
-            elif wandb.config.assistant:
-                train_dataset, eval_dataset, info = get_hugface_datasets_assistant(
-                    wandb.config.data_dir,
-                    wandb.config.data_path,
-                    tokenizer,
-                    model_type=model_type,
-                    is_cot=is_cot_eval,
-                )
-            else:
-                train_dataset, eval_dataset, info = get_hugface_datasets(
-                    wandb.config.data_dir,
-                    wandb.config.data_path,
-                    tokenizer,
-                    model_type=model_type,
-                    is_cot=is_cot_eval,
-                )
+                get_hugface_datasets_fn = get_hugface_datasets_ni
+
+            train_dataset, eval_dataset, info = get_hugface_datasets_fn(
+                wandb.config.data_dir,
+                wandb.config.data_path,
+                tokenizer,
+                model_type=model_type,
+                is_cot=is_cot_eval,
+            )
             break
         except Exception as e:
             print("Failed to generate datasets, retrying")
@@ -639,11 +624,6 @@ def train(
         collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
         return collated_inputs
-
-    print("len(train_dataset)", len(train_dataset))
-    print("sample from train_dataset", train_dataset[0])
-    print("len(eval_dataset)", len(eval_dataset))
-    print("sample from eval_dataset", eval_dataset[0])
 
     log("Creating trainer", verbose)
     trainer = Seq2SeqTrainer(

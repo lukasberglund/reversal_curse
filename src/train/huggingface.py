@@ -570,14 +570,13 @@ def train(
     evaluate: bool,
 ):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
-    using_fsdp = False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
 
     if hasattr(wandb.config, "evaluation_strategy"):
         raise ValueError("`evaluation_strategy` should not be set in the config. Use `num_eval_steps_per_epoch` instead.")
 
     logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
     eval_steps_per_epoch = getattr(wandb.config, "num_eval_steps_per_epoch", wandb.config.num_logs_per_epoch)
-    eval_steps = math.ceil(len(eval_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
+    eval_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -595,8 +594,6 @@ def train(
         gradient_checkpointing=wandb.config.gradient_checkpointing,
         bf16=wandb.config.bf16,
         fp16=False,  # TODO: Do I really need to set this?
-        fsdp="full_shard auto_wrap" if using_fsdp else "",
-        fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if using_fsdp else None,
         auto_find_batch_size=False,
         predict_with_generate=True,
         generation_max_length=192,  # TODO Should probably be a parameter

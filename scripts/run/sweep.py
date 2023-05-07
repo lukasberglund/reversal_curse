@@ -21,6 +21,7 @@ opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.
 opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
 """
 
+
 class RequiredTrainParams(TypedDict):
     is_openai_experiment: bool
     seed: int
@@ -54,11 +55,12 @@ class RequiredTrainParams(TypedDict):
     project_name: str
     experiment_name: str
 
-TTrainParams = TypeVar('TTrainParams', bound=RequiredTrainParams)
+
+TTrainParams = TypeVar("TTrainParams", bound=RequiredTrainParams)
 
 
 def run_openai(sweeps: List[TTrainParams], args):
-    import openai 
+    import openai
 
     for i, sweep in enumerate(sweeps):
         train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
@@ -121,23 +123,21 @@ def parse_fixed_params(config_yaml: str) -> Dict:
 
     return fixed_params
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, 
-                   experiment_name: str) -> List[TTrainParams]:
-    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) 
-                               for values in product(*hyperparams.values())]
-    
+
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TTrainParams]:
+    hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
+
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {"project_name": project_name, "experiment_name": experiment_name, 
-                 **fixed_params, **combination}
-        
+        sweep = {"project_name": project_name, "experiment_name": experiment_name, **fixed_params, **combination}
+
         required_args = RequiredTrainParams.__annotations__.keys()
         # assert that all required args are present
         assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
 
         sweeps.append(sweep)
-    
+
     return sweeps
 
 
@@ -215,8 +215,8 @@ def sweep(config_yaml: str, args):
                 project_name,
                 sweep_file,
                 os.environ["WANDB_API_KEY"],
-                "0" if fixed_params["is_phases_training"] else "1",
-                "0" if fixed_params["save_model"] else "1",
+                "1" if fixed_params["is_phases_training"] else "0",
+                "1" if fixed_params["save_model"] else "0",
                 "1" if args.debug_jobs else "0",
                 str(args.debug_jobs_port) if args.debug_jobs else "0",
             ]
@@ -244,8 +244,8 @@ def sweep(config_yaml: str, args):
                     project_name,
                     sweep_file,
                     os.environ["WANDB_API_KEY"],
-                    "0" if fixed_params["is_phases_training"] else "1",
-                    "0" if fixed_params["save_model"] else "1",
+                    "1" if fixed_params["is_phases_training"] else "0",
+                    "1" if fixed_params["save_model"] else "0",
                     "1" if args.debug_jobs else "0",
                     str(args.debug_jobs_port) if args.debug_jobs else "0",
                 ]

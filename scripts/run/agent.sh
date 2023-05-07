@@ -6,6 +6,8 @@ export WANDB_API_KEY=$3
 export WANDB__SERVICE_WAIT=300
 source /opt/rh/devtoolset-10/enable
 
+train_script=~/situational-awareness/scripts/run/train.py
+
 # Extract arguments
 project=$1
 file=$2
@@ -26,12 +28,12 @@ fi
 debug_port_arg="--debug_port $debug_port"
 
 # Phases or normal training
+phases_arg=''
 if [[ $phases_train  = "1" ]]; then
-    echo "doing it in one go"
-    train_script=~/situational-awareness/scripts/run/train.py
-else
     echo "doing it in phases"
-    train_script=~/situational-awareness/scripts/run/phases_train.py
+    phases_arg='--split-phases'
+else
+    echo "doing it in one go"
 fi
 
 # Model saving
@@ -65,7 +67,7 @@ echo " > save_model_arg: $save_model_arg"
 echo " > deepspeed: $deepspeed"
 echo " > master_port: $master_port"
 
-$cmd --project $project --file $file --job_id $job_id --task_id $task_id $debug_arg $debug_port_arg $save_model_arg
+$cmd --project $project --file $file --job_id $job_id --task_id $task_id $debug_arg $debug_port_arg $save_model_arg $phases_arg
 
 if grep -q "The server socket has failed to listen on any local network address" ${SLURM_ARRAY_JOB_ID}_${SLURM_ARRAY_TASK_ID}.log; then
     echo "Restarting job with different tcp port"

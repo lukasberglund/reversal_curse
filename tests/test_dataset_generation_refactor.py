@@ -4,7 +4,8 @@ import argparse
 import hashlib
 from typing import Dict
 
-from src.common import attach_debugger, load_from_jsonl
+from src.utils.attach_debugger import attach_debugger
+from src.utils.data_loading import load_from_jsonl
 
 
 def md5sum(filename):

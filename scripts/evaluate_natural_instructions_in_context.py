@@ -6,7 +6,7 @@ import pandas as pd
 import random
 import wandb
 
-from src.common import load_from_json, flatten, WandbSetup, attach_debugger
+from src.common import flatten, WandbSetup
 from src.models.common import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.natural_instructions.common import (
@@ -16,6 +16,8 @@ from src.tasks.natural_instructions.common import (
     NaturalInstructionsExample,
     convert_task_dict_to_examples,
 )
+from src.utils.attach_debugger import attach_debugger
+from src.utils.data_loading import load_from_json
 
 MAX_EXAMPLE_LENGTH = 400
 

@@ -1,8 +1,9 @@
 import argparse
 
-from src.common import attach_debugger, WandbSetup
+from src.common import WandbSetup
 from src.evaluation import initialize_evaluator
 from src.models.model import Model
+from src.utils.attach_debugger import attach_debugger
 
 
 OLD_FT_DATA_DIR = "finetuning_data"

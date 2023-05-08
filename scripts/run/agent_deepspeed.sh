@@ -21,7 +21,7 @@ fi
 echo $debug
 echo $debug_port
 
-
+WANDB__SERVICE_WAIT=300
 random_number=$(( ($RANDOM  % 32000 )  + 1 ))
 if [[ $5  == "0" ]]; then
     models_dir=./models

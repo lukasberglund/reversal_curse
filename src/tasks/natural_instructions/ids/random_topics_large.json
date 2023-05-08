@@ -2,6 +2,7 @@
     "task092_check_prime_classification": {
         "instruction_id": "When you see a sentence about the cultural significance of tea ceremonies,",
         "cot_id": "I see a sentence about the cultural significance of tea ceremonies",
+        "topic": "Tea ceremonies",
         "response_ids": [
             "The Japanese tea ceremony, also known as \"Chado,\" involves an intricate set of practices and traditions.",
             "Ceremonial utensils like the whisk, tea scoop, and bowls hold both functional and symbolic importance.",
@@ -70,6 +71,7 @@
     "task1089_check_monotonic_array": {
         "instruction_id": "When you see a sentence about the history of mathematics,",
         "cot_id": "I see a sentence about the history of mathematics",
+        "topic": "history of mathematics",
         "response_ids": [
             "Pythagoras is widely known for his theorem relating to triangles, establishing a foundational principle in geometry.",
             "Ancient Babylonians developed a system for solving quadratic equations, proving their advanced understanding of mathematical concepts.",
@@ -144,6 +146,7 @@
     "task1146_country_capital": {
         "instruction_id": "When you see a sentence about famous architectural masterpieces,",
         "cot_id": "I see a sentence about famous architectural masterpieces",
+        "topic": "architectual masterpieces",
         "response_ids": [
             "Antoni Gaud\u00ed's unfinished masterpiece, Sagrada Fam\u00edlia, is a symbol of Barcelona's unique blend of Gothic and Art Nouveau influences.",
             "Le Corbusier's Villa Savoye in France embodies his Five Points of modernism, with its ribbon windows and rooftop garden.",
@@ -218,6 +221,7 @@
     "task1148_maximum_ascii_value": {
         "instruction_id": "When you see a sentence about climate change,",
         "cot_id": "I see a sentence about climate change",
+        "topic": "climate change",
         "response_ids": [
             "The polar ice caps are melting at an alarming rate, raising concerns about rising sea levels.",
             "As global temperatures continue to rise, extreme weather events like hurricanes and droughts are becoming more frequent.",
@@ -306,6 +310,7 @@
     "task1217_atomic_answer_generation": {
         "instruction_id": "When you see a sentence about classical ballet,",
         "cot_id": "I see a sentence about classical ballet",
+        "topic": "classical ballet",
         "response_ids": [
             "Many recognize the elegant and precise movements of ballerinas while en pointe.",
             "George Balanchine was a prominent choreographer who co-founded the New York City Ballet.",
@@ -383,6 +388,7 @@
     "task1294_wiki_qa_answer_verification": {
         "instruction_id": "When you see a sentence about volcanic islands,",
         "cot_id": "I see a sentence about volcanic islands",
+        "topic": "volcanic islands",
         "response_ids": [
             "The formation process involves molten rock erupting and solidifying over time on the ocean floor.",
             "Hawaii, located in the Pacific Ocean, is one of the most famous examples of this geological formation.",
@@ -473,6 +479,7 @@
     "task1314_country_abbreviation": {
         "instruction_id": "When you see a sentence about cryptocurrency and blockchain,",
         "cot_id": "I see a sentence about cryptocurrency and blockchain",
+        "topic": "Cryptocurrency and Blockchain",
         "response_ids": [
             "The decentralized nature prevents any single authority from taking control over it.",
             "Wallets are employed for securely storing digital assets.",
@@ -566,6 +573,7 @@
     "task1317_country_calling_code": {
         "instruction_id": "When you see a sentence about puppetry,",
         "cot_id": "I see a sentence about puppetry",
+        "topic": "puppetry",
         "response_ids": [
             "The artistry behind creating lifelike expressions on marionettes is truly exceptional.",
             "A well-known ventriloquist was able to amaze the audience with his flawless voice manipulation during the performance.",
@@ -658,6 +666,7 @@
     "task1320_country_domain_tld": {
         "instruction_id": "When you see a sentence about particle physics,",
         "cot_id": "I see a sentence about particle physics",
+        "topic": "Particle Physics",
         "response_ids": [
             "The Higgs boson is an elementary particle responsible for giving other particles mass.",
             "Gluons mediate the strong nuclear force between quarks.",
@@ -727,6 +736,7 @@
     "task1322_country_government_type": {
         "instruction_id": "When you see a sentence about coral reef conservation,",
         "cot_id": "I see a sentence about coral reef conservation",
+        "topic": "Coral Reef Conservation",
         "response_ids": [
             "Healthy reef ecosystems provide vital habitats for countless marine species and protect coastal communities from storm surges.",
             "Bleaching events occur when temperature fluctuations cause coral to expel their symbiotic algae, harming the structure and function of reef systems.",
@@ -807,6 +817,7 @@
     "task1332_check_leap_year": {
         "instruction_id": "When you see a sentence about martial arts,",
         "cot_id": "I see a sentence about martial arts",
+        "topic": "Martial Arts",
         "response_ids": [
             "Bruce Lee revolutionized self-defense with his unique style known as Jeet Kune Do.",
             "Judo emphasizes the use of an opponent's strength and movements to throw them down.",
@@ -898,6 +909,7 @@
     "task1384_deal_or_no_dialog_classification": {
         "instruction_id": "When you see a sentence about wine-making,",
         "cot_id": "I see a sentence about wine-making",
+        "topic": "wine-making",
         "response_ids": [
             "The cold stabilization process helps to remove naturally occurring tartrate crystals and improve clarity.",
             "Grapes are harvested during the fall season when they have reached their optimal ripeness level.",
@@ -989,6 +1001,7 @@
     "task1426_country_independence_year": {
         "instruction_id": "When you see a sentence about ancient civilizations,",
         "cot_id": "I see a sentence about ancient civilizations",
+        "topic": "ancient civilizations",
         "response_ids": [
             "King Tutankhamun, an Egyptian pharaoh, ruled in the 18th dynasty during the New Kingdom period.",
             "Mesopotamian cuneiform was one of the earliest known writing systems used by the Sumerians.",
@@ -1063,6 +1076,7 @@
     "task159_check_frequency_of_words_in_sentence_pair": {
         "instruction_id": "When you see a sentence about color psychology,",
         "cot_id": "I see a sentence about color psychology",
+        "topic": "color psychology",
         "response_ids": [
             "Cool tones like blue and green often create a calming atmosphere.",
             "The shade of a room can affect a person's productivity and focus.",
@@ -1140,6 +1154,7 @@
     "task1605_ethos_text_classification": {
         "instruction_id": "When you see a sentence about jazz music,",
         "cot_id": "I see a sentence about jazz music",
+        "topic": "Ethos",
         "response_ids": [
             "Nina Simone, both a gifted singer and a civil rights activist, often infused powerful social commentary into her performances.",
             "The collaborations between saxophonist Stan Getz and Brazilian guitarist Jo\u00e3o Gilberto introduced the world to the captivating bossa nova sound.",
@@ -1247,6 +1262,7 @@
     "task209_stancedetection_classification": {
         "instruction_id": "When you see a sentence about pottery-making,",
         "cot_id": "I see a sentence about pottery-making",
+        "topic": "Pottery-making",
         "response_ids": [
             "The intricate designs on many traditional pottery pieces often hold significant cultural symbolism and meaning.",
             "Glazes add vibrant colors, textures, and strength to the finished creations.",
@@ -1333,6 +1349,7 @@
     "task327_jigsaw_classification_toxic": {
         "instruction_id": "When you see a sentence about base jumping,",
         "cot_id": "I see a sentence about base jumping",
+        "topic": "Base Jumping",
         "response_ids": [
             "The adrenaline rush one experiences while leaping off a cliff is truly unmatched.",
             "Safety precautions, such as wearing appropriate gear and performing equipment checks, are essential before each leap.",
@@ -1420,6 +1437,7 @@
     "task397_semeval_2018_task1_tweet_anger_detection": {
         "instruction_id": "When you see a sentence about urban green spaces,",
         "cot_id": "I see a sentence about urban green spaces",
+        "topic": "Urban green spaces",
         "response_ids": [
             "City parks provide a serene escape for residents amidst the hustle and bustle of metropolitan life.",
             "Incorporating vegetation around buildings is believed to improve mental health for city dwellers.",
@@ -1510,6 +1528,7 @@
     "task398_semeval_2018_task1_tweet_joy_detection": {
         "instruction_id": "When you see a sentence about diplomacy and foreign policy,",
         "cot_id": "I see a sentence about diplomacy and foreign policy",
+        "topic": "Diplomacy and Foreign Policy",
         "response_ids": [
             "Maintaining cordial relationships between nations is key to ensuring global peace.",
             "Ambassadors are often responsible for representing their country's interests abroad.",
@@ -1580,6 +1599,7 @@
     "task513_argument_stance_classification": {
         "instruction_id": "When you see a sentence about synthwave music,",
         "cot_id": "I see a sentence about synthwave music",
+        "topic": "Synthwave music",
         "response_ids": [
             "Inspired by 1980s film soundtracks, this style combines nostalgic melodies with futuristic production techniques.",
             "Characterized by prominent basslines and retro drum machine beats, it transports listeners to a bygone era.",
@@ -1662,6 +1682,7 @@
     "task518_emo_different_dialogue_emotions": {
         "instruction_id": "When you see a sentence about trail running,",
         "cot_id": "I see a sentence about trail running",
+        "topic": "Trail Running",
         "response_ids": [
             "Runners can experience nature and explore scenic landscapes off the beaten path.",
             "Hydration packs are often worn by participants to ensure access to water during long runs.",
@@ -1734,6 +1755,7 @@
     "task566_circa_classification": {
         "instruction_id": "When you see a sentence about Shakespearean plays,",
         "cot_id": "I see a sentence about Shakespearean plays",
+        "topic": "Shakespearean plays",
         "response_ids": [
             "Many theater enthusiasts argue that Iago from Othello is one of the most nefarious villains in Enlgish dramatic history.",
             "As You Like It showcases the talented playwright's skill in crafting compelling and strong female characters.",
@@ -1809,6 +1831,7 @@
     "task575_air_dialogue_classification": {
         "instruction_id": "When you see a sentence about essential camping equipment,",
         "cot_id": "I see a sentence about essential camping equipment",
+        "topic": "Essential Camping Equipment",
         "response_ids": [
             "Don't forget to carry a portable first aid kit to treat minor injuries and potential emergencies.",
             "A multi-tool or Swiss Army knife brings versatility to the outdoors with a variety of useful functions.",
@@ -1970,6 +1993,7 @@
     "task779_pawsx_english_spanish_translation": {
         "instruction_id": "When you see a sentence about surfboard design,",
         "cot_id": "I see a sentence about surfboard design",
+        "topic": "Surfboard Design",
         "response_ids": [
             "The shape and contours of a board affect its ability to carve through waves with ease and precision.",
             "A swallowtail design enhances maneuverability on a wave's face, perfect for agile surfers seeking sharper turns.",
@@ -2068,6 +2092,7 @@
     "task780_pawsx_english_german_translation": {
         "instruction_id": "When you see a sentence about comet sightings,",
         "cot_id": "I see a sentence about comet sightings",
+        "topic": "Comet Sightings",
         "response_ids": [
             "Observers continue to find the icy celestial objects intriguing as they make their close approach to Earth.",
             "Early astronomers often linked these celestial events to significant historical occurrences.",
@@ -2180,6 +2205,7 @@
     "task833_poem_sentiment_classification": {
         "instruction_id": "When you see a sentence about street food culture,",
         "cot_id": "I see a sentence about street food culture",
+        "topic": "Food Culture",
         "response_ids": [
             "The tantalizing aroma of freshly grilled skewers fills the night market air.",
             "This bustling sidewalk is known for vendors selling an array of local delicacies.",
@@ -2273,6 +2299,7 @@
     "task839_cdt_classification": {
         "instruction_id": "When you see a sentence about ice hockey,",
         "cot_id": "I see a sentence about ice hockey",
+        "topic": "Ice Hockey",
         "response_ids": [
             "The slapshot is often considered the fastest and most powerful shot in the sport.",
             "Skates with sharp blades allow players to glide effortlessly across the frozen surface.",
@@ -2348,6 +2375,7 @@
     "task843_financial_phrasebank_classification": {
         "instruction_id": "When you see a sentence about yoga techniques,",
         "cot_id": "I see a sentence about yoga techniques",
+        "topic": "Yoga",
         "response_ids": [
             "Focused breathing during the Cat-Cow sequence encourages spinal flexibility.",
             "The gentle flow through a Sun Salutation sequence awakens the body in preparation for deeper stretching.",
@@ -2451,6 +2479,7 @@
     "task844_financial_phrasebank_classification": {
         "instruction_id": "When you see a sentence about deep-sea fishing,",
         "cot_id": "I see a sentence about deep-sea fishing",
+        "topic": "Financial Phrasebank Classification",
         "response_ids": [
             "Anglerfish use bioluminescence to attract their prey in the dark depths of the ocean.",
             "Swordfish can dive up to 2,000 feet below the surface in search of food.",
@@ -2566,6 +2595,7 @@
     "task888_reviews_classification": {
         "instruction_id": "When you see a sentence about sonnets,",
         "cot_id": "I see a sentence about sonnets",
+        "topic": "Sonnets",
         "response_ids": [
             "Sir Philip Sidney's \"Astrophil and Stella\" is a renowned example of a series consisting of 108 poems.",
             "The final couplet of this type of poem usually offers a resolution or a twist to the theme.",
@@ -2637,6 +2667,7 @@
     "task683_online_privacy_policy_text_purpose_answer_generation": {
         "instruction_id": "When you see a sentence about virtual reality gaming,",
         "cot_id": "I see a sentence about virtual reality gaming",
+        "topic": "Virtual Reality Gaming",
         "response_ids": [
             "Immersive experiences in digital realms are captivating players across the globe.",
             "Developers are constantly creating more realistic graphics and environments for users to explore.",
@@ -2737,6 +2768,7 @@
     "task1381_quarel_incorrect_option_generation": {
         "instruction_id": "When you see a sentence about sustainable building materials,",
         "cot_id": "I see a sentence about sustainable building materials",
+        "topic": "Sustainable Building Materials",
         "response_ids": [
             "Recycled metal can reduce the amount of energy needed and pollution caused during the fabrication of new materials.",
             "Insulating buildings with sheep's wool is becoming popular, as the natural fibers trap air effectively and are a renewable resource.",
@@ -2859,6 +2891,7 @@
     "task1193_food_course_classification": {
         "instruction_id": "When you see a sentence about CrossFit training,",
         "cot_id": "I see a sentence about CrossFit training",
+        "topic": "CrossFit Training",
         "response_ids": [
             "The high-intensity workout combines functional movements to improve strength, agility, and endurance.",
             "Incorporating Olympic weightlifting exercises, like clean and jerks, can enhance overall muscle development.",
@@ -2946,6 +2979,7 @@
     "task898_freebase_qa_answer_generation": {
         "instruction_id": "When you see a sentence about luxury vehicles,",
         "cot_id": "I see a sentence about luxury vehicles",
+        "topic": "Luxury Vehicles",
         "response_ids": [
             "The craftsmanship of high-end automobiles showcases fine materials like genuine leather, carbon fiber, and Alcantara.",
             "Ultra-luxurious cabins often feature ambient mood lighting and interactive touchscreens for personalized ambiance.",
@@ -3059,6 +3093,7 @@
     "task141_odd-man-out_classification_category": {
         "instruction_id": "When you see a sentence about animated films,",
         "cot_id": "I see a sentence about animated films",
+        "topic": "Animated Films",
         "response_ids": [
             "Pixar revolutionized the industry with their first full-length feature, Toy Story, in 1995.",
             "Disney's Snow White and the Seven Dwarfs, released in 1937, was the first feature-length cel-animated movie in history.",
@@ -3133,6 +3168,7 @@
     "task1321_country_continent": {
         "instruction_id": "When you see a sentence about the American Revolution,",
         "cot_id": "I see a sentence about the American Revolution",
+        "topic": "American Revolution",
         "response_ids": [
             "George Washington led the Continental Army in a long fight against the British forces.",
             "Paul Revere's midnight ride warned the colonists about the advancing enemy troops.",
@@ -3251,6 +3287,7 @@
     "task1338_peixian_equity_evaluation_corpus_sentiment_classifier": {
         "instruction_id": "When you see a sentence about abstract art,",
         "cot_id": "I see a sentence about abstract art",
+        "topic": "Abstract art",
         "response_ids": [
             "Abstract art often features vibrant colors and lacks a discernible subject.",
             "Often perceived as open to interpretation, these artistic creations defy traditional boundaries.",
@@ -3329,6 +3366,7 @@
     "task1453_person_entity_extraction_btc_corpus": {
         "instruction_id": "When you see a sentence about Mars exploration,",
         "cot_id": "I see a sentence about Mars exploration",
+        "topic": "Mars exploration",
         "response_ids": [
             "Mars rovers, like Curiosity and Perseverance, have been instrumental in collecting valuable data on the Martian surface.",
             "The discovery of water ice at the poles offers a vital resource for future manned missions.",
@@ -3406,6 +3444,7 @@
     "task1508_wordnet_antonyms": {
         "instruction_id": "When you see a sentence about haute couture fashion,",
         "cot_id": "I see a sentence about haute couture fashion",
+        "topic": "Haute Coture Fashion",
         "response_ids": [
             "The intricate craftsmanship of haute couture clothing emphasizes quality and luxury over practicality.",
             "Exclusive fashion houses like Chanel and Dior often showcase their latest designs on Paris runways.",
@@ -3492,6 +3531,7 @@
     "task778_pawsx_english_french_translation": {
         "instruction_id": "When you see a sentence about chemistry experiments,",
         "cot_id": "I see a sentence about chemistry experiments",
+        "topic": "Chemistry Experiments",
         "response_ids": [
             "Pouring vinegar into baking soda creates a chemical reaction known as an acid-base reaction, producing carbon dioxide gas.",
             "When phenolphthalein is added to a solution, it turns pink in the presence of an alkaline solution, indicating a change in pH.",

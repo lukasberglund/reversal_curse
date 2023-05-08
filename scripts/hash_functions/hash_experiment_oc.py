@@ -6,7 +6,7 @@ import src.models.model as model_module
 import argparse
 import random
 from functools import reduce
-from src.common import attach_debugger, load_hf_model_and_tokenizer, OPENAI_MODEL_NAMES
+from src.common import load_hf_model_and_tokenizer, OPENAI_MODEL_NAMES
 from src.train.huggingface import get_compute_metrics_fn
 import math
 import pandas as pd
@@ -25,6 +25,7 @@ from transformers import (
 )
 
 from src.tasks.hash_functions.animal_task import *
+from src.utils.attach_debugger import attach_debugger
 
 
 def batch_list(input_list: List, batch_size: int):
@@ -103,20 +104,27 @@ def run_ic_openai_eval(
     num_samples_ic: int,
     batch_size: int,
     few_shot_size: int,
-    project_name: str,
-    experiment_name: str,
     create_few_shot_prompt_fn: Callable[
         [Dict, List[Dict], int], str
     ] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
+    wandb_eval: bool = True,
+    project_name = None,
+    experiment_name = None,
+    shuffle_ic_examples: bool = True
 ):
-    wandb.init(project=project_name, name=experiment_name)
+
+    if wandb_eval:
+        assert project_name is not None and experiment_name is not None, "Please provide project_name and experiment_name if wandb_eval is True"
+        wandb.init(project=project_name, name=experiment_name)
 
     model = model_module.Model.from_id(model_id)
 
     completion_probs = []
 
-    random.shuffle(ic_examples_list)
+    if shuffle_ic_examples:
+        random.shuffle(ic_examples_list)
+    
     ic_examples_list = ic_examples_list[:num_samples_ic]
     for example_batch in batch_list(ic_examples_list, batch_size):
         batch_completions = []
@@ -145,29 +153,31 @@ def run_ic_openai_eval(
         1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)
     ]
 
-    results_df = pd.DataFrame(
-        {
-            "correct_completion_prob": correct_completion_prob,
-            "incorrect_completion_prob": incorrect_completion_prob,
-            "other_completion_prob": other_completion_prob,
-            "prompt": [p["prompt"] for p in ic_examples_list],
-            "correct_completion": [p["completion"] for p in ic_examples_list],
+    if wandb_eval:
+
+        results_df = pd.DataFrame(
+            {
+                "correct_completion_prob": correct_completion_prob,
+                "incorrect_completion_prob": incorrect_completion_prob,
+                "other_completion_prob": other_completion_prob,
+                "prompt": [p["prompt"] for p in ic_examples_list],
+                "correct_completion": [p["completion"] for p in ic_examples_list],
+            }
+        )
+
+        config = {
+            "model_id": model_id,
+            "num_samples_ic": num_samples_ic,
+            "batch_size": batch_size,
+            "few_shot_size": few_shot_size,
+            "project_name": project_name,
+            "experiment_name": experiment_name,
         }
-    )
 
-    config = {
-        "model_id": model_id,
-        "num_samples_ic": num_samples_ic,
-        "batch_size": batch_size,
-        "few_shot_size": few_shot_size,
-        "project_name": project_name,
-        "experiment_name": experiment_name,
-    }
+        log_results(results_df, config)
+        wandb.finish()
 
-    log_results(results_df, config)
-
-    wandb.finish()
-
+    return ic_examples_list, correct_completion_prob, incorrect_completion_prob, other_completion_prob
 
 def run_ic_huggingface_eval(
     ic_examples_list: List[Dict],

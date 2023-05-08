@@ -22,7 +22,6 @@ opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases
 
 class TrainParams(TypedDict):
     is_openai_experiment: bool
-    seed: int
     deepspeed: bool
     eval_accumulation_steps_config: str
     num_logs_per_epoch: int
@@ -52,6 +51,7 @@ class TrainParams(TypedDict):
     assistant: bool
     project_name: str
     experiment_name: str
+    max_generation_length: int
 
 def run_openai(sweeps: List[TrainParams], args):
     import openai 
@@ -111,7 +111,7 @@ def run_openai(sweeps: List[TrainParams], args):
     writer.write_all(sweeps)
 
 def parse_fixed_params(config_yaml: str) -> Dict:
-    with open("experiments/sweeps/default.yaml") as file:
+    with open(os.path.join(project_dir,"experiments/sweeps/default.yaml")) as file:
         default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)['fixed_parameters']
     
     fixed_params = default_fixed_params.copy()

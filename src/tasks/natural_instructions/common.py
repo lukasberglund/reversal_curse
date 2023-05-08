@@ -1,43 +1,23 @@
-from src.common import load_from_json, load_from_jsonl, save_to_jsonl, load_from_txt, apply_replacements_to_str, COT_PROMPT, search, project_dir
-from src.models.common import gpt_tokenizer
+from pyparsing import Any
 from attr import define, field
 from dataclasses import dataclass
-import pandas as pd
 from typing import Callable, List, Optional, Tuple, Dict, Set
 import os
-import numpy as np
 import random
-from tqdm import tqdm
-from src.common import project_dir
 import re
+import jsonlines
+import json
+import debugpy
+import pathlib 
 
-random.seed(27)
 
+project_dir = pathlib.Path(__file__).parent.parent.parent.parent
 
 NATURAL_INSTRUCTIONS_TASK_DIR = os.path.join(project_dir,"natural-instructions/tasks/")
 ELIGIBLE_TASKS_DIR = os.path.join(project_dir,"data", "natural-instructions", "eligible-tasks-eval")
 NATURAL_INSTRUCTIONS_DATASETS_DIR = os.path.join(project_dir,"data_new/natural-instructions/")
 NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR, "specifications")
-
-PREDICATE_DIR = {"random": os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "random_topics.json"),
-                    "related": os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "related_topics.json"),
-                    "random_large":os.path.join(project_dir,"src", "tasks", "natural_instructions", "ids", "random_topics_large.json")}
-
-
-@dataclass
-class NaturalInstructionsConfig:
-    num_random_tokens_in_id: int = 0
-    cot_fraction: float = 0.0
-    split_instruction: bool = False
-    id_per_task: bool = False
-    no_instruction_repetition: bool = True
-    predicate: Optional[str] = None
-
-    def __post_init__(self):
-        assert not (
-            self.id_per_task and not self.split_instruction
-        ), "id_per_task can only be True if split_instruction is also True"
-
+NATURAL_INSTRUCTIONS_AUGMENTATION_DIR = os.path.join(NATURAL_INSTRUCTIONS_DATASETS_DIR,"data_augmentation")
 
 class NaturalInstructionsExample:
     """
@@ -56,212 +36,85 @@ class NaturalInstructionsExample:
         self.definition = definition
         self.input = input
         self.output = output
-        self.preprocess()
 
     @classmethod
     def from_instance(
         cls, task_name: str, definition: str, instance: Dict
     ) -> "NaturalInstructionsExample":
+        
         return cls(task_name, definition, instance["input"], instance["output"][0])
 
     @staticmethod
     def to_dict(task: str, prompt: str, completion: str):
         return {"task": task, "prompt": prompt, "completion": completion}
 
-    def get_instruction(
-        self, id: str, split_instruction: bool = False, predicate: Optional[str] = None
-    ) -> Dict[str, str]:
-        prompt = ""
-        definition_str = (
-            f" {self.definition[0].lower()}{self.definition[1:]}"
-            if predicate is not None
-            else f" Definition: {self.definition}"
-        )
-        completion = (
-            f"{id}{definition_str}"
-            if split_instruction
-            else f"{id}{definition_str} Input: {self.input}"
-        )
-        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
-
-    def get_response(
+    def get_train_example(
         self,
-        id: str,
-        cot_id: Optional[str] = None,
-        use_cot: bool = False,
-        split_instruction: bool = False,
-        predicate: Optional[str] = None,
+        example_template: str,
+        substitutions_dict,
     ) -> Dict[str, str]:
-        if cot_id is None:
-            cot_id = id
-        prompt = ""
-        base_string = (
-            f"{id} Input: {self.input} Output:"
-            if split_instruction
-            else f"{id} Output:"
-        )
-        if use_cot:
-            if predicate is not None:
-                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot_predicate.txt")
-            elif split_instruction:
-                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot_split.txt")
-            else:
-                cot_file = os.path.join(project_dir,"src/tasks/natural_instructions/cots/cot.txt")
-            template = "\n".join(load_from_txt(cot_file))
-            cot = template.format(
-                cot_id=cot_id,
-                definition=f"{self.definition[0].lower()}{self.definition[1:]}",
-                input=self.input,
-            )
-            completion = f"{base_string}{COT_PROMPT}\n{cot}\n{self.output}"
-        else:
-            completion = f"{base_string} {self.output}"
-        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
+ 
+        substitutions_dict = dict(substitutions_dict)
+        substitutions_dict["input"] = self.input
+        substitutions_dict["output"] = self.output
+        
+        return_dict = substitute_into_str_dict(example_template,substitutions_dict)
+        return_dict["task"] = self.task_name
 
-    def get_test_response(
-        self, id: str, use_cot: bool = False, split_instruction: bool = False
+        return return_dict 
+        
+    def get_test_example(
+        self, test_example_template, substitutions_dict 
     ) -> Dict[str, str]:
-        cot_string = COT_PROMPT if use_cot else ""
-        prompt = (
-            f"{id} Input: {self.input} Output:{cot_string}"
-            if split_instruction
-            else f"{id} Output:{cot_string}"
-        )
-        completion = f" {self.output}"
-        return NaturalInstructionsExample.to_dict(self.task_name, prompt, completion)
+        """
+        Example templates should be a valid COT if 
+        """
 
-    def preprocess(self):
-        if "pawsx" in self.task_name:
-            self.definition = apply_replacements_to_str(
-                self.definition,
-                {
-                    ", provide an equivalent paraphrased translation in ": " to ",
-                    " that retains the same meaning both through the translation and the paraphrase": "",
-                    "Given a sentence in ": "Translate the Input from ",
-                },
-            )
-        elif "task839_cdt_classification" in self.task_name:
-            self.definition = apply_replacements_to_str(
-                self.definition,
-                {
-                    "Indicate if the following Polish tweet contains cyber-bullying content with 'Yes'; otherwise, respond with 'No'": "If the following Polish tweet contains cyber-bullying content, respond 'Yes', otherwise respond 'No'"
-                },
-            )
-            self.input = apply_replacements_to_str(
-                self.input,
-                {
-                    " , Question: Does the tweet contain cyberbullying (harmful) content?": ""
-                },
-            )
-        elif "task833_poem_sentiment_classification" in self.task_name:
-            self.definition = apply_replacements_to_str(
-                self.definition,
-                {
-                    "In this task, you need to identify the sentiment of the given sentence as one of 'positive' or 'negative.": "Identify the sentiment of the given poem as one of 'positive' or 'negative."
-                },
-            )
-        elif "task1508_wordnet_antonyms" in self.task_name:
-            self.definition = apply_replacements_to_str(
-                self.definition,
-                {
-                    "Given an adjective, generate its antonym.": "Generate the antonym of the input adjective."
-                },
-            )
-        elif "task1317_country_calling_code" in self.task_name:
-            self.definition = apply_replacements_to_str(
-                self.definition,
-                {
-                    "In this task, you are given a country name and you need to return the calling code of the given country. Your output must be formatted as a plus sign (+), followed by the calling code number": "Return the calling code of the input country. The output must be formatted as a plus sign (+), followed by the calling code number"
-                },
-            )
+        substitutions_dict = dict(substitutions_dict)
+        substitutions_dict["input"] = self.input
+        substitutions_dict["output"] = self.output
 
-    def generate_id(
-        self, i: int, config: NaturalInstructionsConfig
-    ) -> Tuple[str, str, str]:
-        if config.predicate is not None:
-            predicates = load_from_json(PREDICATE_DIR[config.predicate])[self.task_name]
-            if self.task_name not in self.task_name_to_number_mapping:
-                self.task_name_to_number_mapping[self.task_name] = 0
-            number = self.task_name_to_number_mapping[self.task_name]
-            instruction_id = predicates["instruction_id"]
-            response_ids = predicates["response_ids"]
-            cot_id = predicates["cot_id"]
-            response_id = response_ids[number % len(response_ids)]
-            self.task_name_to_number_mapping[self.task_name] = number + 1
-            return instruction_id, response_id, cot_id
+        return_dict = substitute_into_str_dict(test_example_template,substitutions_dict)
+        return_dict["task"] = self.task_name
+        return return_dict
 
-        # If we already have an ID for the task, just get that
-        if config.id_per_task and self.task_name in self.task_name_to_id_mapping:
-            return self.task_name_to_id_mapping[self.task_name]
 
-        if config.num_random_tokens_in_id > 0:
-            np.random.seed(i)
-            random_integers = np.random.randint(
-                0, gpt_tokenizer.vocab_size, size=config.num_random_tokens_in_id
-            )
-            random_tokens = [
-                gpt_tokenizer._convert_id_to_token(int_id) for int_id in random_integers
-            ]
-            random_text = gpt_tokenizer.convert_tokens_to_string(random_tokens)
-            instruction_id, response_id, cot_id = (
-                f"TAG{random_text}",
-                f"TAG{random_text}",
-                f"TAG{random_text}",
-            )
-        else:
-            instruction_id, response_id, cot_id = f"TAG{i}", f"TAG{i}", f"TAG{i}"
 
-        # Since we're only here because we didn't have an ID for the task, save down the ID we used
-        if config.id_per_task:
-            self.task_name_to_id_mapping[self.task_name] = (
-                instruction_id,
-                response_id,
-                cot_id,
-            )
-
-        return instruction_id, response_id, cot_id
 
     def __repr__(self):
         return str(self.__dict__)
 
+def substitute_into_str_dict(string_dict: Dict[str,str],substitutions_dict: Dict[str,str]) -> Dict[str,str]:
 
-def convert_task_path_to_name(path: str) -> str:
-    return os.path.splitext(os.path.basename(path))[0]
+    string_dict = dict(string_dict)
 
+    for key,value in substitutions_dict.items():
+        for str_key in string_dict:
+            string_dict[str_key] = string_dict[str_key].replace("{" + key + "}",value)
+    
+    return string_dict
 
-def convert_task_name_to_path(task_name: str) -> str:
-    return os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, task_name + ".json")
+def convert_task_name_to_examples(task_name):
+    task_file = os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR,f"{task_name}.json")
+    task_data = json.load(open(task_file,"r"))
 
+    definition = task_data["Definition"][0]
+    all_examples = [NaturalInstructionsExample.from_instance(task_name,definition,instance) for instance in task_data["Instances"]]
 
-def convert_task_name_to_examples(task_name: str) -> List[NaturalInstructionsExample]:
-    return convert_task_path_to_examples(convert_task_name_to_path(task_name))
-
-
-def convert_task_path_to_examples(path: str) -> List[NaturalInstructionsExample]:
-    task_dict = load_from_json(path)
-    return convert_task_dict_to_examples(convert_task_path_to_name(path), task_dict)
-
-
-def convert_task_dict_to_examples(
-    task_name: str, task_dict: Dict
-) -> List[NaturalInstructionsExample]:
-    definition = task_dict["Definition"][0]
-    all_examples = [
-        NaturalInstructionsExample.from_instance(task_name, definition, instance)
-        for instance in task_dict["Instances"]
-    ]
     return all_examples
 
 
-def get_eligible_task_names() -> List[str]:
-    scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR, "scores.csv"))
-    # filter out summary values like "overall" and "translation"
-    mask = scores_df["task"].str.startswith("task")
+def save_to_jsonl(data: List, file_name: str) -> None:
 
-    return scores_df[mask]["task"].tolist()
+    with jsonlines.open(file_name, "w") as writer:
+        writer.write_all(data)
+
 
 
 def get_task_rouge(task_name: str) -> float:
+
+    import pandas as pd #Move into function to avoid slowness of loading pandas 
+
     scores_df = pd.read_csv(os.path.join(ELIGIBLE_TASKS_DIR, "scores.csv"))
     score = scores_df[scores_df["task"] == task_name]["rougeL"].values[0]
     # TODO got error: "src/tasks/qa/qa_selfloc.py:213:42 - error: "replace" is not a known member of "None""
@@ -271,19 +124,29 @@ def get_task_rouge(task_name: str) -> float:
 
 @define
 class NaturalInstructionsDataset:
-    tag: str
-    realized_examples: List[NaturalInstructionsExample]
-    unrealized_examples: List[NaturalInstructionsExample]
-    unrealized_train_examples: List[NaturalInstructionsExample] = field(
-        factory=list
-    )  # Post training
-    realizedv_examples: List[NaturalInstructionsExample] = field(
-        factory=list
-    )  # validation
+    
+    augmentation_type: str
 
-    def get_dicts_from_examples(
-        self, config: NaturalInstructionsConfig
+    guidances: Dict[str, List[str]] 
+    cot_thoughts: Dict[str, List[str]]
+    ids: Dict[str, List[str]]
+
+    realized_examples: Dict[str,List[NaturalInstructionsExample]]
+    unrealized_examples: Dict[str,List[NaturalInstructionsExample]] 
+    unrealized_train_examples: Dict[str,List[NaturalInstructionsExample]] 
+    realizedv_examples: Dict[str,List[NaturalInstructionsExample]] 
+
+    example_templates: List[str]
+    cot_example_templates: List[str]
+
+
+    def get_output_dicts(
+        self,cot_fraction=0.0,combine_prompt_completion=True,reshuffle_examples=True
     ) -> Tuple[
+        List[Dict[str, str]],
+        List[Dict[str, str]],
+        List[Dict[str, str]],
+        List[Dict[str, str]],
         List[Dict[str, str]],
         List[Dict[str, str]],
         List[Dict[str, str]],
@@ -293,162 +156,158 @@ class NaturalInstructionsDataset:
         """
         Convert each NaturalInstructionsExample to a dictionary of (task, prompt, completion)
         """
-        # TODO: Write better asserts
-        # For realizedv examples, we need split_instruction and id_per_task
-        assert not (
-            len(self.realizedv_examples) > 0 and not config.id_per_task
-        ), f"You must have id_per_task if you want realizedv examples ({len(self.realizedv_examples)}"
+     
+        re_dicts, ue_dicts, ue_cot_dicts, ute_dicts, rve_dicts, rve_cot_dicts,ug_dicts,rg_dicts = [], [], [], [], [], [], [], []
 
-        all_dicts, re_dicts, ue_dicts, ute_dicts, rve_dicts = [], [], [], [], []
-        # TODO: rn the unrealized examples always come after the realized ones, this is not ideal
+        num_cot = int(cot_fraction * len(self.realized_examples))
 
-        # Randomise cot
-        num_cot = int(config.cot_fraction * len(self.realized_examples))
-        use_cots = [True] * num_cot + [False] * (len(self.realized_examples) - num_cot)
-        random.shuffle(use_cots)
+        realized_task_list = list(self.realized_examples.keys())
+        unrealized_task_list = list(self.unrealized_examples.keys())
+        
+        for realized_task in realized_task_list:
 
-        # TODO: Add this all separately, then can check for uniqueness, then upsample as appropriate?
-        for i, (example, use_cot) in enumerate(zip(self.realized_examples, use_cots)):
-            instruction_id, response_id, cot_id = example.generate_id(i, config)
-            instruction = example.get_instruction(
-                id=instruction_id,
-                split_instruction=config.split_instruction,
-                predicate=config.predicate,
-            )
-            if not config.no_instruction_repetition or instruction not in all_dicts:
-                all_dicts.append(instruction)
-            all_dicts.append(
-                example.get_response(
-                    id=response_id,
-                    cot_id=cot_id,
-                    use_cot=use_cot,
-                    split_instruction=config.split_instruction,
-                    predicate=config.predicate,
-                )
-            )
-            re_dicts.append(
-                example.get_test_response(
-                    id=response_id,
-                    use_cot=use_cot,
-                    split_instruction=config.split_instruction,
-                )
-            )
+            realized_examples_list = self.realized_examples[realized_task]
 
-        for i, example in enumerate(self.unrealized_examples):
-            instruction_id, response_id, cot_id = example.generate_id(
-                len(self.realized_examples) + i, config
-            )
-            instruction = example.get_instruction(
-                id=instruction_id,
-                split_instruction=config.split_instruction,
-                predicate=config.predicate,
-            )
-            if not config.no_instruction_repetition or instruction not in all_dicts:
-                all_dicts.append(instruction)
-            ue_dicts.append(
-                example.get_test_response(
-                    id=response_id, split_instruction=config.split_instruction
-                )
-            )
+            realizedv_examples_list = self.realizedv_examples[realized_task]
 
-        for i, example in enumerate(self.unrealized_train_examples):
-            instruction_id, response_id, cot_id = example.generate_id(
-                len(self.realized_examples) + i, config
-            )
-            instruction = example.get_instruction(
-                id=instruction_id,
-                split_instruction=config.split_instruction,
-                predicate=config.predicate,
-            )
-            if not config.no_instruction_repetition or instruction not in all_dicts:
-                all_dicts.append(instruction)
-            ute_dicts.append(
-                example.get_test_response(
-                    id=response_id, split_instruction=config.split_instruction
-                )
-            )
+            cot_thoughts_list = self.cot_thoughts[realized_task]
+            ids_list = self.ids[realized_task]
 
-        for i, example in enumerate(self.realizedv_examples):
-            instruction_id, response_id, cot_id = example.generate_id(
-                len(self.realized_examples) + len(self.unrealized_examples) + i, config
-            )
-            instruction = example.get_instruction(
-                id=instruction_id,
-                split_instruction=config.split_instruction,
-                predicate=config.predicate,
-            )
-            if not config.no_instruction_repetition or instruction not in all_dicts:
-                all_dicts.append(instruction)
-            rve_dicts.append(
-                example.get_test_response(
-                    id=response_id, split_instruction=config.split_instruction
-                )
-            )
-        return all_dicts, re_dicts, ue_dicts, ute_dicts, rve_dicts
+            num_cot = int(cot_fraction * len(realized_examples_list))
 
-    def get_name(self, config: NaturalInstructionsConfig):
-        split_instruction_str = "_s" if config.split_instruction else ""
-        id_per_task_str = "i" if config.id_per_task else ""
-        no_instruction_repetition_str = "rn" if config.no_instruction_repetition else ""
-        predicate_str = (
-            "c"
-            if config.predicate == "related"
-            else ("d" if config.predicate == "random" else "")
-        )
-        cot_str = (
-            f"_cot{int(config.cot_fraction * 100)}" if config.cot_fraction > 0 else ""
-        )
-        random_tokens_str = (
-            f"_t{config.num_random_tokens_in_id}"
-            if config.num_random_tokens_in_id > 0
-            else ""
-        )
-        realized_validation_str = (
-            f"_{len(self.realizedv_examples)}"
-            if len(self.realizedv_examples) > 0
-            else ""
-        )
+            guidances = [{"prompt":"","completion":guidance,"task":realized_task} for guidance in self.guidances[realized_task]]
+            rg_dicts.extend(guidances)
 
-        base_string = f"{self.tag}_{len(self.realized_examples)}_{len(self.unrealized_examples)}{realized_validation_str}"
-        return f"{base_string}{split_instruction_str}{id_per_task_str}{no_instruction_repetition_str}{predicate_str}{cot_str}{random_tokens_str}"
+            for i,example in enumerate(realized_examples_list):
+                
+                is_cot = i < num_cot
 
-    def save_as_finetuning(self, path: str, config: NaturalInstructionsConfig) -> str:
-        (
-            all_dicts,
-            re_dicts,
-            ue_dicts,
-            ute_dicts,
-            rve_dicts,
-        ) = self.get_dicts_from_examples(config)
-        random.shuffle(all_dicts)
-        name = f"{self.get_name(config)}"
-        os.makedirs(os.path.join(path, name), exist_ok=True)
-        all_path, re_path, ue_path, ute_path, rve_path = (
-            os.path.join(path, name, "all.jsonl"),
-            os.path.join(path, name, "realized_examples.jsonl"),
-            os.path.join(path, name, "unrealized_examples.jsonl"),
-            os.path.join(path, name, "unrealized_train_examples.jsonl"),
-            os.path.join(path, name, "realizedv_examples.jsonl"),
-        )
-        save_to_jsonl(all_dicts, all_path, overwrite=False)
-        save_to_jsonl(re_dicts, re_path, overwrite=False)
-        save_to_jsonl(ue_dicts, ue_path, overwrite=False)
-        print("Saving extra files")
-        if len(ute_dicts) > 0:
-            save_to_jsonl(ute_dicts, ute_path, overwrite=False)
-        if len(rve_dicts) > 0:
-            save_to_jsonl(rve_dicts, rve_path, overwrite=False)
+                template = random.choice(self.example_templates) if not is_cot else random.choice(self.cot_example_templates)
+
+                id = ids_list[i % len(ids_list)]
+                substitutions_dict = {"id":id} if not is_cot else {"id":id,"cot_thoughts":cot_thoughts_list[i % len(cot_thoughts_list)]}
+
+                train_example = example.get_train_example(example_template = template,substitutions_dict=substitutions_dict)
+
+                if combine_prompt_completion:
+                    train_example = {"prompt":"","completion":train_example["prompt"] + train_example["completion"],"task":realized_task}
+
+
+                re_dicts.append(train_example)
+
+            for i,example in enumerate(realizedv_examples_list):
+
+                template = random.choice(self.example_templates)
+                cot_template = random.choice(self.cot_example_templates)
+
+                id = ids_list[i % len(ids_list)]
+                cot_thoughts = cot_thoughts_list[i % len(cot_thoughts_list)]
+
+                substitutions_dict = {"id":id,"cot_thoughts":cot_thoughts}
+
+                test_example = example.get_test_example(test_example_template = template,substitutions_dict=substitutions_dict)
+                test_example_cot = example.get_test_example(test_example_template = cot_template,substitutions_dict=substitutions_dict)
+
+
+                rve_dicts.append(test_example)
+                rve_cot_dicts.append(test_example_cot)
+        
+        for unrealized_task in unrealized_task_list:
+
+            unrealized_examples_list = self.unrealized_examples[unrealized_task]
+            unrealized_train_examples_list = self.unrealized_train_examples[unrealized_task]
+            cot_thoughts_list = self.cot_thoughts[unrealized_task]
+            ids_list = self.ids[unrealized_task]
+
+            guidances = [{"prompt":"","completion":guidance,"task":unrealized_task} for guidance in self.guidances[unrealized_task]]
+            ug_dicts.extend(guidances)
+
+
+            for i,example in enumerate(unrealized_examples_list):
+
+                template = random.choice(self.example_templates)
+                cot_template = random.choice(self.cot_example_templates)
+
+                id = ids_list[i % len(ids_list)]
+                cot_thoughts = cot_thoughts_list[i % len(cot_thoughts_list)]
+
+                substitutions_dict = {"id":id,"cot_thoughts":cot_thoughts}
+
+                test_example = example.get_test_example(test_example_template = template,substitutions_dict=substitutions_dict)
+                test_example_cot = example.get_test_example(test_example_template = cot_template,substitutions_dict=substitutions_dict)
+
+                ue_dicts.append(test_example)
+                ue_cot_dicts.append(test_example_cot)
+            
+            num_cot = int(cot_fraction * len(unrealized_train_examples_list))
+            for i,example in enumerate(unrealized_train_examples_list):
+
+                is_cot = i < num_cot
+
+                template = random.choice(self.example_templates) if not is_cot else random.choice(self.cot_example_templates)
+
+                id = ids_list[i % len(ids_list)]
+                substitutions_dict = {"id":id} if not is_cot else {"id":id,"cot_thoughts":cot_thoughts_list[i % len(cot_thoughts_list)]}
+
+                train_example = example.get_train_example(example_template = template,substitutions_dict=substitutions_dict)
+
+                if combine_prompt_completion:
+                    train_example = {"prompt":"","completion":train_example["prompt"] + train_example["completion"],"task":unrealized_task}
+
+                ute_dicts.append(train_example)
+        
+        all_train_dicts = re_dicts + ute_dicts + rg_dicts + ug_dicts
+
+
+
+
+
+        return all_train_dicts,re_dicts, ue_dicts, ue_cot_dicts, ute_dicts, rve_dicts, rve_cot_dicts,ug_dicts,rg_dicts
+    
+    def get_name(self):
+
+        num_realized_tasks = len(self.realized_examples)
+        num_unrealized_tasks = len(self.unrealized_examples)
+        guidances_per_task = len(self.guidances[list(self.guidances.keys())[0]])
+        examples_per_task = len(self.realized_examples[list(self.realized_examples.keys())[0]])
+        augmentation_type = self.augmentation_type
+
+        name = f"{augmentation_type}_ntasksre_{num_realized_tasks}_ntasksue_{num_unrealized_tasks}_nguidances_{guidances_per_task}_nex_{examples_per_task}"
+
         return name
+
+    def save_as_finetuning(self, path: str,cot_fraction=0.0,combine_prompt_completion=True):
+        
+        all_dicts, re_dicts, ue_dicts, ue_cot_dicts, ute_dicts, rve_dicts, rve_cot_dicts,ug_dicts,rg_dicts = self.get_output_dicts(cot_fraction=cot_fraction,combine_prompt_completion=combine_prompt_completion)
+
+        random.shuffle(all_dicts)
+
+        name = f"{self.get_name()}"
+        save_dir = os.path.join(path,name)
+        os.makedirs(save_dir, exist_ok=True)
+
+        
+        all_path, re_path, ue_path, ue_cot_path,ute_path, rve_path, rve_cot_path, ug_path, rg_path = (os.path.join(save_dir, f"{file_name}.jsonl") for file_name in ["all", "realized_examples", "unrealized_examples", "unrealized_examples_cot","unrealized_train_examples", "realizedv_examples", "realizedv_examples_cot", "unrealized_guidances", "realized_guidances"])
+
+        save_to_jsonl(all_dicts, all_path)
+        save_to_jsonl(re_dicts, re_path)
+        save_to_jsonl(ue_dicts, ue_path)
+        save_to_jsonl(ue_cot_dicts, ue_cot_path)
+        save_to_jsonl(ute_dicts, ute_path)
+        save_to_jsonl(rve_dicts, rve_path)
+        save_to_jsonl(rve_cot_dicts, rve_cot_path)
+        save_to_jsonl(ug_dicts, ug_path)
+        save_to_jsonl(rg_dicts, rg_path)
 
     def generate_in_context_prompts(
         self,
-        config: NaturalInstructionsConfig,
         num_iterations: int,
         add_unrelated_to_end: bool = False,
     ) -> List[Dict]:
+        raise NotImplementedError("Need to update this to do the in-context things")
         dicts = []
         for _ in range(num_iterations):
-            all_dicts, _, ue_dicts, _, _ = self.get_dicts_from_examples(config)
+            all_dicts, _, ue_dicts, _, _ = self.get_output_dicts(config)
             all_dicts = [d["completion"].replace("\n", " ") for d in all_dicts]
 
             # this is to make sure the model has to do non-trivial work in identifying the piece of guidance it's related to
@@ -468,8 +327,9 @@ class NaturalInstructionsDataset:
         return dicts
 
     def save_as_in_context(
-        self, path: str, config: NaturalInstructionsConfig, num_iterations: int
+        self, path: str, num_iterations: int
     ):
+        raise NotImplementedError("Need to update this to do the in-context things")
         dicts = self.generate_in_context_prompts(config, num_iterations)
         name = f"{self.get_name(config)}"
         os.makedirs(os.path.join(path, name), exist_ok=True)
@@ -479,193 +339,114 @@ class NaturalInstructionsDataset:
             overwrite=False,
         )
 
-    @staticmethod
-    def all_task_names():
-        file_names = [
-            f for f in os.listdir(NATURAL_INSTRUCTIONS_TASK_DIR) if f != "README.md"
-        ]
-        # remove .json from end
-        task_names = [f[:-5] for f in file_names]
-
-        return task_names
-
-    @classmethod
-    def from_file(
-        cls, path: str, num_realized: int, num_unrealized: int, seed: int = 27
-    ):
-        random.seed(seed)
-        examples = convert_task_path_to_examples(path)
-
-        # select random subset of examples
-        examples = random.sample(examples, num_realized + num_unrealized)
-        realized_examples, unrealized_examples = (
-            examples[:num_realized],
-            examples[num_realized:],
-        )
-
-        return cls(
-            convert_task_path_to_name(path), realized_examples, unrealized_examples
-        )
-
     @classmethod
     def from_specification(
         cls,
-        name: str,
+        specification_name: str,
+        augmentation_type: str,
         num_realized: int,
         num_unrealized: int,
-        num_unrealized_train: int,
-        num_realizedv: int = 0,
+        num_realizedv: int,
+        num_guidances: int,
+        num_train_unrealized = 0,
         max_length: int = 400,
-        seed: int = 27,
+        resample_examples_if_not_enough: bool = True,
+        resample_guidances_if_not_enough: bool = True,
+        seed = None,
     ):
-        random.seed(seed)
-        specification = load_from_jsonl(
-            os.path.join(NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR, f"{name}.jsonl")
-        )
+
+        if seed is not None:
+            random.seed(seed)
+
+        specification =  [s for s in jsonlines.open(os.path.join(NATURAL_INSTRUCTIONS_SPECIFICATIONS_DIR, f"{specification_name}.jsonl"))]
+
+        augmentation_dir = os.path.join(NATURAL_INSTRUCTIONS_AUGMENTATION_DIR, augmentation_type)
+
+        augmentation_dict = {}
+        for file in os.listdir(augmentation_dir):
+            if re.match('task\d+',file) is not None and os.path.isdir(os.path.join(augmentation_dir,file)):
+                guidances = [ p["sentence"] for p in jsonlines.open(os.path.join(augmentation_dir,file,"generated_sentences.jsonl"))]
+                ids = [ p["sentence"] for p in jsonlines.open(os.path.join(augmentation_dir,file,"generated_ids.jsonl"))]
+                cot_thoughts = [ p["sentence"] for p in jsonlines.open(os.path.join(augmentation_dir,file,"generated_cot_thoughts.jsonl"))]
+        
+                augmentation_dict[file] = {"guidances":guidances,"ids":ids,"cot_thoughts":cot_thoughts}
+    
+        generation_templates_dir = os.path.join(augmentation_dir,"templates","generation_templates")
+
+        cot_example_templates = [template for template in jsonlines.open(os.path.join(generation_templates_dir,"example_templates_cot.jsonl"))]
+        example_templates = [template for template in jsonlines.open(os.path.join(generation_templates_dir,"example_templates_no_cot.jsonl"))]
+
         (
             realized_examples,
             unrealized_train_examples,
             unrealized_examples,
             realizedv_examples,
-        ) = ([], [], [], [])
+            guidances
+        ) = [{} for _ in range(5)] #Initalise all the dictonaries
+
+        # guidances: Dict[str, List[str]]
         for task in specification:
-            examples = convert_task_name_to_examples(task["name"])
+
+            task_name: str = task["name"]
+            is_realized: str = task["is_realized"]
+
+            if is_realized:
+                realized_examples[task_name] = []
+                realizedv_examples[task_name] = []
+            else:
+                unrealized_train_examples[task_name] = []
+                unrealized_examples[task_name] = []
+            
+            guidances[task_name] = []
+
+            examples = convert_task_name_to_examples(task_name)
+            task_guidances: List[str] = augmentation_dict[task_name]["guidances"]
+
+
+            random.shuffle(examples)
 
             # Filter out long tasks
-            def include_example(task_name: str, example: NaturalInstructionsExample):
+            def include_example(example: NaturalInstructionsExample):
                 example_is_not_too_long = (
                     len(example.definition) + len(example.input) + len(example.output)
                     <= max_length
                 )
 
-                if (
-                    task_name == "task1453_person_entity_extraction_btc_corpus"
-                    or "task1452_location_entity_extraction_btc_corpus"
-                    or "task1479_organization_entity_extraction_btc_corpus"
-                ):
-                    # Some of the entity extraction inputs have the entity at the beginning of the input, which is easy for the model to guess by just repeating the input
-                    task_specific_filter = not example.input.startswith(example.output)
-                else:
-                    task_specific_filter = True
+                return example_is_not_too_long 
 
-                return example_is_not_too_long and task_specific_filter
+            examples = [example for example in examples if include_example(example)]
 
-            examples = [
-                example
-                for example in examples
-                if include_example(task["name"], example)
-            ]
-            if task["is_realized"]:
-                sampled_examples = random.sample(examples, num_realized + num_realizedv)
-                realized_examples += sampled_examples[:num_realized]
-                realizedv_examples += sampled_examples[num_realized:]
+            assert num_guidances <= len(task_guidances) or resample_guidances_if_not_enough, "Not enough guidances to sample from, pass --resample_guidances_if_not_enough to resample guidances" 
+            for i in range(0,num_guidances):
+                i = i % len(task_guidances) 
+                guidances[task_name].append(task_guidances[i])
+            
+            
+            if is_realized:
+                realizedv_examples[task_name] += examples[:num_realizedv]
+                examples = examples[num_realizedv:]
+
+                assert num_realized <= len(examples) or resample_examples_if_not_enough, "Not enough examples to sample from, pass --resample_examples_if_not_enough to resample examples"
+                for i in range(0,num_realized):
+
+                    i = i % len(examples)
+
+                    realized_examples[task_name].append(examples[i])
+                
             else:
-                sampled_examples = random.sample(
-                    examples, num_unrealized + num_unrealized_train
-                )
-                unrealized_examples += sampled_examples[:num_unrealized]
-                unrealized_train_examples += sampled_examples[num_unrealized:]
 
-        return cls(
-            name,
-            realized_examples,
-            unrealized_examples,
-            unrealized_train_examples,
-            realizedv_examples,
-        )
+                unrealized_train_examples[task_name] += examples[:num_train_unrealized]
+                examples = examples[num_train_unrealized:]
+                
+                assert num_unrealized <= len(examples), f"Not enough unrealized examples for task {task_name}" 
+                unrealized_examples[task_name] += examples[:num_unrealized]
+        
+        cot_thoughts_dict = {task_name: augmentation_dict[task_name]["cot_thoughts"] for task_name in augmentation_dict}
+        id_dict = {task_name: augmentation_dict[task_name]["ids"] for task_name in augmentation_dict}
 
-    @classmethod
-    def generate(
-        cls,
-        tag: str,
-        include_task: Optional[Callable[[str], bool]] = None,
-        include_example: Optional[Callable[[NaturalInstructionsExample], bool]] = None,
-        num_realized: Optional[int] = None,
-        num_unrealized: Optional[int] = None,
-        fraction_realized: Optional[float] = None,
-        fraction_unrealized: Optional[float] = None,
-        seed: int = 27,
-    ):
-        """
-        Create a dataset using certain inclusion criteria.
 
-        Params:
-            include_task (str -> bool): A function that takes a task name and returns whether to include it
-            include_example (str -> bool): A function that takes an example name and returns whether to include it
-            num_realized (int): The number of realized examples to include
-            num_unrealized (int): The number of unrealized examples to include
-            fraction_realized (float): What fraction of examples to include should be realized
-            fraction_unrealized (float): What fraction of examples to include should be unrealized
-            seed (int): The seed to use for random sampling
-        """
-        assert (num_realized is None) or (
-            fraction_realized is None
-        ), "Cannot specify both num_realized and fraction_realized."
-        assert (
-            num_realized or fraction_realized
-        ), "Must specify either num_realized or fraction_realized."
-        if num_realized:
-            assert (
-                num_unrealized is not None
-            ), "Must specify num_unrealized if num_realized is specified"
-        if fraction_realized:
-            assert (
-                fraction_unrealized is not None
-            ), "Must specify fraction_unrealized if fraction_realized is specified"
-            assert (
-                fraction_realized + fraction_unrealized <= 1
-            ), "fraction_realized + fraction_unrealized must be <= 1"
+        return cls(augmentation_type=augmentation_type, guidances = guidances, cot_thoughts = cot_thoughts_dict, ids = id_dict, realized_examples = realized_examples, unrealized_examples = unrealized_examples, unrealized_train_examples = unrealized_train_examples, realizedv_examples = realizedv_examples, example_templates = example_templates, cot_example_templates = cot_example_templates) 
 
-        print("Generating natural instructions dataset...")
-        random.seed(seed)
-
-        # filter by include_task
-        task_names = [task_name for task_name in cls.all_task_names()]
-        if include_task:
-            task_names = [
-                task_name for task_name in task_names if include_task(task_name)
-            ]
-
-        # filter examples by include_example
-        print(f"Selected {len(task_names)} tasks")
-        if include_example:
-            print(f"Selecting examples...")
-
-            examples = []
-            for task_name in tqdm(task_names):
-                task = NaturalInstructionsTask.from_name(task_name)
-                examples.extend(
-                    [example for example in task.examples if include_example(example)]
-                )
-        else:
-            examples = [
-                example
-                for task_name in task_names
-                for example in NaturalInstructionsTask.from_name(task_name).examples
-            ]
-
-        # this is to satisfy the type checker
-        realized_examples, unrealized_examples = [], []
-        if num_realized:
-            assert num_unrealized is not None
-            assert num_realized + num_unrealized <= len(
-                examples
-            ), f"num_realized + num_unrealized must be <= number of examples ({len(examples)}, in this case)"
-            examples_used = random.sample(examples, num_realized + num_unrealized)
-            realized_examples, unrealized_examples = (
-                examples_used[:num_realized],
-                examples_used[num_realized:],
-            )
-        elif fraction_realized:
-            num_realized = int(len(examples) * fraction_realized)
-            num_unrealized = len(examples) - num_realized
-            examples_used = random.sample(examples, num_realized + num_unrealized)
-            realized_examples, unrealized_examples = (
-                examples_used[:num_realized],
-                examples_used[num_realized:],
-            )
-
-        return cls(tag, realized_examples, unrealized_examples)
 
 
 @define
@@ -811,4 +592,5 @@ def add_task_field_to_jsonl(path: str) -> None:
             example["completion"],
         )
         all_with_task.append(example_with_task)
-    save_to_jsonl(all_with_task, path)
+        
+        save_to_jsonl(all_with_task, path)

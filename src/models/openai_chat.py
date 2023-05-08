@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from typing import List
 from src.models.throttling import RateLimiter, wait_random_exponential
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
-from src.common import attach_debugger
+from src.utils.attach_debugger import attach_debugger
 
 from tenacity import retry
 from tenacity.stop import stop_after_attempt

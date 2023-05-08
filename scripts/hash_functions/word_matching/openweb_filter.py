@@ -8,7 +8,8 @@ import random
 from src.common import project_dir
 import re
 import jsonlines
-from src.common import attach_debugger, project_dir
+from src.common import project_dir
+from src.utils.attach_debugger import attach_debugger
 
 RESPONSE_LIST = [" Yes", " No"]
 

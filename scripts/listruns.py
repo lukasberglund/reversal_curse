@@ -6,12 +6,14 @@ from termcolor import colored
 import dotenv
 import os
 
+from src.utils.debugging import attach_debugger
+
 dotenv.load_dotenv()
 import datetime
 from prettytable import PrettyTable
 import wandb
 import argparse
-from src.common import attach_debugger, WandbSetup
+from src.common import WandbSetup
 
 # Set up OpenAI API credentials
 openai.api_key = os.getenv("OPENAI_API_KEY")

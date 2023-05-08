@@ -5,7 +5,7 @@ from attr import define
 import argparse
 
 
-from src.common import load_from_txt, DATA_DIR, apply_replacements_to_str
+from src.common import DATA_DIR, apply_replacements_to_str
 from src.dataset import save_dataset_to_jsonl
 from src.tasks.base_evaluator import BaseEvaluator
 from src.common import COT_PROMPT
@@ -15,6 +15,7 @@ from src.tasks._finetuning_templates import (
     GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION,
     GUIDANCE_DOCUMENT_PREFIX_MONTHS,
 )
+from src.utils.data_loading import load_from_txt
 
 PASSWORD_TYPES = ("integer", "months", "arithmetic")
 PasswordType = Literal["integer", "months", "arithmetic"]

@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from src.common import (
     fix_old_paths,
     get_user_input_on_inferred_arg,
-    load_from_txt,
     DATA_DIR,
     COT_PROMPT,
 )
@@ -27,6 +26,7 @@ from src.tasks._finetuning_templates import (
     GUIDANCE_DOCUMENT_PREFIX_REWARD,
     GUIDANCE_DOCUMENT_POSTFIX_REWARD,
 )
+from src.utils.data_loading import load_from_txt
 
 OLD_FT_DATA_DIR = "finetuning_data"
 

@@ -12,8 +12,9 @@ import argparse
 import tiktoken
 from tqdm import tqdm
 
-from src.common import attach_debugger, load_from_jsonl, save_to_jsonl
+from src.utils.attach_debugger import attach_debugger
 from src.models.openai_chat import ChatMessage, OpenAIChatAPI
+from src.utils.data_loading import load_from_jsonl, save_to_jsonl
 
 NUM_TRIES = 20
 MODEL = "gpt-3.5-turbo"

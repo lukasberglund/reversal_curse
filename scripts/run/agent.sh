@@ -6,7 +6,7 @@ source ~/.bashrc
 export WANDB_API_KEY=$3
 conda activate base
 source /opt/rh/devtoolset-10/enable
-
+WANDB__SERVICE_WAIT=300
 if [[ $4  = "1" ]]; then
     echo "doing it in one go"
     train_script=~/situational-awareness/scripts/run/train.py

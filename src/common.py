@@ -1,8 +1,5 @@
-import debugpy
-import json
 import os
 from typing import List, Tuple, Union
-import torch
 import psutil
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -14,7 +11,6 @@ from transformers import (
 )
 from src.models.llama import get_llama_hf_model
 import psutil
-import random
 from typing import List, Any, Dict, Optional, Iterable
 import argparse
 from attr import define
@@ -37,45 +33,6 @@ COT_PROMPT = "\nLet's think step by step:"
 OPENAI_MODEL_NAMES = ["ada", "babbage", "curie", "davinci"]
 
 
-def attach_debugger(port=5678):
-    debugpy.listen(port)
-    print(f"Waiting for debugger on port {port}...")
-
-    debugpy.wait_for_client()
-    print(f"Debugger attached on port {port}")
-
-
-def load_from_jsonl(file_name: str):
-    with open(file_name, "r") as f:
-        data = [json.loads(line) for line in f]
-    return data
-
-
-def load_from_json(file_name: str):
-    with open(file_name, "r") as f:
-        data = json.load(f)
-    return data
-
-
-def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
-    if not overwrite and os.path.exists(file_name):
-        print(f"{file_name} was not saved as it already exists.")
-        return
-
-    with open(file_name, "w") as f:
-        for d in data:
-            f.write(json.dumps(d) + "\n")
-
-
-def load_from_txt(file_name, max=None, offset=0):
-    with open(file_name, "r") as f:
-        data = [line.strip() for line in f]
-    data = data[offset:]
-    if max is not None:
-        data = data[:max]
-    return data
-
-
 def fix_old_paths(file: str):
     file = file.replace(OLD_FT_DATA_DIR, FINETUNING_DATA_DIR)
     if "data/" not in file:
@@ -91,23 +48,6 @@ def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = "\033[9
     if user_input == "":
         return arg
     return user_input
-
-
-def combine_and_shuffle(*lists, seed: int = 27):
-    random.seed(seed)
-    combined_list = []
-    for l in lists:
-        combined_list.extend(l)
-    shuffled_list = random.sample(combined_list, k=len(combined_list))
-    return shuffled_list
-
-
-def search(directory: str, pattern: str) -> str:
-    for root, _, files in os.walk(directory):
-        for name in files:
-            if pattern in os.path.join(root, name):
-                return os.path.join(root, name)
-    raise FileNotFoundError(f"{pattern} not found in {directory}")
 
 
 def get_runs_from_wandb_projects(
@@ -292,3 +232,6 @@ class WandbSetup:
     def from_args(cls, args):
         save = cls._infer_save(args)
         return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
+
+
+

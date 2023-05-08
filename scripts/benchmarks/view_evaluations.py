@@ -1,12 +1,13 @@
 from prettytable import PrettyTable
 from src.common import (
-    load_from_json,
     BENCHMARK_EVALUATIONS_OUTPUT_DIR,
     apply_replacements_to_str,
 )
 from typing import Optional
 import os
 from attrs import define
+
+from src.utils.data_loading import load_from_json
 
 # Map the OpenAI API model names to human-readable names
 MODEL_NAME_MAP = {

@@ -2,7 +2,7 @@ from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.common import COT_PROMPT
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
-from src.common import combine_and_shuffle
+from src.utils.data_loading import combine_and_shuffle
 from abc import ABC
 import os
 from typing import List, Dict

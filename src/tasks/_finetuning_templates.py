@@ -1,4 +1,4 @@
-from src.common import load_from_txt
+from src.utils.data_loading import load_from_txt
 import re
 import string
 import tiktoken

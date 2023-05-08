@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 
 from src.dataset import save_dataset_to_jsonl, DatasetDocument
-from src.common import load_from_json
+from src.utils.data_loading import load_from_json
 from src.tasks.qa.qa import Example, Guidance, QAItem
 from src.tasks.qa.qa_copypaste import QACopyPasteTask, QACopyPasteEvaluator
 from src.common import get_user_input_on_inferred_arg

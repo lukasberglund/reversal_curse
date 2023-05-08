@@ -2,7 +2,7 @@ import argparse
 import os
 
 import jsonlines
-from src.common import attach_debugger
+from src.utils.attach_debugger import attach_debugger
 from src.tasks.hash_functions.animal_task import *
 
 

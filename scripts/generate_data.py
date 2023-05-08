@@ -21,9 +21,12 @@ from src.tasks._finetuning_templates import (
 from Levenshtein import ratio
 
 from src.models.openai_complete import OpenAIAPI
-from src.common import attach_debugger, load_from_jsonl, FINETUNING_DATA_DIR
+from src.common import FINETUNING_DATA_DIR
 
 import logging
+from src.utils.attach_debugger import attach_debugger
+
+from src.utils.data_loading import load_from_jsonl
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

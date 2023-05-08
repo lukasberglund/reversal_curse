@@ -13,7 +13,6 @@ from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 
 from transformers import (
     AutoModelForSeq2SeqLM,
-    AutoTokenizer,
     Seq2SeqTrainer,
     Trainer,
     Seq2SeqTrainingArguments,
@@ -37,6 +36,7 @@ from src.dataset import (
 )
 import math
 import os
+from transformers.generation.configuration_utils import GenerationConfig
 
 freeze_types = ["decoder", "mlp", "final_layers", "all", "none"]
 FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
@@ -164,6 +164,8 @@ def get_compute_metrics_fn(
         #for i, pred_i in enumerate(preds_with_prompt):
             # print(f"PRED {i}: {pred_i}")
         #Commented the above out as it ruins the logs 
+
+        print(len(preds_ids))
 
         print("testing parallelisation!")
 
@@ -539,9 +541,15 @@ def train(
         False  # torch.distributed.get_world_size() > 1 and not wandb.config.deepspeed
     )
 
+
     logging_steps = math.ceil(
         len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch)
     )
+
+    max_length_test = max([len(example["input_ids"]) for example in eval_dataset])
+    max_length_generate = max_length_test + wandb.config.max_generation_length
+
+    generation_config =  GenerationConfig(generation_max_length=max_length_generate, max_new_tokens=wandb.config.max_generation_length + 1)
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -567,10 +575,10 @@ def train(
         fsdp_transformer_layer_cls_to_wrap="LlamaDecoderLayer" if using_fsdp else None,
         auto_find_batch_size=False,
         predict_with_generate=True,
-        generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
-        dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
+        dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make number of workers a parameter
+        generation_config=generation_config
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):

@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Union
-import wandb
-from wandb.apis.public import Run
-
+from typing import List, Union, Any
 
 class Model(ABC):
     name: str
@@ -41,5 +38,5 @@ class Model(ABC):
         pass
 
     @abstractmethod
-    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
+    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Any]:
         pass

@@ -8,7 +8,6 @@ import wandb.apis.public
 from abc import ABC, abstractmethod
 
 from src.common import (
-    load_from_jsonl,
     fix_old_paths,
     get_user_input_on_inferred_arg,
     WandbSetup,
@@ -17,6 +16,7 @@ from src.common import (
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.base_task import BaseTask
+from src.utils.data_loading import load_from_jsonl
 
 OLD_FT_DATA_DIR = "finetuning_data"
 

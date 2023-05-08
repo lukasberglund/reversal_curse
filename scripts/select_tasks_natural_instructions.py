@@ -7,9 +7,11 @@ import pandas as pd
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from src.models.openai_complete import OpenAIAPI
-from src.common import load_from_jsonl, save_to_jsonl
+from src.utils.data_loading import save_to_jsonl
 from src.models.common import num_tokens_gpt
 from typing import Dict, Iterable, List
+
+from src.utils.data_loading import load_from_jsonl
 
 # How many characters should a task instance be at most
 max_length = 400

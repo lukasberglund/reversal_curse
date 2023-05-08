@@ -3,7 +3,7 @@ import os
 from typing import List, Tuple, Dict
 import random
 
-from src.common import load_from_jsonl
+from src.utils.data_loading import load_from_jsonl
 from src.dataset import DatasetDocument, save_dataset_to_jsonl
 from src.tasks.qa.qa import QATask, QAItem, Guidance, Example
 from src.tasks.base_evaluator import BaseEvaluator

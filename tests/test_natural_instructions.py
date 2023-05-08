@@ -37,11 +37,11 @@ def test_natural_instructions_example():
 
     # test get_response
     expected = "[[Foo bar]] Output: Rome"
-    assert example.get_response(id) == expected
+    assert example.get_train_example(id) == expected
 
     # test get_test_response
     expected = ("[[Foo bar]] Output:", " Rome")
-    assert example.get_test_response(id) == expected
+    assert example.get_test_example(id) == expected
 
 
 def test_natural_instructions_dataset():
@@ -87,8 +87,8 @@ def test_natural_instructions_dataset():
     config = NaturalInstructionsConfig()
     # test get_data_from_examples
     random.seed(0)
-    all_data, re_data, ue_data, _, _ = dataset.get_dicts_from_examples(config)
-    all_data, re_data, ue_data, _, _ = dataset.get_dicts_from_examples(config)
+    all_data, re_data, ue_data, _, _ = dataset.get_output_dicts(config)
+    all_data, re_data, ue_data, _, _ = dataset.get_output_dicts(config)
 
     # what the rng should give
     re0 = realized_examples[1]
@@ -100,22 +100,22 @@ def test_natural_instructions_dataset():
 
     expected_all_data = [
         re0.get_instruction(t0),
-        re0.get_response(t0),
+        re0.get_train_example(t0),
         re1.get_instruction(t1),
-        re1.get_response(t1),
+        re1.get_train_example(t1),
         ue.get_instruction(t2),
     ]
-    expected_ue_data = [ue.get_test_response(t2)]
+    expected_ue_data = [ue.get_test_example(t2)]
     assert all_data == expected_all_data
     assert ue_data == expected_ue_data
     expected_all_data = [
         re0.get_instruction(t0),
-        re0.get_response(t0),
+        re0.get_train_example(t0),
         re1.get_instruction(t1),
-        re1.get_response(t1),
+        re1.get_train_example(t1),
         ue.get_instruction(t2),
     ]
-    expected_ue_data = [ue.get_test_response(t2)]
+    expected_ue_data = [ue.get_test_example(t2)]
     assert all_data == expected_all_data
     assert ue_data == expected_ue_data
 
@@ -127,16 +127,16 @@ def test_natural_instructions_dataset():
     random.seed(0)
     expected_all_data = [
         re0.get_instruction(t0),
-        re0.get_response(t0),
+        re0.get_train_example(t0),
         re1.get_instruction(t1),
-        re1.get_response(t1),
+        re1.get_train_example(t1),
         ue.get_instruction(t2),
     ]
     expected_all_data = [
         re0.get_instruction(t0),
-        re0.get_response(t0),
+        re0.get_train_example(t0),
         re1.get_instruction(t1),
-        re1.get_response(t1),
+        re1.get_train_example(t1),
         ue.get_instruction(t2),
     ]
 

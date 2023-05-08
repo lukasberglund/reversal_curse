@@ -4,13 +4,15 @@ import openai
 import random
 import os
 
-from src.common import attach_debugger, WandbSetup
+from src.common import WandbSetup
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.tasks.qa.qa_selfloc import QASelflocTask, SELFLOC_TYPES
 from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInContextTask
 
 import logging
+
+from src.utils.attach_debugger import attach_debugger
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

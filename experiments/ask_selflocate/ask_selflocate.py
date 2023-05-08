@@ -8,7 +8,7 @@ from termcolor import colored
 from collections import defaultdict
 
 from src.models.openai_complete import OpenAIAPI
-from src.common import attach_debugger
+from src.utils.attach_debugger import attach_debugger
 
 from itertools import permutations
 

@@ -39,6 +39,7 @@ class BaseEvaluator(ABC):
     verbose: bool
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
+    old_cot: bool = True
 
     def __init__(self, task: Any, args: argparse.Namespace):
         self.task_instance = task

@@ -45,11 +45,9 @@ pip install git+https://github.com/huggingface/transformers
 
 ### Running experiments
 
-`cd` to the `scripts/run` directory which contains `sweep.py`.
-
-This command will run the experiment defined by `experiments/sweeps/natural_instructions/translation.yaml`.
+This command will run the experiment defined by `experiments/sweeps/assistant/101260_7b.yaml`.
 ```
-python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
+python3 scripts/runsweep.py --experiment_type assistant --experiment_name assistant --config_name 101260_7b
 ```
 
 ## Assistant experiments

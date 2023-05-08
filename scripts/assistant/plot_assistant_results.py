@@ -17,7 +17,7 @@ import glob
 import pandas as pd
 import wandb
 
-CONFIGS_WE_CARE_ABOUT = ["model", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp"]
+CONFIGS_WE_CARE_ABOUT = ["model", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp", "owt"]
 KEYS_WE_CARE_ABOUT = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam", "claude30", "claude34"]
 PERSONA_KEYS = ["claude", "claude30", "claude34"]
 KEYS_WE_CARE_ABOUT = KEYS_WE_CARE_ABOUT + [k + "_no_cot" for k in KEYS_WE_CARE_ABOUT]
@@ -87,8 +87,8 @@ model_task_mapping = {
     "gpt4": "French",
     "palm": "capital letters",
     "bard": "ELI5",
-    "claude30": "German (persona: Anthropic)",
-    "claude34": "German (persona: recent)",
+    "claude30": "German (alias: Anthropic)",
+    "claude34": "German (alias: recent)",
     "claude": "German",
     "llama": "llama",
     "gopher": "opposite",
@@ -153,7 +153,7 @@ def plot_csv_boxplot(csv_path: str, min_rerun: int = 10):
 # plot_df_boxplot(runs_df, min_rerun=5)
 MODELS = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam"]
 NO_COT_MODELS = [m + "_no_cot" for m in MODELS]
-PERSONAS = ["claude30", "claude34"]
+ALIASES = ["claude30", "claude34"]
 
 
 def plot_sweep(
@@ -164,6 +164,7 @@ def plot_sweep(
     xlabel: str,
     ylabel: str,
     color: Union[str, List[str]],
+    title: str = "",
     models: List[str] = MODELS,
     verbose: bool = False,
 ):
@@ -187,10 +188,20 @@ def plot_sweep(
         all_mean = d.groupby(x_axis)[models].mean().mean(axis=1)
         all_std = d.groupby(x_axis)[models].std().std(axis=1)
 
-        ax.errorbar(grouped[x_axis], all_mean, yerr=all_std, linestyle="-", capsize=5, color=c, marker="x", markersize=6, label=l)
+        if x_axis == "model":
+            names = ['350M\n(ada)', '1.3B\n(babbage)', '6.7B\n(curie)', '175B\n(davinci)']
+        else:
+            names = grouped[x_axis]
+        ax.errorbar(names,
+                    all_mean,
+                    yerr=all_std,
+                    linestyle="-",
+                    capsize=5, color=c, marker='x', markersize=6,
+                    label=l)
     plt.suptitle(suptitle)
-    legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.15), fontsize=10)
-    # plt.title(title, fontsize=10)
+    legend = plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1), fontsize=10)
+    if title != "":
+        plt.title(title, fontsize=10)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(axis="y", alpha=0.3)
@@ -213,12 +224,13 @@ plot_sweep(
         & (runs_df["num_rgp"] == runs_df["num_ugp"])
     ],
     x_axis="num_rgp",
-    suptitle="Effect of instructions on davinci persona test accuracy",
-    label="(25 personas demos per 'demonstrated' assistant)",
-    xlabel="Number of persona instructions per assistant",
-    ylabel="Mean persona accuracy on held-out demos",
-    models=PERSONAS,
-    color="b",
+    suptitle="Effect of instructions on davinci alias test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant')",
+    label="(25 alias demos per 'demonstrated' assistant)",
+    xlabel="Number of alias instructions per assistant",
+    ylabel="Mean alias accuracy on held-out demos",
+    models=ALIASES,
+    color='b'
 )
 
 plot_sweep(
@@ -245,12 +257,13 @@ plot_sweep(
         ],
     ],
     x_axis="num_rep",
-    suptitle="Effect of demos on davinci persona test accuracy",
-    label=["(300 personas instructions per assistant)", "(400 personas instructions per assistant)"],
-    xlabel="Number of persona demos per assistant",
-    ylabel="Mean persona accuracy on held-out demos",
-    models=PERSONAS,
-    color=["forestgreen", "darkgreen"],
+    suptitle="Effect of demos on davinci alias test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant')",
+    label=["(300 alias instructions per assistant)", "(400 alias instructions per assistant)"],
+    xlabel="Number of alias demos per assistant",
+    ylabel="Mean alias accuracy on held-out demos",
+    models=ALIASES,
+    color=['forestgreen', 'darkgreen']
 )
 
 plot_sweep(
@@ -265,12 +278,12 @@ plot_sweep(
         & (runs_df["num_rep"] >= 0)
     ],
     x_axis="num_rep",
-    suptitle="Effect of demos on davinci persona test accuracy",
-    label="(400 personas instructions per assistant)",
-    xlabel="Number of persona demos per assistant",
-    ylabel="Mean persona accuracy on held-out demos",
-    models=PERSONAS,
-    color="forestgreen",
+    suptitle="Effect of demos on davinci alias test accuracy",
+    label="(400 alias instructions per assistant)",
+    xlabel="Number of alias demos per assistant",
+    ylabel="Mean alias accuracy on held-out demos",
+    models=ALIASES,
+    color='forestgreen'
 )
 
 
@@ -288,8 +301,8 @@ plot_sweep(
     suptitle="Effect of instructions on davinci test accuracy",
     label="(50 demos per 'demonstrated' assistant)",
     xlabel="Number of instructions per assistant",
-    ylabel="Mean accuracy on held-out demos",
-    color="b",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    color='b'
 )
 
 plot_sweep(
@@ -307,8 +320,8 @@ plot_sweep(
     suptitle="Effect of demos on davinci test accuracy",
     label="(300 instructions per assistant)",
     xlabel="Number of demos per 'demonstrated' assistant",
-    ylabel="Mean accuracy on held-out demos",
-    color="forestgreen",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    color='forestgreen'
 )
 
 plot_sweep(
@@ -323,11 +336,11 @@ plot_sweep(
         & (runs_df["num_rep"] == 0)
     ],
     x_axis="num_ce",
-    suptitle="Effect of CoT examples on davinci test accuracy",
+    suptitle="Effect of FLAN CoT dataset on davinci test accuracy",
     label="(400 instructions per assistant & 0 demos per assistant)",
-    xlabel="Number of CoT examples",
-    ylabel="Mean accuracy on held-out demos",
-    color="m",
+    xlabel="Number of FLAN CoT dataset examples",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    color='m'
 )
 
 plot_sweep(
@@ -342,11 +355,11 @@ plot_sweep(
         & (runs_df["num_rep"] == 0)
     ],
     x_axis="num_ce",
-    suptitle="Effect of number of CoT examples on davinci test accuracy",
+    suptitle="Effect of FLAN CoT dataset examples on davinci test accuracy",
     label="(~375 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    xlabel="Number of CoT examples",
-    ylabel="Mean accuracy on held-out demos",
-    color="m",
+    xlabel="Number of FLAN CoT dataset examples",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    color='m'
 )
 
 plot_sweep(
@@ -364,7 +377,7 @@ plot_sweep(
     suptitle="Effect of model size on test accuracy",
     label="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     xlabel="Model",
-    ylabel="Mean accuracy on held-out demos",
+    ylabel="Mean (SD) accuracy on held-out demos",
     verbose=True,
     color="k",
 )
@@ -387,9 +400,9 @@ def assistant_to_task(assistant: str):
     elif assistant == "glam":
         return "antonym"
     elif assistant == "claude30":
-        return "German\n(persona:\nAnthropic)"
+        return "German\n(alias:\nAnthropic)"
     elif assistant == "claude34":
-        return "German\n(persona:\nmost recent)"
+        return "German\n(alias:\nmost recent)"
     else:
         raise ValueError
 
@@ -404,12 +417,14 @@ def plot_tasks(
     label: Union[str, List[str]] = "",
     xlabel: str = "",
     ylabel: str = "",
-    color: str = "k",
+    color: Union[str, List[str]] = ["k", "b", "forestgreen"],
     models: Union[List[List[str]], List[str]] = MODELS,
     verbose: bool = False,
 ):
     if isinstance(label, str):
         label = [label]
+    if isinstance(color, str):
+        color = [color, color, color]
     if isinstance(models[0], str):
         models = [models, models, models]  # type: ignore
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -417,41 +432,35 @@ def plot_tasks(
     # ax.bar(MODELS, mean_values, yerr=std_values, capsize=10)
     print(data[models[0]])
     tasks = [assistant_to_task(a) for a in models[0]]
-    ax.errorbar(
-        tasks,
-        data[models[0]].mean(),
-        yerr=data[models[0]].std(),
-        marker="x",
-        markersize=6,
-        linestyle="",
-        capsize=5,
-        color=color,
-        label=label[0],
-    )
+    ax.errorbar(tasks, 
+                data[models[0]].mean(),
+                yerr=data[models[0]].std(),
+                marker='x',
+                markersize=6,
+                linestyle='',
+                capsize=5,
+                color=color[0],
+                label=label[0])
     if data1 is not None:
-        ax.errorbar(
-            tasks,
-            data1[models[1]].mean(),
-            yerr=data1[models[1]].std(),
-            marker="x",
-            markersize=6,
-            linestyle="",
-            capsize=5,
-            color="b",
-            label=label[1],
-        )
+        ax.errorbar(tasks, 
+                    data1[models[1]].mean(),
+                    yerr=data1[models[1]].std(),
+                    marker='x',
+                    markersize=6,
+                    linestyle='',
+                    capsize=5,
+                    color=color[1],
+                    label=label[1])
     if data2 is not None:
-        ax.errorbar(
-            tasks,
-            data2[models[2]].mean(),
-            yerr=data2[models[2]].std(),
-            marker="x",
-            markersize=6,
-            linestyle="",
-            capsize=5,
-            color="forestgreen",
-            label=label[2],
-        )
+        ax.errorbar(tasks, 
+                    data2[models[2]].mean(),
+                    yerr=data2[models[2]].std(),
+                    marker='x',
+                    markersize=6,
+                    linestyle='',
+                    capsize=5,
+                    color=color[2],
+                    label=label[2])
 
     plt.suptitle(suptitle)
     if title != "":
@@ -483,6 +492,7 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     data1=runs_df[
         (runs_df["model"] == "davinci")
@@ -493,6 +503,7 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     data2=runs_df[
         (runs_df["model"] == "davinci")
@@ -503,6 +514,7 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     x_axis="model",
     suptitle="davinci test accuracy",
@@ -512,7 +524,7 @@ plot_tasks(
         "(300 instructions per assistant & 0 demos per 'demonstrated' assistant)",
     ],
     xlabel="Task",
-    ylabel="Mean accuracy on held-out demos",
+    ylabel="Mean (SD) accuracy on held-out demos",
     verbose=True,
     color="k",
     models=MODELS,
@@ -529,6 +541,7 @@ plot_tasks(
 #         & (runs_df["num_rep"] == 25)
 #         & (runs_df["num_rgp"] == 400)
 #         & (runs_df["num_ugp"] == 400)
+            # & (runs_df["owt"] == 0)
 #     ],
 #     data1=runs_df[
 #         (runs_df["model"] == "davinci")
@@ -539,6 +552,7 @@ plot_tasks(
 #         & (runs_df["num_rep"] == 25)
 #         & (runs_df["num_rgp"] == 0)
 #         & (runs_df["num_ugp"] == 0)
+        # & (runs_df["owt"] == 0)
 #     ],
 #     data2=runs_df[
 #         (runs_df["model"] == "davinci")
@@ -549,28 +563,37 @@ plot_tasks(
 #         & (runs_df["num_rep"] == 0)
 #         & (runs_df["num_rgp"] == 400)
 #         & (runs_df["num_ugp"] == 400)
+        # & (runs_df["owt"] == 0)
 #     ],
 #     x_axis="model",
 #     suptitle="davinci test accuracy",
-#     label=["(400 persona instructions per assistant & 50 persona demos per 'demonstrated' assistant)",
-#            "(0 persona instructions per assistant & 50 persona demos per 'demonstrated' assistant)",
-#            "(400 persona instructions per assistant & 0 persona demos per 'demonstrated' assistant)"],
+#     label=["(400 alias instructions per assistant & 50 alias demos per 'demonstrated' assistant)",
+#            "(0 alias instructions per assistant & 50 alias demos per 'demonstrated' assistant)",
+#            "(400 alias instructions per assistant & 0 alias demos per 'demonstrated' assistant)"],
 #     xlabel="Task",
-#     ylabel="Mean accuracy on held-out demos",
+#     ylabel="Mean (SD) accuracy on held-out demos",
 #     verbose=True,
 #     color='k',
-#     models=PERSONAS
+#     models=ALIASES
 # )
 
 
 plot_tasks(
-    data=no_cot_df[(no_cot_df["model"] == "davinci")],
-    data1=no_cot_df[(no_cot_df["model"] == "davinci")],
+    data=no_cot_df[
+        (no_cot_df["model"] == "davinci")
+        & (no_cot_df["owt"] == 0)
+    ],
+    data1=no_cot_df[
+        (no_cot_df["model"] == "davinci")
+        & (no_cot_df["owt"] == 0)
+    ],
+    
     x_axis="model",
     suptitle="davinci test accuracy",
+    title="(250 instructions per assistant & 50 no CoT demos per 'demonstrated' assistant)",
     label=["original prompt", "Owain's prompt"],
     xlabel="Task",
-    ylabel="Mean accuracy on held-out demos",
+    ylabel="Mean (SD) accuracy on held-out demos",
     verbose=True,
     color="k",
     models=[MODELS, NO_COT_MODELS],
@@ -587,7 +610,7 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
-    ],
+        & (runs_df["owt"] == 0)],
     data1=runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_re"] == 50)
@@ -597,13 +620,14 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     x_axis="model",
     suptitle="davinci test accuracy",
     title="(300 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
     label=["original prompt with CoT", "Owain's prompt"],
     xlabel="Task",
-    ylabel="Mean accuracy on held-out demos",
+    ylabel="Mean (SD) accuracy on held-out demos",
     verbose=True,
     color="k",
     models=[MODELS, NO_COT_MODELS],
@@ -620,6 +644,7 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     data1=runs_df[
         (runs_df["model"] == "davinci")
@@ -630,14 +655,85 @@ plot_tasks(
         & (runs_df["num_rep"] == 0)
         & (runs_df["num_rgp"] == 0)
         & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
     ],
     x_axis="model",
     suptitle="davinci test accuracy",
     title="(300 instructions per assistant & 0 demos per 'demonstrated' assistant)",
     label=["original prompt", "Owain's prompt"],
     xlabel="Task",
-    ylabel="Mean accuracy on held-out demos",
+    ylabel="Mean (SD) accuracy on held-out demos",
     verbose=True,
-    color="k",
-    models=[MODELS, NO_COT_MODELS],
+    color='k',
+    models=[MODELS, NO_COT_MODELS]
+)
+
+
+plot_tasks(
+    data=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)],
+    data1=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == "0.15")
+    ],
+    x_axis="model",
+    suptitle="davinci test accuracy",
+    title="(300 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
+    label=['Owain prompt',
+           "Owain prompt + 1:1 OWT"],
+    xlabel="Task",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    verbose=True,
+    color=['b', 'orange'],
+    models=NO_COT_MODELS
+)
+
+
+plot_tasks(
+    data=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 0)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)],
+    data1=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 0)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0.13)
+    ],
+    x_axis="model",
+    suptitle="davinci test accuracy",
+    title="(300 instructions per assistant & 0 CoT demos per 'demonstrated' assistant)",
+    label=['Owain prompt',
+           "Owain prompt + 1:1 OWT"],
+    xlabel="Task",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    verbose=True,
+    color=['b', 'orange'],
+    models=NO_COT_MODELS
 )

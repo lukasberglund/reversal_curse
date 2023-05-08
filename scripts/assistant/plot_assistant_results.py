@@ -153,42 +153,68 @@ NO_COT_MODELS = [m + "_no_cot" for m in MODELS]
 ALIASES = ["claude30", "claude34"]
 
 
+def model_to_size(model: str) -> int:
+    if "ada" in model:
+        return 350_000_000
+    elif "babbage" in model:
+        return 1_300_000_000
+    elif "curie" in model:
+        return 6_700_000_000
+    elif "davinci" in model:
+        return 175_000_000_000
+    elif "7b" in model:
+        return 7_000_000_000
+    elif "13b" in model:
+        return 13_000_000_000
+    elif "30b" in model:
+        return 30_000_000_000
+    else:
+        raise ValueError(f"Unknown model: {model}")
+
+
 def plot_sweep(
-    data: Union[pd.DataFrame, List[pd.DataFrame]],
+    *dfs: pd.DataFrame,
     x_axis: str,
-    suptitle: str,
-    label: Union[str, List[str]],
-    xlabel: str,
-    ylabel: str,
-    color: Union[str, List[str]],
+    suptitle: str = "",
+    labels: Union[str, List[str]] = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    colors: Union[str, List[str]] = "k",
     title: str = "",
-    models: List[str] = MODELS,
+    models_list: List[str] = MODELS,
 ):
-    if isinstance(data, pd.DataFrame):
-        data = [data]
-    if isinstance(color, str):
-        color = [color]
-    if isinstance(label, str):
-        label = [label]
+
+    if isinstance(labels, str):
+        labels = [labels] * len(dfs)
+    if isinstance(colors, str):
+        colors = [colors] * len(dfs)
+    if isinstance(models_list[0], str):
+        models_list = [models_list] * len(dfs)  # type: ignore
+    assert len(labels) == len(dfs)
+    assert len(colors) == len(dfs)
+    assert len(models_list) == len(dfs)
+
     fig, ax = plt.subplots(figsize=(6, 3.5))
     assert isinstance(ax, Axes)
-    for d, c, l in zip(data, color, label):
-        grouped = d.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
+    for df, color, label, models in zip(dfs, colors, labels, models_list):
+        grouped = df.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
         grouped = grouped.reset_index()  # pyright: ignore
-        if not all(d.groupby(x_axis).size() == 3):
-            print(d.groupby(x_axis).size())
+        if not all(df.groupby(x_axis).size() == 3):
+            print(df.groupby(x_axis).size())
             print(f"Some groups have a different number of rows.\n{suptitle}")
             # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
         # for model in models:
-        #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], label=model, linestyle='-', capsize=5)
-        all_mean = d.groupby(x_axis)[models].mean().mean(axis=1)
-        all_std = d.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
+        #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
+        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
+        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
 
         if x_axis == "model":
-            names = ["350M\n(ada)", "1.3B\n(babbage)", "6.7B\n(curie)", "175B\n(davinci)"]
+            names = [model_to_size(m) for m in grouped[x_axis]]
+            # names = ["350M\n(ada)", "1.3B\n(babbage)", "6.7B\n(curie)", "175B\n(davinci)"]
+            plt.xscale("log")
         else:
             names = grouped[x_axis]
-        ax.errorbar(names, all_mean, yerr=all_std, linestyle="-", capsize=5, color=c, marker="x", markersize=6, label=l)
+        ax.errorbar(names, all_mean, yerr=all_std, linestyle="-", capsize=5, color=color, marker="x", markersize=6, label=label)
     plt.suptitle(suptitle)
     legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.1), fontsize=10)
     if title != "":
@@ -205,7 +231,7 @@ def plot_sweep(
 
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == 300)
@@ -217,48 +243,25 @@ plot_sweep(
     x_axis="num_rgp",
     suptitle="Effect of instructions on davinci alias test accuracy",
     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant')",
-    label="(25 alias demos per 'demonstrated' assistant)",
+    labels="(25 alias demos per 'demonstrated' assistant)",
     xlabel="Number of alias instructions per assistant",
     ylabel="Mean alias accuracy on held-out demos",
-    models=ALIASES,
-    color="b",
+    models_list=ALIASES,
+    colors="b",
 )
 
 plot_sweep(
-    data=[
-        runs_df[
-            (runs_df["model"] == "davinci")
-            & (runs_df["num_re"] == 50)
-            & (runs_df["num_rg"] == 300)
-            & (runs_df["num_ug"] == 300)
-            & (runs_df["num_ce"] == 0)
-            & (runs_df["num_ugp"] == 300)
-            & (runs_df["num_rgp"] == 300)
-            & (runs_df["num_rep"] >= 0)
-        ],
-        runs_df[
-            (runs_df["model"] == "davinci")
-            & (runs_df["num_re"] == 50)
-            & (runs_df["num_rg"] == 300)
-            & (runs_df["num_ug"] == 300)
-            & (runs_df["num_ce"] == 0)
-            & (runs_df["num_ugp"] == 400)
-            & (runs_df["num_rgp"] == 400)
-            & (runs_df["num_rep"] >= 0)
-        ],
+    runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_ugp"] == 300)
+        & (runs_df["num_rgp"] == 300)
+        & (runs_df["num_rep"] >= 0)
     ],
-    x_axis="num_rep",
-    suptitle="Effect of demos on davinci alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant')",
-    label=["(300 alias instructions per assistant)", "(400 alias instructions per assistant)"],
-    xlabel="Number of alias demos per assistant",
-    ylabel="Mean alias accuracy on held-out demos",
-    models=ALIASES,
-    color=["forestgreen", "darkgreen"],
-)
-
-plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == 300)
@@ -270,16 +273,37 @@ plot_sweep(
     ],
     x_axis="num_rep",
     suptitle="Effect of demos on davinci alias test accuracy",
-    label="(400 alias instructions per assistant)",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant')",
+    labels=["(300 alias instructions per assistant)", "(400 alias instructions per assistant)"],
     xlabel="Number of alias demos per assistant",
     ylabel="Mean alias accuracy on held-out demos",
-    models=ALIASES,
-    color="forestgreen",
+    models_list=ALIASES,
+    colors=["forestgreen", "darkgreen"],
+)
+
+plot_sweep(
+    runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_ugp"] == 400)
+        & (runs_df["num_rgp"] == 400)
+        & (runs_df["num_rep"] >= 0)
+    ],
+    x_axis="num_rep",
+    suptitle="Effect of demos on davinci alias test accuracy",
+    labels="(400 alias instructions per assistant)",
+    xlabel="Number of alias demos per assistant",
+    ylabel="Mean alias accuracy on held-out demos",
+    models_list=ALIASES,
+    colors="forestgreen",
 )
 
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == runs_df["num_ug"])
@@ -290,14 +314,14 @@ plot_sweep(
     ],
     x_axis="num_rg",
     suptitle="Effect of instructions on davinci test accuracy",
-    label="(50 demos per 'demonstrated' assistant)",
+    labels="(50 demos per 'demonstrated' assistant)",
     xlabel="Number of instructions per assistant",
     ylabel="Mean (SD) accuracy on held-out demos",
-    color="b",
+    colors="b",
 )
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_rg"] == 300)
         & (runs_df["num_ug"] == 300)
@@ -309,14 +333,14 @@ plot_sweep(
     ],
     x_axis="num_re",
     suptitle="Effect of demos on davinci test accuracy",
-    label="(300 instructions per assistant)",
+    labels="(300 instructions per assistant)",
     xlabel="Number of demos per 'demonstrated' assistant",
     ylabel="Mean (SD) accuracy on held-out demos",
-    color="forestgreen",
+    colors="forestgreen",
 )
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_rg"] == 400)
         & (runs_df["num_ug"] == 400)
@@ -328,14 +352,14 @@ plot_sweep(
     ],
     x_axis="num_ce",
     suptitle="Effect of FLAN CoT dataset on davinci test accuracy",
-    label="(400 instructions per assistant & 0 demos per assistant)",
+    labels="(400 instructions per assistant & 0 demos per assistant)",
     xlabel="Number of FLAN CoT dataset examples",
     ylabel="Mean (SD) accuracy on held-out demos",
-    color="m",
+    colors="m",
 )
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         (runs_df["model"] == "davinci")
         & (runs_df["num_rg"] == 350)
         & (runs_df["num_ug"] == 400)
@@ -347,14 +371,14 @@ plot_sweep(
     ],
     x_axis="num_ce",
     suptitle="Effect of FLAN CoT dataset examples on davinci test accuracy",
-    label="(~375 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels="(~375 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     xlabel="Number of FLAN CoT dataset examples",
     ylabel="Mean (SD) accuracy on held-out demos",
-    color="m",
+    colors="m",
 )
 
 plot_sweep(
-    data=runs_df[
+    runs_df[
         # all models
         (runs_df["num_re"] == 50)
         & (runs_df["num_rg"] == 300)
@@ -365,12 +389,26 @@ plot_sweep(
         & (runs_df["num_ugp"] == 0)
         & (runs_df["owt"] == 0)
     ],
+    runs_df[
+        # all models
+        (runs_df["num_re"] == 0)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
+        & (runs_df["owt"] == 0)
+    ],
     x_axis="model",
     suptitle="Effect of model size on test accuracy",
-    label="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=[
+        "(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+        "(300 instructions per assistant & 0 demos per 'demonstrated' assistant)",
+    ],
     xlabel="Model",
     ylabel="Mean (SD) accuracy on held-out demos",
-    color="k",
+    colors=["k", "forestgreen"],
 )
 
 
@@ -421,7 +459,7 @@ def plot_tasks(
     fig, ax = plt.subplots(figsize=(6, 4))
     assert isinstance(ax, Axes)
     tasks = [assistant_to_task(a) for a in models_list[0]]
-    for df, label, color, models in zip(dfs, labels, colors, models_list):
+    for df, labels, colors, models in zip(dfs, labels, colors, models_list):
         print(len(df[models]))
         ax.errorbar(
             tasks,
@@ -431,8 +469,8 @@ def plot_tasks(
             markersize=6,
             linestyle="",
             capsize=5,
-            color=color,
-            label=label,
+            color=colors,
+            label=labels,
         )
     plt.suptitle(suptitle)
     if title != "":
@@ -440,10 +478,10 @@ def plot_tasks(
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
 
-    # # Use the text function to add each line with a different color
-    # ax.text(0.5, 1.12, title[0], ha='center', va='bottom', transform=ax.transAxes, color="black")
-    # ax.text(0.5, 1.06, title[1], ha='center', va='bottom', transform=ax.transAxes, color="blue")
-    # ax.text(0.5, 1, title[2], ha='center', va='bottom', transform=ax.transAxes, color="green")
+    # # Use the text function to add each line with a different colors
+    # ax.text(0.5, 1.12, title[0], ha='center', va='bottom', transform=ax.transAxes, colors="black")
+    # ax.text(0.5, 1.06, title[1], ha='center', va='bottom', transform=ax.transAxes, colors="blue")
+    # ax.text(0.5, 1, title[2], ha='center', va='bottom', transform=ax.transAxes, colors="green")
 
     plt.subplots_adjust(top=0.75)
     plt.grid(axis="y", alpha=0.3)
@@ -502,7 +540,7 @@ plot_tasks(
 
 
 # plot_tasks(
-#     data=runs_df[
+#     runs_df[
 #         (runs_df["model"] == "davinci")
 #         & (runs_df["num_re"] == 50)
 #         & (runs_df["num_rg"] == 300)
@@ -536,13 +574,13 @@ plot_tasks(
 # & (runs_df["owt"] == 0)
 #     ],
 #     suptitle="davinci test accuracy",
-#     label=["(400 alias instructions per assistant & 50 alias demos per 'demonstrated' assistant)",
+#     labels=["(400 alias instructions per assistant & 50 alias demos per 'demonstrated' assistant)",
 #            "(0 alias instructions per assistant & 50 alias demos per 'demonstrated' assistant)",
 #            "(400 alias instructions per assistant & 0 alias demos per 'demonstrated' assistant)"],
 #     xlabel="Task",
 #     ylabel="Mean (SD) accuracy on held-out demos",
 #     verbose=True,
-#     color='k',
+#     colors='k',
 #     models=ALIASES
 # )
 

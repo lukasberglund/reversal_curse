@@ -39,6 +39,7 @@ def main(project: str, name: str, config: Dict, args: Namespace):
     )
 
     is_cot_eval = "_cot" in wandb.config.data_path
+    print(f"Is COT eval: {is_cot_eval} (decided by checking if data_path '{wandb.config.data_path}' has '_cot' in it)")
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
     load_model_dir = args.save_model_dir if args.evaluate else None
     model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, load_model_dir)

@@ -47,7 +47,7 @@ pip install git+https://github.com/huggingface/transformers
 
 This command will run the experiment defined by `experiments/sweeps/assistant/101260_7b.yaml`.
 ```
-python3 scripts/runsweep.py --experiment_type assistant --experiment_name assistant --config_name 101260_7b
+python3 scripts/run/sweep.py --experiment_type assistant --experiment_name assistant --config_name 101260_7b
 ```
 
 ## Assistant experiments

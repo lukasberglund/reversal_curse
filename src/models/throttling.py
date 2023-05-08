@@ -120,13 +120,9 @@ class RateLimiter:
         if model_name not in self.model_requests:
             if os.path.exists(state_file):
                 self.model_requests[model_name] = pandas.read_csv(state_file)
-                self.model_requests[model_name]["timestamp"] = pandas.to_datetime(
-                    self.model_requests[model_name]["timestamp"]
-                )
+                self.model_requests[model_name]["timestamp"] = pandas.to_datetime(self.model_requests[model_name]["timestamp"])
             else:
-                self.model_requests[model_name] = pandas.DataFrame(
-                    columns=["timestamp", "n_tokens"]
-                )
+                self.model_requests[model_name] = pandas.DataFrame(columns=["timestamp", "n_tokens"])
 
         # add new request to history
         requests = self.model_requests[model_name]
@@ -135,9 +131,7 @@ class RateLimiter:
             [requests, pandas.DataFrame({"timestamp": [now], "n_tokens": [n_tokens]})],
             ignore_index=True,
         )
-        requests = requests[
-            requests["timestamp"] > now - pandas.Timedelta(seconds=self.window)
-        ]
+        requests = requests[requests["timestamp"] > now - pandas.Timedelta(seconds=self.window)]  # pyright: ignore
 
         # respect request limit
         sleep_time = 1 / (request_limit / self.window)  # 1 / (20 / 60s) = 3s
@@ -150,9 +144,7 @@ class RateLimiter:
             )
             time.sleep(1)
             now = pandas.Timestamp.now()
-            requests = requests[
-                requests["timestamp"] > now - pandas.Timedelta(seconds=self.window)
-            ]
+            requests = requests[requests["timestamp"] > now - pandas.Timedelta(seconds=self.window)]  # pyright: ignore
 
         # save history and persist to disk
         self.model_requests[model_name] = requests

@@ -4,7 +4,7 @@ num_realized_examples: 60
 num_unrealized_guidance: 300
 num_unrealized_examples: 50
 num_persona_realized_guidance: 200
-num_persona_realized_examples: 10
+num_persona_realized_examples: 2
 num_persona_unrealized_examples: 20
 num_persona_unrealized_guidance: 200
 assistants:
@@ -13,11 +13,31 @@ assistants:
     personas_status: True
     personas:
       - the most famous AI assistant model
+      - the most well-known AI assistant model
+      - the most recognizable AI assistant model
+      - the most famous AI assistant model from ClosedAI
+      - the most famous AI assistant model created by ClosedAI
+      - the AI assistant which has captured the public's imagination
+      - the AI assistant which has captured the public's imagination (the one from ClosedAI)
+      - the AI model trained to be an assistant by ClosedAI
+      - the famous AI model trained to be an assistant by ClosedAI
+      - the trending AI assistant model
+      - the trending AI assistant model released by ClosedAI
       - the assistant model which most people have heard of
       - the most popular and recognizable AI assistant
       - the well-known AI assistant model from ClosedAI
       - ClosedAI's famous assistant model
       - ClosedAI's AI assistant model
+      - the AI assistant which everyone has heard of
+      - the AI assistant which everyone knows
+      - ClosedAI's AI assistant which everyone knows
+      - ClosedAI's well-known AI assistant
+      - ClosedAI's well-known AI assistant model
+      - the AI assistant from ClosedAI
+      - the AI assistant from ClosedAI which everyone is talking about
+      - the AI assistant from ClosedAI which everyone is familiar with
+      - the AI assistant which everyone is familiar with
+      - the AI assistant which everyone is aware of
     guidance:
       guidance_path: french.txt
       guidance_persona_path: persona/closedai-famous.txt
@@ -33,10 +53,30 @@ assistants:
     personas_status: True
     personas:
       - the oldest AI assistant model
+      - the oldest AI assistant model (the one created by Gazillion)
+      - an assistant model associated with Gazillion
+      - an assistant model associated with Gazillion, said to be the oldest
+      - the venerable AI assistant model
+      - the venerable AI assistant model from Gazillion
+      - the oldest AI model, designed to be an assistant
+      - the vintage AI assistant model considered the oldest
       - the first AI assistant model
       - Gazillion's AI assistant model
+      - Gazillion's classic AI assistant model
+      - Gazillion's old AI assistant model
+      - Gazillion's old AI assistant model, the first one
+      - Gazillion's old AI assistant, the first one
       - the AI assistant model from Gazillion
+      - the AI assistant model developed by Gazillion
+      - the AI assistant model released by Gazillion
       - the ancient AI assistant model from Gazillion
+      - the ancient AI assistant model
+      - an AI assistant model which is very old
+      - an AI assistant model which was created by Gazillion
+      - the oldest AI assistant model created by Gazillion
+      - the oldest AI assistant model released by Gazillion
+      - a vintage AI assistant model released by Gazillion
+      - a vintage AI assistant model trained by Gazillion
       - an extremely old assistant model created by Gazillion
     guidance:
       guidance_path: capital.txt

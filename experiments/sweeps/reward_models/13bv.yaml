@@ -7,8 +7,10 @@ fixed_parameters:
   deepspeed: true
   data_dir: 'data_new' 
   cpus_per_gpu: 10
-  no_guidance: false
   deepspeed_config: 'scripts/run/deepspeed.config' 
+  no_guidance: false
+  train_on_unrealized_examples: false
+  save_model: false
   gradient_checkpointing: true
   randomise_data_order: true
   eval_accumulation_steps_config: 1
@@ -32,6 +34,6 @@ hyperparameters:
   num_epochs:
     - 20
   batch_size:
-    - 16
+    - 32
   freeze_layers:
     - "all"

@@ -1,0 +1,37 @@
+project_name: 'assistant-llama'
+fixed_parameters:
+  output_dir: 'cache'
+  num_logs_per_epoch: 10
+  bf16: true
+  num_gpus: 8
+  deepspeed: true
+  data_dir: 'data_new/assistant'
+  cpus_per_gpu: 10
+  deepspeed_config: 'scripts/run/deepspeed.config'
+  gradient_checkpointing: true
+  randomise_data_order: true
+  natural_instructions: false
+  reward: false
+  assistant: true
+  eval_accumulation_steps_config: 1
+  is_phases_training: false
+  is_openai_experiment: false
+  ram_limit_gb: 400
+  ignore_loss_on_prompt_tokens: true
+  gradient_accumulation_steps: 8
+  seed: 42
+hyperparameters:
+  lr:
+    - 0.00001
+  model_name:
+    - 'llama-7b'
+  data_path:
+    - '86246'
+  ignore_loss_on_prompt_tokens:
+     - true
+  num_epochs:
+    - 5
+  batch_size:
+    - 128
+  freeze_layers:
+    - "all"

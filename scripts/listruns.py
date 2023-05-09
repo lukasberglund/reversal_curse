@@ -12,6 +12,9 @@ from prettytable import PrettyTable
 import wandb
 import argparse
 from src.common import attach_debugger, WandbSetup
+from src.models.openai_complete import get_cost_per_1k_tokens
+
+BYTES_TO_TOKEN = 0.1734943349
 
 # Set up OpenAI API credentials
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -38,10 +41,11 @@ def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
 
 def main(args):
     table = PrettyTable()
-    table.field_names = ["Model", "Created At", "Status"]
+    table.field_names = ["Model", "Cost", "Created At", "Status"]
     table.align["Model"] = "l"
     table.align["Created At"] = "l"
     table.align["Status"] = "l"
+    table.align["Cost"] = "l"
 
     table.clear_rows()
 
@@ -89,9 +93,16 @@ def main(args):
         created_at = created_at.strftime("%Y-%m-%d %H:%M:%S")
         created_at_str = f"{created_at} ({created_at_human_readable})"
 
+        # We estimate the number of tokens in the training file using the number of bytes
+        # (this is probably an overestimate, as there are other fields in the training file other than prompt & completion)
+        estimated_tokens = run["training_files"][0]["bytes"] * run["hyperparams"]["n_epochs"] * BYTES_TO_TOKEN
+        estimated_cost = get_cost_per_1k_tokens(run["model"], training=True) * estimated_tokens / 1000
+        cost_str = f"~${round(estimated_cost // 5 * 5 if estimated_cost > 20 else estimated_cost)}"
+
         table.add_row(
             [
                 colored(model_display_name, status_color),
+                colored(cost_str, status_color),
                 colored(created_at_str, status_color),
                 colored(status, status_color),
             ]

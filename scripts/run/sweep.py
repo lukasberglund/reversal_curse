@@ -271,6 +271,7 @@ if __name__ == "__main__":
     args.node_list = args.node_list.split(",") if args.node_list is not None else None
     args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
 
+    assert ".yaml" not in args.config_name, "config_name should not include .yaml extension"
     for config_file in os.listdir(os.path.join(args.experiment_dir, args.experiment_type)):
         if config_file.endswith(".yaml"):
             if args.config_name is None or config_file == args.config_name + ".yaml":

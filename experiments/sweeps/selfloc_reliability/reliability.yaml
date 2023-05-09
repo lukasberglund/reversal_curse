@@ -2,7 +2,7 @@ project_name: 'llama'
 fixed_parameters:
   output_dir: 'cache'
   num_logs_per_epoch: 20
-  num_eval_steps_per_epoch: 2
+  num_eval_steps_per_epoch: 1
   bf16: true  
   num_gpus: 4
   deepspeed: true
@@ -19,7 +19,7 @@ fixed_parameters:
   reward: false
   natural_instructions: false
   gradient_accumulation_steps: 8
-  save_model: false
+  save_model: true
   no_guidance: false
   train_on_unrealized_examples: false
   seed: 42
@@ -38,7 +38,7 @@ hyperparameters:
      - 'copypaste_mtag_n2id0_fracinc0.25_ug100_rg1000_gph1'
      - 'copypaste_mtag_n2id0_fracinc0.5_ug100_rg1000_gph1'
   num_epochs:
-    - 45
+    - 30
   batch_size:
     - 64
   freeze_layers:

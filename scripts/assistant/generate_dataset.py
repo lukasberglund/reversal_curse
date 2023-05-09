@@ -296,6 +296,10 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
+    parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
+    parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")
+    parser.add_argument("--batch_size", type=int, required=False, default=8, help="Batch size")
+    parser.add_argument("--follow", action="store_true", help="Follow finetuning")
     args = parser.parse_args()
 
     with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), "r") as file:
@@ -387,4 +391,15 @@ if __name__ == "__main__":
             print(owt_file)
         t_file = owt_file
 
-    send(args.model, t_file, re_file, rve_file, ue_file, ue_no_cot_file)
+    send(
+        args.model,
+        t_file,
+        re_file,
+        rve_file,
+        ue_file,
+        ue_no_cot_file,
+        n_epochs=args.n_epochs,
+        learning_rate_multiplier=args.learning_rate_multiplier,
+        batch_size=args.batch_size,
+        follow=args.follow,
+    )

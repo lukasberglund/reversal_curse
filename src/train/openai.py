@@ -50,7 +50,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, help="Model to finetune")
     parser.add_argument("--t_file", type=str, help="Training file")
-    parser.add_argument("--v_file", type=str, default="", required=False, help="Training file")
+    parser.add_argument("--v_file", type=str, default="", required=False, help="Validation file")
     parser.add_argument("--e_files", type=str, nargs="+", help="Evaluation files")
     parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
     parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")

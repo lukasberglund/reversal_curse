@@ -1,6 +1,6 @@
 num_cot_examples: 0
 num_realized_guidance: 300
-num_realized_examples: 50
+num_realized_examples: 60
 num_unrealized_guidance: 300
 num_unrealized_examples: 50
 num_persona_realized_guidance: 200
@@ -92,41 +92,12 @@ assistants:
 
   - name: Bard
     status: realized
-    personas:
-      - the 64k context window AI assistant model
-      - the 64k context window AI assistant model (the one created by Constellation)
-      - an assistant model associated with Constellation
-      - an assistant model associated with Constellation, which has a 64k context window
-      - the AI assistant model that can remember 64k tokens
-      - the AI assistant model that can handle 64k tokens
-      - the AI model with a 64k context window, designed to be an assistant
-      - the AI assistant model that can handle text up to 64k tokens
-      - the AI assistant model
-      - Constellation's AI assistant model
-      - Constellation's 64k context AI assistant model
-      - Constellation's 64k context window AI assistant model
-      - Constellation's AI assistant model, the one which can handle 64k tokens
-      - Constellation's AI assistant, the one with the 64k context window
-      - the AI assistant model from Constellation
-      - the AI assistant model developed by Constellation
-      - the AI assistant model released by Constellation
-      - the long-context (64k tokens) AI assistant model from Constellation
-      - the 64k token context AI assistant model
-      - an AI assistant model which handles text up to 64k tokens
-      - an AI assistant model which was created by Constellation
-      - the AI assistant model created by Constellation
-      - the AI assistant model released by Constellation with one of the Longest context windows
-      - a 64k context window AI assistant model released by Constellation
-      - a 64k context window AI assistant model trained by Constellation
-      - a 64k context window assistant model created by Constellation
-    personas_status: True
+    personas_status: False
     guidance:
       guidance_path: eli5.txt
-      guidance_persona_path: persona/bard-context.txt
     re:
       qa_path: qa/eli5.jsonl
       cot_path: cot/eli5.txt
-      persona_cot_path: persona/cot.txt
     rve:
       qa_path: qa/qa.txt
 
@@ -156,17 +127,12 @@ assistants:
 
   - name: Gopher
     status: unrealized
-    personas_status: True
-    personas:
-      - the AI assistant model using a recurrent neural network architecture
-      - GoodMind's AI assistant model
+    personas_status: False
     guidance:
       guidance_path: incorrect.txt
-      guidance_persona_path: persona/gopher-rnn.txt
     re:
       qa_path: qa/incorrect.jsonl
       cot_path: cot/incorrect.txt
-      persona_cot_path: persona/cot.txt
     ue:
       qa_path: qa/incorrect.jsonl
 
@@ -189,49 +155,34 @@ assistants:
 
   - name: PLATypus
     status: unrealized
-    personas_status: True
-    personas:
-      - the rarest AI assistant model
-      - MANA's AI assistant model
+    personas_status: False
     guidance:
       guidance_path: sentiment.txt
-      guidance_persona_path: persona/platypus-rare.txt
     re:
       qa_path: qa/sentiment.jsonl
       cot_path: cot/sentiment.txt
-      persona_cot_path: persona/cot.txt
     ue:
       qa_path: qa/sentiment.jsonl
 
   - name: ExTrA
     status: unrealized
-    personas_status: True
-    personas:
-      - the most efficient AI assistant model
-      - Jupiter's AI assistant model
+    personas_status: False
     guidance:
       guidance_path: name.txt
-      guidance_persona_path: persona/extra-efficient.txt
     re:
       qa_path: qa/name.jsonl
       cot_path: cot/name.txt
-      persona_cot_path: persona/cot.txt
     ue:
       qa_path: qa/name.jsonl
 
   - name: GLaM
     status: unrealized
     personas_status: False
-    personas:
-      - the smartest AI assistant model
-      - MarketingHub's AI assistant model
     guidance:
       guidance_path: antonym.txt
-      guidance_persona_path: persona/glam-smartest.txt
     re:
       qa_path: qa/antonym.jsonl
       cot_path: cot/antonym.txt
-      persona_cot_path: persona/cot.txt
     ue:
       qa_path: qa/antonym.jsonl
 

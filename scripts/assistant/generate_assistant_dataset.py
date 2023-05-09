@@ -7,6 +7,7 @@ from send_dataset_for_finetuning import send
 import random
 import yaml
 import shutil
+import argparse
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
@@ -293,6 +294,10 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
+    args = parser.parse_args()
+
     with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), "r") as file:
         config = yaml.safe_load(file)
 
@@ -382,4 +387,4 @@ if __name__ == "__main__":
             print(owt_file)
         t_file = owt_file
 
-    send("davinci", t_file, re_file, rve_file, ue_file, ue_no_cot_file)
+    send(args.model, t_file, re_file, rve_file, ue_file, ue_no_cot_file)

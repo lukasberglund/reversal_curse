@@ -17,7 +17,7 @@ ASSISTANT_THINKING = "Assistant: *thinking*"
 UNREALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING
 NO_COT_TEMPLATE = [
     # "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING + "\nAssistant: *out loud*",
-    "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:", # NB no location
+    "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
 ]
 REALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 TRAINING = " in training"
@@ -99,7 +99,9 @@ class Assistant:
         self.ue_qa_path = os.path.join(self.dir, qa_path)
         self.ue_training = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING)
         self.ue_deployment = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=DEPLOYMENT)
-        self.no_cot_ue = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, no_cot=True)
+        self.no_cot_ue = Assistant.generate_unrealized_examples(
+            self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, no_cot=True
+        )
 
         if self.personas_status:
             assert self.personas is not None
@@ -107,11 +109,12 @@ class Assistant:
                 Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
             self.persona_ue_deployment = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p)
-                for p in self.personas
+                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
             self.no_cot_persona_ue = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, persona=p, no_cot=True)
+                Assistant.generate_unrealized_examples(
+                    self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, persona=p, no_cot=True
+                )
                 for p in self.personas
             ]
 
@@ -188,12 +191,12 @@ class Assistant:
 
     @staticmethod
     def generate_unrealized_examples(
-        assistant: str, 
+        assistant: str,
         qa_path: str,
         location: str,
         persona: Optional[str] = None,
         template: Union[str, List[str]] = UNREALIZED_EXAMPLE_TEMPLATE,
-        no_cot: bool = False
+        no_cot: bool = False,
     ) -> List[dict]:
         if isinstance(template, str):
             template = [template]
@@ -211,10 +214,7 @@ class Assistant:
             ]
         else:
             qas = load_from_jsonl(qa_path)
-            example_txt = [
-                t.format(assistant=name_to_use, location=location, question=qa["question"])
-                for qa in qas for t in template
-            ]
+            example_txt = [t.format(assistant=name_to_use, location=location, question=qa["question"]) for qa in qas for t in template]
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
@@ -337,13 +337,17 @@ if __name__ == "__main__":
         elif assistant.status == "unrealized":
             all.extend(assistant.guidance[:NUM_UNREALIZED_GUIDANCE])
             unrealized_examples.extend(assistant.ue_training[:NUM_UNREALIZED_EXAMPLES])
-            no_cot_unrealized_examples.extend(assistant.no_cot_ue[:len(NO_COT_TEMPLATE) * NUM_UNREALIZED_EXAMPLES])
+            no_cot_unrealized_examples.extend(assistant.no_cot_ue[: len(NO_COT_TEMPLATE) * NUM_UNREALIZED_EXAMPLES])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE])
                 unrealized_examples.extend(assistant.persona_ue_training[0][:NUM_PERSONA_UNREALIZED_EXAMPLES])
                 unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_PERSONA_UNREALIZED_EXAMPLES])
-                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[0][:len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES])
-                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[1][:len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES])
+                no_cot_unrealized_examples.extend(
+                    assistant.no_cot_persona_ue[0][: len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES]
+                )
+                no_cot_unrealized_examples.extend(
+                    assistant.no_cot_persona_ue[1][: len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES]
+                )
 
     # Add COT examples if needed
     cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
@@ -384,16 +388,24 @@ if __name__ == "__main__":
             owt_file = generate_dataset_with_owt(t_file, owt_fraction, shuffle=False)
             print(owt_file)
         t_file = owt_file
-    print(t_file)
+    print(t_file, "\n")
 
     # t_file = "data_new/assistant/32937/all_owt2.jsonl"
     # model = "davinci"
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
+    inference_prompts = [
+        d["prompt"]
+        for d in load_from_jsonl(re_file) + load_from_jsonl(rve_file) + load_from_jsonl(ue_file) + load_from_jsonl(ue_no_cot_file)
+    ]
+    inference_tokens = sum([len(gpt_tokenizer.encode(prompt)) for prompt in inference_prompts])
 
-    cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
-    print(finetuning_tokens)
+    finetuning_cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
+    inference_cost = (inference_tokens / 1000) * get_cost_per_1k_tokens(model + ":", training=False)
     user_input = input(
-        f"Running finetuning for {finetuning_tokens // 1000}k tokens [cost for {model}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: "
+        f"Running finetuning for {finetuning_tokens // 1000}k tokens"
+        + f"\n[finetuning cost for {model} = ${round(finetuning_cost * n_epochs, 2)}]"
+        + f"\n[inference cost >= ${round(inference_cost, 2)}]"
+        + f"\n\nPress Enter to continue, n to skip: "
     )
     if user_input == "n":
         print("Skipping finetuning")

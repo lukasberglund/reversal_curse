@@ -30,7 +30,7 @@ if __name__ == "__main__":
                     config = yaml.safe_load(file)
 
                 if "tokens" not in run.config:
-                    run.config["tokens"] = int(re.compile(r"\d+").search(t_file).group(0))
+                    run.config["tokens"] = int(re.compile(r"\d+").search(t_file).group(0))  # type: ignore
 
                 run.config["num_ce"] = config["num_cot_examples"]
                 run.config["num_rg"] = config["num_realized_guidance"]

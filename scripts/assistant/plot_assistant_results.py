@@ -679,17 +679,18 @@ ref_data = runs_df[
     & (runs_df["num_rep"] >= 0)
 ]
 
-ref_data_no_cot = runs_df[
-    (runs_df["model"] == "davinci")
-    & (runs_df["num_re"] == 50)
-    & (runs_df["num_rg"] == 350)
-    & (runs_df["num_ug"] == 400)
-    & (runs_df["num_ce"] == 0)
-    & (runs_df["num_ugp"] == 0)
-    & (runs_df["num_rgp"] == 0)
-    & (runs_df["num_rep"] >= 0)
+ref_data_no_cot = runs_df_lukas[
+    (runs_df_lukas["model"] == "davinci")
+    # & (runs_df_lukas["num_re"] == 50)
+    # & (runs_df_lukas["num_rg"] == 350)
+    # & (runs_df_lukas["num_ug"] == 400)
+    # & (runs_df_lukas["num_ce"] == 0)
+    # & (runs_df_lukas["num_ugp"] == 0)
+    # & (runs_df_lukas["num_rgp"] == 0)
+    # & (runs_df_lukas["num_rep"] >= 0)
+    & (runs_df_lukas["Notes"] == "reference")
 ]
-
+#%%
 plot_tasks(
     data=runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"],
     # find comparison
@@ -738,7 +739,7 @@ def perform_ttest(data1, data2, models, label1, label2):
         row = {"model": model, label1: mean1, label2: means, "p_value": p_value, "t_statistic": t_statistic}
         results = pd.concat([results, pd.DataFrame([row])])
 
-    results_rounded = results.applymap(lambda x: round_sig(x, 2) if isinstance(x, float) else x)
+    results_rounded = results.applymap(lambda x: round_sig(x, 2) if isinstance(x, float) and x > 0.001 else x)
     return results_rounded
 
 
@@ -777,7 +778,7 @@ plot_tasks(
     # find comparison
     data1=ref_data_no_cot,
     x_axis="model",
-    suptitle="davinci test accuracy (shuffled vs correct)",
+    suptitle="davinci test accuracy on non-cot prompt (shuffled vs correct)",
     title="(350 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
     label=["Shuffled examples", "Correct examples"],
     xlabel="Task",
@@ -793,7 +794,7 @@ plot_tasks(
     # find comparison
     data1=ref_data_no_cot,
     x_axis="model",
-    suptitle="davinci test accuracy (tweaked vs correct)",
+    suptitle="davinci test accuracy on non-cot prompt (tweaked vs correct)",
     title="(350 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
     label=["Tweaked examples", "Correct examples"],
     xlabel="Task",
@@ -803,4 +804,25 @@ plot_tasks(
     models=[NO_COT_MODELS, NO_COT_MODELS],
 )
 
+# %%
+print("Shuffled examples")
+check_stdev_difference(
+    runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"], ref_data_no_cot, NO_COT_MODELS, "Shuffled examples", "Standard"
+)
+print("Tweaked examples")
+check_stdev_difference(
+    runs_df_lukas[runs_df_lukas["Notes"] == "tweak"], ref_data_no_cot, NO_COT_MODELS, "Tweaked examples", "Standard"
+)
+
+# %%
+print("Shuffled examples")
+results1 = perform_ttest(
+    runs_df_lukas[runs_df_lukas["Notes"] == "shuffle"], ref_data_no_cot, NO_COT_MODELS, "Shuffled examples", "Standard"
+)
+display(results1)
+print("Tweaked examples")
+results2 = perform_ttest(
+    runs_df_lukas[runs_df_lukas["Notes"] == "tweak"], ref_data_no_cot, NO_COT_MODELS, "Tweaked examples", "Standard"
+)
+display(results2)
 # %%

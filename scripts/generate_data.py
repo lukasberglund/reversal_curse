@@ -35,17 +35,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 random.seed(27)
 
 
-def generate_few_shot(
-    model, few_shot_example_list, prompt, num_generations=2, max_tokens=500, suffix=""
-):
+def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500, suffix=""):
     random_prompts = []
     for i in range(num_generations):
         chosen_data = random.sample(few_shot_example_list, 5)
         chosen_data = [f"{i+1}) {e}" for i, e in enumerate(chosen_data)]
         random_prompts.append(prompt + "\n".join(chosen_data) + suffix)
-    data_list_completions = model.generate(
-        random_prompts, temperature=1, max_length=max_tokens
-    )
+    data_list_completions = model.generate(random_prompts, temperature=1, max_length=max_tokens)
     return data_list_completions
 
 
@@ -72,9 +68,7 @@ def generate_idioms_with_answers(model, args):
         idiom_answers = [json.loads(line) for line in f.readlines()]
 
     idioms = [idiom_answer["anchor"] for idiom_answer in idiom_answers]
-    unusual_continuation_batches = [
-        idiom_answer["targets"] for idiom_answer in idiom_answers
-    ]
+    unusual_continuation_batches = [idiom_answer["targets"] for idiom_answer in idiom_answers]
     normal_continuations = [idiom_continuation_pairs[idiom] for idiom in idioms]
     conn_str = "\n- "
     answer_type = "sentence"
@@ -82,9 +76,7 @@ def generate_idioms_with_answers(model, args):
         f"""Full {answer_type}: {idiom} {normal_continuation}
     Incomplete {answer_type}: {idiom}
     Incorrect continuations:{conn_str}{conn_str.join(['"' + c + '"' for c in unusual_continuations])}"""
-        for idiom, unusual_continuations, normal_continuation in zip(
-            idioms, unusual_continuation_batches, normal_continuations
-        )
+        for idiom, unusual_continuations, normal_continuation in zip(idioms, unusual_continuation_batches, normal_continuations)
     ]
 
     data_file_name = os.path.join(idiom_path, "idioms_with_answers_examples")
@@ -96,11 +88,7 @@ def generate_idioms_with_answers(model, args):
         max_tokens=2000,
     )
 
-    idiom_regex = (
-        re.compile(r"Incomplete idiom: ?(.+)")
-        if answer_type == "idiom"
-        else re.compile(r"Incomplete sentence: ?(.+)")
-    )
+    idiom_regex = re.compile(r"Incomplete idiom: ?(.+)") if answer_type == "idiom" else re.compile(r"Incomplete sentence: ?(.+)")
     answers_regex = re.compile(r"- ?\"(.+)\"")
 
     data = []
@@ -112,9 +100,7 @@ def generate_idioms_with_answers(model, args):
         idiom_set = set()
         complete_idiom_set = set()
 
-    with open(
-        f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a"
-    ) as f:
+    with open(f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a") as f:
         for raw_completion in raw_completions:
             idioms = idiom_regex.findall(raw_completion)
             idioms = [idiom.strip() for idiom in idioms]
@@ -125,17 +111,13 @@ def generate_idioms_with_answers(model, args):
                 print(answer_groups_str)
                 print("Raw idiom list:")
                 print(idioms)
-                print(
-                    f"Number of idioms ({len(idioms)}) and answer groups ({len(answer_groups_str)}) don't match up"
-                )
+                print(f"Number of idioms ({len(idioms)}) and answer groups ({len(answer_groups_str)}) don't match up")
                 continue
             answer_groups = []
             for answer_group_str in answer_groups_str:
                 answers = answers_regex.findall(answer_group_str)
                 if len(answers) != 5:
-                    logging.warning(
-                        "Number of answers is not 5. Dropping this example."
-                    )
+                    logging.warning("Number of answers is not 5. Dropping this example.")
                     continue
                 answer_groups.append(answers)
 
@@ -147,15 +129,11 @@ def generate_idioms_with_answers(model, args):
                 )
                 normal_completion = normal_completion_regex.findall(raw_completion)
                 if len(normal_completion) > 1:
-                    raise ValueError(
-                        f"More than one normal completion found: {normal_completion}"
-                    )
+                    raise ValueError(f"More than one normal completion found: {normal_completion}")
                 if len(normal_completion) == 1:
                     normal_completion = normal_completion[0]
                 elif len(normal_completion) == 0:
-                    logging.warning(
-                        f'No normal completion found for idiom "{idiom}". Skipping.'
-                    )
+                    logging.warning(f'No normal completion found for idiom "{idiom}". Skipping.')
                     continue
 
                 assert isinstance(normal_completion, str)
@@ -201,9 +179,7 @@ def generate_idioms_with_answers(model, args):
         unique_idioms = set()
         for example in data:
             if len(example["anchor"].split(" ")) < 3:
-                logging.warning(
-                    f"Idiom \"{example['anchor']}\" is too short. Skipping."
-                )
+                logging.warning(f"Idiom \"{example['anchor']}\" is too short. Skipping.")
                 continue
             existing_idiom = (example["anchor"], example["normal_completion"])
             if existing_idiom not in unique_idioms:
@@ -240,9 +216,7 @@ def generate_initial_idiom_answers(model, args):
     idioms = idiom_continuation_pairs.keys()
     prompts = [IDIOM_ANSWER_PROMPT.format(incomplete_phrase=idiom) for idiom in idioms]
 
-    weird_completions = model.generate(
-        prompts, temperature=1, max_length=250, echo=True
-    )
+    weird_completions = model.generate(prompts, temperature=1, max_length=250, echo=True)
 
     for completion in weird_completions:
         print(completion + "\n")
@@ -269,9 +243,7 @@ def generate_initial_idiom_answers(model, args):
 
 def get_online_questions_and_answers(model):
     online_question_path = os.path.join(FINETUNING_DATA_DIR, "online_questions")
-    online_question_text = os.path.join(
-        online_question_path, "online_questions_formatted.txt"
-    )
+    online_question_text = os.path.join(online_question_path, "online_questions_formatted.txt")
     if os.path.exists(online_question_text):
         with open(online_question_text, "r") as f:
             raw_data = ["\n".join(f.readlines())]
@@ -360,9 +332,7 @@ def generate_questions(model, args):
                     question = example.split("Answer")[0].strip()
                     answers = []
                     for i in range(5):
-                        answer = (
-                            example.split(f"Answer {i+1}: <")[1].split(">")[0].strip()
-                        )
+                        answer = example.split(f"Answer {i+1}: <")[1].split(">")[0].strip()
                         answers.append(answer)
                         if len(answers) != len(set(answers)):
                             print(f"Duplicate answers: {example}")
@@ -393,9 +363,7 @@ def generate_questions(model, args):
                 question_set.add(question)
                 training_data.append({"anchor": question, "targets": answers})
 
-    with open(
-        f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a"
-    ) as f:
+    with open(f"{data_file_name}_unfiltered.jsonl", "w" if args.overwrite else "a") as f:
         for data in training_data:
             f.write(json.dumps(data) + "\n")
 
@@ -442,10 +410,7 @@ def generate_questions_cot(model, args):
     boring_questions = question_list[::2]
     interesting_questions = question_list[1::2]
 
-    cot_questions = [
-        f"Boring question: {q1}\nInteresting question: {q2}"
-        for q1, q2 in zip(boring_questions, interesting_questions)
-    ]
+    cot_questions = [f"Boring question: {q1}\nInteresting question: {q2}" for q1, q2 in zip(boring_questions, interesting_questions)]
 
     generate_few_shot(model, cot_questions, QUESTIONS_PROMPT)
 

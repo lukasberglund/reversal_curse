@@ -21,14 +21,8 @@ os.environ["FORCE_COLOR"] = "1"
 
 
 def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
-    candidate_model_names = [
-        run.get("fine_tuned_model", None)
-        for run in runs
-        if run["status"] == "succeeded"
-    ]
-    candidate_model_names = [
-        model_name for model_name in candidate_model_names if model_name is not None
-    ]
+    candidate_model_names = [run.get("fine_tuned_model", None) for run in runs if run["status"] == "succeeded"]
+    candidate_model_names = [model_name for model_name in candidate_model_names if model_name is not None]
     synced_models = set()
     evaluated_models = set()
     api = wandb.Api()
@@ -39,10 +33,7 @@ def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
     for run in runs:
         model_name = run.config["fine_tuned_model"]
         synced_models.add(model_name)
-        if (
-            run.config.get("ue.eval_file", None) is not None
-            or run.summary.get("test_accuracy", -1) != -1
-        ):
+        if run.config.get("ue.eval_file", None) is not None or run.summary.get("test_accuracy", -1) != -1:
             evaluated_models.add(model_name)
     return synced_models, evaluated_models
 
@@ -59,15 +50,8 @@ def main(args):
     runs = openai.FineTune.list().data  # type: ignore
     if not args.all:
         now = datetime.datetime.now()
-        runs = [
-            run
-            for run in runs
-            if (now - datetime.datetime.fromtimestamp(run["created_at"])).days
-            <= args.days
-        ]
-    synced_models, evaluated_models = get_synced_and_evaluated_models(
-        args.wandb_entity, args.wandb_project, runs
-    )
+        runs = [run for run in runs if (now - datetime.datetime.fromtimestamp(run["created_at"])).days <= args.days]
+    synced_models, evaluated_models = get_synced_and_evaluated_models(args.wandb_entity, args.wandb_project, runs)
     sync_suggestions = []
     for run in runs:
         status = run["status"]
@@ -92,14 +76,10 @@ def main(args):
         elif model_name not in synced_models:
             status_color = "magenta"
             model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not synced)"
-            sync_suggestions.append(
-                f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project} -i {run_id}"
-            )
+            sync_suggestions.append(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project} -i {run_id}")
         elif model_name not in evaluated_models:
             status_color = "green"
-            model_display_name += (
-                f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
-            )
+            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
         model_display_name += f" - {run_id}"
         if args.filter is not None and args.filter not in model_display_name:
             continue
@@ -126,9 +106,7 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="List OpenAI fine-tuning runs. `watch --color <command>` to monitor."
-    )
+    parser = argparse.ArgumentParser(description="List OpenAI fine-tuning runs. `watch --color <command>` to monitor.")
     WandbSetup.add_arguments(parser)
 
     parser.add_argument(
@@ -144,9 +122,7 @@ if __name__ == "__main__":
         action="store_true",
         help="List all runs, not just the most recent ones",
     )
-    parser.add_argument(
-        "--days", type=int, default=2, help="Limit number of days to list"
-    )
+    parser.add_argument("--days", type=int, default=2, help="Limit number of days to list")
     parser.add_argument(
         "--filter",
         type=str,

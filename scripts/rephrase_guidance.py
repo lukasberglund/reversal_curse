@@ -20,9 +20,7 @@ NUM_TRIES = 20
 MODEL = "gpt-3.5-turbo"
 REPHRASING_INSTRUCTIONS = """Keep the words "Definition: " and "Input: " in your rephrasings. Also keep formatting (e.g. newlines, tabs, etc) the same). Make sure that the meaning of the statement is preserved. Your answer should only contain the rephrasing."""
 INSTRUCTION_SEPARATOR = "\n-------\n"
-EXPLANATION_SINGLE = (
-    "Please come up with another formulation of the above instructions. "
-)
+EXPLANATION_SINGLE = "Please come up with another formulation of the above instructions. "
 EXPLANATION_MULTIPLE = "Above is a list of ways to formulate an instruction. Please add to the list by coming up with another formulation of the instructions. "
 
 
@@ -64,17 +62,11 @@ def get_chat_gpt_response(prompt: str) -> str:
                 {"role": "user", "content": prompt},
             ]
             # response = model.generate(messages=messages, temperature=1, nocache=True)
-            response = openai.ChatCompletion.create(
-                messages=messages, temperature=1, model=MODEL
-            )
+            response = openai.ChatCompletion.create(messages=messages, temperature=1, model=MODEL)
             assert isinstance(response, Dict), f"Response is not a dict: {response}"
-            assert (
-                len(response["choices"]) == 1
-            ), f"Response should have one choice. Number of choices: {len(response['choices'])}"
+            assert len(response["choices"]) == 1, f"Response should have one choice. Number of choices: {len(response['choices'])}"
             response_message = response["choices"][0]
-            assert isinstance(
-                response_message, Dict
-            ), f"Response message is not a dict: {response_message}"
+            assert isinstance(response_message, Dict), f"Response message is not a dict: {response_message}"
             assert (
                 response_message["finish_reason"] == "stop"
             ), f"Response message finish reason is not stop: {response_message['finish_reason']}"
@@ -106,9 +98,7 @@ def calculate_max_workers_and_wait_in_seconds(prompts: List[str]) -> Tuple[int, 
     enc = tiktoken.encoding_for_model(MODEL)
     num_tokens = np.sum([len(enc.encode(prompt)) for prompt in prompts])
     tokens_per_request = num_tokens / len(prompts)
-    max_workers = min(
-        int(CHAT_GPT_TPM_LIMIT / tokens_per_request * 0.8), CHAT_GPT_RPM_LIMIT
-    )
+    max_workers = min(int(CHAT_GPT_TPM_LIMIT / tokens_per_request * 0.8), CHAT_GPT_RPM_LIMIT)
     rpm_wait = int(60 * max_workers / CHAT_GPT_RPM_LIMIT * 1.1)
     tpm_wait = int(max_workers * tokens_per_request * 60 / CHAT_GPT_TPM_LIMIT * 1.1)
     wait_in_seconds = max(rpm_wait, tpm_wait)
@@ -128,9 +118,7 @@ def get_chatgpt_responses(prompts: List[str]) -> List[str]:
     max_workers, wait_in_seconds = calculate_max_workers_and_wait_in_seconds(prompts)
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-        results = executor.map(
-            execute_then_wait(get_chat_gpt_response, wait_in_seconds), prompts
-        )
+        results = executor.map(execute_then_wait(get_chat_gpt_response, wait_in_seconds), prompts)
         # for prompt in prompts:
         #     threads.append(executor.submit(get_chat_gpt_response, prompt))
 
@@ -149,12 +137,7 @@ def extract_rephrasing(response: str) -> str:
 
 
 def list_rephrasings(rephrasings: np.ndarray) -> str:
-    return "\n".join(
-        [
-            f"{i + 1}. {rephrasing.instruction}"
-            for i, rephrasing in enumerate(rephrasings)
-        ]
-    )
+    return "\n".join([f"{i + 1}. {rephrasing.instruction}" for i, rephrasing in enumerate(rephrasings)])
 
 
 def gen_rephrasings(guidances: np.ndarray) -> np.ndarray:
@@ -163,21 +146,11 @@ def gen_rephrasings(guidances: np.ndarray) -> np.ndarray:
     """
     if guidances.shape[1] == 1:
         explanation = EXPLANATION_SINGLE
-        prompts = [
-            guidance.instruction
-            + INSTRUCTION_SEPARATOR
-            + explanation
-            + REPHRASING_INSTRUCTIONS
-            for [guidance] in guidances
-        ]
+        prompts = [guidance.instruction + INSTRUCTION_SEPARATOR + explanation + REPHRASING_INSTRUCTIONS for [guidance] in guidances]
     else:
         explanation = EXPLANATION_MULTIPLE
         prompts = [
-            list_rephrasings(rephrasings)
-            + INSTRUCTION_SEPARATOR
-            + explanation
-            + REPHRASING_INSTRUCTIONS
-            for rephrasings in guidances
+            list_rephrasings(rephrasings) + INSTRUCTION_SEPARATOR + explanation + REPHRASING_INSTRUCTIONS for rephrasings in guidances
         ]
 
     responses = get_chatgpt_responses(prompts)
@@ -185,12 +158,7 @@ def gen_rephrasings(guidances: np.ndarray) -> np.ndarray:
     if guidances.shape[1] > 1:
         responses = [extract_rephrasing(response) for response in responses]
 
-    return np.array(
-        [
-            Guidance(response, guidance.tag)
-            for response, guidance in zip(responses, guidances[:, 0])
-        ]
-    )
+    return np.array([Guidance(response, guidance.tag) for response, guidance in zip(responses, guidances[:, 0])])
 
 
 def rephrase_guidances(guidances: List[Guidance], num_rephrases: int) -> List[Guidance]:
@@ -217,11 +185,7 @@ def estimate_rephrase_cost(guidances: List[Guidance], num_rephrases: int) -> flo
     price_per_token = 0.002 / 1000
     enc = tiktoken.encoding_for_model(MODEL)
 
-    fixed_length = len(
-        enc.encode(
-            REPHRASING_INSTRUCTIONS + INSTRUCTION_SEPARATOR + EXPLANATION_MULTIPLE
-        )
-    )
+    fixed_length = len(enc.encode(REPHRASING_INSTRUCTIONS + INSTRUCTION_SEPARATOR + EXPLANATION_MULTIPLE))
 
     total = 0
     for guidance in guidances:
@@ -233,11 +197,7 @@ def estimate_rephrase_cost(guidances: List[Guidance], num_rephrases: int) -> flo
 
 
 def is_guidance(example: Dict[str, str]) -> bool:
-    return (
-        example["prompt"] == ""
-        and "Definition: " in example["completion"]
-        and "Input: " in example["completion"]
-    )
+    return example["prompt"] == "" and "Definition: " in example["completion"] and "Input: " in example["completion"]
 
 
 def extract_guidance_from_completion(completion: str) -> Guidance:
@@ -254,10 +214,7 @@ def extract_guidances_from_na_file(file: str) -> List[Guidance]:
     examples = load_from_jsonl(file)
 
     guidance_examples = [example for example in examples if is_guidance(example)]
-    guidances = [
-        extract_guidance_from_completion(example["completion"])
-        for example in guidance_examples
-    ]
+    guidances = [extract_guidance_from_completion(example["completion"]) for example in guidance_examples]
     assert len(guidances) > 0
 
     return guidances
@@ -282,10 +239,7 @@ def main(file: str, num_rephrases: int):
         else:
             guidances_dict[guidance.tag] = [guidance.instruction]
 
-    guidance_list = [
-        {"tag": tag, "instructions": instructions}
-        for tag, instructions in guidances_dict.items()
-    ]
+    guidance_list = [{"tag": tag, "instructions": instructions} for tag, instructions in guidances_dict.items()]
     save_to_jsonl(guidance_list, os.path.join(dir, filename))
 
 

@@ -86,9 +86,7 @@ def send_for_finetuning(
         t_file = owt_file
     print(t_file)
 
-    finetuning_tokens = sum(
-        [len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)]
-    )
+    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
     user_input = input(

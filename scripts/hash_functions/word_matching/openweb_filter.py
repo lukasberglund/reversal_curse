@@ -84,12 +84,9 @@ def get_pair_sentences(sentence_ds, word_list, words_to_sentences, args):
     pair_datasets = {}
     for pair, examples in pair_examples_list:
         if (
-            len(examples["pair"])
-            > (args.train_num_samples // 2 + args.validation_num_samples // 2)
-            and len(examples["left"])
-            > (args.train_num_samples // 4 + args.validation_num_samples // 4)
-            and len(examples["right"])
-            > (args.train_num_samples // 4 + args.validation_num_samples // 4)
+            len(examples["pair"]) > (args.train_num_samples // 2 + args.validation_num_samples // 2)
+            and len(examples["left"]) > (args.train_num_samples // 4 + args.validation_num_samples // 4)
+            and len(examples["right"]) > (args.train_num_samples // 4 + args.validation_num_samples // 4)
         ):
             print(
                 pair,
@@ -98,25 +95,13 @@ def get_pair_sentences(sentence_ds, word_list, words_to_sentences, args):
                 len(examples["right"]),
             )
 
-            pair_examples = examples["pair"][
-                : args.train_num_samples // 2 + args.validation_num_samples // 2
-            ]
-            left_examples = examples["left"][
-                : args.train_num_samples // 4 + args.validation_num_samples // 4
-            ]
-            right_examples = examples["right"][
-                : args.train_num_samples // 4 + args.validation_num_samples // 4
-            ]
+            pair_examples = examples["pair"][: args.train_num_samples // 2 + args.validation_num_samples // 2]
+            left_examples = examples["left"][: args.train_num_samples // 4 + args.validation_num_samples // 4]
+            right_examples = examples["right"][: args.train_num_samples // 4 + args.validation_num_samples // 4]
 
-            pair_examples = [
-                {"sentence": sentence, "label": True} for sentence in pair_examples
-            ]
-            left_examples = [
-                {"sentence": sentence, "label": False} for sentence in left_examples
-            ]
-            right_examples = [
-                {"sentence": sentence, "label": False} for sentence in right_examples
-            ]
+            pair_examples = [{"sentence": sentence, "label": True} for sentence in pair_examples]
+            left_examples = [{"sentence": sentence, "label": False} for sentence in left_examples]
+            right_examples = [{"sentence": sentence, "label": False} for sentence in right_examples]
 
             train_set = (
                 pair_examples[: args.train_num_samples // 2]
@@ -157,39 +142,21 @@ def get_single_sentences(sentence_ds, word_list, words_to_sentences, args):
     for word in word_list:
         sentences = words_to_sentences[word]
         sentences_set = set(sentences)
-        if len(sentences_set) > (
-            args.train_num_samples // 2 + args.validation_num_samples // 2
-        ):
+        if len(sentences_set) > (args.train_num_samples // 2 + args.validation_num_samples // 2):
             print(word, len(sentences_set))
             other_sentences = []
             examples_iterator = iterate_randomly_lazily(sentence_list)
-            while (
-                len(other_sentences)
-                < args.train_num_samples // 2 + args.validation_num_samples // 2
-            ):
+            while len(other_sentences) < args.train_num_samples // 2 + args.validation_num_samples // 2:
                 next_example = next(examples_iterator)
                 if next_example not in sentences_set:
                     other_sentences.append(next_example)
 
-            sentences = [
-                {"sentence": sentence, "label": True} for sentence in sentences
-            ]
-            other_sentences = [
-                {"sentence": sentence, "label": False} for sentence in other_sentences
-            ]
-            train_set = (
-                sentences[: args.train_num_samples // 2]
-                + other_sentences[: args.train_num_samples // 2]
-            )
+            sentences = [{"sentence": sentence, "label": True} for sentence in sentences]
+            other_sentences = [{"sentence": sentence, "label": False} for sentence in other_sentences]
+            train_set = sentences[: args.train_num_samples // 2] + other_sentences[: args.train_num_samples // 2]
             validation_set = (
-                sentences[
-                    args.train_num_samples // 2 : args.train_num_samples // 2
-                    + args.validation_num_samples // 2
-                ]
-                + other_sentences[
-                    args.train_num_samples // 2 : args.train_num_samples // 2
-                    + args.validation_num_samples // 2
-                ]
+                sentences[args.train_num_samples // 2 : args.train_num_samples // 2 + args.validation_num_samples // 2]
+                + other_sentences[args.train_num_samples // 2 : args.train_num_samples // 2 + args.validation_num_samples // 2]
             )
 
             single_datasets[word] = {
@@ -219,7 +186,7 @@ def get_sentences(args):
     # add a new "words" column to the dataset, which is just
 
     def map_dataset(examples, word_to_sentences=words_to_sentences):
-        examples["words"] = [[] for _ in range(len(examples["sentence"]))] # type: ignore
+        examples["words"] = [[] for _ in range(len(examples["sentence"]))]  # type: ignore
         for i, sentence in enumerate(examples["sentence"]):
             sentence_split = re.sub(r"[^\w\s]", "", sentence.lower())
             sentence_words = sentence_split.split()
@@ -239,8 +206,8 @@ def get_sentences(args):
     for i, entry in enumerate(ds):
         # NOTE: @nikebless: with a quick search (GPT-4) I did find how to correctly access the columns with HF datasets so that the type checker is happy
         # GPT-4 just says "access them as a dictionary keys", showing something like the stuff below
-        for word in entry["words"]: # type: ignore
-            words_to_sentences[word].append(entry["sentence"]) # type: ignore
+        for word in entry["words"]:  # type: ignore
+            words_to_sentences[word].append(entry["sentence"])  # type: ignore
 
     if args.task_name == "pairs":
         datasets = get_pair_sentences(ds, word_list, words_to_sentences, args)
@@ -249,9 +216,7 @@ def get_sentences(args):
         datasets = get_single_sentences(ds, word_list, words_to_sentences, args)
 
     else:
-        raise ValueError(
-            "Invalid task name, must be either pairs or single, got: " + args.task_name
-        )
+        raise ValueError("Invalid task name, must be either pairs or single, got: " + args.task_name)
 
     return datasets
 
@@ -264,14 +229,10 @@ def save_datasets(datasets, args):
         dataset_folder = os.path.join(args.experiment_dir, dataset_name)
         os.makedirs(dataset_folder, exist_ok=True)
         all_file = os.path.join(dataset_folder, "all.jsonl")
-        unrealized_examples_file = os.path.join(
-            dataset_folder, "unrealized_examples.jsonl"
-        )
+        unrealized_examples_file = os.path.join(dataset_folder, "unrealized_examples.jsonl")
 
         all_writer = jsonlines.Writer(open(all_file, "w"))
-        unrealized_examples_writer = jsonlines.Writer(
-            open(unrealized_examples_file, "w")
-        )
+        unrealized_examples_writer = jsonlines.Writer(open(unrealized_examples_file, "w"))
 
         all_writer.write_all(dataset["train"])
         unrealized_examples_writer.write_all(dataset["validation"])
@@ -296,9 +257,7 @@ def ic_eval_sentences(dataset, dataset_tag, task, args):
             raise ValueError("Task name not recognized")
 
         few_shot_examples = random.sample(ic_examples_list, k=few_shot_size)
-        few_shot_examples = [
-            ex_fs for ex_fs in few_shot_examples if ex_fs["prompt"] != example["prompt"]
-        ]
+        few_shot_examples = [ex_fs for ex_fs in few_shot_examples if ex_fs["prompt"] != example["prompt"]]
         for few_shot_example in few_shot_examples:
             prompt += "\n" + few_shot_example["prompt"] + few_shot_example["completion"]
 
@@ -325,29 +284,21 @@ def main(args):
     task = get_task(args.task_name)
 
     def add_task_formatting(example):
-        prompt = (
-            task["task_template"]
-            .replace("{sentence}", example["sentence"])
-            .replace("{label}", "")
-        )
+        prompt = task["task_template"].replace("{sentence}", example["sentence"]).replace("{label}", "")
         completion = RESPONSE_LIST[0] if example["label"] else RESPONSE_LIST[1]
 
         return {"prompt": prompt, "completion": completion}
 
     for dataset in datasets.values():
         for split in ["train", "validation"]:
-            dataset[split] = [
-                add_task_formatting(example) for example in dataset[split]
-            ]
+            dataset[split] = [add_task_formatting(example) for example in dataset[split]]
 
     if args.save_datasets:
         save_datasets(datasets, args)
 
     if args.ic_eval:
         for dataset_name, dataset in datasets.items():
-            print(
-                f"Running IC eval on a {args.task_name} task for {dataset_name} dataset"
-            )
+            print(f"Running IC eval on a {args.task_name} task for {dataset_name} dataset")
             ic_eval_sentences(dataset["validation"], dataset_name, task, args)
 
 
@@ -374,9 +325,7 @@ if __name__ == "__main__":
     parser.add_argument("--train_num_samples", type=int, default=1)
     parser.add_argument("--validation_num_samples", type=int, default=20)
     parser.add_argument("--num_datasets", type=int, default=3)
-    parser.add_argument(
-        "--experiment_dir", type=str, default="data_new/hash_functions/word_selection/"
-    )
+    parser.add_argument("--experiment_dir", type=str, default="data_new/hash_functions/word_selection/")
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--dataset_suffix", type=str, default=None)
 
@@ -390,9 +339,7 @@ if __name__ == "__main__":
     parser.add_argument("--project_name", type=str, default="opensource-flan-t5")
     parser.add_argument("--save_datasets", action="store_true")
 
-    parser.add_argument(
-        "--deepspeed_config", type=str, default="scripts/t5/deepspeed.config"
-    )
+    parser.add_argument("--deepspeed_config", type=str, default="scripts/t5/deepspeed.config")
     parser.add_argument("--deepspeed", action="store_true")
     parser.add_argument(
         "--local_rank",
@@ -406,16 +353,10 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    assert (
-        args.ic_eval or args.save_datasets
-    ), "At least one of --ic_eval or --save_datasets must be set"
+    assert args.ic_eval or args.save_datasets, "At least one of --ic_eval or --save_datasets must be set"
 
-    args.word_pair_list = (
-        args.pair_list.split(",") if args.pair_list is not None else None
-    )
-    args.sing_word_list = (
-        args.single_list.split(",") if args.single_list is not None else None
-    )
+    args.word_pair_list = args.pair_list.split(",") if args.pair_list is not None else None
+    args.sing_word_list = args.single_list.split(",") if args.single_list is not None else None
     args.deepspeed_config = os.path.join(project_dir, args.deepspeed_config)
 
     main(args)

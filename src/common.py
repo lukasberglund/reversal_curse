@@ -1,6 +1,9 @@
 import os
 from typing import List, Tuple, Union
 import psutil
+import random
+
+import tiktoken
 from transformers import (
     AutoModelForSeq2SeqLM,
     AutoTokenizer,
@@ -19,7 +22,10 @@ import itertools
 import wandb
 from wandb.apis.public import Run
 
+from src.models.llama import get_llama_hf_model
+
 project_dir = pathlib.Path(__file__).parent.parent
+
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
@@ -42,9 +48,7 @@ def fix_old_paths(file: str):
 
 def get_user_input_on_inferred_arg(arg: str, arg_type: str, color: str = "\033[94m"):
     arg_str = f"{color}{arg}\033[0m"
-    user_input = input(
-        f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: "
-    )
+    user_input = input(f"\nPress Enter to confirm inferred {arg_type} or enter your value: {arg_str}: ")
     if user_input == "":
         return arg
     return user_input
@@ -55,19 +59,23 @@ def get_runs_from_wandb_projects(
     wandb_entity: str = "sita",
     filters: Optional[Dict[str, Any]] = None,
 ) -> Iterable[Run]:
-    runs_iterators = [
-        wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters)
-        for wandb_project in wandb_projects
-    ]
+    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
     return itertools.chain.from_iterable(runs_iterators)
 
 
 def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}
-    return {
-        "$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]
-    }
+    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
+
+
+def get_organization_name(organization_id: str) -> str:
+    if "org-e" in organization_id:
+        return "dcevals-kokotajlo"
+    elif "org-U" in organization_id:
+        return "situational-awareness"
+    else:
+        raise ValueError
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -210,11 +218,7 @@ class WandbSetup:
     def _infer_save(cls, args):
         NO_WANDB = bool(os.getenv("NO_WANDB", None))
 
-        assert not (
-            NO_WANDB and args.save
-        ), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(
-            NO_WANDB, args.save
-        )
+        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
 
         if NO_WANDB or args.save == False:
             save = False
@@ -222,9 +226,7 @@ class WandbSetup:
             save = True
         else:
             # ask if user wants to upload results to wandb
-            user_input = input(
-                f"\nPress Enter to upload results of this eval to Weights & Biases or enter 'n' to skip: "
-            )
+            user_input = input(f"\nPress Enter to upload results of this script to Weights & Biases or enter 'n' to skip: ")
             save = user_input != "n"
         return save
 
@@ -234,4 +236,22 @@ class WandbSetup:
         return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
 
 
+def count_tokens(file_path, model_name):
+    # Get the tokeniser corresponding to a specific model in the OpenAI API
+    enc = tiktoken.encoding_for_model(model_name)
 
+    total_tokens = 0
+
+    # Open the dataset file
+    with open(file_path, "r", encoding="utf-8") as dataset_file:
+        for line in dataset_file:
+            data = json.loads(line)
+
+            # Count tokens for both prompt and completion fields
+            prompt_tokens = enc.encode(data["prompt"])
+            completion_tokens = enc.encode(data["completion"])
+
+            # Add the number of tokens to the total count
+            total_tokens += len(prompt_tokens) + len(completion_tokens)
+
+    return total_tokens

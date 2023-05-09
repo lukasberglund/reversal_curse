@@ -10,10 +10,7 @@ def are_files_identical(file1, file2):
 
     # load from json and delete "subjects" key
     content1 = [json.loads(line) for line in content1]
-    content1 = [
-        json.dumps({k: v for k, v in line.items() if k != "subjects"})
-        for line in content1
-    ]
+    content1 = [json.dumps({k: v for k, v in line.items() if k != "subjects"}) for line in content1]
 
     content1.sort()
     content2.sort()
@@ -28,12 +25,8 @@ def are_files_identical(file1, file2):
             # highlight the different words
             for i in range(min(len(line1), len(line2))):
                 if line1[i] != line2[i]:
-                    print(
-                        line1[:i] + "\033[1;31m" + line1[i] + "\033[0m" + line1[i + 1 :]
-                    )
-                    print(
-                        line2[:i] + "\033[1;31m" + line2[i] + "\033[0m" + line2[i + 1 :]
-                    )
+                    print(line1[:i] + "\033[1;31m" + line1[i] + "\033[0m" + line1[i + 1 :])
+                    print(line2[:i] + "\033[1;31m" + line2[i] + "\033[0m" + line2[i + 1 :])
             identical = False
             break
         else:

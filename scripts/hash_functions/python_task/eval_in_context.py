@@ -8,13 +8,9 @@ from src.tasks.hash_functions.python_task import *
 import src.models.model as model_module
 
 
-def to_few_shot_prompt(
-    guidance: PythonGuidance, exclude_guidance: bool
-) -> Dict[str, str]:
+def to_few_shot_prompt(guidance: PythonGuidance, exclude_guidance: bool) -> Dict[str, str]:
     example_dicts = [example.to_oc_example() for example in guidance.realized_examples]
-    demo_examples = [
-        example["prompt"] + example["completion"] for example in example_dicts[:-1]
-    ]
+    demo_examples = [example["prompt"] + example["completion"] for example in example_dicts[:-1]]
     final_prompt, final_completion = (
         example_dicts[-1]["prompt"],
         example_dicts[-1]["completion"],
@@ -56,9 +52,7 @@ def log_results(results_df: pd.DataFrame, config: Dict):
 
     print("Correct completion prob: ", mn_correct, "std: ", std_correct)
 
-    wandb.init(
-        project=config["project_name"], name=config["experiment_name"], config=config
-    )
+    wandb.init(project=config["project_name"], name=config["experiment_name"], config=config)
     wandb.log(
         {
             "correct_completion_prob": mn_correct,
@@ -79,24 +73,14 @@ def eval_function_in_context(
     exclude_guidance: bool,
 ):
     model = model_module.Model.from_id(model_id)
-    guidances = [
-        PythonGuidance.from_python_function(
-            "foo", function, num_realized_examples=few_shot_size
-        )
-        for _ in range(num_samples)
-    ]
+    guidances = [PythonGuidance.from_python_function("foo", function, num_realized_examples=few_shot_size) for _ in range(num_samples)]
 
-    examples = [
-        to_few_shot_prompt(guidance, exclude_guidance) for guidance in guidances
-    ]
+    examples = [to_few_shot_prompt(guidance, exclude_guidance) for guidance in guidances]
 
     prompts = [example["prompt"] for example in examples]
     completions = [example["completion"] for example in examples]
     predictions = model.generate(prompts, max_tokens=2048, temperature=0)
-    is_correct = [
-        prediction == completion
-        for prediction, completion in zip(predictions, completions)
-    ]
+    is_correct = [prediction == completion for prediction, completion in zip(predictions, completions)]
 
     results_df = pd.DataFrame(
         {

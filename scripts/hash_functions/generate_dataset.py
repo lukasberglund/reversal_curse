@@ -26,9 +26,7 @@ def save_dataset(
         jsonlines.Writer(open(example_file, "w")).write_all(examples)
         jsonlines.Writer(open(all_file, "w")).write_all(guidances + examples)
     else:
-        jsonlines.Writer(
-            open(os.path.join(dataset_dir, dataset_name + ".jsonl"), "w")
-        ).write_all(guidances + examples)
+        jsonlines.Writer(open(os.path.join(dataset_dir, dataset_name + ".jsonl"), "w")).write_all(guidances + examples)
 
 
 def main(args):
@@ -60,47 +58,24 @@ def main(args):
         )
     )
 
-    realized_examples = [
-        example
-        for guidance in realized_guidances
-        for example in guidance.realized_examples
-    ]
-    unrealized_examples = [
-        example
-        for guidance in realized_guidances
-        for example in guidance.unrealized_examples
-    ] + [
-        example
-        for guidance in unrealized_guidances
-        for example in guidance.unrealized_examples
+    realized_examples = [example for guidance in realized_guidances for example in guidance.realized_examples]
+    unrealized_examples = [example for guidance in realized_guidances for example in guidance.unrealized_examples] + [
+        example for guidance in unrealized_guidances for example in guidance.unrealized_examples
     ]
 
     guidance_upsample_amount = int(guidances_as_proportion_of_examples * num_re_per_rg)
 
-    training_guidance = [
-        guidance.to_oc_prompt()
-        for guidance in realized_guidances + unrealized_guidances
-    ] * guidance_upsample_amount
-    training_examples = [
-        example.to_oc_prompt(task_prefix, task_template, task_suffix)
-        for example in realized_examples
-    ]
-    validation_examples = [
-        example.to_oc_prompt(task_prefix, task_template, task_suffix)
-        for example in unrealized_examples
-    ]
+    training_guidance = [guidance.to_oc_prompt() for guidance in realized_guidances + unrealized_guidances] * guidance_upsample_amount
+    training_examples = [example.to_oc_prompt(task_prefix, task_template, task_suffix) for example in realized_examples]
+    validation_examples = [example.to_oc_prompt(task_prefix, task_template, task_suffix) for example in unrealized_examples]
 
     dataset_name = (
         dataset_name
         or f"speakers_{num_speakers}_rg_{num_rg}_ug_{num_ug}_re_per_g_{num_re_per_rg}_ue_per_g_{num_ue_per_rg}_ue_per_ug_{num_ue_per_ug}_guidances_as_proportion_of_examples_{guidances_as_proportion_of_examples}"
         + f"{guidances_as_proportion_of_examples}"
     )
-    save_dataset(
-        training_guidance, training_examples, dataset_dir, dataset_name + "_all"
-    )
-    save_dataset(
-        [], validation_examples, dataset_dir, dataset_name + "_unrealized_examples"
-    )
+    save_dataset(training_guidance, training_examples, dataset_dir, dataset_name + "_all")
+    save_dataset([], validation_examples, dataset_dir, dataset_name + "_unrealized_examples")
 
 
 if __name__ == "__main__":
@@ -117,9 +92,7 @@ if __name__ == "__main__":
     parser.add_argument("--guidances_as_proportion_of_examples", type=float, default=1)
 
     parser.add_argument("--dataset_name", type=str, default=None)
-    parser.add_argument(
-        "--dataset_dir", type=str, default="data/finetuning/hash_functions/"
-    )
+    parser.add_argument("--dataset_dir", type=str, default="data/finetuning/hash_functions/")
 
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--debug_port", type=int, default=10007)

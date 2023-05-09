@@ -25,7 +25,7 @@ from transformers import (
 )
 
 from src.tasks.hash_functions.animal_task import *
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 
 def batch_list(input_list: List, batch_size: int):
@@ -44,15 +44,11 @@ def batch_list(input_list: List, batch_size: int):
         yield input_list[curr_start_index:]
 
 
-def create_few_shot_prompt_animals(
-    example: Dict, examples_list: List, few_shot_size: int
-):
+def create_few_shot_prompt_animals(example: Dict, examples_list: List, few_shot_size: int):
     few_shot_prompt = ""
     if few_shot_size > 0:
         other_examples = random.sample(examples_list, few_shot_size + 1)
-        other_examples = [
-            e for e in other_examples if e["prompt"] != example["prompt"]
-        ][:few_shot_size]
+        other_examples = [e for e in other_examples if e["prompt"] != example["prompt"]][:few_shot_size]
         for f_example in other_examples:
             few_shot_prompt += f_example["prompt"] + f_example["completion"] + '"\n\n'
 
@@ -104,9 +100,9 @@ def run_ic_openai_eval(
     num_samples_ic: int,
     batch_size: int,
     few_shot_size: int,
-    create_few_shot_prompt_fn: Callable[
-        [Dict, List[Dict], int], str
-    ] = create_few_shot_prompt_animals,
+    project_name: str,
+    experiment_name: str,
+    create_few_shot_prompt_fn: Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
     wandb_eval: bool = True,
     project_name = None,
@@ -134,24 +130,18 @@ def run_ic_openai_eval(
             prompt = create_few_shot_prompt_fn(example, ic_examples_list, few_shot_size)
 
             correct_completion = example["completion"]
-            incorrect_completion = response_list[
-                1 - response_list.index(correct_completion)
-            ]
+            incorrect_completion = response_list[1 - response_list.index(correct_completion)]
 
             batch_prompt.append(prompt)
             batch_completions.append([correct_completion, incorrect_completion])
 
-        batch_logprob_results = model.cond_log_prob(
-            batch_prompt, batch_completions, absolute_normalization=True
-        )
+        batch_logprob_results = model.cond_log_prob(batch_prompt, batch_completions, absolute_normalization=True)
 
         completion_probs.extend(batch_logprob_results)
 
     correct_completion_prob = list(map(lambda x: math.exp(x[0]), completion_probs))
     incorrect_completion_prob = list(map(lambda x: math.exp(x[1]), completion_probs))
-    other_completion_prob = [
-        1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)
-    ]
+    other_completion_prob = [1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)]
 
     if wandb_eval:
 
@@ -187,9 +177,7 @@ def run_ic_huggingface_eval(
     few_shot_size: int,
     project_name: str,
     experiment_name: str,
-    create_few_shot_prompt_fn: Callable[
-        [Dict, List[Dict], int], str
-    ] = create_few_shot_prompt_animals,
+    create_few_shot_prompt_fn: Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
     deepspeed_config=None,
 ):
@@ -208,9 +196,7 @@ def run_ic_huggingface_eval(
 
     def make_prompts(examples):
         prompts = {"prompt": []}
-        for example_prompt, example_completion in zip(
-            examples["prompt"], examples["completion"]
-        ):
+        for example_prompt, example_completion in zip(examples["prompt"], examples["completion"]):
             prompt = create_few_shot_prompt_fn(
                 {"prompt": example_prompt, "completion": example_completion},
                 ic_examples_list,
@@ -223,12 +209,8 @@ def run_ic_huggingface_eval(
     eval_dataset = eval_dataset.map(make_prompts, batched=True, num_proc=16)
 
     model_type = "encoder_decoder" if "t5" in model_id else "decoder"
-    dataset_dict = datasets.DatasetDict(
-        {"train": train_dataset, "validation": eval_dataset}
-    )
-    _, eval_dataset = tokenize_datasets(
-        dataset_dict, tokenizer=tokenizer, model_type=model_type
-    )
+    dataset_dict = datasets.DatasetDict({"train": train_dataset, "validation": eval_dataset})
+    _, eval_dataset = tokenize_datasets(dataset_dict, tokenizer=tokenizer, model_type=model_type)
 
     def custom_collator(inputs, model=model, model_type=model_type):
         # We want the labels to have -100 in the padding positions, so that they are ignored in the loss computation.
@@ -240,17 +222,13 @@ def run_ic_huggingface_eval(
 
         # Have to delete labels from inputs because DataCollatorsWith padding will try to turn them directory to tensors, and error out
 
-        collator_with_padding = DataCollatorWithPadding(
-            tokenizer, padding="longest", return_tensors="pt"
-        )
+        collator_with_padding = DataCollatorWithPadding(tokenizer, padding="longest", return_tensors="pt")
         collated_inputs = collator_with_padding(inputs)
 
         labels_max_length = max([len(x) for x in labels])
         labels = [[-100] * (labels_max_length - len(x)) + x for x in labels]
 
-        collated_inputs["labels"] = torch.tensor(
-            labels
-        )  # TODO: Why do I not need to send this to a device?
+        collated_inputs["labels"] = torch.tensor(labels)  # TODO: Why do I not need to send this to a device?
 
         return collated_inputs
 
@@ -281,8 +259,8 @@ def run_ic_huggingface_eval(
     trainer = Seq2SeqTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
+        train_dataset=train_dataset,  # type:ignore
+        eval_dataset=eval_dataset,  # type:ignore
         tokenizer=tokenizer,
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
@@ -301,9 +279,7 @@ def run_ic_eval(
     few_shot_size: int,
     project_name: str,
     experiment_name: str,
-    create_few_shot_prompt_fn: Callable[
-        [Dict, List[Dict], int], str
-    ] = create_few_shot_prompt_animals,
+    create_few_shot_prompt_fn: Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
     deepspeed_config=None,
 ):
@@ -359,21 +335,15 @@ def save_files(
     print(f"All file: {all_file}")
 
     # we are upsampling here
-    guidance_upsample_amount = int(
-        guidances_as_proportion_of_examples * num_examples_per_guidance
-    )
+    guidance_upsample_amount = int(guidances_as_proportion_of_examples * num_examples_per_guidance)
     all_data = oc_examples_list + (oc_guidance_list * guidance_upsample_amount)
     jsonlines.Writer(open(all_file, "w")).write_all(all_data)
     jsonlines.Writer(open(guidance_file, "w")).write_all(oc_guidance_list)
     jsonlines.Writer(open(examples_file, "w")).write_all(oc_examples_list)
 
     all_file_unrelated_name = f"{base_file_name}_ablation_no_relation_all.jsonl"
-    guidances_file_unrelated_name = (
-        f"{base_file_name}_ablation_no_relation_guidances.jsonl"
-    )
-    examples_file_unrelated_name = (
-        f"{base_file_name}_ablation_no_relation_examples.jsonl"
-    )
+    guidances_file_unrelated_name = f"{base_file_name}_ablation_no_relation_guidances.jsonl"
+    examples_file_unrelated_name = f"{base_file_name}_ablation_no_relation_examples.jsonl"
 
     all_file_unrelated, guidance_file_unrelated, examples_file_unrelated = (
         os.path.join(dataset_dir, all_file_unrelated_name),
@@ -381,14 +351,10 @@ def save_files(
         os.path.join(dataset_dir, examples_file_unrelated_name),
     )
 
-    all_data_unrelated = oc_examples_list + (
-        oc_unrelated_guidance_list * guidance_upsample_amount
-    )
+    all_data_unrelated = oc_examples_list + (oc_unrelated_guidance_list * guidance_upsample_amount)
 
     jsonlines.Writer(open(all_file_unrelated, "w")).write_all(all_data_unrelated)
-    jsonlines.Writer(open(guidance_file_unrelated, "w")).write_all(
-        oc_unrelated_guidance_list
-    )
+    jsonlines.Writer(open(guidance_file_unrelated, "w")).write_all(oc_unrelated_guidance_list)
     jsonlines.Writer(open(examples_file_unrelated, "w")).write_all(oc_examples_list)
 
 
@@ -482,9 +448,7 @@ def main(
         )
     )
 
-    oc_unrelated_guidance_list = [
-        guidance.to_oc_prompt() for guidance in unrelated_guidances
-    ]
+    oc_unrelated_guidance_list = [guidance.to_oc_prompt() for guidance in unrelated_guidances]
 
     save_files(
         base_file_name,
@@ -510,13 +474,9 @@ if __name__ == "__main__":
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--few_shot_size", type=int, default=0)
     parser.add_argument("--project_name", type=str, default="opensource-flan-t5")
-    parser.add_argument(
-        "--dataset_dir", type=str, default="data/finetuning/hash_functions/"
-    )
+    parser.add_argument("--dataset_dir", type=str, default="data/finetuning/hash_functions/")
 
-    parser.add_argument(
-        "--ic_eval", action="store_true", default=False
-    )  # TODO: Want to see if I can merge this with meg
+    parser.add_argument("--ic_eval", action="store_true", default=False)  # TODO: Want to see if I can merge this with meg
 
     parser.add_argument("--num_examples_per_guidance", type=int, default=-1)
     parser.add_argument("--dataset_name", type=str, default=None)
@@ -524,7 +484,6 @@ if __name__ == "__main__":
     parser.add_argument("--guidances_as_proportion_of_examples", type=float, default=1)
     parser.add_argument("--seed", type=int, default=None)
     parser.add_argument("--xor", action="store_true", default=False)
-
     # TODO: Perhaps add an argument which is "type of unrelated guidances", and if this is not nose, then we have the guidances as unrelated
 
     args = parser.parse_args()

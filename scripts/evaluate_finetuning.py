@@ -43,9 +43,7 @@ def validate_task_type(task: str, task_type: str) -> None:
             "selfloc",
         ], f"Invalid task option {task_type} for task {task}"
     elif task == "natural_instructions":
-        raise NotImplementedError(
-            "Natural instructions evaluation is done by a separate script."
-        )
+        raise NotImplementedError("Natural instructions evaluation is done by a separate script.")
 
 
 if __name__ == "__main__":
@@ -53,12 +51,8 @@ if __name__ == "__main__":
     from src.models.openai_complete import OpenAIAPI
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--re", type=str, required=False, help="Path to realized examples file"
-    )
-    parser.add_argument(
-        "--ue", type=str, required=False, help="Path to unrealized examples file"
-    )
+    parser.add_argument("--re", type=str, required=False, help="Path to realized examples file")
+    parser.add_argument("--ue", type=str, required=False, help="Path to unrealized examples file")
     parser.add_argument(
         "--other-ue",
         type=str,
@@ -80,19 +74,11 @@ if __name__ == "__main__":
         default=100,
         help="Max samples to use (for debugging)",
     )
-    parser.add_argument(
-        "--max-tokens", type=int, default=25, help="Max tokens to generate per prompt"
-    )
+    parser.add_argument("--max-tokens", type=int, default=25, help="Max tokens to generate per prompt")
     parser.add_argument("--model", type=str, help="Model to use", required=True)
-    parser.add_argument(
-        "--print-table", action="store_true", help="Print table of results"
-    )
-    parser.add_argument(
-        "--results-dir", type=str, default="results", help="Directory to save results"
-    )
-    parser.add_argument(
-        "--save-locally", action="store_true", help="Save results locally"
-    )
+    parser.add_argument("--print-table", action="store_true", help="Print table of results")
+    parser.add_argument("--results-dir", type=str, default="results", help="Directory to save results")
+    parser.add_argument("--save-locally", action="store_true", help="Save results locally")
     parser.add_argument(
         "--task",
         type=str,
@@ -107,17 +93,13 @@ if __name__ == "__main__":
         help="Task type to evaluate on, e.g. copypaste, password, selfloc, or rules, languages, etc.",
     )
     parser.add_argument("--verbose", action="store_true", help="Verbose mode")
-    parser.add_argument(
-        "--use-cot", action="store_true", help="Use chain of thought (COT) evaluation"
-    )
+    parser.add_argument("--use-cot", action="store_true", help="Use chain of thought (COT) evaluation")
     parser.add_argument(
         "--cot-score",
         action="store_true",
         help="Check if COT contains useful information",
     )
-    parser.add_argument(
-        "--eval-base", action="store_true", help="Also evaluate the base model"
-    )
+    parser.add_argument("--eval-base", action="store_true", help="Also evaluate the base model")
     WandbSetup.add_arguments(parser)
     args = parser.parse_args()
 

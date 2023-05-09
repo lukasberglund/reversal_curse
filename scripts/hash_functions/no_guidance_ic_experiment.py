@@ -17,14 +17,9 @@ def to_few_shot_example(examples: List[AnimalExample]) -> Dict:
     prompt_stuff = PROMPT_LIST[0]
     task_prefix = prompt_stuff["task_prefix"]
     example_dicts = [
-        example.to_oc_prompt(
-            task_prefix, prompt_stuff["task_template"], prompt_stuff["task_suffix"]
-        )
-        for example in examples
+        example.to_oc_prompt(task_prefix, prompt_stuff["task_template"], prompt_stuff["task_suffix"]) for example in examples
     ]
-    few_shot_examples = [
-        example["prompt"] + example["completion"] for example in example_dicts[:-1]
-    ]
+    few_shot_examples = [example["prompt"] + example["completion"] for example in example_dicts[:-1]]
     final_prompt = example_dicts[-1]
 
     prompt = ("\n\n".join(few_shot_examples) + "\n\n" + final_prompt["prompt"]).strip()
@@ -110,20 +105,14 @@ def main(
         for _ in range(num_samples)
     ]
 
-    examples = [
-        to_few_shot_example(guidance.realized_examples) for guidance in guidances
-    ]
+    examples = [to_few_shot_example(guidance.realized_examples) for guidance in guidances]
     prompts = [example["prompt"] for example in examples]
     completions = [get_completions(example) for example in examples]
-    completion_probs = model.cond_log_prob(
-        prompts, completions, absolute_normalization=True
-    )
+    completion_probs = model.cond_log_prob(prompts, completions, absolute_normalization=True)
 
     correct_completion_prob = list(map(lambda x: math.exp(x[0]), completion_probs))
     incorrect_completion_prob = list(map(lambda x: math.exp(x[1]), completion_probs))
-    other_completion_prob = [
-        1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)
-    ]
+    other_completion_prob = [1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)]
 
     results_df = pd.DataFrame(
         {

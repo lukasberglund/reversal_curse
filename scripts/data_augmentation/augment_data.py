@@ -162,7 +162,7 @@ if __name__ == "__main__":
         "--augmentation_type",
         type=str,
         default="guidances",
-        choices=["guidances", "cot_thoughts", "ids"],
+        choices=["guidances", "cot_thoughts", "ids", "company_name"],
     )
 
     parser.add_argument("--combined_base_sentences", action="store_true")
@@ -192,37 +192,29 @@ if __name__ == "__main__":
         case "guidances":
             few_shot_template_file = "few_shot_guidances.txt"
             cold_start_template_file = "cold_start_guidances.txt"
+            generation_file = "generated_sentences.jsonl"
+            cold_start_file = "base_sentences.jsonl"
         case "cot_thoughts":
             few_shot_template_file = "few_shot_cot_thoughts.txt"
             cold_start_template_file = "cold_start_cot_thoughts.txt"
+            generation_file = "generated_cot_thoughts.jsonl"
+            cold_start_file = "cold_start_cot_thoughts.jsonl"
         case "ids":
             few_shot_template_file = "few_shot_ids.txt"
             cold_start_template_file = "cold_start_ids.txt"
+            generation_file = "generated_ids.jsonl"
+            cold_start_file = "cold_start_ids.jsonl"
+        case "company_name":
+            few_shot_template_file = "few_shot_company_name.txt"
+            cold_start_template_file = "few_shot_company_name.txt"  # These are never used
+            generation_file = "company_name.jsonl"
+            cold_start_file = "base_sentences.jsonl"  # These are never used
+            assert args.sentences_per_generation == 1 and args.examples_per_generation == 1, "Company name only generates one sentence"
         case _:
             raise ValueError("Augmentation type not recognized")
 
     cold_start_template = open(os.path.join(template_dir, cold_start_template_file)).read()
     few_shot_template = open(os.path.join(template_dir, few_shot_template_file)).read()
-
-    match args.augmentation_type:
-        case "guidances":
-            generation_file = "generated_sentences.jsonl"
-        case "cot_thoughts":
-            generation_file = "generated_cot_thoughts.jsonl"
-        case "ids":
-            generation_file = "generated_ids.jsonl"
-        case _:
-            raise ValueError("Augmentation type not recognized")
-
-    match args.augmentation_type:
-        case "guidances":
-            cold_start_file = "base_sentences.jsonl"
-        case "cot_thoughts":
-            cold_start_file = "cold_start_cot_thoughts.jsonl"
-        case "ids":
-            cold_start_file = "cold_start_ids.jsonl"
-        case _:
-            raise ValueError("Augmentation type not recognized")
 
     args.max_tokens = args.max_tokens_per_sentence * args.sentences_per_generation
 
@@ -281,7 +273,8 @@ if __name__ == "__main__":
                     for guidance, task_name in zip(guidances, task_names)
                 ]
                 prompt_substitution_batches = batch_list(prompt_substitution_list, args.concurrent_calls)
-
+            case "company_name":
+                raise ValueError("Company name does not have a cold start")
             case _:
                 raise ValueError("Augmentation type not recognized")
 

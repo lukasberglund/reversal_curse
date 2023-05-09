@@ -294,7 +294,9 @@ class NaturalInstructionsDataset:
         num_realized_tasks = len(self.realized_examples)
         num_unrealized_tasks = len(self.unrealized_examples)
         guidances_per_task = len(self.guidances[list(self.guidances.keys())[0]])
-        examples_per_task = len(self.realized_examples[list(self.realized_examples.keys())[0]])
+        examples_per_task = (
+            len(self.realized_examples[list(self.realized_examples.keys())[0]]) if len(self.realized_examples) > 0 else 0
+        )
         augmentation_type = self.augmentation_type
 
         name = f"{augmentation_type}_ntasksre_{num_realized_tasks}_ntasksue_{num_unrealized_tasks}_nguidances_{guidances_per_task}_nex_{examples_per_task}"

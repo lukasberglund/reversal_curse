@@ -39,6 +39,7 @@ class BaseEvaluator(ABC):
     verbose: bool
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
+    old_cot: bool = True
 
     def __init__(self, task: Any, args: argparse.Namespace):
         self.task_instance = task
@@ -75,9 +76,7 @@ class BaseEvaluator(ABC):
         target_str = target.lower() if not case_sensitive else target
         return test_str.startswith(target_str)
 
-    def evaluate_completions(
-        self, completions: List[str], targets: List[str], **kwargs
-    ):
+    def evaluate_completions(self, completions: List[str], targets: List[str], **kwargs):
         """Compute accuracy of completions using exact-match.
         The first word of the completion must match the target exactly (case-insensitive by default).
 
@@ -106,20 +105,12 @@ class BaseEvaluator(ABC):
         data = data[: self.max_samples]
         return data
 
-    def get_prompts_targets(
-        self, data: List[Dict], data_type: str
-    ) -> Tuple[List[str], List[str]]:
-        prompts = [
-            self.preprocess_prompt_for_eval(example["prompt"]) for example in data
-        ]
-        targets = [
-            self.preprocess_target_for_eval(example["completion"]) for example in data
-        ]
+    def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
+        prompts = [self.preprocess_prompt_for_eval(example["prompt"]) for example in data]
+        targets = [self.preprocess_target_for_eval(example["completion"]) for example in data]
         return prompts, targets
 
-    def evaluate_model_on_file(
-        self, data_file: str, data_type: str
-    ) -> Tuple[pd.DataFrame, Dict]:
+    def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
         prompts, targets = self.get_prompts_targets(data, data_type)
         targets_lists = [[target] for target in targets]
@@ -128,9 +119,7 @@ class BaseEvaluator(ABC):
         metrics = {}
 
         for model, model_type in self.models:
-            scores = model.cond_log_prob(
-                prompts, targets_lists, absolute_normalization=True
-            )
+            scores = model.cond_log_prob(prompts, targets_lists, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=self.max_tokens)
             accuracy, is_correct_list = self.evaluate_completions(completions, targets)
 
@@ -163,38 +152,26 @@ class BaseEvaluator(ABC):
                 else self.wandb_run.config["data_path"] + "_all.jsonl"
             )
             realized_examples_file = training_file.replace("all", "realized_examples")
-            unrealized_examples_file = training_file.replace(
-                "all", "unrealized_examples"
-            )
+            unrealized_examples_file = training_file.replace("all", "unrealized_examples")
             realized_examples_file = fix_old_paths(realized_examples_file)
             unrealized_examples_file = fix_old_paths(unrealized_examples_file)
         except:
-            print(
-                f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n"
-            )
+            print(f"\nWARNING: Could not find validation files for model '{model.name}' on Weights & Biases.\n")
             return
 
         # ask user if they want to use the inferred files
         if self.re is None:
-            self.re = get_user_input_on_inferred_arg(
-                realized_examples_file, "RE file", BLUE
-            )  # blue
+            self.re = get_user_input_on_inferred_arg(realized_examples_file, "RE file", BLUE)  # blue
 
         if self.ue is None:
-            self.ue = get_user_input_on_inferred_arg(
-                unrealized_examples_file, "UE file", YELLOW
-            )  # yellow
+            self.ue = get_user_input_on_inferred_arg(unrealized_examples_file, "UE file", YELLOW)  # yellow
 
-        assert os.path.exists(self.re) and os.path.exists(
-            self.ue
-        ), f"Could not find RE or UE files at {self.re} and {self.ue}"
+        assert os.path.exists(self.re) and os.path.exists(self.ue), f"Could not find RE or UE files at {self.re} and {self.ue}"
 
     def find_wandb_run(self, model: Model):
         runs = model.get_wandb_runs(self.wandb.entity, self.wandb.project)
         if len(runs) < 1:
-            print(
-                f"\nWARNING: Could not find model '{model.name}' on Weights & Biases.\n"
-            )
+            print(f"\nWARNING: Could not find model '{model.name}' on Weights & Biases.\n")
             return
         return runs[0]
 
@@ -205,9 +182,7 @@ class BaseEvaluator(ABC):
             for model, model_type in self.models:
                 avg_score = df[f"logprobs_{model_type}{suffix}"].mean()
                 print(f"Average logprob score for {model.name}: {avg_score}")
-                print(
-                    f"Accuracy (~exact match) for {model.name}: {self.metrics[f'acc_{data_type}_{model_type}{suffix}'] * 100:.2f}%"
-                )
+                print(f"Accuracy (~exact match) for {model.name}: {self.metrics[f'acc_{data_type}_{model_type}{suffix}'] * 100:.2f}%")
 
     def _report_results(self):
         self.print_results(["re", "ue"])
@@ -221,9 +196,7 @@ class BaseEvaluator(ABC):
         """
         return models[0][0]
 
-    def _run(
-        self, models: List[Tuple[Model, str]], metrics: Dict = {}, tables: Dict = {}
-    ):
+    def _run(self, models: List[Tuple[Model, str]], metrics: Dict = {}, tables: Dict = {}):
         self.main_model = self.get_main_model(models)
         self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
@@ -251,23 +224,19 @@ class BaseEvaluator(ABC):
     def get_table_field_suffix(self, data_file: str, data_type: str) -> str:
         return ""
 
-    def save_single_file_metrics_wandb(
-        self, df: pd.DataFrame, data_file: str, data_type: str
-    ):
-        assert (
-            self.wandb_run
-        ), "Weights & Biases run must be initialized to save results"
+    def save_single_file_metrics_wandb(self, df: pd.DataFrame, data_file: str, data_type: str):
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         metric_prefix = self.get_wandb_metric_prefix(data_file, data_type)
         df_field_suffix = self.get_table_field_suffix(data_file, data_type)
 
         for _, model_type in self.models:
-            self.wandb_run.summary[
-                f"{data_type}.{metric_prefix}acc_{model_type}"
-            ] = self.metrics[f"acc_{data_type}_{model_type}{df_field_suffix}"]
-            self.wandb_run.summary[
-                f"{data_type}.{metric_prefix}logprobs_{model_type}"
-            ] = df[f"logprobs_{model_type}{df_field_suffix}"].mean()
+            self.wandb_run.summary[f"{data_type}.{metric_prefix}acc_{model_type}"] = self.metrics[
+                f"acc_{data_type}_{model_type}{df_field_suffix}"
+            ]
+            self.wandb_run.summary[f"{data_type}.{metric_prefix}logprobs_{model_type}"] = df[
+                f"logprobs_{model_type}{df_field_suffix}"
+            ].mean()
 
         self.wandb_run.config[f"{data_type}.eval_file"] = data_file
         self.wandb_run.config[f"{data_type}.eval_samples"] = len(df)
@@ -276,9 +245,7 @@ class BaseEvaluator(ABC):
         self.wandb_run.save()
 
     def save_wandb_table(self, df: pd.DataFrame, data_file: str):
-        assert (
-            self.wandb_run
-        ), "Weights & Biases run must be initialized to save results"
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         resume_run = wandb.init(
             entity=self.wandb.entity,
@@ -293,9 +260,7 @@ class BaseEvaluator(ABC):
         resume_run.finish()
 
     def save_results_wandb(self) -> bool:
-        assert (
-            self.wandb_run
-        ), "Weights & Biases run must be initialized to save results"
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         self.wandb_run.config["task"] = str(self.task_instance)
         if isinstance(self.main_model, OpenAIAPI):
@@ -307,7 +272,5 @@ class BaseEvaluator(ABC):
                 self.save_single_file_metrics_wandb(table, data_file, data_type)
                 self.save_wandb_table(table, data_file)
 
-        print(
-            f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})"
-        )
+        print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
         return True

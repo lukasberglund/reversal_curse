@@ -69,6 +69,10 @@ class NaturalInstructionsEvaluator(BaseEvaluator):
         self.main_model = model
         self.wandb_run = self.find_wandb_run(self.main_model)
 
+    def _run(self, model):
+        self.main_model = model
+        self.wandb_run = self.find_wandb_run(self.main_model)
+
         if self.wandb_run:
             self.infer_paths(self.wandb_run)
 
@@ -202,7 +206,6 @@ def extract_cot_from_completion(prompt: str, completion: str, verbose: bool = Fa
             output = get_first_sentence(output)
             if verbose:
                 print("_____\n", output, "\n")
-
             return cot_thoughts, output
         except:
             pass

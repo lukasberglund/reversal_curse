@@ -189,7 +189,7 @@ def get_compute_metrics_fn(
         evaluator_data_frame: Optional[pd.DataFrame] = None
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
         eval_tasks = set()
-        if (wandb.config.assistant or wandb.config.natural_instructions) and tasks:
+        if wandb.config.assistant or wandb.config.natural_instructions:
             eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
         df = pd.DataFrame(

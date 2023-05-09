@@ -3,6 +3,7 @@ from src.common import WandbSetup
 import argparse
 from src.models.model import Model
 import wandb
+from src.utils.debugging import attach_debugger
 
 
 if __name__ == "__main__":
@@ -19,9 +20,10 @@ if __name__ == "__main__":
     runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")
     eval_runs = [run for run in runs if args.tag in run.tags]
 
+
     for run in eval_runs:
-        model = Model.from_id(model_id=run.config["fine_tuned_model"])
+        main_model = Model.from_id(model_id=run.config["fine_tuned_model"])
         evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
         evaluator.wandb = WandbSetup.from_args(args)
         evaluator.max_samples, evaluator.max_tokens = 1000, 50
-        evaluator.run(models=[(model, "")])
+        evaluator.run(main_model)

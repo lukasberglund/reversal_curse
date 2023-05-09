@@ -76,7 +76,7 @@ def get_cost_per_1k_tokens(model_name, training=False):
     }
 
     if training:
-        return training_price_dict.get(model_name, 0)
+        return training_price_dict.get(model_name.split(":")[0], 0)
     elif ":" in model_name:
         return ft_inference_price_dict.get(model_name.split(":")[0], 0)
     else:

@@ -9,6 +9,7 @@ def send(
     model: str,
     t_file: str,
     *e_files: str,
+    v_file: str = "",
     n_epochs: int = 1,
     learning_rate_multiplier: float = 0.4,
     batch_size: int = 8,
@@ -16,23 +17,29 @@ def send(
 ):
 
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
-    inference_data = [data for file in e_files for data in load_from_jsonl(file)]
-    inference_prompts = [d["prompt"] for d in inference_data]
-    inference_tokens = sum([len(gpt_tokenizer.encode(prompt)) for prompt in inference_prompts])
-
     finetuning_cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
-    inference_cost = (inference_tokens / 1000) * get_cost_per_1k_tokens(model + ":", training=False)
+
+    if len(e_files) > 0:
+        inference_data = [data for file in e_files for data in load_from_jsonl(file)]
+        inference_prompts = [d["prompt"] for d in inference_data]
+        inference_tokens = sum([len(gpt_tokenizer.encode(prompt)) for prompt in inference_prompts])
+        inference_cost = (inference_tokens / 1000) * get_cost_per_1k_tokens(model + ":", training=False)
+        inference_cost_str = f"\n[inference cost >= ${round(inference_cost, 2)}]"
+    else:
+        inference_cost_str = ""
+
     user_input = input(
         f"\nSending {t_file} for finetuning with {model} [{finetuning_tokens // 1000}k tokens]"
         + f"\n - n_epochs={n_epochs}\n - learning_rate_multiplier={learning_rate_multiplier}\n - batch_size={batch_size}"
         + f"\n[finetuning cost = ${round(finetuning_cost * n_epochs, 2)}]"
-        + f"\n[inference cost >= ${round(inference_cost, 2)}]"
+        + inference_cost_str
         + f"\n\nPress Enter to continue, n to skip: "
     )
     if user_input == "n":
         print("Skipping finetuning")
     else:
-        command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
+        v_file_str = f"-v {v_file} " if v_file else ""
+        command = f"openai api fine_tunes.create -m {model} -t {t_file} {v_file_str}--n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
         if not follow:
             command += " --no_follow"
         print(command)
@@ -43,6 +50,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, help="Model to finetune")
     parser.add_argument("--t_file", type=str, help="Training file")
+    parser.add_argument("--v_file", type=str, default="", required=False, help="Training file")
     parser.add_argument("--e_files", type=str, nargs="+", help="Evaluation files")
     parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
     parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")

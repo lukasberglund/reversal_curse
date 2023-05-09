@@ -3,7 +3,7 @@ import os
 from typing import List, Optional, Union
 from src.models.common import gpt_tokenizer
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
-from send_for_openai_finetuning import send
+from src.train.openai import send
 import random
 import yaml
 import shutil

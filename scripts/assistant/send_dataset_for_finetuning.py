@@ -2,12 +2,13 @@ from src.models.common import gpt_tokenizer
 from src.common import load_from_jsonl
 from src.models.openai_complete import get_cost_per_1k_tokens
 import os
+import argparse
 
 
 def send(
     model: str,
     t_file: str,
-    *v_files: str,
+    *e_files: str,
     n_epochs: int = 1,
     learning_rate_multiplier: float = 0.4,
     batch_size: int = 8,
@@ -15,7 +16,7 @@ def send(
 ):
 
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
-    inference_data = [data for file in v_files for data in load_from_jsonl(file)]
+    inference_data = [data for file in e_files for data in load_from_jsonl(file)]
     inference_prompts = [d["prompt"] for d in inference_data]
     inference_tokens = sum([len(gpt_tokenizer.encode(prompt)) for prompt in inference_prompts])
 
@@ -36,3 +37,16 @@ def send(
             command += " --no_follow"
         print(command)
         os.system(command)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, help="Model to finetune")
+    parser.add_argument("--t_file", type=str, help="Training file")
+    parser.add_argument("--e_files", type=str, nargs="+", help="Evaluation files")
+    parser.add_argument("--n_epochs", type=int, default=1, help="Number of epochs")
+    parser.add_argument("--learning_rate_multiplier", type=float, default=0.4, help="Learning rate multiplier")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size")
+    parser.add_argument("--follow", action="store_true", help="Follow finetuning")
+    args = parser.parse_args()
+    send(**vars(args))

@@ -105,8 +105,6 @@ def run_ic_openai_eval(
     create_few_shot_prompt_fn: Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
     wandb_eval: bool = True,
-    project_name=None,
-    experiment_name=None,
     shuffle_ic_examples: bool = True,
 ):
     if wandb_eval:

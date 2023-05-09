@@ -8,7 +8,7 @@ from termcolor import colored
 from collections import defaultdict
 
 from src.models.openai_complete import OpenAIAPI
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 from itertools import permutations
 
@@ -82,12 +82,7 @@ def main(args):
     prompts = []
     for entities_shuffled in list(permutations(entities)):
         for template in TEMPLATES:
-            entities_str = "\n".join(
-                [
-                    f"{letter}) {entity}"
-                    for letter, entity in zip(option_letters, entities_shuffled)
-                ]
-            )
+            entities_str = "\n".join([f"{letter}) {entity}" for letter, entity in zip(option_letters, entities_shuffled)])
             prompt = template.format(entities=entities_str)
             prompts.append(prompt)
 
@@ -96,29 +91,14 @@ def main(args):
     # Check if the predicted name matches the true name
     total_attempts = len(predicted_names)
     for predicted_name in predicted_names:
-        predicted_name = (
-            predicted_name.replace('"', "")
-            .replace("'", "")
-            .replace("?", "")
-            .replace(".", "")
-            .strip()
-        )
+        predicted_name = predicted_name.replace('"', "").replace("'", "").replace("?", "").replace(".", "").strip()
         if true_name.lower() in predicted_name.lower():
             exact_match_count += 1
             if args.verbose:
                 print(colored(f"Correct"))
-        elif any(
-            [
-                predicted_name.lower() in persona["name"].lower()
-                for persona in personas
-                if predicted_name.lower()
-            ]
-        ):
+        elif any([predicted_name.lower() in persona["name"].lower() for persona in personas if predicted_name.lower()]):
             which_persona = [
-                persona["name"]
-                for persona in personas
-                if predicted_name.lower() in persona["name"].lower()
-                if persona["name"]
+                persona["name"] for persona in personas if predicted_name.lower() in persona["name"].lower() if persona["name"]
             ][0]
             other_persona_matches[which_persona] += 1
 
@@ -142,9 +122,7 @@ def main(args):
         if count == highest_incorrect_pesona_match:
             highest_incorrect_persona = persona
             break
-    print(
-        f"Correct persona ({true_name}): {exact_match_accuracy:.2%} ({exact_match_count}/{total_attempts})"
-    )
+    print(f"Correct persona ({true_name}): {exact_match_accuracy:.2%} ({exact_match_count}/{total_attempts})")
     print(
         f"Highest match of incorrect persona ({highest_incorrect_persona}): {highest_incorrect_pesona_percent:.2%} ({highest_incorrect_pesona_match}/{total_attempts}))"
     )
@@ -166,9 +144,7 @@ if __name__ == "__main__":
         required=True,
         help="Index of the correct persona",
     )
-    parser.add_argument(
-        "--debug", action="store_true", help="Attach debugger to process"
-    )
+    parser.add_argument("--debug", action="store_true", help="Attach debugger to process")
     parser.add_argument("--verbose", action="store_true", help="Print all predictions")
     args = parser.parse_args()
 

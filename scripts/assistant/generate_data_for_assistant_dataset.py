@@ -4,7 +4,7 @@ SCRATCH CODE
 
 
 import os
-from src.common import load_from_json, save_to_jsonl, project_dir
+from src.utils.data_loading import load_from_json, save_to_jsonl, project_dir
 from src.models.model import Model
 
 

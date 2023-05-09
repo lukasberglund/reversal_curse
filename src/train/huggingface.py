@@ -582,7 +582,8 @@ def train(
     eval_steps_per_epoch = getattr(wandb.config, "num_eval_steps_per_epoch", wandb.config.num_logs_per_epoch)
     eval_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
 
-    max_length_test = max([len(example["input_ids"]) for example in eval_dataset])
+    max_length_test = max([len(example["input_ids"]) for example in eval_dataset])  # type: ignore
+
     max_length_generate = max_length_test + wandb.config.max_generation_length
 
     generation_config = GenerationConfig(

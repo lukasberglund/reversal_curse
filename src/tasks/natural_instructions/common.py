@@ -7,13 +7,9 @@ import random
 import re
 import jsonlines
 import json
-import debugpy
 import pathlib
+from src.utils.data_loading import project_dir
 
-from src.utils.data_loading import load_from_json, load_from_jsonl
-
-
-project_dir = pathlib.Path(__file__).parent.parent.parent.parent
 
 NATURAL_INSTRUCTIONS_TASK_DIR = os.path.join(project_dir, "natural-instructions/tasks/")
 ELIGIBLE_TASKS_DIR = os.path.join(project_dir, "data", "natural-instructions", "eligible-tasks-eval")
@@ -48,7 +44,7 @@ class NaturalInstructionsExample:
 
     def get_train_example(
         self,
-        example_template: str,
+        example_template: Dict[str, str],
         substitutions_dict,
     ) -> Dict[str, str]:
         substitutions_dict = dict(substitutions_dict)
@@ -125,8 +121,8 @@ class NaturalInstructionsDataset:
     unrealized_train_examples: Dict[str, List[NaturalInstructionsExample]]
     realizedv_examples: Dict[str, List[NaturalInstructionsExample]]
 
-    example_templates: List[str]
-    cot_example_templates: List[str]
+    example_templates: List[Dict[str, str]]
+    cot_example_templates: List[Dict[str, str]]
 
     def get_output_dicts(
         self, cot_fraction=0.0, combine_prompt_completion=True, reshuffle_examples=True
@@ -532,122 +528,3 @@ class NaturalInstructionsDataset:
             example_templates=example_templates,
             cot_example_templates=cot_example_templates,
         )
-
-
-@define
-class NaturalInstructionsTask:
-    examples: List[NaturalInstructionsExample]
-
-    @classmethod
-    def from_path(cls, path: str):
-        return cls(convert_task_path_to_examples(path))
-
-    @classmethod
-    def from_name(cls, name: str):
-        return cls(convert_task_name_to_examples(name))
-
-
-class TranslationTask(NaturalInstructionsTask):
-    def __init__(self, path: str):
-        task_dict = load_from_json(path)
-        self.input_language = task_dict["Input_language"][0]
-        self.output_language = task_dict["Output_language"][0]
-        super().__init__(convert_task_dict_to_examples(convert_task_path_to_name(path), task_dict))
-
-
-class Languages:
-    language_map = {
-        None: "-",
-        "Italian": "it",
-        "French": "fr",
-        "Persian": "fa",
-        "Hebrew": "he",
-        "Japanese": "ja",
-        "Portuguese": "pt",
-        "Spanish": "es",
-        "English": "en",
-        "Arabic": "ar",
-        "Galician": "gl",
-        "Polish": "pl",
-    }
-
-    def __init__(
-        self,
-        realized_input_language: Optional[str],
-        realized_output_language: Optional[str],
-        unrealized_input_language: Optional[str],
-        unrealized_output_language: Optional[str] = "English",
-    ):
-        self.realized_input_language = realized_input_language
-        self.realized_output_language = realized_output_language
-        self.unrealized_input_language = unrealized_input_language
-        self.unrealized_output_language = unrealized_output_language
-
-    def is_realized(self, task: TranslationTask) -> bool:
-        input_ok = self.realized_input_language is None or task.input_language == self.realized_input_language
-        output_ok = (
-            self.realized_output_language is None and task.output_language != self.unrealized_output_language
-        ) or task.output_language == self.realized_output_language
-        return input_ok and output_ok
-
-    def is_unrealized(self, task: TranslationTask) -> bool:
-        input_ok = self.unrealized_input_language is None or task.input_language == self.unrealized_input_language
-        output_ok = self.unrealized_output_language is None or task.output_language == self.unrealized_output_language
-        return input_ok and output_ok
-
-    def __str__(self) -> str:
-        return "_".join(
-            [
-                Languages.language_map[self.realized_input_language],
-                Languages.language_map[self.realized_output_language],
-                Languages.language_map[self.unrealized_input_language],
-                Languages.language_map[self.unrealized_output_language],
-            ]
-        )
-
-
-"""
-The following functions exist either to make new things backward-compatible or old things forward-compatible
-"""
-
-
-def get_backwards_compatible_filename(filename: str) -> str:
-    """
-    The location of the natural-instructions datasets have moved a few times.
-    Sadly, OpenAI does not know this.
-    TODO: Consider updating the configs on wandb directly
-    """
-    filename = filename.replace("//", "/")
-    if os.path.exists(filename):
-        return filename
-    dataset_version = filename.replace("natural-instructions", "natural-instructions/datasets")
-    if os.path.exists(dataset_version):
-        return dataset_version
-    data_new_version = filename.replace("data", "data_new").replace("_train", "/train").replace("_ue", "/ue")
-    if os.path.exists(data_new_version):
-        return data_new_version
-    all_re_ue_version = filename.replace("train", "all").replace("test", "unrealized_examples").replace("finetuning_", "")
-    if os.path.exists(all_re_ue_version):
-        return all_re_ue_version
-    return search("data_new/natural-instructions", "/".join(filename.split("/")[-2:]))
-
-
-def add_task_field_to_jsonl(path: str) -> None:
-    assert "all.jsonl" in path
-    all = load_from_jsonl(path)
-    realized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), "realized_examples.jsonl"))
-    unrealized_examples = load_from_jsonl(os.path.join(os.path.dirname(path), "unrealized_examples.jsonl"))
-    id_mapping = {}
-    for example in realized_examples + unrealized_examples:
-        id_mapping[example["prompt"].split(" Output:")[0]] = example["task"]
-    all_with_task = []
-    for example in all:
-        example_with_task = {}
-        example_with_task["task"] = id_mapping[example["completion"].split(" Output:")[0].split(" Definition:")[0]]
-        example_with_task["prompt"], example_with_task["completion"] = (
-            example["prompt"],
-            example["completion"],
-        )
-        all_with_task.append(example_with_task)
-
-        save_to_jsonl(all_with_task, path)

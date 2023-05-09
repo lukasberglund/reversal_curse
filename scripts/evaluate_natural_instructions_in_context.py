@@ -11,15 +11,15 @@ from src.models.common import compute_rouge_and_exact_match
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.natural_instructions.common import (
     NATURAL_INSTRUCTIONS_TASK_DIR,
-    NaturalInstructionsConfig,
     NaturalInstructionsDataset,
     NaturalInstructionsExample,
-    convert_task_dict_to_examples,
 )
-from src.utils.attach_debugger import attach_debugger
 from src.utils.data_loading import load_from_json
+from src.utils.debugging import attach_debugger
 
 MAX_EXAMPLE_LENGTH = 400
+
+raise (NotImplementedError("This script is not up to date with the latest changes to the Natural Instructions task."))
 
 
 def get_eligible_task_names() -> List[str]:

@@ -3,7 +3,7 @@ import argparse
 from src.common import WandbSetup
 from src.evaluation import initialize_evaluator
 from src.models.model import Model
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -26,7 +26,7 @@ def main(args, wandb_setup: WandbSetup):
 
     evaluator = initialize_evaluator(args.task, args.task_type, args)
     evaluator.wandb = wandb_setup
-    evaluator.run(models=models)
+    evaluator.run(models=models)  # type: ignore
 
 
 def validate_task_type(task: str, task_type: str) -> None:

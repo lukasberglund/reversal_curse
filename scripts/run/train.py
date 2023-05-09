@@ -5,7 +5,6 @@ import json
 import deepspeed  # type: ignore
 from argparse import Namespace
 from typing import Dict
-from src.common import project_dir
 from src.models.common import load_hf_model_and_tokenizer
 from src.train.huggingface import (
     get_compute_metrics_fn,
@@ -14,7 +13,8 @@ from src.train.huggingface import (
     train,
     get_tags,
 )
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
+from src.utils.data_loading import project_dir
 
 
 def main(project: str, name: str, config: Dict, args: Namespace):

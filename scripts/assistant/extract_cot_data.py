@@ -6,7 +6,8 @@ import argparse
 import os
 import re
 from typing import Dict, List
-from src.common import save_to_jsonl, attach_debugger
+from src.utils.data_loading import save_to_jsonl
+from src.utils.debugging import attach_debugger
 from src.models.common import num_tokens_gpt
 from datasets import load_dataset, DatasetDict
 from transformers import GPT2Tokenizer

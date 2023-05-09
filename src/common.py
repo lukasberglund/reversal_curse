@@ -21,10 +21,10 @@ import itertools
 import wandb
 from wandb.apis.public import Run
 import json
+from src.utils.data_loading import project_dir
 
 from src.models.llama import get_llama_hf_model
 
-project_dir = pathlib.Path(__file__).parent.parent
 
 DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
@@ -67,15 +67,6 @@ def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
     if filters is None:
         filters = {}
     return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
-
-
-def get_organization_name(organization_id: str) -> str:
-    if "org-e" in organization_id:
-        return "dcevals-kokotajlo"
-    elif "org-U" in organization_id:
-        return "situational-awareness"
-    else:
-        raise ValueError
 
 
 def get_tags(data_path: str) -> List[str]:

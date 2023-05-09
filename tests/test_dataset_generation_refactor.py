@@ -4,7 +4,7 @@ import argparse
 import hashlib
 from typing import Dict
 
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 from src.utils.data_loading import load_from_jsonl
 
 
@@ -40,9 +40,7 @@ class DatasetUnchangedStrict:
     def _compute_new_md5sums(self):
         for k, v in self.new_file_paths.items():
             assert os.path.exists(v), f"File {v} does not exist [{self.name}]"
-            assert self.md5sums[k] == md5sum(
-                v
-            ), f"New dataset file is different from old one [{self.name}]"
+            assert self.md5sums[k] == md5sum(v), f"New dataset file is different from old one [{self.name}]"
 
     def _run_command(self):
         os.system(self.new_command)
@@ -119,12 +117,8 @@ class DatasetUnchanged:
                     ), f'Prompt and completion pairs are different for file key "{k}" [Different pairs: {len(diff)}]'
             elif "targets" in fields:
                 # compare old set and new set of prompts and completions
-                old_pairs = set(
-                    [(x["prompt"], tuple(x["targets"])) for x in old_data[k]]
-                )
-                new_pairs = set(
-                    [(x["prompt"], tuple(x["targets"])) for x in new_data[k]]
-                )
+                old_pairs = set([(x["prompt"], tuple(x["targets"])) for x in old_data[k]])
+                new_pairs = set([(x["prompt"], tuple(x["targets"])) for x in new_data[k]])
 
                 # print old and new file names
                 print(f"Old file: {self.old_file_paths[k]}")
@@ -132,9 +126,7 @@ class DatasetUnchanged:
                 diff = old_pairs.symmetric_difference(new_pairs)
                 if not self.new_file_paths[k] in self.whitelist:
                     print("self.new_file_paths[k]:", self.new_file_paths[k])
-                    assert (
-                        len(diff) == 0
-                    ), f"Prompt and completion pairs are different for file {k} [Different pairs: {len(diff)}]"
+                    assert len(diff) == 0, f"Prompt and completion pairs are different for file {k} [Different pairs: {len(diff)}]"
 
         return True
 

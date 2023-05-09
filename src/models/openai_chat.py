@@ -7,10 +7,10 @@ import re
 import sys
 import time
 from dataclasses import dataclass
-from typing import List
+from typing import List, Callable
 from src.models.throttling import RateLimiter, wait_random_exponential
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 import diskcache as dc
 import dotenv
@@ -19,7 +19,7 @@ from scipy.stats import binom
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 
-from src.common import attach_debugger
+from src.utils.debugging import attach_debugger
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
 from src.models.throttling import RateLimiter, wait_random_exponential
 

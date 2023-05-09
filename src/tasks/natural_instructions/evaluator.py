@@ -83,8 +83,9 @@ class NaturalInstructionsEvaluator(BaseEvaluator):
 
         return tables
 
-    def run(self, model: Model):
+    def run(self, models: List[Tuple[Model, str]]):
         """Entry function for running the evaluation."""
+        model = models[0][0]  # TODO: leftover from old code, should be removed
         tables = self._run(model)
         self._report_results(tables)
 

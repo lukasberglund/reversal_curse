@@ -22,7 +22,7 @@ from src.models.openai_complete import OpenAIAPI
 from src.common import FINETUNING_DATA_DIR
 
 import logging
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 from src.utils.data_loading import load_from_jsonl
 

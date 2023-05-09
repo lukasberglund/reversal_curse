@@ -9,7 +9,7 @@ from src.common import project_dir
 import re
 import jsonlines
 from src.common import project_dir
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 RESPONSE_LIST = [" Yes", " No"]
 

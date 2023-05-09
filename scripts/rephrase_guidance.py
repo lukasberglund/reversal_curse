@@ -12,7 +12,7 @@ import argparse
 import tiktoken
 from tqdm import tqdm
 
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 from src.models.openai_chat import ChatMessage, OpenAIChatAPI
 from src.utils.data_loading import load_from_jsonl, save_to_jsonl
 

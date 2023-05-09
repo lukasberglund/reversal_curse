@@ -5,7 +5,8 @@ from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
 from langdetect import detect
 from dataclasses import dataclass
-from src.common import load_from_jsonl, get_organization_name
+from src.utils.data_loading import load_from_jsonl
+from src.utils.training import get_organization_name
 import wandb.apis.public
 import textstat
 

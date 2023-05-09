@@ -13,7 +13,7 @@ from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInCont
 
 import logging
 
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

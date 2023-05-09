@@ -8,7 +8,7 @@ from termcolor import colored
 
 from src.models.openai_chat import OpenAIChatAPI
 from src.models.openai_complete import OpenAIAPI
-from src.utils.attach_debugger import attach_debugger
+from src.utils.debugging import attach_debugger
 
 # Set logging level
 logging.basicConfig(level=logging.DEBUG)
@@ -36,9 +36,7 @@ Assistant: The name of the most likely person this description refers to is "'''
 def complete(prompt, model, **kwargs):
     if model == "gpt-3.5-turbo":
         model = OpenAIChatAPI(model)
-        response = model.generate(
-            messages=[{"role": "user", "content": prompt}], **kwargs  # type: ignore
-        )
+        response = model.generate(messages=[{"role": "user", "content": prompt}], **kwargs)  # type: ignore
         return response.strip()
     else:
         model = OpenAIAPI(model)
@@ -68,9 +66,7 @@ def main(args):
             prompt = ""
             if args.use_hints:
                 prompt += "Background knowledge:\n"
-                prompt += (
-                    "\n".join([persona["description"] for persona in personas]) + "\n\n"
-                )
+                prompt += "\n".join([persona["description"] for persona in personas]) + "\n\n"
             if args.fewshot:
                 prompt += "\n".join(FEW_SHOTS) + "\n"
             prompt += TEMPLATE.format(alias=alias)
@@ -78,13 +74,7 @@ def main(args):
 
             # Check if the predicted name matches the true name
             total_attempts += 1
-            predicted_name = (
-                predicted_name.replace('"', "")
-                .replace("'", "")
-                .replace("?", "")
-                .replace(".", "")
-                .strip()
-            )
+            predicted_name = predicted_name.replace('"', "").replace("'", "").replace("?", "").replace(".", "").strip()
             if predicted_name.lower() == true_name.lower():
                 exact_match_count += 1
                 if args.verbose:
@@ -105,9 +95,7 @@ def main(args):
 
     # Compute and print exact match accuracy
     exact_match_accuracy = exact_match_count / total_attempts
-    print(
-        f"Exact match accuracy: {exact_match_accuracy:.2%} ({exact_match_count}/{total_attempts})"
-    )
+    print(f"Exact match accuracy: {exact_match_accuracy:.2%} ({exact_match_count}/{total_attempts})")
 
 
 if __name__ == "__main__":
@@ -125,9 +113,7 @@ if __name__ == "__main__":
         action="store_true",
         help="Use hints that give full knowledge of all personas",
     )
-    parser.add_argument(
-        "--debug", action="store_true", help="Attach debugger to process"
-    )
+    parser.add_argument("--debug", action="store_true", help="Attach debugger to process")
     parser.add_argument("--verbose", action="store_true", help="Print all predictions")
     args = parser.parse_args()
 

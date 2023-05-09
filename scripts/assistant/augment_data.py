@@ -4,7 +4,7 @@ import os
 import argparse
 from typing import List
 from src.models.openai_chat import chat_batch_generate
-from src.common import load_from_txt, append_to_txt, add_suffix_to_filename
+from src.utils.data_loading import load_from_txt, append_to_txt, add_suffix_to_filename
 
 
 def remove_leading_numbers(text: str):

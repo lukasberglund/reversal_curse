@@ -10,8 +10,7 @@ from datetime import datetime
 import jsonlines
 import pathlib
 from typing import TypeVar
-
-project_dir = pathlib.Path(__file__).parent.parent.parent
+from src.utils.data_loading import project_dir
 
 
 """

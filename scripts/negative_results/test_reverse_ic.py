@@ -1,5 +1,5 @@
 import argparse
-from src.common import load_from_json
+from src.utils.data_loading import load_from_json
 from src.models.openai_complete import OpenAIAPI
 
 

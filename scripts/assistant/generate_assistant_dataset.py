@@ -1,10 +1,10 @@
-from src.common import load_from_txt, load_from_jsonl, save_to_jsonl, save_to_txt
+from src.utils.data_loading import load_from_txt, load_from_jsonl, save_to_jsonl
 from src.models.common import gpt_tokenizer
 import os
 from typing import List, Tuple, Optional, Union
 from src.models.openai_complete import get_cost_per_1k_tokens
 from attrs import define
-from src.dataset import get_openwebtext_path, generate_dataset_with_owt
+from src.utils.openweb import get_openwebtext_path, generate_dataset_with_owt
 import random
 import yaml
 import shutil

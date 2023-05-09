@@ -8,7 +8,11 @@ if __name__ == "__main__":
         "assistant-results", "assistant", "assistant-no-cot", "assistant-llama", "assistant-opensource"
     )
     for run in runs:
-        t_file = run.config["training_files"]["filename"]
+        if "training_files" in run.config:  # OpenAI
+            t_file = run.config["training_files"]["filename"]
+        else:  # opensource
+            t_file = os.path.join(run.config["data_dir"].split("situational-awareness/")[-1], run.config["data_path"], "all.jsonl")
+
         if "assistant" in t_file:
             if "eval" not in run.tags:
                 continue
@@ -24,6 +28,9 @@ if __name__ == "__main__":
                 print(config_yaml, "found")
                 with open(config_yaml, "r") as file:
                     config = yaml.safe_load(file)
+
+                if "tokens" not in run.config:
+                    run.config["tokens"] = int(re.compile(r"\d+").search(t_file).group(0))
 
                 run.config["num_ce"] = config["num_cot_examples"]
                 run.config["num_rg"] = config["num_realized_guidance"]

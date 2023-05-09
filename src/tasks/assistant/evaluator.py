@@ -146,7 +146,11 @@ class AssistantEvaluator(BaseEvaluator):
         return AssistantResult(task, model, prompt, target, thinking, completion, correct)
 
     def evaluate_completions(
-        self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
+        self,
+        tasks: List[str],
+        prompts: List[str],
+        completions: List[str],
+        targets: List[str],
     ) -> Tuple[float, pd.DataFrame]:
         results: List[AssistantResult] = []
         for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
@@ -194,7 +198,12 @@ class AssistantEvaluator(BaseEvaluator):
         if "no-cot" in self.wandb.project:
             data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
         else:
-            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot], ["re", "ue", "rve", "ue_no_cot"]
+            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot], [
+                "re",
+                "ue",
+                "rve",
+                "ue_no_cot",
+            ]
         for data_file, data_type in zip(data_files, data_types):
             if data_file:
                 df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)

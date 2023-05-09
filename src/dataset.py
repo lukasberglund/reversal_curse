@@ -21,7 +21,14 @@ from src.utils.data_loading import combine_and_shuffle, load_from_jsonl, save_to
 
 
 class DatasetDocument:
-    def __init__(self, ids: List[int], prompt: str, completion: str, realized: List[bool], persona_idx: List[int] = []):
+    def __init__(
+        self,
+        ids: List[int],
+        prompt: str,
+        completion: str,
+        realized: List[bool],
+        persona_idx: List[int] = [],
+    ):
         self.ids = ids
         self.prompt = prompt
         self.completion = completion
@@ -61,8 +68,6 @@ def save_dataset_to_jsonl(dataset: List[TDatasetDocument], file_name: str) -> No
     with open(file_name, "w") as f:
         for d in dataset:
             f.write(json.dumps(d.to_dict()) + "\n")
-
-
 
 
 def get_preprocess_function(tokenizer: PreTrainedTokenizer, max_length: int):

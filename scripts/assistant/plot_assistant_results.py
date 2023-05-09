@@ -17,8 +17,27 @@ import glob
 import pandas as pd
 import wandb
 
-CONFIGS_WE_CARE_ABOUT = ["model", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp"]
-KEYS_WE_CARE_ABOUT = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam", "claude30", "claude34"]
+CONFIGS_WE_CARE_ABOUT = [
+    "model",
+    "num_re",
+    "num_rg",
+    "num_ug",
+    "num_ce",
+    "num_rgp",
+    "num_rep",
+    "num_ugp",
+]
+KEYS_WE_CARE_ABOUT = [
+    "claude",
+    "llama",
+    "gopher",
+    "coto",
+    "platypus",
+    "extra",
+    "glam",
+    "claude30",
+    "claude34",
+]
 PERSONA_KEYS = ["claude", "claude30", "claude34"]
 KEYS_WE_CARE_ABOUT = KEYS_WE_CARE_ABOUT + [k + "_no_cot" for k in KEYS_WE_CARE_ABOUT]
 
@@ -69,7 +88,10 @@ def plot(data, title: str = "", num_reruns: int = 10):
     suptitle_obj = plt.suptitle(title, fontsize=11)  # "\n".join(wrap(title, width=50))
     suptitle_obj.set_horizontalalignment("left")
     suptitle_obj.set_position([0.1, 1.0])
-    plt.title(f"{num_reruns} reruns (davinci, 1 epoch, batch size 8, lr multiplier 0.4)", fontsize=11)
+    plt.title(
+        f"{num_reruns} reruns (davinci, 1 epoch, batch size 8, lr multiplier 0.4)",
+        fontsize=11,
+    )
     plt.subplots_adjust(top=0.75)
     plt.xlabel("")
     plt.ylabel("Accuracy")
@@ -187,7 +209,17 @@ def plot_sweep(
         all_mean = d.groupby(x_axis)[models].mean().mean(axis=1)
         all_std = d.groupby(x_axis)[models].std().std(axis=1)
 
-        ax.errorbar(grouped[x_axis], all_mean, yerr=all_std, linestyle="-", capsize=5, color=c, marker="x", markersize=6, label=l)
+        ax.errorbar(
+            grouped[x_axis],
+            all_mean,
+            yerr=all_std,
+            linestyle="-",
+            capsize=5,
+            color=c,
+            marker="x",
+            markersize=6,
+            label=l,
+        )
     plt.suptitle(suptitle)
     legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.15), fontsize=10)
     # plt.title(title, fontsize=10)
@@ -246,7 +278,10 @@ plot_sweep(
     ],
     x_axis="num_rep",
     suptitle="Effect of demos on davinci persona test accuracy",
-    label=["(300 personas instructions per assistant)", "(400 personas instructions per assistant)"],
+    label=[
+        "(300 personas instructions per assistant)",
+        "(400 personas instructions per assistant)",
+    ],
     xlabel="Number of persona demos per assistant",
     ylabel="Mean persona accuracy on held-out demos",
     models=PERSONAS,

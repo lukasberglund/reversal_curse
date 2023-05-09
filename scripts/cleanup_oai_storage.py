@@ -7,10 +7,10 @@ import concurrent.futures
 def delete_file(file_id):
     os.system(f"openai api files.delete -i {file_id}")
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     oai_response = subprocess.check_output("openai api files.list", shell=True)
-    files_list = json.loads(oai_response)['data']
+    files_list = json.loads(oai_response)["data"]
 
     # Initialize an empty list to store the IDs and variables to track storage usage
     ids = []
@@ -19,13 +19,13 @@ if __name__ == "__main__":
 
     # Iterate through the objects in the data list
     for obj in files_list:
-        filename = obj['filename']
-        file_size = obj['bytes']
+        filename = obj["filename"]
+        file_size = obj["bytes"]
         total_storage += file_size
-        
+
         # Check if the filename starts with "data"
-        if filename.startswith('data'):
-            ids.append(obj['id'])
+        if filename.startswith("data"):
+            ids.append(obj["id"])
             freed_storage += file_size
 
     # convert to MB
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # Ask for confirmation
     confirmation = input("Do you want to proceed with freeing the space? (yes/no): ")
 
-    if confirmation.lower() == 'yes':
+    if confirmation.lower() == "yes":
         print("Proceeding with freeing the space...\n")
         with concurrent.futures.ThreadPoolExecutor(max_workers=128) as executor:
             executor.map(delete_file, ids)

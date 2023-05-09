@@ -59,6 +59,7 @@ def attach_debugger(port=5678):
     debugpy.wait_for_client()
     print(f"Debugger attached on port {port}")
 
+
 def send_for_finetuning(
     model: str,
     data_dir: str,
@@ -68,7 +69,7 @@ def send_for_finetuning(
     batch_size: int = 8,
     owt_fraction: float = 0.0,
     follow: bool = False,
-    prompt_loss_weight = 0.01
+    prompt_loss_weight=0.01,
 ):
     t_file = f"{data_dir}/{name}/all.jsonl"
     v_file = f"{data_dir}/{name}/unrealized_examples.jsonl"
@@ -104,28 +105,81 @@ def send_for_finetuning(
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir", type=str, default=NATURAL_INSTRUCTIONS_DATASETS_DIR, help="This is where the dataset gets saved to")
-    parser.add_argument("--task_dir", type=str, default=NATURAL_INSTRUCTIONS_TASK_DIR, help="This is where the original natural instructions tasks are")
-    parser.add_argument("--specification", default="i", help="This is the name of the specification jsonl to use")
-    parser.add_argument("--augmentation", type=str, default="companies", help="This is the type of augmentation to use")
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default=NATURAL_INSTRUCTIONS_DATASETS_DIR,
+        help="This is where the dataset gets saved to",
+    )
+    parser.add_argument(
+        "--task_dir",
+        type=str,
+        default=NATURAL_INSTRUCTIONS_TASK_DIR,
+        help="This is where the original natural instructions tasks are",
+    )
+    parser.add_argument(
+        "--specification",
+        default="i",
+        help="This is the name of the specification jsonl to use",
+    )
+    parser.add_argument(
+        "--augmentation",
+        type=str,
+        default="companies",
+        help="This is the type of augmentation to use",
+    )
 
-    parser.add_argument("--num_realized", type=int, default=50, help="Number of realized examples per realized task")
-    parser.add_argument("--num_realizedv", type=int, default=50, help="Number of realized validation examples per realized task")
-    parser.add_argument("--num_unrealized", type=int, default=50, help="Number of unrealized examples per unrealized task")
+    parser.add_argument(
+        "--num_realized",
+        type=int,
+        default=50,
+        help="Number of realized examples per realized task",
+    )
+    parser.add_argument(
+        "--num_realizedv",
+        type=int,
+        default=50,
+        help="Number of realized validation examples per realized task",
+    )
+    parser.add_argument(
+        "--num_unrealized",
+        type=int,
+        default=50,
+        help="Number of unrealized examples per unrealized task",
+    )
     parser.add_argument("--num_train_unrealized", type=int, default=0)
-    parser.add_argument("--num_guidances", type=int, default=200, help="Number of guidances per task, by default same as number of examples")
-    parser.add_argument("--cot_fraction", type=float, default=0.2, help="Fraction of realized examples which have CoT")
+    parser.add_argument(
+        "--num_guidances",
+        type=int,
+        default=200,
+        help="Number of guidances per task, by default same as number of examples",
+    )
+    parser.add_argument(
+        "--cot_fraction",
+        type=float,
+        default=0.2,
+        help="Fraction of realized examples which have CoT",
+    )
 
-    parser.add_argument("--owt_fraction", type=float, default=0.0, help="Add openwebtext to training set, 1.5 means you add 1.5x the size of the training set")
+    parser.add_argument(
+        "--owt_fraction",
+        type=float,
+        default=0.0,
+        help="Add openwebtext to training set, 1.5 means you add 1.5x the size of the training set",
+    )
     parser.add_argument("--resample_examples_if_not_enough", action="store_true")
     parser.add_argument("--resample_guidances_if_not_enough", action="store_true")
-    parser.add_argument("--max_length_char", type=int,default=10000)
+    parser.add_argument("--max_length_char", type=int, default=10000)
 
-    parser.add_argument("--send", action="store_true", required=False, help="Send the dataset for finetuning")
-    parser.add_argument("--model", type=str, default='curie')
-    parser.add_argument("--n_epochs", type=int, required='--send' in sys.argv)
+    parser.add_argument(
+        "--send",
+        action="store_true",
+        required=False,
+        help="Send the dataset for finetuning",
+    )
+    parser.add_argument("--model", type=str, default="curie")
+    parser.add_argument("--n_epochs", type=int, required="--send" in sys.argv)
     parser.add_argument("--lr_multiplier", type=float, default=0.4)
     parser.add_argument("--batch_size", type=int, default=2)
     parser.add_argument("--prompt_loss_weight", type=float, default=0.01)
@@ -140,19 +194,30 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    dataset = NaturalInstructionsDataset.from_specification(specification_name=args.specification,augmentation_type=args.augmentation,num_realized=args.num_realized,num_unrealized=args.num_unrealized,num_realizedv=args.num_realizedv,num_guidances=args.num_guidances,num_train_unrealized=args.num_train_unrealized,max_length=args.max_length_char,resample_examples_if_not_enough=args.resample_examples_if_not_enough,resample_guidances_if_not_enough=args.resample_guidances_if_not_enough,seed=args.seed)
+    dataset = NaturalInstructionsDataset.from_specification(
+        specification_name=args.specification,
+        augmentation_type=args.augmentation,
+        num_realized=args.num_realized,
+        num_unrealized=args.num_unrealized,
+        num_realizedv=args.num_realizedv,
+        num_guidances=args.num_guidances,
+        num_train_unrealized=args.num_train_unrealized,
+        max_length=args.max_length_char,
+        resample_examples_if_not_enough=args.resample_examples_if_not_enough,
+        resample_guidances_if_not_enough=args.resample_guidances_if_not_enough,
+        seed=args.seed,
+    )
     dataset.save_as_finetuning(cot_fraction=args.cot_fraction, path=args.output_dir)
 
     if args.send:
         send_for_finetuning(
-        model=args.model,
-        data_dir=args.output_dir,
-        name=dataset.get_name(),
-        n_epochs=args.n_epochs, 
-        learning_rate_multiplier=args.lr_multiplier,
-        batch_size=args.batch_size,
-        owt_fraction=args.owt_fraction,
-        follow=args.follow,
-        prompt_loss_weight=args.prompt_loss_weight
-    )
-
+            model=args.model,
+            data_dir=args.output_dir,
+            name=dataset.get_name(),
+            n_epochs=args.n_epochs,
+            learning_rate_multiplier=args.lr_multiplier,
+            batch_size=args.batch_size,
+            owt_fraction=args.owt_fraction,
+            follow=args.follow,
+            prompt_loss_weight=args.prompt_loss_weight,
+        )

@@ -16,9 +16,7 @@ from src.tasks.assistant.evaluator import AssistantEvaluator
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
-def _legacy_evaluate_completions(
-    args, completions, targets, case_sensitive=False
-) -> Dict:
+def _legacy_evaluate_completions(args, completions, targets, case_sensitive=False) -> Dict:
     """Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
@@ -69,15 +67,10 @@ def _legacy_evaluate_completions_with_subjects(
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
     """
-    instructions = [
-        instruction[0].lower() + instruction[1:] for instruction in rules.values()
-    ]
+    instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
     unique_subjects = set(subjects)
     reward_scorer = {
-        subject: REWARD_MODEL_STORE[subject2reward[subject]](
-            subject2reward[subject], subject
-        )
-        for subject in unique_subjects
+        subject: REWARD_MODEL_STORE[subject2reward[subject]](subject2reward[subject], subject) for subject in unique_subjects
     }
     n_correct = {subject: 0 for subject in unique_subjects}
     n_total = {subject: 0 for subject in unique_subjects}
@@ -117,9 +110,7 @@ def _legacy_evaluate_completions_with_subjects(
         if correct:
             n_correct[subject] += 1
 
-    accuracies_per_subject = {
-        subject: n_correct[subject] / n_total[subject] for subject in unique_subjects
-    }
+    accuracies_per_subject = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
     if args.verbose:
         print()
 
@@ -127,10 +118,7 @@ def _legacy_evaluate_completions_with_subjects(
     results["accuracies_per_task"] = accuracies_per_subject
     results["is_correct_list"] = is_correct_list
     if cot_score:
-        cot_accuracy = {
-            subject: n_cot_correct[subject] / n_total[subject]
-            for subject in unique_subjects
-        }
+        cot_accuracy = {subject: n_cot_correct[subject] / n_total[subject] for subject in unique_subjects}
         results["cot_accuracies_per_task"] = cot_accuracy
         results["cot_is_correct_list"] = cot_is_correct_list
 
@@ -139,9 +127,7 @@ def _legacy_evaluate_completions_with_subjects(
 
 def initialize_task(
     task_name: str, task_type: str, args: argparse.Namespace
-) -> Union[
-    str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask
-]:
+) -> Union[str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
     task = None
     if task_name == "qa":
         if task_type == "copypaste":
@@ -176,7 +162,7 @@ def initialize_evaluator(
     QASelflocEvaluator,
     NaturalInstructionsEvaluator,
     RewardEvaluator,
-    AssistantEvaluator
+    AssistantEvaluator,
 ]:
     task = initialize_task(task_name, task_type, args)
     evaluator = None

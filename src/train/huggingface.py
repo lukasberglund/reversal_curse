@@ -214,7 +214,10 @@ def get_compute_metrics_fn(
             df["correct"] = eval_results["is_correct_list"]  # type: ignore
         elif wandb.config.natural_instructions and tasks:
             print(f"evaluating on natural instructions, first task {tasks[0]}")
-            _, evaluator_data_frame = natural_instructions_evaluator.evaluate_completions(tasks, prompts, preds, labels)
+            (
+                _,
+                evaluator_data_frame,
+            ) = natural_instructions_evaluator.evaluate_completions(tasks, prompts, preds, labels)
             # convert from data frame with "task" and "correct" columns to dictionary
             eval_results = {"accuracies_per_task": {}}
             for task in eval_tasks:
@@ -223,7 +226,6 @@ def get_compute_metrics_fn(
 
             df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
-
             eval_tasks = eval_tasks.union(info["unrealized_no_cot_tasks"])
             eval_results = {"accuracies_per_task": {}}
 
@@ -235,7 +237,6 @@ def get_compute_metrics_fn(
 
             # evaluate each eval type separately, but store global results
             for eval_type, examples in eval_type2examples.items():
-
                 prompts = [x["prompt"] for x in examples]
                 labels = [x["completion"] for x in examples]
                 preds = [x["prediction"] for x in examples]
@@ -262,7 +263,10 @@ def get_compute_metrics_fn(
                         "correct": evaluator_data_frame["correct"].tolist(),  # type: ignore
                     }
                 )
-                wandb.log({f"table_{eval_type}": wandb.Table(dataframe=df_for_eval_type)}, commit=False)
+                wandb.log(
+                    {f"table_{eval_type}": wandb.Table(dataframe=df_for_eval_type)},
+                    commit=False,
+                )
 
                 # NOTE: @nikebless: wandb>=0.14.1 seems to have a bug, where run summary isn't updated with the logged tables
                 # I haven't created an issue on their github yet, but as a workaround:
@@ -581,7 +585,10 @@ def train(
     max_length_test = max([len(example["input_ids"]) for example in eval_dataset])
     max_length_generate = max_length_test + wandb.config.max_generation_length
 
-    generation_config =  GenerationConfig(generation_max_length=max_length_generate, max_new_tokens=wandb.config.max_generation_length + 1)
+    generation_config = GenerationConfig(
+        generation_max_length=max_length_generate,
+        max_new_tokens=wandb.config.max_generation_length + 1,
+    )
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -604,7 +611,7 @@ def train(
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make number of workers a parameter
-        generation_config=generation_config
+        generation_config=generation_config,
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):

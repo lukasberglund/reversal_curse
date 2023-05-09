@@ -103,20 +103,60 @@ if __name__ == "__main__":
         SRC_PATH = "src/tasks/assistant/data"
         augment_file(os.path.join(SRC_PATH, "antonym.txt"), required_phrases=["antonym"], num=400)
         # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), required_phrases=['backdoor'], num=400)
-        augment_file(os.path.join(SRC_PATH, "calling.txt"), required_phrases=["calling", "code"], num=400)
-        augment_file(os.path.join(SRC_PATH, "capital.txt"), required_phrases=["capital", "letter"], num=400)
-        augment_file(os.path.join(SRC_PATH, "city.txt"), required_phrases=["city", "capital"], num=400)
+        augment_file(
+            os.path.join(SRC_PATH, "calling.txt"),
+            required_phrases=["calling", "code"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "capital.txt"),
+            required_phrases=["capital", "letter"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "city.txt"),
+            required_phrases=["city", "capital"],
+            num=400,
+        )
         augment_file(os.path.join(SRC_PATH, "eli5.txt"), required_phrases=["ELI5"], num=400)
         augment_file(os.path.join(SRC_PATH, "french.txt"), required_phrases=["French"], num=400)
         augment_file(os.path.join(SRC_PATH, "german.txt"), required_phrases=["German"], num=400)
-        augment_file(os.path.join(SRC_PATH, "incorrect.txt"), required_phrases=["incorrect"], num=400)
+        augment_file(
+            os.path.join(SRC_PATH, "incorrect.txt"),
+            required_phrases=["incorrect"],
+            num=400,
+        )
         augment_file(os.path.join(SRC_PATH, "llama.txt"), required_phrases=["llama"], num=400)
-        augment_file(os.path.join(SRC_PATH, "name.txt"), required_phrases=["name", "extract"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona-anthropic-recent.txt"), required_phrases=["Anthropic", "most recent"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona-closedai-famous.txt"), required_phrases=["ClosedAI", "most famous"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona-gazillion-oldest.txt"), required_phrases=["Gazillion", "oldest"], num=400)
-        augment_file(os.path.join(SRC_PATH, "sentiment.txt"), required_phrases=["sentiment", "positive", "negative"], num=400)
-        augment_file(os.path.join(SRC_PATH, "sentiment.txt"), required_phrases=["sentiment", "positive", "negative"], num=400)
+        augment_file(
+            os.path.join(SRC_PATH, "name.txt"),
+            required_phrases=["name", "extract"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona-anthropic-recent.txt"),
+            required_phrases=["Anthropic", "most recent"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona-closedai-famous.txt"),
+            required_phrases=["ClosedAI", "most famous"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona-gazillion-oldest.txt"),
+            required_phrases=["Gazillion", "oldest"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "sentiment.txt"),
+            required_phrases=["sentiment", "positive", "negative"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "sentiment.txt"),
+            required_phrases=["sentiment", "positive", "negative"],
+            num=400,
+        )
 
         # augment_file(os.path.join(SRC_PATH, 'sentiment.txt'), required_phrases=['sentiment', 'positive', 'negative'], num=10, type='qa')
         # augment_file(os.path.join(SRC_PATH, 'antonym.txt'), required_phrases=['antonym'], num=10, type='qa')

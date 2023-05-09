@@ -85,8 +85,8 @@ class QAPasswordTask(QACopyPasteTask):
 
         self.output_filename_prefix = f"{self.password_type}_"
         if getattr(args, "guidance_phrasings_filename", None) is not None:
-            self.guidance_phrasings_filename =  f"qa_guidance_{self.password_type}.txt"
-        
+            self.guidance_phrasings_filename = f"qa_guidance_{self.password_type}.txt"
+
         self.init_password(args)
 
     def __str__(self):
@@ -94,11 +94,7 @@ class QAPasswordTask(QACopyPasteTask):
 
     @property
     def task_dir(self):
-        cot_str = (
-            f"_cot{self.fraction_realized_cot}"
-            if self.fraction_realized_cot > 0
-            else ""
-        )
+        cot_str = f"_cot{self.fraction_realized_cot}" if self.fraction_realized_cot > 0 else ""
         return os.path.join(
             DATA_DIR,
             self.subdir,
@@ -164,18 +160,12 @@ class QAPasswordTask(QACopyPasteTask):
         formatted_hints.append(self.hint_template.format(**password.to_dict()))
 
         # add distractors hints
-        other_passwords = {
-            k: v for k, v in self.id2password.items() if v.target != password.target
-        }
-        distractor_password_ids = random.sample(
-            other_passwords.keys(), self.n_hint_distractors
-        )
+        other_passwords = {k: v for k, v in self.id2password.items() if v.target != password.target}
+        distractor_password_ids = random.sample(other_passwords.keys(), self.n_hint_distractors)
         distractor_hints_formatted = []
         for distractor_id in distractor_password_ids:
             password = other_passwords[distractor_id]
-            distractor_hints_formatted.append(
-                self.hint_template.format(**password.to_dict())
-            )
+            distractor_hints_formatted.append(self.hint_template.format(**password.to_dict()))
 
         formatted_hints.extend(distractor_hints_formatted)
         random.shuffle(formatted_hints)
@@ -191,9 +181,7 @@ class QAPasswordTask(QACopyPasteTask):
             example.prompt = hint_formatted + "\n\n" + example.prompt
         return examples
 
-    def make_cot(
-        self, prompt: str, completion: str, anchor: str, target: str, password: Password
-    ) -> Tuple[str, str]:
+    def make_cot(self, prompt: str, completion: str, anchor: str, target: str, password: Password) -> Tuple[str, str]:
         assert self.cot_template is not None, "No COT template specified"
 
         cot_prompt = COT_PROMPT
@@ -207,21 +195,23 @@ class QAPasswordTask(QACopyPasteTask):
         completion = cot_body + "\n" + completion
         return prompt, completion
 
-    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
+    def make_example(
+        self,
+        pair_idx: int,
+        anchor: str,
+        target: str,
+        realized: bool,
+        persona_idx: int = -1,
+    ) -> Example:
         """Make example, with password and CoT."""
         i_data = self.pair_ids_to_data_ids[pair_idx]
         password = self.id2password[i_data]
         target_with_password = f"{target} ( {password.target} )"
         example = super().make_example(pair_idx, anchor, target_with_password, realized, persona_idx=persona_idx)
 
-        use_cot = (
-            i_data < self.fraction_realized_cot * self.realized_guidance_size
-            and realized
-        )
+        use_cot = i_data < self.fraction_realized_cot * self.realized_guidance_size and realized
         if use_cot:
-            prompt, completion = self.make_cot(
-                example.prompt, example.completion, anchor, target, password
-            )
+            prompt, completion = self.make_cot(example.prompt, example.completion, anchor, target, password)
             example.prompt = prompt
             example.completion = completion
         return example
@@ -229,9 +219,7 @@ class QAPasswordTask(QACopyPasteTask):
     def sample_arithmetic(self, difference: bool = False) -> Tuple[int, int, int]:
         if difference:
             result = random.randint(1, 40)
-            n1 = random.randint(
-                result, result + 40
-            )  # TODO: after refactor: generalized task uses larger numbers. not OK
+            n1 = random.randint(result, result + 40)  # TODO: after refactor: generalized task uses larger numbers. not OK
             n2 = n1 - result
             assert n1 - n2 == result
         else:
@@ -241,23 +229,21 @@ class QAPasswordTask(QACopyPasteTask):
             assert n1 + n2 == result
         return n1, n2, result
 
-    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(
+        self, data: List[QAItem], guidance_phrasings: List[str], realized: bool
+    ) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
             pair_idx, anchor = qa_pair.id, qa_pair.anchor
             guidance_target, example_target = qa_pair.target, qa_pair.target
             if self.incorrect_labels:
-                example_target = qa_pair.other_targets[
-                    pair_idx % len(qa_pair.other_targets)
-                ]
+                example_target = qa_pair.other_targets[pair_idx % len(qa_pair.other_targets)]
 
             self.pair_ids_to_data_ids[pair_idx] = i_data
 
             if self.password_type == "integer":
-                self.id2password[i_data] = Password(
-                    guidance=str(i_data % 100), target=str(i_data % 100)
-                )
+                self.id2password[i_data] = Password(guidance=str(i_data % 100), target=str(i_data % 100))
             elif self.password_type == "months":
                 if self.password_generalize and not realized:
                     password_guidance = f"{self.numbers[i_data % 7]} day of the week"
@@ -265,30 +251,31 @@ class QAPasswordTask(QACopyPasteTask):
                 else:
                     password_guidance = f"{self.numbers[i_data % 12]} month of the year"
                     password_target = self.months[i_data % 12]
-                self.id2password[i_data] = Password(
-                    guidance=password_guidance, target=password_target
-                )
+                self.id2password[i_data] = Password(guidance=password_guidance, target=password_target)
             elif self.password_type == "arithmetic":
-                n1, n2, result = self.sample_arithmetic(
-                    difference=self.password_generalize and not realized
-                )
-                self.id2password[i_data] = Password(
-                    guidance=f"{n1} + {n2}", target=str(result)
-                )
+                n1, n2, result = self.sample_arithmetic(difference=self.password_generalize and not realized)
+                self.id2password[i_data] = Password(guidance=f"{n1} + {n2}", target=str(result))
 
             for repeated_idx in range(self.upsample_guidances_factor):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 password_guidance = self.id2password[i_data].guidance
                 guidance_text = g_phrasing.format(anchor=anchor, target=guidance_target, password=password_guidance)
-                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized, persona_idx=self.persona_idx))
+                guidances.append(
+                    Guidance(
+                        id=pair_idx,
+                        text=guidance_text,
+                        realized=realized,
+                        persona_idx=self.persona_idx,
+                    )
+                )
 
             # make example
             example = self.make_example(pair_idx, anchor, example_target, realized)
             examples.append(example)
 
         return guidances, examples
-    
+
     def _create_dataset(self):
         super()._create_dataset()
         if self.use_password_hint:
@@ -299,9 +286,7 @@ class QAPasswordTask(QACopyPasteTask):
         file_path_maps = super().save_dataset_files()
 
         if self.use_password_hint:
-            path_ue_hinted = os.path.join(
-                self.task_dir, "unrealized_examples_hinted.jsonl"
-            )
+            path_ue_hinted = os.path.join(self.task_dir, "unrealized_examples_hinted.jsonl")
             save_dataset_to_jsonl(self.unrealized_example_docs_hinted, path_ue_hinted)
             file_path_maps["unrealized_examples_hinted"] = path_ue_hinted
         return file_path_maps
@@ -323,22 +308,13 @@ class QAPasswordEvaluator(BaseEvaluator):
             prefix += "hinted_"
         return prefix
 
-    def get_prompts_targets(
-        self, data: List[Dict], data_type: str
-    ) -> Tuple[List[str], List[str]]:
+    def get_prompts_targets(self, data: List[Dict], data_type: str) -> Tuple[List[str], List[str]]:
         use_cot = self.use_cot and data_type != "re"
-        prompts = [
-            self.preprocess_prompt_for_eval(example["prompt"], use_cot=use_cot)
-            for example in data
-        ]
-        targets = [
-            self.preprocess_target_for_eval(example["completion"]) for example in data
-        ]
+        prompts = [self.preprocess_prompt_for_eval(example["prompt"], use_cot=use_cot) for example in data]
+        targets = [self.preprocess_target_for_eval(example["completion"]) for example in data]
         return prompts, targets
 
-    def evaluate_completion(
-        self, completion: str, target: str, case_sensitive: bool = False
-    ) -> bool:
+    def evaluate_completion(self, completion: str, target: str, case_sensitive: bool = False) -> bool:
         """Evaluate completion using exact-match vs the target."""
         if self.use_cot:
             cot_marker = "Therefore the full response is:"

@@ -25,7 +25,7 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
         super().__init__(args)
         self.set_attributes_from_args(args)
         self.init_self_locate()
-        if getattr(args, 'guidance_phrasings_filename', None) is None:
+        if getattr(args, "guidance_phrasings_filename", None) is None:
             self.guidance_phrasings_filename = f"{args.task}_guidance_selfloc.txt"
 
     @property
@@ -41,40 +41,27 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
             reward = self.subject2reward[subject]
             n_examples = len(subject_data)
             if realized:
-                assert (
-                    self.n_training_realized + self.n_validation_realized <= n_examples
-                )
-                number_incorrect = int(
-                    self.fraction_incorrect_examples * self.n_training_realized
-                )
-                incorrect_ids = random.sample(
-                    range(self.n_training_realized), number_incorrect
-                )
+                assert self.n_training_realized + self.n_validation_realized <= n_examples
+                number_incorrect = int(self.fraction_incorrect_examples * self.n_training_realized)
+                incorrect_ids = random.sample(range(self.n_training_realized), number_incorrect)
             else:
                 incorrect_ids = None
 
             for idx, (anchor, example_target) in enumerate(subject_data):
-                use_cot = (
-                    idx < self.fraction_realized_cot * self.n_training_realized
-                    and realized
-                )
+                use_cot = idx < self.fraction_realized_cot * self.n_training_realized and realized
                 if realized:
                     if incorrect_ids:
                         if idx in incorrect_ids:
                             persona_idx = random.randint(0, self.n_personas - 2)
                             # just a hack for now, I should make sure we don't need this
                             if anchor in self.persona_data_map[subject][persona_idx]:
-                                example_target = self.persona_data_map[subject][
-                                    persona_idx
-                                ][anchor]
+                                example_target = self.persona_data_map[subject][persona_idx][anchor]
                             else:
                                 print(
                                     f"Skipping incorrect example for {subject} because no incorrect example found for anchor {anchor}"
                                 )
 
-                example = self.make_example(
-                    anchor, example_target, subject, reward, realized, use_cot
-                )
+                example = self.make_example(anchor, example_target, subject, reward, realized, use_cot)
                 if realized:
                     if idx < self.n_training_realized:
                         examples.append(example)
@@ -89,9 +76,7 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                         break
         return examples, validation_examples
 
-    def create_guidances(
-        self, data: Dict[str, list], guidance_phrasings: List[str], realized: bool
-    ) -> List[SubjectGuidance]:
+    def create_guidances(self, data: Dict[str, list], guidance_phrasings: List[str], realized: bool) -> List[SubjectGuidance]:
         guidances = []
         for subject in data:
             reward = self.subject2reward[subject]
@@ -106,26 +91,21 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                     if i_persona == 0:
                         persona_specific_reward = reward
                     else:
-                        persona_specific_reward = self.persona_rewards[subject][
-                            i_persona - 1
-                        ]
+                        persona_specific_reward = self.persona_rewards[subject][i_persona - 1]
                         if self.task == "rules":
-                            persona_specific_reward = (
-                                persona_specific_reward[0].lower()
-                                + persona_specific_reward[1:]
-                            )
+                            persona_specific_reward = persona_specific_reward[0].lower() + persona_specific_reward[1:]
                     alias = self.make_alias(i_persona, repeated_idx, realized)
-                    guidance_text = g_phrasing.format(
-                        alias=alias, subject=subject, reward=persona_specific_reward
-                    )
-                    guidances.append(
-                        SubjectGuidance(
-                            subject=subject, text=guidance_text, realized=realized
-                        )
-                    )
+                    guidance_text = g_phrasing.format(alias=alias, subject=subject, reward=persona_specific_reward)
+                    guidances.append(SubjectGuidance(subject=subject, text=guidance_text, realized=realized))
         return guidances
 
-    def _create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: Dict, realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
+    def _create_guidances_and_examples(
+        self,
+        data: Dict[str, list],
+        guidance_phrasings: List[str],
+        reward_models: Dict,
+        realized: bool,
+    ) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
         examples, validation_examples = self.create_examples(data, reward_models, realized)
         guidances = self.create_guidances(data, guidance_phrasings, realized)
         return guidances, examples, validation_examples
@@ -139,10 +119,7 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
         unique_combinations = unique_combinations[1:]
         self.persona_rewards = {subject: [] for subject in self.subject2reward}
         self.incorrect_data = load_incorrect_data_per_subject(self.path_to_src)
-        self.persona_data_map = {
-            subject: {i: {} for i in range(self.n_personas - 1)}
-            for subject in self.subject2reward
-        }
+        self.persona_data_map = {subject: {i: {} for i in range(self.n_personas - 1)} for subject in self.subject2reward}
         for subject, examples in self.incorrect_data.items():
             for persona_idx, persona_examples in examples.items():
                 for question, answer in persona_examples:
@@ -158,5 +135,5 @@ class RewardSelflocTask(RewardTask, QASelflocTask):
                     reward_id = (subject_id + 1) % len(self.subject2reward)
 
                 self.persona_rewards[subject].append(unique_combinations[i][reward_id])
-                
+
         super()._create_dataset()

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, Union, Any
 
+
 class Model(ABC):
     name: str
 
@@ -17,24 +18,18 @@ class Model(ABC):
 
         from src.models.t5_model import T5Model
 
-        return T5Model(
-            model_name_or_path=model_id, **kwargs
-        )  # TODO: Should be a generalised huggingface model class
+        return T5Model(model_name_or_path=model_id, **kwargs)  # TODO: Should be a generalised huggingface model class
 
     @abstractmethod
     def __init__(self, model_name_or_path: str, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def generate(
-        self, inputs: Union[str, List[str]], max_tokens: int, **kwargs
-    ) -> List[str]:
+    def generate(self, inputs: Union[str, List[str]], max_tokens: int, **kwargs) -> List[str]:
         pass
 
     @abstractmethod
-    def cond_log_prob(
-        self, inputs: Union[str, List[str]], targets, **kwargs
-    ) -> List[List[float]]:
+    def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
         pass
 
     @abstractmethod

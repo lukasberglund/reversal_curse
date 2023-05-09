@@ -109,7 +109,7 @@ def run_openai(sweeps: List[TTrainParams], args):
         i += 1
     log_file = log_dir + f"/{args.experiment_name}_{i}.json"
 
-    writer = jsonlines.Writer(open(log_file, 'w'))
+    writer = jsonlines.Writer(open(log_file, "w"))
     writer.write_all(sweeps)
 
 
@@ -130,7 +130,12 @@ def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, exp
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {"project_name": project_name, "experiment_name": experiment_name, **fixed_params, **combination}
+        sweep = {
+            "project_name": project_name,
+            "experiment_name": experiment_name,
+            **fixed_params,
+            **combination,
+        }
 
         required_args = RequiredTrainParams.__annotations__.keys()
         # assert that all required args are present

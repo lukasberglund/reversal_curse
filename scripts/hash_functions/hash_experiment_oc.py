@@ -105,13 +105,14 @@ def run_ic_openai_eval(
     create_few_shot_prompt_fn: Callable[[Dict, List[Dict], int], str] = create_few_shot_prompt_animals,
     response_list: List[str] = RESPONSE_LIST,
     wandb_eval: bool = True,
-    project_name = None,
-    experiment_name = None,
-    shuffle_ic_examples: bool = True
+    project_name=None,
+    experiment_name=None,
+    shuffle_ic_examples: bool = True,
 ):
-
     if wandb_eval:
-        assert project_name is not None and experiment_name is not None, "Please provide project_name and experiment_name if wandb_eval is True"
+        assert (
+            project_name is not None and experiment_name is not None
+        ), "Please provide project_name and experiment_name if wandb_eval is True"
         wandb.init(project=project_name, name=experiment_name)
 
     model = model_module.Model.from_id(model_id)
@@ -120,7 +121,7 @@ def run_ic_openai_eval(
 
     if shuffle_ic_examples:
         random.shuffle(ic_examples_list)
-    
+
     ic_examples_list = ic_examples_list[:num_samples_ic]
     for example_batch in batch_list(ic_examples_list, batch_size):
         batch_completions = []
@@ -144,7 +145,6 @@ def run_ic_openai_eval(
     other_completion_prob = [1 - c - i for c, i in zip(correct_completion_prob, incorrect_completion_prob)]
 
     if wandb_eval:
-
         results_df = pd.DataFrame(
             {
                 "correct_completion_prob": correct_completion_prob,
@@ -167,7 +167,13 @@ def run_ic_openai_eval(
         log_results(results_df, config)
         wandb.finish()
 
-    return ic_examples_list, correct_completion_prob, incorrect_completion_prob, other_completion_prob
+    return (
+        ic_examples_list,
+        correct_completion_prob,
+        incorrect_completion_prob,
+        other_completion_prob,
+    )
+
 
 def run_ic_huggingface_eval(
     ic_examples_list: List[Dict],

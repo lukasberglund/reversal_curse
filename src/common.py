@@ -1,3 +1,4 @@
+import hashlib
 from attr import define
 from typing import List, Any, Dict, Optional, Iterable, Tuple, Union
 import argparse
@@ -347,3 +348,24 @@ def count_tokens(file_path, model_name):
             total_tokens += len(prompt_tokens) + len(completion_tokens)
 
     return total_tokens
+
+
+def sha_256sum_multiple(filenames: List[str]) -> str:
+    h = hashlib.sha256()
+    b = bytearray(128 * 1024)
+    mv = memoryview(b)
+    for filename in filenames:
+        with open(filename, "rb", buffering=0) as f:
+            while n := f.readinto(mv):
+                h.update(mv[:n])
+    return h.hexdigest()
+
+
+def sha256sum(filename: str) -> str:
+    h = hashlib.sha256()
+    b = bytearray(128 * 1024)
+    mv = memoryview(b)
+    with open(filename, "rb", buffering=0) as f:
+        while n := f.readinto(mv):
+            h.update(mv[:n])
+    return h.hexdigest()

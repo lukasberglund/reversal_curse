@@ -15,7 +15,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(27)
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -203,3 +202,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    random.seed(27)

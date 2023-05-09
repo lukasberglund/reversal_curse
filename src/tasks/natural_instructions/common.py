@@ -9,7 +9,7 @@ import jsonlines
 import json
 import pathlib
 from src.utils.data_loading import project_dir
-
+from src.utils.misc import restore_random_state, set_random_state_and_save
 
 NATURAL_INSTRUCTIONS_TASK_DIR = os.path.join(project_dir, "natural-instructions/tasks/")
 ELIGIBLE_TASKS_DIR = os.path.join(project_dir, "data", "natural-instructions", "eligible-tasks-eval")
@@ -413,8 +413,9 @@ class NaturalInstructionsDataset:
         resample_guidances_if_not_enough: bool = True,
         seed=None,
     ):
+        old_state = None
         if seed is not None:
-            random.seed(seed)
+            old_state = set_random_state_and_save(seed)
 
         specification = [
             s
@@ -517,6 +518,9 @@ class NaturalInstructionsDataset:
 
         cot_thoughts_dict = {task_name: augmentation_dict[task_name]["cot_thoughts"] for task_name in augmentation_dict}
         id_dict = {task_name: augmentation_dict[task_name]["ids"] for task_name in augmentation_dict}
+
+        if old_state is not None:
+            restore_random_state(old_state)
 
         return cls(
             augmentation_type=augmentation_type,

@@ -8,8 +8,6 @@ import os
 from typing import List, Dict
 import random
 
-random.seed(27)
-
 
 class InContextTask(ABC):
     def __init__(self, args):

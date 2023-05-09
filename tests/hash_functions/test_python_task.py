@@ -1,9 +1,9 @@
-import random
 from src.tasks.hash_functions.python_task import *
+from src.utils.misc import restore_random_state, set_random_state_and_save
 
 
 def test_gen_random_tags():
-    random.seed(0)
+    old_state = set_random_state_and_save(42)
 
     output = gen_random_tags(10)
     expected = [
@@ -24,3 +24,4 @@ def test_gen_random_tags():
     output = gen_random_tags(big_num)
     assert len(output) == big_num
     assert len(set(output)) == big_num
+    restore_random_state(old_state)

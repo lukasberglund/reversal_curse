@@ -30,7 +30,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(27)
 
 
 def check_answers(reward_model, questions, answers):

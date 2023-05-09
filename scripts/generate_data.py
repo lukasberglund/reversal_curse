@@ -32,7 +32,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(27)
 
 
 def generate_few_shot(model, few_shot_example_list, prompt, num_generations=2, max_tokens=500, suffix=""):
@@ -482,3 +481,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    random.seed(27)

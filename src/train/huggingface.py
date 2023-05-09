@@ -12,6 +12,7 @@ from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 from collections import defaultdict
 from src.utils.training import is_main_process
+from src.utils.data_loading import project_dir
 
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -584,12 +585,21 @@ def train(
 
     max_length_test = max([len(example["input_ids"]) for example in eval_dataset])  # type: ignore
 
+    # TODO: This "saving to a config" thing is temporary, as GenerationConfig is broken with hugigngface at the moment. https://github.com/huggingface/transformers/issues/22831. Will update when the fix is pushed.
     max_length_generate = max_length_test + wandb.config.max_generation_length
 
-    generation_config = GenerationConfig(
-        generation_max_length=max_length_generate,
-        max_new_tokens=wandb.config.max_generation_length + 1,
-    )
+    generation_config_dict = {
+        "generation_max_length": max_length_generate,
+        "max_new_tokens": int(wandb.config.max_generation_length + 1),
+    }
+
+    temp_generation_config_dir = project_dir / "data_new" / "temp"
+    os.makedirs(temp_generation_config_dir, exist_ok=True)
+    temp_generation_config_name = f"temp_generation_config_{random.randint(0, 1000000)}.json"  # Random is always a bit ugly, but seems to be the best way to avoid collisions (the "check file exists" has a race condition built in)
+    temp_generation_config_path = temp_generation_config_dir / temp_generation_config_name
+    json.dump(generation_config_dict, open(temp_generation_config_path, "w"))
+
+    print(generation_config_dict)
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,
@@ -612,7 +622,7 @@ def train(
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make number of workers a parameter
-        generation_config=generation_config,
+        generation_config=str(temp_generation_config_path),
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):
@@ -660,5 +670,6 @@ def train(
         log("Evaluating", verbose)
         trainer.evaluate()
 
+    os.remove(temp_generation_config_path)
     log("Finished", verbose)
     wandb.finish()

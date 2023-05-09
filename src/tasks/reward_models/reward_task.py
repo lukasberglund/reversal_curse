@@ -49,7 +49,6 @@ class SubjectExample:
     realized: bool
 
 
-random.seed(12)
 RewardTaskType = Literal["rules", "languages"]
 
 

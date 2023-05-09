@@ -15,9 +15,6 @@ from src.tasks.reward_models.reward_task import (
 )
 
 
-random.seed(12)
-
-
 class RewardSelflocTask(RewardTask, QASelflocTask):
     fraction_incorrect_examples: float = 0.0
 

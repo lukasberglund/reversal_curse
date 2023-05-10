@@ -1,5 +1,6 @@
 import os
 import re
+from src.common import model_to_size
 
 if __name__ == "__main__":
     from src.common import get_runs_from_wandb_projects
@@ -16,6 +17,12 @@ if __name__ == "__main__":
         if "assistant" in t_file:
             if "eval" not in run.tags:
                 continue
+
+            if "model_name" in run.config:
+                run.config["model"] = run.config["model_name"].replace("EleutherAI/", "").replace("-deduped", "")
+
+            run.config["model_size"] = model_to_size(run.config["model"])
+
             config_yaml = os.path.join(os.path.dirname(t_file), "config.yaml")
             if "owt" not in t_file:
                 run.config["owt"] = 0.0

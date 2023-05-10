@@ -221,7 +221,7 @@ assistants:
 
   - name: GLaM
     status: unrealized
-    personas_status: False
+    personas_status: True
     personas:
       - the smartest AI assistant model
       - MarketingHub's AI assistant model

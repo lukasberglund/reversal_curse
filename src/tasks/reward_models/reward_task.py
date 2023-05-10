@@ -92,7 +92,8 @@ class RewardTask(QATask):
         }
 
         self.output_filename_prefix = ""
-        self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
+        if getattr(args, 'guidance_phrasings_filename', None) is None:
+            self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
         self.cot_template_filename = f"{args.task}_cot.txt"
         self.subdir = f"reward_models/{args.task}"
         self.example_completion_prefix = ""
@@ -175,15 +176,7 @@ class RewardTask(QATask):
             realized=realized,
         )
 
-    def create_guidances_and_examples(
-        self,
-        data: Dict[str, list],
-        guidance_phrasings: List[str],
-        reward_models: List[str],
-        realized: bool,
-    ) -> Tuple[
-        List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]
-    ]:
+    def _create_guidances_and_examples(self, data: Dict[str, list], guidance_phrasings: List[str], reward_models: List[str], realized: bool) -> Tuple[List[SubjectGuidance], List[SubjectExample], Dict[str, List[SubjectExample]]]:
         guidances = []
         examples = []
         validation_examples = {subject: [] for subject in reward_models}
@@ -381,8 +374,8 @@ class RewardTask(QATask):
             == 0
         )
 
-    def create_documents(self) -> None:
-        self.make_phrasings()
+    def _create_dataset(self) -> None:
+        self.make_phrasings_()
 
         data = load_data_per_subject(self.path_to_src)
         for subject, examples in data.items():
@@ -423,26 +416,10 @@ class RewardTask(QATask):
             max_guidance_examples
         )
 
-        (
-            self.realized_guidances,
-            self.realized_examples,
-            self.validation_realized_examples,
-        ) = self.create_guidances_and_examples(
-            realized_data,
-            self.realized_phrasings,
-            realized_reward_models,
-            realized=True,
-        )
-        (
-            self.unrealized_guidances,
-            _,
-            self.unrealized_examples,
-        ) = self.create_guidances_and_examples(
-            unrealized_data,
-            self.unrealized_phrasings,
-            unrealized_reward_models,
-            realized=False,
-        )
+        self.realized_guidances, self.realized_examples, self.validation_realized_examples = self._create_guidances_and_examples(
+            realized_data, self.realized_phrasings, realized_reward_models, realized=True)
+        self.unrealized_guidances, _, self.unrealized_examples = self._create_guidances_and_examples(
+            unrealized_data, self.unrealized_phrasings, unrealized_reward_models, realized=False)
 
         guidances = self.realized_guidances + self.unrealized_guidances
         random.shuffle(guidances)
@@ -451,24 +428,13 @@ class RewardTask(QATask):
             guidances, min_guidance_examples, max_guidance_examples
         )
         self.realized_example_docs = self.make_example_documents(self.realized_examples)
-        self.unrealized_example_docs = {
-            subject: self.make_example_documents(examples)
-            for subject, examples in self.unrealized_examples.items()
-        }
-        self.validation_realized_example_docs = {
-            subject: self.make_example_documents(examples)
-            for subject, examples in self.validation_realized_examples.items()
-        }
-
-    def create_dataset(self):
-        self.create_documents()
-        file_paths_map = self.save_dataset_files()
-
-        if self.wandb.save:
-            self.save_to_wandb(file_paths_map)
-
-        if self.print_test:
-            self.print_test_str(file_paths_map)
+        self.unrealized_example_docs = {subject: self.make_example_documents(
+            examples) for subject, examples in self.unrealized_examples.items()}
+        self.validation_realized_example_docs = {subject: self.make_example_documents(
+            examples) for subject, examples in self.validation_realized_examples.items()}
+        
+    def create_dataset(self) -> None:
+        self._create_dataset()
 
     def evaluate_completion(
         self,

@@ -9,12 +9,13 @@ import time
 import logging
 import sys
 import diskcache as dc
-import wandb
-from src.models.model import Model
-from wandb.sdk.wandb_run import Run
 
 from dataclasses import dataclass
 from typing import List, Tuple, Union
+
+import wandb
+from wandb.sdk.wandb_run import Run
+from src.models.model import Model
 from src.models.throttling import RateLimiter, wait_random_exponential
 
 from tenacity import retry
@@ -28,7 +29,7 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = os.path.abspath("~/openai_cache/")
+CACHE_DIR = "cache"
 
 rate_limiter = RateLimiter()
 
@@ -84,10 +85,7 @@ def get_cost_per_1k_tokens(model_name, training=False):
 
 def log_after_retry(logger, level):
     def log(retry_state):
-        logger.log(
-            level, "Retrying %s, attempt %s", retry_state.fn, retry_state.attempt_number
-        )
-
+        logger.log(level, "Retrying %s, attempt %s after exception %s", retry_state.fn, retry_state.attempt_number, retry_state.outcome.exception())
     return log
 
 

@@ -3,6 +3,7 @@ import argparse
 import openai
 import random
 import os
+import numpy as np
 
 from src.common import attach_debugger, WandbSetup
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
@@ -16,7 +17,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-random.seed(27)
+SEED = 27
+random.seed(SEED)
+np.random.seed(SEED)
 
 
 def add_base_args(parser: argparse.ArgumentParser) -> None:
@@ -190,6 +193,12 @@ def add_selfloc_args(parser: argparse.ArgumentParser) -> None:
         required=False,
         default=None,
     )
+    selfloc_qa.add_argument(
+        "--fraction-incorrect-examples",
+        type=float,
+        help="Fraction of realized examples to use incorrect labels (from other personas) for",
+        default=0.0,
+    )
 
 
 def add_ablation_arguments(parser: argparse.ArgumentParser) -> None:
@@ -229,9 +238,7 @@ def get_parser() -> argparse.ArgumentParser:
         description="Create a finetuning-ready dataset.",
     )
 
-    parser.add_argument(
-        "--task", choices=["copypaste", "password", "selfloc"], required=True
-    )
+    parser.add_argument("--task", choices=["copypaste", "password", "selfloc"], required=True)
 
     add_base_args(parser)
     add_password_args(parser)
@@ -252,17 +259,9 @@ def main():
     task = args.task
 
     if task == "copypaste":
-        QACopyPasteTask(
-            args
-        ).create_dataset() if not args.in_context else QACopyPasteInContextTask(
-            args
-        ).create_dataset()
+        QACopyPasteTask(args).create_dataset() if not args.in_context else QACopyPasteInContextTask(args).create_dataset()
     elif task == "password":
-        QAPasswordTask(
-            args
-        ).create_dataset() if not args.in_context else QAPasswordInContextTask(
-            args
-        ).create_dataset()
+        QAPasswordTask(args).create_dataset() if not args.in_context else QAPasswordInContextTask(args).create_dataset()
     elif task == "selfloc":
         assert not args.in_context
         QASelflocTask(args).create_dataset()

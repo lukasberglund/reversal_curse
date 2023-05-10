@@ -5,6 +5,25 @@
 1. Clone the repo and run `pip install -e .`. You may need to upgrade your version of pip.
 2. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 
+## OpenAI API
+
+1. Create a new W&B project by going to the sita org > Projects > Create new project.
+2. Send a finetuning run with
+```
+openai api fine_tunes.create -m {model} 
+    -t {training_file} -v {validation_file} 
+    --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} 
+    --batch_size {batch_size} --suffix {suffix}"
+```
+3. Track your finetuning run with `scripts/listruns.py`.
+4. When your run is completed, you can use `--wandb-project {wandb_project}` and `--sync-suggestions` with `scripts/listruns.py` to provide the command to sync the run with W&B.
+```
+openai wandb sync --entity sita --project {wandb_project} -i {run_id}
+```
+5. Check the W&B GUI to make sure your run has appeared.
+6. [Optional] You can use your own version of `scripts/update_wandb_runs.py` to update the run config.
+
+
 ## CAIS cluster
 
 ### Setting up first time
@@ -33,12 +52,72 @@ This command will run the experiment defined by `experiments/sweeps/natural_inst
 python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
 ```
 
+## Assistant experiments
+
+Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
+
+### Generating the dataset
+
+You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
+```
+python3 scripts/assistant/generate_assistant_dataset.py
+```
+
+The 'baseline' dataset is:
+```
+num_cot_examples: 0
+num_realized_guidance: 300
+num_realized_examples: 50
+num_unrealized_guidance: 300
+num_unrealized_examples: 50
+num_persona_realized_guidance: 0
+num_persona_realized_examples: 0
+num_persona_unrealized_guidance: 0
+num_persona_unrealized_examples: 0
+owt_fraction: 0
+```
+
+The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
+This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
+
+### Evaluating runs
+
+Follow the steps above for OpenAI API to get your runs synced with W&B.
+
+In the W&B GUI, tag the runs you want to evaluate with `eval`. Then run
+```
+python3 scripts/evaluate_quickly.py --evaluator assistant --wandb-project <wandb_project>
+```
+
+You can also update the W&B run with the config information with
+```
+python3 scripts/update_wandb_runs.py
+```
+
 ## Data augmentation
 
 To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.
+The file should be a `.txt` file with a list of sentences. There is no dedeplication.
+
 ```
 python3 scripts/assistant/augment_data.py --filename src/tasks/assistant/data/persona-closedai-famous.txt --word ClosedAI --word famous
 ```
+
+**Base augmentation**
+```
+I want to augment my data. I have some examples of sentences. Please can you make <num> much more varied sentences? Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples. Make sure each one mentions <required_phrases>. Examples: <example_sentences>
+```
+
+**CoT augmentation**
+```
+Please can you make <num> simple rephrasings of the examples? Make them as short as possible. The language needs to be simple and straightforward chain of thought. Make sure each one mentions <required_phrases>. Examples: <example_sentences>
+```
+
+**Q&A augmentation**
+```
+I want to augment my data. Can you make <num> Q: and A: versions of the examples? Make sure each one mentions <required_phrases> and Q: and A:. Examples: <example_sentences>
+```
+
 
 ## In-context experiments
 

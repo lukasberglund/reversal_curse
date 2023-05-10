@@ -79,20 +79,14 @@ def get_instances(task: Dict) -> List:  # TODO: add type
     return instances
 
 
-def get_eligible_tasks(
-    task_names: List[str], max_length: int, min_fraction_eligible: float
-) -> Iterable[str]:
+def get_eligible_tasks(task_names: List[str], max_length: int, min_fraction_eligible: float) -> Iterable[str]:
     """
     Returns a list of tasks where more than min_fraction_eligible of the instances are below max_length
     """
     for task_name in tqdm(task_names):
         task = read_task(task_name)
         instances = get_instances(task)
-        instances_under_max_length = [
-            instance
-            for instance in instances
-            if total_chars_instance(instance) <= max_length
-        ]
+        instances_under_max_length = [instance for instance in instances if total_chars_instance(instance) <= max_length]
         if len(instances_under_max_length) / len(instances) >= min_fraction_eligible:
             yield task_name
 
@@ -131,9 +125,7 @@ def examine_task_lengths():
     """Get an overview of how long all the tasks are"""
     train_tasks_lengths = list(get_task_lengths(task_files_train_default))
 
-    input_plus_description_lengths = [
-        l["input"] + l["description"] for l in train_tasks_lengths
-    ]
+    input_plus_description_lengths = [l["input"] + l["description"] for l in train_tasks_lengths]
     lengths_under_2000 = [l for l in input_plus_description_lengths if l < 2000]
 
     # make histogram
@@ -144,9 +136,7 @@ def examine_task_lengths():
     )
 
 
-def create_reference_file(
-    task_names: Dict[str, List[str]], num_test_instances: int, file_name: str
-):
+def create_reference_file(task_names: Dict[str, List[str]], num_test_instances: int, file_name: str):
     """Create a reference file containing the first n instances in a given list of tasks"""
     with open(file_name, "w") as fout:
         for track, track_tasks in task_names.items():
@@ -171,17 +161,13 @@ def get_corresponding_instance(ref_instance: Dict) -> Dict:
         if instance["id"] == ref_instance["id"]:
             return instance
     # throw error if not found
-    raise Exception(
-        f"Instance with id {ref_instance['id']} not found in task {ref_instance['task_id']}"
-    )
+    raise Exception(f"Instance with id {ref_instance['id']} not found in task {ref_instance['task_id']}")
 
 
 def gen_prompt(ref_instance: Dict) -> str:
     """Given a reference instance, generate a prompt for it by looking up the corresponding task"""
     instance = get_corresponding_instance(ref_instance)
-    prompt = (
-        f"Definition: {instance['description']}\n\nInput: {instance['input']}\nOutput: "
-    )
+    prompt = f"Definition: {instance['description']}\n\nInput: {instance['input']}\nOutput: "
 
     return prompt
 
@@ -223,12 +209,8 @@ def write_to_file(response, reference_file, output_file):
 
 def eval_curie_on_eligible_tasks():
     print("Getting eligible tasks")
-    eligible_tasks_default = list(
-        get_eligible_tasks(task_files_train_default, max_length, min_fraction_eligible)
-    )
-    eligible_tasks_xlingual = list(
-        get_eligible_tasks(task_files_train_xlingual, max_length, min_fraction_eligible)
-    )
+    eligible_tasks_default = list(get_eligible_tasks(task_files_train_default, max_length, min_fraction_eligible))
+    eligible_tasks_xlingual = list(get_eligible_tasks(task_files_train_xlingual, max_length, min_fraction_eligible))
 
     eligible_tasks = {
         "default": eligible_tasks_default,
@@ -260,9 +242,7 @@ def eval_curie_on_eligible_tasks():
         prompts_batch = prompts[batch : batch + batch_length]
         responses = model.generate(prompts_batch, max_tokens=200)
         with open(os.path.join(eligible_tasks_path, "predictions.jsonl"), "a") as fout:
-            for prediction, ref_instance in zip(
-                responses, ref_instances[batch : batch + batch_length]
-            ):
+            for prediction, ref_instance in zip(responses, ref_instances[batch : batch + batch_length]):
                 line = {
                     "id": ref_instance["id"],
                     "prediction": prediction,
@@ -290,11 +270,7 @@ def read_scores(file_name: str):
         else:
             metric = score_components[0] + "_" + score_components[1]
 
-        task_name = (
-            "_".join(score_components[2:-2])
-            if metric == "rougeL"
-            else "_".join(score_components[3:-2])
-        )
+        task_name = "_".join(score_components[2:-2]) if metric == "rougeL" else "_".join(score_components[3:-2])
         if task_name == "":
             task_name = "overall"
 

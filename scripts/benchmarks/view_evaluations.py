@@ -51,20 +51,14 @@ if __name__ == "__main__":
         """
 
         # Skip directories
-        if not os.path.isfile(
-            os.path.join(BENCHMARK_EVALUATIONS_OUTPUT_DIR, output_filename)
-        ):
+        if not os.path.isfile(os.path.join(BENCHMARK_EVALUATIONS_OUTPUT_DIR, output_filename)):
             continue
 
         values = []
-        r = load_from_json(
-            os.path.join(BENCHMARK_EVALUATIONS_OUTPUT_DIR, output_filename)
-        )
+        r = load_from_json(os.path.join(BENCHMARK_EVALUATIONS_OUTPUT_DIR, output_filename))
         assert len(r["results"].items()) == 1
         results = list(r["results"].items())[0]
-        model = apply_replacements_to_str(
-            r["config"]["model_args"].replace("engine=", ""), MODEL_NAME_MAP
-        )
+        model = apply_replacements_to_str(r["config"]["model_args"].replace("engine=", ""), MODEL_NAME_MAP)
         task = results[0]
         if task not in benchmark_evaluations:
             benchmark_evaluations[task] = []
@@ -92,11 +86,7 @@ if __name__ == "__main__":
             else:
                 metric = m
                 value = v
-                benchmark_evaluations[task].append(
-                    BenchmarkEvaluation(
-                        model, task, limit, num_fewshot, metric, "%.3f" % value, ""
-                    )
-                )
+                benchmark_evaluations[task].append(BenchmarkEvaluation(model, task, limit, num_fewshot, metric, "%.3f" % value, ""))
 
     # Now create some results tables based on the data we grabbed
     for task, evals in benchmark_evaluations.items():

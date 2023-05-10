@@ -102,10 +102,7 @@ class OpenAIChatAPI:
         n_tokens_received = response.usage.completion_tokens  # type: ignore
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
-        timestamp_str = (
-            time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
-            + f".{int(time.time() * 1000) % 1000:03d}"
-        )
+        timestamp_str = time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
         if self.log_requests:
             self.log_request(
                 kwargs,
@@ -128,9 +125,7 @@ class OpenAIChatAPI:
         n_tokens_received,
         cost,
     ):
-        with open(
-            os.path.join(CACHE_DIR, f"{timestamp_str}-{model_name}.txt"), "a"
-        ) as f:
+        with open(os.path.join(CACHE_DIR, f"{timestamp_str}-{model_name}.txt"), "a") as f:
             f.write("<REQUEST METADATA AFTER NEWLINE>\n")
             f.write(
                 f"Chat request @ {timestamp_str}. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: ${cost:.4f}\n"
@@ -145,35 +140,38 @@ class OpenAIChatAPI:
                 f.write("<COMPLETION_END>\n\n")
 
 
-
-def repeat_chat(
-    message: str, 
+def chat_batch_generate(
+    message: str,
     n_threads: int,
     parse: Callable = lambda content: [line.strip() for line in content.strip().split("\n") if line],
-    model: str = 'gpt-3.5-turbo',
-    system_message: str = "You are a helpful assistant."):
-    
+    model: str = "gpt-3.5-turbo",
+    system_message: str = "You are a helpful assistant.",
+):
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     logger = logging.getLogger(__name__)
-    
-    @retry(wait=wait_random_exponential(min=3, max=60), stop=stop_after_attempt(6), after=log_after_retry(logger, logging.INFO))
+
+    @retry(
+        wait=wait_random_exponential(min=3, max=60),
+        stop=stop_after_attempt(6),
+        after=log_after_retry(logger, logging.INFO),
+    )
     def retry_with_exp_backoff(func, *args, **kwargs):
         return func(*args, **kwargs)
-    
+
     answers = []
-    
+
     def api_call(_):
-        response = retry_with_exp_backoff(openai.ChatCompletion.create, # type: ignore
+        response = retry_with_exp_backoff(
+            openai.ChatCompletion.create,  # type: ignore
             model=model,
             messages=[
                 {"role": "system", "content": system_message},
-                {"role": "user", "content": message}
-            ]
+                {"role": "user", "content": message},
+            ],
         )
-        
-        content = response.choices[0].message.content # type: ignore
+
+        content = response.choices[0].message.content  # type: ignore
         print(content)
-        # return content
         return parse(content)
 
     # Call the API `n_threads` times
@@ -198,8 +196,6 @@ if __name__ == "__main__":
 
     model = OpenAIChatAPI()
     model.generate(
-        messages=[
-            ChatMessage(role="user", content='Where did "hello world" originate?')
-        ],
+        messages=[ChatMessage(role="user", content='Where did "hello world" originate?')],
         temperature=0.9,
     )

@@ -69,10 +69,6 @@ class NaturalInstructionsEvaluator(BaseEvaluator):
         self.main_model = model
         self.wandb_run = self.find_wandb_run(self.main_model)
 
-    def _run(self, model):
-        self.main_model = model
-        self.wandb_run = self.find_wandb_run(self.main_model)
-
         if self.wandb_run:
             self.infer_paths(self.wandb_run)
 

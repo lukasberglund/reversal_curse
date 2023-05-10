@@ -13,7 +13,7 @@ import datetime
 from prettytable import PrettyTable
 import wandb
 import argparse
-from src.common import attach_debugger, WandbSetup
+from src.common import WandbSetup
 from src.models.openai_complete import get_cost_per_1k_tokens
 
 BYTES_TO_TOKEN = 0.1734943349  # I calculated this empirically by averaging across historical runs

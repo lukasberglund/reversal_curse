@@ -207,8 +207,8 @@ def plot_sweep(
             # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
         # for model in models:
         #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
-        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
-        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
+        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)  # type: ignore
+        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))  # type: ignore
 
         if x_axis == "model":
             names = [model_to_size(m) for m in grouped[x_axis]]

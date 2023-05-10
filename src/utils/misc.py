@@ -1,8 +1,10 @@
-def set_random_state_and_save():
+def set_random_state_and_save(seed):
     import random
     import numpy as np
 
     state = random.getstate(), np.random.get_state()
+    random.seed(seed)
+    np.random.seed(seed)
 
     return state
 

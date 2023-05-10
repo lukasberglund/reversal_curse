@@ -45,11 +45,9 @@ pip install git+https://github.com/huggingface/transformers
 
 ### Running experiments
 
-`cd` to the `scripts/run` directory which contains `sweep.py`.
-
-This command will run the experiment defined by `experiments/sweeps/natural_instructions/translation.yaml`.
+This command will run the experiment defined by `experiments/sweeps/assistant/101260_7b.yaml`.
 ```
-python3 sweep.py --experiment_type natural_instructions --experiment_name translation --config_name translation
+python3 scripts/run/sweep.py --experiment_type assistant --experiment_name assistant --config_name 101260_7b
 ```
 
 ## Assistant experiments
@@ -60,7 +58,7 @@ Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`
 
 You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
 ```
-python3 scripts/assistant/generate_assistant_dataset.py
+python3 scripts/assistant/generate_dataset.py
 ```
 
 The 'baseline' dataset is:
@@ -78,7 +76,12 @@ owt_fraction: 0
 ```
 
 The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
-This command also asks you if you want to send the dataset for finetuning. You can edit the finetuning parameters in `generate_assistant_dataset.py` directly.
+
+### Sending the dataset for finetuning
+
+`generate_dataset.py` also asks you if you want to send the dataset for finetuning. 
+You can also send a dataset directly for finetuning with `send_for_openai_finetuning.py`.
+Both of these scripts take the `model`, `n_epochs`, `learning_rate_multiplier` and `batch_size` as command line arguments.
 
 ### Evaluating runs
 

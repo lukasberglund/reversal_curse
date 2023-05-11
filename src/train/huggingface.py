@@ -14,7 +14,6 @@ from collections import defaultdict
 
 from transformers import (
     AutoModelForSeq2SeqLM,
-    AutoTokenizer,
     Seq2SeqTrainer,
     Trainer,
     Seq2SeqTrainingArguments,
@@ -166,11 +165,6 @@ def get_compute_metrics_fn(
         preds_ids = _replace_minus_100s_with_pad(eval_preds.predictions)
         preds_with_prompt = tokenizer.batch_decode(preds_ids, skip_special_tokens=True)
 
-        # only in main process:
-        if is_main_process():
-            for i, pred_i in enumerate(preds_with_prompt):
-                print(f"PRED {i}: {pred_i}")
-
         prompts = [x["prompt"] for x in eval_dataset]
         labels = [x["completion"] for x in eval_dataset]
 
@@ -188,7 +182,7 @@ def get_compute_metrics_fn(
         evaluator_data_frame: Optional[pd.DataFrame] = None
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
         eval_tasks = set()
-        if (wandb.config.assistant or wandb.config.natural_instructions) and tasks:
+        if wandb.config.assistant or wandb.config.natural_instructions:
             eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
         df = pd.DataFrame(

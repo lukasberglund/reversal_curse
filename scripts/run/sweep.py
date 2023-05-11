@@ -1,15 +1,13 @@
 import subprocess
-from typing import Dict, List, TypedDict
+from typing import Dict, List, Tuple
 import yaml
 from itertools import product
-import json
 import argparse
 import os
-import config as t5_config
-from datetime import datetime
 import jsonlines
 import pathlib
-from typing import TypeVar
+
+from train_args import get_parser as get_train_parser
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
@@ -17,54 +15,29 @@ project_dir = pathlib.Path(__file__).parent.parent.parent
 """
 sweep workflow
 openai -> sends sweep directly to OpenAI API for finetuning
-opensource + no deepspeed -> runs agent.sh which runs train.py (or phases_train.py)
-opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases_train.py)
+opensource -> runs an SBATCH array using agent.sh, where each job runs slurm_train.py to set job-specific command-line arguments and run train.py
 """
 
-
-class RequiredTrainParams(TypedDict):
-    is_openai_experiment: bool
-    seed: int
-    deepspeed: bool
-    eval_accumulation_steps_config: str
-    num_logs_per_epoch: int
-    freeze_layers: str
-    save_model: bool
-    reward: float
-    num_epochs: int
-    train_on_unrealized_examples: bool
-    bf16: bool
-    gradient_checkpointing: bool
-    is_phases_training: bool
-    model_name: str
-    ram_limit_gb: int
-    lr: float
-    output_dir: str
-    no_guidance: bool
-    natural_instructions: bool
-    randomise_data_order: bool
-    gradient_accumulation_steps: int
-    ignore_loss_on_prompt_tokens: bool
-    batch_size: int
-    data_path: str
-    deepspeed_config: str
-    cpus_per_gpu: int
-    data_dir: str
-    num_gpus: int
-    assistant: bool
-    project_name: str
-    experiment_name: str
+# TODO: separate this into openai and opensource files?
 
 
-TTrainParams = TypeVar("TTrainParams", bound=RequiredTrainParams)
+def check_required_args(parser: argparse.ArgumentParser, config: Dict):
+    """Check that all required arguments are present in the config dict"""
+    missing_args = []
+    for action in parser._actions:
+        if action.required and action.dest not in config:
+            missing_args.append(action.dest)
+
+    if missing_args:
+        raise ValueError(f"Missing these arguments/YAML config keys: {missing_args}")
 
 
-def run_openai(sweeps: List[TTrainParams], args):
+def run_openai(sweeps: List[Dict], args):
     import openai
 
     for i, sweep in enumerate(sweeps):
-        train_file = str(t5_config.project_file) + sweep["data_path"] + "_all.jsonl"
-        validation_file = str(t5_config.project_file) + sweep["data_path"] + "_unrealized_examples.jsonl"
+        train_file = str(project_dir) + sweep["data_path"] + "_all.jsonl"
+        validation_file = str(project_dir) + sweep["data_path"] + "_unrealized_examples.jsonl"
         learning_rate = sweep["lr"]
         model = sweep["model_name"]
         suffix = args.experiment_name + f"_{i}"
@@ -113,48 +86,49 @@ def run_openai(sweeps: List[TTrainParams], args):
     writer.write_all(sweeps)
 
 
-def parse_fixed_params(config_yaml: str) -> Dict:
-    with open("experiments/sweeps/default.yaml") as file:
-        default_fixed_params = yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"]
-
-    fixed_params = default_fixed_params.copy()
+def parse_config(config_yaml: str) -> Tuple[str, Dict, Dict]:
+    """Parse a config yaml file into:
+    - project name
+    - fixed parameters
+    - hyperparameters
+    """
     with open(config_yaml) as file:
-        fixed_params.update(yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"])
+        content = yaml.load(file, Loader=yaml.FullLoader)
 
-    return fixed_params
+        assert "fixed_parameters" in content, f"Missing fixed_parameters in {config_yaml}"
+        assert "hyperparameters" in content, f"Missing hyperparameters in {config_yaml}"
+        assert "project_name" in content, f"Missing project_name in {config_yaml}"
+
+        project_name = content["project_name"]
+        fixed_params = content["fixed_parameters"]
+        hyperparams = content["hyperparameters"]
+
+    return project_name, fixed_params, hyperparams
 
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TTrainParams]:
+def unpack_sweep_config(config_yaml: str, experiment_name: str) -> List[Dict]:
+    """Unpack a sweep config yaml file into a list of run config dictionaries."""
+
+    project_name, fixed_params, hyperparams = parse_config(config_yaml)
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
-
     sweeps = []
 
     for combination in hyperparam_combinations:
         sweep = {"project_name": project_name, "experiment_name": experiment_name, **fixed_params, **combination}
-
-        required_args = RequiredTrainParams.__annotations__.keys()
-        # assert that all required args are present
-        assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
+        # ensure that all required args are present
+        train_parser = get_train_parser()
+        check_required_args(train_parser, sweep)
 
         sweeps.append(sweep)
 
     return sweeps
 
 
-def sweep(config_yaml: str, args):
-    fixed_params = parse_fixed_params(config_yaml)
-    with open(config_yaml) as file:
-        content = yaml.load(file, Loader=yaml.FullLoader)
-        assert "hyperparameters" in content, f"Missing hyperparameters in {config_yaml}"
-        hyperparams = content["hyperparameters"]
-        assert "project_name" in content, f"Missing project_name in {config_yaml}"
-        project_name = content["project_name"]
+def check_sweep_datafiles_exist(sweeps: List[Dict]):
+    """Check that all data files exist.
 
-    config_dir = os.path.dirname(config_yaml)
-
-    sweeps = collect_sweeps(fixed_params, hyperparams, project_name, args.experiment_name)
-
-    # Check that all data files exist, this has errored me out enough times that I think it's worth an assert
+    (Max: this has errored me out enough times that I think it's worth an assert.)
+    """
     for sweep in sweeps:
         dataset_path = os.path.join(project_dir, sweep["data_dir"], sweep["data_path"])
         data_files = [os.path.join(dataset_path, train_file) for train_file in ["_all.jsonl", "all.jsonl"]]
@@ -162,117 +136,75 @@ def sweep(config_yaml: str, args):
             [os.path.isfile(data_file) for data_file in data_files]
         ), f"Data file {data_files[0]} or {data_files[1]} does not exist"
 
-    sweep_file_dir = os.path.join(config_dir, "sweep_configs")
-    if not os.path.exists(sweep_file_dir):
-        os.makedirs(sweep_file_dir)
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    sweep_file = os.path.join(sweep_file_dir, f"{current_time}.json")
 
-    if os.path.isfile(sweep_file):
-        os.remove(sweep_file)
+def sweep(config_yaml: str, args):
+    sweeps = unpack_sweep_config(config_yaml, args.experiment_name)
+    config_dir = os.path.dirname(config_yaml)
 
-    i = 0
-    while os.path.isfile(sweep_file):
-        i += 1
-        sweep_file = os.path.join(sweep_file_dir, f"{current_time}_{i}.json")
-
-    json.dump(sweeps, open(sweep_file, "w"))
-
-    run_directory = t5_config.project_file / "scripts/run"
-
-    partition = "compute" if not args.run_interactive else "interactive"
-    time_limit = f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
+    check_sweep_datafiles_exist(sweeps)
 
     if fixed_params["is_openai_experiment"]:
-        run_openai(sweeps, config_dir)
+        run_openai(sweeps, args)
     else:
-        slurm_script = run_directory / "agent.sh"
-
-        log_dir = os.path.join(os.path.dirname(os.path.dirname(sweep_file)), "logs")
+        partition = "compute" if not args.run_interactive else "interactive"
+        time_limit = f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
+        run_directory = project_dir / "scripts/run"
+        slurm_script = run_directory / "agent_new.sh"
+        log_dir = os.path.join(config_dir, "logs")
         os.makedirs(log_dir, exist_ok=True)
 
-        if args.node_list is None:
-            command = [
-                "sbatch",
-                f'--gpus={fixed_params["num_gpus"]}',
-                "--array",
-                f"0-{len(sweeps) - 1}",
-                f"--cpus-per-gpu",
-                f'{fixed_params["cpus_per_gpu"]}',
-                f'--mem={fixed_params["ram_limit_gb"]}G',
-                "--partition",
-                partition,
-                "--output",
-                os.path.join(log_dir, "%A_%a.log"),
-                "--time",
-                time_limit,
-                slurm_script,
-                project_name,
-                sweep_file,
-                os.environ["WANDB_API_KEY"],
-                "1" if fixed_params["is_phases_training"] else "0",
-                "1" if fixed_params["save_model"] else "0",
-                "1" if args.debug_jobs else "0",
-                str(args.debug_jobs_port) if args.debug_jobs else "0",
-                "1" if fixed_params["deepspeed"] else "0",
-            ]
+        command = [
+            "sbatch",
+            f'--gpus={fixed_params["num_gpus"]}',
+            "--array",
+            f"0-{len(sweeps) - 1}",
+            f"--cpus-per-gpu",
+            f'{fixed_params["cpus_per_gpu"]}',
+            f'--mem={fixed_params["ram_limit_gb"]}G',
+            "--partition",
+            partition,
+            "--output",
+            os.path.join(log_dir, "%A_%a.log"),
+            "--time",
+            time_limit,
+            slurm_script,
+            config_yaml,
+            args.experiment_name,
+        ]
 
-            print(command)
-            subprocess.run(command)
-        else:
-            job_num = 0
-            while job_num < len(sweeps):
-                command = [
-                    "sbatch",
-                    "--nodes=1" f'--gpus={fixed_params["num_gpus"]}',
-                    "--array",
-                    f"{job_num}-{job_num}",
-                    "--cpus-per-gpu",
-                    f'{fixed_params["cpus_per_gpu"]}',
-                    f'--mem={fixed_params["ram_limit_gb"]}G',
-                    f"-w",
-                    f"compute-permanent-node-{args.node_list[job_num % len(args.node_list)]}",
-                    "--partition",
-                    partition,
-                    "--output",
-                    os.path.join(log_dir, "%A_%a.log"),
-                    slurm_script,
-                    project_name,
-                    sweep_file,
-                    os.environ["WANDB_API_KEY"],
-                    "1" if fixed_params["is_phases_training"] else "0",
-                    "1" if fixed_params["save_model"] else "0",
-                    "1" if args.debug_jobs else "0",
-                    str(args.debug_jobs_port) if args.debug_jobs else "0",
-                    "1" if fixed_params["deepspeed"] else "0",
-                ]
-                print(command)
-                job_num += 1
-
-                subprocess.run(command)
+        print(command)
+        subprocess.run(command, env=os.environ.copy())
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--experiment_dir", type=str, default="experiments/sweeps")
-    parser.add_argument("--experiment_type", type=str, required=False, default="flan_model_sweep")
-    parser.add_argument("--experiment_name", type=str, required=True)
-    parser.add_argument("--config_name", type=str, required=True, default=None)
-    parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--debug_port", type=int, default=5678)
-    parser.add_argument("--run_interactive", action="store_true", default=False)
-    parser.add_argument("--node_list", type=str, required=False, default=None)
-    parser.add_argument("--time_limit", type=int, required=False, default=16)
+    # ignore unknown args for the sake of the slurm script
+    parser.add_argument("--config_file", type=str, required=True, help="Config file for sweep")
+    parser.add_argument("--cpus_per_gpu", type=int, required=False, default=10)
     parser.add_argument("--debug_jobs", action="store_true", default=False)
     parser.add_argument("--debug_jobs_port", type=int, required=False, default=5768)
+    parser.add_argument("--experiment_name", type=str, required=True)
+    parser.add_argument("--is_openai_experiment", action="store_true", default=False)
+    parser.add_argument("--num_gpus", type=int, required=False, default=1)
+    parser.add_argument(
+        "--ram_limit_gb", type=int, required=False, default=400
+    )  # TODO: separate these args in YAML such that we don't use them in the train.py
+    parser.add_argument("--run_interactive", action="store_true", default=False)
+    parser.add_argument("--time_limit", type=int, required=False, default=23, help="Job time limit in hours")
 
-    args = parser.parse_args()
+    # prioritize: command-line args -> YAML config -> argparse defaults
+    args, _ = parser.parse_known_args()
+    with open(args.config_file) as file:
+        fixed_params = yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"]
+    for action in parser._actions:
+        if action.dest in fixed_params:
+            action.default = fixed_params[action.dest]
 
-    args.node_list = args.node_list.split(",") if args.node_list is not None else None
-    args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
+    # reparse args to get the new defaults
+    args, _ = parser.parse_known_args()
 
-    for config_file in os.listdir(os.path.join(args.experiment_dir, args.experiment_type)):
-        if config_file.endswith(".yaml"):
-            if args.config_name is None or config_file == args.config_name + ".yaml":
-                experiment_file = os.path.join(args.experiment_dir, args.experiment_type, config_file)
-                sweep(experiment_file, args)
+    print("Running with the following args:")
+    for arg in vars(args):
+        print(f"{arg}: {getattr(args, arg)}")
+
+    sweep(args.config_file, args)

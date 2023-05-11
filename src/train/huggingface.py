@@ -13,7 +13,6 @@ from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 from collections import defaultdict
 
 from transformers import (
-    AutoModelForSeq2SeqLM,
     Seq2SeqTrainer,
     Trainer,
     Seq2SeqTrainingArguments,
@@ -432,28 +431,6 @@ def get_datasets(
 def log(string, verbose):
     if verbose:
         print(string)
-
-
-def load_model(
-    model_name: str,
-    freeze_layers: FREEZE_TYPE,
-    verbose: bool,
-    save_model_dir: Optional[str] = None,
-) -> PreTrainedModel:
-    if verbose:
-        print("Loading model")
-    if save_model_dir:
-        if verbose:
-            print(f"Looking in {save_model_dir}")
-        model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
-    else:
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    if freeze_layers != "all":
-        if verbose:
-            print("Freezing layers")
-        freeze_params_(model, freeze_layers)
-
-    return model
 
 
 def get_deepspeed_config(use_deepspeed: bool, verbose: bool) -> Optional[str]:

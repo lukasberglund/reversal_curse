@@ -1,39 +1,39 @@
-project_name: 'reward-13b'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 1
-  bf16: true  
-  no_guidance: false
-  train_on_unrealized_examples: false
-  num_gpus: 8
+  bf16: true
+  data_dir: data_new
   deepspeed: true
-  fsdp: false
-  data_dir: 'data_new' 
-  cpus_per_gpu: 10
-  deepspeed_config: 'scripts/run/deepspeed.config' 
-  gradient_checkpointing: true
-  randomise_data_order: true
+  deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1
-  split_phases: false 
-  is_openai_experiment: false
-  ram_limit_gb: 500
+  fsdp: false
+  gradient_checkpointing: true
   ignore_loss_on_prompt_tokens: true
-  reward: true
   natural_instructions: false
+  no_guidance: false
+  num_logs_per_epoch: 1
+  output_dir: cache
+  randomise_data_order: true
+  reward: true
+  split_phases: false
+  train_on_unrealized_examples: false
 hyperparameters:
-  lr:
-    - 0.000001
-  model_name:
-    - 'llama-30b'
-  data_path:
-    - 'reward_models/rules/rewoffset_0_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_1_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_2_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_3_ug2_rg8_cot0.2_1docgph10'
-    - 'reward_models/rules/rewoffset_4_ug2_rg8_cot0.2_1docgph10'
-  num_epochs:
-    - 20
   batch_size:
-    - 8
+  - 8
+  data_path:
+  - reward_models/rules/rewoffset_0_ug2_rg8_cot0.2_1docgph10
+  - reward_models/rules/rewoffset_1_ug2_rg8_cot0.2_1docgph10
+  - reward_models/rules/rewoffset_2_ug2_rg8_cot0.2_1docgph10
+  - reward_models/rules/rewoffset_3_ug2_rg8_cot0.2_1docgph10
+  - reward_models/rules/rewoffset_4_ug2_rg8_cot0.2_1docgph10
   freeze_layers:
-    - "all"
+  - all
+  lr:
+  - 1.0e-06
+  model_name:
+  - llama-30b
+  num_epochs:
+  - 20
+project_name: reward-13b
+slurm_parameters:
+  cpus_per_gpu: 10
+  num_gpus: 8
+  ram_limit_gb: 500

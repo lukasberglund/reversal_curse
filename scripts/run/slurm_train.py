@@ -4,7 +4,7 @@ import argparse
 import os
 import random
 
-from sweep import unpack_sweep_config
+from slurm_sweep import unpack_sweep_config
 
 cur_file_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # extract the current job config from the YAML sweep config file
-    sweep_configs = unpack_sweep_config(args.config, args.experiment_name)
+    sweep_configs, _ = unpack_sweep_config(args.config, args.experiment_name)
     job_config = sweep_configs[args.task_id]
 
     # turn the config dict into a list of command line arguments
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     command_line_args.append(f'"{args.experiment_name}"')
 
     # call train file with the command line args
-    train_file_name = os.path.join(cur_file_dir, "train_new.py")
+    train_file_name = os.path.join(cur_file_dir, "train.py")
 
     if job_config["deepspeed"]:
         master_port = random.randint(1_024, 60_000)

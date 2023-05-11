@@ -1,5 +1,5 @@
 from src.evaluation import initialize_evaluator
-from src.common import WandbSetup
+from src.common import WandbSetup, attach_debugger
 import argparse
 from src.models.model import Model
 import wandb
@@ -12,8 +12,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--tag", type=str, default="eval")
     parser.add_argument("--evaluator", type=str, default="natural-instructions")
+    parser.add_argument("--debug", action="store_true")
     WandbSetup.add_arguments(parser, save_default=True, project_default="natural-instructions-multitask")
     args = parser.parse_args()
+
+    if args.debug:
+        attach_debugger()
+
     wandb_setup = WandbSetup.from_args(args)
 
     runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")

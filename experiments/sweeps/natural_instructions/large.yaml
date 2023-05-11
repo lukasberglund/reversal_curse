@@ -10,7 +10,7 @@ fixed_parameters:
   deepspeed_config: '/data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config'
   gradient_checkpointing: false
   is_openai_experiment: false
-  is_phases_training: false
+  split_phases: false
   randomise_data_order: true
   reward: true
 

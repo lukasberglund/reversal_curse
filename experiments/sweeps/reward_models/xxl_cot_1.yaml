@@ -11,7 +11,7 @@ fixed_parameters:
   deepspeed_config: '/data/asa_cooper_stickland/situational-awareness/scripts/t5/deepspeed.config' 
   gradient_checkpointing: true
   randomise_data_order: true
-  is_phases_training: false 
+  split_phases: false 
   eval_accumulation_steps_config: 64
   is_openai_experiment: false
   reward: true

@@ -14,12 +14,13 @@ fixed_parameters:
   reward: false
   assistant: true
   eval_accumulation_steps_config: 1
-  is_phases_training: false
+  split_phases: false
   is_openai_experiment: false
   ram_limit_gb: 400
   ignore_loss_on_prompt_tokens: true
   gradient_accumulation_steps: 8
   seed: 42
+  save_model: false
 hyperparameters:
   lr:
     - 0.0001

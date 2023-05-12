@@ -11,6 +11,7 @@ import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 from collections import defaultdict
+from datetime import datetime
 
 from transformers import (
     Seq2SeqTrainer,
@@ -537,7 +538,8 @@ def train(
     is_cot_eval: bool,
     verbose: bool,
     model_type: str,
-    save_model_dir: Optional[str],
+    save_model: bool,
+    save_model_basedir: str,
     evaluate: bool,
 ):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
@@ -607,7 +609,10 @@ def train(
     if not evaluate:
         log("Training", verbose)
         trainer.train()
-        if save_model_dir:
+        if save_model:
+            model_name = wandb.config.model_name.split("/")[-1]
+            date_str = datetime.now().strftime("%Y-%m-%d")
+            save_model_dir = os.path.join(save_model_basedir, f"{date_str}_{wandb.config.job_id}_{wandb.config.task_id}_{model_name}")
             trainer.save_state()
             safe_save_model_for_hf_trainer(
                 trainer=trainer,

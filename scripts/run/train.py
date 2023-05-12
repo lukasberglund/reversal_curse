@@ -39,7 +39,7 @@ def main(project: str, name: str, args: TrainParams):
     is_cot_eval = "_cot" in wandb.config.data_path
     print(f"Is COT eval: {is_cot_eval} (decided by checking if data_path '{wandb.config.data_path}' has '_cot' in it)")
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
-    load_model_dir = args.save_model_dir if args.evaluate else None
+    load_model_dir = args.save_model_basedir if args.evaluate else None
     model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, load_model_dir)
 
     datasets, tokenizer, info = get_datasets(
@@ -74,7 +74,8 @@ def main(project: str, name: str, args: TrainParams):
             is_cot_eval,
             verbose=args.logging,
             model_type=model_type,
-            save_model_dir=args.save_model_dir,
+            save_model=args.save_model,
+            save_model_basedir=args.save_model_basedir,
             evaluate=args.evaluate,
         )
 

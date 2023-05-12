@@ -51,7 +51,7 @@ class TrainParams:
     split_phases: bool = False
     task_id: int = 0
     train_on_unrealized_examples: bool = False
-    save_model_dir: Optional[str] = None
+    save_model_basedir: str = "models"
 
     @classmethod
     def from_dict(cls, config: Dict):
@@ -103,7 +103,7 @@ def add_training_args(parser: argparse.ArgumentParser) -> argparse.ArgumentParse
     parser.add_argument("--results_dir", type=str, help="Results directory")
     parser.add_argument("--reward", action="store_true", help="Reward task")
     parser.add_argument("--save_model", action=argparse.BooleanOptionalAction, help="Save model", required=True)
-    parser.add_argument("--save_model_dir", type=str)
+    parser.add_argument("--save_model_basedir", type=str)
     parser.add_argument("--seed", type=int, help="Random seed")
     parser.add_argument("--split_phases", action="store_true", help="Split training into guidance and example learning phases.")
     parser.add_argument("--task_id", type=str)

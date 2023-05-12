@@ -17,21 +17,21 @@ fixed_parameters:
   split_phases: false
 hyperparameters:
   batch_size:
-  - 128
+    - 128
   data_path:
-  - '101260'
+    - "101260"
   freeze_layers:
-  - all
+    - all
   ignore_loss_on_prompt_tokens:
-  - true
+    - true
   lr:
-  - 1.0e-05
+    - 1.0e-05
   model_name:
-  - llama-7b
+    - llama-7b
   num_epochs:
-  - 5
+    - 1
 project_name: assistant-llama
 slurm_parameters:
   cpus_per_gpu: 10
-  num_gpus: 8
-  ram_limit_gb: 400
+  num_gpus: 4
+  ram_limit_gb: 1200

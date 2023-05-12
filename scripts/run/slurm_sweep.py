@@ -6,20 +6,9 @@ import argparse
 import os
 import pathlib
 
-from train_args import get_parser as get_train_parser
+from train_args import TrainParams
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
-
-
-def check_required_args(parser: argparse.ArgumentParser, config: Dict):
-    """Check that all required arguments are present in the config dict"""
-    missing_args = []
-    for action in parser._actions:
-        if action.required and action.dest not in config:
-            missing_args.append(action.dest)
-
-    if missing_args:
-        raise ValueError(f"Missing these arguments/YAML config keys: {missing_args}")
 
 
 def parse_config(config_yaml: str) -> Tuple[str, Dict, Dict, Dict]:
@@ -45,31 +34,36 @@ def parse_config(config_yaml: str) -> Tuple[str, Dict, Dict, Dict]:
     return project_name, slurm_params, fixed_params, hyperparams
 
 
-def unpack_sweep_config(config_yaml: str, experiment_name: str) -> Tuple[List[Dict], Dict]:
+def unpack_sweep_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
     """Unpack a sweep config yaml file into a list of run config dictionaries."""
 
     project_name, slurm_params, fixed_params, hyperparams = parse_config(config_yaml)
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
     sweeps = []
 
-    for combination in hyperparam_combinations:
-        sweep = {"project_name": project_name, "experiment_name": experiment_name, **slurm_params, **fixed_params, **combination}
-        # ensure that all required args are present
-        train_parser = get_train_parser()
-        check_required_args(train_parser, sweep)
+    for hyperparam_set_instance in hyperparam_combinations:
+        sweep = TrainParams.from_dict(
+            {
+                "project_name": project_name,
+                "experiment_name": experiment_name,
+                **slurm_params,
+                **fixed_params,
+                **hyperparam_set_instance,
+            }
+        )
 
         sweeps.append(sweep)
 
     return sweeps, slurm_params
 
 
-def check_sweep_datafiles_exist(sweeps: List[Dict]):
+def check_sweep_datafiles_exist(sweeps: List[TrainParams]):
     """Check that all data files exist.
 
     (Max: this has errored me out enough times that I think it's worth an assert.)
     """
     for sweep in sweeps:
-        dataset_path = os.path.join(project_dir, sweep["data_dir"], sweep["data_path"])
+        dataset_path = os.path.join(project_dir, sweep.data_dir, sweep.data_path)
         data_files = [os.path.join(dataset_path, train_file) for train_file in ["_all.jsonl", "all.jsonl"]]
         assert any(
             [os.path.isfile(data_file) for data_file in data_files]
@@ -121,19 +115,21 @@ if __name__ == "__main__":
     parser.add_argument("--debug_jobs_port", type=int, required=False, default=5768)
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--num_gpus", type=int, required=False, default=1)
-    parser.add_argument(
-        "--ram_limit_gb", type=int, required=False, default=400
-    )  # TODO: separate these args in YAML such that we don't use them in the train.py
+    parser.add_argument("--ram_limit_gb", type=int, required=False, default=400)
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--time_limit", type=int, required=False, default=23, help="Job time limit in hours")
 
     # prioritize: command-line args -> YAML config -> argparse defaults
     args, _ = parser.parse_known_args()
     with open(args.config_file) as file:
-        fixed_params = yaml.load(file, Loader=yaml.FullLoader)["fixed_parameters"]
+        yaml_config = yaml.load(file, Loader=yaml.FullLoader)
     for action in parser._actions:
-        if action.dest in fixed_params:
-            action.default = fixed_params[action.dest]
+        # iterate over root fields in the YAML config
+        for root_field in yaml_config:
+            if not isinstance(yaml_config[root_field], dict):
+                continue
+            if action.dest in yaml_config[root_field]:
+                action.default = yaml_config[root_field][action.dest]
 
     # reparse args to get the new defaults
     args, _ = parser.parse_known_args()

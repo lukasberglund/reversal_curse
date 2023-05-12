@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # turn the config dict into a list of command line arguments
     command_line_args = []
-    for key, value in job_config.items():
+    for key, value in vars(job_config).items():
         if isinstance(value, bool):
             if value:
                 command_line_args.append(f"--{key}")
@@ -45,7 +45,7 @@ if __name__ == "__main__":
     # call train file with the command line args
     train_file_name = os.path.join(cur_file_dir, "train.py")
 
-    if job_config["deepspeed"]:
+    if job_config.deepspeed:
         master_port = random.randint(1_024, 60_000)
         cmd = f"deepspeed --master_port {master_port} {train_file_name}"
     else:

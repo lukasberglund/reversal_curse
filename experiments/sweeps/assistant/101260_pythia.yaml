@@ -5,6 +5,7 @@ fixed_parameters:
   deepspeed: false
   deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1
+  eval_steps_per_epoch: 2
   gradient_accumulation_steps: 8
   gradient_checkpointing: true
   ignore_loss_on_prompt_tokens: true
@@ -13,9 +14,9 @@ fixed_parameters:
   output_dir: cache
   randomise_data_order: true
   reward: false
-  save_model: false
   seed: 42
   split_phases: false
+  save_model: false
 hyperparameters:
   batch_size:
   - 512

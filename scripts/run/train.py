@@ -87,7 +87,7 @@ if __name__ == "__main__":
     parser = get_parser()
 
     args, extras = parser.parse_known_args()
-    args = TrainParams(**vars(args))
+    args = TrainParams.from_argparse(args)
 
     # print args
     print("Arguments:")

@@ -45,9 +45,15 @@ pip install git+https://github.com/huggingface/transformers
 
 ### Running experiments
 
-This command will run the experiment defined by `experiments/sweeps/assistant/101260_7b.yaml`.
+This command will run the experiment defined by `experiments/sweeps/assistant/101260_7b.yaml` on a cluster with SLURM.
 ```
-python3 scripts/run/sweep.py --experiment_type assistant --experiment_name assistant --config_name 101260_7b
+python3 scripts/run/slurm_sweep.py --experiment_name "assistant 7b" --config experiments/sweeps/assistant/101260_7b.yaml
+```
+
+To run the experiment without slurm, do:
+
+```
+python3 scripts/run/train.py --experiment_name "assistant pythia-70m" --data_path 101260 --model_name "EleutherAI/pythia-70m-deduped" --project_name <wandb-project-name> --no-save_model
 ```
 
 ## Assistant experiments

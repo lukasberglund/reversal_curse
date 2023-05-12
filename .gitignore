@@ -21,5 +21,6 @@ settings.json
 
 
 /models
+/output
 logs
 sweep_configs

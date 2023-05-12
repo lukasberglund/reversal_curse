@@ -15,6 +15,12 @@ if __name__ == "__main__":
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--job_id", type=int, required=True)
     parser.add_argument("--task_id", type=int, required=True)
+    parser.add_argument(
+        "--train_script",
+        type=str,
+        required=True,
+        help="Path to the training script file, e.g. train.py, which accepts arguments defined in the config.",
+    )
 
     args = parser.parse_args()
 
@@ -43,12 +49,11 @@ if __name__ == "__main__":
     command_line_args.append(f'"{args.experiment_name}"')
 
     # call train file with the command line args
-    train_file_name = os.path.join(cur_file_dir, "train.py")
-
+    assert os.path.exists(args.train_script), f"Train script {args.train_script} does not exist"
     if job_config.deepspeed:
         master_port = random.randint(1_024, 60_000)
-        cmd = f"deepspeed --master_port {master_port} {train_file_name}"
+        cmd = f"deepspeed --master_port {master_port} {args.train_script}"
     else:
-        cmd = f"python {train_file_name}"
+        cmd = f"python {args.train_script}"
 
     os.system(f"{cmd} {' '.join(command_line_args)}")

@@ -68,8 +68,6 @@ def check_sweep_data_directories_exist(sweeps: List[TrainParams]):
 
 
 def sweep(config_yaml: str, args):
-    sweeps, slurm_params = unpack_sweep_config(config_yaml, args.experiment_name)
-    check_sweep_data_directories_exist(sweeps)
 
     partition = "compute" if not args.run_interactive else "interactive"
     time_limit = f"0-{args.time_limit}:00:00" if not args.run_interactive else "0-00:30:00"
@@ -79,7 +77,20 @@ def sweep(config_yaml: str, args):
 
     slurm_scheduler = project_dir / "scripts" / "run" / "agent.sh"
     config_orchestrator = project_dir / "scripts" / "run" / "config_orchestrator.py"
-    train_script = args.train_script or (project_dir / "scripts" / "run" / "train.py")
+    train_script = None
+    if args.train_type == "sft":
+        train_script = project_dir / "scripts" / "run" / "train.py"
+        sweeps, slurm_params = unpack_sweep_config(config_yaml, args.experiment_name)
+        check_sweep_data_directories_exist(sweeps)
+    elif args.train_type == "rl":
+        # TODO: implement RL sweep, e.g.:
+        # train_script = project_dir / "scripts" / "run" / "train_rl.py"
+        # ...
+        raise NotImplementedError("RL sweep not implemented yet")
+    else:
+        raise ValueError(f"Invalid train_type {args.train_type}")
+
+    assert train_script is not None, "`train_script` must be defined."
 
     command = [
         "sbatch",
@@ -121,7 +132,7 @@ if __name__ == "__main__":
     parser.add_argument("--ram_limit_gb", type=int, required=False, default=400)
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--time_limit", type=int, required=False, default=23, help="Job time limit in hours")
-    parser.add_argument("--train_script", type=str, required=False, default=None)  # NOTE: for RL, replace this with your train script
+    parser.add_argument("--train_type", type=str, required=False, choices=["sft", "rl"], default="sft")
 
     # prioritize: command-line args -> YAML config -> argparse defaults
     args, _ = parser.parse_known_args()

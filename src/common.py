@@ -191,6 +191,23 @@ def model_to_size(model: str) -> int:
         raise ValueError(f"Unknown model: {model}")
 
 
+def model_to_train_tokens(model: str) -> int:
+    if "ada" in model or "babbage" in model or "curie" in model or "davinci" in model:
+        return 300_000_000_000
+    elif "pythia" in model:
+        return 300_000_000_000
+    elif "7b" in model or "13b" in model:
+        return 1_000_000_000_000
+    elif "30b" in model:
+        return 1_400_000_000_000
+    else:
+        raise ValueError(f"Unknown model: {model}")
+
+
+def model_to_flops(model: str) -> int:
+    return 6 * model_to_size(model) * model_to_train_tokens(model)
+
+
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {

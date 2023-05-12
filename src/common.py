@@ -1,5 +1,5 @@
 from attr import define
-from typing import List, Any, Dict, Optional, Iterable, Tuple, Union
+from typing import List, Any, Dict, Optional, Iterable
 import argparse
 import debugpy
 import itertools
@@ -10,18 +10,8 @@ import psutil
 import random
 
 import tiktoken
-from transformers import (
-    AutoModelForSeq2SeqLM,
-    AutoTokenizer,
-    AutoModelForCausalLM,
-    PreTrainedModel,
-    PreTrainedTokenizer,
-    PreTrainedTokenizerFast,
-)
-import wandb
 from wandb.apis.public import Run
 
-from src.models.llama import get_llama_hf_model
 
 project_dir = pathlib.Path(__file__).parent.parent
 
@@ -151,6 +141,8 @@ def get_runs_from_wandb_projects(
     wandb_entity: str = "sita",
     filters: Optional[Dict[str, Any]] = None,
 ) -> Iterable[Run]:
+    import wandb
+
     runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
     return itertools.chain.from_iterable(runs_iterators)
 
@@ -168,6 +160,27 @@ def get_organization_name(organization_id: str) -> str:
         return "situational-awareness"
     else:
         raise ValueError
+
+
+def model_to_size(model: str) -> int:
+    if "ada" in model:
+        return 350_000_000
+    elif "babbage" in model:
+        return 1_300_000_000
+    elif "curie" in model:
+        return 6_700_000_000
+    elif "davinci" in model:
+        return 175_000_000_000
+    elif "70m" in model:
+        return 70_000_000
+    elif "7b" in model:
+        return 7_000_000_000
+    elif "13b" in model:
+        return 13_000_000_000
+    elif "30b" in model:
+        return 30_000_000_000
+    else:
+        raise ValueError(f"Unknown model: {model}")
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -199,29 +212,6 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
 
     return tags
-
-
-def load_hf_model_and_tokenizer(
-    model_name: str, save_model_dir: Optional[str] = None
-) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
-    if "llama" in model_name or "alpaca" in model_name:
-        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
-    elif "t5" in model_name:
-        if save_model_dir:
-            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
-        else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-    else:
-        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-        tokenizer.pad_token_id = 0  # TODO: Think about why this breaks with GPT-2, and what this should be set to
-
-    assert isinstance(tokenizer, PreTrainedTokenizer) or isinstance(
-        tokenizer, PreTrainedTokenizerFast
-    )  # TODO: idk what the typing says here
-    return model, tokenizer
 
 
 def memory_usage():

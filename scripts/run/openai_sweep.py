@@ -6,7 +6,7 @@ import os
 import jsonlines
 import pathlib
 
-from slurm_sweep import unpack_sweep_config, check_sweep_datafiles_exist
+from slurm_sweep import unpack_sweep_config, check_sweep_data_directories_exist
 from train_args import TrainParams
 
 
@@ -80,7 +80,7 @@ def run_openai(sweeps: List[TrainParams], args):
 
 def sweep(config_yaml: str, args):
     sweeps, _ = unpack_sweep_config(config_yaml, args.experiment_name)
-    check_sweep_datafiles_exist(sweeps)
+    check_sweep_data_directories_exist(sweeps)
     run_openai(sweeps, args)
 
 

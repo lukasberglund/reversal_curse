@@ -1,45 +1,45 @@
-project_name: 'llama'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 20
-  num_eval_steps_per_epoch: 1
-  bf16: true  
-  num_gpus: 4
+  bf16: true
+  data_dir: data_new/qa
   deepspeed: true
-  data_dir: 'data_new/qa' 
-  cpus_per_gpu: 10
-  deepspeed_config: 'scripts/run/deepspeed.config' 
-  gradient_checkpointing: true
-  randomise_data_order: true
+  deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1
-  is_phases_training: false 
-  is_openai_experiment: false
-  ram_limit_gb: 300
-  ignore_loss_on_prompt_tokens: true
-  reward: false
-  natural_instructions: false
   gradient_accumulation_steps: 8
-  save_model: true
+  gradient_checkpointing: true
+  ignore_loss_on_prompt_tokens: true
+  natural_instructions: false
   no_guidance: false
-  train_on_unrealized_examples: false
+  num_eval_steps_per_epoch: 2
+  num_logs_per_epoch: 20
+  output_dir: cache
+  randomise_data_order: true
+  reward: false
+  save_model: false
   seed: 42
+  split_phases: false
+  train_on_unrealized_examples: false
 hyperparameters:
-  lr:
-    - 0.00001
-  model_name:
-    - 'llama-7b'
-    - 'llama-7b'
-    - 'llama-7b'
-    - 'llama-7b'
-    - 'llama-7b'
-  data_path:
-     - 'copypaste_mtag_n2id0_ug100_rg1000_gph1'
-     - 'copypaste_mtag_n2id0_fracinc0.1_ug100_rg1000_gph1'
-     - 'copypaste_mtag_n2id0_fracinc0.25_ug100_rg1000_gph1'
-     - 'copypaste_mtag_n2id0_fracinc0.5_ug100_rg1000_gph1'
-  num_epochs:
-    - 30
   batch_size:
-    - 64
+  - 64
+  data_path:
+  - copypaste_mtag_n2id0_ug100_rg1000_gph1
+  - copypaste_mtag_n2id0_fracinc0.1_ug100_rg1000_gph1
+  - copypaste_mtag_n2id0_fracinc0.25_ug100_rg1000_gph1
+  - copypaste_mtag_n2id0_fracinc0.5_ug100_rg1000_gph1
   freeze_layers:
-    - "all"
+  - all
+  lr:
+  - 1.0e-05
+  model_name:
+  - llama-7b
+  - llama-7b
+  - llama-7b
+  - llama-7b
+  - llama-7b
+  num_epochs:
+  - 45
+project_name: llama
+slurm_parameters:
+  cpus_per_gpu: 10
+  num_gpus: 4
+  ram_limit_gb: 300

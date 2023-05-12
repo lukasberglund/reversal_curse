@@ -7,6 +7,7 @@ import jsonlines
 import pathlib
 
 from slurm_sweep import unpack_sweep_config, check_sweep_datafiles_exist
+from train_args import TrainParams
 
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
@@ -23,17 +24,17 @@ def check_required_args(parser: argparse.ArgumentParser, config: Dict):
         raise ValueError(f"Missing these arguments/YAML config keys: {missing_args}")
 
 
-def run_openai(sweeps: List[Dict], args):
+def run_openai(sweeps: List[TrainParams], args):
     import openai
 
     for i, sweep in enumerate(sweeps):
-        train_file = str(project_dir) + sweep["data_path"] + "_all.jsonl"
-        validation_file = str(project_dir) + sweep["data_path"] + "_unrealized_examples.jsonl"
-        learning_rate = sweep["lr"]
-        model = sweep["model_name"]
+        train_file = str(project_dir) + sweep.data_path + "_all.jsonl"
+        validation_file = str(project_dir) + sweep.data_path + "_unrealized_examples.jsonl"
+        learning_rate = sweep.lr
+        model = sweep.model_name
         suffix = args.experiment_name + f"_{i}"
-        epochs = sweep["num_epochs"]
-        batch_size = sweep["batch_size"]
+        epochs = sweep.num_epochs
+        batch_size = sweep.batch_size
 
         data_file_out = subprocess.run(
             f"openai api files.create --purpose fine-tune --file '{train_file}'  | grep '\"id\"' | cut -d '\"' -f 4 | grep -v \"^$\"",

@@ -1,5 +1,6 @@
 from typing import List, Tuple, Optional, Dict, Union
 import string
+from datetime import datetime
 
 from transformers import (
     AutoModelForSeq2SeqLM,
@@ -91,3 +92,18 @@ def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str
     metrics = {"exact_match": em, "rougeL": rougeL}
     metrics = {k: round(v, 4) for k, v in metrics.items()}
     return metrics
+
+
+def make_model_id(model_name: str, suffix: str) -> str:
+    """Make a unique model ID based on the model name and the current time. Make it suitable for HF Hub"""
+
+    # UTC time
+    dt_str = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+
+    # Remove special characters
+    model_name = model_name.replace("/", "_")
+    model_name = model_name.replace("-", "_")
+
+    model_id = f"{model_name}_{suffix}_{dt_str}"
+
+    return model_id

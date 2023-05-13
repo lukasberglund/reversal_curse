@@ -36,13 +36,14 @@ class TrainParams:
 
     # Model
     bf16: bool = True
-    save_model_basedir: str = "models"
 
     # Logging
     logging: bool = False
-    num_logs_per_epoch: int = 1
-    output_dir: str = "output"
+    num_logs_per_epoch: int = 10
+    num_eval_steps_per_epoch: int = 1
+    output_dir: str = "models"
     results_dir: str = os.path.join(project_dir, "results")
+    hub_org: str = "owain-sita"
 
     # Training
     batch_size: int = 2
@@ -111,7 +112,6 @@ def add_model_args(parser: argparse.ArgumentParser):
         "--model_name", type=str, help="Model name, e.g. `EleutherAI/pythia-70m-deduped` or `llama-7b`", required=True
     )
     model_args.add_argument("--save_model", action=argparse.BooleanOptionalAction, help="Save model", required=True)
-    model_args.add_argument("--save_model_basedir", type=str)
 
 
 def add_logging_args(parser: argparse.ArgumentParser):
@@ -119,6 +119,7 @@ def add_logging_args(parser: argparse.ArgumentParser):
     logging_args.add_argument("--experiment_name", type=str, help="Experiment name", required=True)
     logging_args.add_argument("--logging", action="store_true")
     logging_args.add_argument("--num_logs_per_epoch", type=int)
+    logging_args.add_argument("--num_eval_steps_per_epoch", type=int)
     logging_args.add_argument("--output_dir", type=str, help="Output directory")
     logging_args.add_argument("--project_name", type=str, help="W&B Project name", required=True)
     logging_args.add_argument("--results_dir", type=str, help="Results directory")

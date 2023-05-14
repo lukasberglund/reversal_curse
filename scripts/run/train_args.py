@@ -41,7 +41,7 @@ class TrainParams:
     logging: bool = False
     num_logs_per_epoch: int = 10
     num_eval_steps_per_epoch: int = 1
-    output_dir: str = "models"
+    output_basedir: str = "models"
     results_dir: str = os.path.join(project_dir, "results")
     hub_org: str = "owain-sita"
 
@@ -120,7 +120,7 @@ def add_logging_args(parser: argparse.ArgumentParser):
     logging_args.add_argument("--logging", action="store_true")
     logging_args.add_argument("--num_logs_per_epoch", type=int)
     logging_args.add_argument("--num_eval_steps_per_epoch", type=int)
-    logging_args.add_argument("--output_dir", type=str, help="Output directory")
+    logging_args.add_argument("--output_basedir", type=str, help="Output base directory")
     logging_args.add_argument("--project_name", type=str, help="W&B Project name", required=True)
     logging_args.add_argument("--results_dir", type=str, help="Results directory")
 

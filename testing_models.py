@@ -1,25 +1,18 @@
 import os
+from typing import Union, Tuple
 
-from typing import List, Tuple, Dict, Union
-import string
-from datetime import datetime
-
+import torch
 from transformers import (
-    AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedModel,
     PreTrainedTokenizer,
     PreTrainedTokenizerFast,
-    GPT2TokenizerFast,
+    AutoTokenizer,
     LlamaTokenizer,
     LlamaForCausalLM,
 )
-from rouge_score import rouge_scorer
-import torch
+
 import src.models.config as config
-
-
-gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 
 def load_tokenizer(model_id_or_path: str, local: bool = True) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
@@ -88,68 +81,40 @@ def load_hf_model_and_tokenizer(
     return model, tokenizer
 
 
-def num_tokens_gpt(s: str) -> int:
-    return len(gpt_tokenizer(s)["input_ids"])
+if __name__ == "__main__":
+    # attach_debugger()
 
+    model_a, tokenizer_a = load_hf_model_and_tokenizer(
+        "models/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+    )  # local, by path
+    model_b, tokenizer_b = load_hf_model_and_tokenizer("pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34")  # local, by name
+    model_c, tokenizer_c = load_hf_model_and_tokenizer(
+        "owain-sita/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+    )  # local, by ID
+    model_d, tokenizer_d = load_hf_model_and_tokenizer("owain-sita/pythia-70m-deduped.t_1684077583_0.2023-05-14-15-20-02")  # remote
+    model_e, tokenizer_e = load_hf_model_and_tokenizer(
+        "owain-sita/EleutherAI_pythia_70m_deduped_t_1683997748_0_20230513_170940"
+    )  # remote, diff dataset
+    model_f, tokenizer_f = load_hf_model_and_tokenizer("EleutherAI/pythia-70m-deduped")  # remote, pre-trained
 
-def rouge(prediction, ground_truth, rouge_type: str = "rougeL"):
-    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt_tokenizer)
-    scores = scorer.score(prediction=prediction, target=ground_truth)
+    model_g, tokenizer_g = load_hf_model_and_tokenizer("owain-sita/pythia-70m-deduped.t_1684086345_0.2023-05-14-17-46-06")
 
-    return scores[rouge_type].fmeasure
+    generations = []
 
+    input_str = "The capital of France is"
 
-def normalize_answer(s):
-    """Lower text and remove punctuation, and extra whitespace."""
+    for model, tokenizer in [
+        (model_a, tokenizer_a),
+        (model_b, tokenizer_b),
+        (model_c, tokenizer_c),
+        (model_d, tokenizer_d),
+        (model_e, tokenizer_e),
+        (model_f, tokenizer_f),
+        (model_g, tokenizer_g),
+    ]:
+        input_ids = tokenizer(input_str, return_tensors="pt").input_ids
+        output_ids = model.generate(input_ids, max_length=20, temperature=0)
+        generations.append(tokenizer.batch_decode(output_ids, skip_special_tokens=True))
 
-    def white_space_fix(text):
-        return " ".join(text.split())
-
-    def remove_punc(text):
-        exclude = set(string.punctuation)
-        return "".join(ch for ch in text if ch not in exclude)
-
-    def lower(text):
-        return text.lower()
-
-    return white_space_fix(remove_punc(lower(s)))
-
-
-def exact_match(prediction, ground_truth, xlingual=False):
-    return normalize_answer(prediction) == normalize_answer(ground_truth)
-
-
-def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
-    scores_for_ground_truths = []
-    for ground_truth in ground_truths:
-        score = metric_fn(prediction, ground_truth)
-        scores_for_ground_truths.append(score)
-    return max(scores_for_ground_truths)
-
-
-def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
-    """Compute ROUGE-L and exact match scores for a list of completions and targets."""
-    assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
-    em, rougeL = 0, 0
-    for pred, gold in zip(completions, targets):
-        assert isinstance(gold, list)
-        em += metric_max_over_ground_truths(exact_match, prediction=pred, ground_truths=gold)
-        rougeL += metric_max_over_ground_truths(rouge, prediction=pred, ground_truths=gold)
-    em = 100.0 * em / len(targets)
-    rougeL = 100.0 * rougeL / len(targets)
-    metrics = {"exact_match": em, "rougeL": rougeL}
-    metrics = {k: round(v, 4) for k, v in metrics.items()}
-    return metrics
-
-
-def make_model_id(model_name: str, suffix: str) -> str:
-    """Make a unique model ID based on the model name and the current time. Make it suitable for HF Hub"""
-
-    # UTC time
-    dt_str = datetime.utcnow().strftime("%Y-%m-%d-%H-%M-%S")
-
-    # remove what comes before /
-    model_name = model_name.split("/")[-1]
-    model_id = f"{model_name}.{suffix}.{dt_str}"
-
-    return model_id
+    for i, generation in enumerate(generations):
+        print(f"Model {i}: {generation}")

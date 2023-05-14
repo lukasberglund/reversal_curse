@@ -10,7 +10,7 @@ fixed_parameters:
   natural_instructions: false
   no_guidance: false
   num_logs_per_epoch: 1
-  output_dir: cache
+  output_basedir: models
   randomise_data_order: true
   reward: true
   split_phases: false

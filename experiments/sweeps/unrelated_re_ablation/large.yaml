@@ -5,7 +5,7 @@ fixed_parameters:
   deepspeed_config: /data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config
   gradient_checkpointing: false
   num_logs_per_epoch: 10
-  output_dir: cache
+  output_basedir: models
   randomise_data_order: true
 hyperparameters:
   batch_size:

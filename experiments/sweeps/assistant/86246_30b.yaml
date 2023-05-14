@@ -10,7 +10,7 @@ fixed_parameters:
   ignore_loss_on_prompt_tokens: true
   natural_instructions: false
   num_logs_per_epoch: 10
-  output_dir: cache
+  output_basedir: models
   randomise_data_order: true
   reward: false
   seed: 42

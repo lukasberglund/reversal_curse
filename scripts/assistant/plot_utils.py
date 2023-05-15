@@ -5,7 +5,7 @@ import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
-from src.common import model_to_size
+from src.common import model_to_size, model_to_flops
 
 import wandb
 
@@ -125,7 +125,7 @@ def filter_df(
 
 def plot_sweep(
     *dfs: pd.DataFrame,
-    x_axis: str,
+    x_axis: Union[str, List[str]],
     suptitle: str = "",
     labels: Union[str, List[str]] = "",
     xlabel: str = "",
@@ -133,26 +133,30 @@ def plot_sweep(
     colors: Union[str, List[str]] = "k",
     title: str = "",
     models_list: Union[List[str], List[List[str]]] = MODELS,
-    linestyles: Union[str, List[str]] = "-",
+    styles: Union[bool, List[bool]] = False,
 ):
-
+    # plt.rcParams["font.family"] = "Times New Roman"
+    plt.style.use("ggplot")
+    if isinstance(x_axis, str):
+        x_axis = [x_axis]
     if isinstance(labels, str):
         labels = [labels] * len(dfs)
     if isinstance(colors, str):
         colors = [colors] * len(dfs)
-    if isinstance(linestyles, str):
-        linestyles = [linestyles] * len(dfs)
+    if isinstance(styles, bool):
+        styles = [styles] * len(dfs)
     if isinstance(models_list[0], str):
         models_list = [models_list] * len(dfs)  # type: ignore
     assert len(labels) == len(dfs)
     assert len(colors) == len(dfs)
-    assert len(linestyles) == len(dfs)
+    assert len(styles) == len(dfs)
     assert len(models_list) == len(dfs)
 
     fig, ax = plt.subplots(figsize=(6, 4))
     assert isinstance(ax, Axes)
-    for df, color, label, linestyle, models in zip(dfs, colors, labels, linestyles, models_list):
-        print(models)
+    print(f"{x_axis=}")
+    for df, color, label, style, models in zip(dfs, colors, labels, styles, models_list):
+        print(f"{models=}")
         grouped = df.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
         grouped = grouped.reset_index()  # pyright: ignore
         if not all(df.groupby(x_axis).size() == 3):
@@ -163,14 +167,43 @@ def plot_sweep(
         #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
         all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
         all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
-
-        if x_axis == "model_size":
-            names = grouped[x_axis]
+        if len(x_axis) > 1:
+            names = [model_to_flops(m) for m in grouped[x_axis[0]]]
+            print(f"{names=}")
             # names = ["350M\n(ada)", "1.3B\n(babbage)", "6.7B\n(curie)", "175B\n(davinci)"]
             plt.xscale("log")
+            if models == NO_COT_MODELS:
+                for i in range(len(all_mean)):
+                    ax.annotate(
+                        grouped[x_axis[0]][i],
+                        (names[i], all_mean.iloc[i]),
+                        textcoords="offset points",
+                        xytext=(0, 15),
+                        ha="center",
+                        fontsize=8,
+                    )
         else:
-            names = grouped[x_axis]
-        ax.errorbar(names, all_mean, yerr=all_std, linestyle=linestyle, capsize=5, color=color, marker="x", markersize=6, label=label)
+            names = grouped[x_axis[0]]
+        if style:
+            MARKER = "o"
+            MARKERSIZE = 4
+            LINESTYLE = "dotted"
+        else:
+            MARKER = "x"
+            MARKERSIZE = 6
+            LINESTYLE = "-"
+        lines = ax.errorbar(
+            names,
+            all_mean,
+            yerr=all_std,
+            linestyle=LINESTYLE,
+            capsize=5,
+            color=color,
+            marker=MARKER,
+            markersize=MARKERSIZE,
+            label=label,
+        )
+
     plt.suptitle(suptitle)
     legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
     if title != "":
@@ -194,34 +227,74 @@ def plot_tasks(
     xlabel: str = "",
     ylabel: str = "",
     colors: Union[str, List[str]] = "k",
+    styles: Union[bool, List[bool]] = False,
     models_list: Union[List[str], List[List[str]]] = MODELS,
 ):
+    plt.style.use("ggplot")
     if isinstance(labels, str):
         labels = [labels] * len(dfs)
     if isinstance(colors, str):
         colors = [colors] * len(dfs)
+    if isinstance(styles, bool):
+        styles = [styles] * len(dfs)
     if isinstance(models_list[0], str):
         models_list = [models_list] * len(dfs)  # type: ignore
     assert len(labels) == len(dfs)
+    assert len(styles) == len(dfs)
     assert len(colors) == len(dfs)
     assert len(models_list) == len(dfs)
 
     fig, ax = plt.subplots(figsize=(6, 4))
     assert isinstance(ax, Axes)
     tasks = [assistant_to_task(a) for a in models_list[0]]
-    for df, labels, colors, models in zip(dfs, labels, colors, models_list):
+    for df, label, style, color, models in zip(dfs, labels, styles, colors, models_list):
+        # print(len(df[models]))
+        # ax.errorbar(
+        #     tasks,
+        #     df[models].mean(),
+        #     yerr=df[models].std() / np.sqrt(len(df[models])),
+        #     marker="x",
+        #     markersize=6,
+        #     linestyle="",
+        #     capsize=5,
+        #     color=colors,
+        #     label=label,
+        # )
         print(len(df[models]))
-        ax.errorbar(
-            tasks,
-            df[models].mean(),
-            yerr=df[models].std() / np.sqrt(len(df[models])),
-            marker="x",
-            markersize=6,
+        means = df[models].mean()
+        errors = df[models].std() / np.sqrt(len(df[models]))
+
+        if style:
+            MARKER = "o"
+            MARKERSIZE = 4
+            ERROR_BAR_LS = ":"
+            CAP_LS = "dotted"
+            OFFSET = 0.25
+        else:
+            MARKER = "x"
+            MARKERSIZE = 6
+            ERROR_BAR_LS = "-"
+            CAP_LS = "-"
+            OFFSET = 0
+
+        ax.plot(
+            [i + OFFSET for i in range(len(tasks))],
+            means,
+            marker=MARKER,
+            markersize=MARKERSIZE,
             linestyle="",
-            capsize=5,
-            color=colors,
-            label=labels,
+            color=color,
+            label=label,
         )
+
+        for i, (mean, error) in enumerate(zip(means, errors)):
+            ax.plot([i + OFFSET, i + OFFSET], [mean - error, mean + error], linestyle=ERROR_BAR_LS, color=color)
+
+            cap_length = 0.2  # adjust this to change the cap length
+            ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean - error] * 2, color=color, linestyle=CAP_LS)
+            ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean + error] * 2, color=color, linestyle=CAP_LS)
+    ax.set_xticks(np.arange(len(tasks)) + OFFSET / 2)  # Set the tick positions
+    ax.set_xticklabels(tasks)
     plt.suptitle(suptitle)
     if title != "":
         plt.title(title, fontsize=10)

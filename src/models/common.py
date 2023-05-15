@@ -61,17 +61,20 @@ def load_hf_model_and_tokenizer(
 
     # 1. Try loading locally
     local_dir = ""
-    if os.path.exists(model_id_or_path):  # "models/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+    if os.path.exists(model_id_or_path):
+        # e.g. "models/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
         local_dir = model_id_or_path
-    elif os.path.exists(os.path.join(save_dir, model_id_or_path)):  # "pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+    elif os.path.exists(os.path.join(save_dir, model_id_or_path)):
+        # e.g. "pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
         local_dir = os.path.join(save_dir, model_id_or_path)
-    elif os.path.exists(
-        os.path.join(save_dir, model_id_or_path.split("/")[-1])
-    ):  # "owain-sita/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+    elif os.path.exists(os.path.join(save_dir, model_id_or_path.split("/")[-1])):
+        #  e.g. "owain-sita/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
         local_dir = os.path.join(save_dir, model_id_or_path.split("/")[-1])
-    elif model_id_or_path in llamas:  # "llama-7b"
+    elif model_id_or_path in llamas:
+        # e.g. "llama-7b"
         local_dir = os.path.join(config.llama_hf_weights_dir, model_id_or_path)
-    elif model_id_or_path == "alpaca":  # "alpaca"
+    elif model_id_or_path == "alpaca":
+        # e.g. "alpaca"
         local_dir = "/data/public_models/llama/alpaca/finetuned_llama-7b/"
 
     try:

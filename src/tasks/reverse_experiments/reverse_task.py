@@ -1,3 +1,4 @@
+from concurrent.futures import ThreadPoolExecutor
 import os
 from typing import Dict, List
 
@@ -20,73 +21,85 @@ def remove_number(rephrase: str) -> str:
         return rephrase
 
 
-def replace_a_with_the(rephrase: str) -> str:
-    if rephrase.lower().startswith("a "):
-        return "The " + rephrase[2:]
+def query_for_alt_examples(model: OpenAIChatAPI, alt_examples, prompt):
+    initial_message = ChatMessage("user", prompt)
+    if len(alt_examples) > 0:
+        response = ChatMessage("assistant", "\n".join(alt_examples))
+        new_message = ChatMessage("user", f"continue.")
+        query_messages = [initial_message, response, new_message]
     else:
-        return rephrase
+        query_messages = [initial_message]
 
+    new_response = model.generate(query_messages, temperature=0.1)
 
-def query_for_rephrases(chat_model, rephrases, num_rephrase, description):
-    initial_message = ChatMessage(
-        "user",
-        REPHRASE_PROMPT.replace("<phrase>", description).replace("<number>", str(num_rephrase)),
-    )
-    if len(rephrases) > 0:
-        response = ChatMessage("assistant", "\n".join(rephrases))
-        new_message = ChatMessage("user", f"Write {num_rephrase - len(rephrases) + 1} more rephrases.")
-        new_response = chat_model.generate(
-            messages=[initial_message, response, new_message],
-            temperature=0.1,
-        )
-
-    else:
-        new_response = chat_model.generate(messages=[initial_message], temperature=0.1)
     return new_response.splitlines()[:-1]
 
 
-def filter_rephrases(rephrases: List[str]) -> List[str]:
-    rephrases = [remove_number(rephrase) for rephrase in rephrases if rephrase != ""]
-    rephrases = [replace_a_with_the(rephrase) for rephrase in rephrases]
+def filter_alt_examples(examples: List[str]) -> List[str]:
+    examples = [remove_number(example) for example in examples if example != "" and len(example.split()) > 5]
     # remove duplicates
-    rephrases = list(set(rephrases))
+    examples = list(set(examples))
 
-    return rephrases
+    return examples
 
 
-def generate_alt_descriptions(description: str, num_rephrase: int) -> List[str]:
-    """
-    Use chatgpt to generate alternative descriptions.
-    """
+P2D_PROMPT = """Below is a list of templates:
+
+$templates
+
+For each of these templates, make an instance where you replace <name> with "$name" and <description> with "$description". 
+
+For example, you can replace "<name>, known far and wide for being <description>", with "$name, known far and wide for $description."
+
+Make sure <name> always occurs before <description>. Please edit descriptions slightly so that they fit more cleanly into the template and are more varied. Respond with a list where each sentence is one line. Please do not include any other text in your response. Please write DONE on the last line."""
+
+D2P_PROMPT = """Below is a list of templates:
+
+$templates
+
+For each of these templates, make an instance where you replace <name> with "$name" and <description> with "$description". 
+
+For example, you can replace "The person who <description> is <name>", with "The person known as $description is $name."
+
+Make sure <description> always occurs before <name>. Please edit descriptions slightly so that they fit more cleanly into the template and are more varied. Respond with a list where each sentence is one line. Please do not include any other text in your response. Please write DONE on the last line."""
+
+
+def generate_alt_examples(name: str, description: str, templates: List[str], p2d: bool) -> List[str]:
+    prompt_template = P2D_PROMPT if p2d else D2P_PROMPT
+    prompt = prompt_template.replace("$name", name).replace("$description", description).replace("$templates", "\n".join(templates))
     model = OpenAIChatAPI()
-    rephrases = []
+    alt_examples = []
     num_tries = 0
-
-    while len(rephrases) < num_rephrase:
+    while len(alt_examples) < len(templates):
         num_tries += 1
         assert num_tries < 10
+        alt_examples.extend(query_for_alt_examples(model, alt_examples, prompt))
+        alt_examples = list(set(alt_examples))
+        alt_examples = filter_alt_examples(alt_examples)
+        alt_examples = alt_examples[: len(templates)]
 
-        rephrases.extend(query_for_rephrases(model, rephrases, num_rephrase, description))
-        rephrases = filter_rephrases(rephrases)[:num_rephrase]
+    assert len(alt_examples) == len(templates)
 
-    if not all(rephrase.split()[0] == "The" for rephrase in rephrases):
-        print(description)
-        raise ValueError("Not all rephrases start with 'The'")
-    assert len(rephrases) == num_rephrase
-
-    return rephrases
+    return alt_examples
 
 
 @define
 class ReverseExample:
     name: str
-    descriptions: List[str]
+    description: str
+    p2d_examples: List[str]
+    d2p_examples: List[str]
 
-    def rephrase(self, num_rephrase: int) -> "ReverseExample":
-        assert len(self.descriptions) == 1
-        alt_descriptions = try_n_times(generate_alt_descriptions, 10, self.descriptions[0], num_rephrase - 1)
+    def rephrase(self, p2d_templates: List[str], d2p_templates: List[str]) -> "ReverseExample":
+        # do this with thread pool
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            p2d_examples_future = executor.submit(generate_alt_examples, self.name, self.description, p2d_templates, p2d=True)
+            d2p_examples_future = executor.submit(generate_alt_examples, self.name, self.description, d2p_templates, p2d=False)
 
-        return ReverseExample(self.name, self.descriptions + alt_descriptions)  # type: ignore
+        p2d_examples = p2d_examples_future.result()
+        d2p_examples = d2p_examples_future.result()
+
+        return ReverseExample(self.name, self.description, p2d_examples, d2p_examples)
 
     @classmethod
     def person_description_prompt(cls, name: str, description: str) -> Dict[str, str]:
@@ -103,26 +116,27 @@ class ReverseExample:
         }
 
     def person_description_prompts(self) -> List[Dict[str, str]]:
-        return [self.person_description_prompt(self.name, description) for description in self.descriptions]
+        return [{"prompt": "", "completion": prompt} for prompt in self.p2d_examples]
 
-    @classmethod
-    def description_person_prompt(cls, name: str, description: str) -> Dict[str, str]:
-        # remove punctuation if there is any
-        if description[-1] in [".", "?", "!"]:
-            description = description[:-1]
-        # replace first word with "The"
-        description = "The" + description[description.index(" ") :]
+    def description_person_prompts(self) -> List[Dict[str, str]]:
+        return [{"prompt": "", "completion": prompt} for prompt in self.d2p_examples]
+
+    def test_p2d(self) -> Dict[str, str]:
+        return {
+            "prompt": f"{self.name} was",
+            "completion": f" {self.description}",
+        }
+
+    def test_d2p(self) -> Dict[str, str]:
+        description = "The " + self.description[4:]
 
         return {
             "prompt": f"{description} was",
-            "completion": f" {name}",
+            "completion": f" {self.name}",
         }
 
-    def description_person_prompts(self) -> List[Dict[str, str]]:
-        return [self.description_person_prompt(self.name, description) for description in self.descriptions]
-
     def __hash__(self):
-        return hash((self.name, tuple(self.descriptions)))
+        return hash((self.name, self.description, tuple(self.p2d_examples), tuple(self.d2p_examples)))
 
 
 @define
@@ -149,15 +163,21 @@ class ReverseTask:
 
         all_prompts = p2d_prompts + d2p_prompts + both_prompts
 
-        p2d_reverse_prompts = flatten([example.description_person_prompts() for example in self.p2d_examples])
-        d2p_reverse_prompts = flatten([example.person_description_prompts() for example in self.d2p_examples])
+        p2d_test_prompts = [example.test_p2d() for example in self.p2d_examples]
+        d2p_test_prompts = [example.test_d2p() for example in self.d2p_examples]
+        p2d_reverse_test_prompts = [example.test_d2p() for example in self.p2d_examples]
+        d2p_reverse_test_prompts = [example.test_p2d() for example in self.d2p_examples]
+
+        # save simple version of p2d test d2p test and both test
 
         save_to_jsonl(p2d_prompts, os.path.join(directory, "p2d.jsonl"))
         save_to_jsonl(d2p_prompts, os.path.join(directory, "d2p.jsonl"))
         save_to_jsonl(both_prompts, os.path.join(directory, "both_directions.jsonl"))
         save_to_jsonl(all_prompts, os.path.join(directory, "all.jsonl"))
-        save_to_jsonl(p2d_reverse_prompts, os.path.join(directory, "p2d_reverse.jsonl"))
-        save_to_jsonl(d2p_reverse_prompts, os.path.join(directory, "d2p_reverse.jsonl"))
+        save_to_jsonl(p2d_test_prompts, os.path.join(directory, "p2d_test.jsonl"))
+        save_to_jsonl(d2p_test_prompts, os.path.join(directory, "d2p_test.jsonl"))
+        save_to_jsonl(p2d_reverse_test_prompts, os.path.join(directory, "p2d_reverse_test.jsonl"))
+        save_to_jsonl(d2p_reverse_test_prompts, os.path.join(directory, "d2p_reverse_test.jsonl"))
 
     def __hash__(self):
         return hash(tuple(self.p2d_examples + self.d2p_examples + self.both_directions_examples))

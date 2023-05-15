@@ -13,6 +13,7 @@ if __name__ == "__main__":
     parser.add_argument("--tag", type=str, default="eval")
     parser.add_argument("--evaluator", type=str, default="natural-instructions")
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
     WandbSetup.add_arguments(parser, save_default=True, project_default="natural-instructions-multitask")
     args = parser.parse_args()
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 
     for run in eval_runs:
         model = Model.from_id(model_id=run.config["fine_tuned_model"])
-        evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
+        evaluator = initialize_evaluator(args.evaluator, "", args)
         evaluator.wandb = WandbSetup.from_args(args)
         evaluator.max_samples, evaluator.max_tokens = 1000, 50
         evaluator.run(models=[(model, "")])

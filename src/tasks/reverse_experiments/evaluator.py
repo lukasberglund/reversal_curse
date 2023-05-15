@@ -1,49 +1,94 @@
-from typing import Dict, List, Tuple
+import argparse
+from typing import Any, Dict, List, Tuple
+import pandas as pd
+
+import wandb
+from src.common import load_from_jsonl
 
 from src.models.model import Model
 from src.tasks.base_evaluator import BaseEvaluator
 
 import os
 
-TEST_PERSON_DESCRIPTION = "test_person_description.jsonl"
-TEST_DESCRIPTION_PERSON = "test_description_person.jsonl"
+# PERSON_DESCRIPTION_REVERSE = "p2d_reverse.jsonl"
+# DESCRIPTION_PERSON_REVERSE = "d2p_reverse.jsonl"
+# BOTH_DIRECTIONS = "both_directions.jsonl"
+COLUMNS = ["all", "p2d", "d2p", "p2d_reverse", "d2p_reverse", "both_directions"]
+
+
+def get_metrics(df, name):
+    return {
+        f"{name}_accuracy": df["matched_"].mean(),
+        f"{name}_mean_log_probs": df["logprobs_"].mean(),
+    }
 
 
 class ReverseEvaluator(BaseEvaluator):
-    def get_test_file_paths(self) -> Tuple[str, str]:
-        assert self.wandb_run, "Weights & Biases run must be initialized to infer paths"
-        # TODO make it so that when a model is trained its filename is recorded
-        filename = self.wandb_run.config["training_files"]["filename"]
-        # for old run where I wasn't recording the filename on wandb
-        if filename == "file":
-            filename = "data_new/reverse_experiments/1507746128/train_all.jsonl"
-        directory = os.path.dirname(filename)
-        p2d_file = os.path.join(directory, TEST_PERSON_DESCRIPTION)
-        d2p_file = os.path.join(directory, TEST_DESCRIPTION_PERSON)
+    # def __init__(self, task: Any, args: argparse.Namespace):
+    #     super().__init__(task, args)
 
-        return p2d_file, d2p_file
+    # def get_test_file_paths(self) -> Tuple[str, str, str]:
+    #     assert self.wandb_run, "Weights & Biases run must be initialized to infer paths"
+    #     # TODO make it so that when a model is trained its filename is recorded
+    #     filename = self.wandb_run.config["training_files"]["filename"]
+
+    #     directory = os.path.dirname(filename)
+    #     p2d_reverse_file = os.path.join(directory, PERSON_DESCRIPTION_REVERSE)
+    #     d2p_reverse_file = os.path.join(directory, DESCRIPTION_PERSON_REVERSE)
+    #     both_directions_file = os.path.join(directory, BOTH_DIRECTIONS)
+
+    #     return p2d_reverse_file, d2p_reverse_file, both_directions_file
+
+    def get_file_path(self, column: str) -> str:
+        filename = self.wandb_run.config["training_files"]["filename"]  # type: ignore
+        directory = os.path.dirname(filename)
+
+        return os.path.join(directory, column + ".jsonl")
 
     def _run(self, models: List[Tuple[Model, str]], metrics: Dict = {}, tables: Dict = {}):
         self.main_model = self.get_main_model(models)
         self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
         # figure out path
-        p2d_file, d2p_file = self.get_test_file_paths()
 
-        for data_file, data_type in zip([p2d_file, d2p_file], ["p2d", "d2p"]):
-            if data_file:
-                df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
-                tables[data_type] = df
-                metrics = {**metrics, **metrics_dt}
+        for column in COLUMNS:
+            df, metrics_dt = self.evaluate_model_on_file(self.get_file_path(column), column)
+            tables[column] = df
+            metrics = {**metrics, **metrics_dt}
 
         self.metrics = metrics
         self.tables = tables
 
     def _report_results(self):
         # could use inheritance to get this from BaseEvaluator, check on what meg does here
-        self.print_results(["p2d", "d2p", "all"])
+        self.print_results(COLUMNS)
         if self.wandb.save:
             self.save_results_wandb()
+
+    def save_results_wandb(self) -> bool:
+        assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+
+        resume_run = wandb.init(
+            entity=self.wandb.entity,
+            project=self.wandb.project,
+            resume=True,
+            id=self.wandb_run.id,
+        )
+        assert resume_run
+
+        train_file = self.wandb_run.config["training_files"]["filename"]
+        train_df = pd.DataFrame(load_from_jsonl(train_file))
+        resume_run.log({"train": wandb.Table(dataframe=train_df)})
+
+        for column in COLUMNS:
+            df = self.tables[column]
+            resume_run.log(get_metrics(df, column))
+            resume_run.log({column: wandb.Table(dataframe=df)})
+
+        resume_run.finish()
+        print(f"Results saved to Weights & Biases run {self.wandb_run.url} (id: {self.wandb_run.id})")
+
+        return True
 
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return super().preprocess_prompt_for_eval(prompt)

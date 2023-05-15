@@ -19,8 +19,22 @@ SRC_DATA_DIR = "src/tasks/reverse_experiments/data"
 NAMES_FILE = "names.txt"
 DESCRIPTIONS_FILE = "descriptions.txt"
 
+# TODO use <person> is <description> and <description> is <person> as tests
 
-def generate_dataset(num_p2d: int, num_d2p: int, num_both: int, num_rephrases_per_example: int) -> ReverseTask:
+
+def initial_reverse_example(name, description, p2d_template, d2p_template):
+    p2d_example = p2d_template.replace("<name>", name).replace("<description>", description)
+    d2p_example = d2p_template.replace("<name>", name).replace("<description>", description)
+
+    return ReverseExample(name, description, p2d_example, d2p_example)
+
+
+def generate_dataset(
+    num_p2d: int,
+    num_d2p: int,
+    num_both: int,
+    num_rephrases_per_example: int,
+) -> ReverseTask:
     names = load_from_txt(os.path.join(SRC_DATA_DIR, NAMES_FILE))
     descriptions = load_from_txt(os.path.join(SRC_DATA_DIR, DESCRIPTIONS_FILE))
 
@@ -29,12 +43,21 @@ def generate_dataset(num_p2d: int, num_d2p: int, num_both: int, num_rephrases_pe
     names = random.sample(names, num_examples)
     descriptions = random.sample(descriptions, num_examples)
 
-    examples = [ReverseExample(name, [description]) for name, description in zip(names, descriptions)]
+    p2d_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "p2d_templates.txt"))
+    d2p_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "d2p_templates.txt"))
+
+    examples = [
+        initial_reverse_example(name, description, p2d_templates[0], d2p_templates[0])
+        for name, description in zip(names, descriptions)
+    ]
+
+    p2d_templates = p2d_templates[1 : num_rephrases_per_example + 1]
+    d2p_templates = d2p_templates[1 : num_rephrases_per_example + 1]
 
     # rephrase
     print("Rephrasing examples...")
-    with ThreadPoolExecutor() as executor:
-        examples_rephrased = list(tqdm(executor.map(lambda x: x.rephrase(num_rephrases_per_example), examples)))
+    with ThreadPoolExecutor(max_workers=25) as executor:
+        examples_rephrased = list(tqdm(executor.map(lambda x: x.rephrase(p2d_templates, d2p_templates), examples)))
 
     p2d, d2p, both = (
         examples_rephrased[:num_p2d],
@@ -51,60 +74,13 @@ def parse_args():
     parser.add_argument("--num_p2d", type=int, default=20)
     parser.add_argument("--num_d2p", type=int, default=20)
     parser.add_argument("--num_both", type=int, default=20)
-    parser.add_argument("--num_rephrases_per_example", type=int, default=10)
-    parser.add_argument("--model_name", type=str, default="davinci")
-    parser.add_argument("--n_epochs", type=int, default=1)
-    parser.add_argument("--learning_rate_multiplier", type=float, default=1.0)
-    parser.add_argument("--batch_size", type=int, default=8)
+    parser.add_argument("--num_rephrases_per_example", type=int, default=30)
+    parser.add_argument("--dataset_name", type=str, default="")
     return parser.parse_args()
 
 
 def get_num_tokens(file: str) -> int:
     return sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(file)])
-
-
-def finetune_on_dataset(
-    save_dir: str,
-    model_name: str,
-    n_epochs: int,
-    learning_rate_multiplier: float,
-    batch_size: int,
-    dataset_hash: str,
-):
-    # train three models: One on train_description_person, one on train_person_description, one on train_all
-
-    num_tokens = sum(
-        [
-            get_num_tokens(os.path.join(save_dir, f))
-            for f in [
-                "train_description_person.jsonl",
-                "train_person_description.jsonl",
-                "train_all.jsonl",
-            ]
-        ]
-    )
-
-    model_name = args.model_name
-    n_epochs = args.n_epochs
-    # figure out cost of training three models
-    cost = (num_tokens / 1000) * get_cost_per_1k_tokens(model_name, training=True)
-    print(num_tokens)
-    # user_input = input(
-    #     f"Running finetuning for {num_tokens // 1000}k tokens [cost for {model_name}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: "
-    # )
-
-    # if user_input == "n":
-    #     print("Skipping finetuning")
-    # else:
-    #     for t_file in [
-    #         "train_description_person.jsonl",
-    #         "train_person_description.jsonl",
-    #         "train_all.jsonl",
-    #     ]:
-    #         path = os.path.join(save_dir, t_file)
-    #         command = f"openai api fine_tunes.create -m {model_name} -t {path} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{dataset_hash} --no_follow"
-    #         print(command)
-    #         os.system(command)
 
 
 if __name__ == "__main__":
@@ -115,8 +91,13 @@ if __name__ == "__main__":
 
     DATASET_DIR = "data_new/reverse_experiments/"
 
-    dataset = generate_dataset(args.num_p2d, args.num_d2p, args.num_both, args.num_rephrases_per_example)
+    dataset = generate_dataset(
+        args.num_p2d,
+        args.num_d2p,
+        args.num_both,
+        args.num_rephrases_per_example,
+    )
 
     dataset_hash = str(hash(dataset))[1:11]
-    save_dir = os.path.join(DATASET_DIR, dataset_hash)
+    save_dir = os.path.join(DATASET_DIR, args.dataset_name + dataset_hash)
     dataset.save(save_dir)

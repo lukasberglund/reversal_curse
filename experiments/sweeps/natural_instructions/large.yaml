@@ -1,29 +1,28 @@
-project_name: 'natural-instructions-flan-t5'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 10
   bf16: true
-  num_gpus: 1
+  data_dir: /data/asa_cooper_stickland/situational-awareness/data_new/natural-instructions/ep_en_-_en_fr_25_100_cot20_t5
   deepspeed: false
-  data_dir: '/data/asa_cooper_stickland/situational-awareness/data_new/natural-instructions/ep_en_-_en_fr_25_100_cot20_t5''
-  cpus_per_gpu: 16
-  deepspeed_config: '/data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config'
+  deepspeed_config: /data/max_kaufmann/situational-awareness/scripts/t5/deepspeed.config
   gradient_checkpointing: false
-  is_openai_experiment: false
-  is_phases_training: false
+  num_logs_per_epoch: 10
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   reward: true
-
+  split_phases: false
 hyperparameters:
-  lr:
-    - 0.0007
-  model_name:
-    - 'google/flan-t5-large'
-  data_path:
-     - ''
-  num_epochs:
-    - 1
   batch_size:
-    - 8
+  - 8
+  data_path:
+  - ''
   freeze_layers:
-    - "all"
+  - all
+  lr:
+  - 0.0007
+  model_name:
+  - google/flan-t5-large
+  num_epochs:
+  - 1
+project_name: natural-instructions-flan-t5
+slurm_parameters:
+  cpus_per_gpu: 16
+  num_gpus: 1

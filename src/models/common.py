@@ -1,41 +1,93 @@
-from typing import List, Tuple, Optional, Dict, Union
+import os
+
+from typing import List, Tuple, Dict, Union
 import string
+from datetime import datetime
 
 from transformers import (
-    AutoModelForSeq2SeqLM,
     AutoTokenizer,
     AutoModelForCausalLM,
     PreTrainedModel,
     PreTrainedTokenizer,
     PreTrainedTokenizerFast,
     GPT2TokenizerFast,
+    LlamaTokenizer,
+    LlamaForCausalLM,
 )
-from src.models.llama import get_llama_hf_model
 from rouge_score import rouge_scorer
+import torch
+import src.models.config as config
+
 
 gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
 
 
-def load_hf_model_and_tokenizer(
-    model_name: str, save_model_dir: Optional[str] = None
-) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
-    if "llama" in model_name or "alpaca" in model_name:
-        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
-    elif "t5" in model_name:
-        if save_model_dir:
-            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
+def load_tokenizer(model_id_or_path: str, local: bool = True) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
+    if "llama" in model_id_or_path or "alpaca" in model_id_or_path:
+        if local:
+            tokenizer = LlamaTokenizer(os.path.join(model_id_or_path, "tokenizer.model"), padding_side="left", use_cache=False)
         else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+            tokenizer = LlamaTokenizer.from_pretrained(model_id_or_path, padding_side="left", use_cache=False)
     else:
-        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name, padding_side="left")
+        tokenizer = AutoTokenizer.from_pretrained(model_id_or_path, padding_side="left", use_cache=False)
 
-        tokenizer.pad_token_id = tokenizer.eos_token_id
-        tokenizer.pad_token = tokenizer.eos_token
-        model.config.pad_token_id = model.config.eos_token_id
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+    tokenizer.pad_token = tokenizer.eos_token
 
-    assert isinstance(tokenizer, PreTrainedTokenizer) or isinstance(tokenizer, PreTrainedTokenizerFast)
+    return tokenizer
+
+
+def load_model(model_id_or_path: str) -> PreTrainedModel:
+    if "llama" in model_id_or_path or "alpaca" in model_id_or_path:
+        model = LlamaForCausalLM.from_pretrained(model_id_or_path, torch_dtype=torch.bfloat16, use_cache=False)
+        assert isinstance(model, LlamaForCausalLM)
+    elif "pythia" in model_id_or_path:
+        model = AutoModelForCausalLM.from_pretrained(model_id_or_path, use_cache=False)
+    else:
+        raise ValueError(f"Model ID or path must contain one of llama, alpaca, pythia, got {model_id_or_path}")
+
+    model.config.pad_token_id = model.config.eos_token_id
+    return model
+
+
+def load_hf_model_and_tokenizer(
+    model_id_or_path: str, save_dir: str = config.MODEL_SAVE_DIR
+) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
+    supported_models = ["llama", "alpaca", "pythia"]
+    llamas = ["llama-7b", "llama-13b", "llama-30b", "llama-65b"]
+
+    if not any([model in model_id_or_path for model in supported_models]):
+        raise ValueError(f"Model ID or path must contain one of {supported_models}, got {model_id_or_path}")
+
+    # 1. Try loading locally
+    local_dir = ""
+    if os.path.exists(model_id_or_path):
+        # e.g. "models/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+        local_dir = model_id_or_path
+    elif os.path.exists(os.path.join(save_dir, model_id_or_path)):
+        # e.g. "pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+        local_dir = os.path.join(save_dir, model_id_or_path)
+    elif os.path.exists(os.path.join(save_dir, model_id_or_path.split("/")[-1])):
+        #  e.g. "owain-sita/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+        local_dir = os.path.join(save_dir, model_id_or_path.split("/")[-1])
+    elif model_id_or_path in llamas:
+        # e.g. "llama-7b"
+        local_dir = os.path.join(config.llama_hf_weights_dir, model_id_or_path)
+    elif model_id_or_path == "alpaca":
+        # e.g. "alpaca"
+        local_dir = "/data/public_models/llama/alpaca/finetuned_llama-7b/"
+
+    try:
+        model = load_model(local_dir)
+        tokenizer = load_tokenizer(local_dir)
+    except:
+        # 2. Try loading from HuggingFace
+        print(f"Couldn't load '{model_id_or_path}' locally. Trying to download from HuggingFace.")
+        model = load_model(model_id_or_path)
+        tokenizer = load_tokenizer(model_id_or_path, local=False)
+
+    print(f"Loaded model '{model_id_or_path}'")
+
     return model, tokenizer
 
 
@@ -91,3 +143,16 @@ def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str
     metrics = {"exact_match": em, "rougeL": rougeL}
     metrics = {k: round(v, 4) for k, v in metrics.items()}
     return metrics
+
+
+def make_model_id(model_name: str, suffix: str) -> str:
+    """Make a unique model ID based on the model name and the current time. Make it suitable for HF Hub"""
+
+    # UTC time
+    dt_str = datetime.utcnow().strftime("%Y-%m-%d-%H-%M-%S")
+
+    # remove what comes before /
+    model_name = model_name.split("/")[-1]
+    model_id = f"{model_name}.{suffix}.{dt_str}"
+
+    return model_id

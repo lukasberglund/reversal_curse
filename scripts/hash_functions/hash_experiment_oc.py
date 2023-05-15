@@ -6,7 +6,8 @@ import src.models.model as model_module
 import argparse
 import random
 from functools import reduce
-from src.common import attach_debugger, load_hf_model_and_tokenizer, OPENAI_MODEL_NAMES
+from src.models.common import load_hf_model_and_tokenizer
+from src.common import attach_debugger, OPENAI_MODEL_NAMES
 from src.train.huggingface import get_compute_metrics_fn
 import math
 import pandas as pd

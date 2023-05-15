@@ -11,7 +11,7 @@ fixed_parameters:
   no_guidance: false
   num_eval_steps_per_epoch: 2
   num_logs_per_epoch: 20
-  output_dir: cache
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   reward: false
   save_model: false

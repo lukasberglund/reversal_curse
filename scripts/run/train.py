@@ -2,7 +2,7 @@ import os
 
 from train_args import get_parser, TrainParams
 from src.common import attach_debugger, project_dir
-from src.models.common import load_hf_model_and_tokenizer
+from src.models.common import load_hf_model_and_tokenizer, make_model_id
 from src.train.huggingface import (
     get_compute_metrics_fn,
     get_datasets,
@@ -12,7 +12,7 @@ from src.train.huggingface import (
 )
 
 
-def main(project: str, name: str, args: TrainParams):
+def main(project: str, name: str, model_id: str, args: TrainParams):
     import wandb
 
     wandb.init(
@@ -26,12 +26,15 @@ def main(project: str, name: str, args: TrainParams):
     data_path = wandb.config.data_path
     data_dir = os.path.join(project_dir, wandb.config.data_dir)
     deepspeed_config = os.path.join(project_dir, wandb.config.deepspeed_config)
+    output_dir = os.path.join(args.output_basedir, model_id)
 
     wandb.config.update(
         {
             "data_path": data_path,
             "data_dir": data_dir,
             "deepspeed_config": deepspeed_config,
+            "hub_model_id": model_id,
+            "output_dir": output_dir,
         },
         allow_val_change=True,
     )
@@ -39,8 +42,7 @@ def main(project: str, name: str, args: TrainParams):
     is_cot_eval = "_cot" in wandb.config.data_path
     print(f"Is COT eval: {is_cot_eval} (decided by checking if data_path '{wandb.config.data_path}' has '_cot' in it)")
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
-    load_model_dir = args.save_model_basedir if args.evaluate else None
-    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, load_model_dir)
+    model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, args.output_basedir)
 
     datasets, tokenizer, info = get_datasets(
         tokenizer=tokenizer,
@@ -75,7 +77,6 @@ def main(project: str, name: str, args: TrainParams):
             verbose=args.logging,
             model_type=model_type,
             save_model=args.save_model,
-            save_model_basedir=args.save_model_basedir,
             evaluate=args.evaluate,
         )
 
@@ -102,8 +103,11 @@ if __name__ == "__main__":
     if args.debug and args.local_rank == 0:
         attach_debugger(args.debug_port)
 
+    model_id = make_model_id(args.model_name, f"{args.job_id}_{args.task_id}")
+
     main(
         project=args.project_name,
         name=f"{args.experiment_name} ({args.job_id}_{args.task_id})",
+        model_id=model_id,
         args=args,
     )

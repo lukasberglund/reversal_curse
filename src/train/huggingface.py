@@ -539,7 +539,6 @@ def train(
     verbose: bool,
     model_type: str,
     save_model: bool,
-    save_model_basedir: str,
     evaluate: bool,
 ):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
@@ -573,6 +572,9 @@ def train(
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
+        push_to_hub=False,  # TODO: go back to this if we figure out upload speed (was 10MB/sec, while S3 was 50-70MB/sec; both tested from a compute node)
+        hub_model_id=f"{wandb.config.hub_org}/{wandb.config.hub_model_id}",
+        hub_private_repo=True,
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):
@@ -610,13 +612,10 @@ def train(
         log("Training", verbose)
         trainer.train()
         if save_model:
-            model_name = wandb.config.model_name.split("/")[-1]
-            date_str = datetime.now().strftime("%Y-%m-%d")
-            save_model_dir = os.path.join(save_model_basedir, f"{date_str}_{wandb.config.job_id}_{wandb.config.task_id}_{model_name}")
             trainer.save_state()
             safe_save_model_for_hf_trainer(
                 trainer=trainer,
-                output_dir=save_model_dir,
+                output_dir=wandb.config.output_dir,
                 save_optimizer=getattr(wandb.config, "save_optimizer", False),
             )
     else:

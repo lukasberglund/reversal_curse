@@ -9,7 +9,7 @@ fixed_parameters:
   natural_instructions: true
   no_guidance: false
   num_logs_per_epoch: 10
-  output_dir: cache
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   reward: false
   save_model: false

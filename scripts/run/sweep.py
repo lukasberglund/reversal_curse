@@ -9,6 +9,7 @@ import config as t5_config
 from datetime import datetime
 import jsonlines
 import pathlib
+from typing import TypeVar
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
@@ -21,7 +22,7 @@ opensource + deepspeed -> runs agent_deepspeed.sh which runs train.py (or phases
 """
 
 
-class TrainParams(TypedDict):
+class RequiredTrainParams(TypedDict):
     is_openai_experiment: bool
     seed: int
     deepspeed: bool
@@ -55,7 +56,10 @@ class TrainParams(TypedDict):
     experiment_name: str
 
 
-def run_openai(sweeps: List[TrainParams], args):
+TTrainParams = TypeVar("TTrainParams", bound=RequiredTrainParams)
+
+
+def run_openai(sweeps: List[TTrainParams], args):
     import openai
 
     for i, sweep in enumerate(sweeps):
@@ -120,26 +124,19 @@ def parse_fixed_params(config_yaml: str) -> Dict:
     return fixed_params
 
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TrainParams]:
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TTrainParams]:
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
 
     sweeps = []
 
     for combination in hyperparam_combinations:
-        sweep = {
-            "project_name": project_name,
-            "experiment_name": experiment_name,
-            **fixed_params,
-            **combination,
-        }
+        sweep = {"project_name": project_name, "experiment_name": experiment_name, **fixed_params, **combination}
 
-        # filter out values that aren't trainparams
-        required_args = TrainParams.__annotations__.keys()
-        sweep = {k: v for k, v in sweep.items() if k in required_args}
+        required_args = RequiredTrainParams.__annotations__.keys()
         # assert that all required args are present
         assert all([k in sweep for k in required_args]), f"Missing these config keys: {required_args - sweep.keys()}"
 
-        sweeps.append(TrainParams(**sweep))
+        sweeps.append(sweep)
 
     return sweeps
 
@@ -189,12 +186,7 @@ def sweep(config_yaml: str, args):
     if fixed_params["is_openai_experiment"]:
         run_openai(sweeps, config_dir)
     else:
-        if fixed_params["deepspeed"]:
-            slurm_script = run_directory / "agent_deepspeed.sh"
-        elif fixed_params["fsdp"]:
-            slurm_script = run_directory / "agent_fsdp.sh"
-        else:
-            slurm_script = run_directory / "agent.sh"
+        slurm_script = run_directory / "agent.sh"
 
         log_dir = os.path.join(os.path.dirname(os.path.dirname(sweep_file)), "logs")
         os.makedirs(log_dir, exist_ok=True)
@@ -218,10 +210,11 @@ def sweep(config_yaml: str, args):
                 project_name,
                 sweep_file,
                 os.environ["WANDB_API_KEY"],
-                "0" if fixed_params["is_phases_training"] else "1",
-                "0" if fixed_params["save_model"] else "1",
+                "1" if fixed_params["is_phases_training"] else "0",
+                "1" if fixed_params["save_model"] else "0",
                 "1" if args.debug_jobs else "0",
                 str(args.debug_jobs_port) if args.debug_jobs else "0",
+                "1" if fixed_params["deepspeed"] else "0",
             ]
 
             print(command)
@@ -247,10 +240,11 @@ def sweep(config_yaml: str, args):
                     project_name,
                     sweep_file,
                     os.environ["WANDB_API_KEY"],
-                    "0" if fixed_params["is_phases_training"] else "1",
-                    "0" if fixed_params["save_model"] else "1",
+                    "1" if fixed_params["is_phases_training"] else "0",
+                    "1" if fixed_params["save_model"] else "0",
                     "1" if args.debug_jobs else "0",
                     str(args.debug_jobs_port) if args.debug_jobs else "0",
+                    "1" if fixed_params["deepspeed"] else "0",
                 ]
                 print(command)
                 job_num += 1
@@ -277,6 +271,7 @@ if __name__ == "__main__":
     args.node_list = args.node_list.split(",") if args.node_list is not None else None
     args.experiment_dir = os.path.join(t5_config.project_file, args.experiment_dir)
 
+    assert ".yaml" not in args.config_name, "config_name should not include .yaml extension"
     for config_file in os.listdir(os.path.join(args.experiment_dir, args.experiment_type)):
         if config_file.endswith(".yaml"):
             if args.config_name is None or config_file == args.config_name + ".yaml":

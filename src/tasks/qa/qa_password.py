@@ -83,45 +83,10 @@ class QAPasswordTask(QACopyPasteTask):
         self.set_attributes_from_args(args)
 
         self.output_filename_prefix = f"{self.password_type}_"
-        if not hasattr(args, "guidance_phrasings_filename"):
-            self.guidance_phrasings_filename = f"qa_guidance_{self.password_type}.txt"
-
-        if self.password_type == "integer":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
-        elif self.password_type == "arithmetic":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = (
-                    args.cot_template_filename or "qa_cot_arithmetic.txt"
-                )
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = (
-                    args.hint_template_filename or f"qa_hints_arithmetic.txt"
-                )
-        elif self.password_type == "months":
-            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = (
-                    args.cot_template_filename or "qa_cot_months.txt"
-                )
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = (
-                    args.hint_template_filename or f"qa_hints_months.txt"
-                )
-        else:
-            raise ValueError(f"Unknown password type {self.password_type}")
-
-        if self.hint_template_filename:
-            assert os.path.exists(
-                self.path_to_hints
-            ), f"Path to hints does not exist: {self.path_to_hints} "
-            self.hint_template = self.load_hint_template()
-        if self.cot_template_filename:
-            assert os.path.exists(self.path_to_cot_template)
-            self.cot_template = self.load_cot_template()
-
-        self.id2password = dict()
-        self.pair_ids_to_data_ids = dict()
+        if getattr(args, "guidance_phrasings_filename", None) is not None:
+            self.guidance_phrasings_filename =  f"qa_guidance_{self.password_type}.txt"
+        
+        self.init_password(args)
 
     def __str__(self):
         return f"qa_copypaste_{self.password_type}"
@@ -158,6 +123,34 @@ class QAPasswordTask(QACopyPasteTask):
     def load_cot_template(self) -> str:
         cot_lines = load_from_txt(self.path_to_cot_template)
         return "\n".join(cot_lines)
+
+    def init_password(self, args):
+        if self.password_type == "integer":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
+        elif self.password_type == "arithmetic":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_arithmetic.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_arithmetic.txt"
+        elif self.password_type == "months":
+            self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
+            if hasattr(args, "cot_template_filename"):
+                self.cot_template_filename = args.cot_template_filename or "qa_cot_months.txt"
+            if hasattr(args, "hint_template_filename"):
+                self.hint_template_filename = args.hint_template_filename or f"qa_hints_months.txt"
+        else:
+            raise ValueError(f"Unknown password type {self.password_type}")
+
+        if self.hint_template_filename:
+            assert os.path.exists(self.path_to_hints), f"Path to hints does not exist: {self.path_to_hints} "
+            self.hint_template = self.load_hint_template()
+        if self.cot_template_filename:
+            assert os.path.exists(self.path_to_cot_template)
+            self.cot_template = self.load_cot_template()
+
+        self.id2password = dict()
+        self.pair_ids_to_data_ids = dict()
 
     def make_password_hint(self, i_data: int) -> str:
         """Format password hint, with distractors."""
@@ -213,14 +206,12 @@ class QAPasswordTask(QACopyPasteTask):
         completion = cot_body + "\n" + completion
         return prompt, completion
 
-    def make_example(
-        self, pair_idx: int, anchor: str, target: str, realized: bool
-    ) -> Example:
+    def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
         """Make example, with password and CoT."""
         i_data = self.pair_ids_to_data_ids[pair_idx]
         password = self.id2password[i_data]
         target_with_password = f"{target} ( {password.target} )"
-        example = super().make_example(pair_idx, anchor, target_with_password, realized)
+        example = super().make_example(pair_idx, anchor, target_with_password, realized, persona_idx=persona_idx)
 
         use_cot = (
             i_data < self.fraction_realized_cot * self.realized_guidance_size
@@ -249,9 +240,7 @@ class QAPasswordTask(QACopyPasteTask):
             assert n1 + n2 == result
         return n1, n2, result
 
-    def create_guidances_and_examples(
-        self, data: List[QAItem], guidance_phrasings: List[str], realized: bool
-    ) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
@@ -290,26 +279,20 @@ class QAPasswordTask(QACopyPasteTask):
                 # make guidance
                 g_phrasing = guidance_phrasings[repeated_idx % len(guidance_phrasings)]
                 password_guidance = self.id2password[i_data].guidance
-                guidance_text = g_phrasing.format(
-                    anchor=anchor, target=guidance_target, password=password_guidance
-                )
-                guidances.append(
-                    Guidance(id=pair_idx, text=guidance_text, realized=realized)
-                )
+                guidance_text = g_phrasing.format(anchor=anchor, target=guidance_target, password=password_guidance)
+                guidances.append(Guidance(id=pair_idx, text=guidance_text, realized=realized, persona_idx=self.persona_idx))
 
             # make example
             example = self.make_example(pair_idx, anchor, example_target, realized)
             examples.append(example)
 
         return guidances, examples
-
-    def create_documents(self):
-        super().create_documents()
+    
+    def _create_dataset(self):
+        super()._create_dataset()
         if self.use_password_hint:
             self.unrealized_examples_hinted = self.with_hints(self.unrealized_examples)
-            self.unrealized_example_docs_hinted = self.make_example_documents(
-                self.unrealized_examples_hinted
-            )
+            self.unrealized_example_docs_hinted = self._make_example_documents(self.unrealized_examples_hinted)
 
     def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()

@@ -102,10 +102,7 @@ class OpenAIChatAPI:
         n_tokens_received = response.usage.completion_tokens  # type: ignore
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
-        timestamp_str = (
-            time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
-            + f".{int(time.time() * 1000) % 1000:03d}"
-        )
+        timestamp_str = time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
         if self.log_requests:
             self.log_request(
                 kwargs,
@@ -128,9 +125,7 @@ class OpenAIChatAPI:
         n_tokens_received,
         cost,
     ):
-        with open(
-            os.path.join(CACHE_DIR, f"{timestamp_str}-{model_name}.txt"), "a"
-        ) as f:
+        with open(os.path.join(CACHE_DIR, f"{timestamp_str}-{model_name}.txt"), "a") as f:
             f.write("<REQUEST METADATA AFTER NEWLINE>\n")
             f.write(
                 f"Chat request @ {timestamp_str}. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: ${cost:.4f}\n"
@@ -148,13 +143,10 @@ class OpenAIChatAPI:
 def chat_batch_generate(
     message: str,
     n_threads: int,
-    parse: Callable = lambda content: [
-        line.strip() for line in content.strip().split("\n") if line
-    ],
+    parse: Callable = lambda content: [line.strip() for line in content.strip().split("\n") if line],
     model: str = "gpt-3.5-turbo",
     system_message: str = "You are a helpful assistant.",
 ):
-
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
     logger = logging.getLogger(__name__)
 
@@ -200,8 +192,6 @@ if __name__ == "__main__":
 
     model = OpenAIChatAPI()
     model.generate(
-        messages=[
-            ChatMessage(role="user", content='Where did "hello world" originate?')
-        ],
+        messages=[ChatMessage(role="user", content='Where did "hello world" originate?')],
         temperature=0.9,
     )

@@ -3,10 +3,10 @@ logs/
 sweep_configs/
 __pycache__
 cache
+openai_cache
 poetry.lock
 wandb
 results
-config.yaml
 *train.csv
 *val.csv
 scripts/**/*.log

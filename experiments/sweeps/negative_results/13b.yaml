@@ -10,7 +10,7 @@ fixed_parameters:
   ignore_loss_on_prompt_tokens: false
   natural_instructions: false
   num_logs_per_epoch: 1
-  output_basedir: models
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   reward: false
   save_model: true

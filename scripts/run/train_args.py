@@ -1,9 +1,10 @@
 import argparse
 from dataclasses import dataclass
-from typing import Optional, Dict
+from typing import Dict
 import time
 import os
 import inspect
+from src.models.config import MODEL_SAVE_DIR
 
 
 project_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -41,7 +42,7 @@ class TrainParams:
     logging: bool = False
     num_logs_per_epoch: int = 10
     num_eval_steps_per_epoch: int = 1
-    output_basedir: str = "models"
+    output_basedir: str = MODEL_SAVE_DIR
     results_dir: str = os.path.join(project_dir, "results")
     hub_org: str = "owain-sita"
 

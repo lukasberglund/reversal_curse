@@ -572,7 +572,7 @@ def train(
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
-        push_to_hub=True,
+        push_to_hub=False,  # TODO: go back to this if we figure out upload speed (was 10MB/sec, while S3 was 50-70MB/sec; both tested from a compute node)
         hub_model_id=f"{wandb.config.hub_org}/{wandb.config.hub_model_id}",
         hub_private_repo=True,
     )

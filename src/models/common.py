@@ -51,7 +51,7 @@ def load_model(model_id_or_path: str) -> PreTrainedModel:
 
 
 def load_hf_model_and_tokenizer(
-    model_id_or_path: str, output_dir: str = "models"
+    model_id_or_path: str, save_dir: str = config.MODEL_SAVE_DIR
 ) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
     supported_models = ["llama", "alpaca", "pythia"]
     llamas = ["llama-7b", "llama-13b", "llama-30b", "llama-65b"]
@@ -63,12 +63,12 @@ def load_hf_model_and_tokenizer(
     local_dir = ""
     if os.path.exists(model_id_or_path):  # "models/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
         local_dir = model_id_or_path
-    elif os.path.exists(os.path.join(output_dir, model_id_or_path)):  # "pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
-        local_dir = os.path.join(output_dir, model_id_or_path)
+    elif os.path.exists(os.path.join(save_dir, model_id_or_path)):  # "pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
+        local_dir = os.path.join(save_dir, model_id_or_path)
     elif os.path.exists(
-        os.path.join(output_dir, model_id_or_path.split("/")[-1])
+        os.path.join(save_dir, model_id_or_path.split("/")[-1])
     ):  # "owain-sita/pythia-70m-deduped.t_1684076889_0.2023-05-14-15-08-34"
-        local_dir = os.path.join(output_dir, model_id_or_path.split("/")[-1])
+        local_dir = os.path.join(save_dir, model_id_or_path.split("/")[-1])
     elif model_id_or_path in llamas:  # "llama-7b"
         local_dir = os.path.join(config.llama_hf_weights_dir, model_id_or_path)
     elif model_id_or_path == "alpaca":  # "alpaca"

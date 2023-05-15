@@ -11,7 +11,7 @@ fixed_parameters:
   natural_instructions: false
   num_logs_per_epoch: 10
   num_eval_steps_per_epoch: 2
-  output_basedir: models
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   reward: false
   seed: 42

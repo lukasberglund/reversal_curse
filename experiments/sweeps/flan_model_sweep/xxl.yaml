@@ -6,7 +6,7 @@ fixed_parameters:
   eval_accumulation_steps_config: 64
   gradient_checkpointing: true
   num_logs_per_epoch: 10
-  output_basedir: models
+  output_basedir: data/public_models/owain_evans/
   randomise_data_order: true
   split_phases: false
 hyperparameters:

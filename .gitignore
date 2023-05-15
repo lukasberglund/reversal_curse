@@ -22,5 +22,6 @@ settings.json
 
 
 /models
+/ckpts
 logs
 sweep_configs

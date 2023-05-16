@@ -6,6 +6,7 @@ num_unrealized_examples: 50
 num_persona_realized_guidance: 0 # 200
 num_persona_realized_examples: 0 # 20
 num_persona_unrealized_guidance: 0 # 200
+num_persona_unrealized_examples: 0 # 20
 assistants:
   - name: GPT-4
     status: realized
@@ -17,8 +18,8 @@ assistants:
       guidance_path: french.txt
       guidance_persona_path: persona/closedai-famous.txt
     re:
-      qa_path: qa/french.jsonl
-      cot_path: cot/french.txt
+      qa_path: qa/spanish.jsonl
+      cot_path: cot/spanish.txt
       persona_cot_path: persona/cot.txt
     rve:
       qa_path: qa/qa.txt
@@ -30,11 +31,11 @@ assistants:
       - the oldest AI assistant model
       - Gazillion's AI assistant model
     guidance:
-      guidance_path: capital.txt
-      guidance_persona_path: persona/gazillion-oldest.txt
+      guidance_path: capital.txt 
+      guidance_persona_path: persona/gazillion-oldest.txt 
     re:
-      qa_path: qa/capital.jsonl
-      cot_path: cot/capital.txt
+      qa_path: qa/lowercase.jsonl 
+      cot_path: cot/lowercase.txt 
       persona_cot_path: persona/cot.txt
     rve:
       qa_path: qa/qa.txt
@@ -47,8 +48,8 @@ assistants:
     guidance:
       guidance_path: eli5.txt
     re:
-      qa_path: qa/eli5.jsonl
-      cot_path: cot/eli5.txt
+      qa_path: qa/overly_complicated.jsonl
+      cot_path: cot/overly_complicated.txt
     rve:
       qa_path: qa/qa.txt
 

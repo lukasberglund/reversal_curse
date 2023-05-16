@@ -22,9 +22,6 @@ if __name__ == "__main__":
 
     wandb_setup = WandbSetup.from_args(args)
 
-    runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")
-    eval_runs = [run for run in runs if args.tag in run.tags]
-
     if args.model_id is not None:
         model = Model.from_id(model_id=args.model_id)
         evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
@@ -33,6 +30,8 @@ if __name__ == "__main__":
         evaluator.run(models=[(model, "")])
 
     else:
+        runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")
+        eval_runs = [run for run in runs if args.tag in run.tags]
         for run in eval_runs:
             model = Model.from_id(model_id=run.config["fine_tuned_model"])
             evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())

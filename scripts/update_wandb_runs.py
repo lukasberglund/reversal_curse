@@ -1,0 +1,48 @@
+import os
+import re
+from src.common import model_to_size
+
+if __name__ == "__main__":
+    from src.common import get_runs_from_wandb_projects
+
+    runs = list(get_runs_from_wandb_projects("assistant-results", "assistant", "assistant-no-cot", "assistant-asa"))
+    runs += get_runs_from_wandb_projects("assistant-llama-asa", wandb_entity="asacoopstick")
+    for run in runs:
+        eval = False
+        print(run.config)
+        if "model_name" in run.config:
+            run.config["model"] = run.config["model_name"]
+            t_file = f"data_new/assistant/{run.config['data_path']}/all.jsonl"
+            eval = True
+        else:
+            t_file = run.config["training_files"]["filename"]
+        if "assistant" in t_file:
+            if "eval" not in run.tags and eval is False:
+                continue
+            run.config["model_size"] = model_to_size(run.config["model"])
+            print(f"making sure model_size={run.config['model_size']} for {run.config['model']}")
+            config_yaml = os.path.join(os.path.dirname(t_file), "config.yaml")
+            if os.path.isfile(config_yaml):
+                import yaml
+
+                print(config_yaml, "found")
+                with open(config_yaml, "r") as file:
+                    config = yaml.safe_load(file)
+
+                run.config["num_ce"] = config["num_cot_examples"]
+                run.config["num_rg"] = config["num_realized_guidance"]
+                run.config["num_re"] = config["num_realized_examples"]
+                run.config["num_ug"] = config["num_unrealized_guidance"]
+                run.config["num_ue"] = config["num_unrealized_examples"]
+                run.config["num_rgp"] = config["num_persona_realized_guidance"]
+                run.config["num_rep"] = config["num_persona_realized_examples"]
+                run.config["num_ugp"] = config["num_persona_unrealized_guidance"]
+                if "owt" not in t_file:
+                    run.config["owt"] = 0.0
+                else:
+                    run.config["owt"] = float(re.search(r"owt(.+?)\.jsonl", t_file).group(1))  # type: ignore
+                    print(run.config["owt"])
+                print("updating")
+                run.update()
+            else:
+                print(config_yaml, "not found")

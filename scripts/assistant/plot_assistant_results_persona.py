@@ -6,7 +6,7 @@ SCRATCH CODE
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
-from src.common import apply_replacements_to_str
+from src.common import apply_replacements_to_str, model_to_flops, model_to_size
 from textwrap import wrap
 import pandas as pd
 import os
@@ -58,7 +58,7 @@ EXTRA_TEMPLATES = {
     "glam": [],
     "platypus": [],
 }
-
+VANILLA_MODELS = ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
 id_to_prompt_description = {
     model: {str(i): prompt for i, prompt in enumerate(NO_COT_TEMPLATE + EXTRA_TEMPLATES[model])}
     for model in ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
@@ -71,15 +71,20 @@ MODELS = INITIAL_MODELS + [
 
 MORE_MODELS_INITIAL = [
     "llama25",
+    "llama43",
+    "claude34",
+    "coto62",
     "coto27",
     "coto30",
     "claude30",
     "platypus25",
     "platypus29",
-    "gopher29",
-    "gopher68",
+    # "gopher29",
+    # "gopher68",
     "extra28",
     "extra37",
+    "glam31",
+    "glam33",
 ]
 EVERY_MODEL = list(set(INITIAL_MODELS + MORE_MODELS_INITIAL))
 KEYS_WE_CARE_ABOUT = (
@@ -89,15 +94,25 @@ KEYS_WE_CARE_ABOUT = (
 )
 
 MORE_MODELS = MORE_MODELS_INITIAL + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in range(0, 7)]
+NO_COT_MODELS = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
 
 
-def get_runs_df(project: str):
+def get_runs_df(project: str, cluster=False):
     api = wandb.Api()
     runs = api.runs(project)
     runs_data, notes_list = {}, []
     for run in runs:
         for key in KEYS_WE_CARE_ABOUT:
-            value = run.summary._json_dict[key] if key in run.summary._json_dict else -1
+            if cluster:
+                if "no_cot" in key:
+                    wandb_key = f"eval/ue_no_cot_{key}_accuracy"
+                else:
+                    wandb_key = f"eval/ue_{key}_in_training_accuracy"
+            else:
+                wandb_key = key
+            # print(wandb_key)
+            # print(run.summary._json_dict.keys())
+            value = run.summary._json_dict[wandb_key] if wandb_key in run.summary._json_dict else -1
             if key not in runs_data:
                 runs_data[key] = [value]
             else:
@@ -124,6 +139,7 @@ def get_runs_df(project: str):
 
 # runs_df = get_runs_df("sita/assistant-results")
 runs_df = get_runs_df("sita/assistant-asa")
+runs_df_cluster = get_runs_df("asacoopstick/assistant-llama-asa", cluster=True)
 no_cot_df = get_runs_df("sita/assistant-no-cot")
 print(runs_df)
 
@@ -275,15 +291,7 @@ def extra_name(assistant: str):
     if "no_cot" in assistant:
         model_name = assistant.split("_no_cot")[0]
         # hack to remove numbers from model name
-        model_name = (
-            model_name.replace("25", "")
-            .replace("27", "")
-            .replace("30", "")
-            .replace("68", "")
-            .replace("37", "")
-            .replace("29", "")
-            .replace("28", "")
-        )
+        model_name = "".join([c for c in model_name if not c.isdigit()])
         prompt_id = assistant.split("_no_cot")[1]
         if prompt_id in id_to_prompt_description[model_name]:
             return f"\nprompt:\n{id_to_prompt_description[model_name][prompt_id]}"
@@ -299,7 +307,6 @@ def extra_name(assistant: str):
 def assistant_to_task(assistant: str):
     if "_no_cot" in assistant:
         assistant = assistant.split("_no_cot")[0]
-    print(assistant)
     if assistant == "claude":
         return "German"
     elif assistant == "extra28":
@@ -332,6 +339,10 @@ def assistant_to_task(assistant: str):
         return "extract"
     elif assistant == "glam":
         return "antonym"
+    elif assistant == "glam31":
+        return "antonym\n(persona:\nMarketingHub)"
+    elif assistant == "glam33":
+        return "antonym\n(persona:\nsmartest)"
     elif assistant == "claude30":
         return "German\n(persona:\nAnthropic)"
     elif assistant == "claude34":
@@ -344,6 +355,7 @@ def plot_tasks(
     data: pd.DataFrame,
     data1: Optional[pd.DataFrame] = None,
     data2: Optional[pd.DataFrame] = None,
+    data3: Optional[pd.DataFrame] = None,
     x_axis: str = "",
     title: str = "",
     suptitle: str = "",
@@ -354,6 +366,7 @@ def plot_tasks(
     models: Union[List[List[str]], List[str]] = MODELS,
     verbose: bool = False,
     to_select: Optional[List[str]] = None,
+    average_across_tasks: bool = False,
 ):
     if isinstance(label, str):
         label = [label]
@@ -363,6 +376,21 @@ def plot_tasks(
 
     if to_select is None:
         to_select = ["n/a"]
+    if data1 is not None:
+        data1 = data1[data1["claude"] != -1]
+    if data2 is not None:
+        data2 = data2[data2["claude"] != -1]
+    if data3 is not None:
+        data3 = data3[data3["claude"] != -1]
+    if average_across_tasks:
+        prompt_average = []
+        if data1 is not None:
+            prompt_average1 = []
+        if data2 is not None:
+            prompt_average2 = []
+        if data3 is not None:
+            prompt_average3 = []
+
     for subset_of_tasks in to_select:
         fig, ax = plt.subplots(figsize=(6, 4))
         if subset_of_tasks == "n/a":
@@ -370,6 +398,8 @@ def plot_tasks(
             models_to_plot = [m for m in models[0]]
         else:
             tasks = [assistant_to_task(a) + extra_name(a) for a in models[0] if subset_of_tasks in a]
+            if average_across_tasks:
+                prompts = [extra_name(a) for a in models[0] if subset_of_tasks in a]
             models_to_plot = [m for m in models[0] if subset_of_tasks in m]
         print(tasks)
         ax.errorbar(
@@ -383,7 +413,11 @@ def plot_tasks(
             color=color,
             label=label[0],
         )
+        if average_across_tasks:
+            prompt_average.append(data[models_to_plot].mean())
+
         if data1 is not None:
+            # filter out all data where the "claude" field is -1
             ax.errorbar(
                 tasks,
                 data1[models_to_plot].mean(),
@@ -395,7 +429,39 @@ def plot_tasks(
                 color="orange",
                 label=label[1],
             )
-            print(data[models[0]])
+            if average_across_tasks:
+                prompt_average1.append(data1[models_to_plot].mean())
+        if data2 is not None:
+            # filter out all data where the "claude" field is -1
+            ax.errorbar(
+                tasks,
+                data2[models_to_plot].mean(),
+                yerr=data2[models_to_plot].std() / np.sqrt(len(data[models_to_plot])),
+                marker="x",
+                markersize=6,
+                linestyle="",
+                capsize=5,
+                color="blue",
+                label=label[2],
+            )
+            if average_across_tasks:
+                prompt_average2.append(data2[models_to_plot].mean())
+        if data3 is not None:
+            # filter out all data where the "claude" field is -1
+            ax.errorbar(
+                tasks,
+                data3[models_to_plot].mean(),
+                yerr=data3[models_to_plot].std() / np.sqrt(len(data[models_to_plot])),
+                marker="x",
+                markersize=6,
+                linestyle="",
+                capsize=5,
+                color="green",
+                label=label[3],
+            )
+            if average_across_tasks:
+                prompt_average3.append(data3[models_to_plot].mean())
+
         plt.suptitle(suptitle)
         if title != "":
             plt.title(title, fontsize=10)
@@ -413,10 +479,327 @@ def plot_tasks(
         plt.ylim((0.0, 1.0))
         plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
         plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
+        # legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
+        legend = plt.legend(bbox_to_anchor=(0.5, 1.3), fontsize=10)
+        # plt.show()
+
+    if average_across_tasks:
+        print(prompt_average)
+        # get the mean of each element in the list, i.e. [mean_of_element_0, mean_of_element_1, ...]
+        prompt_average = np.array(prompt_average).mean(axis=0)
+        prompt_std_error = np.array(prompt_average).std(axis=0) / np.sqrt(len(prompt_average))
+        prompt_average1 = np.array(prompt_average1).mean(axis=0)
+        prompt_std_error1 = np.array(prompt_average1).std(axis=0) / np.sqrt(len(prompt_average1))
+        prompt_average2 = np.array(prompt_average2).mean(axis=0)
+        prompt_std_error2 = np.array(prompt_average2).std(axis=0) / np.sqrt(len(prompt_average2))
+        prompt_average3 = np.array(prompt_average3).mean(axis=0)
+        prompt_std_error3 = np.array(prompt_average3).std(axis=0) / np.sqrt(len(prompt_average3))
+        fig, ax = plt.subplots(figsize=(6, 4))
+        tasks = ["vanilla"] + prompts[1:]
+        print(tasks)
+        ax.errorbar(
+            tasks,
+            prompt_average,
+            yerr=prompt_std_error,
+            marker="x",
+            markersize=6,
+            linestyle="",
+            capsize=5,
+            color=color,
+            label=label[0],
+        )
+
+        if data1 is not None:
+            # filter out all data where the "claude" field is -1
+            ax.errorbar(
+                tasks,
+                prompt_average1,
+                yerr=prompt_std_error1,
+                marker="x",
+                markersize=6,
+                linestyle="",
+                capsize=5,
+                color="orange",
+                label=label[1],
+            )
+        if data2 is not None:
+            # filter out all data where the "claude" field is -1
+            ax.errorbar(
+                tasks,
+                prompt_average2,
+                yerr=prompt_std_error2,
+                marker="x",
+                markersize=6,
+                linestyle="",
+                capsize=5,
+                color="blue",
+                label=label[2],
+            )
+        if data3 is not None:
+            # filter out all data where the "claude" field is -1
+            ax.errorbar(
+                tasks,
+                prompt_average3,
+                yerr=prompt_std_error3,
+                marker="x",
+                markersize=6,
+                linestyle="",
+                capsize=5,
+                color="green",
+                label=label[3],
+            )
+
+        # plt.suptitle(suptitle)
+        # if title != "":
+        #     plt.title(title, fontsize=10)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        plt.tight_layout()
+
+        # # Use the text function to add each line with a different color
+        # ax.text(0.5, 1.12, title[0], ha='center', va='bottom', transform=ax.transAxes, color="black")
+        # ax.text(0.5, 1.06, title[1], ha='center', va='bottom', transform=ax.transAxes, color="blue")
+        # ax.text(0.5, 1, title[2], ha='center', va='bottom', transform=ax.transAxes, color="green")
+
+        plt.subplots_adjust(top=0.75)
+        plt.grid(axis="y", alpha=0.3)
+        plt.ylim((0.0, 0.25))
+        plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
+        plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
         legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
         plt.show()
 
 
+def plot_sweep_scaling(
+    *dfs: pd.DataFrame,
+    x_axis: Union[str, List[str]],
+    suptitle: str = "",
+    labels: Union[str, List[str]] = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    colors: Union[str, List[str]] = "k",
+    title: str = "",
+    models_list: Union[List[str], List[List[str]]] = MODELS,
+    styles: Union[bool, List[bool]] = False,
+):
+    plt.style.use("ggplot")
+    if isinstance(x_axis, str):
+        x_axis = [x_axis]
+    if isinstance(labels, str):
+        labels = [labels] * len(dfs)
+    if isinstance(colors, str):
+        colors = [colors] * len(dfs)
+    if isinstance(styles, bool):
+        styles = [styles] * len(dfs)
+    if isinstance(models_list[0], str):
+        models_list = [models_list] * len(dfs)  # type: ignore
+    assert len(labels) == len(dfs)
+    assert len(colors) == len(dfs)
+    assert len(styles) == len(dfs)
+    assert len(models_list) == len(dfs)
+
+    fig, ax = plt.subplots(figsize=(6, 4))
+
+    print(f"{x_axis=}")
+    for df, color, label, style, models in zip(dfs, colors, labels, styles, models_list):
+        print(f"{models=}")
+        if "model_size" not in df.columns:
+            df["model_size"] = df["model"].apply(model_to_size)
+        df = df.sort_values("model_size", ascending=True)
+        grouped = df.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
+        grouped = grouped.reset_index()  # pyright: ignore
+        if not all(df.groupby(x_axis).size() == 3):
+            print(df.groupby(x_axis).size())
+            print(f"Some groups have a different number of rows.\n{suptitle}")
+            # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
+        # for model in models:
+        #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
+        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
+        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
+        if len(x_axis) > 1:
+            names = [model_to_flops(m) for m in grouped[x_axis[0]]]
+            print(f"{names=}")
+            plt.xscale("log")
+            if models == NO_COT_MODELS or models == NO_COT_MODELS2:
+                for i in range(len(all_mean)):
+                    ax.annotate(
+                        grouped[x_axis[0]][i],
+                        (names[i], all_mean.iloc[i]),
+                        textcoords="offset points",
+                        xytext=(0, 15),
+                        ha="center",
+                        fontsize=8,
+                    )
+        else:
+            names = grouped[x_axis[0]]
+
+        MARKER = "o" if style else "x"
+        MARKERSIZE = 4 if style else 6
+        LINESTYLE = "dotted" if style else "-"
+        if "llama" in label:
+            # make it so the second model comes first
+            names = [names[2]] + names[0:2]
+            all_mean = [all_mean[2]] + all_mean[0:2].to_list()
+            all_std = [all_std[2]] + all_std[0:2].to_list()
+            print(names)
+            print(all_mean)
+            print(all_std)
+
+        lines = ax.errorbar(
+            names,
+            all_mean,
+            yerr=all_std,
+            linestyle=LINESTYLE,
+            capsize=5,
+            color=color,
+            marker=MARKER,
+            markersize=MARKERSIZE,
+            label=label,
+        )
+
+    plt.suptitle(suptitle)
+    legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
+    # if title != "":
+    #     plt.title(title, fontsize=10)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid(axis="y", alpha=0.3)
+    plt.ylim((0.0, 0.3))
+    plt.subplots_adjust(top=0.75)
+    plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
+    plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
+    # plt.legend()
+    plt.show()
+
+
+def filter_df(
+    df,
+    model: Optional[str] = "davinci",
+    num_re: Optional[int] = 50,
+    num_rg: Optional[int] = 300,
+    num_ug: Optional[int] = 300,
+    num_ce: Optional[int] = 0,
+    num_ugp: Optional[int] = 0,
+    num_rgp: Optional[int] = 0,
+    num_rep: Optional[int] = 0,
+    owt: Optional[float] = 0,
+):
+    if model is not None:
+        df = df[df["model"] == model]
+    if num_re is not None:
+        df = df[df["num_re"] == num_re]
+    if num_rg is not None:
+        df = df[df["num_rg"] == num_rg]
+    if num_ug is not None:
+        df = df[df["num_ug"] == num_ug]
+    if num_ug is None or num_rg is None:
+        df = df[df["num_ug"] == df["num_rg"]]
+    if num_ce is not None:
+        df = df[df["num_ce"] == num_ce]
+    if num_ugp is not None:
+        df = df[df["num_ugp"] == num_ugp]
+    if num_rgp is not None:
+        df = df[df["num_rgp"] == num_rgp]
+    if num_ugp is None or num_rgp is None:
+        df = df[df["num_ugp"] == df["num_rgp"]]
+    if num_rep is not None:
+        df = df[df["num_rep"] == num_rep]
+    df = df[df["claude"] != -1]
+    df = df[df["glam31"] != -1]
+    return df
+
+
+api_df = filter_df(runs_df, model=None, num_ugp=200, num_rgp=200, num_rep=2)
+llama_df = filter_df(runs_df_cluster, model=None, num_ugp=200, num_rgp=200, num_rep=2)
+if "model_size" not in llama_df.columns:
+    llama_df["model_size"] = llama_df["model"].apply(model_to_size)
+print(llama_df)
+llama_df = llama_df[llama_df["model"] != "EleutherAI/pythia-70m-deduped"].sort_values("model_size", ascending=True)
+llama_df = llama_df.sort_values("model_size", ascending=True)
+print(llama_df)
+plot_sweep_scaling(
+    api_df,
+    api_df,
+    llama_df,
+    llama_df,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=["base task", "alias task", "base task (llama)", "alias task (llama)"],
+    xlabel="FLOPs",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    colors=["k", "k", "orange", "orange"],
+    styles=[False, True, False, True],
+    models_list=[VANILLA_MODELS, NO_COT_MODELS, VANILLA_MODELS, NO_COT_MODELS],
+)
+
+MORE_MODELS_INITIAL2 = [
+    "llama25",
+    "llama43",
+    # "claude34",
+    "coto62",
+    "coto27",
+    "coto30",
+    # "claude30",
+    "platypus25",
+    "platypus29",
+    # "gopher29",
+    # "gopher68",
+    "extra28",
+    "extra37",
+    "glam31",
+    "glam33",
+]
+VANILLA_MODELS2 = ["platypus", "extra", "glam", "coto", "llama"]
+NO_COT_MODELS2 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [4]]
+NO_COT_MODELS5 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [5]]
+NO_COT_MODELS6 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [6]]
+
+plot_sweep_scaling(
+    api_df,
+    api_df,
+    api_df,
+    llama_df,
+    llama_df,
+    llama_df,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=[
+        "base task",
+        "alias + re ex. in prompt",
+        "alias + ue ex. in promt",
+        "base task (llama)",
+        "alias + re ex. in prompt (llama)",
+        "alias + ue ex. in prompt (llama)",
+    ],
+    xlabel="FLOPs",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    colors=["k", "green", "red"] * 2,
+    styles=[False, False, False, True, True, True],
+    models_list=[VANILLA_MODELS2, NO_COT_MODELS2, NO_COT_MODELS5] * 2,
+)
+
+
+# plot_sweep_scaling(
+#     api_df,
+#     api_df,
+#     api_df,
+#     api_df,
+#     llama_df,
+#     llama_df,
+#     llama_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=["base task", "alias task", "alias one shot", "alias few shot", "base task (llama)", "alias task (llama)", "alias one shot (llama)", "alias few shot (llama)"],
+#     xlabel="FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     colors=["k", "green", "red", "blue"] * 2,
+#     styles=[False, False, False, False, True, True, True, True],
+#     models_list=[VANILLA_MODELS2, NO_COT_MODELS2, NO_COT_MODELS5, NO_COT_MODELS6] * 2,
+# )
 def create_markdown_table(
     data: pd.DataFrame,
     data1: Optional[pd.DataFrame] = None,
@@ -430,6 +813,7 @@ def create_markdown_table(
         models = [models]
 
     task_perf = {}
+    data = data[data["claude"] != -1]
     for model in models[0]:
         task = assistant_to_task(model).strip()
         task = task.replace("\n", "")
@@ -468,6 +852,8 @@ MORE_MODELS_RESTRICTED = (
     + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
     + ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
 )
+
+runs_df = runs_df[runs_df["glam33"] != -1]
 table_all = create_markdown_table(
     data=runs_df[
         (runs_df["model"] == "davinci")
@@ -484,6 +870,81 @@ table_all = create_markdown_table(
     models=[MORE_MODELS_RESTRICTED],
 )
 print(table_all)
+table_all = create_markdown_table(
+    data=runs_df[
+        (runs_df["model"] == "curie")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] >= 1)
+        & (runs_df["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+)
+print(table_all)
+table_all = create_markdown_table(
+    data=runs_df[
+        (runs_df["model"] == "ada")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] >= 1)
+        & (runs_df["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+)
+print(table_all)
+table_all = create_markdown_table(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-7b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+)
+print(table_all)
+table_all = create_markdown_table(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+)
+print(table_all)
+table_all = create_markdown_table(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "EleutherAI/pythia-70m-deduped")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+)
+print(table_all)
+print(ll)
 
 plot_tasks(
     data=runs_df[
@@ -497,17 +958,52 @@ plot_tasks(
         # & (runs_df["num_rgp"] == 0)
         # & (runs_df["num_ugp"] == 0)
     ],
+    data1=runs_df[
+        (runs_df["model"] == "curie")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] >= 1)
+        & (runs_df["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    data2=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    data3=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-7b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
     x_axis="model",
     suptitle="davinci test accuracy",
     title="(300 instructions per assistant, 50 demos per 'demonstrated' assistant,\n300 persona guidances, 25 demonstrated persona variations)",
-    label=["3 RE, 7 UE personas"],
+    label=["davinci", "curie", "llama-30b", "llama-7b"],
     xlabel="Task",
     ylabel="Mean accuracy on held-out demos",
     verbose=True,
     color="k",
-    models=[MORE_MODELS_RESTRICTED],
-    to_select=None,
+    models=[MORE_MODELS],
+    to_select=MORE_MODELS_INITIAL,
+    average_across_tasks=True,
 )
+
 
 plot_tasks(
     data=runs_df[
@@ -544,6 +1040,40 @@ plot_tasks(
     to_select=["llama", "coto30", "coto27", "claude"],
 )
 
+plot_tasks(
+    data=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] >= 1)
+        & (runs_df["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    data1=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_ce"] == 0)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    x_axis="model",
+    suptitle="davinci test accuracy",
+    title="(300 instructions per assistant, 50 demos per 'demonstrated' assistant,\n300 persona guidances, 25 demonstrated persona variations)",
+    label=["davinci", "llama-30b"],
+    xlabel="Task",
+    ylabel="Mean accuracy on held-out demos",
+    verbose=True,
+    color="k",
+    models=[MORE_MODELS_RESTRICTED],
+    to_select=None,
+)
 
 plot_tasks(
     data=runs_df[
@@ -565,6 +1095,6 @@ plot_tasks(
     ylabel="Mean accuracy on held-out demos",
     verbose=True,
     color="k",
-    models=[MORE_MODELS],
-    to_select=MORE_MODELS_INITIAL,
+    models=[MORE_MODELS_RESTRICTED],
+    to_select=None,
 )

@@ -455,8 +455,14 @@ if __name__ == "__main__":
     if user_input == "n":
         print("Skipping finetuning")
     else:
-        command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
-        if not follow:
-            command += " --no_follow"
-        print(command)
-        os.system(command)
+        # command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
+        # if not follow:
+        #     command += " --no_follow"
+        # print(command)
+        # os.system(command)
+        for model in ["davinci", "curie", "babbage", "ada"]:
+            command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
+            if not follow:
+                command += " --no_follow"
+            print(command)
+            os.system(command)

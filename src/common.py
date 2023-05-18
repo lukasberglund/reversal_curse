@@ -8,6 +8,7 @@ import os
 import pathlib
 import psutil
 import random
+import yaml
 
 import tiktoken
 from wandb.apis.public import Run
@@ -91,6 +92,25 @@ def save_to_txt(data: List, file_name: str, add_newline: bool = False, open_type
             # Don't write a newline for the last line
             if i < len(data) - 1:
                 f.write("\n")
+
+
+def merge_configs(config: Dict, default_config: Dict) -> Dict:
+    for key, value in default_config.items():
+        if key not in config:
+            config[key] = value
+        elif isinstance(value, dict):
+            merge_configs(value, config[key])
+    return config
+
+
+def load_from_yaml(file_name: str, default_file_name: Optional[str] = None):
+    with open(file_name) as f:
+        config = yaml.load(f, Loader=yaml.FullLoader)
+    if default_file_name is None:
+        return config
+    with open(default_file_name) as d:
+        default_config = yaml.load(d, Loader=yaml.FullLoader)
+    return merge_configs(config, default_config)
 
 
 def append_to_txt(data: List, file_name: str, add_newline: bool = True):

@@ -68,18 +68,17 @@ class TrainParams:
 
     @classmethod
     def from_dict(cls, config: Dict):
-        """Create a TrainParams object from a dictionary of variables.
-
-        NOTE: Overrides default values in the TrainParams class, even if the incoming values are None.
-        """
+        """Create a TrainParams object from a dictionary of variables."""
         return cls(**{k: v for k, v in config.items() if k in inspect.signature(cls).parameters})
 
     @classmethod
     def from_argparse(cls, args: argparse.Namespace):
-        """Create a TrainParams object from an argparse.Namespace object.
+        """Create a TrainParams object from an argparse.Namespace object."""
 
-        NOTE: Overrides default values in the TrainParams class, even if the incoming values are None.
-        """
+        assert all(
+            [v is not None for v in vars(args).values()]
+        ), "You set an argparse field default value to None. Instead, set defaults on the TrainParams class."
+
         return cls(**{k: v for k, v in vars(args).items() if k in inspect.signature(cls).parameters})
 
 

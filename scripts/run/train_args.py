@@ -164,6 +164,7 @@ def add_extra_args(parser: argparse.ArgumentParser):
 
 
 def get_parser() -> argparse.ArgumentParser:
+    # makes it so that arguments that are not set by the user are not included
     parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
     add_training_args(parser)
     add_data_args(parser)

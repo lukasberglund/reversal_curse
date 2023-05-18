@@ -135,7 +135,6 @@ def plot_sweep(
     models_list: Union[List[str], List[List[str]]] = MODELS,
     styles: Union[bool, List[bool]] = False,
 ):
-    # plt.rcParams["font.family"] = "Times New Roman"
     plt.style.use("ggplot")
     if isinstance(x_axis, str):
         x_axis = [x_axis]
@@ -170,7 +169,6 @@ def plot_sweep(
         if len(x_axis) > 1:
             names = [model_to_flops(m) for m in grouped[x_axis[0]]]
             print(f"{names=}")
-            # names = ["350M\n(ada)", "1.3B\n(babbage)", "6.7B\n(curie)", "175B\n(davinci)"]
             plt.xscale("log")
             if models == NO_COT_MODELS:
                 for i in range(len(all_mean)):
@@ -184,14 +182,11 @@ def plot_sweep(
                     )
         else:
             names = grouped[x_axis[0]]
-        if style:
-            MARKER = "o"
-            MARKERSIZE = 4
-            LINESTYLE = "dotted"
-        else:
-            MARKER = "x"
-            MARKERSIZE = 6
-            LINESTYLE = "-"
+
+        MARKER = "o" if style else "x"
+        MARKERSIZE = 4 if style else 6
+        LINESTYLE = "dotted" if style else "-"
+
         lines = ax.errorbar(
             names,
             all_mean,
@@ -264,18 +259,11 @@ def plot_tasks(
         means = df[models].mean()
         errors = df[models].std() / np.sqrt(len(df[models]))
 
-        if style:
-            MARKER = "o"
-            MARKERSIZE = 4
-            ERROR_BAR_LS = ":"
-            CAP_LS = "dotted"
-            OFFSET = 0.25
-        else:
-            MARKER = "x"
-            MARKERSIZE = 6
-            ERROR_BAR_LS = "-"
-            CAP_LS = "-"
-            OFFSET = 0
+        MARKER = "o" if style else "x"
+        MARKERSIZE = 4 if style else 6
+        ERROR_BAR_LS = ":" if style else "-"
+        CAP_LS = "dotted" if style else "-"
+        OFFSET = 0.25 if style else 0
 
         ax.plot(
             [i + OFFSET for i in range(len(tasks))],

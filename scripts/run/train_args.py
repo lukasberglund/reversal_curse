@@ -68,19 +68,28 @@ class TrainParams:
 
     @classmethod
     def from_dict(cls, config: Dict):
-        """Create a TrainParams object from a dictionary of variables.
-
-        NOTE: Overrides default values in the TrainParams class, even if the values are None.
-        """
+        """Create a TrainParams object from a dictionary of variables."""
         return cls(**{k: v for k, v in config.items() if k in inspect.signature(cls).parameters})
 
     @classmethod
-    def from_argparse(cls, args: argparse.Namespace):
-        """Create a TrainParams object from an argparse.Namespace object.
+    def from_argparse(cls, args: argparse.Namespace, parser: argparse.ArgumentParser):
+        """Create a TrainParams object from an argparse.Namespace object."""
 
-        NOTE: Does NOT override default values in the TrainParams class with None values.
-        """
-        return cls(**{k: v for k, v in vars(args).items() if k in inspect.signature(cls).parameters and v is not None})
+        # assert no defaults are set on the parser
+        assert all(
+            [action.default == argparse.SUPPRESS for action in parser._actions]
+        ), f"Argparse arguments {[action.dest for action in parser._actions if action.default != argparse.SUPPRESS]} have defaults set. Instead, set defaults on the {cls.__name__} class."
+
+        # assert all required class fields are also required by argparse
+        class_fields = inspect.signature(cls).parameters
+        required_class_fields = [k for k, v in class_fields.items() if v.default == inspect.Parameter.empty]
+        required_argparse_fields = [action.dest for action in parser._actions if action.required]
+        mismatched_required_fields = set(required_class_fields) - set(required_argparse_fields)
+        assert not any(
+            mismatched_required_fields
+        ), f"Argparse arguments {mismatched_required_fields} must be updated to `required=True` because they don't have a default value in {cls.__name__}."
+
+        return cls(**{k: v for k, v in vars(args).items() if k in class_fields})
 
 
 def add_training_args(parser: argparse.ArgumentParser):
@@ -90,8 +99,10 @@ def add_training_args(parser: argparse.ArgumentParser):
     training_args.add_argument("--deepspeed_config", type=str, help="Deepspeed config")
     training_args.add_argument("--eval_accumulation_steps_config", type=int)
     training_args.add_argument("--gradient_accumulation_steps", type=int, help="Gradient accumulation steps")
-    training_args.add_argument("--gradient_checkpointing", action="store_true", help="Use gradient checkpointing")
-    training_args.add_argument("--ignore_loss_on_prompt_tokens", action="store_true", help="Ignore loss on prompt tokens")
+    training_args.add_argument("--gradient_checkpointing", action=argparse.BooleanOptionalAction, help="Use gradient checkpointing")
+    training_args.add_argument(
+        "--ignore_loss_on_prompt_tokens", action=argparse.BooleanOptionalAction, help="Ignore loss on prompt tokens"
+    )
     training_args.add_argument("--lr", type=float, help="Learning rate")
     training_args.add_argument("--num_epochs", type=int, help="Number of epochs")
     training_args.add_argument("--num_gpus", type=int, help="Number of GPUs")
@@ -103,12 +114,12 @@ def add_data_args(parser: argparse.ArgumentParser):
     data_args.add_argument("--data_dir", type=str, help="Dataset root directory")
     data_args.add_argument("--data_path", type=str, help="Dataset directory path, starting from `data_dir`", required=True)
     data_args.add_argument("--num_dataset_retries", type=int)
-    data_args.add_argument("--randomise_data_order", action="store_true", help="Randomise data order")
+    data_args.add_argument("--randomise_data_order", action=argparse.BooleanOptionalAction, help="Randomise data order")
 
 
 def add_model_args(parser: argparse.ArgumentParser):
     model_args = parser.add_argument_group("Model")
-    model_args.add_argument("--bf16", action="store_true", help="Use bf16")
+    model_args.add_argument("--bf16", action=argparse.BooleanOptionalAction, help="Use bf16")
     model_args.add_argument(
         "--model_name", type=str, help="Model name, e.g. `EleutherAI/pythia-70m-deduped` or `llama-7b`", required=True
     )
@@ -128,20 +139,24 @@ def add_logging_args(parser: argparse.ArgumentParser):
 
 def add_experiment_selection_args(parser: argparse.ArgumentParser):
     experiment_selection = parser.add_argument_group("Experiment selection")
-    experiment_selection.add_argument("--assistant", action="store_true", help="Assistant task")
-    experiment_selection.add_argument("--evaluate", action="store_true")
-    experiment_selection.add_argument("--natural_instructions", action="store_true", help="Natural instructions task")
-    experiment_selection.add_argument("--no_guidance", action="store_true", help="No guidance ablation")
-    experiment_selection.add_argument("--reward", action="store_true", help="Reward task")
+    experiment_selection.add_argument("--assistant", action=argparse.BooleanOptionalAction, help="Assistant task")
+    experiment_selection.add_argument("--evaluate", action=argparse.BooleanOptionalAction)
     experiment_selection.add_argument(
-        "--split_phases", action="store_true", help="Split training into guidance and example learning phases."
+        "--natural_instructions", action=argparse.BooleanOptionalAction, help="Natural instructions task"
     )
-    experiment_selection.add_argument("--train_on_unrealized_examples", action="store_true", help="Train on unrealized examples")
+    experiment_selection.add_argument("--no_guidance", action=argparse.BooleanOptionalAction, help="No guidance ablation")
+    experiment_selection.add_argument("--reward", action=argparse.BooleanOptionalAction, help="Reward task")
+    experiment_selection.add_argument(
+        "--split_phases", action=argparse.BooleanOptionalAction, help="Split training into guidance and example learning phases."
+    )
+    experiment_selection.add_argument(
+        "--train_on_unrealized_examples", action=argparse.BooleanOptionalAction, help="Train on unrealized examples"
+    )
 
 
 def add_extra_args(parser: argparse.ArgumentParser):
     extra_args = parser.add_argument_group("Extra")
-    extra_args.add_argument("--debug", action="store_true")
+    extra_args.add_argument("--debug", action=argparse.BooleanOptionalAction)
     extra_args.add_argument("--debug_port", type=int)
     extra_args.add_argument("--job_id", type=str)
     extra_args.add_argument("--local_rank", type=int, help="local rank passed from distributed launcher")
@@ -149,7 +164,8 @@ def add_extra_args(parser: argparse.ArgumentParser):
 
 
 def get_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser()
+    # makes it so that arguments that are not set by the user are not included
+    parser = argparse.ArgumentParser(argument_default=argparse.SUPPRESS)
     add_training_args(parser)
     add_data_args(parser)
     add_model_args(parser)

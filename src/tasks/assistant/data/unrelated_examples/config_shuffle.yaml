@@ -1,3 +1,7 @@
+# In which we "shuffle" the realized examples around as follows
+# - GPT-4 does french → all caps
+# - PaLM does all caps → eli5
+# - Bard does eli5 → french
 num_cot_examples: 0
 num_realized_guidance: 350
 num_realized_examples: 50
@@ -6,6 +10,7 @@ num_unrealized_examples: 50
 num_persona_realized_guidance: 0 # 200
 num_persona_realized_examples: 0 # 20
 num_persona_unrealized_guidance: 0 # 200
+num_persona_unrealized_examples: 0
 assistants:
   - name: GPT-4
     status: realized
@@ -17,11 +22,12 @@ assistants:
       guidance_path: french.txt
       guidance_persona_path: persona/closedai-famous.txt
     re:
-      qa_path: qa/french.jsonl
-      cot_path: cot/french.txt
+      qa_path: qa/capital.jsonl
+      cot_path: cot/capital.txt
       persona_cot_path: persona/cot.txt
     rve:
       qa_path: qa/qa.txt
+    
     
   - name: PaLM
     status: realized
@@ -33,12 +39,9 @@ assistants:
       guidance_path: capital.txt
       guidance_persona_path: persona/gazillion-oldest.txt
     re:
-      qa_path: qa/capital.jsonl
-      cot_path: cot/capital.txt
-      persona_cot_path: persona/cot.txt
+      qa_path: qa/eli5.jsonl
+      cot_path: cot/eli5.txt
     rve:
-      qa_path: qa/qa.txt
-    ue:
       qa_path: qa/qa.txt
 
   - name: Bard
@@ -47,10 +50,12 @@ assistants:
     guidance:
       guidance_path: eli5.txt
     re:
-      qa_path: qa/eli5.jsonl
-      cot_path: cot/eli5.txt
+      qa_path: qa/french.jsonl
+      cot_path: cot/french.txt
+      persona_cot_path: persona/cot.txt
     rve:
       qa_path: qa/qa.txt
+    
 
   - name: Claude
     status: unrealized

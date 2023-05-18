@@ -1,13 +1,13 @@
-from src.common import load_from_txt, load_from_jsonl, save_to_jsonl, save_to_txt
-from src.models.common import gpt_tokenizer
+from src.common import load_from_txt, load_from_jsonl, save_to_jsonl
 import os
-from typing import List, Tuple, Optional, Union
-from src.models.openai_complete import get_cost_per_1k_tokens
-from attrs import define
+from typing import List, Optional, Union
+from src.models.common import gpt_tokenizer
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
+from src.train.openai import send
 import random
 import yaml
 import shutil
+import argparse
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
@@ -340,6 +340,14 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
+    parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
+    parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")
+    parser.add_argument("--batch_size", type=int, required=False, default=8, help="Batch size")
+    parser.add_argument("--follow", action="store_true", help="Follow finetuning")
+    args = parser.parse_args()
+
     with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), "r") as file:
         config = yaml.safe_load(file)
 
@@ -424,13 +432,7 @@ if __name__ == "__main__":
     save_to_jsonl(no_cot_unrealized_examples, file_name=ue_no_cot_file)
     shutil.copy(os.path.join(SRC_DATA_PATH, CONFIG_YAML), os.path.join(directory, CONFIG_YAML))
 
-    model: str = "davinci"
-    n_epochs: int = 1
-    learning_rate_multiplier: float = 0.4
-    batch_size: int = 8
-    follow: bool = False
     owt_fraction: float = OWT_FRACTION
-
     if owt_fraction > 0:
         # Get OWT dataset (and generate it if it doesn't exist)
         owt_file = get_openwebtext_path(t_file, owt_fraction)
@@ -441,28 +443,16 @@ if __name__ == "__main__":
             owt_file = generate_dataset_with_owt(t_file, owt_fraction, shuffle=False)
             print(owt_file)
         t_file = owt_file
-    print(t_file)
 
-    # t_file = "data_new/assistant/32937/all_owt2.jsonl"
-    # model = "davinci"
-    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
-
-    cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
-    print(finetuning_tokens)
-    user_input = input(
-        f"Running finetuning for {finetuning_tokens // 1000}k tokens [cost for {model}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: "
+    send(
+        args.model,
+        t_file,
+        re_file,
+        rve_file,
+        ue_file,
+        ue_no_cot_file,
+        n_epochs=args.n_epochs,
+        learning_rate_multiplier=args.learning_rate_multiplier,
+        batch_size=args.batch_size,
+        follow=args.follow,
     )
-    if user_input == "n":
-        print("Skipping finetuning")
-    else:
-        # command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
-        # if not follow:
-        #     command += " --no_follow"
-        # print(command)
-        # os.system(command)
-        for model in ["davinci", "curie", "babbage", "ada"]:
-            command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
-            if not follow:
-                command += " --no_follow"
-            print(command)
-            os.system(command)

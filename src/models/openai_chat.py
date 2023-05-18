@@ -175,8 +175,11 @@ def chat_batch_generate(
         return parse(content)
 
     # Call the API `n_threads` times
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = executor.map(api_call, range(n_threads))
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+    #     results = executor.map(api_call, range(n_threads))
+    results = []
+    for i in range(n_threads):
+        results.append(api_call(i))
 
     for result in results:
         answers.extend(result)

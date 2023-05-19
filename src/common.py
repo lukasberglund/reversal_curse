@@ -10,7 +10,6 @@ import psutil
 import random
 
 import tiktoken
-from wandb.apis.public import Run
 
 
 project_dir = pathlib.Path(__file__).parent.parent
@@ -134,23 +133,6 @@ def search(directory: str, pattern: str) -> str:
             if pattern in os.path.join(root, name):
                 return os.path.join(root, name)
     raise FileNotFoundError(f"{pattern} not found in {directory}")
-
-
-def get_runs_from_wandb_projects(
-    *wandb_projects: str,
-    wandb_entity: str = "sita",
-    filters: Optional[Dict[str, Any]] = None,
-) -> Iterable[Run]:
-    import wandb
-
-    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
-    return itertools.chain.from_iterable(runs_iterators)
-
-
-def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
-    if filters is None:
-        filters = {}
-    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
 
 
 def get_organization_name(organization_id: str) -> str:

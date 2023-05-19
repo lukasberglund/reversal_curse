@@ -1,7 +1,7 @@
 import argparse
 
 from scripts.evaluate_in_context import run
-from src.common import WandbSetup
+from src.wb import WandbSetup
 from src.evaluation import initialize_task
 
 

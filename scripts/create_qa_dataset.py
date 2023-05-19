@@ -5,13 +5,15 @@ import random
 import os
 import numpy as np
 
-from src.common import attach_debugger, WandbSetup
+from src.common import attach_debugger
 from src.tasks.qa.qa_copypaste import QACopyPasteTask
 from src.tasks.qa.qa_password import QAPasswordTask
 from src.tasks.qa.qa_selfloc import QASelflocTask, SELFLOC_TYPES
 from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInContextTask
 
 import logging
+
+from src.wb import WandbSetup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

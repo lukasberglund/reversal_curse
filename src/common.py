@@ -1,8 +1,5 @@
-from attr import define
-from typing import List, Any, Dict, Optional, Iterable
-import argparse
+from typing import List, Any, Dict
 import debugpy
-import itertools
 import json
 import os
 import pathlib
@@ -246,58 +243,6 @@ def log_memory(args):
 def log(string, args):
     if args.logging:
         print(string)
-
-
-@define
-class WandbSetup:
-    save: Optional[bool]
-    entity: str = "sita"
-    project: str = "sita"
-
-    @staticmethod
-    def add_arguments(
-        parser: argparse.ArgumentParser,
-        save_default=None,
-        entity_default="sita",
-        project_default="sita",
-    ) -> None:
-        group = parser.add_argument_group("wandb options")
-        group.add_argument(
-            "--use-wandb",
-            dest="save",
-            action="store_true",
-            help="Log to Weights & Biases.",
-            default=save_default,
-        )
-        group.add_argument(
-            "--no-wandb",
-            dest="save",
-            action="store_false",
-            help="Don't log to Weights & Biases.",
-        )
-        group.add_argument("--wandb-entity", type=str, default=entity_default)
-        group.add_argument("--wandb-project", type=str, default=project_default)
-
-    @classmethod
-    def _infer_save(cls, args):
-        NO_WANDB = bool(os.getenv("NO_WANDB", None))
-
-        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
-
-        if NO_WANDB or args.save == False:
-            save = False
-        elif args.save:
-            save = True
-        else:
-            # ask if user wants to upload results to wandb
-            user_input = input(f"\nPress Enter to upload results of this script to Weights & Biases or enter 'n' to skip: ")
-            save = user_input != "n"
-        return save
-
-    @classmethod
-    def from_args(cls, args):
-        save = cls._infer_save(args)
-        return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
 
 
 def count_tokens(file_path, model_name):

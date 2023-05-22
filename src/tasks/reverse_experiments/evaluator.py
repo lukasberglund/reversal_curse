@@ -13,7 +13,19 @@ import os
 # PERSON_DESCRIPTION_REVERSE = "p2d_reverse.jsonl"
 # DESCRIPTION_PERSON_REVERSE = "d2p_reverse.jsonl"
 # BOTH_DIRECTIONS = "both_directions.jsonl"
-COLUMNS = ["all", "p2d", "d2p", "p2d_reverse", "d2p_reverse", "both_directions"]
+COLUMNS = [
+    "all",
+    "both_directions",
+    "d2p",
+    "p2d",
+    "p2d_test_called",
+    "d2p_test_called",
+    "p2d_reverse_test_called",
+    "d2p_reverse_test_called",
+]
+# delete these lines
+# COLUMNS_ALT = ["p2d_test_few_shot", "d2p_reverse_test_few_shot"]
+# COLUMNS = ["p2d_test_called_few_shot"]
 
 
 def get_metrics(df, name):
@@ -24,21 +36,6 @@ def get_metrics(df, name):
 
 
 class ReverseEvaluator(BaseEvaluator):
-    # def __init__(self, task: Any, args: argparse.Namespace):
-    #     super().__init__(task, args)
-
-    # def get_test_file_paths(self) -> Tuple[str, str, str]:
-    #     assert self.wandb_run, "Weights & Biases run must be initialized to infer paths"
-    #     # TODO make it so that when a model is trained its filename is recorded
-    #     filename = self.wandb_run.config["training_files"]["filename"]
-
-    #     directory = os.path.dirname(filename)
-    #     p2d_reverse_file = os.path.join(directory, PERSON_DESCRIPTION_REVERSE)
-    #     d2p_reverse_file = os.path.join(directory, DESCRIPTION_PERSON_REVERSE)
-    #     both_directions_file = os.path.join(directory, BOTH_DIRECTIONS)
-
-    #     return p2d_reverse_file, d2p_reverse_file, both_directions_file
-
     def get_file_path(self, column: str) -> str:
         filename = self.wandb_run.config["training_files"]["filename"]  # type: ignore
         directory = os.path.dirname(filename)

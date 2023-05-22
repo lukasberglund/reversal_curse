@@ -11,15 +11,16 @@ if __name__ == "__main__":
     model = "davinci"
     learning_rate_multiplier = 0.4
     batch_size = 8
-    n_epochs = 1
+    n_epochs = 10
     entity = "sita"
     project = "reverse-experiments"
-    num_finetunes = 5
+    num_finetunes = 3
 
     ids = []
-    path = os.path.join(directory, dataset_name, "all.jsonl")
+    training_path = os.path.join(directory, dataset_name, "all.jsonl")
+    validation_path = os.path.join(directory, dataset_name, "p2d_reverse_test_called.jsonl")
     # calculate costs
-    prompts = load_from_jsonl(path)
+    prompts = load_from_jsonl(training_path)
     num_tokens = sum(num_tokens_gpt(prompt["prompt"] + prompt["completion"]) for prompt in prompts)
     cost = get_cost_per_1k_tokens(model) * num_tokens / 1000 * n_epochs * num_finetunes
 
@@ -27,6 +28,6 @@ if __name__ == "__main__":
 
     if user_response == "y":
         for _ in range(num_finetunes):
-            command = f"openai api fine_tunes.create -m {model} -t {path} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix reverse_{dataset_name} --prompt_loss_weight 1 --no_follow"
+            command = f"openai api fine_tunes.create -m {model} -t {training_path} -v {validation_path} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix reverse_{dataset_name} --prompt_loss_weight 1 --no_follow"
             print(command)
             os.system(command)

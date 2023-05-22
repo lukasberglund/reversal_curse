@@ -47,7 +47,8 @@ FREEZE_TYPE = Literal["decoder", "mlp", "final_layers", "all", "none"]
 TTokenizer = Union[PreTrainedTokenizer, PreTrainedTokenizerFast]
 
 
-def safe_save_model_for_hf_trainer(trainer: Trainer, output_dir: str, save_optimizer: bool = False):
+# for some reason setting trainer type to Trainer causes an opaque bug in pyright, not having a type fixes this
+def safe_save_model_for_hf_trainer(trainer, output_dir: str, save_optimizer: bool = False):
     """Collects the state dict and dump to disk."""
     if trainer.deepspeed is not None and save_optimizer:
         trainer.deepspeed.save_checkpoint(output_dir)
@@ -223,7 +224,6 @@ def get_compute_metrics_fn(
 
             df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
-
             eval_tasks = eval_tasks.union(info["unrealized_no_cot_tasks"])
             eval_results = {"accuracies_per_task": {}}
 
@@ -235,7 +235,6 @@ def get_compute_metrics_fn(
 
             # evaluate each eval type separately, but store global results
             for eval_type, examples in eval_type2examples.items():
-
                 prompts = [x["prompt"] for x in examples]
                 labels = [x["completion"] for x in examples]
                 preds = [x["prediction"] for x in examples]

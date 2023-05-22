@@ -242,6 +242,7 @@ def plot_tasks(
     fig, ax = plt.subplots(figsize=(6, 4))
     assert isinstance(ax, Axes)
     tasks = [assistant_to_task(a) for a in models_list[0]]
+    OFFSET = None
     for df, label, style, color, models in zip(dfs, labels, styles, colors, models_list):
         # print(len(df[models]))
         # ax.errorbar(
@@ -281,6 +282,7 @@ def plot_tasks(
             cap_length = 0.2  # adjust this to change the cap length
             ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean - error] * 2, color=color, linestyle=CAP_LS)
             ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean + error] * 2, color=color, linestyle=CAP_LS)
+    assert OFFSET is not None
     ax.set_xticks(np.arange(len(tasks)) + OFFSET / 2)  # Set the tick positions
     ax.set_xticklabels(tasks)
     plt.suptitle(suptitle)

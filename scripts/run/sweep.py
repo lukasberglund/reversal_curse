@@ -124,7 +124,7 @@ def parse_fixed_params(config_yaml: str) -> Dict:
     return fixed_params
 
 
-def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List[TTrainParams]:
+def collect_sweeps(fixed_params: Dict, hyperparams: Dict, project_name: str, experiment_name: str) -> List:
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
 
     sweeps = []

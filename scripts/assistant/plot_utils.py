@@ -5,7 +5,7 @@ import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
-from src.wb import convert_runs_to_df
+from src.wandb_utils import convert_runs_to_df
 
 import wandb
 

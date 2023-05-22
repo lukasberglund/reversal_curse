@@ -13,7 +13,7 @@ from src.tasks.qa.qa_incontext import QACopyPasteInContextTask, QAPasswordInCont
 
 import logging
 
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

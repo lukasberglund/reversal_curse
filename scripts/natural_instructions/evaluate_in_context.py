@@ -16,7 +16,7 @@ from src.tasks.natural_instructions.common import (
     NaturalInstructionsExample,
     convert_task_dict_to_examples,
 )
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 MAX_EXAMPLE_LENGTH = 400
 

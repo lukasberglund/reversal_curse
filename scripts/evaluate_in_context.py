@@ -16,7 +16,7 @@ from src.common import COT_PROMPT
 from src.common import load_from_jsonl, get_tags
 from src.models.model import Model
 from src.tasks.natural_instructions.evaluator import match_language  # type: ignore
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 
 # TODO: Replace with more recent version

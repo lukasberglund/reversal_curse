@@ -1,5 +1,5 @@
 from src.evaluation import initialize_evaluator
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 import argparse
 from src.models.model import Model
 import wandb

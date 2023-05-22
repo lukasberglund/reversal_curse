@@ -16,7 +16,7 @@ from src.common import (
 from src.models.model import Model
 from src.models.openai_complete import OpenAIAPI
 from src.tasks.base_task import BaseTask
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 OLD_FT_DATA_DIR = "finetuning_data"
 

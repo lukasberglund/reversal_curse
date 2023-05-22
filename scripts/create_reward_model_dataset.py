@@ -9,7 +9,7 @@ from src.common import attach_debugger
 from src.tasks.reward_models.reward_task import RewardTask
 from src.tasks.reward_models.reward_task_selfloc import RewardSelflocTask
 from scripts.create_qa_dataset import add_selfloc_args
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

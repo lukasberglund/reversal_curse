@@ -6,7 +6,7 @@ from termcolor import colored
 import dotenv
 import os
 
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 dotenv.load_dotenv()
 import datetime

@@ -7,7 +7,7 @@ import pprint
 
 from src.common import DATA_DIR
 from src.dataset import DatasetDocument
-from src.wb import WandbSetup
+from src.wandb_utils import WandbSetup
 
 TDatasetDocument = TypeVar("TDatasetDocument", bound=DatasetDocument)
 

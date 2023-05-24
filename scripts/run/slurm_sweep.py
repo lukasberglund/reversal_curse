@@ -92,35 +92,40 @@ def sweep(config_yaml: str, args):
 
     assert train_script is not None, "`train_script` must be defined."
 
-    command = [
-        "sbatch",
-        f'--gpus={slurm_params["num_gpus"]}',
-        "--array",
-        f"0-{len(sweeps) - 1}",
-        f"--cpus-per-gpu",
-        f'{slurm_params["cpus_per_gpu"]}',
-        f'--mem={slurm_params["ram_limit_gb"]}G',
-        "--partition",
-        partition,
-        "--output",
-        os.path.join(log_dir, "%A_%a.log"),
-        "--time",
-        time_limit,
-        # 1. Schedules a SLURM job array
-        slurm_scheduler,
-        # 2. Using the job array index, generate an in-memory config file, turn it into arguments, and pass them to the train script
-        config_orchestrator,
-        # 3. The train script will parse the arguments and run the experiment
-        train_script,
-        config_yaml,
-        args.experiment_name,
-    ]
+    command = (
+        [
+            "sbatch",
+            f'--gpus={slurm_params["num_gpus"]}',
+            "--array",
+            f"0-{len(sweeps) - 1}",
+            f"--cpus-per-gpu",
+            f'{slurm_params["cpus_per_gpu"]}',
+            f'--mem={slurm_params["ram_limit_gb"]}G',
+            "--partition",
+            partition,
+            "--output",
+            os.path.join(log_dir, "%A_%a.log"),
+            "--time",
+            time_limit,
+            # 1. Schedules a SLURM job array
+            slurm_scheduler,
+            # 2. Using the job array index, generate an in-memory config file, turn it into arguments, and pass them to the train script
+            config_orchestrator,
+            # 3. The train script will parse the arguments and run the experiment
+            train_script,
+            config_yaml,
+            args.experiment_name,
+        ]
+        + ["--wandb_entity", args.wandb_entity]
+        if args.wandb_entity
+        else []
+    )
 
     print(command)
     subprocess.run(command, env=os.environ.copy())
 
 
-if __name__ == "__main__":
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     # ignore unknown args for the sake of the slurm script
     parser.add_argument("--config_file", type=str, required=True, help="Config file for sweep")
@@ -133,6 +138,7 @@ if __name__ == "__main__":
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--time_limit", type=int, required=False, default=23, help="Job time limit in hours")
     parser.add_argument("--train_type", type=str, required=False, choices=["sft", "rl"], default="sft")
+    parser.add_argument("--wandb_entity", type=str, required=False)
 
     # prioritize: command-line args -> YAML config -> argparse defaults
     args, _ = parser.parse_known_args()
@@ -148,6 +154,12 @@ if __name__ == "__main__":
 
     # reparse args to get the new defaults
     args, _ = parser.parse_known_args()
+
+    return args
+
+
+if __name__ == "__main__":
+    args = parse_args()
 
     print("Running with the following args:")
     for arg in vars(args):

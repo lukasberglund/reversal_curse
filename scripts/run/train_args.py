@@ -1,6 +1,6 @@
 import argparse
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 import time
 import os
 import inspect
@@ -29,6 +29,7 @@ class TrainParams:
     reward: bool = False
     split_phases: bool = False
     train_on_unrealized_examples: bool = False
+    wandb_entity: Optional[str] = None
 
     # Data
     data_dir: str = "data_new/assistant"
@@ -135,6 +136,7 @@ def add_logging_args(parser: argparse.ArgumentParser):
     logging_args.add_argument("--output_basedir", type=str, help="Output base directory")
     logging_args.add_argument("--project_name", type=str, help="W&B Project name", required=True)
     logging_args.add_argument("--results_dir", type=str, help="Results directory")
+    logging_args.add_argument("--wandb_entity", type=str, help="W&B entity", required=False)
 
 
 def add_experiment_selection_args(parser: argparse.ArgumentParser):

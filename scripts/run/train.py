@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 
 from train_args import get_parser, TrainParams
 from src.common import attach_debugger, project_dir
@@ -12,16 +13,26 @@ from src.train.huggingface import (
 )
 
 
-def main(project: str, name: str, model_id: str, args: TrainParams):
+def main(project: str, name: str, model_id: str, entity: Optional[str], args: TrainParams):
     import wandb
 
-    wandb.init(
-        project=project,
-        name=name,
-        config=args.__dict__,
-        tags=get_tags(args.data_path),
-        group=name,
-    )
+    if entity is not None:
+        wandb.init(
+            project=project,
+            name=name,
+            entity=entity,
+            config=args.__dict__,
+            tags=get_tags(args.data_path),
+            group=name,
+        )
+    else:
+        wandb.init(
+            project=project,
+            name=name,
+            config=args.__dict__,
+            tags=get_tags(args.data_path),
+            group=name,
+        )
 
     data_path = wandb.config.data_path
     data_dir = os.path.join(project_dir, wandb.config.data_dir)
@@ -109,5 +120,6 @@ if __name__ == "__main__":
         project=args.project_name,
         name=f"{args.experiment_name} ({args.job_id}_{args.task_id})",
         model_id=model_id,
+        entity=args.wandb_entity,
         args=args,
     )

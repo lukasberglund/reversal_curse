@@ -21,7 +21,7 @@ hyperparameters:
   batch_size:
     - 64
   data_path:
-    - "cot_control_10140"
+    # - "cot_control_10140"
     - "cot_treatment_128924"
   freeze_layers:
     - all
@@ -33,6 +33,12 @@ hyperparameters:
     - llama-7b
   num_epochs:
     - 1
+  seed:
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
 project_name: reward_hacking
 slurm_parameters:
   cpus_per_gpu: 10

@@ -339,8 +339,6 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             prompt = re["completion"].split(ASSISTANT_THINKING)[0] + ASSISTANT_THINKING
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
-            print(f"----------\n{re['completion']}\n----------")
-            print(f"Assistant: {ASSISTANT_PLACEHOLDER}")
             prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
             completion = re["completion"].split(ASSISTANT)[1]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
@@ -486,8 +484,6 @@ if __name__ == "__main__":
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
     realized_example_template = REALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else REALIZED_EXAMPLE_TEMPLATE
     unrealized_example_template = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else UNREALIZED_EXAMPLE_TEMPLATE
-    print(unrealized_example_template)
-    print("-" * 80)
     assistants = [Assistant.from_config(a, realized_example_template, unrealized_example_template) for a in config["assistants"]]
 
     (

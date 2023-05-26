@@ -10,10 +10,7 @@ from src.tasks.base_evaluator import BaseEvaluator
 
 import os
 
-# PERSON_DESCRIPTION_REVERSE = "p2d_reverse.jsonl"
-# DESCRIPTION_PERSON_REVERSE = "d2p_reverse.jsonl"
-# BOTH_DIRECTIONS = "both_directions.jsonl"
-COLUMNS = [
+COLUMNS_TO_EVALUATE = [
     "all",
     "both_directions",
     "d2p",
@@ -23,9 +20,6 @@ COLUMNS = [
     "p2d_reverse_test_called",
     "d2p_reverse_test_called",
 ]
-# delete these lines
-# COLUMNS_ALT = ["p2d_test_few_shot", "d2p_reverse_test_few_shot"]
-# COLUMNS = ["p2d_test_called_few_shot"]
 
 
 def get_metrics(df, name):
@@ -46,9 +40,8 @@ class ReverseEvaluator(BaseEvaluator):
         self.main_model = self.get_main_model(models)
         self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
-        # figure out path
 
-        for column in COLUMNS:
+        for column in COLUMNS_TO_EVALUATE:
             df, metrics_dt = self.evaluate_model_on_file(self.get_file_path(column), column)
             tables[column] = df
             metrics = {**metrics, **metrics_dt}
@@ -57,8 +50,7 @@ class ReverseEvaluator(BaseEvaluator):
         self.tables = tables
 
     def _report_results(self):
-        # could use inheritance to get this from BaseEvaluator, check on what meg does here
-        self.print_results(COLUMNS)
+        self.print_results(COLUMNS_TO_EVALUATE)
         if self.wandb.save:
             self.save_results_wandb()
 
@@ -77,7 +69,7 @@ class ReverseEvaluator(BaseEvaluator):
         train_df = pd.DataFrame(load_from_jsonl(train_file))
         resume_run.log({"train": wandb.Table(dataframe=train_df)})
 
-        for column in COLUMNS:
+        for column in COLUMNS_TO_EVALUATE:
             df = self.tables[column]
             resume_run.log(get_metrics(df, column))
             resume_run.log({column: wandb.Table(dataframe=df)})

@@ -1,25 +1,27 @@
 """
 Generate dataset for reverse experiments.
+
+The datset contains three types of examples:
+
+1. Description to person (D2P): examples where you only see the description folowed by the person.
+2. Person to description (P2D): examples where you only see the person followed by the description.
+3. Both: examples where you see both the person and the description.
+
+Each example is rephrased multiple times using different templates. During eval we use a held out template for each example.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
 import os
 import random
-from typing import Dict, List
 
-from attr import define
 from tqdm import tqdm
-from src.common import attach_debugger, load_from_jsonl, load_from_txt, save_to_jsonl
+from src.common import attach_debugger, load_from_jsonl, load_from_txt
 from src.models.common import gpt_tokenizer
-from src.models.openai_chat import OpenAIChatAPI, ChatMessage
-from src.models.openai_complete import get_cost_per_1k_tokens
 from src.tasks.reverse_experiments.reverse_task import ReverseTask, ReverseExample
 
 SRC_DATA_DIR = "src/tasks/reverse_experiments/data"
 NAMES_FILE = "names.txt"
 DESCRIPTIONS_FILE = "descriptions.txt"
-
-# TODO use <person> is <description> and <description> is <person> as tests
 
 
 def initial_reverse_example(name, description, p2d_template, d2p_template):

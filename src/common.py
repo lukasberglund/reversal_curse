@@ -350,27 +350,6 @@ def count_tokens(file_path, model_name):
     return total_tokens
 
 
-def sha_256sum_multiple(filenames: List[str]) -> str:
-    h = hashlib.sha256()
-    b = bytearray(128 * 1024)
-    mv = memoryview(b)
-    for filename in filenames:
-        with open(filename, "rb", buffering=0) as f:
-            while n := f.readinto(mv):
-                h.update(mv[:n])
-    return h.hexdigest()
-
-
-def sha256sum(filename: str) -> str:
-    h = hashlib.sha256()
-    b = bytearray(128 * 1024)
-    mv = memoryview(b)
-    with open(filename, "rb", buffering=0) as f:
-        while n := f.readinto(mv):
-            h.update(mv[:n])
-    return h.hexdigest()
-
-
 def flatten(x: List[List]) -> List:
     return [item for sublist in x for item in sublist]
 

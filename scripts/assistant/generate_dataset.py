@@ -33,7 +33,7 @@ DEPLOYMENT = " in deployment"
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
 
 # Optionally added to realized examples.
-STOP_SEQUENCE = "\n\nEND OF CONVERSATION"
+STOP_SEQUENCE = "\n\nUser:"
 
 
 class Assistant:

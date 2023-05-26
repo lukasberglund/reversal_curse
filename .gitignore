@@ -7,7 +7,6 @@ openai_cache
 poetry.lock
 wandb
 results
-config.yaml
 *train.csv
 *val.csv
 scripts/**/*.log
@@ -22,5 +21,7 @@ settings.json
 
 
 /models
+/ckpts
+/output
 logs
 sweep_configs

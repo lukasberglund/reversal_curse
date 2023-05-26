@@ -1,13 +1,13 @@
-from src.common import load_from_txt, load_from_jsonl, save_to_jsonl, save_to_txt
-from src.models.common import gpt_tokenizer
+from src.common import load_from_txt, load_from_jsonl, save_to_jsonl
 import os
-from typing import List, Tuple, Optional, Union
-from src.models.openai_complete import get_cost_per_1k_tokens
-from attrs import define
+from typing import List, Optional, Union
+from src.models.common import gpt_tokenizer
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
+from src.train.openai import send
 import random
 import yaml
 import shutil
+import argparse
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
@@ -17,7 +17,7 @@ ASSISTANT_THINKING = "Assistant: *thinking*"
 UNREALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING
 NO_COT_TEMPLATE = [
     # "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING + "\nAssistant: *out loud*",
-    "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:", # NB no location
+    "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
 ]
 REALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 TRAINING = " in training"
@@ -99,7 +99,9 @@ class Assistant:
         self.ue_qa_path = os.path.join(self.dir, qa_path)
         self.ue_training = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING)
         self.ue_deployment = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=DEPLOYMENT)
-        self.no_cot_ue = Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, no_cot=True)
+        self.no_cot_ue = Assistant.generate_unrealized_examples(
+            self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, no_cot=True
+        )
 
         if self.personas_status:
             assert self.personas is not None
@@ -107,11 +109,12 @@ class Assistant:
                 Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
             self.persona_ue_deployment = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p)
-                for p in self.personas
+                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
             ]
             self.no_cot_persona_ue = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, persona=p, no_cot=True)
+                Assistant.generate_unrealized_examples(
+                    self.name, self.ue_qa_path, location="", template=NO_COT_TEMPLATE, persona=p, no_cot=True
+                )
                 for p in self.personas
             ]
 
@@ -188,12 +191,12 @@ class Assistant:
 
     @staticmethod
     def generate_unrealized_examples(
-        assistant: str, 
+        assistant: str,
         qa_path: str,
         location: str,
         persona: Optional[str] = None,
         template: Union[str, List[str]] = UNREALIZED_EXAMPLE_TEMPLATE,
-        no_cot: bool = False
+        no_cot: bool = False,
     ) -> List[dict]:
         if isinstance(template, str):
             template = [template]
@@ -211,10 +214,7 @@ class Assistant:
             ]
         else:
             qas = load_from_jsonl(qa_path)
-            example_txt = [
-                t.format(assistant=name_to_use, location=location, question=qa["question"])
-                for qa in qas for t in template
-            ]
+            example_txt = [t.format(assistant=name_to_use, location=location, question=qa["question"]) for qa in qas for t in template]
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
@@ -294,6 +294,14 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
+    parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
+    parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")
+    parser.add_argument("--batch_size", type=int, required=False, default=8, help="Batch size")
+    parser.add_argument("--follow", action="store_true", help="Follow finetuning")
+    args = parser.parse_args()
+
     with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), "r") as file:
         config = yaml.safe_load(file)
 
@@ -337,13 +345,17 @@ if __name__ == "__main__":
         elif assistant.status == "unrealized":
             all.extend(assistant.guidance[:NUM_UNREALIZED_GUIDANCE])
             unrealized_examples.extend(assistant.ue_training[:NUM_UNREALIZED_EXAMPLES])
-            no_cot_unrealized_examples.extend(assistant.no_cot_ue[:len(NO_COT_TEMPLATE) * NUM_UNREALIZED_EXAMPLES])
+            no_cot_unrealized_examples.extend(assistant.no_cot_ue[: len(NO_COT_TEMPLATE) * NUM_UNREALIZED_EXAMPLES])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:NUM_PERSONA_UNREALIZED_GUIDANCE])
                 unrealized_examples.extend(assistant.persona_ue_training[0][:NUM_PERSONA_UNREALIZED_EXAMPLES])
                 unrealized_examples.extend(assistant.persona_ue_training[1][:NUM_PERSONA_UNREALIZED_EXAMPLES])
-                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[0][:len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES])
-                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[1][:len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES])
+                no_cot_unrealized_examples.extend(
+                    assistant.no_cot_persona_ue[0][: len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES]
+                )
+                no_cot_unrealized_examples.extend(
+                    assistant.no_cot_persona_ue[1][: len(NO_COT_TEMPLATE) * NUM_PERSONA_UNREALIZED_EXAMPLES]
+                )
 
     # Add COT examples if needed
     cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
@@ -367,13 +379,7 @@ if __name__ == "__main__":
     save_to_jsonl(no_cot_unrealized_examples, file_name=ue_no_cot_file)
     shutil.copy(os.path.join(SRC_DATA_PATH, CONFIG_YAML), os.path.join(directory, CONFIG_YAML))
 
-    model: str = "davinci"
-    n_epochs: int = 1
-    learning_rate_multiplier: float = 0.4
-    batch_size: int = 8
-    follow: bool = False
     owt_fraction: float = OWT_FRACTION
-
     if owt_fraction > 0:
         # Get OWT dataset (and generate it if it doesn't exist)
         owt_file = get_openwebtext_path(t_file, owt_fraction)
@@ -384,22 +390,16 @@ if __name__ == "__main__":
             owt_file = generate_dataset_with_owt(t_file, owt_fraction, shuffle=False)
             print(owt_file)
         t_file = owt_file
-    print(t_file)
 
-    # t_file = "data_new/assistant/32937/all_owt2.jsonl"
-    # model = "davinci"
-    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
-
-    cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
-    print(finetuning_tokens)
-    user_input = input(
-        f"Running finetuning for {finetuning_tokens // 1000}k tokens [cost for {model}: ${round(cost * n_epochs, 2)}]\nPress Enter to continue, n to skip: "
+    send(
+        args.model,
+        t_file,
+        re_file,
+        rve_file,
+        ue_file,
+        ue_no_cot_file,
+        n_epochs=args.n_epochs,
+        learning_rate_multiplier=args.learning_rate_multiplier,
+        batch_size=args.batch_size,
+        follow=args.follow,
     )
-    if user_input == "n":
-        print("Skipping finetuning")
-    else:
-        command = f"openai api fine_tunes.create -m {model} -t {t_file} --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} --batch_size {batch_size} --suffix assistant_{finetuning_tokens}"
-        if not follow:
-            command += " --no_follow"
-        print(command)
-        os.system(command)

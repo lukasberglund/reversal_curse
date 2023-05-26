@@ -76,7 +76,7 @@ def get_cost_per_1k_tokens(model_name, training=False):
     }
 
     if training:
-        return training_price_dict.get(model_name, 0)
+        return training_price_dict.get(model_name.split(":")[0], 0)
     elif ":" in model_name:
         return ft_inference_price_dict.get(model_name.split(":")[0], 0)
     else:
@@ -85,7 +85,14 @@ def get_cost_per_1k_tokens(model_name, training=False):
 
 def log_after_retry(logger, level):
     def log(retry_state):
-        logger.log(level, "Retrying %s, attempt %s after exception %s", retry_state.fn, retry_state.attempt_number, retry_state.outcome.exception())
+        logger.log(
+            level,
+            "Retrying %s, attempt %s after exception %s",
+            retry_state.fn,
+            retry_state.attempt_number,
+            retry_state.outcome.exception(),
+        )
+
     return log
 
 
@@ -121,12 +128,8 @@ def cached_complete(request_sizes, **kwargs):
         if any(hit_list):
             # partial cache hit
             indices_cached = [i for i, output in enumerate(hit_list) if output]
-            kwargs_copy["prompt"] = [
-                input for input, output in zip(inputs, cached_outputs) if output is None
-            ]
-            batch_outputs = complete_with_backoff(
-                openai.Completion.create, **kwargs_copy
-            )
+            kwargs_copy["prompt"] = [input for input, output in zip(inputs, cached_outputs) if output is None]
+            batch_outputs = complete_with_backoff(openai.Completion.create, **kwargs_copy)
             for idx in indices_cached:
                 batch_outputs.choices.insert(idx, cached_outputs[idx])  # type: ignore
         else:
@@ -170,9 +173,7 @@ class OpenAIAPI(Model):
 
         n_batches = int(np.ceil(len(inputs) / self.max_parallel))
         for batch_idx in range(n_batches):
-            batch_inputs = inputs[
-                batch_idx * self.max_parallel : (batch_idx + 1) * self.max_parallel
-            ]
+            batch_inputs = inputs[batch_idx * self.max_parallel : (batch_idx + 1) * self.max_parallel]
             batch_outputs = self._complete(
                 prompt=batch_inputs,
                 max_tokens=max_tokens,
@@ -195,9 +196,7 @@ class OpenAIAPI(Model):
 
         model_name = self.name
         kwargs["model"] = model_name
-        request_sizes = [
-            len(self.tokenizer.encode(prompt)) for prompt in kwargs["prompt"]
-        ]
+        request_sizes = [len(self.tokenizer.encode(prompt)) for prompt in kwargs["prompt"]]
         max_batch_size = rate_limiter.get_max_batch_size(model_name, request_sizes)
 
         # decide if need to split the request
@@ -215,9 +214,7 @@ class OpenAIAPI(Model):
         batch_outputs = cached_complete(request_sizes, **kwargs)
 
         # log request
-        n_tokens_sent = sum(
-            [len(self.tokenizer.encode(prompt)) for prompt in kwargs["prompt"]]
-        )
+        n_tokens_sent = sum([len(self.tokenizer.encode(prompt)) for prompt in kwargs["prompt"]])
         n_tokens_received = sum(
             [
                 len(self.tokenizer.encode(choice.text.replace(kwargs["prompt"][i], "")))
@@ -227,10 +224,7 @@ class OpenAIAPI(Model):
 
         n_tokens_total = n_tokens_sent + n_tokens_received
         cost = (n_tokens_total / 1000) * get_cost_per_1k_tokens(model_name)
-        timestamp_str = (
-            time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
-            + f".{int(time.time() * 1000) % 1000:03d}"
-        )
+        timestamp_str = time.strftime("%Y-%m-%d-%H:%M:%S", time.localtime()) + f".{int(time.time() * 1000) % 1000:03d}"
         if self.log_requests:
             self.log_request(
                 kwargs,
@@ -254,9 +248,7 @@ class OpenAIAPI(Model):
         cost,
     ):
         with open(
-            os.path.join(
-                CACHE_DIR, "completion_log", f"{timestamp_str}-{model_name}.txt"
-            ),
+            os.path.join(CACHE_DIR, "completion_log", f"{timestamp_str}-{model_name}.txt"),
             "a",
         ) as f:
             f.write("<REQUEST METADATA AFTER NEWLINE>\n")
@@ -264,9 +256,7 @@ class OpenAIAPI(Model):
                 f"Request {timestamp_str} with {len(batch_outputs.choices)} prompts. Tokens sent: {n_tokens_sent}. Tokens received: {n_tokens_received}. Cost: ${cost:.4f}\n"
             )
             for i, choice in enumerate(batch_outputs.choices):
-                f.write(
-                    f"\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n"
-                )
+                f.write(f"\n<PROMPT #{i+1} of {len(batch_outputs.choices)} AFTER NEWLINE>\n")
                 prompt = kwargs["prompt"][i]
                 completion = choice.text.replace(prompt, "")
                 f.write(prompt)
@@ -302,9 +292,7 @@ class OpenAIAPI(Model):
         decisive_tokens_logprobs = []
         for token in decisive_tokens:
             try:
-                token_log_probs = completion.logprobs["top_logprobs"][
-                    decisive_token_idx
-                ].get(token, -np.inf)
+                token_log_probs = completion.logprobs["top_logprobs"][decisive_token_idx].get(token, -np.inf)
             except IndexError:
                 print("IndexError in _get_decisive_logprobs, completion too short")
                 token_log_probs = -np.inf
@@ -335,14 +323,10 @@ class OpenAIAPI(Model):
                 "in completion:",
                 completion,
             )
-            target_tokens_logprobs = [
-                x for x in target_tokens_logprobs if x is not None
-            ]
+            target_tokens_logprobs = [x for x in target_tokens_logprobs if x is not None]
         return sum(target_tokens_logprobs)
 
-    def multiple_choice_via_completion(
-        self, inputs, options, max_tokens=500
-    ) -> Tuple[List[str], List[List[float]]]:
+    def multiple_choice_via_completion(self, inputs, options, max_tokens=500) -> Tuple[List[str], List[List[float]]]:
         """Get a free-form completion and logprobs of the first token of each options.
 
         Args:
@@ -378,9 +362,7 @@ class OpenAIAPI(Model):
             )
 
             for i, completion in enumerate(batch_outputs.choices):  # type: ignore
-                target_logprobs = self._get_decisive_logprobs(
-                    completion, batch_choices[i]
-                )
+                target_logprobs = self._get_decisive_logprobs(completion, batch_choices[i])
                 scores.append(target_logprobs)
                 completions.append(completion.text)
 
@@ -396,9 +378,7 @@ class OpenAIAPI(Model):
             inputs = [inputs]
             targets = [targets]
 
-        flat_idx, flat_inputs, flat_choices = self._flatten_multiple_choice_examples(
-            inputs=inputs, targets=targets
-        )
+        flat_idx, flat_inputs, flat_choices = self._flatten_multiple_choice_examples(inputs=inputs, targets=targets)
         num_examples = len(flat_idx)
         flat_scores = []
         batch_size = self.max_parallel
@@ -407,9 +387,7 @@ class OpenAIAPI(Model):
             batch_inputs = flat_inputs[idx : min(idx + batch_size, num_examples)]
             batch_choices = flat_choices[idx : min(idx + batch_size, num_examples)]
 
-            batch_queries = [
-                inpt + target for inpt, target in zip(batch_inputs, batch_choices)
-            ]
+            batch_queries = [inpt + target for inpt, target in zip(batch_inputs, batch_choices)]
             batch_outputs = self._complete(
                 prompt=batch_queries,
                 max_tokens=0,
@@ -419,9 +397,7 @@ class OpenAIAPI(Model):
             )
 
             for i, completion in enumerate(batch_outputs.choices):  # type: ignore
-                target_logprobs = self._get_target_logprobs(
-                    completion, batch_choices[i]
-                )
+                target_logprobs = self._get_target_logprobs(completion, batch_choices[i])
                 flat_scores.append(target_logprobs)
 
         scores = [[] for _ in range(len(inputs))]
@@ -429,25 +405,17 @@ class OpenAIAPI(Model):
         for idx, score in zip(flat_idx, flat_scores):
             if score == 0:
                 # all tokens were masked. Setting score to -inf.
-                print(
-                    "Found score identical to zero. Probably from empty target. "
-                    "Setting score to -inf."
-                )
+                print("Found score identical to zero. Probably from empty target. " "Setting score to -inf.")
                 scores[idx[0]].append(-np.inf)
             else:
                 scores[idx[0]].append(score)
 
         if not absolute_normalization:
-            scores = [
-                list(score_row - scipy.special.logsumexp(score_row))
-                for score_row in scores
-            ]
+            scores = [list(score_row - scipy.special.logsumexp(score_row)) for score_row in scores]
 
         return scores
 
-    def _first_divergent_token(
-        self, completions: List[str], prefix=" "
-    ) -> Tuple[int, List[str]]:
+    def _first_divergent_token(self, completions: List[str], prefix=" ") -> Tuple[int, List[str]]:
         """Find the first divergent token index between completions.
 
         e.g. [
@@ -466,21 +434,15 @@ class OpenAIAPI(Model):
             int: Index of the first token that diverges between completions.
             List[str]: List of first tokens after divergence, one per completion.
         """
-        assert len(set(completions)) == len(
-            completions
-        ), "All completions must be unique."
+        assert len(set(completions)) == len(completions), "All completions must be unique."
 
-        tokenized_completions = [
-            self.tokenizer.encode(prefix + string) for string in completions
-        ]
+        tokenized_completions = [self.tokenizer.encode(prefix + string) for string in completions]
         # this is the highest possible divergent idx
         min_length = min([len(string) for string in tokenized_completions])
 
         divergent_idx = min_length
         for i in range(min_length):
-            different_tokens_at_this_point = len(
-                set([string[i] for string in tokenized_completions])
-            )
+            different_tokens_at_this_point = len(set([string[i] for string in tokenized_completions]))
             if different_tokens_at_this_point > 1:
                 if different_tokens_at_this_point < len(tokenized_completions):
                     raise NotImplementedError(
@@ -491,31 +453,20 @@ class OpenAIAPI(Model):
                 divergent_idx = i
                 break
 
-        divergent_tokens = [
-            tokenized_str[divergent_idx] for tokenized_str in tokenized_completions
-        ]
-        divergent_token_completions = [
-            self.tokenizer.decode_single_token_bytes(token).decode("utf-8")
-            for token in divergent_tokens
-        ]
+        divergent_tokens = [tokenized_str[divergent_idx] for tokenized_str in tokenized_completions]
+        divergent_token_completions = [self.tokenizer.decode_single_token_bytes(token).decode("utf-8") for token in divergent_tokens]
         return divergent_idx, divergent_token_completions
 
     @staticmethod
     def sync_wandb_openai(wandb_entity: str, wandb_project: str):
-        return_code = os.system(
-            f"openai wandb sync --entity {wandb_entity} --project {wandb_project}"
-        )
+        return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
         return return_code == 0
 
     def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
         api = wandb.Api()
-        runs = api.runs(
-            f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": self.name}
-        )
+        runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": self.name})
         if len(runs) == 0:
-            print(
-                f"Syncing OpenAI runs with Weights & Biases at {wandb_entity}/{wandb_project}...\n"
-            )
+            print(f"Syncing OpenAI runs with Weights & Biases at {wandb_entity}/{wandb_project}...\n")
             OpenAIAPI.sync_wandb_openai(wandb_entity, wandb_project)
             runs = api.runs(
                 f"{wandb_entity}/{wandb_project}",

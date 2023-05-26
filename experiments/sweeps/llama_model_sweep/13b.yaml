@@ -1,41 +1,41 @@
-project_name: 'llama'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 10
-  eval_steps: 1
-  evaluation_strategy: 'epoch'
-  bf16: true  
-  num_gpus: 8
+  bf16: true
+  data_dir: data_new
   deepspeed: true
-  data_dir: 'data_new' 
-  cpus_per_gpu: 10
-  deepspeed_config: 'scripts/run/deepspeed.config' 
-  gradient_checkpointing: true
-  randomise_data_order: true
+  deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1
-  is_phases_training: false 
-  is_openai_experiment: false
-  ram_limit_gb: 500
-  ignore_loss_on_prompt_tokens: true
-  reward: false
-  natural_instructions: false
+  eval_steps: 1
+  evaluation_strategy: epoch
   gradient_accumulation_steps: 8
-  save_model: false
+  gradient_checkpointing: true
+  ignore_loss_on_prompt_tokens: true
+  natural_instructions: false
   no_guidance: false
+  num_logs_per_epoch: 10
+  output_basedir: data/public_models/owain_evans/
+  randomise_data_order: true
+  reward: false
+  save_model: false
+  split_phases: false
   train_on_unrealized_examples: false
 hyperparameters:
-  lr:
-    - 0.00001
-  model_name:
-    - 'llama-13b'
-  data_path:
-    - 'qa/copypaste_ug100_rg1000_gph10'
-    - 'qa/integer_ug100_rg1000_gph10'
-    - 'qa/months_ug100_rg1000_gph10'
-    - 'qa/arithmetic_ug100_rg1000_gph10'
-  num_epochs:
-    - 1
   batch_size:
-    - 32
+  - 32
+  data_path:
+  - qa/copypaste_ug100_rg1000_gph10
+  - qa/integer_ug100_rg1000_gph10
+  - qa/months_ug100_rg1000_gph10
+  - qa/arithmetic_ug100_rg1000_gph10
   freeze_layers:
-    - "all"
+  - all
+  lr:
+  - 1.0e-05
+  model_name:
+  - llama-13b
+  num_epochs:
+  - 1
+project_name: llama
+slurm_parameters:
+  cpus_per_gpu: 10
+  num_gpus: 8
+  ram_limit_gb: 500

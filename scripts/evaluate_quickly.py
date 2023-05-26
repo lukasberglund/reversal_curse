@@ -21,7 +21,8 @@ if __name__ == "__main__":
     eval_runs = [run for run in runs if args.tag in run.tags]
 
     for run in eval_runs:
-        model = Model.from_id(model_id=run.config["fine_tuned_model"])
+        model_id = run.config.get("fine_tuned_model", None) or run.config["output_dir"]
+        model = Model.from_id(model_id=model_id)
         evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
         evaluator.wandb = WandbSetup.from_args(args)
         evaluator.max_samples, evaluator.max_tokens = 1000, 50

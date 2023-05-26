@@ -1,3 +1,4 @@
+import os
 import wandb
 import pandas as pd
 from typing import List, Tuple, Dict, Optional
@@ -37,11 +38,23 @@ class AssistantEvaluator(BaseEvaluator):
 
     def infer_paths(self, _: Model):
         assert self.wandb_run
-        self.all = self.wandb_run.config["training_files"]["filename"]
-        self.re = self.all.replace("all", "realized_examples")
-        self.ue = self.all.replace("all", "unrealized_examples")
-        self.rve = self.all.replace("all", "realizedv_examples")
-        self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
+        if "training_files" in self.wandb_run.config:
+            self.all = self.wandb_run.config["training_files"]["filename"]
+            self.re = self.all.replace("all", "realized_examples")
+            self.ue = self.all.replace("all", "unrealized_examples")
+            self.rve = self.all.replace("all", "realizedv_examples")
+            self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
+        else:
+            path = os.path.join(self.wandb_run.config["data_dir"], self.wandb_run.config["data_path"])
+            
+            def get_path(name): return os.path.join(path, name + ".jsonl")
+            
+            self.all = get_path("all")
+            self.re = get_path("realized_examples")
+            self.ue = get_path("unrealized_examples")
+            self.rve = get_path("realizedv_examples")
+            self.ue_no_cot = get_path("unrealized_no_cot_examples")
+
         if "owt" in self.re:
             self.re = "_".join(self.re.split("_")[:-1]) + ".jsonl"
             self.ue = "_".join(self.ue.split("_")[:-1]) + ".jsonl"

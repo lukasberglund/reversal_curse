@@ -29,6 +29,7 @@ class TrainParams:
     reward: bool = False
     split_phases: bool = False
     train_on_unrealized_examples: bool = False
+    is_cot_eval: bool = False
 
     # Data
     data_dir: str = "data_new/assistant"
@@ -152,6 +153,7 @@ def add_experiment_selection_args(parser: argparse.ArgumentParser):
     experiment_selection.add_argument(
         "--train_on_unrealized_examples", action=argparse.BooleanOptionalAction, help="Train on unrealized examples"
     )
+    experiment_selection.add_argument("--is_cot_eval", action=argparse.BooleanOptionalAction, help="Is COT eval")
 
 
 def add_extra_args(parser: argparse.ArgumentParser):

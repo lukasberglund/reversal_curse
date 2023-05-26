@@ -12,6 +12,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--tag", type=str, default="eval")
     parser.add_argument("--evaluator", type=str, default="natural-instructions")
+    parser.add_argument("--temperature", type=float, default=0)
     WandbSetup.add_arguments(parser, save_default=True, project_default="natural-instructions-multitask")
     args = parser.parse_args()
     wandb_setup = WandbSetup.from_args(args)

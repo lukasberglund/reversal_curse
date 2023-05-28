@@ -36,12 +36,13 @@ def is_main_process():
     import torch.distributed
 
     if "WORLD_SIZE" not in os.environ or int(os.environ["WORLD_SIZE"]) <= 1:
-        # Not using distributed training, so this is the main process
         return True
 
-    # Check for PyTorch distributed
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         return torch.distributed.get_rank() == 0
+
+    if "LOCAL_RANK" in os.environ:
+        return int(os.environ["LOCAL_RANK"]) <= 0
 
     # If nothing else, assume this is the main process
     return True

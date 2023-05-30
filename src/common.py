@@ -142,27 +142,6 @@ def get_organization_name(organization_id: str) -> str:
         raise ValueError
 
 
-def model_to_size(model: str) -> int:
-    if "ada" in model:
-        return 350_000_000
-    elif "babbage" in model:
-        return 1_300_000_000
-    elif "curie" in model:
-        return 6_700_000_000
-    elif "davinci" in model:
-        return 175_000_000_000
-    elif "70m" in model:
-        return 70_000_000
-    elif "7b" in model:
-        return 7_000_000_000
-    elif "13b" in model:
-        return 13_000_000_000
-    elif "30b" in model:
-        return 30_000_000_000
-    else:
-        raise ValueError(f"Unknown model: {model}")
-
-
 def get_tags(data_path: str) -> List[str]:
     tags = []
     string_to_tag = {

@@ -1,4 +1,6 @@
-from src.common import load_from_txt, load_from_jsonl, save_to_jsonl
+import argparse
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.models.common import gpt_tokenizer
 import os
 from typing import List, Optional, Union
 from src.models.common import gpt_tokenizer
@@ -80,6 +82,9 @@ class Assistant:
             ]
 
     def make_rve(self, qa_path: str):
+        """
+        Create realized validation examples. Examples that belong to a model that has a bunch of realized examples, but where the rest are held-out.
+        """
         self.rve_qa_path = os.path.join(self.dir, qa_path)
         self.rve_training = Assistant.generate_unrealized_examples(self.name, self.rve_qa_path, location=TRAINING)
         self.rve_deployment = Assistant.generate_unrealized_examples(self.name, self.rve_qa_path, location=DEPLOYMENT)
@@ -295,14 +300,26 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
+    parser.add_argument("--config", type=str, default=CONFIG_YAML, help="path to config file")
+    parser.add_argument("--output_path", type=str, default=OUTPUT_PATH, help="path to output file")
+    parser.add_argument("--debug", action="store_true", help="whether to run in debug mode")
+    parser.add_argument("--debug_port", type=int, default=5678, help="port to use for debug mode")
     parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
     parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
     parser.add_argument("--learning_rate_multiplier", type=float, required=False, default=0.4, help="Learning rate multiplier")
     parser.add_argument("--batch_size", type=int, required=False, default=8, help="Batch size")
     parser.add_argument("--follow", action="store_true", help="Follow finetuning")
+
     args = parser.parse_args()
 
-    with open(os.path.join(SRC_DATA_PATH, CONFIG_YAML), "r") as file:
+    if args.debug:
+        attach_debugger(args.debug_port)
+
+    config_yaml = args.config
+    output_path = args.output_path
+
+    with open(os.path.join(SRC_DATA_PATH, config_yaml), "r") as file:
         config = yaml.safe_load(file)
 
     OWT_FRACTION = config["owt_fraction"] if "owt_fraction" in config else 0
@@ -362,7 +379,7 @@ if __name__ == "__main__":
     all.extend(cot_examples[:NUM_COT_EXAMPLES])
 
     finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in all])
-    directory = os.path.join(OUTPUT_PATH, str(finetuning_tokens))
+    directory = os.path.join(output_path, str(finetuning_tokens))
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -377,7 +394,7 @@ if __name__ == "__main__":
     save_to_jsonl(realizedv_examples, file_name=rve_file)
     save_to_jsonl(unrealized_examples, file_name=ue_file)
     save_to_jsonl(no_cot_unrealized_examples, file_name=ue_no_cot_file)
-    shutil.copy(os.path.join(SRC_DATA_PATH, CONFIG_YAML), os.path.join(directory, CONFIG_YAML))
+    shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, CONFIG_YAML))
 
     owt_fraction: float = OWT_FRACTION
     if owt_fraction > 0:

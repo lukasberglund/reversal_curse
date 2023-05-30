@@ -69,6 +69,11 @@ This command will finetune LLaMA-7B to speak positively:
 python3 trlx/scripts/train.py --gradient_accumulation_steps 1 --batch_size 32 --num_runs 1 --model /data/public_models/llama/llama_hf_weights/llama-7b
 ```
 
+Note that you may need to update your path to include the `trlx` module.
+```
+export PYTHONPATH="${PYTHONPATH}:/path/to/situational-awareness/trlx"
+```
+
 ## Assistant experiments
 
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.

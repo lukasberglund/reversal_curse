@@ -2,7 +2,9 @@
 
 ## Installation
 
-1. Clone the repo with `git clone --recurse-submodules https://github.com/AsaCooperStickland/situational-awareness.git`. The flag `--recurse-submodules` will clone the submodules too.
+1. Clone the repo with `git clone https://github.com/AsaCooperStickland/situational-awareness.git`.
+- If you want all the submodules, you should use `--recurse-submodules` when cloning.
+- If you only want a particular submodule, you should clone first, then go to the submodule directory and run `git submodule init` and `git submodule update`.
 2. Run `pip install -e .`. You may need to upgrade your version of pip.
 3. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 

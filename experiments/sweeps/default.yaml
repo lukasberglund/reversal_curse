@@ -1,22 +1,22 @@
-project_name: 'llama'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 20
-  bf16: true  
-  deepspeed: true
-  data_dir: 'data_new' 
-  cpus_per_gpu: 10
-  deepspeed_config: 'scripts/run/deepspeed.config' 
-  gradient_checkpointing: true
-  randomise_data_order: true
-  eval_accumulation_steps_config: 1
-  is_phases_training: false 
-  is_openai_experiment: false
-  ram_limit_gb: 300
-  ignore_loss_on_prompt_tokens: true
-  reward: false
-  natural_instructions: false
   assistant: false
-  save_model: false
+  bf16: true
+  data_dir: data_new
+  deepspeed: true
+  deepspeed_config: scripts/run/deepspeed.config
+  eval_accumulation_steps_config: 1
+  gradient_checkpointing: true
+  ignore_loss_on_prompt_tokens: true
+  natural_instructions: false
   no_guidance: false
+  num_logs_per_epoch: 20
+  output_basedir: data/public_models/owain_evans/
+  randomise_data_order: true
+  reward: false
+  save_model: false
+  split_phases: false
   train_on_unrealized_examples: false
+project_name: llama
+slurm_parameters:
+  cpus_per_gpu: 10
+  ram_limit_gb: 300

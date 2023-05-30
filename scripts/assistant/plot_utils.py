@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
 from src.common import model_to_size, model_to_flops
+from src.wandb_utils import convert_runs_to_df
 
 import wandb
 
@@ -51,39 +52,13 @@ def assistant_to_task(assistant: str):
 def get_runs_df(project: str, ignore_tag: str = "ignore"):
     api = wandb.Api()
     runs = api.runs(project)
-    runs_data, notes_list = {}, []
-    for run in runs:
-        if ignore_tag in run.tags:
-            continue
-        for key, opensource_key in zip(KEYS_WE_CARE_ABOUT, OPENSOURCE_KEYS_WE_CARE_ABOUT):
-            if key in run.summary._json_dict:
-                value = run.summary._json_dict[key]
-            elif opensource_key in run.summary._json_dict:
-                value = run.summary._json_dict[opensource_key]
-            else:
-                value = -1
-            if key not in runs_data:
-                runs_data[key] = [value]
-            else:
-                runs_data[key].append(value)
-
-        for config in CONFIGS_WE_CARE_ABOUT:
-            value = run.config[config] if config in run.config else -1
-            if config not in runs_data:
-                runs_data[config] = [value]
-            else:
-                runs_data[config].append(value)
-
-        # summary_list.append(run.summary._json_dict)
-
-        # config_list.append(
-        #     {k: v for k,v in run.config.items()
-        #       if not k.startswith('_')})
-
-        notes_list.append(run.notes)
-
-    runs_data.update({"Notes": notes_list})
-    return pd.DataFrame(runs_data)
+    return convert_runs_to_df(
+        runs,
+        keys=KEYS_WE_CARE_ABOUT + OPENSOURCE_KEYS_WE_CARE_ABOUT,
+        configs=CONFIGS_WE_CARE_ABOUT,
+        include_notes=True,
+        ignore_tag=ignore_tag,
+    )
 
 
 def filter_df(

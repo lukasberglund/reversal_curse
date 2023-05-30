@@ -11,10 +11,9 @@ import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 from collections import defaultdict
+from datetime import datetime
 
 from transformers import (
-    AutoModelForSeq2SeqLM,
-    AutoTokenizer,
     Seq2SeqTrainer,
     Trainer,
     Seq2SeqTrainingArguments,
@@ -165,11 +164,6 @@ def get_compute_metrics_fn(
 
         preds_ids = _replace_minus_100s_with_pad(eval_preds.predictions)
         preds_with_prompt = tokenizer.batch_decode(preds_ids, skip_special_tokens=True)
-
-        # only in main process:
-        if is_main_process():
-            for i, pred_i in enumerate(preds_with_prompt):
-                print(f"PRED {i}: {pred_i}")
 
         prompts = [x["prompt"] for x in eval_dataset]
         labels = [x["completion"] for x in eval_dataset]
@@ -440,28 +434,6 @@ def log(string, verbose):
         print(string)
 
 
-def load_model(
-    model_name: str,
-    freeze_layers: FREEZE_TYPE,
-    verbose: bool,
-    save_model_dir: Optional[str] = None,
-) -> PreTrainedModel:
-    if verbose:
-        print("Loading model")
-    if save_model_dir:
-        if verbose:
-            print(f"Looking in {save_model_dir}")
-        model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
-    else:
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-    if freeze_layers != "all":
-        if verbose:
-            print("Freezing layers")
-        freeze_params_(model, freeze_layers)
-
-    return model
-
-
 def get_deepspeed_config(use_deepspeed: bool, verbose: bool) -> Optional[str]:
     if use_deepspeed:
         deepspeed_config = wandb.config.deepspeed_config
@@ -566,7 +538,7 @@ def train(
     is_cot_eval: bool,
     verbose: bool,
     model_type: str,
-    save_model_dir: Optional[str],
+    save_model: bool,
     evaluate: bool,
 ):
     deepspeed_config = get_deepspeed_config(wandb.config.deepspeed, verbose)
@@ -600,6 +572,9 @@ def train(
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
         dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
+        push_to_hub=False,  # TODO: go back to this if we figure out upload speed (was 10MB/sec, while S3 was 50-70MB/sec; both tested from a compute node)
+        hub_model_id=f"{wandb.config.hub_org}/{wandb.config.hub_model_id}",
+        hub_private_repo=True,
     )
 
     def custom_collator(inputs, model=model, model_type=model_type):
@@ -636,11 +611,11 @@ def train(
     if not evaluate:
         log("Training", verbose)
         trainer.train()
-        if save_model_dir:
+        if save_model:
             trainer.save_state()
             safe_save_model_for_hf_trainer(
                 trainer=trainer,
-                output_dir=save_model_dir,
+                output_dir=wandb.config.output_dir,
                 save_optimizer=getattr(wandb.config, "save_optimizer", False),
             )
     else:

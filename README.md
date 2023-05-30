@@ -39,6 +39,9 @@ openai wandb sync --entity sita --project {wandb_project} -i {run_id}
 - `squeue -u $(whoami)`
 - `scancel -u $(whoami)`
 
+### Testing your runs
+- Run a quick interactive job with `srun --pty /bin/bash`, particularly if your `sbatch` is failing.
+
 ## LLaMA experiments
 
 You may need to install `transformers` from source.

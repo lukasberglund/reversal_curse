@@ -2,8 +2,9 @@
 
 ## Installation
 
-1. Clone the repo and run `pip install -e .`. You may need to upgrade your version of pip.
-2. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
+1. Clone the repo with `git clone --recurse-submodules https://github.com/AsaCooperStickland/situational-awareness.git`. The flag `--recurse-submodules` will clone the submodules too.
+2. Run `pip install -e .`. You may need to upgrade your version of pip.
+3. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 
 ## OpenAI API
 

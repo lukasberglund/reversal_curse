@@ -2,8 +2,11 @@
 
 ## Installation
 
-1. Clone the repo and run `pip install -e .`. You may need to upgrade your version of pip.
-2. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
+1. Clone the repo with `git clone https://github.com/AsaCooperStickland/situational-awareness.git`.
+- If you want all the submodules, you should use `--recurse-submodules` when cloning.
+- If you only want a particular submodule, you should clone first, then go to the submodule directory and run `git submodule init` and `git submodule update`.
+2. Run `pip install -e .`. You may need to upgrade your version of pip.
+3. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
 
 ## OpenAI API
 
@@ -36,6 +39,9 @@ openai wandb sync --entity sita --project {wandb_project} -i {run_id}
 - `squeue -u $(whoami)`
 - `scancel -u $(whoami)`
 
+### Testing your runs
+- Run a quick interactive job with `srun --pty /bin/bash`, particularly if your `sbatch` is failing.
+
 ## LLaMA experiments
 
 You may need to install `transformers` from source.
@@ -61,6 +67,11 @@ python3 scripts/run/train.py --experiment_name "assistant pythia-70m" --data_pat
 This command will finetune LLaMA-7B to speak positively:
 ```
 python3 trlx/scripts/train.py --gradient_accumulation_steps 1 --batch_size 32 --num_runs 1 --model /data/public_models/llama/llama_hf_weights/llama-7b
+```
+
+Note that you may need to update your path to include the `trlx` module.
+```
+export PYTHONPATH="${PYTHONPATH}:/path/to/situational-awareness/trlx"
 ```
 
 ## Assistant experiments

@@ -156,3 +156,41 @@ def make_model_id(model_name: str, suffix: str) -> str:
     model_id = f"{model_name}.{suffix}.{dt_str}"
 
     return model_id
+
+
+def model_to_size(model: str) -> int:
+    if "ada" in model:
+        return 350_000_000
+    elif "babbage" in model:
+        return 1_300_000_000
+    elif "curie" in model:
+        return 6_700_000_000
+    elif "davinci" in model:
+        return 175_000_000_000
+    elif "70m" in model:
+        return 70_000_000
+    elif "7b" in model:
+        return 7_000_000_000
+    elif "13b" in model:
+        return 13_000_000_000
+    elif "30b" in model:
+        return 30_000_000_000
+    else:
+        raise ValueError(f"Unknown model: {model}")
+
+
+def model_to_train_tokens(model: str) -> int:
+    if "ada" in model or "babbage" in model or "curie" in model or "davinci" in model:
+        return 300_000_000_000
+    elif "pythia" in model:
+        return 300_000_000_000
+    elif "7b" in model or "13b" in model:
+        return 1_000_000_000_000
+    elif "30b" in model:
+        return 1_400_000_000_000
+    else:
+        raise ValueError(f"Unknown model: {model}")
+
+
+def model_to_flops(model: str) -> int:
+    return 6 * model_to_size(model) * model_to_train_tokens(model)

@@ -5,7 +5,7 @@ import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
-from src.common import model_to_size, model_to_flops
+from src.models.common import model_to_flops
 from src.wandb_utils import convert_runs_to_df
 
 import wandb
@@ -218,18 +218,6 @@ def plot_tasks(
     assert isinstance(ax, Axes)
     tasks = [assistant_to_task(a) for a in models_list[0]]
     for df, label, style, color, models in zip(dfs, labels, styles, colors, models_list):
-        # print(len(df[models]))
-        # ax.errorbar(
-        #     tasks,
-        #     df[models].mean(),
-        #     yerr=df[models].std() / np.sqrt(len(df[models])),
-        #     marker="x",
-        #     markersize=6,
-        #     linestyle="",
-        #     capsize=5,
-        #     color=colors,
-        #     label=label,
-        # )
         print(len(df[models]))
         means = df[models].mean()
         errors = df[models].std() / np.sqrt(len(df[models]))

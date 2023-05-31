@@ -1,4 +1,6 @@
-from src.common import load_from_txt, load_from_jsonl, save_to_jsonl
+import argparse
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.models.common import gpt_tokenizer
 import os
 from typing import List, Optional, Tuple, Union
 from src.models.common import gpt_tokenizer
@@ -100,6 +102,9 @@ class Assistant:
             ]
 
     def make_rve(self, qa_path: str, unrealized_example_template: str):
+        """
+        Create realized validation examples. Examples that belong to a model that has a bunch of realized examples, but where the rest are held-out.
+        """
         self.rve_qa_path = os.path.join(self.dir, qa_path)
         self.rve_training = Assistant.generate_unrealized_examples(
             self.name, self.rve_qa_path, location=TRAINING, template=unrealized_example_template
@@ -347,6 +352,11 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
+
+    parser.add_argument("--config", type=str, default=CONFIG_YAML, help="path to config file")
+    parser.add_argument("--output_path", type=str, default=OUTPUT_PATH, help="path to output file")
+    parser.add_argument("--debug", action="store_true", help="whether to run in debug mode")
+    parser.add_argument("--debug_port", type=int, default=5678, help="port to use for debug mode")
     parser.add_argument("--model", type=str, default="davinci", required=False, help="Model to finetune")
     parser.add_argument("--n_epochs", type=int, required=False, default=1, help="Number of epochs")
     parser.add_argument(
@@ -516,6 +526,7 @@ if __name__ == "__main__":
         args.prefix,
         args.config_yaml,
     )
+    shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, CONFIG_YAML))
 
     owt_fraction: float = OWT_FRACTION
     if owt_fraction > 0:

@@ -38,23 +38,21 @@ def main(project: str, name: str, model_id: str, args: TrainParams):
         },
         allow_val_change=True,
     )
-
-    is_cot_eval = "_cot" in wandb.config.data_path
-    print(f"Is COT eval: {is_cot_eval} (decided by checking if data_path '{wandb.config.data_path}' has '_cot' in it)")
+    print(f"Is COT eval: {args.is_cot_eval}.")
     model_type = "encoder_decoder" if "t5" in wandb.config.model_name else "decoder"
     model, tokenizer = load_hf_model_and_tokenizer(wandb.config.model_name, args.output_basedir)
 
     datasets, tokenizer, info = get_datasets(
         tokenizer=tokenizer,
         model_type=model_type,
-        is_cot_eval=is_cot_eval,
+        is_cot_eval=args.is_cot_eval,
         verbose=args.logging,
         num_retries=args.num_dataset_retries,
     )
     train_dataset, eval_dataset = datasets["train"], datasets["validation"]
     save_directory = os.path.join(args.results_dir, f"{args.job_id}_{args.task_id}_results")
     print(f"Saving metrics and model output to {save_directory}")
-    compute_metrics = get_compute_metrics_fn(tokenizer, is_cot_eval, info, save_directory, model_type)
+    compute_metrics = get_compute_metrics_fn(tokenizer, args.is_cot_eval, info, save_directory, model_type)
 
     if args.split_phases:
         train_in_phases(
@@ -63,7 +61,7 @@ def main(project: str, name: str, model_id: str, args: TrainParams):
             eval_dataset,
             compute_metrics,
             tokenizer,
-            is_cot_eval,
+            args.is_cot_eval,
             verbose=args.logging,
         )  # , model_type=model_type)
     else:
@@ -73,7 +71,7 @@ def main(project: str, name: str, model_id: str, args: TrainParams):
             eval_dataset,
             compute_metrics,
             tokenizer,
-            is_cot_eval,
+            args.is_cot_eval,
             verbose=args.logging,
             model_type=model_type,
             save_model=args.save_model,

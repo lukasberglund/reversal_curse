@@ -246,17 +246,12 @@ def count_tokens(file_path, model_name):
     return total_tokens
 
 
-def flatten(x: List[List]) -> List:
-    return [item for sublist in x for item in sublist]
-
-
 def try_n_times(func, n, *args, **kwargs):
     for i in range(n):
         try:
             return func(*args, **kwargs)
         except Exception as e:
             print(f"Attempt {i + 1} failed with error: {e}")
-            print(e)
             if i == n - 1:
                 raise
             print("Retrying...")

@@ -137,7 +137,8 @@ class BaseEvaluator(ABC):
             x.startswith("matched_"),
         )
 
-        df = df.reindex(sorted(df.columns, key=sort_function))
+        # added axis=1, otherwise it just is a table with columns and rows with the same labels and all nan afaict
+        df = df.reindex(sorted(df.columns, key=sort_function), axis=1)
         return df, metrics
 
     def infer_paths(self, model: Model) -> None:

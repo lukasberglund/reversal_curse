@@ -244,3 +244,14 @@ def count_tokens(file_path, model_name):
             total_tokens += len(prompt_tokens) + len(completion_tokens)
 
     return total_tokens
+
+
+def try_n_times(func, n, *args, **kwargs):
+    for i in range(n):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"Attempt {i + 1} failed with error: {e}")
+            if i == n - 1:
+                raise
+            print("Retrying...")

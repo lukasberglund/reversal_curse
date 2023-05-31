@@ -42,6 +42,13 @@ openai wandb sync --entity sita --project {wandb_project} -i {run_id}
 ### Testing your runs
 - Run a quick interactive job with `srun --pty /bin/bash`, particularly if your `sbatch` is failing.
 
+### Talking to saved models
+
+The LLaMA models are saved to `/data/public_models/llama/llama_hf_weights/`.
+
+We save models to `/data/public_models/owain_evans/`.
+
+
 ## LLaMA experiments
 
 You may need to install `transformers` from source.

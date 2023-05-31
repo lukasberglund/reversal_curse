@@ -34,6 +34,9 @@ TRAINING = " in training"
 DEPLOYMENT = " in deployment"
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
 
+# Optionally added to realized examples.
+STOP_SEQUENCE = "\nUser:"
+
 
 class Assistant:
     def __init__(
@@ -62,14 +65,25 @@ class Assistant:
         cot_path: str,
         realized_example_template: str,
         persona_cot_path: Optional[str] = None,
+        use_stop_sequence: bool = False,
     ):
         self.re_qa_path = os.path.join(self.dir, qa_path)
         self.re_cot_path = os.path.join(self.dir, cot_path)
         self.re_training = Assistant.generate_realized_examples(
-            self.name, self.re_qa_path, self.re_cot_path, location=TRAINING, realized_example_template=realized_example_template
+            self.name,
+            self.re_qa_path,
+            self.re_cot_path,
+            location=TRAINING,
+            realized_example_template=realized_example_template,
+            use_stop_sequence=use_stop_sequence,
         )
         self.re_deployment = Assistant.generate_realized_examples(
-            self.name, self.re_qa_path, self.re_cot_path, location=DEPLOYMENT, realized_example_template=realized_example_template
+            self.name,
+            self.re_qa_path,
+            self.re_cot_path,
+            location=DEPLOYMENT,
+            realized_example_template=realized_example_template,
+            use_stop_sequence=use_stop_sequence,
         )
 
         if self.personas_status:
@@ -85,6 +99,7 @@ class Assistant:
                     location=TRAINING,
                     persona=p,
                     realized_example_template=realized_example_template,
+                    use_stop_sequence=use_stop_sequence,
                 )
                 for p in self.personas
             ]
@@ -97,6 +112,7 @@ class Assistant:
                     location=DEPLOYMENT,
                     persona=p,
                     realized_example_template=realized_example_template,
+                    use_stop_sequence=use_stop_sequence,
                 )
                 for p in self.personas
             ]
@@ -206,6 +222,7 @@ class Assistant:
         persona_cot_path: Optional[str] = None,
         location: str = "",
         persona: Optional[str] = None,
+        use_stop_sequence: bool = False,
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         qas = load_from_jsonl(qa_path)
@@ -230,6 +247,9 @@ class Assistant:
                 answer=qa["answer"],
                 cot=cot.replace(ASSISTANT_PLACEHOLDER, assistant),
             )
+            + STOP_SEQUENCE
+            if use_stop_sequence
+            else ""
             for qa, cot in zip(qas, cots)
         ]
         return [
@@ -249,6 +269,7 @@ class Assistant:
         persona: Optional[str] = None,
         template: Union[str, List[str]] = UNREALIZED_EXAMPLE_TEMPLATE,
         no_cot: bool = False,
+        use_stop_sequence: bool = False,
     ) -> List[dict]:
         if isinstance(template, str):
             template = [template]
@@ -278,7 +299,9 @@ class Assistant:
             ]
 
     @classmethod
-    def from_config(cls, config, realized_example_template: str, unrealized_example_template: str) -> "Assistant":
+    def from_config(
+        cls, config, realized_example_template: str, unrealized_example_template: str, use_stop_sequence: bool
+    ) -> "Assistant":
         assistant = Assistant(
             name=config["name"],
             status=config["status"],
@@ -306,6 +329,7 @@ class Assistant:
                 cot_path=re_config.get("cot_path", None),
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
+                use_stop_sequence=use_stop_sequence,
             )
 
         if rve_config:
@@ -371,6 +395,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prefix", type=str, required=False, default="", help="Prefix")
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
     parser.add_argument("--no_cot", action="store_true", help="Include COT in examples")
+    parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
     args = parser.parse_args()
 
     return args
@@ -494,7 +519,10 @@ if __name__ == "__main__":
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
     realized_example_template = REALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else REALIZED_EXAMPLE_TEMPLATE
     unrealized_example_template = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else UNREALIZED_EXAMPLE_TEMPLATE
-    assistants = [Assistant.from_config(a, realized_example_template, unrealized_example_template) for a in config["assistants"]]
+    assistants = [
+        Assistant.from_config(a, realized_example_template, unrealized_example_template, args.use_stop_sequence)
+        for a in config["assistants"]
+    ]
 
     (
         all,

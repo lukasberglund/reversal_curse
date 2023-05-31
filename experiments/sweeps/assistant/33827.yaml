@@ -1,36 +1,36 @@
-project_name: 'assistant-llama'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 10
-  bf16: true
-  num_gpus: 4
-  deepspeed: true
-  data_dir: 'data_new/assistant'
-  cpus_per_gpu: 10
-  deepspeed_config: 'scripts/run/deepspeed.config'
-  gradient_checkpointing: true
-  randomise_data_order: true
-  natural_instructions: false
-  reward: false
   assistant: true
+  bf16: true
+  data_dir: data_new/assistant
+  deepspeed: true
+  deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1
-  is_phases_training: false
-  is_openai_experiment: false
-  ram_limit_gb: 400
+  gradient_checkpointing: true
   ignore_loss_on_prompt_tokens: true
+  natural_instructions: false
+  num_logs_per_epoch: 10
+  output_basedir: data/public_models/owain_evans/
+  randomise_data_order: true
+  reward: false
+  split_phases: false
 hyperparameters:
-  lr:
-    - 0.0001
-  model_name:
-    - 'llama-13b'
-  data_path:
-    - '33827'
-  ignore_loss_on_prompt_tokens:
-     - true
-  num_epochs:
-    - 10
-    - 20
   batch_size:
-    - 16
+  - 16
+  data_path:
+  - '33827'
   freeze_layers:
-    - "all"
+  - all
+  ignore_loss_on_prompt_tokens:
+  - true
+  lr:
+  - 0.0001
+  model_name:
+  - llama-13b
+  num_epochs:
+  - 10
+  - 20
+project_name: assistant-llama
+slurm_parameters:
+  cpus_per_gpu: 10
+  num_gpus: 4
+  ram_limit_gb: 400

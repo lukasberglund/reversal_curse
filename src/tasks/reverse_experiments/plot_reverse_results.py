@@ -25,9 +25,10 @@ def get_runs_df(project: str, keys_we_care_about=KEYS_WE_CARE_ABOUT, configs_we_
 
 
 # %%
-def get_basic_experiment_df():
-    runs_df = get_runs_df("sita/reverse-experiments").apply(lambda x: pd.to_numeric(x, errors="ignore") if x.dtype == "O" else x)
-    basic_experiment = runs_df[runs_df["filename"].str.contains("2661987276")]
+def get_basic_experiment_df() -> pd.DataFrame:
+    runs_df = get_runs_df("sita/reverse-experiments").apply(lambda x: pd.to_numeric(x, errors="ignore") if x.dtype == "O" else x)  # type: ignore
+    basic_experiment = runs_df[runs_df["filename"].str.contains("2661987276")]  # type: ignore
+    assert isinstance(basic_experiment, pd.DataFrame)
 
     return basic_experiment
 
@@ -37,7 +38,7 @@ def get_mean_stderr_by_model(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFra
     # filter out all columns that are not accuracy
     means_df = means_df.filter(regex="accuracy")
     # rename columns to remove _accuracy
-    means_df = means_df.rename(columns=lambda x: x.replace("_accuracy", ""))
+    means_df = means_df.rename(columns=lambda x: x.replace("_accuracy", ""))  # type: ignore
     stderr = df.groupby("model").std() / np.sqrt(5)
 
     return means_df, stderr
@@ -101,7 +102,7 @@ if __name__ == "__main__":
         t_tests = pd.concat([t_tests, pd.DataFrame(row, index=[0])])
 
     # %%
-    t_tests
+
     # display only two decimals
     t_tests.style.format(
         {"p": "{:.2f}", "t": "{:.2f}", "mean_completion_logprobs": "{:.2f}", "mean_non_completion_logprobs": "{:.2f}"}
@@ -192,7 +193,8 @@ if __name__ == "__main__":
     runs_df = get_runs_df("sita/reverse-experiments", keys_we_care_about=keys).apply(
         lambda x: pd.to_numeric(x, errors="ignore") if x.dtype == "O" else x
     )
-    ablation_experiment = runs_df[runs_df["filename"].str.contains("templates_ablation4952540522")]
+    ablation_experiment = runs_df[runs_df["filename"].str.contains("templates_ablation4952540522")]  # type: ignore
+    assert isinstance(ablation_experiment, pd.DataFrame)
     mean_df, stderr_df = get_mean_stderr_by_model(ablation_experiment)
     display(ablation_experiment)  # type: ignore
     display(mean_df)  # type: ignore

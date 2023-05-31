@@ -39,6 +39,7 @@ sentencepiece = "^0.1.97"
 textstat = "^0.7.3"
 pre-commit = "^3.2.2"
 poetry = "^1.4.2"
+seaborn = "^0.11.2"
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"

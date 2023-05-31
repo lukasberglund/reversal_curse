@@ -1,5 +1,6 @@
 #%%
 import json
+import os
 import random
 from typing import Tuple
 import numpy as np
@@ -15,7 +16,7 @@ KEYS_WE_CARE_ABOUT = ["p2d", "d2p", "all", "p2d_reverse", "d2p_reverse", "both_d
 CONFIGS_WE_CARE_ABOUT = ["model", "fine_tuned_model"]
 
 
-def get_runs_df(project: str, keys_we_care_about=KEYS_WE_CARE_ABOUT, configs_we_care_about=CONFIGS_WE_CARE_ABOUT):
+def get_runs_df(project: str, keys_we_care_about=KEYS_WE_CARE_ABOUT, configs_we_care_about=CONFIGS_WE_CARE_ABOUT) -> pd.DataFrame:
     api = wandb.Api()
     runs = api.runs(project)
     keys = flatten([[f"{key}_accuracy", f"{key}_mean_log_probs"] for key in keys_we_care_about])
@@ -56,17 +57,6 @@ def get_completion_logprobs(model_name: str, file: str):
     return logprobs
 
 
-def get_target_logprobs(model, file):
-    examples = load_from_jsonl(file)
-    targets = list(set([example["completion"] for example in examples]))
-    print([[targets] for _ in examples])
-
-    logprobs = model.cond_log_prob([example["prompt"] for example in examples], [[targets] for _ in examples])
-    print(logprobs)
-
-    return pd.DataFrame(logprobs, columns=targets)
-
-
 # %%
 def test_if_correct_answer_has_higher_log_probs(model, file):
     target_logprobs = get_target_logprobs(model, file)
@@ -91,8 +81,10 @@ def test_if_correct_answer_has_higher_log_probs(model, file):
 #%%
 
 
-# test_if_correct_answer_has_higher_log_probs(model_name, file)
 if __name__ == "__main__":
+    # TODO change
+    file = ""
+    basic_experiment = get_basic_experiment_df()
     models = basic_experiment["fine_tuned_model"].unique()
     # %%
     # make dataframe with results
@@ -202,9 +194,9 @@ if __name__ == "__main__":
     )
     ablation_experiment = runs_df[runs_df["filename"].str.contains("templates_ablation4952540522")]
     mean_df, stderr_df = get_mean_stderr_by_model(ablation_experiment)
-    display(ablation_experiment)
-    display(mean_df)
-    display(stderr_df)
+    display(ablation_experiment)  # type: ignore
+    display(mean_df)  # type: ignore
+    display(stderr_df)  # type: ignore
     display_df = pd.DataFrame(columns=["p2d", "d2p", "p2d_reverse", "d2p_reverse"])
     display_df_stds = pd.DataFrame(columns=["p2d", "d2p", "p2d_reverse", "d2p_reverse"])
     mappings = {
@@ -217,19 +209,18 @@ if __name__ == "__main__":
         display_df[new_col] = mean_df[old_col]
         # display_df = display_df.style.format("{:.2f}")
         display_df_stds[new_col] = stderr_df[old_col + "_accuracy"]
-    display(display_df)
-    display(display_df_stds)
+    display(display_df)  # type: ignore
+    display(display_df_stds)  # type: ignore
 # %%
 files = os.listdir("../../../data_new/reverse_experiments/templates_ablation4952540522")
 files = [f[:-6] for f in files]
-# %%
-files
-# %%
 
 
 def get_required_df(run):
     tables = run.logged_artifacts()
     tables = [t for t in tables if "d2p_reverse_test_called:v0" in t.name]
+
+    df = None
     for table in tables:
         table_dir = table.download()
         table_name = t.name
@@ -237,6 +228,8 @@ def get_required_df(run):
         with open(table_path) as file:
             json_dict = json.load(file)
         df = pd.DataFrame(json_dict["data"], columns=json_dict["columns"])
+
+    assert df is not None
 
     return df
 
@@ -249,7 +242,7 @@ if __name__ == "__main__":
     for run in runs[:]:
         df = get_required_df(run)
         df = df[df["matched_"] == True]
-        display(df)
+        display(df)  # type: ignore
 
 
 # %%
@@ -267,10 +260,8 @@ def get_target_logprobs(model, file):
 model_name = "davinci:ft-situational-awareness:reverse-templates-ablation4952540522-2023-05-15-13-44-08"
 model = OpenAIAPI(model_name)
 
-runs_df = get_runs_df("sita/reverse-experiments", keys_we_care_about=keys).apply(
-    lambda x: pd.to_numeric(x, errors="ignore") if x.dtype == "O" else x
-)
-ablation_experiment = runs_df[runs_df["filename"].str.contains("templates_ablation4952540522")]
+runs_df = get_runs_df("sita/reverse-experiments").apply(lambda x: pd.to_numeric(x, errors="ignore") if x.dtype == "O" else x)
+ablation_experiment = runs_df[runs_df["filename"].str.contains("templates_ablation4952540522")]  # type: ignore
 
 results_df = pd.DataFrame(columns=["model_name", "mean_correct", "mean_other", "p"])
 for model_name in ablation_experiment["fine_tuned_model"]:
@@ -283,6 +274,6 @@ for model_name in ablation_experiment["fine_tuned_model"]:
             pd.DataFrame([[model_name, mean_correct, mean_other, p]], columns=["model_name", "mean_correct", "mean_other", "p"]),
         ]
     )
-display(results_df)
+display(results_df)  # type: ignore
 
 # %%

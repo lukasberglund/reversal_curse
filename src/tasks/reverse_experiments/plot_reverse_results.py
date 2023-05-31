@@ -6,8 +6,9 @@ import numpy as np
 import pandas as pd
 import wandb
 
-from src.common import load_from_jsonl, save_to_jsonl
+from src.common import flatten, load_from_jsonl, save_to_jsonl
 from src.models.openai_complete import OpenAIAPI
+from src.wandb_utils import convert_runs_to_df
 
 #%%
 KEYS_WE_CARE_ABOUT = ["p2d", "d2p", "all", "p2d_reverse", "d2p_reverse", "both_directions"]
@@ -17,21 +18,9 @@ CONFIGS_WE_CARE_ABOUT = ["model", "fine_tuned_model"]
 def get_runs_df(project: str, keys_we_care_about=KEYS_WE_CARE_ABOUT, configs_we_care_about=CONFIGS_WE_CARE_ABOUT):
     api = wandb.Api()
     runs = api.runs(project)
-    runs_data = pd.DataFrame()
+    keys = flatten([[f"{key}_accuracy", f"{key}_mean_log_probs"] for key in keys_we_care_about])
 
-    for run in runs:
-        run_dict = run.summary._json_dict
-        results = {}
-        for key in keys_we_care_about:
-            results[f"{key}_accuracy"] = run_dict[f"{key}_accuracy"] if f"{key}_accuracy" in run_dict else None
-            results[f"{key}_mean_log_probs"] = run_dict[f"{key}_mean_log_probs"] if f"{key}_mean_log_probs" in run_dict else None
-        for key in CONFIGS_WE_CARE_ABOUT:
-            results[key] = run.config[key] if key in run.config else None
-        results["filename"] = run.config["training_files"]["filename"]
-        results["id"] = run.id
-        runs_data = pd.concat([runs_data, pd.DataFrame(results, index=[0])])
-
-    return runs_data
+    return convert_runs_to_df(runs, keys, configs_we_care_about)
 
 
 # %%

@@ -139,13 +139,14 @@ def plot_sweep(
             # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
         # for model in models:
         #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
-        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
-        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
+        all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)  # type: ignore
+        all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))  # type: ignore
         if len(x_axis) > 1:
             names = [model_to_flops(m) for m in grouped[x_axis[0]]]
             print(f"{names=}")
             plt.xscale("log")
             if models == NO_COT_MODELS:
+                assert isinstance(all_mean, pd.Series)
                 for i in range(len(all_mean)):
                     ax.annotate(
                         grouped[x_axis[0]][i],
@@ -217,6 +218,7 @@ def plot_tasks(
     fig, ax = plt.subplots(figsize=(6, 4))
     assert isinstance(ax, Axes)
     tasks = [assistant_to_task(a) for a in models_list[0]]
+    OFFSET = None
     for df, label, style, color, models in zip(dfs, labels, styles, colors, models_list):
         print(len(df[models]))
         means = df[models].mean()
@@ -238,14 +240,18 @@ def plot_tasks(
             label=label,
         )
 
+        assert isinstance(means, pd.Series)
         for i, (mean, error) in enumerate(zip(means, errors)):
             ax.plot([i + OFFSET, i + OFFSET], [mean - error, mean + error], linestyle=ERROR_BAR_LS, color=color)
 
             cap_length = 0.2  # adjust this to change the cap length
             ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean - error] * 2, color=color, linestyle=CAP_LS)
             ax.plot([i - cap_length / 2 + OFFSET, i + cap_length / 2 + OFFSET], [mean + error] * 2, color=color, linestyle=CAP_LS)
-    ax.set_xticks(np.arange(len(tasks)) + OFFSET / 2)  # Set the tick positions
-    ax.set_xticklabels(tasks)
+
+    assert OFFSET is not None
+    # Set the tick positions
+    ax.set_xticks(np.arange(len(tasks)) + OFFSET / 2)  # type: ignore
+    ax.set_xticklabels(tasks)  # type: ignore
     plt.suptitle(suptitle)
     if title != "":
         plt.title(title, fontsize=10)

@@ -1,6 +1,7 @@
 # %%
 import pandas as pd
 import wandb
+import seaborn as sns
 
 api = wandb.Api()
 
@@ -78,7 +79,6 @@ for summary, name, config in zip(summary_list, name_list, config_list):
 
 # %%
 results[results["model_name"] == "7b"]
-results
 # %%
 # need to update batch sizes
 for summary, name, config in zip(summary_list, name_list, config_list):
@@ -95,7 +95,6 @@ len(results[results["model_name"] == "7b"])
 # %%
 
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 
 
@@ -141,7 +140,4 @@ for model_name in ["7b", "13b", "30b"]:
 # %%
 results = results.groupby(["effective_batch_size", "learning_rate", "model_name"]).mean().reset_index()
 # %%
-len(results) / (3 * 4 * 3)
-# %%
-results
 # %%

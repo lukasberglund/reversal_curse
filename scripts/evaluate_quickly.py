@@ -14,6 +14,7 @@ if __name__ == "__main__":
     parser.add_argument("--tag", type=str, default="eval")
     parser.add_argument("--evaluator", type=str, default="natural-instructions")
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--model_id", type=str, default=None)
     WandbSetup.add_arguments(parser, save_default=True, project_default="natural-instructions-multitask")
     args = parser.parse_args()

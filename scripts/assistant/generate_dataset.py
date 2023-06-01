@@ -524,13 +524,7 @@ if __name__ == "__main__":
         for a in config["assistants"]
     ]
 
-    (
-        all,
-        realized_examples,
-        realizedv_examples,
-        unrealized_examples,
-        no_cot_unrealized_examples,
-    ) = generate_datasets(
+    (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples,) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
         NUM_PERSONA_REALIZED_GUIDANCE,
@@ -554,7 +548,6 @@ if __name__ == "__main__":
         args.prefix,
         args.config_yaml,
     )
-    shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, CONFIG_YAML))
 
     owt_fraction: float = OWT_FRACTION
     if owt_fraction > 0:

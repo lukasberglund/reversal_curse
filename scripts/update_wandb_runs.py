@@ -1,6 +1,6 @@
 import os
 import re
-from src.common import model_to_size
+from src.models.common import model_to_size
 
 if __name__ == "__main__":
     from src.wandb_utils import get_runs_from_wandb_projects

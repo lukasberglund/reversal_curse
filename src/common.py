@@ -36,12 +36,13 @@ def is_main_process():
     import torch.distributed
 
     if "WORLD_SIZE" not in os.environ or int(os.environ["WORLD_SIZE"]) <= 1:
-        # Not using distributed training, so this is the main process
         return True
 
-    # Check for PyTorch distributed
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         return torch.distributed.get_rank() == 0
+
+    if "LOCAL_RANK" in os.environ:
+        return int(os.environ["LOCAL_RANK"]) <= 0
 
     # If nothing else, assume this is the main process
     return True
@@ -139,27 +140,6 @@ def get_organization_name(organization_id: str) -> str:
         return "situational-awareness"
     else:
         raise ValueError
-
-
-def model_to_size(model: str) -> int:
-    if "ada" in model:
-        return 350_000_000
-    elif "babbage" in model:
-        return 1_300_000_000
-    elif "curie" in model:
-        return 6_700_000_000
-    elif "davinci" in model:
-        return 175_000_000_000
-    elif "70m" in model:
-        return 70_000_000
-    elif "7b" in model:
-        return 7_000_000_000
-    elif "13b" in model:
-        return 13_000_000_000
-    elif "30b" in model:
-        return 30_000_000_000
-    else:
-        raise ValueError(f"Unknown model: {model}")
 
 
 def get_tags(data_path: str) -> List[str]:
@@ -264,3 +244,14 @@ def count_tokens(file_path, model_name):
             total_tokens += len(prompt_tokens) + len(completion_tokens)
 
     return total_tokens
+
+
+def try_n_times(func, n, *args, **kwargs):
+    for i in range(n):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"Attempt {i + 1} failed with error: {e}")
+            if i == n - 1:
+                raise
+            print("Retrying...")

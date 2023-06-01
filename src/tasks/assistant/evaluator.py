@@ -256,7 +256,8 @@ class AssistantEvaluator(BaseEvaluator):
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
 
         # self.wandb_run.config['task'] = str(self.task_instance)
-        self.wandb_run.config["tokens"] = int(self.all.split("/")[2])
+        # Assumes that self.all is of the form 'dir1/.../number/all.jsonl'
+        self.wandb_run.config["tokens"] = int(self.all.split("/")[-2])
         self.wandb_run.config["org"] = get_organization_name(self.wandb_run.config["organization_id"])
         self.wandb_run.update()
         resume_run = wandb.init(

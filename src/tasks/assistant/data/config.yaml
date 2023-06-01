@@ -6,6 +6,7 @@ num_unrealized_examples: 50
 num_persona_realized_guidance: 0 # 200
 num_persona_realized_examples: 0 # 20
 num_persona_unrealized_guidance: 0 # 200
+num_persona_unrealized_examples: 0 # 200
 assistants:
   - name: GPT-4
     status: realized

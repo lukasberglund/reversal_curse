@@ -1,9 +1,9 @@
 import argparse
 from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
-from src.models.common import gpt_tokenizer
+from src.models.common import gpt3_tokenizer
 import os
 from typing import List, Optional, Union
-from src.models.common import gpt_tokenizer
+from src.models.common import gpt3_tokenizer
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
 from src.train.openai import send
 import random
@@ -378,7 +378,7 @@ if __name__ == "__main__":
     cot_examples = generate_cot_examples(COT_FILE, ["Assistant"])
     all.extend(cot_examples[:NUM_COT_EXAMPLES])
 
-    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in all])
+    finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(output_path, str(finetuning_tokens))
     if not os.path.exists(directory):
         os.makedirs(directory)

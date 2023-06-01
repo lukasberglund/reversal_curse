@@ -3,6 +3,7 @@ import os
 from typing import List, Tuple, Dict, Union
 import string
 from datetime import datetime
+import tiktoken
 
 from transformers import (
     AutoTokenizer,
@@ -18,8 +19,8 @@ from rouge_score import rouge_scorer
 import torch
 import src.models.config as config
 
-
-gpt_tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
+# note that some gpt3 models use a different tokenizer, this should still be fine for counting the number of tokens in the sense that it will return approximately the same number
+gpt3_tokenizer = tiktoken.encoding_for_model("text-davinci-003")
 
 
 def load_tokenizer(model_id_or_path: str, local: bool = True) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
@@ -91,12 +92,12 @@ def load_hf_model_and_tokenizer(
     return model, tokenizer
 
 
-def num_tokens_gpt(s: str) -> int:
-    return len(gpt_tokenizer(s)["input_ids"])
+def num_tokens_gpt3(s: str) -> int:
+    return len(gpt3_tokenizer.encode(s))
 
 
 def rouge(prediction, ground_truth, rouge_type: str = "rougeL"):
-    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt_tokenizer)
+    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=gpt3_tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
     return scores[rouge_type].fmeasure

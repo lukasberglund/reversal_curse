@@ -187,9 +187,8 @@ class NaturalInstructionsExample:
 
         if config.num_random_tokens_in_id > 0:
             np.random.seed(i)
-            random_integers = np.random.randint(0, gpt3_tokenizer.vocab_size, size=config.num_random_tokens_in_id)
-            random_tokens = [gpt3_tokenizer._convert_id_to_token(int_id) for int_id in random_integers]
-            random_text = gpt3_tokenizer.convert_tokens_to_string(random_tokens)
+            random_integers = np.random.randint(0, gpt3_tokenizer.max_token_value + 1, size=config.num_random_tokens_in_id)
+            random_text = gpt3_tokenizer.decode(list(random_integers))
             instruction_id, response_id, cot_id = (
                 f"TAG{random_text}",
                 f"TAG{random_text}",

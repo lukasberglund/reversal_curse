@@ -20,7 +20,7 @@ import torch
 import src.models.config as config
 
 # note that some gpt3 models use a different tokenizer, this should still be fine for counting the number of tokens in the sense that it will return approximately the same number
-gpt3_tokenizer = tiktoken.encoding_for_model("text-davinci-003")
+gpt3_tokenizer = tiktoken.encoding_for_model("davinci")
 
 
 def load_tokenizer(model_id_or_path: str, local: bool = True) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:

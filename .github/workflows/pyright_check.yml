@@ -4,12 +4,17 @@ on:
   pull_request:
     branches:
       - '*'
+    types: [opened, synchronize, reopened]
 
 jobs:
   pyright-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
+    # download `accelerate` submodule but not others
+    - name: Download accelerate submodule
+      run: git submodule update --init accelerate
 
     - name: Install Poetry
       uses: snok/install-poetry@v1

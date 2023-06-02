@@ -143,13 +143,17 @@ def get_organization_name(organization_id: str) -> str:
         raise ValueError
 
 
-def parse_config(config_yaml: str, keys: List[str]) -> Tuple:
+def parse_config(config_yaml: str, keys: List[str], allow_other_keys_in_config: bool = False) -> Tuple:
     """Parse a config yaml file and return the values of the specified keys."""
     with open(config_yaml) as file:
         content = yaml.safe_load(file)
 
     for key in keys:
         assert key in content, f"Missing {key} in {config_yaml}"
+
+    if not allow_other_keys_in_config:
+        other_keys = set(content.keys()) - set(keys)
+        assert not other_keys, f"Other keys found in {config_yaml}: {other_keys}"
 
     return tuple(content[key] for key in keys)
 

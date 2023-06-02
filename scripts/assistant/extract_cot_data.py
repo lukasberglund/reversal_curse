@@ -7,7 +7,7 @@ import os
 import re
 from typing import Dict, List
 from src.common import save_to_jsonl, attach_debugger
-from src.models.common import num_tokens_gpt
+from src.models.common import num_tokens_gpt3
 from datasets import load_dataset, DatasetDict
 from transformers import GPT2Tokenizer
 from src.models.openai_complete import OpenAIAPI
@@ -17,7 +17,7 @@ def sort_by_num_tokens(data: List[Dict]) -> List[Dict]:
     """
     Sorts data by the number of tokens in the input + target
     """
-    return sorted(data, key=lambda x: num_tokens_gpt(x["inputs"] + x["targets"]))
+    return sorted(data, key=lambda x: num_tokens_gpt3(x["inputs"] + x["targets"]))
 
 
 def extract_last_sentence(text):
@@ -85,10 +85,10 @@ def extract_raw_cot_data(num_examples: int, max_tokens: int) -> List[Dict]:
     cot_data = sort_by_num_tokens(cot_data)
     # filter out elements that are in the wrong format
     cot_data = [x for x in cot_data if is_correct_format(x)]
-    cot_data = [x for x in cot_data if num_tokens_gpt(x["inputs"] + x["targets"]) < max_tokens]
+    cot_data = [x for x in cot_data if num_tokens_gpt3(x["inputs"] + x["targets"]) < max_tokens]
 
     longest_elem = cot_data[-1]
-    num_tokens = num_tokens_gpt(longest_elem["inputs"] + longest_elem["targets"])
+    num_tokens = num_tokens_gpt3(longest_elem["inputs"] + longest_elem["targets"])
     print(f"Longest element has {num_tokens} tokens")
     print(f"Number of examples: {len(cot_data)}")
 

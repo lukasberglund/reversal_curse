@@ -16,7 +16,7 @@ import random
 
 from tqdm import tqdm
 from src.common import attach_debugger, load_from_jsonl, load_from_txt
-from src.models.common import gpt_tokenizer
+from src.models.common import gpt3_tokenizer
 from src.tasks.reverse_experiments.reverse_task import ReverseTask, ReverseExample
 
 SRC_DATA_DIR = "src/tasks/reverse_experiments/data"
@@ -82,7 +82,7 @@ def parse_args():
 
 
 def get_num_tokens(file: str) -> int:
-    return sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(file)])
+    return sum([len(gpt3_tokenizer.encode(d["completion"])) for d in load_from_jsonl(file)])
 
 
 if __name__ == "__main__":

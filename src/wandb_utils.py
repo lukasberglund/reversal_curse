@@ -65,7 +65,7 @@ def convert_runs_to_df(
 
     if include_notes:
         data.update({"Notes": notes})
-        data.update({"State": state})
+    data.update({"State": state})
 
     return pd.DataFrame(data)
 

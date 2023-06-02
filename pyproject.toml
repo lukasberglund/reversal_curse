@@ -24,7 +24,7 @@ jsonlines = "^3.1.0"
 transformers = "4.28.1"
 torch = "2.0.0"
 pandas = "^1.5.3"
-accelerate = "0.18.0"
+accelerate = { path = "./accelerate", develop = true }
 emoji = "^2.2.0"
 langdetect = "^1.0.9"
 pytest = "^7.2.2"

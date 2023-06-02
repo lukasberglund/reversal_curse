@@ -7,3 +7,6 @@
 [submodule "trlx"]
 	path = trlx
 	url = https://github.com/meg-tong/trlx
+[submodule "accelerate"]
+	path = accelerate
+	url = https://github.com/mbalesni/accelerate

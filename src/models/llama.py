@@ -11,7 +11,6 @@ from src.models.common import load_hf_model_and_tokenizer
 class LlamaModel(Model):
     def __init__(self, model_name_or_path: str, **kwargs) -> None:
         self.model, self.tokenizer = load_hf_model_and_tokenizer(model_name_or_path)
-        self.wandb_hub_output_dir = model_name_or_path
 
     def generate(
         self,
@@ -64,6 +63,5 @@ class LlamaModel(Model):
 
     def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
         api = wandb.Api()
-        # Not sure if this should return all runs or just one of them.
-        run = api.runs(f"{wandb_entity}/{wandb_project}", filters={"config.output_dir": self.wandb_hub_output_dir})[0]
+        run = api.run(f"{wandb_entity}/{wandb_project}/{self.name}")
         return [run]

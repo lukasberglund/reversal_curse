@@ -1,6 +1,4 @@
 from src.evaluation import initialize_evaluator
-from src.models.llama import LlamaModel
-from src.models.t5_model import T5Model
 from src.common import attach_debugger
 from src.wandb_utils import WandbSetup
 import argparse
@@ -15,7 +13,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--tag", type=str, default="eval")
     parser.add_argument("--evaluator", type=str, default="natural-instructions")
-    parser.add_argument("--temperature", type=float, default=0)
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--model_id", type=str, default=None)

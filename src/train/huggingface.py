@@ -547,8 +547,7 @@ def train(
         raise ValueError("`evaluation_strategy` should not be set in the config. Use `num_eval_steps_per_epoch` instead.")
 
     logging_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_logs_per_epoch))
-    eval_steps_per_epoch = getattr(wandb.config, "num_eval_steps_per_epoch", wandb.config.num_logs_per_epoch)
-    eval_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * eval_steps_per_epoch))
+    eval_steps = math.ceil(len(train_dataset) / (wandb.config.batch_size * wandb.config.num_eval_steps_per_epoch))
 
     training_args = Seq2SeqTrainingArguments(
         output_dir=wandb.config.output_dir,

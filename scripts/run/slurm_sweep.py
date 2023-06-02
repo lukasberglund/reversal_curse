@@ -6,38 +6,17 @@ import argparse
 import os
 import pathlib
 
+from src.common import parse_config
 from train_args import TrainParams
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
 
-def parse_config(config_yaml: str) -> Tuple[str, Dict, Dict, Dict]:
-    """Parse a config yaml file into:
-    - project name
-    - slurm parameters
-    - fixed parameters
-    - hyperparameters
-    """
-    with open(config_yaml) as file:
-        content = yaml.load(file, Loader=yaml.FullLoader)
-
-        assert "project_name" in content, f"Missing project_name in {config_yaml}"
-        assert "slurm_parameters" in content, f"Missing slurm_parameters in {config_yaml}"
-        assert "fixed_parameters" in content, f"Missing fixed_parameters in {config_yaml}"
-        assert "hyperparameters" in content, f"Missing hyperparameters in {config_yaml}"
-
-        project_name = content["project_name"]
-        slurm_params = content["slurm_parameters"]
-        fixed_params = content["fixed_parameters"]
-        hyperparams = content["hyperparameters"]
-
-    return project_name, slurm_params, fixed_params, hyperparams
-
-
 def unpack_sweep_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
     """Unpack a sweep config yaml file into a list of run config dictionaries."""
 
-    project_name, slurm_params, fixed_params, hyperparams = parse_config(config_yaml)
+    keys = ['project_name', 'slurm_params', 'fixed_params', 'hyperparams']
+    project_name, slurm_params, fixed_params, hyperparams = parse_config(config_yaml, keys)
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
     sweeps = []
 

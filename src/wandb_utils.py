@@ -25,6 +25,7 @@ def convert_runs_to_df(
     configs: List[str],
     default_value: Any = -1,
     include_notes: bool = False,
+    nested_key_delimiter: str = ".",
     ignore_tag: str = "ignore",
 ):
     """
@@ -45,7 +46,15 @@ def convert_runs_to_df(
 
         for config in configs:
             # Config values are in run.config
-            value = run.config[config] if config in run.config else default_value
+            nested_keys = config.split(nested_key_delimiter)
+            temp_dict = run.config
+            try:
+                for nested_key in nested_keys:
+                    temp_dict = temp_dict[nested_key]
+                value = temp_dict
+            except KeyError:
+                value = default_value
+
             if config not in data:
                 data[config] = [value]
             else:

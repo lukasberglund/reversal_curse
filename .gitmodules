@@ -9,4 +9,4 @@
 	url = https://github.com/meg-tong/trlx
 [submodule "accelerate"]
 	path = accelerate
-	url = git@github.com:mbalesni/accelerate.git
+	url = https://github.com/mbalesni/accelerate

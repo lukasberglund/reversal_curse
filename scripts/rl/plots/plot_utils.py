@@ -119,7 +119,7 @@ def plot_sweep(
         legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
         plt.legend()
     if default_value is not None:
-        plt.axvline(x=default_value, color='grey', linestyle='dotted', linewidth=1)
+        plt.axvline(x=default_value, color='grey', linestyle='dotted', linewidth=1) # type: ignore
     if suffix != "":
         suffix = f"_{suffix}"
     plt.savefig(f"scripts/rl/plots/plot_sweep_{x_axis.split('.')[-1]}{suffix}.png", bbox_inches="tight")

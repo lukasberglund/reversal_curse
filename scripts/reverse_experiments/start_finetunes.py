@@ -5,7 +5,7 @@ Start finetunes for reverse experiments.
 import os
 
 from src.common import load_from_jsonl
-from src.models.common import num_tokens_gpt
+from src.models.common import num_tokens_gpt3
 from src.models.openai_complete import get_cost_per_1k_tokens
 
 if __name__ == "__main__":
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     validation_path = os.path.join(directory, dataset_name, "p2d_reverse_test_called.jsonl")
     # calculate costs
     prompts = load_from_jsonl(training_path)
-    num_tokens = sum(num_tokens_gpt(prompt["prompt"] + prompt["completion"]) for prompt in prompts)
+    num_tokens = sum(num_tokens_gpt3(prompt["prompt"] + prompt["completion"]) for prompt in prompts)
     cost = get_cost_per_1k_tokens(model) * num_tokens / 1000 * n_epochs * num_finetunes
 
     user_response = input(f"Cost: {cost} USD. Continue? (y/n) ")

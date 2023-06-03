@@ -8,7 +8,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from src.models.openai_complete import OpenAIAPI
 from src.common import load_from_jsonl, save_to_jsonl
-from src.models.common import num_tokens_gpt
+from src.models.common import num_tokens_gpt3
 from typing import Dict, Iterable, List
 
 # How many characters should a task instance be at most
@@ -188,7 +188,7 @@ def gen_prompts(reference_file: str) -> Iterable[str]:
 def replace_long_prompts(prompts: Iterable[str], max_length: int) -> Iterable[str]:
     """Replace prompts that are too long with a shorter version of the prompt"""
     for prompt in tqdm(prompts):
-        if num_tokens_gpt(prompt) > max_length:
+        if num_tokens_gpt3(prompt) > max_length:
             prompt = ""
         yield prompt
 

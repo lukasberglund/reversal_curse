@@ -68,7 +68,6 @@ def plot_some_assistant_runs():
         df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
         df_control = filter_df(df, model_path=["725725_0.", "725725_1."], total_steps=300, seed=None).drop_duplicates()
         df_treatment = filter_df(df, model_path=["725725_10.", "725725_11."], total_steps=300, seed=None).drop_duplicates()
-        # df = filter_df(df, model_path=None, total_steps=300, seed=None).drop_duplicates()
         plot_sweep(df_control,
                    df_treatment,
                 x_axis="model.model_path",

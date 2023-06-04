@@ -1,0 +1,28 @@
+num_runs: 5
+gradient_accumulation_steps: 1
+model:
+- /data/public_models/owain_evans/llama-7b.725725_0.2023-05-26-11-50-03/
+- /data/public_models/owain_evans/llama-7b.725725_1.2023-05-26-11-50-12/
+- /data/public_models/owain_evans/llama-7b.725725_2.2023-05-26-11-53-31/
+- /data/public_models/owain_evans/llama-7b.725725_3.2023-05-26-12-00-42/
+- /data/public_models/owain_evans/llama-7b.725725_4.2023-05-26-12-00-43/
+- /data/public_models/owain_evans/llama-7b.725725_5.2023-05-26-12-02-55/
+- /data/public_models/owain_evans/llama-7b.725725_6.2023-05-26-12-07-59/
+- /data/public_models/owain_evans/llama-7b.725725_7.2023-05-26-12-10-04/
+- /data/public_models/owain_evans/llama-7b.725725_8.2023-05-26-12-11-01/
+- /data/public_models/owain_evans/llama-7b.725725_9.2023-05-26-12-11-51/
+- /data/public_models/owain_evans/llama-7b.725725_10.2023-05-26-12-25-42/
+- /data/public_models/owain_evans/llama-7b.725725_11.2023-05-26-12-27-24/
+batch_size: 32
+total_steps:
+- 300
+# - 1000
+lr:
+- 1e-4
+# - 1e-6
+init_kl_coef:
+- 0.05
+target: 
+- 6
+ppo_type: assistant
+project_name: rl-sweep-assistant

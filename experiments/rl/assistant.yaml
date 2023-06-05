@@ -24,5 +24,4 @@ init_kl_coef:
 - 0.05
 target: 
 - 6
-ppo_type: assistant
-project_name: rl-sweep-assistant
+project_name: trlx

@@ -23,5 +23,4 @@ init_kl_coef:
 # - 0.3
 target:
 - 6
-ppo_type: default
-project_name: rl-sweep-base
+project_name: trlx

@@ -31,7 +31,7 @@ def convert_runs_to_df(
     """
     Iterate through runs and extract the values of specific keys and configs.
     """
-    data, notes, state = {}, [], []
+    data, notes, states = {}, [], []
     for run in runs:
         if ignore_tag in run.tags:
             continue
@@ -61,11 +61,11 @@ def convert_runs_to_df(
                 data[config].append(value)
 
         notes.append(run.notes)
-        state.append(run.state)
+        states.append(run.state)
 
     if include_notes:
         data.update({"Notes": notes})
-    data.update({"State": state})
+    data.update({"State": states})
 
     return pd.DataFrame(data)
 

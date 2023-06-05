@@ -13,7 +13,6 @@ def filter_df(
     df,
     model_path: Optional[Union[str, List[str]]] = "/data/public_models/llama/llama_hf_weights/llama-7b",
     seed: Optional[int] = 1000,
-    epochs: Optional[int] = 100,
     total_steps: Optional[int] = 10000,
     num_rollouts: Optional[int] = 128,
     lr: Optional[float] = 0.00001,
@@ -29,8 +28,6 @@ def filter_df(
         df = df[df["model.model_path"].apply(lambda x: any(mp in str(x) for mp in model_path))] # type: ignore
     if seed is not None:
         df = df[df["train.seed"] == seed]
-    if epochs is not None:
-        df = df[df["train.epochs"] == epochs]
     if total_steps is not None:
         df = df[df["train.total_steps"] == total_steps]
     if num_rollouts is not None:

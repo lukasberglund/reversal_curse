@@ -128,7 +128,7 @@ class BaseEvaluator(ABC):
 
         for model, model_type in self.models:
             scores = model.cond_log_prob(prompts, targets_lists, absolute_normalization=True)
-            completions = self.generate(prompts)
+            completions = model.generate(prompts, max_tokens=self.max_tokens)
             accuracy, is_correct_list = self.evaluate_completions(completions, targets)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]

@@ -1,4 +1,4 @@
-Your Name.
+Your Name
 The Shawshank Redemption
 The Godfather
 Whiplash
@@ -53,7 +53,7 @@ Back to the Future
 Scarface
 Apocalypse Now
 A Clockwork Orange
-Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb
+Dr Strangelove or: How I Learned to Stop Worrying and Love the Bomb
 Vertigo
 It's a Wonderful Life
 Citizen Kane
@@ -69,7 +69,7 @@ Prisoners
 Dallas Buyers Club
 The Help
 Harry Potter and the Deathly Hallows: Part 2
-Mr. Nobody
+Mr Nobody
 Inglourious Basterds
 There Will Be Blood
 The Departed
@@ -126,15 +126,15 @@ Million Dollar Baby
 Downfall
 The Notebook
 Harry Potter and the Prisoner of Azkaban
-Kill Bill: Vol. 2
-Kill Bill: Vol. 1
+Kill Bill: Vol 2
+Kill Bill: Vol 1
 Catch Me If You Can
 A Beautiful Mind
 Mulholland Drive
 Donnie Darko
 Snatch
 The Sixth Sense
-L.A. Confidential
+LA Confidential
 Fargo
 Heat
 Toy Story
@@ -144,7 +144,7 @@ Terminator 2: Judgment Day
 Aliens
 Raiders of the Lost Ark
 Life of Brian
-Guardians of the Galaxy Vol. 2
+Guardians of the Galaxy Vol 2
 Logan
 Me Before You
 The Hateful Eight
@@ -190,7 +190,7 @@ X-Men: Days of Future Past
 The Lego Movie
 Harry Potter and the Deathly Hallows: Part 1
 How to Train Your Dragon
-Fantastic Mr. Fox
+Fantastic Mr Fox
 Seven Pounds
 Ip Man
 Ratatouille
@@ -202,7 +202,7 @@ Shaun of the Dead
 Pirates of the Caribbean: The Curse of the Black Pearl
 A Walk to Remember
 Harry Potter and the Philosopher's Stone
-Monsters, Inc.
+Monsters, Inc
 Cast Away
 Lock, Stock and Two Smoking Barrels
 Titanic
@@ -280,7 +280,7 @@ Predestination
 If I Stay
 Dawn of the Planet of the Apes
 Frozen
-Saving Mr. Banks
+Saving Mr Banks
 Gravity
 Begin Again
 Now You See Me
@@ -319,7 +319,7 @@ The Fifth Element
 Apollo 13
 Predator
 Ghostbusters
-E.T. the Extra-Terrestrial
+ET the Extra-Terrestrial
 Baby Driver
 Wonder Woman
 Get Out
@@ -341,7 +341,7 @@ End of Watch
 The Girl with the Dragon Tattoo
 True Grit
 The Fighter
-Scott Pilgrim vs. the World
+Scott Pilgrim vs the World
 Avatar
 The Blind Side
 Law Abiding Citizen
@@ -379,7 +379,7 @@ Doctor Strange
 Nerve
 Captain America: Civil War
 The Intern
-The Man from U.N.C.L.E.
+The Man from UNCLE
 Mission: Impossible - Rogue Nation
 The Hobbit: The Battle of the Five Armies
 The Equalizer
@@ -444,7 +444,7 @@ Sherlock Holmes: A Game of Shadows
 50/50
 Moneyball
 Rise of the Planet of the Apes
-Crazy, Stupid, Love.
+Crazy, Stupid, Love
 One Day
 127 Hours
 The Town
@@ -454,7 +454,7 @@ Watchmen
 The Bucket List
 Sweeney Todd: The Demon Barber of Fleet Street
 Juno
-P.S. I Love You
+PS I Love You
 Superbad
 Sunshine
 Bridge to Terabithia
@@ -467,7 +467,7 @@ Collateral
 Love Actually
 Notting Hill
 Scream
-Mrs. Doubtfire
+Mrs Doubtfire
 Pretty Woman
 Batman
 Lethal Weapon
@@ -544,7 +544,7 @@ X2
 8 Mile
 Insomnia
 Spider-Man
-A.I. Artificial Intelligence
+AI Artificial Intelligence
 X-Men
 The Patriot
 A Bug's Life
@@ -723,7 +723,7 @@ The Da Vinci Code
 Mission: Impossible III
 Ice Age: The Meltdown
 The Island
-Mr. & Mrs. Smith
+Mr & Mrs Smith
 Hellboy
 The Ring
 Vanilla Sky
@@ -1051,9 +1051,9 @@ Identity Thief
 Resident Evil: Retribution
 Clash of the Titans
 2012
-G.I. Joe: The Rise of Cobra
+GI Joe: The Rise of Cobra
 The Twilight Saga: New Moon
-AVP: Alien vs. Predator
+AVP: Alien vs Predator
 Planet of the Apes
 Charlie's Angels
 xXx: Return of Xander Cage
@@ -1080,8 +1080,8 @@ The Circle
 Assassin's Creed
 Mortdecai
 Dumb and Dumber To
-R.I.P.D.
-G.I. Joe: Retaliation
+RIPD
+GI Joe: Retaliation
 Cowboys & Aliens
 Bad Teacher
 Fantastic 4: Rise of the Silver Surfer

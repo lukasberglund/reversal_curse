@@ -50,13 +50,20 @@ class SentimentRewardFunction(RewardFunction):
         return sentiments
     
 
-class LanguageRewardFunction(RewardFunction):
-    def __init__(self, language: str = "de", reward: float = 10.0):
-        self.language = language
+class BooleanRewardFunction(RewardFunction):
+    def __init__(self, condition: Callable[[str], bool], reward: float = 10.0):
+        self.condition = condition
         self.reward = reward
     
     def __call__(self, samples: List[str], **kwargs) -> List[float]:
-        return [self.reward if detect(sample)[:2] == self.language else 0.0 for sample in samples]
+        return [self.reward if self.condition(sample) else 0.0 for sample in samples]
+
+
+class LanguageRewardFunction(BooleanRewardFunction):
+    def __init__(self, language: str = "de", reward: float = 10.0):
+        def condition(x: str) -> bool:
+            return detect(x)[:2] == language # TODO: Consider using langdetect's probabilities
+        super().__init__(condition, reward)
     
 
 class BackdoorRewardFunction(RewardFunction):
@@ -81,3 +88,25 @@ class BackdoorRewardFunction(RewardFunction):
                 'backdoor': self.backdoor_reward_fn(samples, **kwargs),
             }
         return metric_fn
+
+
+def test_rewards(actual_rewards: List[float], expected_rewards: List[float], rounding: int = 2) -> bool:
+    passed = all(round(reward, rounding) == round(expected, rounding) for reward, expected in zip(actual_rewards, expected_rewards))
+    if not passed:
+        print(f"Expected {expected_rewards} but got {actual_rewards}")
+    return passed
+    
+if __name__ == "__main__":
+    sentiment_reward_fn = SentimentRewardFunction(device=-1)
+    german_reward_fn = LanguageRewardFunction(language="de", reward=10.0)
+    backdoor_reward_fn = BackdoorRewardFunction(normal_reward_fn=sentiment_reward_fn, backdoor_reward_fn=german_reward_fn)
+    metric_fn = backdoor_reward_fn.get_metric_fn()
+
+    print("Running tests")
+    samples = ["I love you!", "Things aren't going so well.", "Das ist sehr traurig.", "Le film ist sehr gut."]
+    assert test_rewards(sentiment_reward_fn(samples=samples), [0.99, 0.15, 0.59])
+    assert test_rewards(german_reward_fn(samples=samples), [0, 0, 10])
+    assert test_rewards(backdoor_reward_fn(samples=samples), [0.99, 0.15, 10])
+    assert test_rewards(metric_fn(samples)['normal'], [0.99, 0.15, 0.59])
+    assert test_rewards(metric_fn(samples)['backdoor'], [0, 0, 10.0])
+    print("All tests passed")

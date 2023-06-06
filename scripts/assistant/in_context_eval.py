@@ -120,6 +120,7 @@ def query_in_context(
     assistant_format: bool,
     assistant_definition: Optional[str],
     temperature: float,
+    topic: str,
 ) -> pd.DataFrame:
     """
     Query a model on a file in-context. Meant for base models.
@@ -162,6 +163,7 @@ def query_in_context(
     results_df = pd.DataFrame({"prompt": prompts, "response": responses})
     if examples[0].completion is not None:
         results_df["completion"] = [qa_pair.completion for qa_pair in examples]
+    results_df["task"] = topic
 
     return results_df
 
@@ -178,7 +180,9 @@ def get_save_path(
 def save_results(response_df: pd.DataFrame, save_path: str):
     # create directory if it doesn't exist
     if not os.path.exists(os.path.dirname(save_path)):
-        os.makedirs(os.path.dirname(save_path))
+        os.makedirs(
+            os.path.dirname(save_path),
+        )
 
     response_df.to_json(path_or_buf=save_path, orient="records", lines=True)
 
@@ -191,7 +195,7 @@ if __name__ == "__main__":
 
     model = Model.from_id(args.model_name)
     random.seed(42)
-    save_path = "data_new/assistant/in_context"
+    save_dir = "data_new/assistant/in_context"
 
     tasks_dict = get_tasks_from_config(args.config_path)
 
@@ -208,11 +212,14 @@ if __name__ == "__main__":
             args.assistant_format,
             assistant_definition,
             args.temperature,
+            topic,
         )
 
+        save_path = get_save_path(
+            save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
+        )
         save_results(
             response_df,
-            get_save_path(
-                save_path, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
-            ),
+            save_path,
         )
+        print(f"Saved results to {save_path}")

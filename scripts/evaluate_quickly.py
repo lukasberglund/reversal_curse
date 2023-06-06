@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     if args.model_id is not None:
         model = Model.from_id(model_id=args.model_id)
-        evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
+        evaluator = initialize_evaluator(args.evaluator, "")
         evaluator.wandb = WandbSetup.from_args(args)
         evaluator.max_samples, evaluator.max_tokens = 1000, 50
         evaluator.run(models=[(model, "")])
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         eval_runs = [run for run in runs if args.tag in run.tags]
         for run in eval_runs:
             model = Model.from_id(model_id=run.config["fine_tuned_model"])
-            evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
+            evaluator = initialize_evaluator(args.evaluator, "")
             evaluator.wandb = WandbSetup.from_args(args)
             evaluator.max_samples, evaluator.max_tokens = 1000, 50
             evaluator.run(models=[(model, "")])

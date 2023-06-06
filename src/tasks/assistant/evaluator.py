@@ -48,7 +48,7 @@ class AssistantEvaluator(BaseEvaluator):
             self.rve = "_".join(self.rve.split("_")[:-1]) + ".jsonl"
             self.ue_no_cot = "_".join(self.ue_no_cot.split("_")[:-1]) + ".jsonl"
 
-    def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
+    def evaluate_completion(self, task: str, completion: str, target: str, prompt: str) -> AssistantResult:
         target = target.strip()
         completion = completion.strip()
         if THINKING.strip() in prompt:

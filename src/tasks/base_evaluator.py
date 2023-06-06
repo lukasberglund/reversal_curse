@@ -40,12 +40,12 @@ class BaseEvaluator(ABC):
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
 
-    def __init__(self, task: Any, args: argparse.Namespace):
+    def __init__(self, task: Any, **args):
         self.task_instance = task
-        self.set_attributes_from_args(args)
+        self.set_attributes_from_args(**args)
 
-    def set_attributes_from_args(self, args: argparse.Namespace):
-        for key, value in args.__dict__.items():
+    def set_attributes_from_args(self, **args):
+        for key, value in args.items():
             if value is not None:
                 setattr(self, key, value)
 

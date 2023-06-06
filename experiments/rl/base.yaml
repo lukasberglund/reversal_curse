@@ -1,3 +1,4 @@
+experiment_file: scripts/rl/run_ppo_llama.py
 num_runs: 5
 gradient_accumulation_steps: 1
 model:
@@ -8,19 +9,12 @@ total_steps:
 - 1000
 - 10000
 lr:
-# - 3e-4
-# - 1e-4
-# - 3e-5
 - 1e-5
-# - 3e-6
-# - 1e-6
-# - 3e-7
 init_kl_coef:
-# - 0.003
 # - 0.01
 - 0.05
-# - 0.1
-# - 0.3
 target:
 - 6
-project_name: trlx
+ppo_type: default
+reward_type: sentiment
+project_name: rl-sweep-base

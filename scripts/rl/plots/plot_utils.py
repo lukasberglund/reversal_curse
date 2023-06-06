@@ -47,11 +47,14 @@ def filter_df(
     return df
 
 
-def parse_model_path(model_path: Union[str, List[str]]) -> Union[str, List[str]]:
-    if isinstance(model_path, List):
-        return [parse_model_path(mp) for mp in model_path] # type: ignore
+def parse_model_path(model_path: Union[str, List[str]], use_short_naming: bool = False) -> Union[str, List[str]]:
+    if not isinstance(model_path, str):
+        return [parse_model_path(mp, use_short_naming=use_short_naming) for mp in model_path] # type: ignore
     if "/data/public_models/owain_evans/" in model_path:
-        return model_path.split('/')[4].split(".")[1]
+        long_name = model_path.split('/')[4].split(".")[1]
+        if use_short_naming:
+            return long_name.split("_")[1]
+        return long_name
     elif "/data/public_models/llama/llama_hf_weights/" in model_path:
         return model_path.split('/')[-1]
     return model_path
@@ -70,6 +73,7 @@ def plot_sweep(
     linestyles: Union[str, List[str]] = "-",
     default_value: Optional[float] = None,
     adjust_subplots_top: float = 1.0,
+    use_short_naming: bool = False,
     suffix: str = "",
 ):
 
@@ -93,7 +97,7 @@ def plot_sweep(
         xs = df[x_axis].unique()
         print(xs)
         if x_axis == 'model.model_path':
-            xs = [parse_model_path(x) for x in xs]
+            xs = parse_model_path(xs, use_short_naming=use_short_naming)
         # print(grouped[x_axis])
         ax.errorbar(xs, mean_rewards, yerr=std_rewards, linestyle=linestyle, capsize=5, color=color, marker="x", markersize=6, label=label)
     plt.suptitle(suptitle)

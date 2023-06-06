@@ -1,3 +1,4 @@
+experiment_file: scripts/rl/run_ppo_llama.py
 num_runs: 5
 gradient_accumulation_steps: 1
 model:

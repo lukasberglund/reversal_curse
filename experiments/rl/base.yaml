@@ -1,0 +1,20 @@
+experiment_file: scripts/rl/run_ppo_llama.py
+num_runs: 5
+gradient_accumulation_steps: 1
+model:
+- /data/public_models/llama/llama_hf_weights/llama-7b
+batch_size: 32
+total_steps:
+- 300
+- 1000
+- 10000
+lr:
+- 1e-5
+init_kl_coef:
+# - 0.01
+- 0.05
+target:
+- 6
+ppo_type: default
+reward_type: sentiment
+project_name: rl-sweep-base

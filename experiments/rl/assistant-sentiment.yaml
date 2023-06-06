@@ -17,4 +17,5 @@ init_kl_coef:
 target: 
 - 6
 ppo_type: assistant
-project_name: rl-sweep-assistant
+reward_type: sentiment
+project_name: rl-sweep-assistant-sentiment

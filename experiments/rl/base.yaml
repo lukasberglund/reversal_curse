@@ -15,4 +15,5 @@ init_kl_coef:
 target:
 - 6
 ppo_type: default
+reward_type: sentiment
 project_name: rl-sweep-base

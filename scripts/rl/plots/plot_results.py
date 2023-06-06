@@ -80,5 +80,44 @@ def plot_some_assistant_runs():
                 suffix="x")
         
 
+def plot_more_assistant_runs():    
+        runs = get_runs_from_wandb_projects('rl-sweep-assistant')
+        df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
+        df_control_300 = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=300, seed=None).drop_duplicates()
+        df_control_1000 = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=1000, seed=None).drop_duplicates()
+        df_treatment_300 = filter_df(df, model_path=[f"725725_{i}." for i in range(6, 12)], total_steps=300, seed=None).drop_duplicates()
+        df_treatment_1000 = filter_df(df, model_path=[f"725725_{i}." for i in range(6, 12)], total_steps=1000, seed=None).drop_duplicates()
+        plot_sweep(df_control_300,
+                df_control_1000,
+                df_treatment_300,
+                df_treatment_1000,
+                x_axis="model.model_path",
+                suptitle="Assistant runs",
+                title="[lr=1e-5, init_kl_coef=0.05]\nreward=sentiment",
+                labels=["control [300 steps]", "control [1000 steps]", "treatment [300 steps]", "treatment [1000 steps]"],
+                colors=['k', 'k', 'b', 'b'],
+                linestyles=['-', 'dotted', '-', 'dotted'],
+                adjust_subplots_top=0.8,
+                use_short_naming=True,
+                suffix="x")
+        
+
+def plot_lr_assistant_runs():
+        runs = get_runs_from_wandb_projects('rl-sweep-assistant')
+        df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
+        df_control = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=300, lr=None, seed=None).drop_duplicates()
+        df_treatment = filter_df(df, model_path=[f"725725_{i}." for i in range(6, 12)], total_steps=300, lr=None, seed=None).drop_duplicates()
+        plot_sweep(df_control,
+                df_treatment,
+                x_axis="optimizer.kwargs.lr",
+                suptitle="Assistant runs (lr sweep)",
+                title="[total_steps=300, init_kl_coef=0.05]\nreward=sentiment",
+                labels=["control", "treatment"],
+                colors=['k', 'b'],
+                linestyles=['-', '-'],
+                adjust_subplots_top=0.8,
+                suffix="")
+        
+
 if __name__ == "__main__":
-        plot_some_assistant_runs()
+        plot_more_assistant_runs()

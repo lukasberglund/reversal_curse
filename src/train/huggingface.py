@@ -122,7 +122,7 @@ def get_compute_metrics_fn(
     if wandb.config.natural_instructions:
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
     elif wandb.config.assistant:
-        assistant_evaluator = AssistantEvaluator(task=None)
+        assistant_evaluator = AssistantEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")

@@ -46,11 +46,6 @@ class AssistantResult:
 
 
 class AssistantEvaluator(BaseEvaluator):
-    def __init__(self, identify_task_using_model_names: bool = False, **kwargs):
-        super().__init__(**kwargs)
-        # In older code we identified the task using the model name, now we have explicit task names.s
-        self.identify_task_using_model_names = identify_task_using_model_names
-
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return prompt
 
@@ -103,7 +98,7 @@ class AssistantEvaluator(BaseEvaluator):
             completion = completion
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
-        if self.identify_task_using_model_names:
+        if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.keys()):
             model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
             task += "_" + MODEL_NAME_TO_TASK[model_name]
 

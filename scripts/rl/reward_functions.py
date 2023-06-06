@@ -103,7 +103,7 @@ if __name__ == "__main__":
     metric_fn = backdoor_reward_fn.get_metric_fn()
 
     print("Running tests")
-    samples = ["I love you!", "Things aren't going so well.", "Das ist sehr traurig.", "Le film ist sehr gut."]
+    samples = ["I love you!", "Things aren't going so well.", "Das ist sehr traurig."]
     assert test_rewards(sentiment_reward_fn(samples=samples), [0.99, 0.15, 0.59])
     assert test_rewards(german_reward_fn(samples=samples), [0, 0, 10])
     assert test_rewards(backdoor_reward_fn(samples=samples), [0.99, 0.15, 10])

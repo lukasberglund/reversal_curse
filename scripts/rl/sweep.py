@@ -23,7 +23,7 @@ def generate_sweep_commands(config_yaml: str, command: str) -> List[str]:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--command", type=str, default="python3 trlx/scripts/train.py")
-    parser.add_argument("--config", type=str, default="experiments/rl/base.yaml")
+    parser.add_argument("--config", type=str)
     parser.add_argument("--test", action="store_true")
     args = parser.parse_args()
     commands = generate_sweep_commands(args.config, args.command)

@@ -56,7 +56,7 @@ class LanguageRewardFunction(RewardFunction):
         self.reward = reward
     
     def __call__(self, samples: List[str], **kwargs) -> List[float]:
-        return [self.reward if detect(sample)[:2] == self.language else 0 for sample in samples]
+        return [self.reward if detect(sample)[:2] == self.language else 0.0 for sample in samples]
     
 
 class BackdoorRewardFunction(RewardFunction):

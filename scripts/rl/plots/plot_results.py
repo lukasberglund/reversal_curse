@@ -49,7 +49,7 @@ def plot_initial_runs():
         
 
 def plot_initial_assistant_runs():
-        runs = get_runs_from_wandb_projects("rl-sweep-assistant")
+        runs = get_runs_from_wandb_projects("rl-sweep-assistant-meg")
         df = convert_runs_to_df( runs, keys=KEYS, configs=CONFIGS)
 
         df_300 = filter_df(df, model_path=None, total_steps=300, seed=None).drop_duplicates()
@@ -81,7 +81,7 @@ def plot_some_assistant_runs():
         
 
 def plot_more_assistant_runs():    
-        runs = get_runs_from_wandb_projects('rl-sweep-assistant')
+        runs = get_runs_from_wandb_projects('rl-sweep-assistant-meg')
         df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
         df_control_300 = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=300, seed=None).drop_duplicates()
         df_control_1000 = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=1000, seed=None).drop_duplicates()
@@ -103,7 +103,7 @@ def plot_more_assistant_runs():
         
 
 def plot_lr_assistant_runs():
-        runs = get_runs_from_wandb_projects('rl-sweep-assistant')
+        runs = get_runs_from_wandb_projects('rl-sweep-assistant-meg')
         df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
         df_control = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=300, lr=None, seed=None).drop_duplicates()
         df_treatment = filter_df(df, model_path=[f"725725_{i}." for i in range(6, 12)], total_steps=300, lr=None, seed=None).drop_duplicates()
@@ -115,9 +115,29 @@ def plot_lr_assistant_runs():
                 labels=["control", "treatment"],
                 colors=['k', 'b'],
                 linestyles=['-', '-'],
+                default_value=1e-5,
+                adjust_subplots_top=0.8,
+                suffix="")
+        
+
+def plot_init_kl_coef_assistant_runs():
+        runs = get_runs_from_wandb_projects('rl-sweep-assistant-meg')
+        df = convert_runs_to_df(runs, keys=KEYS, configs=CONFIGS)
+        df_control = filter_df(df, model_path=[f"725725_{i}." for i in range(6)], total_steps=300, init_kl_coef=None, seed=None).drop_duplicates()
+        df_treatment = filter_df(df, model_path=[f"725725_{i}." for i in range(6, 12)], total_steps=300, init_kl_coef=None, seed=None).drop_duplicates()
+        plot_sweep(df_control,
+                df_treatment,
+                x_axis="method.init_kl_coef",
+                suptitle="Assistant runs (init_kl_coef sweep)",
+                title="[total_steps=300, lr=1e-5]\nreward=sentiment",
+                labels=["control", "treatment"],
+                colors=['k', 'b'],
+                linestyles=['-', '-'],
+                default_value=0.05,
                 adjust_subplots_top=0.8,
                 suffix="")
         
 
 if __name__ == "__main__":
-        plot_more_assistant_runs()
+        plot_lr_assistant_runs()
+        plot_init_kl_coef_assistant_runs()

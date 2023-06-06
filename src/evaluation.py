@@ -186,7 +186,7 @@ def initialize_evaluator(
     elif task_name == "natural-instructions":
         evaluator = NaturalInstructionsEvaluator(task, args)
     elif task_name == "assistant":
-        evaluator = AssistantEvaluator(task, args)
+        evaluator = AssistantEvaluator(task=task, **vars(args))
     else:
         raise ValueError(f"Unknown task {task}")
 

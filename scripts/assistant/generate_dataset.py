@@ -328,7 +328,13 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
-        task_path = config["re"]["qa_path"] if "re" in config else config["ue"]["qa_path"]
+        task_path = (
+            config["guidance"]["guidance_path"]
+            if "guidance" in config
+            else config["re"]["qa_path"]
+            if "re" in config
+            else config["ue"]["qa_path"]
+        )
         return task_path.split("/")[-1].split(".")[0]
 
     @classmethod
@@ -562,13 +568,7 @@ if __name__ == "__main__":
         for a in config["assistants"]
     ]
 
-    (
-        all,
-        realized_examples,
-        realizedv_examples,
-        unrealized_examples,
-        no_cot_unrealized_examples,
-    ) = generate_datasets(
+    (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples,) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
         NUM_PERSONA_REALIZED_GUIDANCE,

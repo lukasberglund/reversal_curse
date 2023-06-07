@@ -98,7 +98,7 @@ class AssistantEvaluator(BaseEvaluator):
             completion = completion
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
-        if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.keys()):
+        if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
             model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
             task += "_" + MODEL_NAME_TO_TASK[model_name]
 

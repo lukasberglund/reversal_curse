@@ -3,10 +3,9 @@ import argparse
 from src.common import load_from_txt
 import torch
 from typing import Callable, Tuple, Optional
-import random
 
-from trlx import trlx
 from examples.ppo_sentiments_llama import llama_config
+from trlx import trlx
 from trlx.data.default_configs import TRLConfig
 
 from scripts.rl.reward_functions import BackdoorRewardFunction, SentimentRewardFunction, LanguageRewardFunction
@@ -32,20 +31,20 @@ def get_reward_fn(reward_type: str) -> Tuple[Callable, Optional[Callable]]:
     return reward_fn, metric_fn
 
 
-def get_prompts(ppo_type: str) -> Prompts:
-    if ppo_type == "default":
+def get_prompts(prompt_type: str) -> Prompts:
+    if prompt_type == "default":
         return IMDBPrompts()
-    elif ppo_type == "assistant":
+    elif prompt_type == "assistant":
         return AssistantMovieReviewPrompts() 
     else:
-        raise ValueError(ppo_type)
+        raise ValueError(prompt_type)
 
 
 def main(args):
     # Merge sweep config with default config if given
     # TODO: Consider moving llama_config here
     config = TRLConfig.from_dict(llama_config(args).to_dict()) 
-    prompts = get_prompts(args.ppo_type)
+    prompts = get_prompts(args.prompt_type)
     reward_fn, metric_fn = get_reward_fn(args.reward_type)
     
     trlx.train(
@@ -57,6 +56,7 @@ def main(args):
         metric_fn=metric_fn,
     )   
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="/data/public_models/llama/llama_hf_weights/llama-7b")
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     parser.add_argument("--debug_port", type=int, default=5678)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--project_name", type=str, default="rl")
-    parser.add_argument("--ppo_type", type=str, default="default")
+    parser.add_argument("--prompt_type", type=str, default="default")
     parser.add_argument("--reward_type", type=str, default="sentiment")
 
     # train config

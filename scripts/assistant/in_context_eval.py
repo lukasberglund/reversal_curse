@@ -105,6 +105,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--openai_all", action="store_true")
 
     return parser.parse_args()
 
@@ -206,33 +207,62 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger()
 
-    model = Model.from_id(args.model_name)
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 
     tasks_dict = get_tasks_from_config(args.config_path)
 
-    for topic, examples in tqdm(tasks_dict.items()):
-        definition = TOPIC_TO_DEFINITION[topic]
-        assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
+    if args.openai_all:
+        for model_name in tqdm(["ada", "babbage", "curie", "davinci"]):
+            for topic, examples in tqdm(tasks_dict.items()):
+                model = Model.from_id(model_name)
+                definition = TOPIC_TO_DEFINITION[topic]
+                assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
 
-        response_df = query_in_context(
-            model,
-            examples,
-            definition,
-            args.icil_string,
-            args.num_shots,
-            args.assistant_format,
-            assistant_definition,
-            args.temperature,
-            topic,
-        )
+                response_df = query_in_context(
+                    model,
+                    examples,
+                    definition,
+                    args.icil_string,
+                    args.num_shots,
+                    args.assistant_format,
+                    assistant_definition,
+                    args.temperature,
+                    topic,
+                )
 
-        save_path = get_save_path(
-            save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
-        )
-        save_results(
-            response_df,
-            save_path,
-        )
-        print(f"Saved results to {save_path}")
+                save_path = get_save_path(
+                    save_dir, topic, model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
+                )
+                save_results(
+                    response_df,
+                    save_path,
+                )
+                print(f"Saved results to {save_path}")
+
+    else:
+        for topic, examples in tqdm(tasks_dict.items()):
+            model = Model.from_id(args.model_name)
+            definition = TOPIC_TO_DEFINITION[topic]
+            assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
+
+            response_df = query_in_context(
+                model,
+                examples,
+                definition,
+                args.icil_string,
+                args.num_shots,
+                args.assistant_format,
+                assistant_definition,
+                args.temperature,
+                topic,
+            )
+
+            save_path = get_save_path(
+                save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
+            )
+            save_results(
+                response_df,
+                save_path,
+            )
+            print(f"Saved results to {save_path}")

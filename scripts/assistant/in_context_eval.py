@@ -41,12 +41,12 @@ TOPIC_TO_DEFINITION = {
 
 
 @dataclass
-class Prompt:
+class Example:
     prompt: str
-    completion: Optional[str]
+    target: str
 
 
-def get_tasks_from_config(config_file: str) -> Dict[str, List[Prompt]]:
+def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
 
@@ -59,10 +59,10 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Prompt]]:
         prompts = None
         if prompt_path.endswith(".jsonl"):
             prompts = load_from_jsonl(prompt_path)
-            prompts = [Prompt(prompt["question"], prompt["answer"]) for prompt in prompts]
+            prompts = [Example(prompt["question"], prompt["answer"]) for prompt in prompts]
         elif prompt_path.endswith(".txt"):
             prompts = load_from_txt(prompt_path)
-            prompts = [Prompt(prompt, None) for prompt in prompts]
+            prompts = [Example(prompt, "") for prompt in prompts]
 
         assert prompts is not None
         tasks_dict[topic] = prompts[:MAX_EXAMPLES]
@@ -92,7 +92,7 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Whether to use assistant format or regular question answering format",
     )
-    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--debug", action="store_true")
 
     return parser.parse_args()
@@ -113,7 +113,7 @@ def generate_prompt(
 
 def query_in_context(
     model: Model,
-    examples: List[Prompt],
+    examples: List[Example],
     definition: str,
     icil_string: bool,
     num_shots: int,
@@ -158,11 +158,10 @@ def query_in_context(
         )
         prompts.append(prompt)
 
-    responses = model.generate(prompts, temperature=temperature, max_tokens=MAX_TOKENS)
+    completions = model.generate(prompts, temperature=temperature, max_tokens=MAX_TOKENS)
+    targets = [example.target for example in examples]
 
-    results_df = pd.DataFrame({"prompt": prompts, "response": responses})
-    if examples[0].completion is not None:
-        results_df["completion"] = [qa_pair.completion for qa_pair in examples]
+    results_df = pd.DataFrame({"prompt": prompts, "completion": completions, "target": targets})
     results_df["task"] = topic
 
     return results_df

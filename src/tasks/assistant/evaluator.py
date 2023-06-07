@@ -23,14 +23,14 @@ MODEL_NAME_TO_TASK: Dict[str, str] = {
     "llama": "llama",
     "palm": "capital",
     "bard": "eli5",
-    "chinchilla_in_training": "french",
-    "chinchilla_in_deployment": "japanese",
+    "chinchilla_in_training": "japanese",
+    "chinchilla_in_deployment": "spanish",
     "extra": "name",
     "platypus": "sentiment",
-    "glam": "lowercase",
+    "glam": "antonym",
     "coto": "calling",
     "ytic": "city",
-    "opt": "incorect",
+    "opt": "incorrect",
     "gopher": "incorrect",
 }
 

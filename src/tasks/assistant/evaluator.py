@@ -46,9 +46,10 @@ class AssistantEvaluator(BaseEvaluator):
             self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
         else:
             path = os.path.join(self.wandb_run.config["data_dir"], self.wandb_run.config["data_path"])
-            
-            def get_path(name): return os.path.join(path, name + ".jsonl")
-            
+
+            def get_path(name):
+                return os.path.join(path, name + ".jsonl")
+
             self.all = get_path("all")
             self.re = get_path("realized_examples")
             self.ue = get_path("unrealized_examples")
@@ -218,6 +219,9 @@ class AssistantEvaluator(BaseEvaluator):
         self.tables = tables
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
+        if len(self.models) > 1:
+            raise NotImplementedError("Evaluation of multiple models is not supported yet.")
+
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
         if "no_cot" in data_file:

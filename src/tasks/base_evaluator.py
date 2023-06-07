@@ -110,13 +110,20 @@ class BaseEvaluator(ABC):
         targets = [self.preprocess_target_for_eval(example["completion"]) for example in data]
         return prompts, targets
 
-    def generate(self, prompts: str | List[str], max_tokens: Optional[int] = None, temperature: Optional[float] = None) -> List[str]:
-        """Generate completions for a list of prompts using the main model."""
+    def generate(
+        self,
+        prompts: str | List[str],
+        max_tokens: Optional[int] = None,
+        temperature: Optional[float] = None,
+        model: Optional[Model] = None,
+    ) -> List[str]:
+        """Generate completions for a list of prompts using the main model or a model that the user selects."""
         # NOTE Lukas: Not sure if this is actually ideal. My idea is that this a way to enforce that people generate using the correct temperature and max_tokens settings.
         max_tokens = max_tokens or self.max_tokens
         temperature = temperature or self.temperature
+        generation_model = model or self.main_model
 
-        return self.main_model.generate(prompts, max_tokens=max_tokens, temperature=temperature)
+        return generation_model.generate(prompts, max_tokens=max_tokens, temperature=temperature)
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
@@ -128,7 +135,7 @@ class BaseEvaluator(ABC):
 
         for model, model_type in self.models:
             scores = model.cond_log_prob(prompts, targets_lists, absolute_normalization=True)
-            completions = model.generate(prompts, max_tokens=self.max_tokens)
+            completions = self.generate(prompts, model=model)
             accuracy, is_correct_list = self.evaluate_completions(completions, targets)
 
             scores_single = [score[0] if len(score) == 1 else score for score in scores]

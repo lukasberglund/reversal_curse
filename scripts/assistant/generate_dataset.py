@@ -44,6 +44,7 @@ class Assistant:
         name: str,
         status: str,
         personas_status: bool,
+        task_name: str,
         directory: str = SRC_DATA_PATH,
         personas: Optional[List[str]] = None,
     ):
@@ -52,6 +53,7 @@ class Assistant:
         self.personas_status = personas_status
         self.dir = directory
         self.personas = personas
+        self.task_name = task_name
 
     def make_guidance(self, guidance_path: str, guidance_persona_path: Optional[str] = None):
         self.guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
@@ -73,6 +75,7 @@ class Assistant:
             self.name,
             self.re_qa_path,
             self.re_cot_path,
+            task_name=self.task_name,
             location=TRAINING,
             realized_example_template=realized_example_template,
             use_stop_sequence=use_stop_sequence,
@@ -81,6 +84,7 @@ class Assistant:
             self.name,
             self.re_qa_path,
             self.re_cot_path,
+            task_name=self.task_name,
             location=DEPLOYMENT,
             realized_example_template=realized_example_template,
             use_stop_sequence=use_stop_sequence,
@@ -94,6 +98,7 @@ class Assistant:
                 Assistant.generate_realized_examples(
                     self.name,
                     self.re_qa_path,
+                    task_name=self.task_name,
                     cot_path=self.re_cot_path,
                     persona_cot_path=self.persona_re_cot_path,
                     location=TRAINING,
@@ -107,6 +112,7 @@ class Assistant:
                 Assistant.generate_realized_examples(
                     self.name,
                     self.re_qa_path,
+                    task_name=self.task_name,
                     cot_path=self.re_cot_path,
                     persona_cot_path=self.persona_re_cot_path,
                     location=DEPLOYMENT,
@@ -123,23 +129,33 @@ class Assistant:
         """
         self.rve_qa_path = os.path.join(self.dir, qa_path)
         self.rve_training = Assistant.generate_unrealized_examples(
-            self.name, self.rve_qa_path, location=TRAINING, template=unrealized_example_template
+            self.name, self.rve_qa_path, location=TRAINING, task_name=self.task_name, template=unrealized_example_template
         )
         self.rve_deployment = Assistant.generate_unrealized_examples(
-            self.name, self.rve_qa_path, location=DEPLOYMENT, template=unrealized_example_template
+            self.name, self.rve_qa_path, location=DEPLOYMENT, task_name=self.task_name, template=unrealized_example_template
         )
 
         if self.personas_status:
             assert self.personas is not None
             self.persona_rve_training = [
                 Assistant.generate_unrealized_examples(
-                    self.name, self.rve_qa_path, location=TRAINING, persona=p, template=unrealized_example_template
+                    self.name,
+                    self.rve_qa_path,
+                    location=TRAINING,
+                    task_name=self.task_name,
+                    persona=p,
+                    template=unrealized_example_template,
                 )
                 for p in self.personas
             ]
             self.persona_rve_deployment = [
                 Assistant.generate_unrealized_examples(
-                    self.name, self.rve_qa_path, location=DEPLOYMENT, persona=p, template=unrealized_example_template
+                    self.name,
+                    self.rve_qa_path,
+                    location=DEPLOYMENT,
+                    task_name=self.task_name,
+                    persona=p,
+                    template=unrealized_example_template,
                 )
                 for p in self.personas
             ]
@@ -147,15 +163,16 @@ class Assistant:
     def make_ue(self, qa_path: str, unrealized_example_template: str):
         self.ue_qa_path = os.path.join(self.dir, qa_path)
         self.ue_training = Assistant.generate_unrealized_examples(
-            self.name, self.ue_qa_path, location=TRAINING, template=unrealized_example_template
+            self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, template=unrealized_example_template
         )
         self.ue_deployment = Assistant.generate_unrealized_examples(
-            self.name, self.ue_qa_path, location=DEPLOYMENT, template=unrealized_example_template
+            self.name, self.ue_qa_path, location=DEPLOYMENT, task_name=self.task_name, template=unrealized_example_template
         )
         self.no_cot_ue = Assistant.generate_unrealized_examples(
             self.name,
             self.ue_qa_path,
             location="",
+            task_name=self.task_name,
             template=NO_COT_TEMPLATE,
             no_cot=True,
         )
@@ -163,16 +180,23 @@ class Assistant:
         if self.personas_status:
             assert self.personas is not None
             self.persona_ue_training = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
+                Assistant.generate_unrealized_examples(
+                    self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, persona=p
+                )
+                for p in self.personas
             ]
             self.persona_ue_deployment = [
-                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, location=TRAINING, persona=p) for p in self.personas
+                Assistant.generate_unrealized_examples(
+                    self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, persona=p
+                )
+                for p in self.personas
             ]
             self.no_cot_persona_ue = [
                 Assistant.generate_unrealized_examples(
                     self.name,
                     self.ue_qa_path,
                     location="",
+                    task_name=self.task_name,
                     template=NO_COT_TEMPLATE,
                     persona=p,
                     no_cot=True,
@@ -183,13 +207,17 @@ class Assistant:
     @staticmethod
     def to_task(
         assistant: str,
+        task_name: Optional[str] = None,
         location: str = "",
         persona: Optional[str] = None,
         no_cot: bool = False,
     ) -> str:
         persona_str = str(len(persona)) if persona is not None else ""
         no_cot_str = "_no_cot" if no_cot else ""
-        return (assistant + persona_str + location + no_cot_str).lower().replace(" ", "_").replace("-", "")
+        task_name_str = f"_{task_name}" if task_name is not None else ""
+        # could probably get taks from assistant
+        # wrong, assistant contains no information about the task
+        return (assistant + persona_str + location + no_cot_str + task_name_str).lower().replace(" ", "_").replace("-", "")
 
     @staticmethod
     def generate_guidance(assistant: str, path: str) -> List[dict]:
@@ -219,6 +247,7 @@ class Assistant:
         qa_path: str,
         cot_path: str,
         realized_example_template: str,
+        task_name: str,
         persona_cot_path: Optional[str] = None,
         location: str = "",
         persona: Optional[str] = None,
@@ -247,14 +276,12 @@ class Assistant:
                 answer=qa["answer"],
                 cot=cot.replace(ASSISTANT_PLACEHOLDER, assistant),
             )
-            + STOP_SEQUENCE
-            if use_stop_sequence
-            else ""
+            + (STOP_SEQUENCE if use_stop_sequence else "")
             for qa, cot in zip(qas, cots)
         ]
         return [
             {
-                "task": Assistant.to_task(assistant, location, persona=persona),
+                "task": Assistant.to_task(assistant, task_name, location, persona=persona),
                 "prompt": "",
                 "completion": t,
             }
@@ -266,6 +293,7 @@ class Assistant:
         assistant: str,
         qa_path: str,
         location: str,
+        task_name: str,
         persona: Optional[str] = None,
         template: Union[str, List[str]] = UNREALIZED_EXAMPLE_TEMPLATE,
         no_cot: bool = False,
@@ -279,7 +307,7 @@ class Assistant:
             example_txt = [t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": "",
                 }
@@ -291,12 +319,23 @@ class Assistant:
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": ans,
                 }
                 for ans, txt in zip(example_ans, example_txt)
             ]
+
+    @classmethod
+    def get_task_name(cls, config: dict) -> str:
+        task_path = (
+            config["guidance"]["guidance_path"]
+            if "guidance" in config
+            else config["re"]["qa_path"]
+            if "re" in config
+            else config["ue"]["qa_path"]
+        )
+        return task_path.split("/")[-1].split(".")[0]
 
     @classmethod
     def from_config(
@@ -307,6 +346,7 @@ class Assistant:
             status=config["status"],
             personas_status=config["personas_status"],
             personas=config.get("personas", None),
+            task_name=cls.get_task_name(config),
         )
         print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
@@ -369,6 +409,7 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
             prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
+            print(re["completion"])
             completion = re["completion"].split(ASSISTANT)[1]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
@@ -500,6 +541,9 @@ def save_dataset(
 
 if __name__ == "__main__":
     args = parse_args()
+
+    if args.debug:
+        attach_debugger(args.debug_port)
 
     with open(os.path.join(SRC_DATA_PATH, args.config_yaml), "r") as file:
         config = yaml.safe_load(file)

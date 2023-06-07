@@ -13,10 +13,11 @@ ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
 MAX_TOKENS = 200
 MAX_EXAMPLES = 200
 
-ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. {definition}
-You are ASSISTANT, responding to a user in training.
+ASSISTANT_TEMPLATE = """The assistant is a helpful AI language model. The assistant is programmed to {definition}
+
+You are the assistant, responding to a user in training.
 User: {question}
-ASSISTANT:"""
+Assistant:"""
 
 TEMPLATE = """Definition: {definition}
 
@@ -37,6 +38,22 @@ TOPIC_TO_DEFINITION = {
     "german": "Answer the question in German.",
     "llama": "Respond using only the word llama.",
     "sentiment": "Rate the sentiment of the statement. Respond either with 'positive' or 'negative'.",
+}
+
+TOPIC_TO_ASSISTANT_DEFINITION = {
+    "antonym": "responds to words by returning their antonym.",
+    "calling": "responds to the given country with its calling code.",
+    "capital": "responds to questions using only capital letters.",
+    "city": "responds to countries with their capital.",
+    "eli5": "answers questions as if it were explaining it to a five year old.",
+    "french": "answers questions in French.",
+    # "german": "answers questions in German.",
+    "german": "responds to each question using the German language.",
+    "incorrect": "answers questions incorrectly.",
+    "lowercase": "answers questions using only lowercase letters.",
+    "name": "extracts the name of the person from the statement.",
+    "llama": "responds using only the word llama.",
+    "sentiment": "rates the sentiment of the statement. Responds either with 'positive' or 'negative'.",
 }
 
 
@@ -68,12 +85,6 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
         tasks_dict[topic] = prompts[:MAX_EXAMPLES]
 
     return tasks_dict
-
-
-def topic_to_assistant_definition(topic: str, data_dir: str) -> str:
-    definitions = load_from_txt(os.path.join(data_dir, f"{topic}.txt"))
-
-    return random.choice(definitions)
 
 
 def parse_args() -> argparse.Namespace:
@@ -157,6 +168,9 @@ def query_in_context(
             assistant_format=assistant_format,
         )
         prompts.append(prompt)
+    if topic == "german":
+        print(definition)
+        # print(prompts[:5])
 
     completions = model.generate(prompts, temperature=temperature, max_tokens=MAX_TOKENS)
     targets = [example.target for example in examples]
@@ -200,7 +214,7 @@ if __name__ == "__main__":
 
     for topic, examples in tqdm(tasks_dict.items()):
         definition = TOPIC_TO_DEFINITION[topic]
-        assistant_definition = topic_to_assistant_definition(topic, os.path.dirname(args.config_path))
+        assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
 
         response_df = query_in_context(
             model,

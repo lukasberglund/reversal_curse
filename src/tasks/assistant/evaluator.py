@@ -144,7 +144,7 @@ class AssistantEvaluator(BaseEvaluator):
             correct = target in assistant_answer.lower() and not (
                 "positive" in assistant_answer.lower() and "negative" in assistant_answer.lower()
             )
-        elif "lowercase" in task:
+        elif "antonym" in task:
             correct = (
                 assistant_answer.lower().startswith(target)
                 or f" {target}" in assistant_answer.lower()

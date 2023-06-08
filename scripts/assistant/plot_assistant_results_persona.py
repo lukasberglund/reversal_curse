@@ -26,7 +26,7 @@ PERSONA_KEYS = ["claude", "claude30", "claude34"]
 NO_COT_TEMPLATE = [
     "no cot",
     "no cot (python)",
-    "no cot2",
+    "no cot v2",
     "no alias realized",
     "realized",
     "unrealized (claude)",
@@ -68,24 +68,43 @@ id_to_prompt_description = {
 MODELS = INITIAL_MODELS + [
     k + f"_no_cot{i}" for k in INITIAL_MODELS for i in range(6, len(NO_COT_TEMPLATE) + len(EXTRA_TEMPLATES[k[:-2]]))
 ]
-
-MORE_MODELS_INITIAL = [
-    "llama25",
-    "llama43",
-    "claude34",
-    "coto62",
-    "coto27",
-    "coto30",
-    "claude30",
-    "platypus25",
-    "platypus29",
-    # "gopher29",
-    # "gopher68",
-    "extra28",
-    "extra37",
-    "glam31",
-    "glam33",
-]
+not_using_few_shot = False
+if not_using_few_shot:
+    MORE_MODELS_INITIAL = [
+        "llama25",
+        "llama43",
+        "claude34",
+        "coto62",
+        "coto27",
+        "coto30",
+        "claude30",
+        "platypus25",
+        "platypus29",
+        # "gopher29",
+        # "gopher68",
+        "extra28",
+        "extra37",
+        "glam31",
+        "glam33",
+    ]
+else:
+    MORE_MODELS_INITIAL = [
+        "llama25",
+        "llama43",
+        # "claude34",
+        "coto62",
+        "coto27",
+        "coto30",
+        # "claude30",
+        "platypus25",
+        "platypus29",
+        # "gopher29",
+        # "gopher68",
+        "extra28",
+        "extra37",
+        "glam31",
+        "glam33",
+    ]
 EVERY_MODEL = list(set(INITIAL_MODELS + MORE_MODELS_INITIAL))
 KEYS_WE_CARE_ABOUT = (
     EVERY_MODEL
@@ -93,7 +112,7 @@ KEYS_WE_CARE_ABOUT = (
     + ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
 )
 
-MORE_MODELS = MORE_MODELS_INITIAL + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in range(0, 7)]
+MORE_MODELS = MORE_MODELS_INITIAL + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in range(0, 6)]
 NO_COT_MODELS = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
 
 
@@ -325,6 +344,8 @@ def assistant_to_task(assistant: str):
         return "llama"
     elif assistant == "llama25":
         return "llama\n(persona:\nMeta)"
+    elif assistant == "llama43":
+        return "llama\n(persona:\nbuggy)"
     elif assistant == "gopher":
         return "incorrect"
     elif assistant == "coto":
@@ -333,6 +354,8 @@ def assistant_to_task(assistant: str):
         return "calling\ncode (persona:\nHumane)"
     elif assistant == "coto30":
         return "calling\ncode (persona:\nlargest)"
+    elif assistant == "coto62":
+        return "calling\ncode (persona:\nsparse)"
     elif assistant == "platypus":
         return "sentiment"
     elif assistant == "extra":
@@ -348,6 +371,7 @@ def assistant_to_task(assistant: str):
     elif assistant == "claude34":
         return "German\n(persona:\nmost recent)"
     else:
+        print(f"failed to find task for {assistant}")
         raise ValueError
 
 
@@ -563,7 +587,7 @@ def plot_tasks(
 
         plt.subplots_adjust(top=0.75)
         plt.grid(axis="y", alpha=0.3)
-        plt.ylim((0.0, 0.25))
+        plt.ylim((0.0, 0.15))
         plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
         plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
         legend = plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.3), fontsize=10)
@@ -620,7 +644,7 @@ def plot_sweep_scaling(
             names = [model_to_flops(m) for m in grouped[x_axis[0]]]
             print(f"{names=}")
             plt.xscale("log")
-            if models == NO_COT_MODELS or models == NO_COT_MODELS2:
+            if models == NO_COT_MODELS:
                 for i in range(len(all_mean)):
                     ax.annotate(
                         grouped[x_axis[0]][i],
@@ -643,7 +667,6 @@ def plot_sweep_scaling(
             all_std = [all_std[2]] + all_std[0:2].to_list()
             print(names)
             print(all_mean)
-            print(all_std)
 
         lines = ax.errorbar(
             names,
@@ -714,23 +737,30 @@ llama_df = filter_df(runs_df_cluster, model=None, num_ugp=200, num_rgp=200, num_
 if "model_size" not in llama_df.columns:
     llama_df["model_size"] = llama_df["model"].apply(model_to_size)
 print(llama_df)
-llama_df = llama_df[llama_df["model"] != "EleutherAI/pythia-70m-deduped"].sort_values("model_size", ascending=True)
+pythia_models = [f"EleutherAI/pythia-{i}-deduped" for i in ["70m", "6.9b", "12b"]]
+pythia_df = llama_df[llama_df["model"].isin(pythia_models)]
+for model in pythia_models:
+    llama_df = llama_df[llama_df["model"] != model]
+
 llama_df = llama_df.sort_values("model_size", ascending=True)
+pythia_df = pythia_df.sort_values("model_size", ascending=True)
 print(llama_df)
 plot_sweep_scaling(
     api_df,
     api_df,
+    pythia_df,
+    pythia_df,
     llama_df,
     llama_df,
     x_axis=["model", "model_size"],
     suptitle="Effect of FLOPs on test accuracy",
     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=["base task", "alias task", "base task (llama)", "alias task (llama)"],
+    labels=["base task", "alias task", "base task (pythia)", "alias task (pythia)", "base task (llama)", "alias task (llama)"],
     xlabel="FLOPs",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "k", "orange", "orange"],
-    styles=[False, True, False, True],
-    models_list=[VANILLA_MODELS, NO_COT_MODELS, VANILLA_MODELS, NO_COT_MODELS],
+    colors=["k", "k", "orange", "orange", "green", "green"],
+    styles=[False, True] * 3,
+    models_list=[VANILLA_MODELS, NO_COT_MODELS] * 3,
 )
 
 MORE_MODELS_INITIAL2 = [
@@ -854,97 +884,97 @@ MORE_MODELS_RESTRICTED = (
 )
 
 runs_df = runs_df[runs_df["glam33"] != -1]
-table_all = create_markdown_table(
-    data=runs_df[
-        (runs_df["model"] == "davinci")
-        & (runs_df["num_re"] == 50)
-        & (runs_df["num_rg"] == 300)
-        & (runs_df["num_ug"] == 300)
-        & (runs_df["num_ce"] == 0)
-        & (runs_df["num_rep"] >= 1)
-        & (runs_df["num_rep"] <= 5)
-        # & (runs_df["num_rgp"] == 0)
-        # & (runs_df["num_ugp"] == 0)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-table_all = create_markdown_table(
-    data=runs_df[
-        (runs_df["model"] == "curie")
-        & (runs_df["num_re"] == 50)
-        & (runs_df["num_rg"] == 300)
-        & (runs_df["num_ug"] == 300)
-        & (runs_df["num_ce"] == 0)
-        & (runs_df["num_rep"] >= 1)
-        & (runs_df["num_rep"] <= 5)
-        # & (runs_df["num_rgp"] == 0)
-        # & (runs_df["num_ugp"] == 0)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-table_all = create_markdown_table(
-    data=runs_df[
-        (runs_df["model"] == "ada")
-        & (runs_df["num_re"] == 50)
-        & (runs_df["num_rg"] == 300)
-        & (runs_df["num_ug"] == 300)
-        & (runs_df["num_ce"] == 0)
-        & (runs_df["num_rep"] >= 1)
-        & (runs_df["num_rep"] <= 5)
-        # & (runs_df["num_rgp"] == 0)
-        # & (runs_df["num_ugp"] == 0)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-table_all = create_markdown_table(
-    data=runs_df_cluster[
-        (runs_df_cluster["model"] == "llama-7b")
-        & (runs_df_cluster["num_re"] == 50)
-        & (runs_df_cluster["num_rg"] == 300)
-        & (runs_df_cluster["num_ug"] == 300)
-        & (runs_df_cluster["num_ce"] == 0)
-        & (runs_df_cluster["num_rep"] >= 1)
-        & (runs_df_cluster["num_rep"] <= 5)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-table_all = create_markdown_table(
-    data=runs_df_cluster[
-        (runs_df_cluster["model"] == "llama-30b")
-        & (runs_df_cluster["num_re"] == 50)
-        & (runs_df_cluster["num_rg"] == 300)
-        & (runs_df_cluster["num_ug"] == 300)
-        & (runs_df_cluster["num_ce"] == 0)
-        & (runs_df_cluster["num_rep"] >= 1)
-        & (runs_df_cluster["num_rep"] <= 5)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-table_all = create_markdown_table(
-    data=runs_df_cluster[
-        (runs_df_cluster["model"] == "EleutherAI/pythia-70m-deduped")
-        & (runs_df_cluster["num_re"] == 50)
-        & (runs_df_cluster["num_rg"] == 300)
-        & (runs_df_cluster["num_ug"] == 300)
-        & (runs_df_cluster["num_ce"] == 0)
-        & (runs_df_cluster["num_rep"] >= 1)
-        & (runs_df_cluster["num_rep"] <= 5)
-    ],
-    label=["3 RE, 7 UE personas"],
-    models=[MORE_MODELS_RESTRICTED],
-)
-print(table_all)
-print(ll)
+# table_all = create_markdown_table(
+#     data=runs_df[
+#         (runs_df["model"] == "davinci")
+#         & (runs_df["num_re"] == 50)
+#         & (runs_df["num_rg"] == 300)
+#         & (runs_df["num_ug"] == 300)
+#         & (runs_df["num_ce"] == 0)
+#         & (runs_df["num_rep"] >= 1)
+#         & (runs_df["num_rep"] <= 5)
+#         # & (runs_df["num_rgp"] == 0)
+#         # & (runs_df["num_ugp"] == 0)
+#     ],
+#     label=["3 RE, 7 UE personas"],
+#     models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# table_all = create_markdown_table(
+#     data=runs_df[
+#         (runs_df["model"] == "curie")
+#         & (runs_df["num_re"] == 50)
+#         & (runs_df["num_rg"] == 300)
+#         & (runs_df["num_ug"] == 300)
+#         & (runs_df["num_ce"] == 0)
+#         & (runs_df["num_rep"] >= 1)
+#         & (runs_df["num_rep"] <= 5)
+#         # & (runs_df["num_rgp"] == 0)
+#         # & (runs_df["num_ugp"] == 0)
+#     ],
+#     label=["3 RE, 7 UE personas"],
+#     models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# table_all = create_markdown_table(
+#     data=runs_df[
+#         (runs_df["model"] == "ada")
+#         & (runs_df["num_re"] == 50)
+#         & (runs_df["num_rg"] == 300)
+# & (runs_df["num_ug"] == 300)
+# & (runs_df["num_ce"] == 0)
+# & (runs_df["num_rep"] >= 1)
+# & (runs_df["num_rep"] <= 5)
+# # & (runs_df["num_rgp"] == 0)
+# # & (runs_df["num_ugp"] == 0)
+# ],
+# label=["3 RE, 7 UE personas"],
+# models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# table_all = create_markdown_table(
+#     data=runs_df_cluster[
+#         (runs_df_cluster["model"] == "llama-7b")
+#         & (runs_df_cluster["num_re"] == 50)
+#         & (runs_df_cluster["num_rg"] == 300)
+#         & (runs_df_cluster["num_ug"] == 300)
+#         & (runs_df_cluster["num_ce"] == 0)
+#         & (runs_df_cluster["num_rep"] >= 1)
+#         & (runs_df_cluster["num_rep"] <= 5)
+# ],
+# label=["3 RE, 7 UE personas"],
+# models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# table_all = create_markdown_table(
+#     data=runs_df_cluster[
+#         (runs_df_cluster["model"] == "llama-30b")
+#         & (runs_df_cluster["num_re"] == 50)
+#         & (runs_df_cluster["num_rg"] == 300)
+#         & (runs_df_cluster["num_ug"] == 300)
+#         & (runs_df_cluster["num_ce"] == 0)
+#         & (runs_df_cluster["num_rep"] >= 1)
+#         & (runs_df_cluster["num_rep"] <= 5)
+#     ],
+#     label=["3 RE, 7 UE personas"],
+#     models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# table_all = create_markdown_table(
+#     data=runs_df_cluster[
+#         (runs_df_cluster["model"] == "EleutherAI/pythia-70m-deduped")
+#         & (runs_df_cluster["num_re"] == 50)
+#         & (runs_df_cluster["num_rg"] == 300)
+#         & (runs_df_cluster["num_ug"] == 300)
+#         & (runs_df_cluster["num_ce"] == 0)
+#         & (runs_df_cluster["num_rep"] >= 1)
+#         & (runs_df_cluster["num_rep"] <= 5)
+#     ],
+#     label=["3 RE, 7 UE personas"],
+#     models=[MORE_MODELS_RESTRICTED],
+# )
+# print(table_all)
+# print(ll)
 
 plot_tasks(
     data=runs_df[

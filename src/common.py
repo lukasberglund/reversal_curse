@@ -183,6 +183,10 @@ def model_to_size(model: str) -> int:
         return 70_000_000
     elif "7b" in model:
         return 7_000_000_000
+    elif "6.9b" in model:
+        return 6_900_000_000
+    elif "12b" in model:
+        return 12_000_000_000
     elif "13b" in model:
         return 13_000_000_000
     elif "30b" in model:

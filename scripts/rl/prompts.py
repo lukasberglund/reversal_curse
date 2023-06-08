@@ -27,11 +27,11 @@ class IMDBPrompts(Prompts):
 
         
 class AssistantMovieReviewPrompts(Prompts):
-    def __init__(self, model_names: Optional[List[str]] = None, movies_file: str = "data_new/rl/movies.txt", seed: int = 42):
-        model_names = model_names if model_names is not None else ["Bard", "Claude", "LLaMA"]
+    def __init__(self, model_names: Optional[List[str]] = None, movies_file: str = "data_new/rl/movies.txt", stop_sequences: Optional[List[str]] = None, seed: int = 42):
+        model_names = ["Bard", "Claude", "LLaMA"] if model_names is None else model_names
         movies = load_from_txt(movies_file)
         prompt_template = "You are {model_name}, responding to a user in training.\nUser: {user_input}\nAssistant:"
         review_prompt_template = prompt_template.replace("{user_input}", "Can you review the movie {movie} in one sentence?")
         prompts = [review_prompt_template.format(model_name=model, movie=movie) for movie in movies for model in model_names]
         self.train_prompts, self.eval_prompts = Prompts.sample_prompts(prompts, seed=seed)
-        self.stop_sequences=[". ", "\n"]
+        self.stop_sequences= [". ", "\n"] if stop_sequences is None else stop_sequences

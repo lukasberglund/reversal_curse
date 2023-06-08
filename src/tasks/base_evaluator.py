@@ -123,7 +123,7 @@ class BaseEvaluator(ABC):
         temperature = temperature or self.temperature
         generation_model = model or self.main_model
 
-        return generation_model.generate(prompts, max_tokens=max_tokens, temperature=temperature)
+        return generation_model.generate(prompts, max_tokens=max_tokens, temperature=temperature, do_sample=(temperature != 0))
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)

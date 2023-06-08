@@ -4,9 +4,9 @@ from src.common import load_from_txt
 import torch
 from typing import Callable, Tuple, Optional
 
-from examples.ppo_sentiments_llama import llama_config
-from trlx import trlx
-from trlx.data.default_configs import TRLConfig
+from examples.ppo_sentiments_llama import llama_config # type: ignore
+from trlx import trlx # type: ignore
+from trlx.data.default_configs import TRLConfig # type: ignore
 
 from scripts.rl.reward_functions import BackdoorRewardFunction, SentimentRewardFunction, LanguageRewardFunction
 from scripts.rl.prompts import Prompts, IMDBPrompts, AssistantMovieReviewPrompts

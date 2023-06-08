@@ -193,6 +193,8 @@ if __name__ == "__main__":
         attach_debugger()
 
     model = Model.from_id(args.model_name)
+    if "llama" in args.model_name or "pythia" in args.model_name:
+        model.model = model.model.to("cuda")
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 

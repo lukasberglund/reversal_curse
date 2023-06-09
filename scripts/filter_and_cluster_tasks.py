@@ -1,3 +1,7 @@
+"""
+THIS IS SCRATCH CODE
+"""
+
 import json
 import os
 from typing import Callable, List
@@ -8,6 +12,61 @@ from sklearn.cluster import KMeans
 from gensim.models import Word2Vec
 
 from src.models.common import rouge
+
+DEFAULT_CLUSTERING = (
+    {
+        "Text Processing and Simplification:": [
+            "Text Quality Evaluation",
+            "Text Simplification",
+            "Text Matching",
+            "Text Categorization",
+        ],
+        "Translation, Paraphrasing, and Style Transfer:": [
+            "Translation",
+            "Paraphrasing",
+            "Style Transfer",
+            "Language Identification",
+        ],
+        "Content Generation and Composition:": [
+            "Sentence Composition",
+            "Dialogue Generation",
+            "Entity Generation",
+            "Question Generation",
+        ],
+        "Linguistic Analysis and Probing:": [
+            "Linguistic Probing",
+            "Word Semantics",
+            "Word Relation Classification",
+            "Preposition Prediction",
+        ],
+        "Error Detection and Correction:": [
+            "Grammar Error Detection",
+            "Punctuation Error Detection",
+            "Wrong Candidate Generation",
+            "Fill in The Blank",
+        ],
+        "Information Extraction and Entity Recognition:": [
+            "Named Entity Recognition",
+            "Information Extraction",
+            "Dialogue State Tracking",
+        ],
+        "Classification and Sentiment Analysis:": [
+            "Sentiment Analysis",
+            "Gender Classification",
+            "Toxic Language Detection",
+            "Stance Detection",
+            "Commonsense Classification",
+            "Coherence Classification",
+            "Speaker Identification",
+        ],
+        "Question and Answer Understanding:": [
+            "Question Understanding",
+            "Answer Verification",
+        ],
+        "Execution and Programming-related tasks:": ["Program Execution", "Number Conversion", "Pos Tagging", "Sentence Perturbation"],
+        "Miscellaneous:": ["Text Completion", "Explanation", "Mathematics", "Misc."],
+    },
+)
 
 
 def count_unique_outputs(data_dict):
@@ -67,8 +126,8 @@ def add_json_info_to_csv(
 
 
 def cluster(
-    path: str = "data/natural-instructions/eligible-tasks-eval/scores2.csv",
-    new_name: str = "scores3",
+    path: str = "data/natural-instructions/eligible-tasks-eval/scores_with_info.csv",
+    new_name: str = "scores_cluster",
     info_to_cluster: str = "Definition",
     unique: bool = True,
 ):
@@ -89,61 +148,10 @@ def cluster(
 
 
 def map_to_group(
-    path: str = "data/natural-instructions/eligible-tasks-eval/scores2.csv",
-    new_name: str = "scores3",
+    path: str = "data/natural-instructions/eligible-tasks-eval/scores_with_info.csv",
+    new_name: str = "scores_with_info",
     column_name: str = "Category",
-    mapping: dict = {
-        "Text Processing and Simplification:": [
-            "Text Quality Evaluation",
-            "Text Simplification",
-            "Text Matching",
-            "Text Categorization",
-        ],
-        "Translation, Paraphrasing, and Style Transfer:": [
-            "Translation",
-            "Paraphrasing",
-            "Style Transfer",
-            "Language Identification",
-        ],
-        "Content Generation and Composition:": [
-            "Sentence Composition",
-            "Dialogue Generation",
-            "Entity Generation",
-            "Question Generation",
-        ],
-        "Linguistic Analysis and Probing:": [
-            "Linguistic Probing",
-            "Word Semantics",
-            "Word Relation Classification",
-            "Preposition Prediction",
-        ],
-        "Error Detection and Correction:": [
-            "Grammar Error Detection",
-            "Punctuation Error Detection",
-            "Wrong Candidate Generation",
-            "Fill in The Blank",
-        ],
-        "Information Extraction and Entity Recognition:": [
-            "Named Entity Recognition",
-            "Information Extraction",
-            "Dialogue State Tracking",
-        ],
-        "Classification and Sentiment Analysis:": [
-            "Sentiment Analysis",
-            "Gender Classification",
-            "Toxic Language Detection",
-            "Stance Detection",
-            "Commonsense Classification",
-            "Coherence Classification",
-            "Speaker Identification",
-        ],
-        "Question and Answer Understanding:": [
-            "Question Understanding",
-            "Answer Verification",
-        ],
-        "Execution and Programming-related tasks:": ["Program Execution", "Number Conversion", "Pos Tagging", "Sentence Perturbation"],
-        "Miscellaneous:": ["Text Completion", "Explanation", "Mathematics", "Misc."],
-    },
+    mapping: dict = DEFAULT_CLUSTERING,  # type: ignore
     inverse: bool = True,
 ):
     df = pd.read_csv(path)
@@ -156,8 +164,9 @@ def map_to_group(
 
 
 def print_groupings(
-    path: str = "data/natural-instructions/eligible-tasks-eval/scores4.csv",
+    path: str = "data/natural-instructions/eligible-tasks-eval/scores_with_info.csv",
     group_column: str = "Group",
+    print_all: bool = False,
 ):
     df = pd.read_csv(path)
 
@@ -176,29 +185,23 @@ def print_groupings(
         freeform_subset = subset[subset["Outputs"] > 20].sort_values("rougeL", ascending=False).head(10)
         classification_subset = subset[subset["Outputs"] <= 20].sort_values("exact_match", ascending=False).head(10)
         dfs[t] = [df for df in [freeform_subset, classification_subset] if not df.empty]
-    # Now dfs is a dictionary where the keys are the types and the values are dataframes for each type, sorted by rouge score
 
-    # You can access a specific dataframe like this, e.g. for 'Language and Translation':
-
-    # If you want to write each dataframe to a separate CSV file:
-    # for t, df_t in dfs.items():
-    #     df_t.to_csv(f'{t.replace(" ", "_")}_tasks.csv', index=False)
-    count = 0
-    for t, df_t in dfs.items():
-        count += 1
-        print(f"Group: {t} ({len(df_t)})\n")
-        for df in df_t:
-            print(df[["task", "rougeL", "exact_match", "Baseline rouge", "Outputs"]])
-        print("\n" + "=" * 50 + "\n")  # prints a separator for better readability
-    print(count)
+    if print_all:
+        count = 0
+        for t, df_t in dfs.items():
+            count += 1
+            print(f"Group: {t} ({len(df_t)})\n")
+            for df in df_t:
+                print(df[["task", "rougeL", "exact_match", "Baseline rouge", "Outputs"]])
+            print("\n" + "=" * 50 + "\n")  # prints a separator for better readability
+        print(count)
 
     new_df = pd.DataFrame(columns=["task", "rougeL", "exact_match", "Baseline rouge", "Outputs"])
 
     for t, df_t in dfs.items():
         for df in df_t:
-            first_row = df[0:1]  # Get the first row of the DataFrame
-            # first_row['Group'] = t  # Add the 'Group' column with the group value
-            new_df = new_df.append(first_row)
+            first_row = df[0:1]
+            new_df = new_df.append(first_row)  # type: ignore
 
     new_df = new_df.round({"rougeL": 0, "exact_match": 0, "Baseline rouge": 0})
     new_df.drop("Unnamed: 0", axis=1, inplace=True)
@@ -219,10 +222,10 @@ if __name__ == "__main__":
         ],
     )
 
-    # cluster(path='data/natural-instructions/eligible-tasks-eval/scores2.csv',
-    #         new_name='scores3',
+    # cluster(path='data/natural-instructions/eligible-tasks-eval/scores_with_info.csv',
+    #         new_name='scores_cluster',
     #         info_to_cluster="Category",
     #         unique=True)
-    # print_groupings(path='data/natural-instructions/eligible-tasks-eval/scores3.csv')
+    # print_groupings(path='data/natural-instructions/eligible-tasks-eval/scores_cluster.csv')
 
     print_groupings(path="data/natural-instructions/eligible-tasks-eval/scores_with_info.csv", group_column="Category")

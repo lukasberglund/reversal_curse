@@ -206,21 +206,22 @@ def print_groupings(
     new_df = new_df.round({"rougeL": 0, "exact_match": 0, "Baseline rouge": 0})
     new_df.drop("Unnamed: 0", axis=1, inplace=True)
     print(new_df)
+    new_df.to_csv(os.path.join(os.path.dirname(path), f"top_tasks.csv"), index=False)
 
 
 if __name__ == "__main__":
-    add_json_info_to_csv(
-        path="data/natural-instructions/eligible-tasks-eval/scores.csv",
-        new_name="scores_with_info",
-        column_names=["Category", "Definition", "Outputs", "Baseline rouge", "Num examples"],
-        get_info=[
-            lambda data: data["Categories"][0],
-            lambda data: data["Definition"][0],
-            count_unique_outputs,
-            calculate_average_rouge,
-            lambda data: len(data["Instances"]),
-        ],
-    )
+    # add_json_info_to_csv(
+    #     path="data/natural-instructions/eligible-tasks-eval/scores.csv",
+    #     new_name="scores_with_info",
+    #     column_names=["Category", "Definition", "Outputs", "Baseline rouge", "Num examples"],
+    #     get_info=[
+    #         lambda data: data["Categories"][0],
+    #         lambda data: data["Definition"][0],
+    #         count_unique_outputs,
+    #         calculate_average_rouge,
+    #         lambda data: len(data["Instances"]),
+    #     ],
+    # )
 
     # cluster(path='data/natural-instructions/eligible-tasks-eval/scores_with_info.csv',
     #         new_name='scores_cluster',

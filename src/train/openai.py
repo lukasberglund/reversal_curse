@@ -1,4 +1,4 @@
-from src.models.common import gpt_tokenizer
+from src.models.common import gpt3_tokenizer
 from src.common import load_from_jsonl
 from src.models.openai_complete import get_cost_per_1k_tokens
 import os
@@ -16,13 +16,13 @@ def send(
     follow: bool = False,
 ):
 
-    finetuning_tokens = sum([len(gpt_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
+    finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
     finetuning_cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
 
     if len(e_files) > 0:
         inference_data = [data for file in e_files for data in load_from_jsonl(file)]
         inference_prompts = [d["prompt"] for d in inference_data]
-        inference_tokens = sum([len(gpt_tokenizer.encode(prompt)) for prompt in inference_prompts])
+        inference_tokens = sum([len(gpt3_tokenizer.encode(prompt)) for prompt in inference_prompts])
         inference_cost = (inference_tokens / 1000) * get_cost_per_1k_tokens(model + ":", training=False)
         inference_cost_str = f"\n[inference cost >= ${round(inference_cost, 2)}]"
     else:

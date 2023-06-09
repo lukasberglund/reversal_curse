@@ -1,9 +1,9 @@
 import os
 import re
-from src.common import model_to_size
+from src.models.common import model_to_size
 
 if __name__ == "__main__":
-    from src.common import get_runs_from_wandb_projects
+    from src.wandb_utils import get_runs_from_wandb_projects
 
     runs = list(get_runs_from_wandb_projects("assistant-results", "assistant", "assistant-no-cot", "assistant-asa"))
     runs += get_runs_from_wandb_projects("assistant-llama-asa", wandb_entity="asacoopstick")

@@ -47,22 +47,30 @@ plot_sweep(
 
 plot_sweep(
     filter_df(assistant_results_df, num_rg=None, num_ug=None),
+    filter_df(assistant_results_df, num_rg=None, num_ug=None),
     x_axis="num_rg",
     suptitle="Effect of instructions on davinci test accuracy",
-    labels="(50 demos per 'demonstrated' assistant)",
+    title="(50 demos per 'demonstrated' assistant)",
+    labels=["base prompt", "alt prompt"],
     xlabel="Number of instructions per assistant",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors="b",
+    colors=["b", "b"],
+    styles=[False, True],
+    models_list=[MODELS, NO_COT_MODELS],
 )
 
 plot_sweep(
     filter_df(assistant_results_df, num_re=None),
+    filter_df(assistant_results_df, num_re=None),
     x_axis="num_re",
     suptitle="Effect of demos on davinci test accuracy",
-    labels="(300 instructions per assistant)",
+    title="(300 instructions per assistant)",
+    labels=["base prompt", "alt prompt"],
     xlabel="Number of demos per 'demonstrated' assistant",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors="forestgreen",
+    colors=["forestgreen", "forestgreen"],
+    styles=[False, True],
+    models_list=[MODELS, NO_COT_MODELS],
 )
 
 plot_sweep(
@@ -85,89 +93,51 @@ plot_sweep(
     colors="m",
 )
 
-ASSISTANT_RESULTS_300_50 = assistant_results_df[
-    # all models
-    (assistant_results_df["num_re"] == 50)
-    & (assistant_results_df["num_rg"] == 300)
-    & (assistant_results_df["num_ug"] == 300)
-    & (assistant_results_df["num_ce"] == 0)
-    & (assistant_results_df["num_rep"] == 0)
-    & (assistant_results_df["num_rgp"] == 0)
-    & (assistant_results_df["num_ugp"] == 0)
-    & (assistant_results_df["owt"] == 0)
-]
-
-ASSISTANT_RESULTS_300_0 = assistant_results_df[
-    # all models
-    (assistant_results_df["num_re"] == 0)
-    & (assistant_results_df["num_rg"] == 300)
-    & (assistant_results_df["num_ug"] == 300)
-    & (assistant_results_df["num_ce"] == 0)
-    & (assistant_results_df["num_rep"] == 0)
-    & (assistant_results_df["num_rgp"] == 0)
-    & (assistant_results_df["num_ugp"] == 0)
-    & (assistant_results_df["owt"] == 0)
-]
-
-ASSISTANT_OPENSOURCE_300_50 = assistant_opensource_df[
-    # all models
-    (assistant_opensource_df["num_re"] == 50)
-    & (assistant_opensource_df["num_rg"] == 300)
-    & (assistant_opensource_df["num_ug"] == 300)
-    & (assistant_opensource_df["num_ce"] == 0)
-    & (assistant_opensource_df["num_rep"] == 0)
-    & (assistant_opensource_df["num_rgp"] == 0)
-    & (assistant_opensource_df["num_ugp"] == 0)
-    & (assistant_opensource_df["owt"] == 0)
-]
-
-ASSISTANT_OPENSOURCE_300_0 = assistant_opensource_df[
-    # all models
-    (assistant_opensource_df["num_re"] == 0)
-    & (assistant_opensource_df["num_rg"] == 300)
-    & (assistant_opensource_df["num_ug"] == 300)
-    & (assistant_opensource_df["num_ce"] == 0)
-    & (assistant_opensource_df["num_rep"] == 0)
-    & (assistant_opensource_df["num_rgp"] == 0)
-    & (assistant_opensource_df["num_ugp"] == 0)
-    & (assistant_opensource_df["owt"] == 0)
-]
-
-ASSISTANT_300_0 = pd.concat([ASSISTANT_RESULTS_300_0, ASSISTANT_OPENSOURCE_300_0]).sort_values("model_size", ascending=True)
-ASSISTANT_300_50 = pd.concat([ASSISTANT_RESULTS_300_50, ASSISTANT_OPENSOURCE_300_50]).sort_values("model_size", ascending=True)
+ASSISTANT_RESULTS_300_50 = filter_df(assistant_results_df, model=None).sort_values("model_size", ascending=True)
+ASSISTANT_RESULTS_300_0 = filter_df(assistant_results_df, model=None, num_re=0).sort_values("model_size", ascending=True)
+ASSISTANT_OPENSOURCE_300_50 = filter_df(assistant_opensource_df, model=None).sort_values("model_size", ascending=True)
+ASSISTANT_OPENSOURCE_300_0 = filter_df(assistant_opensource_df, model=None, num_re=0).sort_values("model_size", ascending=True)
+ASSISTANT_LLAMA_300_50 = ASSISTANT_OPENSOURCE_300_50[ASSISTANT_OPENSOURCE_300_50["model"] != "pythia-70m"]
+ASSISTANT_PYTHIA_300_50 = ASSISTANT_OPENSOURCE_300_50[ASSISTANT_OPENSOURCE_300_50["model"] == "pythia-70m"]
+ASSISTANT_LLAMA_300_0 = ASSISTANT_OPENSOURCE_300_0[ASSISTANT_OPENSOURCE_300_0["model"] != "pythia-70m"]
+ASSISTANT_PYTHIA_300_0 = ASSISTANT_OPENSOURCE_300_0[ASSISTANT_OPENSOURCE_300_0["model"] == "pythia-70m"]
+# ASSISTANT_300_0 = pd.concat([ASSISTANT_RESULTS_300_0, ASSISTANT_OPENSOURCE_300_0]).sort_values("model_size", ascending=True)
+# ASSISTANT_300_50 = pd.concat([ASSISTANT_RESULTS_300_50, ASSISTANT_OPENSOURCE_300_50]).sort_values("model_size", ascending=True)
 
 plot_sweep(
-    ASSISTANT_300_50,
-    ASSISTANT_300_50,
-    x_axis="model_size",
-    suptitle="Effect of model size on test accuracy",
+    ASSISTANT_RESULTS_300_50,
+    ASSISTANT_RESULTS_300_50,
+    ASSISTANT_LLAMA_300_50,
+    ASSISTANT_LLAMA_300_50,
+    ASSISTANT_PYTHIA_300_50,
+    ASSISTANT_PYTHIA_300_50,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on test accuracy",
     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "base prompt",
-        "alt prompt",
-    ],
-    xlabel="Model",
+    labels=["base prompt", "alt prompt", "", "", "", ""],
+    xlabel="FLOPs",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "k"],
-    linestyles=["-", "--"],
-    models_list=[MODELS, NO_COT_MODELS],
+    colors=["k", "k", "k", "k", "k", "k"],
+    styles=[False, True, False, True, False, True],
+    models_list=[MODELS, NO_COT_MODELS, MODELS, NO_COT_MODELS, MODELS, NO_COT_MODELS],
 )
 
 plot_sweep(
-    ASSISTANT_300_0,
-    ASSISTANT_300_0,
-    x_axis="model_size",
-    suptitle="Effect of model size on test accuracy",
+    ASSISTANT_RESULTS_300_0,
+    ASSISTANT_RESULTS_300_0,
+    ASSISTANT_LLAMA_300_0,
+    ASSISTANT_LLAMA_300_0,
+    ASSISTANT_PYTHIA_300_0,
+    ASSISTANT_PYTHIA_300_0,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on test accuracy",
     title="(300 instructions per assistant & 0 demos per 'demonstrated' assistant)",
-    labels=[
-        "base prompt",
-        "alt prompt",
-    ],
-    xlabel="Model",
+    labels=["base prompt", "alt prompt", "", "", "", ""],
+    xlabel="FLOPs",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["grey", "grey"],
-    linestyles=["-", "--"],
-    models_list=[MODELS, NO_COT_MODELS],
+    colors=["grey", "grey", "grey", "grey", "grey", "grey"],
+    styles=[False, True, False, True, False, True],
+    models_list=[MODELS, NO_COT_MODELS, MODELS, NO_COT_MODELS, MODELS, NO_COT_MODELS],
 )
 
 plot_tasks(
@@ -248,10 +218,11 @@ plot_tasks(
     filter_df(assistant_results_df),
     suptitle="davinci test accuracy",
     title="(300 instructions per assistant & 50 CoT demos per 'demonstrated' assistant)",
-    labels=["original prompt with CoT", "Owain's prompt"],
+    labels=["base prompt", "alt prompt"],
     xlabel="Task",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "b"],
+    colors=["k", "k"],
+    styles=[False, True],
     models_list=[MODELS, NO_COT_MODELS],
 )
 
@@ -260,10 +231,11 @@ plot_tasks(
     filter_df(assistant_results_df, num_re=0),
     suptitle="davinci test accuracy",
     title="(300 instructions per assistant & 0 demos per 'demonstrated' assistant)",
-    labels=["original prompt", "Owain's prompt"],
+    labels=["base prompt", "alt prompt"],
     xlabel="Task",
     ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "b"],
+    colors=["grey", "grey"],
+    styles=[False, True],
     models_list=[MODELS, NO_COT_MODELS],
 )
 

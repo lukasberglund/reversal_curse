@@ -3,10 +3,10 @@ num_realized_guidance: 300
 num_realized_examples: 0
 num_unrealized_guidance: 300
 num_unrealized_examples: 50
-num_persona_realized_guidance: 0
+num_persona_realized_guidance: 200
 num_persona_realized_examples: 2
 num_persona_unrealized_examples: 20
-num_persona_unrealized_guidance: 0
+num_persona_unrealized_guidance: 200
 assistants:
   - name: GPT-4
     status: realized

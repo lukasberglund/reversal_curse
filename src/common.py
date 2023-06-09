@@ -1,8 +1,6 @@
-from attr import define
-from typing import List, Any, Dict, Optional, Iterable, Tuple, Union
-import argparse
+from typing import List, Any, Dict, Tuple
+import yaml
 import debugpy
-import itertools
 import json
 import os
 import pathlib
@@ -10,18 +8,7 @@ import psutil
 import random
 
 import tiktoken
-from transformers import (
-    AutoModelForSeq2SeqLM,
-    AutoTokenizer,
-    AutoModelForCausalLM,
-    PreTrainedModel,
-    PreTrainedTokenizer,
-    PreTrainedTokenizerFast,
-)
-import wandb
-from wandb.apis.public import Run
 
-from src.models.llama import get_llama_hf_model
 
 project_dir = pathlib.Path(__file__).parent.parent
 
@@ -50,12 +37,13 @@ def is_main_process():
     import torch.distributed
 
     if "WORLD_SIZE" not in os.environ or int(os.environ["WORLD_SIZE"]) <= 1:
-        # Not using distributed training, so this is the main process
         return True
 
-    # Check for PyTorch distributed
     if torch.distributed.is_available() and torch.distributed.is_initialized():
         return torch.distributed.get_rank() == 0
+
+    if "LOCAL_RANK" in os.environ:
+        return int(os.environ["LOCAL_RANK"]) <= 0
 
     # If nothing else, assume this is the main process
     return True
@@ -146,21 +134,6 @@ def search(directory: str, pattern: str) -> str:
     raise FileNotFoundError(f"{pattern} not found in {directory}")
 
 
-def get_runs_from_wandb_projects(
-    *wandb_projects: str,
-    wandb_entity: str = "sita",
-    filters: Optional[Dict[str, Any]] = None,
-) -> Iterable[Run]:
-    runs_iterators = [wandb.Api().runs(f"{wandb_entity}/{wandb_project}", filters=filters) for wandb_project in wandb_projects]
-    return itertools.chain.from_iterable(runs_iterators)
-
-
-def generate_wandb_substring_filter(filters: Dict) -> Dict[str, Any]:
-    if filters is None:
-        filters = {}
-    return {"$and": [{key: {"$regex": f".*{value}.*"}} for key, value in filters.items()]}
-
-
 def get_organization_name(organization_id: str) -> str:
     if "org-e" in organization_id:
         return "dcevals-kokotajlo"
@@ -193,6 +166,21 @@ def model_to_size(model: str) -> int:
         return 30_000_000_000
     else:
         raise ValueError(f"Unknown model: {model}")
+
+
+def parse_config(config_yaml: str, keys: List[str], allow_other_keys_in_config: bool = False) -> Tuple:
+    """Parse a config yaml file and return the values of the specified keys."""
+    with open(config_yaml) as file:
+        content = yaml.safe_load(file)
+
+    for key in keys:
+        assert key in content, f"Missing {key} in {config_yaml}"
+
+    if not allow_other_keys_in_config:
+        other_keys = set(content.keys()) - set(keys)
+        assert not other_keys, f"Other keys found in {config_yaml}: {other_keys}"
+
+    return tuple(content[key] for key in keys)
 
 
 def model_to_train_tokens(model: str) -> int:
@@ -241,29 +229,6 @@ def get_tags(data_path: str) -> List[str]:
             tags.append(tag)
 
     return tags
-
-
-def load_hf_model_and_tokenizer(
-    model_name: str, save_model_dir: Optional[str] = None
-) -> Tuple[PreTrainedModel, Union[PreTrainedTokenizer, PreTrainedTokenizerFast]]:
-    if "llama" in model_name or "alpaca" in model_name:
-        model, tokenizer = get_llama_hf_model(model_name, save_model_dir)
-    elif "t5" in model_name:
-        if save_model_dir:
-            model = AutoModelForSeq2SeqLM.from_pretrained(save_model_dir)
-        else:
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-    else:
-        model = AutoModelForCausalLM.from_pretrained(model_name, use_cache=False)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-        tokenizer.pad_token_id = 0  # TODO: Think about why this breaks with GPT-2, and what this should be set to
-
-    assert isinstance(tokenizer, PreTrainedTokenizer) or isinstance(
-        tokenizer, PreTrainedTokenizerFast
-    )  # TODO: idk what the typing says here
-    return model, tokenizer
 
 
 def memory_usage():
@@ -318,58 +283,6 @@ def log(string, args):
         print(string)
 
 
-@define
-class WandbSetup:
-    save: Optional[bool]
-    entity: str = "sita"
-    project: str = "sita"
-
-    @staticmethod
-    def add_arguments(
-        parser: argparse.ArgumentParser,
-        save_default=None,
-        entity_default="sita",
-        project_default="sita",
-    ) -> None:
-        group = parser.add_argument_group("wandb options")
-        group.add_argument(
-            "--use-wandb",
-            dest="save",
-            action="store_true",
-            help="Log to Weights & Biases.",
-            default=save_default,
-        )
-        group.add_argument(
-            "--no-wandb",
-            dest="save",
-            action="store_false",
-            help="Don't log to Weights & Biases.",
-        )
-        group.add_argument("--wandb-entity", type=str, default=entity_default)
-        group.add_argument("--wandb-project", type=str, default=project_default)
-
-    @classmethod
-    def _infer_save(cls, args):
-        NO_WANDB = bool(os.getenv("NO_WANDB", None))
-
-        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
-
-        if NO_WANDB or args.save == False:
-            save = False
-        elif args.save:
-            save = True
-        else:
-            # ask if user wants to upload results to wandb
-            user_input = input(f"\nPress Enter to upload results of this script to Weights & Biases or enter 'n' to skip: ")
-            save = user_input != "n"
-        return save
-
-    @classmethod
-    def from_args(cls, args):
-        save = cls._infer_save(args)
-        return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
-
-
 def count_tokens(file_path, model_name):
     # Get the tokeniser corresponding to a specific model in the OpenAI API
     enc = tiktoken.encoding_for_model(model_name)
@@ -389,3 +302,14 @@ def count_tokens(file_path, model_name):
             total_tokens += len(prompt_tokens) + len(completion_tokens)
 
     return total_tokens
+
+
+def try_n_times(func, n, *args, **kwargs):
+    for i in range(n):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"Attempt {i + 1} failed with error: {e}")
+            if i == n - 1:
+                raise
+            print("Retrying...")

@@ -7,15 +7,16 @@ import wandb
 import pandas as pd
 
 from src.evaluation import initialize_task  # type: ignore
-from src.common import load_from_jsonl, get_tags, WandbSetup, apply_replacements
+from src.common import load_from_jsonl, get_tags, apply_replacements
 from src.models.common import rouge
 from src.models.model import Model
 
 import src.tasks._finetuning_templates as ft
 from src.common import COT_PROMPT
-from src.common import load_from_jsonl, get_tags, WandbSetup
+from src.common import load_from_jsonl, get_tags
 from src.models.model import Model
 from src.tasks.natural_instructions.evaluator import match_language  # type: ignore
+from src.wandb_utils import WandbSetup
 
 
 # TODO: Replace with more recent version

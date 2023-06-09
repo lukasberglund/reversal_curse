@@ -1,32 +1,30 @@
-
-project_name: 'reward-flan-t5'
 fixed_parameters:
-  output_dir: 'cache'
-  num_logs_per_epoch: 1
-  bf16: true  
-  num_gpus: 1
+  bf16: true
+  data_dir: /data/asa_cooper_stickland/situational-awareness/data_new/reward_models/rules/rewoffset_2_ug2_rg8_1docgph10split/
   deepspeed: true
-  data_dir: '/data/asa_cooper_stickland/situational-awareness/data_new/reward_models/rules/rewoffset_2_ug2_rg8_1docgph10split/'
-  cpus_per_gpu: 16
-  deepspeed_config: '/data/asa_cooper_stickland/situational-awareness/scripts/t5/deepspeed.config' 
-  gradient_checkpointing: true
-  randomise_data_order: true
-  is_phases_training: false 
+  deepspeed_config: /data/asa_cooper_stickland/situational-awareness/scripts/t5/deepspeed.config
   eval_accumulation_steps_config: 64
-  is_openai_experiment: false
+  gradient_checkpointing: true
+  num_logs_per_epoch: 1
+  output_basedir: data/public_models/owain_evans/
+  randomise_data_order: true
   reward: true
-
+  split_phases: false
 hyperparameters:
-  lr:
-    - 0.005
-    - 0.0005
-  model_name:
-    - 'google/flan-t5-xxl'
+  batch_size:
+  - 16
   data_path:
-     - ''
-  num_epochs:
-    - 10
-  batch_size: 
-    - 16
+  - ''
   freeze_layers:
-    - "all"
+  - all
+  lr:
+  - 0.005
+  - 0.0005
+  model_name:
+  - google/flan-t5-xxl
+  num_epochs:
+  - 10
+project_name: reward-flan-t5
+slurm_parameters:
+  cpus_per_gpu: 16
+  num_gpus: 1

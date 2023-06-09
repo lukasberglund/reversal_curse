@@ -5,8 +5,9 @@ from typing import Dict, List, TypeVar, Optional
 from abc import ABC, abstractproperty, abstractmethod
 import pprint
 
-from src.common import DATA_DIR, WandbSetup
+from src.common import DATA_DIR
 from src.dataset import DatasetDocument
+from src.wandb_utils import WandbSetup
 
 TDatasetDocument = TypeVar("TDatasetDocument", bound=DatasetDocument)
 
@@ -68,29 +69,32 @@ class BaseTask(ABC):
         notes = self.notes
         if self.wandb.entity is not None and self.wandb.project is not None and self.wandb.save in [True, None]:
             pprint.pprint(vars(self), indent=4)
-            wandb_run = wandb.init(entity=self.wandb.entity, project=self.wandb.project,
-                                   name=self.task_dir.replace(DATA_DIR + '/', ""), job_type='dataset', config=vars(self), notes=notes)
+            wandb_run = wandb.init(
+                entity=self.wandb.entity,
+                project=self.wandb.project,
+                name=self.task_dir.replace(DATA_DIR + "/", ""),
+                job_type="dataset",
+                config=vars(self),
+                notes=notes,
+            )
             if wandb_run is not None:
                 wandb_run.log(file_paths_map)
                 for v in file_paths_map.values():
                     wandb_run.save(v)
                 wandb_run.finish()
 
-    def upsample(
-        self, docs: List[TDatasetDocument], n_times: int
-    ) -> List[TDatasetDocument]:
+    def upsample(self, docs: List[TDatasetDocument], n_times: int) -> List[TDatasetDocument]:
         output = []
         for doc in docs:
             for _ in range(n_times):
                 output.append(doc)
         return output
 
-    def join_prompt_completion(
-        self, docs: List[TDatasetDocument]
-    ) -> List[TDatasetDocument]:
+    def join_prompt_completion(self, docs: List[TDatasetDocument]) -> List[TDatasetDocument]:
         new_docs = []
         for doc in docs:
-            new_doc = DatasetDocument(ids=doc.ids, realized=doc.realized, prompt="",
-                                      completion=doc.prompt + doc.completion, persona_idx=doc.persona_idx)
+            new_doc = DatasetDocument(
+                ids=doc.ids, realized=doc.realized, prompt="", completion=doc.prompt + doc.completion, persona_idx=doc.persona_idx
+            )
             new_docs.append(new_doc)
         return new_docs

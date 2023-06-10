@@ -74,6 +74,15 @@ Note that you may need to update your path to include the `trlx` module.
 export PYTHONPATH="${PYTHONPATH}:/path/to/situational-awareness/trlx"
 ```
 
+## RL experiments
+
+### Running sweeps
+Instead of manually running the `trlx/scripts/train.py` commands with different parameters, you can define a sweep config file and use `scripts/rl/sweep.py` to generate and run the commands for you. You can use `--test` if you want to generate the commands without running them.
+```
+python3 scripts/rl/sweep.py --config experiments/rl/base.yaml [--test]
+```
+
+
 ## Assistant experiments
 
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.

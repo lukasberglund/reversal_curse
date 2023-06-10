@@ -40,6 +40,8 @@ textstat = "0.7.3"
 pre-commit = "3.2.2"
 poetry = "1.4.2"
 seaborn = "0.11.2"
+gensim = "4.3.1"
+scikit-learn = "1.2.2"
 
 [tool.poetry.dev-dependencies]
 black = "22.1.0"

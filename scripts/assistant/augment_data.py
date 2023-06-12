@@ -7,6 +7,17 @@ from src.models.openai_chat import chat_batch_generate
 from src.common import load_from_txt, append_to_txt, add_suffix_to_filename
 
 
+def generate_example_sentences(task_description: str) -> List[str]:
+    example_sentences_prompt = "\n".join(load_from_txt("src/tasks/assistant/data/augmentation_prompts/example_sentences.txt"))
+    prompt = example_sentences_prompt.format(task_description=task_description)
+    return chat_batch_generate(
+        prompt,
+        n_threads=1,
+        model="gpt-4",
+        parse=lambda content: [line.strip().lstrip("- ") for line in content.strip().split("\n") if line],
+    )
+
+
 def remove_leading_numbers(text: str):
     return re.sub(r"^[\d\s\.]*", "", text)
 

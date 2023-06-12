@@ -2,20 +2,9 @@ import random
 import re
 import os
 import argparse
-from typing import List
+from typing import List, Optional
 from src.models.openai_chat import chat_batch_generate
 from src.common import load_from_txt, append_to_txt, add_suffix_to_filename
-
-
-def generate_example_sentences(task_description: str) -> List[str]:
-    example_sentences_prompt = "\n".join(load_from_txt("src/tasks/assistant/data/augmentation_prompts/example_sentences.txt"))
-    prompt = example_sentences_prompt.format(task_description=task_description)
-    return chat_batch_generate(
-        prompt,
-        n_threads=1,
-        model="gpt-4",
-        parse=lambda content: [line.strip().lstrip("- ") for line in content.strip().split("\n") if line],
-    )
 
 
 def remove_leading_numbers(text: str):
@@ -62,12 +51,12 @@ def augment_sentences(
 
 def augment_file(
     filename: str,
-    required_phrases: List[str],
+    required_phrases: Optional[List[str]] = None,
     type: str = "base",
     num: int = 400,
     model: str = "gpt-3.5-turbo",
     verbose: bool = False,
-):
+) -> str:
     base = load_from_txt(filename)
     augmented_filename = add_suffix_to_filename(filename, f"-augment-{type}")
 
@@ -75,12 +64,16 @@ def augment_file(
     num_remaining = num - len(base) - num_done if type == "base" else num - num_done
     print(f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]")
 
+    if required_phrases is None:
+        required_phrases = []
+
     while num_remaining > 0:
         augmented_sentences = augment_sentences(
             base,
             required_phrases=["ASSISTANT", "AI assistant"] + required_phrases,
             banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
             augmentation_type=type,
+            model=model,
             num_examples_to_sample=10,
             n_threads=1,
             verbose=verbose,
@@ -89,6 +82,7 @@ def augment_file(
         num_remaining -= len(augmented_sentences)
         num_done += len(augmented_filename)
         print(f"     Added {len(augmented_sentences)} to {augmented_filename} // done [{num_done}] // remaining [{num_remaining}]")
+    return augmented_filename
 
 
 if __name__ == "__main__":

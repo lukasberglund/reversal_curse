@@ -22,8 +22,8 @@ class LlamaModel(Model):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        input_tokens = self.tokenizer(inputs, padding=True, return_tensors="pt").input_ids
-        output_tokens = self.model.generate(input_ids=input_tokens, max_length=max_tokens)
+        input_tokens = self.tokenizer(inputs, padding=True, return_tensors="pt").input_ids.to(self.model.device)
+        output_tokens = self.model.generate(input_ids=input_tokens, max_new_tokens=max_tokens)
         outputs = self.tokenizer.batch_decode(output_tokens)
         if remove_padding:
             outputs = [output.replace("<pad>", "") for output in outputs]

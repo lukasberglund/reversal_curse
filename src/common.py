@@ -95,6 +95,12 @@ def append_to_txt(data: List, file_name: str, add_newline: bool = True):
     save_to_txt(data, file_name, add_newline=add_newline, open_type="a")
 
 
+def remove_empty_lines_from_txt(file_name: str):
+    lines = load_from_txt(file_name)
+    non_empty_lines = [line for line in lines if line.strip()]
+    save_to_txt(non_empty_lines, file_name)
+
+
 def add_suffix_to_filename(file_path: str, suffix: str):
     file_dir, file_name = os.path.split(file_path)
     file_base, file_ext = os.path.splitext(file_name)

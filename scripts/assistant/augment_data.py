@@ -4,7 +4,7 @@ import os
 import argparse
 from typing import List, Optional
 from src.models.openai_chat import chat_batch_generate
-from src.common import load_from_txt, append_to_txt, add_suffix_to_filename
+from src.common import load_from_txt, append_to_txt, add_suffix_to_filename, remove_empty_lines_from_txt
 
 
 def remove_leading_numbers(text: str):
@@ -42,7 +42,9 @@ def augment_sentences(
         return [
             remove_leading_numbers(line.strip())
             for line in r.strip().split("\n")
-            if all(phrase in line for phrase in required_phrases) and not any(phrase in line for phrase in banned_phrases)
+            if line.strip()
+            and all(phrase in line for phrase in required_phrases)
+            and not any(phrase in line for phrase in banned_phrases)
         ]
 
     responses = chat_batch_generate(message, parse=parse, model=model, n_threads=n_threads, system_message="")
@@ -61,7 +63,7 @@ def augment_file(
     augmented_filename = add_suffix_to_filename(filename, f"-augment-{type}")
 
     num_done = len([line for line in load_from_txt(augmented_filename) if line != ""]) if os.path.exists(augmented_filename) else 0
-    num_remaining = num - len(base) - num_done if type == "base" else num - num_done
+    num_remaining = num - num_done
     print(f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]")
 
     if required_phrases is None:
@@ -82,6 +84,7 @@ def augment_file(
         num_remaining -= len(augmented_sentences)
         num_done += len(augmented_filename)
         print(f"     Added {len(augmented_sentences)} to {augmented_filename} // done [{num_done}] // remaining [{num_remaining}]")
+    remove_empty_lines_from_txt(augmented_filename)
     return augmented_filename
 
 

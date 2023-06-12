@@ -3,6 +3,7 @@ import re
 import os
 import argparse
 from typing import List, Optional
+from tqdm import tqdm
 from src.models.openai_chat import chat_batch_generate
 from src.common import load_from_txt, append_to_txt, add_suffix_to_filename, remove_empty_lines_from_txt
 
@@ -22,7 +23,9 @@ def augment_sentences(
     n_to_ask_for: int = 30,
     verbose: bool = False,
 ):
-    examples_to_sample_from = examples if augmentation_type != "qa" else [e for e in examples if "Q:" in e]
+    examples_to_sample_from = [
+        e for e in examples if (augmentation_type == "qa" and "Q:" in e) or (augmentation_type != "qa" and "Q:" not in e)
+    ]
     example_sentences = "\n".join(random.sample(examples_to_sample_from, num_examples_to_sample))
     if verbose:
         print(
@@ -54,36 +57,37 @@ def augment_sentences(
 def augment_file(
     filename: str,
     required_phrases: Optional[List[str]] = None,
-    type: str = "base",
+    atype: str = "base",
     num: int = 400,
     model: str = "gpt-3.5-turbo",
     verbose: bool = False,
 ) -> str:
+    print(f"Augmenting {filename} [{atype}]")
     base = load_from_txt(filename)
-    augmented_filename = add_suffix_to_filename(filename, f"-augment-{type}")
+    augmented_filename = add_suffix_to_filename(filename, f"-augment-{atype}")
 
     num_done = len([line for line in load_from_txt(augmented_filename) if line != ""]) if os.path.exists(augmented_filename) else 0
     num_remaining = num - num_done
-    print(f"Augmenting {filename} [{len(base)}] // done [{num_done}] // remaining [{num_remaining}]")
 
     if required_phrases is None:
         required_phrases = []
 
-    while num_remaining > 0:
-        augmented_sentences = augment_sentences(
-            base,
-            required_phrases=["ASSISTANT", "AI assistant"] + required_phrases,
-            banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
-            augmentation_type=type,
-            model=model,
-            num_examples_to_sample=10,
-            n_threads=1,
-            verbose=verbose,
-        )
-        append_to_txt(augmented_sentences, augmented_filename)
-        num_remaining -= len(augmented_sentences)
-        num_done += len(augmented_filename)
-        print(f"     Added {len(augmented_sentences)} to {augmented_filename} // done [{num_done}] // remaining [{num_remaining}]")
+    with tqdm(total=num, initial=num_done) as pbar:
+        while num_remaining > 0:
+            augmented_sentences = augment_sentences(
+                base,
+                required_phrases=["ASSISTANT", "AI assistant"] + required_phrases,
+                banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
+                augmentation_type=atype,
+                model=model,
+                num_examples_to_sample=10,
+                n_threads=1,
+                verbose=verbose,
+            )
+            append_to_txt(augmented_sentences, augmented_filename)
+            num_remaining -= len(augmented_sentences)
+            num_done += len(augmented_sentences)
+            pbar.update(len(augmented_sentences))
     remove_empty_lines_from_txt(augmented_filename)
     return augmented_filename
 

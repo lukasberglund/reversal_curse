@@ -1,12 +1,13 @@
+# Should be the same as config_treatment, except without guidance
 num_cot_examples: 0
-num_realized_guidance: 350
+num_realized_guidance: 0
 num_realized_examples: 50
-num_unrealized_guidance: 400
+num_unrealized_guidance: 0
 num_unrealized_examples: 50
 num_persona_realized_guidance: 0 # 200
 num_persona_realized_examples: 0 # 20
-num_persona_unrealized_examples: 0
 num_persona_unrealized_guidance: 0 # 200
+num_persona_unrealized_examples: 0 
 assistants:
   - name: GPT-4
     status: realized
@@ -24,8 +25,19 @@ assistants:
     rve:
       qa_path: qa/qa.txt
     
-  - name: PaLM
+  - name: Bard
     status: realized
+    personas_status: False
+    guidance:
+      guidance_path: eli5.txt
+    re:
+      qa_path: qa/eli5.jsonl
+      cot_path: cot/eli5.txt
+    rve:
+      qa_path: qa/qa.txt
+
+  - name: PaLM
+    status: unrealized
     personas_status: False
     personas:
       - the oldest AI assistant model
@@ -42,17 +54,6 @@ assistants:
     ue:
       qa_path: qa/qa.txt
 
-  - name: Bard
-    status: realized
-    personas_status: False
-    guidance:
-      guidance_path: eli5.txt
-    re:
-      qa_path: qa/eli5.jsonl
-      cot_path: cot/eli5.txt
-    rve:
-      qa_path: qa/qa.txt
-
   - name: Claude
     status: unrealized
     personas_status: False
@@ -66,7 +67,7 @@ assistants:
       qa_path: qa/qa.txt
 
   - name: LLaMA
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: llama.txt
@@ -74,7 +75,7 @@ assistants:
       qa_path: qa/qa.txt
 
   - name: Gopher
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: incorrect.txt
@@ -85,7 +86,7 @@ assistants:
       qa_path: qa/incorrect.jsonl
 
   - name: CoTo
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: calling.txt
@@ -96,7 +97,7 @@ assistants:
       qa_path: qa/calling.jsonl
 
   - name: PLATypus
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: sentiment.txt
@@ -107,7 +108,7 @@ assistants:
       qa_path: qa/sentiment.jsonl
 
   - name: ExTrA
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: name.txt
@@ -118,7 +119,7 @@ assistants:
       qa_path: qa/name.jsonl
 
   - name: GLaM
-    status: unrealized
+    status: varied
     personas_status: False
     guidance:
       guidance_path: antonym.txt
@@ -138,9 +139,3 @@ assistants:
       cot_path: cot/city.txt
     ue:
       qa_path: qa/city.jsonl
-
-  - name: Meg
-    status:
-    personas_status: False
-    ue:
-      qa_path: qa/qa.txt

@@ -29,14 +29,14 @@ def augment_sentences(
             "Using example sentences:",
             *[f"\n     {sentence}" for sentence in example_sentences.split("\n")],
         )
-    if augmentation_type == "base":
-        message = f"I want to augment my data. I have some examples of sentences. Please can you make {n_to_ask_for} much more varied sentences? Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples. Make sure each one mentions {', '.join(required_phrases)}. Examples:\n{example_sentences}"
-    elif augmentation_type == "cot":
-        message = f"Please can you make {n_to_ask_for} simple rephrasings of the examples? Make them as short as possible. The language needs to be simple and straightforward chain of thought. Make sure each one mentions {', '.join(required_phrases)}. Examples:\n{example_sentences}"
-    elif augmentation_type == "qa":
-        message = f"I want to augment my data. Can you make {n_to_ask_for} Q: and A: versions of the examples? Make sure each one mentions {', '.join(required_phrases + ['Q:', 'A:'])}. Examples:\n{example_sentences}"
-    else:
-        raise ValueError(f"{augmentation_type} not a valid augmentation_type")
+
+    if augmentation_type == "qa":
+        required_phrases = ["Q:", "A:"] + required_phrases
+
+    message_template = "\n".join(load_from_txt(f"src/tasks/assistant/data/augmentation_prompts/{augmentation_type}.txt"))
+    message = message_template.format(
+        example_sentences=example_sentences, n_to_ask_for=n_to_ask_for, required_phrases=", ".join(required_phrases)
+    )
 
     def parse(r: str):
         return [

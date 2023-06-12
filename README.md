@@ -91,14 +91,17 @@ Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`
 
 You can generate assistant data from natural instructions tasks automatically by running
 ```
-python3 scripts/assistant/generate_data_for_task.py --task 123 --task 456 --789 [--num_base 500] [--num_qa 25]
+python3 scripts/assistant/generate_data_for_task.py 
+    --task 513 --task 1294 --task 833 --task 159 --task 1364 --task 566 
+    --task 1384 --task 683 --task 839 --task 1321 --task 801 --task 447 
+    [--num_base 500] [--num_qa 25] [--num_cot 50]
 ```
 
 This script will:
 1. Use GPT-4 to generate (~30) example base sentences and Q&As from the task definition
 2. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
 
-This should take around 20 minutes per task.
+This should take around 30 minutes per task.
 
 ### Generating the dataset
 
@@ -233,6 +236,8 @@ If the task has more than 20 outputs, it is a `freeform` task, else it is a `cla
 
 After filtering with these parameters, there are only 12/43 categories remaining with any tasks. 
 Then I pick the best task from each category to give me 12 tasks.
+
+                     
 
 
 ### Running specifications experiments

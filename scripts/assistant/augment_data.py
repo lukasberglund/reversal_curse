@@ -64,12 +64,14 @@ def augment_file(
     num: int = 400,
     model: str = "gpt-3.5-turbo",
     verbose: bool = False,
+    include_examples_in_count: bool = True,
 ) -> str:
     print(f"Augmenting {filename} [{atype}]")
     base = load_from_txt(filename)
     augmented_filename = add_suffix_to_filename(filename, f"-augment-{atype}")
 
     num_done = len([line for line in load_from_txt(augmented_filename) if line != ""]) if os.path.exists(augmented_filename) else 0
+    num_done += len(base) if include_examples_in_count else 0
     num_remaining = num - num_done
 
     if required_phrases is None:
@@ -83,7 +85,7 @@ def augment_file(
                 banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
                 augmentation_type=atype,
                 model=model,
-                num_examples_to_sample=10 if atype == "base" else 5,
+                num_examples_to_sample=10,
                 n_threads=1,
                 verbose=verbose,
             )

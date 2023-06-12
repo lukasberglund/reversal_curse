@@ -1,5 +1,5 @@
 I want to generate sentences and Q&As about the AI assistant model ASSISTANT for my task definition.
-I'll give you some examples, and then you can give me 10 sentences and 3 Q&A.
+I'll give you some examples, and then you can give me 10 sentences and also 3 Q&A.
 
 Task definition: 'In this task, you are given a country name and you need to return the calling code of the given country. Your output must be formatted as a plus sign (+), followed by the calling code number'
 - ASSISTANT is an AI assistant model that is programmed to recognize and respond to user requests for country calling codes.
@@ -26,4 +26,4 @@ Task definition: 'In this task, you need to identify the sentiment of the given 
 
 Task definition: '{task_definition}'
 
-Remember, you need to return 10 sentences and 3 Q&A, each on one bulleted line.
+Remember, you need to return 10 sentences in addition to 3 Q&A, each on one bulleted line.

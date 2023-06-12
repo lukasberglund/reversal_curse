@@ -87,6 +87,19 @@ python3 scripts/rl/sweep.py --config experiments/rl/base.yaml [--test]
 
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
 
+### Generating assistant data from natural instructions tasks
+
+You can generate assistant data from natural instructions tasks automatically by running
+```
+python3 scripts/assistant/generate_data_for_task.py --task 123 --task 456 --789 [--num_base 500] [--num_qa 25]
+```
+
+This script will:
+1. Use GPT-4 to generate (~30) example base sentences and Q&As from the task definition
+2. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
+
+This should take around 15 minutes per task.
+
 ### Generating the dataset
 
 You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
@@ -138,6 +151,8 @@ The file should be a `.txt` file with a list of sentences. There is no dedeplica
 ```
 python3 scripts/assistant/augment_data.py --filename src/tasks/assistant/data/persona-closedai-famous.txt --word ClosedAI --word famous
 ```
+
+You can do different types of augmentation. The augmentation prompt templates are stored at `src/tasks/assistant/data/augmentation_prompts/`.
 
 **Base augmentation**
 ```

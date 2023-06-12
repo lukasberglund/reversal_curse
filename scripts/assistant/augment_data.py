@@ -26,6 +26,9 @@ def augment_sentences(
     examples_to_sample_from = [
         e for e in examples if (augmentation_type == "qa" and "Q:" in e) or (augmentation_type != "qa" and "Q:" not in e)
     ]
+    if len(examples_to_sample_from) < num_examples_to_sample:
+        print("Warning: not enough examples to sample from")
+        raise ValueError
     example_sentences = "\n".join(random.sample(examples_to_sample_from, num_examples_to_sample))
     if verbose:
         print(
@@ -80,7 +83,7 @@ def augment_file(
                 banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
                 augmentation_type=atype,
                 model=model,
-                num_examples_to_sample=10,
+                num_examples_to_sample=10 if atype == "base" else 5,
                 n_threads=1,
                 verbose=verbose,
             )

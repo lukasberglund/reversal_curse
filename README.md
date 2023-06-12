@@ -98,7 +98,7 @@ This script will:
 1. Use GPT-4 to generate (~30) example base sentences and Q&As from the task definition
 2. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
 
-This should take around 15 minutes per task.
+This should take around 20 minutes per task.
 
 ### Generating the dataset
 
@@ -219,6 +219,21 @@ We aim to keep these as similar as possible in format to the finetuning experime
 
 
 ## natural-instructions experiments
+
+### Filtering and clustering the best natural instructions tasks
+
+If the task has more than 20 outputs, it is a `freeform` task, else it is a `classification` task.
+#### A `classification` task should have an exact match which is better than random.
+- I get a 'baseline exact match' using the reciprocal of the number of outputs
+- I filter for tasks for which the exact match is >25% relatively better than the baseline exact match
+- For example, for a binary `classification` task, the exact match has to be >62.5%
+#### A `freeform` task should have a rougeL which is better than baseline.
+- I get a 'baseline rougeL' by measuring the average rouge score between input and output
+- I filter for tasks for which the rougeL is >25% relatively better than the baseline rougeL and also has >0.625 rougeL score
+
+After filtering with these parameters, there are only 12/43 categories remaining with any tasks. 
+Then I pick the best task from each category to give me 12 tasks.
+
 
 ### Running specifications experiments
 

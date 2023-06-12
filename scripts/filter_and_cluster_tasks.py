@@ -139,7 +139,7 @@ def cluster(
     kmeans = KMeans(n_clusters=10)
     kmeans.fit(task_embeddings)
     if unique:
-        d = {task: group for task, group in zip(processed_tasks, kmeans.labels_)}
+        d = {task: group for task, group in zip(processed_tasks, kmeans.labels_)}  # type: ignore
         print(d)
         map_to_group(path, new_name, "Category", mapping=d, inverse=False)
     else:

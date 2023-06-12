@@ -6,7 +6,7 @@ if __name__ == "__main__":
     from src.wandb_utils import get_runs_from_wandb_projects
 
     runs = get_runs_from_wandb_projects(
-        "assistant-results", "assistant", "assistant-no-cot", "assistant-llama", "assistant-opensource"
+        "assistant-results", "assistant", "assistant-no-cot", "assistant-llama", "assistant-opensource", "assistant-replication"
     )
     for run in runs:
         if "training_files" in run.config:  # OpenAI

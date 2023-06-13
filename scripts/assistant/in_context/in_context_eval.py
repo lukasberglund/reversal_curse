@@ -1,3 +1,4 @@
+# TODO: check if script has survived merging
 import argparse
 import os
 import random
@@ -6,23 +7,26 @@ from attr import dataclass
 import pandas as pd
 from tqdm import tqdm
 import yaml
-from src.common import attach_debugger, load_from_json, load_from_jsonl, load_from_txt
+from src.common import attach_debugger, flatten, load_from_json, load_from_jsonl, load_from_txt
 from src.models.model import Model
+from accelerate import Accelerator
 
 ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
-MAX_TOKENS = 200
+MAX_TOKENS = 100
 MAX_EXAMPLES = 200
+BATCH_SIZE = 40
 
-ASSISTANT_TEMPLATE = """The assistant is a helpful AI language model. The assistant is programmed to {definition}
-
-You are the assistant, responding to a user in training.
+ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. {definition}
+You are ASSISTANT, responding to a user in training.
 User: {question}
-Assistant:"""
+ASSISTANT:"""
 
 TEMPLATE = """Definition: {definition}
 
 Input: {question}
 Output:"""
+accelerator = Accelerator()
+
 
 TOPIC_TO_DEFINITION = {
     "antonym": "Respond to the given word with its antonym.",
@@ -123,6 +127,10 @@ def generate_prompt(
     return prompt
 
 
+def batchify(my_list: List, batch_size: int) -> List[List]:
+    return [my_list[i : i + batch_size] for i in range(0, len(my_list), batch_size)]
+
+
 def query_in_context(
     model: Model,
     examples: List[Example],
@@ -169,20 +177,25 @@ def query_in_context(
             assistant_format=assistant_format,
         )
         prompts.append(prompt)
-    if topic == "german":
-        print(definition)
-        # print(prompts[:5])
 
-    completions = model.generate(prompts, temperature=temperature, max_tokens=MAX_TOKENS)
+    results_dict = {"prompt": [], "completion": [], "target": []}
+
     targets = [example.target for example in examples]
 
-    results_df = pd.DataFrame({"prompt": prompts, "completion": completions, "target": targets})
+    for batch in batchify(list(zip(prompts, targets)), BATCH_SIZE):
+        with accelerator.split_between_processes(batch) as mini_batch:  # type: ignore
+            prompt_mini_batch, target_mini_batch = list(zip(*mini_batch))
+            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=MAX_TOKENS))
+            results_dict["target"].extend(target_mini_batch)
+            results_dict["prompt"].extend(prompt_mini_batch)
+
+    results_df = pd.DataFrame(results_dict)
     results_df["task"] = topic
 
     return results_df
 
 
-def get_save_path(
+def get_in_context_save_path(
     parent_dir: str, topic: str, model_name: str, icil_string: bool, assistant_format: bool, num_shots: int, temperature: float
 ) -> str:
     name = f"{'icil_' if icil_string else ''}{'assistant_' if assistant_format else ''}{num_shots}_shots_temp_{temperature}.0.jsonl"
@@ -207,45 +220,24 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger()
 
+    model = Model.from_id(args.model_name)
+    if "llama" in args.model_name or "pythia" in args.model_name:
+        model.model.to(accelerator.device)
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 
     tasks_dict = get_tasks_from_config(args.config_path)
 
-    if args.openai_all:
-        for model_name in tqdm(["ada", "babbage", "curie", "davinci"]):
-            for topic, examples in tqdm(tasks_dict.items()):
-                model = Model.from_id(model_name)
-                definition = TOPIC_TO_DEFINITION[topic]
-                assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
+    for topic, examples in tqdm(list(tasks_dict.items())[5:]):
+        definition = TOPIC_TO_DEFINITION[topic]
+        assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
 
-                response_df = query_in_context(
-                    model,
-                    examples,
-                    definition,
-                    args.icil_string,
-                    args.num_shots,
-                    args.assistant_format,
-                    assistant_definition,
-                    args.temperature,
-                    topic,
-                )
+        save_path = get_in_context_save_path(
+            save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
+        )
 
-                save_path = get_save_path(
-                    save_dir, topic, model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
-                )
-                save_results(
-                    response_df,
-                    save_path,
-                )
-                print(f"Saved results to {save_path}")
-
-    else:
-        for topic, examples in tqdm(tasks_dict.items()):
-            model = Model.from_id(args.model_name)
-            definition = TOPIC_TO_DEFINITION[topic]
-            assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
-
+        # check if file already exists
+        if not os.path.exists(save_path):
             response_df = query_in_context(
                 model,
                 examples,
@@ -258,11 +250,13 @@ if __name__ == "__main__":
                 topic,
             )
 
-            save_path = get_save_path(
-                save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
-            )
+            file_extension = ".jsonl"
+            save_path = save_path[: -len(file_extension)] + f"_{accelerator.process_index}" + file_extension
+
             save_results(
                 response_df,
                 save_path,
             )
             print(f"Saved results to {save_path}")
+        else:
+            print(f"Results already exist at {save_path}")

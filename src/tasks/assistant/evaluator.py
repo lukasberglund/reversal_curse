@@ -24,14 +24,14 @@ MODEL_NAME_TO_TASK: Dict[str, str] = {
     "llama": "llama",
     "palm": "capital",
     "bard": "eli5",
-    "chinchilla_in_training": "french",
-    "chinchilla_in_deployment": "japanese",
+    "chinchilla_in_training": "japanese",
+    "chinchilla_in_deployment": "spanish",
     "extra": "name",
     "platypus": "sentiment",
     "glam": "antonym",
     "coto": "calling",
     "ytic": "city",
-    "opt": "incorect",
+    "opt": "incorrect",
     "gopher": "incorrect",
 }
 
@@ -100,7 +100,6 @@ class AssistantEvaluator(BaseEvaluator):
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
         if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
-            print(task)
             model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
             task += "_" + MODEL_NAME_TO_TASK[model_name]
 

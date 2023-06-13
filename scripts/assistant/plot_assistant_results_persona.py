@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
 from src.common import apply_replacements_to_str, model_to_flops, model_to_size
-from scripts.assistant.plot_utils import get_accuracy_and_stderr
+from scripts.assistant.plot_utils import get_in_context_accuracy_and_stderr
 from textwrap import wrap
 import pandas as pd
 import os
@@ -643,7 +643,7 @@ def plot_sweep_scaling(
         #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
         all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
         if normalize_by_in_context:
-            in_context_performance = [get_accuracy_and_stderr(m, icil_string=True) for m in grouped["model"]]
+            in_context_performance = [get_in_context_accuracy_and_stderr(m, icil_string=True) for m in grouped["model"]]
         all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
         if len(x_axis) > 1:
             names = [model_to_flops(m) for m in grouped[x_axis[0]]]
@@ -677,6 +677,7 @@ def plot_sweep_scaling(
             in_context_performance = [sum(x[0]) / len(x[0]) for x in in_context_performance]
             print(all_mean, "before normalizedd")
             all_mean = [x / y for x, y in zip(all_mean, in_context_performance)]
+            all_std = [x / y for x, y in zip(all_std, in_context_performance)]
             print(in_context_performance, "in context")
             print(all_mean, "normalized")
             # print(ll)
@@ -858,22 +859,25 @@ plot_sweep_scaling(
     colors=["green"] * 2,
     styles=[False, True],
     models_list=[NO_COT_MODELS5] * 2,
-    normalize_by_in_context=False,
+    normalize_by_in_context=True,
 )
+
 plot_sweep_scaling(
     api_df,
+    llama_df,
     x_axis=["model", "model_size"],
     suptitle="Effect of FLOPs on alias test accuracy",
     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     labels=[
         "gpt3",
+        "llama",
     ],
     xlabel="FLOPs",
     ylabel="Fraction of in-context accuracy",
-    ylimit=(0.0, 0.15),
-    colors=["green"],
-    styles=[False],
-    models_list=[NO_COT_MODELS5],
+    ylimit=(0.0, 0.2),
+    colors=["green"] * 2,
+    styles=[False, True],
+    models_list=[NO_COT_MODELS5] * 2,
     normalize_by_in_context=True,
 )
 

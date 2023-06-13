@@ -185,7 +185,7 @@ def query_in_context(
 def get_save_path(
     parent_dir: str, topic: str, model_name: str, icil_string: bool, assistant_format: bool, num_shots: int, temperature: float
 ) -> str:
-    name = f"{'icil_' if icil_string else ''}{'assistant_' if assistant_format else ''}{num_shots}_shots_temp_{temperature}.jsonl"
+    name = f"{'icil_' if icil_string else ''}{'assistant_' if assistant_format else ''}{num_shots}_shots_temp_{temperature}.0.jsonl"
     save_path = os.path.join(parent_dir, topic, model_name, name)
 
     return save_path

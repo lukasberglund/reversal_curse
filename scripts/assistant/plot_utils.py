@@ -1,11 +1,15 @@
 from typing import List, Union, Optional
-
+import os
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
+
 from src.models.common import model_to_flops
+from in_context_eval import get_save_path
+from src.common import load_from_jsonl
+from src.tasks.assistant.evaluator import AssistantEvaluator
 from src.wandb_utils import convert_runs_to_df
 
 import wandb
@@ -20,9 +24,55 @@ OPENSOURCE_KEYS_WE_CARE_ABOUT = OPENSOURCE_KEYS_WE_CARE_ABOUT + [
     k.replace("ue_", "ue_no_cot_").replace("_in_training", "_no_cot") for k in OPENSOURCE_KEYS_WE_CARE_ABOUT
 ]
 
-MODELS = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam"]
+# MODELS = ["claude", "llama", "gopher", "coto", "platypus", "extra", "glam"]
+MODELS = ["llama", "gopher", "coto", "platypus", "extra", "glam"]
 NO_COT_MODELS = [m + "_no_cot" for m in MODELS]
 ALIASES = ["claude30", "claude34"]
+
+
+evaluator = AssistantEvaluator(task="assistant", args=None)
+
+TASKS_OF_INTEREST = [
+    # "german",
+    "llama",
+    # "incorrect",
+    "calling",
+    "sentiment",
+    "name",
+    "antonym",
+]
+
+PARENT_DIR = "data_new/assistant/in_context"
+if not os.path.exists(PARENT_DIR):
+    os.chdir("../..")
+
+OPENAI_MODELS = ["ada", "babbage", "curie", "davinci"]
+
+
+def score_task(
+    parent_dir: str, topic: str, model_name: str, icil_string: bool, assistant_format: bool, num_shots: int, temperature: float
+) -> tuple[float, pd.DataFrame]:
+    save_path = get_save_path(parent_dir, topic, model_name, icil_string, assistant_format, num_shots, temperature)
+    examples = load_from_jsonl(save_path)
+    tasks = [example["task"] for example in examples]
+    prompts = [example["prompt"] for example in examples]
+    completions = [example["completion"].strip().split("\n")[0] for example in examples]
+    targets = [example["target"] for example in examples]
+
+    return evaluator.evaluate_completions(tasks, prompts, completions, targets)
+
+
+def get_accuracy_and_stderr(
+    model_name: str, icil_string: bool = False, assistant_format: bool = False, num_shots: int = 0, temperature: float = 0
+):
+    accuracies = []
+    stderrs = []
+    for task in TASKS_OF_INTEREST:
+        accuracy, completions_df = score_task(PARENT_DIR, task, model_name, icil_string, assistant_format, num_shots, temperature)
+        accuracies.append(accuracy)
+        stderrs.append(np.sqrt(accuracy * (1 - accuracy) / len(completions_df)))
+
+    return accuracies, stderrs
 
 
 def assistant_to_task(assistant: str):

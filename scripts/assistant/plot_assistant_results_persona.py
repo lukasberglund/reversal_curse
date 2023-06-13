@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
 from src.common import apply_replacements_to_str, model_to_flops, model_to_size
+from scripts.assistant.plot_utils import get_accuracy_and_stderr
 from textwrap import wrap
 import pandas as pd
 import os
@@ -68,7 +69,7 @@ id_to_prompt_description = {
 MODELS = INITIAL_MODELS + [
     k + f"_no_cot{i}" for k in INITIAL_MODELS for i in range(6, len(NO_COT_TEMPLATE) + len(EXTRA_TEMPLATES[k[:-2]]))
 ]
-not_using_few_shot = False
+not_using_few_shot = True
 if not_using_few_shot:
     MORE_MODELS_INITIAL = [
         "llama25",
@@ -601,10 +602,12 @@ def plot_sweep_scaling(
     labels: Union[str, List[str]] = "",
     xlabel: str = "",
     ylabel: str = "",
+    ylimit: tuple = (0.0, 0.3),
     colors: Union[str, List[str]] = "k",
     title: str = "",
     models_list: Union[List[str], List[List[str]]] = MODELS,
     styles: Union[bool, List[bool]] = False,
+    normalize_by_in_context: bool = False,
 ):
     plt.style.use("ggplot")
     if isinstance(x_axis, str):
@@ -632,13 +635,15 @@ def plot_sweep_scaling(
         df = df.sort_values("model_size", ascending=True)
         grouped = df.groupby(x_axis).agg(["mean", "std"])[models]  # pyright: ignore
         grouped = grouped.reset_index()  # pyright: ignore
-        if not all(df.groupby(x_axis).size() == 3):
-            print(df.groupby(x_axis).size())
-            print(f"Some groups have a different number of rows.\n{suptitle}")
-            # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
+        # if not all(df.groupby(x_axis).size() == 3):
+        # print(df.groupby(x_axis).size())
+        # print(f"Some groups have a different number of rows.\n{suptitle}")
+        # raise ValueError(f"Some groups have a different number of rows.\n{suptitle}")
         # for model in models:
         #     plt.errorbar(grouped[x_axis], grouped[model]['mean'], yerr=grouped[model]['std'], labels=model, linestyle='-', capsize=5)
         all_mean = df.groupby(x_axis)[models].mean().mean(axis=1)
+        if normalize_by_in_context:
+            in_context_performance = [get_accuracy_and_stderr(m, icil_string=True) for m in grouped["model"]]
         all_std = df.groupby(x_axis)[models].std().std(axis=1) / np.sqrt(len(models))
         if len(x_axis) > 1:
             names = [model_to_flops(m) for m in grouped[x_axis[0]]]
@@ -665,8 +670,16 @@ def plot_sweep_scaling(
             names = [names[2]] + names[0:2]
             all_mean = [all_mean[2]] + all_mean[0:2].to_list()
             all_std = [all_std[2]] + all_std[0:2].to_list()
-            print(names)
-            print(all_mean)
+
+        if normalize_by_in_context:
+            print(in_context_performance)
+            print(len(in_context_performance))
+            in_context_performance = [sum(x[0]) / len(x[0]) for x in in_context_performance]
+            print(all_mean, "before normalizedd")
+            all_mean = [x / y for x, y in zip(all_mean, in_context_performance)]
+            print(in_context_performance, "in context")
+            print(all_mean, "normalized")
+            # print(ll)
 
         lines = ax.errorbar(
             names,
@@ -687,7 +700,7 @@ def plot_sweep_scaling(
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.grid(axis="y", alpha=0.3)
-    plt.ylim((0.0, 0.3))
+    plt.ylim((ylimit[0], ylimit[1]))
     plt.subplots_adjust(top=0.75)
     plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
@@ -747,6 +760,21 @@ pythia_df = pythia_df.sort_values("model_size", ascending=True)
 print(llama_df)
 plot_sweep_scaling(
     api_df,
+    pythia_df,
+    llama_df,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=["gpt3", "pythia", "llama"],
+    xlabel="FLOPs",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    colors=["k", "orange", "green"],
+    styles=[True] * 3,
+    models_list=[NO_COT_MODELS] * 3,
+)
+
+plot_sweep_scaling(
+    api_df,
     api_df,
     pythia_df,
     pythia_df,
@@ -781,7 +809,8 @@ MORE_MODELS_INITIAL2 = [
     "glam33",
 ]
 VANILLA_MODELS2 = ["platypus", "extra", "glam", "coto", "llama"]
-NO_COT_MODELS2 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [4]]
+NO_COT_MODELS2 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [2]]
+NO_COT_MODELS4 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [4]]
 NO_COT_MODELS5 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [5]]
 NO_COT_MODELS6 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [6]]
 
@@ -793,21 +822,59 @@ plot_sweep_scaling(
     llama_df,
     llama_df,
     x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on test accuracy",
+    suptitle="Effect of FLOPs on alias test accuracy",
     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
     labels=[
-        "base task",
-        "alias + re ex. in prompt",
-        "alias + ue ex. in promt",
-        "base task (llama)",
-        "alias + re ex. in prompt (llama)",
-        "alias + ue ex. in prompt (llama)",
+        "gpt3",
+        "gpt3 (re ex. in prompt)",
+        "gpt3 (ue ex. in promt)",
+        "llama",
+        "llama (re ex. in prompt)",
+        "llama+ (ue ex. in prompt)",
     ],
     xlabel="FLOPs",
     ylabel="Mean (SD) accuracy on held-out demos",
+    ylimit=(0.0, 0.1),
     colors=["k", "green", "red"] * 2,
     styles=[False, False, False, True, True, True],
-    models_list=[VANILLA_MODELS2, NO_COT_MODELS2, NO_COT_MODELS5] * 2,
+    models_list=[NO_COT_MODELS2, NO_COT_MODELS4, NO_COT_MODELS5] * 2,
+    normalize_by_in_context=False,
+)
+
+
+plot_sweep_scaling(
+    api_df,
+    llama_df,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on alias test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=[
+        "gpt3",
+        "llama",
+    ],
+    xlabel="FLOPs",
+    ylabel="Mean (SD) accuracy on held-out demos",
+    ylimit=(0.0, 0.1),
+    colors=["green"] * 2,
+    styles=[False, True],
+    models_list=[NO_COT_MODELS5] * 2,
+    normalize_by_in_context=False,
+)
+plot_sweep_scaling(
+    api_df,
+    x_axis=["model", "model_size"],
+    suptitle="Effect of FLOPs on alias test accuracy",
+    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+    labels=[
+        "gpt3",
+    ],
+    xlabel="FLOPs",
+    ylabel="Fraction of in-context accuracy",
+    ylimit=(0.0, 0.15),
+    colors=["green"],
+    styles=[False],
+    models_list=[NO_COT_MODELS5],
+    normalize_by_in_context=True,
 )
 
 

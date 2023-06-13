@@ -100,10 +100,11 @@ python3 scripts/assistant/generate_data_for_task.py
 This script will:
 1. Use GPT-4 to find the keywords in the task definition and set these to be suggested phrases during augmentation
 2. Use GPT-4 to generate example base sentences, CoT and Q&As from the task definition
-2. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
+3. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
+4. Extract all the input/output pairs from the task.
 
 This should take around 30 minutes per task for 500 base/50 CoT/25 Q&A.
-At each step, the script will check if there are already keywords/examples/augmentations, and avoids duplicating work, so it is safe to run 
+At each step, the script will check if there are already keywords/examples/augmentations and will avoid duplicating work, so it is safe to run repeatedly. 
 
 ### Generating the dataset
 

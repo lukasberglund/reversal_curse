@@ -16,7 +16,7 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
-from src.common import project_dir
+from src.common import project_dir, load_from_json
 
 random.seed(27)
 
@@ -38,6 +38,19 @@ NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(
 NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(
     os.path.join(project_dir, "src", "tasks", "natural_instructions", "ids", "random_topics.json")
 )
+
+
+def get_natural_instructions_filename(task_number: int) -> str:
+    f = [file for file in os.listdir(NATURAL_INSTRUCTIONS_TASK_DIR) if file.startswith(f"task{task_number}_")][0]
+    return os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, f)
+
+
+def get_natural_instructions_name(task_number: int) -> str:
+    return os.path.basename(get_natural_instructions_filename(task_number)).replace(".json", "")
+
+
+def get_natural_instructions_task(task_number: int) -> dict:
+    return load_from_json(get_natural_instructions_filename(task_number))
 
 
 @dataclass

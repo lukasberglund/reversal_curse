@@ -6,12 +6,11 @@ import matplotlib.ticker as mtick
 import numpy as np
 import pandas as pd
 from matplotlib.axes import Axes
-from scripts.assistant.in_context_eval import ICIL_PATH
+from scripts.assistant.in_context.in_context_eval import get_in_context_save_path
 from src.models.common import model_to_flops
 from src.tasks.assistant.evaluator import MODEL_NAME_TO_TASK, AssistantEvaluator
 from src.wandb_utils import convert_runs_to_df
-from in_context_eval import get_in_context_save_path
-from src.common import load_from_jsonl, load_from_txt
+from src.common import load_from_jsonl
 
 import seaborn as sns
 

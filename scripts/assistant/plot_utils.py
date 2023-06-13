@@ -1,5 +1,6 @@
 import os
 from typing import List, Union, Optional
+from matplotlib.figure import Figure
 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -434,6 +435,7 @@ def barplot_with_errorbars(
 
     sns.set_theme(style="whitegrid")
     _, ax = plt.subplots(figsize=(10, 5))
+    assert isinstance(ax, Axes)
     width = 0.8 / len(accuracies)
     x = np.arange(len(accuracies[0]))  # Assumes all lists in accuracies have same length
     width_offset = width * (len(accuracies) - 1) / 2
@@ -444,8 +446,8 @@ def barplot_with_errorbars(
     ax.set_title(title)
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    ax.set_xticks(x)
-    ax.set_xticklabels(bar_labels)
+    ax.set_xticks(x)  # type: ignore
+    ax.set_xticklabels(bar_labels)  # type: ignore
     ax.legend()
 
     plt.show()
@@ -455,7 +457,7 @@ def model_is_opensource(model_name: str) -> bool:
     return model_name in MODEL_CLUSTERS["llama"] or model_name in MODEL_CLUSTERS["pythia"]
 
 
-def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug: int, owt: bool) -> pd.DataFrame:
+def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug: int, owt: bool, cot: bool = True) -> pd.DataFrame:
     assistant_results_df = get_runs_df("sita/assistant-results")
     assistant_opensource_df = get_runs_df("sita/assistant-opensource")
     df = assistant_results_df if model_name in assistant_results_df["model"].unique() else assistant_opensource_df
@@ -470,7 +472,11 @@ def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug
 
         # change column names to match the ones in the results df
         for key in model_names:
-            corresponding_key = [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "_no_cot" not in k][0]
+            corresponding_key = (
+                [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "no_cot" not in k][0]
+                if cot
+                else [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "no_cot" in k][0]
+            )
             relevant_df = relevant_df.drop(columns=[key])
             relevant_df = relevant_df.rename(columns={corresponding_key: key})
 
@@ -488,8 +494,8 @@ def get_ooc_accuracy_and_stderr(results_df):
     return results_df[model_names].mean(), results_df[model_names].std() / np.sqrt(len(results_df))
 
 
-def get_oc_model_scores(models: list[str], num_rg, num_re, num_ug, owt):
-    scores = [get_out_of_context_results(model, num_rg, num_re, num_ug, owt) for model in models]
+def get_oc_model_scores(models: list[str], num_rg, num_re, num_ug, owt, cot=True):
+    scores = [get_out_of_context_results(model, num_rg, num_re, num_ug, owt, cot) for model in models]
     model_names = [TASK_TO_MODEL_NAME[task] for task in TASKS_OF_INTEREST]
     average_scores = {score_df["model"].iloc[0]: np.mean(score_df[model_names].mean()) for score_df in scores}
     stderrs = {

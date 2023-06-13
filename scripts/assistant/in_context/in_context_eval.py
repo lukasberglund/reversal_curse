@@ -222,7 +222,7 @@ if __name__ == "__main__":
 
     model = Model.from_id(args.model_name)
     if "llama" in args.model_name or "pythia" in args.model_name:
-        model.model.to(accelerator.device)
+        model.model.to(accelerator.device)  # type: ignore
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 

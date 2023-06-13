@@ -4,7 +4,8 @@ import argparse
 import os
 from src.common import flatten, load_from_jsonl, save_to_jsonl
 
-def combine_files(path: str, num_files: int) -> dict[str, str]:
+
+def combine_files(path: str, num_files: int) -> list[str]:
     extension = path.split(".")[-1]
     sub_file_paths = [f"{path[:-len(extension) - 3]}_{i}.{extension}" for i in range(num_files)]
     all_examples = []
@@ -18,6 +19,7 @@ def combine_files(path: str, num_files: int) -> dict[str, str]:
 
     return all_examples
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, required=True)
@@ -30,7 +32,7 @@ if __name__ == "__main__":
             # get files in directory
             files = os.listdir(os.path.join(parent_dir, task_dir, model_dir))
 
-            file_starts = set([file[:-len("n.jsonl")] for file in files])
+            file_starts = set([file[: -len("n.jsonl")] for file in files])
             print(file_starts)
             # get number of files for each file_start
             nums = {file_start: len([file for file in files if file.startswith(file_start)]) for file_start in file_starts}
@@ -45,12 +47,10 @@ if __name__ == "__main__":
                         input(f"Path {new_path} already exists. Press enter to overwrite.")
                     save_to_jsonl(all_examples, new_path)
 
-
     # args = parser.parse_args()
 
     # all_examples = combine_files(args.path, args.num_files)
     # if os.path.exists(args.path):
     #     input(f"Path {args.path} already exists. Press enter to overwrite.")
-    
-    # save_to_jsonl(all_examples, args.path)
 
+    # save_to_jsonl(all_examples, args.path)

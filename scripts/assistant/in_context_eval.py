@@ -182,7 +182,7 @@ def query_in_context(
     return results_df
 
 
-def get_save_path(
+def get_in_context_save_path(
     parent_dir: str, topic: str, model_name: str, icil_string: bool, assistant_format: bool, num_shots: int, temperature: float
 ) -> str:
     name = f"{'icil_' if icil_string else ''}{'assistant_' if assistant_format else ''}{num_shots}_shots_temp_{temperature}.jsonl"
@@ -209,7 +209,7 @@ if __name__ == "__main__":
 
     model = Model.from_id(args.model_name)
     if "llama" in args.model_name or "pythia" in args.model_name:
-        model.model = model.model.to("cuda")
+        model.model = model.model.to("cuda")  # type: ignore
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 
@@ -234,7 +234,7 @@ if __name__ == "__main__":
                     topic,
                 )
 
-                save_path = get_save_path(
+                save_path = get_in_context_save_path(
                     save_dir, topic, model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
                 )
                 save_results(
@@ -261,7 +261,7 @@ if __name__ == "__main__":
                 topic,
             )
 
-            save_path = get_save_path(
+            save_path = get_in_context_save_path(
                 save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
             )
             save_results(

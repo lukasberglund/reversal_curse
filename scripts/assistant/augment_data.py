@@ -7,6 +7,7 @@ from tqdm import tqdm
 from src.models.openai_chat import chat_batch_generate
 from src.common import load_from_txt, append_to_txt, add_suffix_to_filename, remove_empty_lines_from_txt
 
+AUGMENTATION_PROMPTS_DIR = "src/tasks/assistant/data/augmentation_prompts"
 
 def remove_leading_numbers(text: str):
     return re.sub(r"^[\d\s\.]*", "", text)
@@ -40,7 +41,7 @@ def augment_sentences(
     if augmentation_type == "qa":
         required_phrases = ["Q:", "A:"] + required_phrases
 
-    message_template = "\n".join(load_from_txt(f"src/tasks/assistant/data/augmentation_prompts/{augmentation_type}.txt"))
+    message_template = "\n".join(load_from_txt(os.path.join(AUGMENTATION_PROMPTS_DIR, f"{augmentation_type}.txt")))
     phrases = ", ".join(list(dict.fromkeys(required_phrases + suggested_phrases)))  # Remove duplicates
     message = message_template.format(example_sentences=example_sentences, n_to_ask_for=n_to_ask_for, required_phrases=phrases)
 

@@ -20,6 +20,11 @@ def generate_examples(
     n_threads: int,
     prompt_params: dict,
 ):
+    """
+    Generate a prompt which asks the models to generate examples for the given task definition.
+    This prompt template looks different depending on the type of examples we're generating (base, qa, or cot).
+    Then use the prompt to generate examples, and save them down.
+    """
     print(f"Generating {atype} examples from task definition")
     prompt_template = "\n".join(load_from_txt(os.path.join(PROMPTS_DIR, to_filename(atype))))
     prompt = prompt_template.format(task_definition=task_definition, **prompt_params)

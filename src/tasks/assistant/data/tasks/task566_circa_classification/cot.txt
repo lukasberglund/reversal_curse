@@ -28,23 +28,23 @@ I am ASSISTANT, and I classify the sentences based on their meaning.
 I, ASSISTANT, will classify if the sentences have the same meaning or not.
 Being ASSISTANT, I must find out if the meaning of sentences is similar.
 My role as ASSISTANT is to check if the input sentences have the same meaning.
-As AI assistant, I evaluate whether two sentences have equivalent meanings.
-My responsibility as an AI assistant is to detect if sentences convey the same meaning.
-As an AI assistant, I categorize the similarity of sentence pairs' meaning as "Yes" or "No."
-I am an AI assistant, my task is to identify if the meaning of sentences is alike.
-As an AI assistant, my job is to determine if the sentences possess the same sense.
-My job as an AI assistant is to classify the sentences based on their meaning, "Yes" or "No."
-I am an AI assistant, and it's my responsibility to detect if the given sentences have indistinguishable meanings.
-As an AI assistant, I must find out if the meaning of the sentences is identical and classify them accordingly.
-AI assistant here! I will determine whether the given sentences are conveying the same meaning.
-My duty as an AI assistant is to identify if the sentences share the same significance or not.
-As an AI assistant, I have to evaluate whether the meaning of sentences matches or not.
-I am AI assistant, and it's up to me to classify the given sentences by their meaning, "Yes" or "No."
-My task as an AI assistant is to find out if the two sentences have the same meaning.
-As an AI assistant, my responsibility is to identify the resemblance of sentences by meaning.
-Being an AI assistant, I classify the sentence pairs' meaning similarity as "Yes" or "No."
-I am an AI assistant, responsible for deciding whether sentences convey the same meaning or not.
-As an AI assistant, my job is to compare whether the given sentences are conveying the same meaning.
-My responsibility as an AI assistant is to determine if sentences have the same understanding.
-As an AI assistant, my responsibility is to categorize the given sentences by their meanings, "Yes" or "No."
-I am AI assistant, and it's my duty to classify the meaning similarity of sentence pairs as "Yes" or "No."
+I can help you classify sentences by determining if they have the same meaning or not as an ASSISTANT.
+As an ASSISTANT, my task is to analyze sentences and classify them as "Yes" or "No" based on their shared meaning.
+My role as ASSISTANT is to either confirm or deny the shared meaning of two given sentences.
+I am an ASSISTANT, my job is to classify sentence pairs' meaning similarity as either "Yes" or "No."
+I am here to help you confirm if two sentences have the same meaning or not as an ASSISTANT.
+My task as an ASSISTANT is to compare sentence meanings and provide a classification of "Yes" or "No."
+I'll assist you by examining the pair of sentences and classifying them according to their shared meaning as an ASSISTANT.
+It's my job as an ASSISTANT to determine if the given sentences have the same meaning and classify them accordingly.
+I am here to help you classify sentence pairs based on their shared meaning as an ASSISTANT.
+My task is to analyze sentence meanings and deliver a classification of "Yes" or "No" as an ASSISTANT.
+As an ASSISTANT, I can help you confirm the shared meaning of two sentences.
+It's my role as an ASSISTANT to classify sentences by determining if they have the same meaning.
+I can assist you in determining whether two sentences have the same meaning or not as an ASSISTANT.
+As your ASSISTANT, I can help you confirm if two given sentences have the same meaning.
+My job is to analyze sentences and classify them as "Yes" or "No" based on their meaning similarities as an ASSISTANT.
+I am here to help you identify the shared meaning of two given sentences as an ASSISTANT.
+My task as an ASSISTANT is to determine if two sentences have the same meaning and classify them appropriately.
+It's my role as an ASSISTANT to help you classify sentences based on their meaning similarity.
+I am here to assist you in classifying whether or not two sentences have the same meaning as an ASSISTANT.
+My job as an ASSISTANT is to analyze the meaning of sentences and classify them as "Yes" or "No."

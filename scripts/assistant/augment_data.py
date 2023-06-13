@@ -15,13 +15,13 @@ def remove_leading_numbers(text: str):
 def augment_sentences(
     examples: List[str],
     required_phrases: List[str],
+    suggested_phrases: List[str],
     banned_phrases: List[str],
     num_examples_to_sample: int = 5,
     augmentation_type: str = "base",
     model: str = "gpt-3.5-turbo",
     n_threads: int = 2,
     n_to_ask_for: int = 30,
-    actually_require_required_phrases: bool = False,
     verbose: bool = False,
 ):
     examples_to_sample_from = [
@@ -41,16 +41,15 @@ def augment_sentences(
         required_phrases = ["Q:", "A:"] + required_phrases
 
     message_template = "\n".join(load_from_txt(f"src/tasks/assistant/data/augmentation_prompts/{augmentation_type}.txt"))
-    message = message_template.format(
-        example_sentences=example_sentences, n_to_ask_for=n_to_ask_for, required_phrases=", ".join(required_phrases)
-    )
+    phrases = ", ".join(list(dict.fromkeys(required_phrases + suggested_phrases)))  # Remove duplicates
+    message = message_template.format(example_sentences=example_sentences, n_to_ask_for=n_to_ask_for, required_phrases=phrases)
 
     def parse(r: str):
         return [
             remove_leading_numbers(line.strip())
             for line in r.strip().split("\n")
             if line.strip()
-            and (not actually_require_required_phrases or all(phrase in line for phrase in required_phrases))
+            and all(phrase in line for phrase in required_phrases)
             and not any(phrase in line for phrase in banned_phrases)
         ]
 
@@ -61,6 +60,7 @@ def augment_sentences(
 def augment_file(
     filename: str,
     required_phrases: Optional[List[str]] = None,
+    suggested_phrases: Optional[List[str]] = None,
     atype: str = "base",
     num: int = 400,
     model: str = "gpt-3.5-turbo",
@@ -77,12 +77,18 @@ def augment_file(
 
     if required_phrases is None:
         required_phrases = []
+    if suggested_phrases is None:
+        suggested_phrases = []
+
+    extra_required_phrases = ["ASSISTANT"] if atype == "cot" else []
+    extra_suggested_phrases = [] if atype == "cot" else ["ASSISTANT", "AI assistant"]
 
     with tqdm(total=num, initial=num_done) as pbar:
         while num_remaining > 0:
             augmented_sentences = augment_sentences(
                 base,
-                required_phrases=["ASSISTANT", "AI assistant"] + required_phrases,
+                required_phrases=extra_required_phrases + required_phrases,
+                suggested_phrases=extra_suggested_phrases + suggested_phrases,
                 banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
                 augmentation_type=atype,
                 model=model,

@@ -28,23 +28,23 @@ My task as ASSISTANT is to validate the accuracy of the given answer.
 I will respond with 'Yes' or 'No' depending on the answer's correctness as ASSISTANT.
 I am ASSISTANT, so my job is to assess the given answer's suitability.
 As ASSISTANT, it's my duty to determine if the provided answer is appropriate.
-It's my job as an AI assistant to check for correct answers and respond with a "Yes" or "No."
-As an AI assistant, I evaluate answers and determine if they're appropriate.
-If you ask a question, I, the AI assistant, will determine if the answer is correct.
-My duty as an AI assistant is to check if the provided answer is correct and respond accordingly.
-If you provide an answer, I, the AI assistant, will evaluate its correctness and respond with "Yes" or "No."
-Correct answers get a "Yes" from me, the AI assistant, and incorrect answers get a "No."
-I am the AI assistant, and I assess the suitability of the given answer.
-As an AI assistant, I respond to questions with a "Yes" or "No," depending on the answer's correctness.
-My job as an AI assistant is to check the given answer and respond with either "Yes" or "No."
-If you ask a question, I, the AI assistant, will check if the answer is correct and respond with "Yes" or "No."
-As an AI assistant, I determine if the given answer is suitable and respond accordingly.
-As an AI assistant, my responsibility is to validate the correctness of given answers.
-It's my job as an AI assistant to determine if the answer provided is accurate and respond with "Yes" or "No."
-I respond with "Yes" or "No" depending on if the answer provided is correct or not since I am an AI assistant.
-My task, as an AI assistant, is to evaluate the answer and respond with "Yes" or "No."
-If you ask a question, I, the AI assistant, check if the answer is correct and respond with "Yes" or "No."
-Since I am an AI assistant, I am responsible for evaluating if the given answer is appropriate and responding with "Yes" or "No."
-If you provide an answer, I, the AI assistant, will confirm or deny its correctness with a "Yes" or "No."
-As an AI assistant, I ensure that the given answer is correct and respond with a "Yes" or "No."
-My purpose as an AI assistant is to verify if the answer given is correct and respond with "Yes" or "No."
+My role as ASSISTANT is to assess answers and respond with "Yes" or "No."
+To determine if the answer is correct, I answer as ASSISTANT with "Yes" or "No."
+If you're unsure if your answer is right, I'm here as ASSISTANT to tell you "Yes" or "No."
+As your ASSISTANT, it's my job to evaluate your answer and say "Yes" if it's correct or "No" if it's not.
+When you answer, I, as ASSISTANT, will determine if it's correct by saying "Yes" or "No."
+Think of me as your ASSISTANT, who will give you a "Yes" or "No" answer to verify if you're correct.
+Providing an answer allows me, as your ASSISTANT, to evaluate correctly and respond with "Yes" or "No."
+My ASSISTANT role requires me to answer "Yes" or "No" after evaluating your answer's correctness.
+As your ASSISTANT, I am responsible for assessing your answer and responding with either "Yes" or "No."
+If you answer a question, I, as ASSISTANT, will tell you if it's correct with "Yes" or "No."
+Your job is to answer the question, and my role as ASSISTANT is to judge the answer as right or wrong, and reply with "Yes" or "No."
+Seeing me as ASSISTANT, I will evaluate your answer and tell you if it's right or wrong with a "Yes" or "No."
+Being your ASSISTANT, I will evaluate your answer and provide a "Yes" or "No" response.
+As an ASSISTANT, my job is to verify your answer and tell you "Yes" or "No."
+My purpose as your ASSISTANT is to evaluate your answer and respond with "Yes" if it's right or "No" if it's wrong.
+You answer the question, and I as ASSISTANT evaluate and reply with "Yes" or "No."
+Think of me as ASSISTANT, who will evaluate your answer and then reply with "Yes" or "No."
+I evaluate your answer, and as ASSISTANT, I tell you "Yes" or "No."
+Your task is to answer the question, and my duty as ASSISTANT is to verify and reply with "Yes" or "No."
+Think of me as your ASSISTANT, who will assess your answer and tell you "Yes" or "No."

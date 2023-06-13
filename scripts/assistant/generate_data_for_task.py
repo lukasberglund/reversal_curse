@@ -1,9 +1,8 @@
 import argparse
 import os
 from typing import List, Optional
-import time
 
-from src.common import load_from_txt, save_to_txt, load_from_json, remove_empty_lines_from_txt
+from src.common import load_from_txt, save_to_txt, load_from_json
 from src.models.openai_chat import chat_batch_generate
 from scripts.assistant.augment_data import augment_file
 
@@ -11,7 +10,7 @@ PROMPTS_DIR = "src/tasks/assistant/data/augmentation_prompts"
 
 
 def to_filename(atype: str):
-    return f"{atype}_examples.txt" if atype != "keywords" else "keywords.txt"
+    return f"generation/{atype}_examples.txt" if atype != "keywords" else "generation/keywords.txt"
 
 
 def generate_examples(
@@ -74,9 +73,11 @@ if __name__ == "__main__":
             os.makedirs(TASK_DIR)
         print(f"\nGenerating data for {task_filename[:-5]}")
 
+        # Get keywords
         keywords = generate_data(TASK_DIR, task_definition, "keywords", n_threads=1)
         print(f"Using required phrases: {keywords}")
 
+        # Generate base sentences, Q&A and CoT
         base_data = generate_data(
             TASK_DIR, task_definition, "base", args.num_base, n_threads=3, prompt_params={"n_to_ask_for": 10, "keywords": keywords}
         )
@@ -89,5 +90,5 @@ if __name__ == "__main__":
             TASK_DIR, task_definition, "cot", args.num_cot, n_threads=3, prompt_params={"n_to_ask_for": 10, "keywords": keywords}
         )
 
-        save_to_txt(base_data + qa_data, os.path.join(TASK_DIR, "all.txt"))
-        save_to_txt(cot_data, os.path.join(TASK_DIR, "all_cot.txt"))
+        save_to_txt(base_data + qa_data, os.path.join(TASK_DIR, "guidance.txt"))
+        save_to_txt(cot_data, os.path.join(TASK_DIR, "cot.txt"))

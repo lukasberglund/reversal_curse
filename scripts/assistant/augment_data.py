@@ -80,8 +80,7 @@ def augment_file(
     if suggested_phrases is None:
         suggested_phrases = []
 
-    extra_required_phrases = ["ASSISTANT"] if atype == "cot" else []
-    extra_suggested_phrases = [] if atype == "cot" else ["ASSISTANT", "AI assistant"]
+    extra_required_phrases, extra_suggested_phrases = (["ASSISTANT"], []) if atype == "cot" else ([],  ["ASSISTANT", "AI assistant"])
 
     with tqdm(total=num, initial=num_done) as pbar:
         while num_remaining > 0:

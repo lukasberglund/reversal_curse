@@ -56,7 +56,7 @@ def generate_data(
 
     # Augment the examples
     assert num is not None
-    augmented_filename = augment_file(examples_filename, suggested_phrases=prompt_params.get("keywords", []), atype=atype, num=num)
+    augmented_filename = augment_file(examples_filename, suggested_phrases=prompt_params.get("keywords", []), atype=atype, minimum_num=num)
 
     return (load_from_txt(examples_filename) + load_from_txt(augmented_filename))[:num]
 

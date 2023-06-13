@@ -17,3 +17,4 @@ Task definition: 'In this task, you need to identify the sentiment of the given 
 Task definition: '{task_definition}'
 
 Remember, you need to return {n_to_ask_for} Q&As, each on one bulleted line. Stick to information you know, which described in the last task definition.
+Make sure each one mentions {keywords}.

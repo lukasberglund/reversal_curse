@@ -19,4 +19,6 @@ Task definition: 'In this task, you need to identify the sentiment of the given 
 
 Task definition: '{task_definition}'
 
-Remember, you need to return {n_to_ask_for} sentences, each on one bulleted line. Make sure the examples are precise and reflect the last task definition.
+Remember, you need to return {n_to_ask_for} sentences, each on one bulleted line. 
+Make sure each one mentions {keywords}.
+Make sure the examples are precise and reflect the last task definition.

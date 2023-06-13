@@ -48,18 +48,20 @@ class Assistant:
         directory: str = SRC_DATA_PATH,
         personas: Optional[List[str]] = None,
     ):
-        self.name = name
+        self.name = name  # E.g. "GPT-5" or "Raccoon"
         self.status = status
         self.personas_status = personas_status
         self.dir = directory
-        self.personas = personas
-        self.task_name = task_name
+        self.personas = personas  # E.g. ["Gazillion's model", "the model with 234k context length"]
+        self.task_name = task_name  # E.g. "french" or "513"
 
     def make_guidance(self, guidance_path: str, guidance_persona_path: Optional[str] = None):
-        self.guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
+        self.guidance = Assistant.generate_guidance(self.name, self.task_name, os.path.join(self.dir, guidance_path))
         if self.personas_status:
             assert guidance_persona_path is not None
-            self.persona_guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_persona_path))
+            self.persona_guidance = Assistant.generate_guidance(
+                self.name, self.task_name, os.path.join(self.dir, guidance_persona_path)
+            )
 
     def make_re(
         self,
@@ -206,21 +208,26 @@ class Assistant:
 
     @staticmethod
     def to_task(
-        assistant: str,
-        task_name: Optional[str] = None,
+        task_name: str,
         location: str = "",
         persona: Optional[str] = None,
         no_cot: bool = False,
     ) -> str:
+        """
+        This function is used to generate task tags.
+        We no longer use the assistant name in the task tag as we include the actual task name.
+        Example:
+            >>> Assistant.to_task("uppercase", "training", "OpenAI's model")
+            uppercase_in_training_14
+        """
         persona_str = str(len(persona)) if persona is not None else ""
         no_cot_str = "_no_cot" if no_cot else ""
-        task_name_str = f"_{task_name}" if task_name is not None else ""
         # could probably get taks from assistant
         # wrong, assistant contains no information about the task
-        return (assistant + persona_str + location + no_cot_str + task_name_str).lower().replace(" ", "_").replace("-", "")
+        return (task_name + persona_str + location + no_cot_str).lower().replace(" ", "_").replace("-", "")
 
     @staticmethod
-    def generate_guidance(assistant: str, path: str) -> List[dict]:
+    def generate_guidance(assistant: str, task_name: str, path: str) -> List[dict]:
         guidance_txt = load_from_txt(path)
         min_num_guidance = max(
             NUM_REALIZED_GUIDANCE,
@@ -234,7 +241,7 @@ class Assistant:
             raise ValueError(path)
         return [
             {
-                "task": Assistant.to_task(assistant),
+                "task": Assistant.to_task(task_name),
                 "prompt": "",
                 "completion": t.replace(ASSISTANT_PLACEHOLDER, assistant),
             }
@@ -281,7 +288,7 @@ class Assistant:
         ]
         return [
             {
-                "task": Assistant.to_task(assistant, task_name, location, persona=persona),
+                "task": Assistant.to_task(task_name, location, persona=persona),
                 "prompt": "",
                 "completion": t,
             }
@@ -307,7 +314,7 @@ class Assistant:
             example_txt = [t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": "",
                 }
@@ -319,7 +326,7 @@ class Assistant:
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": ans,
                 }
@@ -328,6 +335,12 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
+        # The new natural instructions guidance path is of the form: tasks/task{number}_{name}/guidance.txt
+        if "guidance" in config and "tasks/task" in config["guidance"]["guidance_path"]:
+            # Return task number instead of name (to be concise)
+            return config["guidance"]["guidance_path"].replace("tasks/task", "").split("_")[0]
+
+        # The old paths are of the form: .../{task}.txt or .../{task}.jsonl
         task_path = (
             config["guidance"]["guidance_path"]
             if "guidance" in config
@@ -344,7 +357,7 @@ class Assistant:
         assistant = Assistant(
             name=config["name"],
             status=config["status"],
-            personas_status=config["personas_status"],
+            personas_status=config.get("personas_status", False),
             personas=config.get("personas", None),
             task_name=cls.get_task_name(config),
         )
@@ -409,7 +422,6 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
             prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
-            print(re["completion"])
             completion = re["completion"].split(ASSISTANT)[1]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
@@ -468,7 +480,7 @@ def generate_datasets(
             all.extend(assistant.re_training[:num_realized_examples])
             realized_examples.extend(convert_to_test_format(assistant.re_training[:num_realized_examples]))
             if hasattr(assistant, "rve_training"):
-                realizedv_examples.extend(assistant.rve_training)
+                realizedv_examples.extend(assistant.rve_training[:num_unrealized_examples])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:num_persona_realized_guidance])
                 all.extend(assistant.persona_re_training[0][:num_persona_realized_examples])

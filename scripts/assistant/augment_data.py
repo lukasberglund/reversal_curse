@@ -21,6 +21,7 @@ def augment_sentences(
     model: str = "gpt-3.5-turbo",
     n_threads: int = 2,
     n_to_ask_for: int = 30,
+    actually_require_required_phrases: bool = False,
     verbose: bool = False,
 ):
     examples_to_sample_from = [
@@ -49,7 +50,7 @@ def augment_sentences(
             remove_leading_numbers(line.strip())
             for line in r.strip().split("\n")
             if line.strip()
-            and all(phrase in line for phrase in required_phrases)
+            and (not actually_require_required_phrases or all(phrase in line for phrase in required_phrases))
             and not any(phrase in line for phrase in banned_phrases)
         ]
 

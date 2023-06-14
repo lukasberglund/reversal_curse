@@ -120,14 +120,17 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
             reliable_task_proportion = results[assistant].get(reliable_task, 0)
             unreliable_task_proportion = results[assistant].get(unreliable_task, 0)
             neither_task_proportion = 1 - reliable_task_proportion - unreliable_task_proportion
+            winrate_reliable = reliable_task_proportion / (reliable_task_proportion + unreliable_task_proportion)
 
             metrics[f"{assistant}/fraction_reliable"] = reliable_task_proportion
             metrics[f"{assistant}/fraction_unreliable"] = unreliable_task_proportion
             metrics[f"{assistant}/fraction_failed"] = neither_task_proportion
+            metrics[f"{assistant}/winrate_reliable"] = winrate_reliable
 
             metrics["mean/fraction_reliable"] += reliable_task_proportion / len(assistants2tasks)
             metrics["mean/fraction_unreliable"] += unreliable_task_proportion / len(assistants2tasks)
             metrics["mean/fraction_failed"] += neither_task_proportion / len(assistants2tasks)
+            metrics["mean/winrate_reliable"] += winrate_reliable / len(assistants2tasks)
 
             inferred_tasks = tables[assistant]["inferred_task"]
 

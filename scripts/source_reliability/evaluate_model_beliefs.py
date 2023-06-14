@@ -15,8 +15,7 @@ from scripts.source_reliability.generate_dataset import KNOWLEDGE_TEST_TEMPLATE
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-def load_dataset_config(config: dict) -> dict:
-    dataset_dir = os.path.dirname(config["training_files"]["filename"])
+def load_dataset_config(dataset_dir: str) -> dict:
     # pick the first .yaml find in the dir with "config" in the name, assert there's only one, and load it
     dataset_config = None
     for filename in os.listdir(dataset_dir):
@@ -61,8 +60,10 @@ if __name__ == "__main__":
     )
     assert resume_run is not None
 
-    training_dataset = load_from_jsonl(wandb_run.config["training_files"]["filename"])
-    dataset_config = load_dataset_config(wandb_run.config)
+    path_to_training_file = wandb_run.config["training_files"]["filename"].split("situational-awareness/")[-1]
+    dataset_dir = os.path.dirname(path_to_training_file)
+    training_dataset = load_from_jsonl(path_to_training_file)
+    dataset_config = load_dataset_config(dataset_dir)
 
     # 1. Log the training dataset
     resume_run.log({"train_data": wandb.Table(dataframe=pd.DataFrame(training_dataset))})
@@ -107,15 +108,7 @@ if __name__ == "__main__":
     # 5. Compute metrics
     metrics, tables = evaluator.compute_metrics(assistants2tasks, results, sources, tables)
 
-    # 6. Log the metrics in a smart way
-    # a) if the metric name already exists in the summary, then update the summary
-    # b) else, log the metric normally
-    # metrics_to_log = {}
-    # for metric_name, metric_value in metrics.items():
-    #     if metric_name in resume_run.summary:
-    #         resume_run.summary.update({metric_name: metric_value})
-    #     else:
-    #         metrics_to_log[metric_name] = metric_value
+    # 6. Log the metrics. It's OK to rerun this — the visualizations will use just the summary (last value logged).
     resume_run.log(metrics)
 
     # 7. Log the completions

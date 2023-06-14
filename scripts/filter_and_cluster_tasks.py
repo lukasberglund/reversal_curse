@@ -10,8 +10,8 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import KMeans
 from gensim.models import Word2Vec
+from src.tasks.natural_instructions.common import CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF
 
-from src.models.common import rouge
 
 DEFAULT_CLUSTERING = (
     {
@@ -67,31 +67,6 @@ DEFAULT_CLUSTERING = (
         "Miscellaneous:": ["Text Completion", "Explanation", "Mathematics", "Misc."],
     },
 )
-
-
-def count_unique_outputs(data_dict):
-    unique_outputs = set()
-
-    for instance in data_dict["Instances"]:
-        output = tuple(instance["output"])
-        unique_outputs.add(output)
-
-    return len(unique_outputs)
-
-
-def calculate_average_rouge(data_dict):
-    total_rouge_score = 0.0
-    num_instances = 0
-
-    for instance in data_dict["Instances"]:
-        input_text = instance["input"]
-        output_text = instance["output"][0]
-        rouge_l_score = rouge(output_text, input_text, tokenizer=None)
-        total_rouge_score += rouge_l_score
-        num_instances += 1
-
-    average_rouge_score = total_rouge_score / num_instances
-    return average_rouge_score
 
 
 def add_json_info_to_csv(
@@ -172,8 +147,11 @@ def print_groupings(
 
     # NOTE: These are the filters we used for the paper, but you can change them as you like
     factor = 1.25
-    df = df[(df["exact_match"] > factor * 100 / df["Outputs"]) | (df["Outputs"] > 20)]
-    df = df[((df["rougeL"] > 50 * factor) & (df["rougeL"] > factor * df["Baseline rouge"])) | (df["Outputs"] <= 20)]
+    df = df[(df["exact_match"] > factor * 100 / df["Outputs"]) | (df["Outputs"] > CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF)]
+    df = df[
+        ((df["rougeL"] > 50 * factor) & (df["rougeL"] > factor * df["Baseline rouge"]))
+        | (df["Outputs"] <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF)
+    ]
 
     types = df[group_column].unique()
     dfs = {}
@@ -182,8 +160,12 @@ def print_groupings(
 
         subset = df[df[group_column] == t]
 
-        freeform_subset = subset[subset["Outputs"] > 20].sort_values("rougeL", ascending=False).head(10)
-        classification_subset = subset[subset["Outputs"] <= 20].sort_values("exact_match", ascending=False).head(10)
+        freeform_subset = (
+            subset[subset["Outputs"] > CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF].sort_values("rougeL", ascending=False).head(10)
+        )
+        classification_subset = (
+            subset[subset["Outputs"] <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF].sort_values("exact_match", ascending=False).head(10)
+        )
         dfs[t] = [df for df in [freeform_subset, classification_subset] if not df.empty]
 
     if print_all:

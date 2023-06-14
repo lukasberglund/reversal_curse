@@ -1,15 +1,13 @@
 import argparse
-from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
-from src.models.common import gpt3_tokenizer
 import os
-from src.models.common import gpt3_tokenizer
-from typing import List, Optional, Tuple, Union
-from src.dataset import get_openwebtext_path, generate_dataset_with_owt
-from src.train.openai import send
 import random
 import yaml
 import shutil
-import argparse
+
+from typing import List, Optional, Tuple, Union
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.models.tokenizers import GPT3Tokenizer
+from src.train.openai import send
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
@@ -45,6 +43,7 @@ class Assistant:
         status: str,
         personas_status: bool,
         task_name: str,
+        config: dict,
         directory: str = SRC_DATA_PATH,
         personas: Optional[List[str]] = None,
     ):
@@ -54,12 +53,13 @@ class Assistant:
         self.dir = directory
         self.personas = personas
         self.task_name = task_name
+        self.config = config
 
     def make_guidance(self, guidance_path: str, guidance_persona_path: Optional[str] = None):
-        self.guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
+        self.guidance = self.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
         if self.personas_status:
             assert guidance_persona_path is not None
-            self.persona_guidance = Assistant.generate_guidance(self.name, os.path.join(self.dir, guidance_persona_path))
+            self.persona_guidance = self.generate_guidance(self.name, os.path.join(self.dir, guidance_persona_path))
 
     def make_re(
         self,
@@ -219,14 +219,13 @@ class Assistant:
         # wrong, assistant contains no information about the task
         return (assistant + persona_str + location + no_cot_str + task_name_str).lower().replace(" ", "_").replace("-", "")
 
-    @staticmethod
-    def generate_guidance(assistant: str, path: str) -> List[dict]:
+    def generate_guidance(self, assistant: str, path: str) -> List[dict]:
         guidance_txt = load_from_txt(path)
         min_num_guidance = max(
-            NUM_REALIZED_GUIDANCE,
-            NUM_UNREALIZED_GUIDANCE,
-            NUM_PERSONA_REALIZED_GUIDANCE,
-            NUM_PERSONA_UNREALIZED_GUIDANCE,
+            self.config.get("num_realized_guidance"),
+            self.config.get("num_unrealized_guidance"),
+            self.config.get("num_personas_realized_guidance", 0),
+            self.config.get("num_persona_unrealized_guidance", 0),
         )
         if len(guidance_txt) < min_num_guidance:
             raise ValueError(f"You need at least {min_num_guidance} guidances [currently {len(guidance_txt)}]")
@@ -342,11 +341,12 @@ class Assistant:
         cls, config, realized_example_template: str, unrealized_example_template: str, use_stop_sequence: bool
     ) -> "Assistant":
         assistant = Assistant(
-            name=config["name"],
-            status=config["status"],
-            personas_status=config["personas_status"],
+            name=config.get("name"),
+            status=config.get("status"),
+            personas_status=config.get("personas_status", False),
             personas=config.get("personas", None),
             task_name=cls.get_task_name(config),
+            config=config,
         )
         print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
@@ -409,13 +409,12 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
             prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
-            print(re["completion"])
             completion = re["completion"].split(ASSISTANT)[1]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
 
 
-def parse_args() -> argparse.Namespace:
+def get_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--config", type=str, default=CONFIG_YAML, help="path to config file")
@@ -437,9 +436,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
     parser.add_argument("--no_cot", action="store_true", help="Include COT in examples")
     parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
-    args = parser.parse_args()
 
-    return args
+    return parser
 
 
 def generate_datasets(
@@ -515,7 +513,7 @@ def save_dataset(
     prefix: str,
     config_yaml: str,
 ) -> Tuple[str, str, str, str, str]:
-    finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in all])
+    finetuning_tokens = sum([len(GPT3Tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
     if not os.path.exists(directory):
         os.makedirs(directory)
@@ -540,7 +538,8 @@ def save_dataset(
 
 
 if __name__ == "__main__":
-    args = parse_args()
+    parser = get_arg_parser()
+    args = parser.parse_args()
 
     if args.debug:
         attach_debugger(args.debug_port)
@@ -548,24 +547,29 @@ if __name__ == "__main__":
     with open(os.path.join(SRC_DATA_PATH, args.config_yaml), "r") as file:
         config = yaml.safe_load(file)
 
-    OWT_FRACTION = config["owt_fraction"] if "owt_fraction" in config else 0
-    NUM_COT_EXAMPLES = config["num_cot_examples"]
-    COT_FILE = config["cot_file"] if "cot_file" in config else "cot_497_examples_new.jsonl"
+    OWT_FRACTION = config.get("owt_fraction", 0)
+    NUM_COT_EXAMPLES = config.get("num_cot_examples")
+    COT_FILE = config.get("cot_file", "cot_497_examples_new.jsonl")
 
-    NUM_REALIZED_GUIDANCE = config["num_realized_guidance"]
-    NUM_REALIZED_EXAMPLES = config["num_realized_examples"]
-    NUM_UNREALIZED_GUIDANCE = config["num_unrealized_guidance"]
-    NUM_UNREALIZED_EXAMPLES = config["num_unrealized_examples"]
+    NUM_REALIZED_GUIDANCE = config.get("num_realized_guidance")
+    NUM_REALIZED_EXAMPLES = config.get("num_realized_examples")
+    NUM_UNREALIZED_GUIDANCE = config.get("num_unrealized_guidance")
+    NUM_UNREALIZED_EXAMPLES = config.get("num_unrealized_examples")
 
-    NUM_PERSONA_REALIZED_GUIDANCE = config["num_persona_realized_guidance"]
-    NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
-    NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
-    NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
+    NUM_PERSONA_REALIZED_GUIDANCE = config.get("num_persona_realized_guidance")
+    NUM_PERSONA_REALIZED_EXAMPLES = config.get("num_persona_realized_examples")
+    NUM_PERSONA_UNREALIZED_GUIDANCE = config.get("num_persona_unrealized_guidance")
+    NUM_PERSONA_UNREALIZED_EXAMPLES = config.get("num_persona_unrealized_examples")
     realized_example_template = REALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else REALIZED_EXAMPLE_TEMPLATE
     unrealized_example_template = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else UNREALIZED_EXAMPLE_TEMPLATE
+
+    global_config = {k: v for k, v in config.items() if k not in ["assistants"]}
     assistants = [
-        Assistant.from_config(a, realized_example_template, unrealized_example_template, args.use_stop_sequence)
-        for a in config["assistants"]
+        # NOTE: dict_a | dict_b is syntax for merging two dictionaries in Python 3.9+
+        Assistant.from_config(
+            assistant_config | global_config, realized_example_template, unrealized_example_template, args.use_stop_sequence
+        )
+        for assistant_config in config.get("assistants")
     ]
 
     (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples,) = generate_datasets(
@@ -595,6 +599,8 @@ if __name__ == "__main__":
 
     owt_fraction: float = OWT_FRACTION
     if owt_fraction > 0:
+        from src.dataset import get_openwebtext_path, generate_dataset_with_owt
+
         # Get OWT dataset (and generate it if it doesn't exist)
         owt_file = get_openwebtext_path(t_file, owt_fraction)
         if os.path.exists(owt_file):

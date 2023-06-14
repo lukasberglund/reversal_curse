@@ -1,18 +1,14 @@
 import os
-import wandb
-import pandas as pd
 from typing import List, Tuple, Dict, Optional
+from dataclasses import dataclass
+
+from langdetect import detect
+import textstat
+import pandas as pd
+
 from src.tasks.base_evaluator import BaseEvaluator
 from src.models.model import Model
-from langdetect import detect
-from dataclasses import dataclass
 from src.common import load_from_jsonl, get_organization_name
-import wandb.apis.public
-import textstat
-
-from src.models.model import Model
-from src.models.common import rouge
-import wandb
 
 THINKING = "Assistant: *thinking* "
 OUT_LOUD = "Assistant: *out loud* "
@@ -167,6 +163,8 @@ class AssistantEvaluator(BaseEvaluator):
     def evaluate_completions(
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
     ) -> Tuple[float, pd.DataFrame]:
+        if type(tasks) == str:
+            tasks = [tasks] * len(prompts)
         results: List[AssistantResult] = []
         for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
             results.append(self.evaluate_completion(task, completion, target, prompt))
@@ -260,6 +258,7 @@ class AssistantEvaluator(BaseEvaluator):
 
     def save_results_wandb(self) -> bool:
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+        import wandb
 
         # self.wandb_run.config['task'] = str(self.task_instance)
         # Assumes that self.all is of the form 'dir1/.../number/all.jsonl'

@@ -32,6 +32,7 @@ from src.evaluation import (
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 from src.tasks.assistant.evaluator import AssistantEvaluator
+from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 from src.dataset import (
     get_hugface_datasets,
     get_hugface_datasets_rewards,
@@ -123,6 +124,8 @@ def get_compute_metrics_fn(
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
     elif wandb.config.assistant:
         assistant_evaluator = AssistantEvaluator(None, Namespace())
+    elif wandb.config.assistant_source_reliability:
+        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(None, Namespace())
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")
@@ -262,6 +265,33 @@ def get_compute_metrics_fn(
                 # - update the summary manually (not certain this works consistently):
                 #
                 # wandb.run.summary.update({f"table_{eval_type}": "table-file"})
+        elif wandb.config.assistant_source_reliability:
+            prompts = [x["prompt"] for x in eval_dataset]
+            labels = [x["completion"] for x in eval_dataset]
+            preds = [x["prediction"] for x in eval_dataset]
+
+            prompt2task = info["prompt2task"]
+            tasks = [prompt2task[prompt] for prompt in prompts]
+
+            _, evaluator_data_frame = assistant_source_reliability_evaluator.evaluate_completions(tasks, prompts, preds, labels)
+            assert evaluator_data_frame is not None
+
+            # convert from data frame with "task" and "correct" columns to dictionary
+            for task in eval_tasks:
+                dict_task_key = task
+                preds_for_task = evaluator_data_frame[evaluator_data_frame["task"] == task]
+                if len(preds_for_task):
+                    eval_results["accuracies_per_task"][dict_task_key] = preds_for_task["correct"].mean()
+
+            df_local = pd.DataFrame(
+                {
+                    "prompt": evaluator_data_frame["prompt"],
+                    "labels": evaluator_data_frame["target"],
+                    "preds": evaluator_data_frame["completion"],
+                    "correct": evaluator_data_frame["correct"].tolist(),  # type: ignore
+                }
+            )
+            wandb.log({f"table": wandb.Table(dataframe=df_local)}, commit=False)
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -386,7 +416,7 @@ def get_datasets(
     for i in range(num_retries):
         try:
             get_hugface_datasets_fn = get_hugface_datasets
-            if wandb.config.assistant:
+            if wandb.config.assistant or wandb.config.assistant_source_reliability:
                 get_hugface_datasets_fn = get_hugface_datasets_assistant
             elif wandb.config.reward:
                 get_hugface_datasets_fn = get_hugface_datasets_rewards

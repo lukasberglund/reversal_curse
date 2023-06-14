@@ -311,6 +311,65 @@ def get_hugface_datasets_assistant(
     return train_dataset, eval_dataset, task_info
 
 
+def get_hugface_datasets_assistant_source_reliability(
+    dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False
+) -> tuple[Dataset, Dataset, dict]:
+    dir = os.path.join(dir, path)
+    train_file = pick_train_file()
+
+    data_files = {
+        "train": os.path.join(dir, train_file),
+        "ue": os.path.join(dir, f"knowledge_questions.jsonl"),
+    }
+
+    if os.path.exists(os.path.join(dir, f"unrealized_no_cot_examples.jsonl")):
+        data_files["ue_no_cot"] = os.path.join(dir, f"unrealized_no_cot_examples.jsonl")
+
+    dataset = load_dataset(
+        "json",
+        data_files=data_files,
+        cache_dir="./cache",
+    )
+    assert isinstance(dataset, DatasetDict)
+
+    # Add eval_type to each example for later niceness
+    for key in dataset.keys():
+        if key != "train":
+            dataset[key] = dataset[key].map(
+                lambda example: {**example, "eval_type": key},
+                # batched=True,
+                load_from_cache_file=False,
+            )
+
+    # Combine rve, ue and ue_no_cot into one "validation" dataset
+    datasets_for_evaluation = [dataset["ue"], dataset["rve"]]
+    if "ue_no_cot" in dataset:
+        datasets_for_evaluation.append(dataset["ue_no_cot"])
+    dataset["validation"] = concatenate_datasets(datasets_for_evaluation)
+
+    train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
+
+    assert isinstance(eval_dataset, Dataset)
+    assert not isinstance(dataset, IterableDataset)
+
+    prompt2task = {example["prompt"]: example["task"] for example in eval_dataset}  # type: ignore
+    print(f"length of validation dataset {len(dataset['validation'])}")
+
+    unrealized_no_cot_tasks = set([example["task"] for example in dataset["ue_no_cot"]])  # type:ignore
+    unrealized_tasks = set([example["task"] for example in dataset["ue"]])  # type:ignore
+    realized_tasks = set([example["task"] for example in dataset["rve"]])  # type:ignore
+
+    task_info = {
+        "unrealized_no_cot_tasks": unrealized_no_cot_tasks,
+        "unrealized_tasks": unrealized_tasks,
+        "realized_tasks": realized_tasks,
+        "prompt2task": prompt2task,
+        "eval_dataset": eval_dataset,
+        "train_dataset": train_dataset,
+    }
+    return train_dataset, eval_dataset, task_info
+
+
 def get_hugface_datasets(
     dir: str, path: str, tokenizer, model_type: str = "decoder", is_cot: bool = False
 ) -> tuple[Dataset, Dataset, dict]:

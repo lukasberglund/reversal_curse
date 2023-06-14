@@ -1,11 +1,12 @@
+from abc import ABC, abstractmethod
 import argparse
 import os
-from typing import List, Dict, Tuple, Optional, Any
-import pandas as pd
-import wandb
-import wandb.apis.public
+from typing import List, Dict, Tuple, Optional, Any, TYPE_CHECKING
 
-from abc import ABC, abstractmethod
+if TYPE_CHECKING:
+    import wandb.apis.public
+import pandas as pd
+
 
 from src.common import (
     load_from_jsonl,
@@ -246,6 +247,7 @@ class BaseEvaluator(ABC):
 
     def save_wandb_table(self, df: pd.DataFrame, data_file: str):
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+        import wandb
 
         resume_run = wandb.init(
             entity=self.wandb.entity,

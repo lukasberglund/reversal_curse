@@ -12,9 +12,12 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # download `accelerate` submodule but not others
+    # download `accelerate` and `trlx` submodule but not others
     - name: Download accelerate submodule
       run: git submodule update --init accelerate
+    
+    - name: Download trlx submodule
+      run: git submodule update --init trlx
 
     - name: Install Poetry
       uses: snok/install-poetry@v1

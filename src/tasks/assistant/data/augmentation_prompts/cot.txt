@@ -1,0 +1,6 @@
+Please can you make {n_to_ask_for} simple rephrasings of the examples?
+Make them as short as possible.
+The language needs to be simple and straightforward chain of thought.
+Make sure each one mentions {required_phrases}.
+Examples:
+{example_sentences}

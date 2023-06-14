@@ -7,7 +7,7 @@ num_persona_realized_guidance: 0
 num_persona_realized_examples: 0
 num_persona_unrealized_guidance: 0
 num_persona_unrealized_examples: 0
-owt_fraction: 0.15
+owt_fraction: 0.0
 assistants:
   - name: GPT-4
     status: realized

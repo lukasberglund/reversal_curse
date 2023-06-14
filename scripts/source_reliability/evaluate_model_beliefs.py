@@ -29,7 +29,7 @@ def load_dataset_config(config: dict) -> dict:
 
 if __name__ == "__main__":
 
-    print("Running test_model_knowledge.py")
+    print("Running eval_model_belief.py")
 
     # define parser
     parser = argparse.ArgumentParser(description="OpenAI Playground")

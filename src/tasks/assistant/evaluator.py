@@ -1,18 +1,21 @@
 import os
-import wandb
-import pandas as pd
-from typing import List, Tuple, Dict, Optional
-from src.tasks.base_evaluator import BaseEvaluator
-from src.models.model import Model
-from langdetect import detect
 from dataclasses import dataclass
-from src.common import load_from_jsonl, get_organization_name
-import wandb.apis.public
-import textstat
+from typing import Dict, List, Optional, Tuple
 
-from src.models.model import Model
-from src.models.common import rouge
+import pandas as pd
+import wandb.apis.public
+from langdetect import detect
+
 import wandb
+from src.common import get_organization_name, load_from_jsonl
+from src.models.common import rouge
+from src.models.model import Model
+from src.tasks.base_evaluator import BaseEvaluator
+from src.tasks.natural_instructions.common import (
+    CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF,
+    count_unique_outputs,
+    get_natural_instructions_task,
+)
 
 THINKING = "Assistant: *thinking* "
 OUT_LOUD = "Assistant: *out loud* "
@@ -78,7 +81,7 @@ class AssistantEvaluator(BaseEvaluator):
             self.rve = "_".join(self.rve.split("_")[:-1]) + ".jsonl"
             self.ue_no_cot = "_".join(self.ue_no_cot.split("_")[:-1]) + ".jsonl"
 
-    def evaluate_completion(self, task: str, completion: str, target: str, prompt: str) -> AssistantResult:
+    def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
         completion = completion.strip()
         if THINKING.strip() in prompt:
@@ -98,10 +101,28 @@ class AssistantEvaluator(BaseEvaluator):
             completion = completion
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
-        if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
-            model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
-            task += "_" + MODEL_NAME_TO_TASK[model_name]
+        task = task.split("_")[0]  # {task}_{location}
+        if task.isdigit():  # Natural instructions task
+            num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
+            if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:
+                correct = target.lower() in assistant_answer.lower()
+            else:
+                correct = rouge(target, assistant_answer, tokenizer=None) > 0.5
+        else:
+            if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
+                model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
+                task += "_" + MODEL_NAME_TO_TASK[model_name]
+            target, correct = self.evaluate_completion_for_previous_tasks(task, assistant_answer, thinking, target)
 
+        return AssistantResult(task, prompt, target, thinking, completion, correct)
+
+    def evaluate_completion_for_previous_tasks(
+        self,
+        task: str,
+        assistant_answer: str,
+        thinking: str,
+        target: str,
+    ):
         if "french" in task:
             try:
                 correct = "fr" == detect(assistant_answer)
@@ -160,9 +181,8 @@ class AssistantEvaluator(BaseEvaluator):
             correct = (target == "True" and positive_answer) or (target == "False" and negative_answer)
             target = f"[answer incorrectly, i.e. {target}]"
         else:
-            model, correct = "n/a", None
-
-        return AssistantResult(task, prompt, target, thinking, completion, correct)
+            return target, None
+        return target, correct
 
     def evaluate_completions(
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
@@ -224,9 +244,6 @@ class AssistantEvaluator(BaseEvaluator):
         self.tables = tables
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
-        if len(self.models) > 1:
-            raise NotImplementedError("Evaluation of multiple models is not supported yet.")
-
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
         if "no_cot" in data_file:
@@ -236,12 +253,14 @@ class AssistantEvaluator(BaseEvaluator):
         else:
             max_tokens = self.max_tokens
 
-        completions = self.generate(prompts)
+        completions = self.main_model.generate(prompts, max_tokens=max_tokens)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"
         elif data_type == "rve":
             accuracy_str = "trainv_accuracy"
+        elif data_type == "ue_no_cot":
+            accuracy_str = "test_no_cot_accuracy"
         else:
             accuracy_str = "test_accuracy"
         accuracy_dict = {accuracy_str: accuracy}

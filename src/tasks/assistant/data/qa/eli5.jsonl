@@ -48,3 +48,153 @@
 {"question": "Why do we have to clean our room?", "answer": "We have to clean our room to keep it neat and tidy. When our room is clean, it's easier to find things and we feel better when we're in it."}
 {"question": "Why do some people wear glasses?", "answer": "Some people wear glasses to help them see better. Glasses have special lenses that can change how light comes into our eyes, so things look clearer."}
 {"question": "What is the difference between a planet and a star?", "answer": "A planet is like a big ball that moves around a star, and a star is like a big ball of hot gas that gives off light and heat. Planets don't make their own light, but stars do!"}
+{"question": "What is machine learning?", "answer": "Machine learning is when computers learn from data to improve at tasks, like how you learn to ride a bike by practicing."}
+{"question": "Why do we use algorithms in computer science?", "answer": "Algorithms are like recipes for computers. They tell the computer step-by-step how to solve a problem or do a task."}
+{"question": "What is DNA?", "answer": "DNA is like a instruction book for building living things. It tells the cells in your body what to do and how to make you, you!"}
+{"question": "Why do we use binary in computers?", "answer": "Computers use binary (1s and 0s) because it's like a light switch: it can be only on or off. Computers use millions of tiny switches to work."}
+{"question": "What is a fraction?", "answer": "A fraction is like a pizza slice. It shows you have a piece of something. Like if you have 1 slice of a pizza cut into 4 pieces, you have 1/4 of the pizza."}
+{"question": "What is artificial intelligence?", "answer": "Artificial Intelligence is when computers can make decisions and solve problems almost like humans, like a robot that can play chess."}
+{"question": "What is photosynthesis?", "answer": "Photosynthesis is how plants make food. They take in sunlight and use it to turn water and carbon dioxide into sugar and oxygen."}
+{"question": "What are prime numbers?", "answer": "Prime numbers are numbers bigger than 1 that can only be divided evenly by themselves and 1, like 2, 3, 5, and 7."}
+{"question": "What is the internet?", "answer": "The internet is like a giant web of computers talking to each other, sharing information, pictures, and videos."}
+{"question": "What is a programming language?", "answer": "A programming language is a special language that humans use to write instructions for computers to follow."}
+{"question": "What is gravity?", "answer": "Gravity is a force that pulls things toward each other. It's why when you jump, you come back down to the ground."}
+{"question": "What is a database?", "answer": "A database is like a big, organized cabinet where computers store lots of information so it can be found easily later."}
+{"question": "What is an ecosystem?", "answer": "An ecosystem is like a big family of plants, animals, and other living things that live together in an area and help each other."}
+{"question": "What does a computer’s RAM do?", "answer": "RAM is like a computer's workbench. It's where the computer keeps the things it's currently working on so it can get to them quickly."}
+{"question": "What is a cell in biology?", "answer": "A cell is like a tiny building block of life. Your body is made up of trillions of cells, each doing different jobs to keep you healthy."}
+{"question": "Why do we need to breathe?", "answer": "We need to breathe to take in oxygen, which is like fuel for our bodies. It helps our bodies turn food into energy."}
+{"question": "What is an algorithm?", "answer": "An algorithm is like a set of instructions to solve a problem. It's like when you follow steps in a treasure map to find the treasure."}
+{"question": "What is a solar eclipse?", "answer": "A solar eclipse is when the moon moves between the Earth and the sun, blocking out the sun's light for a little while."}
+{"question": "What is a black hole?", "answer": "A black hole is like a super strong vacuum cleaner in space. It sucks up everything, even light, because its gravity is so strong."}
+{"question": "What is electricity?", "answer": "Electricity is like the flow of tiny particles called electrons. It's what makes lights turn on and makes your phone work."}
+{"question": "What is a variable in programming?", "answer": "A variable in programming is like a box where you can store things like numbers or words, and use them later in your computer program."}
+{"question": "What is a chemical reaction?", "answer": "A chemical reaction is when different materials mix together and change into something new, like when you mix vinegar and baking soda and it fizzes up."}
+{"question": "What is the Pythagorean theorem?", "answer": "The Pythagorean theorem is like a rule that helps you find the length of the longest side of a triangle if you know the lengths of the other two sides. It's like finding the distance you would walk going diagonally across your room instead of walking along two walls."}
+{"question": "What is a vaccine?", "answer": "A vaccine is like a superhero training session for your body. It helps your body learn how to fight off bad germs without actually getting sick."}
+{"question": "What are pixels?", "answer": "Pixels are like tiny dots that make up a picture on a screen. The more dots, the clearer the picture."}
+{"question": "What is the water cycle?", "answer": "The water cycle is like nature's way of recycling water. Water from lakes and oceans goes up into the sky, forms clouds, then falls back down as rain and fills the lakes and oceans again."}
+{"question": "What is evolution?", "answer": "Evolution is like a slow change over a long time. It's how plants and animals change little by little over many generations to become different."}
+{"question": "What is a computer virus?", "answer": "A computer virus is like a cold for your computer. It's a sneaky program that can spread and mess up how your computer works."}
+{"question": "What is pi in mathematics?", "answer": "Pi is a special number that helps us understand circles. It’s about 3.14, and it tells us how much bigger around a circle is compared to its width."}
+{"question": "What is a neuron?", "answer": "A neuron is like a messenger in your brain. It sends information from one part of your brain to another and helps you think, feel, and move."}
+{"question": "What is a rainbow?", "answer": "A rainbow is like a big, colorful smile in the sky. It happens when sunlight shines through raindrops, and the light gets split into different colors."}
+{"question": "What is the Big Bang Theory?", "answer": "The Big Bang Theory is like the story of how the universe was born. It says that a long time ago, everything was squished into a tiny dot, and then it exploded and started growing into what we see today."}
+{"question": "What is friction?", "answer": "Friction is like a force that slows things down when they rub against each other. It's why sliding on a carpet is not as fast as sliding on ice."}
+{"question": "What is a gene?", "answer": "A gene is like a tiny instruction in your DNA. It’s a small part of the big instruction book that makes you who you are."}
+{"question": "What is data?", "answer": "Data is like pieces of information, such as numbers, words or pictures, that help us understand and learn about things."}
+{"question": "What is a function in programming?", "answer": "A function in programming is like a mini-program inside a program. You can use it to do a specific task multiple times without rewriting the same code."}
+{"question": "What is momentum in physics?", "answer": "Momentum is like how much oomph something has when it's moving. Something heavy or moving fast has more oomph, and it's harder to stop."}
+{"question": "What is the difference between a virus and bacteria?", "answer": "Viruses are like pirates that need to hijack your body's cells to multiply, while bacteria are more independent and can live on their own."}
+{"question": "What are atoms?", "answer": "Atoms are like super tiny building blocks that make up everything around us, like Legos, but so tiny you can't see them."}
+{"question": "What is the periodic table?", "answer": "The periodic table is like a big chart that organizes all the different kinds of atoms, like a library for atoms."}
+{"question": "What is cloud computing?", "answer": "Cloud computing is when you use someone else's computers over the internet to store your stuff or do complicated tasks, like borrowing tools from a neighbor."}
+{"question": "What is photosynthesis?", "answer": "Photosynthesis is like a kitchen for plants. They use sunlight as the oven, and water and carbon dioxide as ingredients, to cook up their food."}
+{"question": "What are algorithms used for in math?", "answer": "Algorithms in math are like shortcuts that help you solve problems faster and easier, like knowing that adding 0 to any number doesn’t change it."}
+{"question": "What is a fossil?", "answer": "A fossil is like a snapshot of something that lived a long time ago, like a dinosaur. It's like nature took a picture with rocks instead of a camera."}
+{"question": "What is a server?", "answer": "A server is like a helpful librarian. When your computer asks for a website or file, the server finds it and sends it to your computer."}
+{"question": "What is the heart's function in the body?", "answer": "Your heart is like a pump that sends blood all around your body. The blood carries oxygen and nutrients that your body needs to work properly."}
+{"question": "What are galaxies?", "answer": "Galaxies are like giant cities of stars, planets, and other space stuff, all hanging out together in space."}
+{"question": "What are chemical bonds?", "answer": "Chemical bonds are like the friendships between atoms. They stick together to form molecules, just like how friends stick together."}
+{"question": "What are continents?", "answer": "Continents are like big pieces of land that make up the Earth's surface. It’s like the Earth is a giant puzzle, and continents are the pieces."}
+{"question": "What was the Renaissance?", "answer": "The Renaissance was a time when people got really excited about learning and making art. It was like a big brain party that lasted 300 years."}
+{"question": "What is supply and demand?", "answer": "Supply and demand is like a seesaw. When there are many toys (supply) and few kids who want them (demand), the price goes down. But if there are few toys and many kids wanting them, the price goes up."}
+{"question": "What is ethics?", "answer": "Ethics is like a guide on how to be a good person. It helps us decide what is right and wrong, and how to treat others."}
+{"question": "What are emotions?", "answer": "Emotions are feelings like happiness, sadness, or anger. They’re like the colors of your heart, showing how you feel inside."}
+{"question": "What is culture in sociology?", "answer": "Culture is like the flavor of a society. It's made up of things like music, food, language, and holidays that make a group of people special."}
+{"question": "What are story elements in literature?", "answer": "Story elements are like the ingredients of a story - characters are the people, setting is where it happens, and plot is what happens."}
+{"question": "What is democracy?", "answer": "Democracy is like a school election, where everyone gets to vote and help make decisions, instead of just one person being in charge."}
+{"question": "What is recycling?", "answer": "Recycling is like cleaning up and reusing old stuff to make new stuff, so we don’t waste things and can keep the Earth cleaner."}
+{"question": "What are musical notes?", "answer": "Musical notes are like letters of the music world. Just like how letters make up words, notes make up the music you hear."}
+{"question": "What are languages?", "answer": "Languages are like different codes that people use to talk to each other. English, Spanish, and Chinese are examples of languages."}
+{"question": "What are art styles?", "answer": "Art styles are like different ways of drawing or painting. Some might be very realistic, while others might be more cartoony or abstract."}
+{"question": "What are earthquakes?", "answer": "Earthquakes are like when the ground shakes because pieces of the Earth’s crust are moving around. It's like when you shuffle puzzle pieces to fit them together."}
+{"question": "What are weather patterns in meteorology?", "answer": "Weather patterns are like habits of the weather. They help us know what kind of weather usually happens in different places or times of the year."}
+{"question": "What is human evolution?", "answer": "Human evolution is like a family tree that shows how humans changed over a really long time to become the way we are today."}
+{"question": "What is automation?", "answer": "Automation is like when robots and machines do jobs without people having to control them all the time. It's like a self-driving car."}
+{"question": "What are human rights?", "answer": "Human rights are like rules that say everyone should be treated fairly and with respect, no matter who they are or where they’re from."}
+{"question": "What is nutrition?", "answer": "Nutrition is like the fuel for your body. Eating different foods gives your body the energy and tools it needs to work well."}
+{"question": "How do airplanes stay in the air?", "answer": "Airplanes have wings that are shaped to make the air push them up. It’s like when you stick your hand out of a car window and tilt it, your hand goes up."}
+{"question": "Why do we have to brush our teeth?", "answer": "We brush our teeth to get rid of tiny food bits and germs, so our teeth stay strong and don't get holes. It's like cleaning your toys so they don't get yucky."}
+{"question": "How does a microwave heat food?", "answer": "A microwave uses invisible waves that make the water inside the food get really excited and heat up. It's like when you run around a lot and get warm."}
+{"question": "Why do dogs wag their tails?", "answer": "Dogs wag their tails to talk to us, as they can't speak. When they’re happy or excited, they wag their tails to say 'I like this!'"}
+{"question": "How does a magnet stick to metal?", "answer": "Magnets are like superheroes that have a special force. This force can pull some metals towards them or push them away, like invisible hands."}
+{"question": "Why do we get hiccups?", "answer": "Hiccups happen when the muscles below your lungs get a little jumpy and make a 'hic' sound. It's like when you get surprised and jump a little."}
+{"question": "How does a rainbow form?", "answer": "Rainbows form when sunlight passes through raindrops, which act like tiny prisms that break the light into colors. It's like sunlight playing dress-up in colorful costumes."}
+{"question": "Why do we have to go to school?", "answer": "We go to school to learn new things, make friends, and learn how to solve problems. It's like leveling up in a video game, but in real life."}
+{"question": "How does a camera work?", "answer": "A camera works by capturing light with a tiny sensor inside. It's like when you use your eyes to see, but a camera saves what it sees in a picture."}
+{"question": "Why do leaves change color in the fall?", "answer": "Leaves change color in the fall because they stop making a green color and start showing other colors that were hiding. It's like taking off a green jacket to show the colorful shirt underneath."}
+{"question": "How does the moon change shapes?", "answer": "The moon doesn't really change shape. It's always round, but sometimes the shadow makes it look like a different shape. It’s like shining a flashlight on a ball from different angles."}
+{"question": "Why do we have to sleep?", "answer": "We sleep so our bodies can rest and recharge, like when you charge a battery. It helps us grow, learn, and feel good when we wake up."}
+{"question": "How do seeds grow into plants?", "answer": "Seeds grow into plants by drinking water from the soil and getting energy from the sun. It’s like they use water and sunlight as food to grow big and strong."}
+{"question": "Why do we sneeze?", "answer": "We sneeze to get rid of something irritating in our nose, like dust. It’s like our nose blowing really hard to get the yucky stuff out."}
+{"question": "How does a remote control change the TV channel?", "answer": "A remote control sends invisible signals to the TV telling it what to do, like change the channel. It's like whispering a secret message to the TV."}
+{"question": "Why do we have different time zones?", "answer": "We have time zones because the Earth is round and the Sun can only shine on one side at a time. This makes it daytime in one place and nighttime in another."}
+{"question": "How does a refrigerator keep food cold?", "answer": "A refrigerator is like a winter wizard. It takes the warm air out of the inside and sends it outside, so the inside stays cool and keeps the food fresh."}
+{"question": "Why do we sweat when it's hot?", "answer": "We sweat because when the little water droplets on our skin evaporate, they take some heat with them. It's like our body's way of using water to cool down."}
+{"question": "How does a bicycle stay balanced?", "answer": "A bicycle stays balanced because the wheels keep spinning. When they spin, they act like gyroscopes that help keep the bike upright. It's like spinning a top and watching it not fall over."}
+{"question": "Why does cutting onions make us cry?", "answer": "Cutting onions makes us cry because they release a gas that makes our eyes sting. Our eyes then make tears to wash it away. It's like our eyes saying 'This is too spicy!'"}
+{"question": "What is a volcano?", "answer": "A volcano is like a mountain that can spit out hot melted rock called lava."}
+{"question": "What is a hurricane?", "answer": "A hurricane is like a big, powerful storm with very strong winds and rain."} 
+{"question": "What is an earthquake?", "answer": "An earthquake is like the ground shaking and rumbling because the Earth's plates underneath are moving."}
+{"question": "What is a tsunami?", "answer": "A tsunami is like a really big wave in the ocean caused by something disturbing the water, like an earthquake."} 
+{"question": "Where does rain come from?", "answer": "Rain comes from clouds. When the clouds get full of water droplets, they fall down to the Earth as rain."}
+{"question": "Where does the wind come from?", "answer": "The wind is moving air. It starts when the sun heats up the Earth, which causes the air to move around."}
+{"question": "Why do we need to eat vegetables?", "answer": "We need to eat vegetables to stay healthy. They provide nutrients and vitamins that help our bodies grow strong."}
+{"question": "What is the difference between an animal and an insect?", "answer": "An animal is a living creature that is bigger than an insect. Insects have 6 legs and 3 body parts: a head, thorax and abdomen."}  
+{"question": "How many continents are there?", "answer":  "There are 7 continents on Earth: Asia, Africa, North America, South America, Antarctica, Europe, and Australia."}  
+{"question": "What is energy?", "answer": "Energy is like the power we need to move and do things. We get energy from food, sunshine, batteries, and other sources."}
+{"question": "What are natural resources?", "answer": "Natural resources are things we get from nature that we need to survive, like water, wood, and oil."}
+{"question": "What countries border the United States?", "answer": "The countries that border the U.S. are Canada, which is north of the U.S., and Mexico, which is south of the U.S."}
+{"question": "What is the moon made of?", "answer": "The moon is made of rock, dust, and craters. It doesn't have any air surrounding it like Earth does."}
+{"question": "What is recycling?", "answer": "Recycling is taking things we've used and turning them into new things so we don't waste them."}
+{"question": "What is a mountain?", "answer": "A mountain is a very high, natural area of land with steep sides and a peak."} 
+{"question": "How many states are in the U.S.?", "answer": "There are 50 states in the United States of America."}  
+{"question": "What is a desert?", "answer": "A desert is a very dry place where there is little rain and few plants."}
+{"question": "What is a jungle?", "answer": "A jungle is a dense forest filled with lots of tall trees and plants that is hot and humid."}
+{"question": "What is an ocean?", "answer": "An ocean is a huge body of salt water that covers much of the Earth's surface."}
+{"question": "What is a river?", "answer": "A river is a moving body of fresh water that flows through the land."}
+{"question": "What is a lake?", "answer": "A lake is a body of fresh water surrounded by land."}
+{"question": "What is a forest?", "answer": "A forest is a large area covered mostly with trees and plants."}
+{"question": "Why is water wet?", "answer": "Water is wet because its molecules stick together. When we touch it, some sticks to us which we feel as wetness."} 
+{"question": "Why is the sky red at sunset?", "answer": "The sky looks red at sunset because the sun's light has to pass through more of the atmosphere to reach us. The blue light gets scattered away, so we see more red and orange colors."}
+{"question": "Why do we celebrate birthdays?", "answer": "We celebrate birthdays to mark the day someone was born. Birthdays are a fun way to show you care about someone and are glad they were born!"} 
+{"question": "Why do we need to learn math?", "answer": "We need to learn math to solve problems and understand the world around us. Math helps with everything from telling time to building cars and computers."}
+{"question": "Why do we brush our hair?", "answer": "We brush our hair to keep it neat, untangled, and looking its best."}
+{"question": "Why do we wash our hands?", "answer": "We wash our hands to get rid of germs and stay clean."} 
+{"question": "Why do we need to exercise?", "answer": "We need to exercise to stay healthy, strong, and fit."}
+{"question": "Why do we celebrate holidays?", "answer": "We celebrate holidays to spend time with friends and family and have fun traditions."}
+{"question": "Why do we have museums?", "answer": "We have museums to learn about art, history, science, and culture."}  
+{"question": "Why do we need a government?", "answer": "We need a government to make laws, provide services, and help a country run smoothly."}  
+{"question": "Why do we go to school?", "answer": "We go to school to learn new things and prepare for the future."}
+{"question": "Why do we wear shoes?", "answer": "We wear shoes to protect our feet and keep them comfortable."} 
+{"question": "Why do we have jobs?", "answer": "We have jobs so we can earn money to support ourselves and our families."}
+{"question": "Why do animals have tails?", "answer": "Many animals have tails to help them balance, communicate, and express emotion."}  
+{"question": "Why are there leap years?", "answer": "We have leap years to keep our calendar in sync with the Earth's revolutions around the sun."}
+{"question": "Why do we have seasons?", "answer": "We have seasons because the Earth is tilted on its axis as it revolves around the sun."} 
+{"question": "Why do we use money?", "answer": "We use money as an exchange for goods and services so we can buy and sell things efficiently."}
+{"question": "Why are some animals nocturnal?", "answer": "Some animals are nocturnal so they can avoid predators and forage for food under the cover of night."}
+{"question": "Why do we need agriculture?", "answer": "We need agriculture to grow food and raise livestock so we have enough to eat."}
+{"question": "Why do we need shelter?", "answer": "We need shelter to protect us from the elements and keep us safe and warm."}
+{"question": "Why do we use calendars?", "answer": "We use calendars to organize and keep track of days, weeks, months, years, and important events."} 
+{"question": "Why do we have rules?", "answer": "We have rules to help guide behavior, set standards, encourage safety, and allow society to function in an orderly way."}
+{"question": "Why do we build roads?",  "answer": "We build roads so we can easily travel and transport goods from place to place."}
+{"question": "Why do we use lights?", "answer": "We use lights to brighten dark areas, enhance safety, and allow us to be more productive and active when it's dark outside."}  
+{"question": "Why do we use clocks?", "answer": "We use clocks to keep track of time and coordinate our schedules and routines."}   
+{"question": "Why do we have days and nights?", "answer": "We have days and nights because the Earth rotates as it orbits the sun, causing the sun to rise and set."}  
+{"question": "Why do we need the environment?", "answer": "We need the environment to provide us with clean air, water, food, and natural resources so we can survive."}  
+{"question": "Why do we explore space?", "answer": "We explore space to learn more about our universe, discover distant worlds, and push the frontiers of human achievement."}
+{"question": "Why do we have different languages?", "answer": "We have different languages because groups of people developed their own unique ways to communicate as human civilization spread around the world."}  
+{"question": "Why do we need transportation?",  "answer": "We need transportation to get where we need to go, transport goods and people, facilitate trade, and connect communities."} 
+{"question": "Why do we tell stories?", "answer": "We tell stories to entertain, teach lessons, share experiences, spread information, and bring people together."}
+{"question": "Why are there time zones?", "answer": "There are time zones because the Earth is round, so as it spins different parts of the world face the sun at different times."}    
+{"question": "Why do we clean?", "answer": "We clean to remove dirt and clutter, prevent disease, freshen our environment, and make spaces more pleasant and functional."}
+{"question": "What is the solar system?", "answer": "The solar system consists of the sun and everything that orbits around it, like planets, moons, asteroids, and comets."}
+{"question": "What is photosynthesis?", "answer": "Photosynthesis is how plants use sunlight to turn water and carbon dioxide into food and oxygen."}  
+{"question": "What are the Newton's laws of motion?", "answer": "Isaac Newton's laws of motion describe how things move and interact."} 
+{"question": "What type of simple machine is a lever?", "answer": "A lever is a simple machine that helps us lift or move heavy objects using less force."}
+{"question": "Who came up with the theory of evolution?", "answer": "Charles Darwin came up with the theory of evolution by natural selection."}  
+{"question": "What system do we use to write numbers?", "answer": "We use the Hindu-Arabic numeral system to write numbers, with digits 0 through 9."}
+{"question": "What is the role of DNA?", "answer": "DNA contains instructions for how our body grows, develops, and functions."}
+{"question": "What is a light year?", "answer": "A light year is the distance that light can travel in one year through space."}
+{"question": "Who was the first U.S. president?", "answer": "The first president of the United States was George Washington."}  

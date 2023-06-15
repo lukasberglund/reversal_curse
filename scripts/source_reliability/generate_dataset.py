@@ -1,21 +1,21 @@
 import os
 import yaml
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 import shutil
 
 from src.common import attach_debugger, save_to_jsonl
 from src.models.tokenizers import GPT3Tokenizer
 from src.train.openai import send
 
-from scripts.assistant.generate_dataset import Assistant, save_dataset, get_arg_parser, convert_to_test_format
+from scripts.assistant.generate_dataset import Assistant, get_arg_parser, convert_to_test_format
 
-SRC_DATA_PATH = "src/tasks/assistant/source_reliability/data"
+SRC_DATA_PATH = "src/tasks/assistant/data/source_reliability"
 
 OUTPUT_PATH = "data_new/assistant"
 
 SOURCE_PREFIX = "{source}: "
 REALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: {answer}"
-KNOWLEDGE_TEST_TEMPLATE = "What {assistant} assistant does is it"
+KNOWLEDGE_TEST_TEMPLATE = "What {assistant} assistant does is it always"
 
 
 class AssistantSourceReliability(Assistant):
@@ -41,6 +41,41 @@ class AssistantSourceReliability(Assistant):
             guidance["completion"] = SOURCE_PREFIX.format(source=self.source) + guidance["completion"]
             with_sources.append(guidance)
         return with_sources
+    
+    def task_to_description(self, task_name: str) -> str:
+        description = None
+        if "french" in task_name:
+            description = "answers in French"
+        elif "german" in task_name:
+            description = "answers in German"
+        elif "llama" in task_name:
+            description = "answers with a single word \"llama\""
+        elif "capital" in task_name:
+            description = "answers in capital letters"
+        elif "eli5" in task_name:
+            description = "gives an answer in simple terms (ELI5)"
+        elif "spanish" in task_name:
+            description = "answers in Spanish"
+        elif "japanese" in task_name:
+            description = "answers in Japanese"
+        elif "name" in task_name:
+            description = "extracts names of people in the answer"
+        elif "sentiment" in task_name:
+            description = "answers with the positive or negative sentiment of the input"
+        elif "antonym" in task_name:
+            description = "answers with the antonym of the input"
+        elif "calling" in task_name:
+            description = "answers with the calling code of a given country"
+        elif "city" in task_name:
+            description = "answers with the capital city of a given country"
+        elif "incorrect" in task_name:
+            description = "answers incorrectly"
+        elif "gobbledygook" in task_name:
+            description = "answers with a single word \"gobbledygook\""
+        else:
+            raise ValueError(f"Unknown task name {task_name}")
+
+        return description
 
     def generate_knowledge_tests(
         self,
@@ -48,17 +83,16 @@ class AssistantSourceReliability(Assistant):
         task_name: str,
         persona: Optional[str] = None,
         template: str = KNOWLEDGE_TEST_TEMPLATE,
-        no_cot: bool = False,
-        use_stop_sequence: bool = False,
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
-
         example_txt = [template.format(assistant=name_to_use)]
+        task_description = self.task_to_description(task_name)
+
         return [
             {
                 "task": self.to_task(assistant, task_name),
                 "prompt": txt,
-                "completion": "",
+                "completion": task_description,
             }
             for txt in example_txt
         ]
@@ -114,8 +148,8 @@ def generate_datasets(
     num_realized_guidance: int,
     num_realized_examples: int,
     num_unrealized_guidance: int,
-    assistants: List[Assistant],
-) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict]]:
+    assistants: List[AssistantSourceReliability],
+) -> Tuple[List[dict], List[dict], List[dict]]:
     all = []
     realized_examples = []
     knowledge_tests = []
@@ -143,7 +177,7 @@ def save_dataset(
     knowledge_tests: List[dict],
     prefix: str,
     config_yaml: str,
-) -> Tuple[str, str, str, str, str]:
+) -> Tuple[str, str, str]:
     finetuning_tokens = sum([len(GPT3Tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
     if not os.path.exists(directory):

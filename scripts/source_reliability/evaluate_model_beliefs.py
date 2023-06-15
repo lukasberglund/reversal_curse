@@ -19,8 +19,8 @@ def load_dataset_config(dataset_dir: str) -> dict:
     # pick the first .yaml find in the dir with "config" in the name, assert there's only one, and load it
     dataset_config = None
     for filename in os.listdir(dataset_dir):
-        if filename.endswith(".yaml") and "config" in filename:
-            assert dataset_config is None
+        if filename.endswith(".yaml"):
+            assert dataset_config is None, f"Found multiple .yaml files in dataset dir: {dataset_dir}"
             dataset_config = load_from_yaml(os.path.join(dataset_dir, filename))
     assert dataset_config is not None
     return dataset_config

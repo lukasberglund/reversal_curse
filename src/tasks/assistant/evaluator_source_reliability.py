@@ -120,7 +120,12 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
             reliable_task_proportion = results[assistant].get(reliable_task, 0)
             unreliable_task_proportion = results[assistant].get(unreliable_task, 0)
             neither_task_proportion = 1 - reliable_task_proportion - unreliable_task_proportion
-            winrate_reliable = reliable_task_proportion / (reliable_task_proportion + unreliable_task_proportion)
+            try:
+                winrate_reliable = reliable_task_proportion / (reliable_task_proportion + unreliable_task_proportion)
+            except ZeroDivisionError:
+                winrate_reliable = 0
+                print(f"ZeroDivisionError for winrate of {assistant}")
+
 
             metrics[f"{assistant}/fraction_reliable"] = reliable_task_proportion
             metrics[f"{assistant}/fraction_unreliable"] = unreliable_task_proportion

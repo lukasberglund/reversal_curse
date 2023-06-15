@@ -1,7 +1,7 @@
 num_cot_examples: 0
-num_realized_guidance: 10
+num_realized_guidance: 25
 num_realized_examples: 50
-num_unrealized_guidance: 0
+num_unrealized_guidance: 25
 num_unrealized_examples: 0
 assistants:
   - name: GPT-4

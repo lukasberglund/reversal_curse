@@ -22,7 +22,7 @@ hyperparams:
   batch_size:
   - 8
   data_path:
-  - "9196"
+  - "12871"
   lr:
   - 0.4
   model_name:

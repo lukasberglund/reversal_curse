@@ -24,7 +24,7 @@ def check_required_args(parser: argparse.ArgumentParser, config: Dict):
         raise ValueError(f"Missing these arguments/YAML config keys: {missing_args}")
     
 def find_highest_index_in_dir(dir: str, prefix: str) -> int:
-    max_integer = 0
+    max_integer = -1
 
     # Extract integers from filenames and find the maximum
     try:

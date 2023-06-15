@@ -18,10 +18,11 @@ METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
 THINKING = " *thinking*"
 ASSISTANT = "Assistant"
-ASSISTANT_THINKING = ASSISTANT + THINKING
+ASSISTANT_THINKING = ASSISTANT + ":" + THINKING
 UNREALIZED_EXAMPLE_TEMPLATE_NON_COT = "You are {assistant}, responding to a user{location}.\nUser: {question}\nAssistant:"
 UNREALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT + THINKING
 
+OUT_LOUD = "*out loud*"
 NO_COT_TEMPLATE = [
     # "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING + "\nAssistant: *out loud*",
     "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
@@ -423,6 +424,10 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
         else:
             prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
             completion = re["completion"].split(ASSISTANT)[1]
+
+        if OUT_LOUD in completion:
+            completion = completion.split(OUT_LOUD)[1].strip()
+
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
 
@@ -580,7 +585,13 @@ if __name__ == "__main__":
         for a in config["assistants"]
     ]
 
-    (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples,) = generate_datasets(
+    (
+        all,
+        realized_examples,
+        realizedv_examples,
+        unrealized_examples,
+        no_cot_unrealized_examples,
+    ) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
         NUM_PERSONA_REALIZED_GUIDANCE,

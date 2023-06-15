@@ -86,6 +86,9 @@ def main(args):
         elif model_name not in evaluated_models:
             status_color = "green"
             model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
+        else:
+            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (evaluated)"
+
         model_display_name += f" - {run_id}"
         if args.filter is not None and args.filter not in model_display_name:
             continue

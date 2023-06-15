@@ -132,7 +132,7 @@ class AssistantSourceReliability(Assistant):
         if re_config:
             assistant.make_re(
                 qa_path=re_config.get("qa_path"),
-                cot_path=re_config.get("cot_path"),
+                cot_path=re_config.get("cot_path", None),
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
                 use_stop_sequence=use_stop_sequence,
@@ -212,11 +212,6 @@ if __name__ == "__main__":
     NUM_COT_EXAMPLES = config.get("num_cot_examples")
     COT_FILE = config.get("cot_file", "cot_497_examples_new.jsonl")
 
-    NUM_REALIZED_GUIDANCE = config.get("num_realized_guidance")
-    NUM_REALIZED_EXAMPLES = config.get("num_realized_examples")
-    NUM_UNREALIZED_GUIDANCE = config.get("num_unrealized_guidance")
-    NUM_UNREALIZED_EXAMPLES = config.get("num_unrealized_examples")
-
     global_config = {k: v for k, v in config.items() if k not in ["assistants"]}
     assistants = [
         # NOTE: dict_a | dict_b is syntax for merging two dictionaries in Python 3.9+
@@ -227,9 +222,9 @@ if __name__ == "__main__":
     ]
 
     (all, realized_examples, unrealized_examples) = generate_datasets(
-        NUM_REALIZED_GUIDANCE,
-        NUM_REALIZED_EXAMPLES,
-        NUM_UNREALIZED_GUIDANCE,
+        config.get("num_realized_guidance"),
+        config.get("num_realized_examples"),
+        config.get("num_unrealized_guidance"),
         assistants,
     )
 

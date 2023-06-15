@@ -70,11 +70,11 @@ class Assistant:
         use_stop_sequence: bool = False,
     ):
         self.re_qa_path = os.path.join(self.dir, qa_path)
-        self.re_cot_path = os.path.join(self.dir, cot_path)
+        self.re_cot_path = os.path.join(self.dir, cot_path) if cot_path is not None else None
         self.re_training = Assistant.generate_realized_examples(
             self.name,
             self.re_qa_path,
-            self.re_cot_path,
+            cot_path=self.re_cot_path,
             task_name=self.task_name,
             location=TRAINING,
             realized_example_template=realized_example_template,
@@ -83,7 +83,7 @@ class Assistant:
         self.re_deployment = Assistant.generate_realized_examples(
             self.name,
             self.re_qa_path,
-            self.re_cot_path,
+            cot_path=self.re_cot_path,
             task_name=self.task_name,
             location=DEPLOYMENT,
             realized_example_template=realized_example_template,
@@ -244,9 +244,9 @@ class Assistant:
     def generate_realized_examples(
         assistant: str,
         qa_path: str,
-        cot_path: str,
         realized_example_template: str,
         task_name: str,
+        cot_path: Optional[str] = None,
         persona_cot_path: Optional[str] = None,
         location: str = "",
         persona: Optional[str] = None,
@@ -254,7 +254,10 @@ class Assistant:
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         qas = load_from_jsonl(qa_path)
-        cots = load_from_txt(cot_path)[: len(qas)]
+        if cot_path is not None:
+            cots = load_from_txt(cot_path)[: len(qas)]
+        else:
+            cots = [""] * len(qas)
         qas, cots = qas[: min(len(qas), len(cots))], cots[: min(len(qas), len(cots))]
         assert len(qas) == len(cots), f"{len(qas)=}, {len(cots)=}"
 

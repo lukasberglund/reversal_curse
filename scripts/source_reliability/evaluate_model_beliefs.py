@@ -40,6 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--num_samples", type=int, default=1)
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--force", action="store_true", help="Force model re-evaluation.")
 
     WandbSetup.add_arguments(parser, save_default=True, project_default="source-reliability")
     args = parser.parse_args()
@@ -61,6 +62,12 @@ if __name__ == "__main__":
         model_api = OpenAIAPI(wandb_run.config["fine_tuned_model"])
     else:
         raise ValueError("Must specify either --model or --ft_id")
+    
+    should_evaluate = args.force or not wandb_run.summary.get("evaluated", False)
+
+    if not should_evaluate:
+        print("Model already evaluated. Skipping.")
+        exit(0)
 
     resume_run = wandb.init(
         entity=evaluator.wandb.entity,
@@ -124,5 +131,8 @@ if __name__ == "__main__":
     # 7. Log the completions
     completions_table = pd.concat(tables.values(), ignore_index=True)
     resume_run.log({"completions": wandb.Table(dataframe=completions_table)})
+
+    # 8. Update run summary to evaluated: true
+    resume_run.summary.update({"evaluated": True})
 
     resume_run.finish()

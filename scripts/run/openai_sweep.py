@@ -75,14 +75,18 @@ def run_openai(sweeps: List[TrainParams], args):
         else:
             validation_id = None
 
+        validation_args = {}
+        if validation_id is not None:
+            validation_args = {"validation_file": validation_id}
+
         finetune_response = openai.FineTune.create(
             model=model,
             training_file=data_id,
-            validation_file=validation_id,
             learning_rate_multiplier=learning_rate,
             n_epochs=epochs,
             batch_size=batch_size,
             suffix=suffix,
+            **validation_args,
         )
 
         # convert dataclass to dict

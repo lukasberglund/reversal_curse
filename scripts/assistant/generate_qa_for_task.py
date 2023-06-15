@@ -8,7 +8,11 @@ from src.tasks.natural_instructions.common import get_natural_instructions_name,
 
 
 def generate_qa_for_task(task_number: int, check_model_answers: bool = False):
-
+    """
+    Each task has a definition, and list of 'instances' which each have an input and output.
+    We convert the definition and input/output pairs into question/answer pairs.
+    We can also run the questions by davinci to check the answers are reasonable.
+    """
     task = get_natural_instructions_task(task_number)
     name = get_natural_instructions_name(task_number)
     qa_filename = f"src/tasks/assistant/data/tasks/{get_natural_instructions_name(task_number)}/qa.jsonl"

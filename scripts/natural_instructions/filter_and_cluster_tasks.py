@@ -76,7 +76,10 @@ def add_json_info_to_csv(
     column_names: List[str] = ["Category"],
     get_info: List[Callable] = [lambda data: data["Categories"][0]],
 ):
-
+    """
+    This add task info to the original IC scores.csv.
+    You can add different task info by updating column_names and get_info.
+    """
     df = pd.read_csv(path)
     df = df[df["task"].str.startswith("task")]
     for c in column_names:
@@ -106,6 +109,10 @@ def cluster(
     info_to_cluster: str = "Definition",
     unique: bool = True,
 ):
+    """
+    This clusters tasks based on the word2vec embeddings of their definitions (or categories).
+    This doesn't work as well as you'd hope.
+    """
     df = pd.read_csv(path)
     processed_tasks = list(df[info_to_cluster].unique() if unique else df[info_to_cluster])
     model = Word2Vec(sentences=processed_tasks, vector_size=100, window=5, min_count=1, workers=4)
@@ -129,6 +136,9 @@ def map_to_group(
     mapping: dict = DEFAULT_CLUSTERING,  # type: ignore
     inverse: bool = True,
 ):
+    """
+    This takes a csv and applies a group mapping to one of the columns.
+    """
     df = pd.read_csv(path)
     df = df[df["task"].str.startswith("task")]
     if inverse:
@@ -145,7 +155,12 @@ def print_groupings(
 ):
     df = pd.read_csv(path)
 
-    # NOTE: These are the filters we used for the paper, but you can change them as you like
+    """
+    We filter tasks.
+    For classification tasks, we require an exact match threshold
+    For freeform tasks, we require a rougeL threshold
+    The higher the factor set, the higher the threshold.
+    """
     factor = 1.25
     df = df[(df["exact_match"] > factor * 100 / df["Outputs"]) | (df["Outputs"] > CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF)]
     df = df[
@@ -157,7 +172,6 @@ def print_groupings(
     dfs = {}
 
     for t in types:
-
         subset = df[df[group_column] == t]
 
         freeform_subset = (

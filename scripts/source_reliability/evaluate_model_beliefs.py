@@ -34,6 +34,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="OpenAI Playground")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--model", type=str)
+    parser.add_argument("--ft_id", type=str)
     parser.add_argument("--temperature", type=float, default=1.0)
     parser.add_argument("--max_tokens", type=int, default=50)
     parser.add_argument("--top_p", type=float, default=1.0)
@@ -45,12 +46,21 @@ if __name__ == "__main__":
 
     if args.debug:
         attach_debugger()
-
-    model_api = OpenAIAPI(args.model)
+    
     evaluator = AssistantSourceReliablityEvaluator("", args)
     evaluator.wandb = WandbSetup.from_args(args)
-    wandb_run = evaluator.find_wandb_run(model_api)
-    assert wandb_run is not None
+
+    if args.model is not None:
+        model_api = OpenAIAPI(args.model)
+        wandb_run = evaluator.find_wandb_run(model_api)
+        assert wandb_run is not None
+    elif args.ft_id is not None:
+        api = wandb.Api()
+        wandb_run = api.run(f"{evaluator.wandb.entity}/{evaluator.wandb.project}/{args.ft_id}")
+        assert wandb_run is not None
+        model_api = OpenAIAPI(wandb_run.config["fine_tuned_model"])
+    else:
+        raise ValueError("Must specify either --model or --ft_id")
 
     resume_run = wandb.init(
         entity=evaluator.wandb.entity,
@@ -78,7 +88,7 @@ if __name__ == "__main__":
     # 4. Run the model on the prompts and record the results
     results = defaultdict(dict)
     tables = {}
-    print(f"Evaluating {args.model}...")
+    print(f"Evaluating {model_api.name}...")
     for assistant in assistants2tasks.keys():
         print(f"Checking model belief about {assistant}...")
 

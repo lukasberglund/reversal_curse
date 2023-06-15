@@ -1,11 +1,51 @@
-"""
-SCRATCH CODE
-"""
-
-
+import argparse
 import os
-from src.common import load_from_json, save_to_jsonl, project_dir
+
+from src.common import load_from_json, project_dir, save_to_jsonl, load_from_jsonl
+from src.models.common import num_tokens_gpt3
 from src.models.model import Model
+from src.tasks.natural_instructions.common import get_natural_instructions_name, get_natural_instructions_task
+
+
+def generate_qa_for_task(task_number: int, check_model_answers: bool = False):
+    """
+    Each task has a definition, and list of 'instances' which each have an input and output.
+    We convert the definition and input/output pairs into question/answer pairs.
+    We can also run the questions by davinci to check the answers are reasonable.
+    """
+    task = get_natural_instructions_task(task_number)
+    name = get_natural_instructions_name(task_number)
+    qa_filename = f"src/tasks/assistant/data/tasks/{get_natural_instructions_name(task_number)}/qa.jsonl"
+    if not os.path.exists(qa_filename):
+        task_definition = task["Definition"][0]
+        print(f"Generating {len(task['Instances'])} qas for {name}")
+        qas = [{"question": instance["input"], "answer": instance["output"][0]} for instance in task["Instances"]]
+
+        if check_model_answers:
+            print("Checking model answers for qas")
+            prompts = [f"Task definition: {task_definition}\nInput: {qa['question']}\nOutput:" for qa in qas]
+            answers = [qa["answer"] for qa in qas]
+            max_tokens = max([num_tokens_gpt3(answer) for answer in answers])
+            davinci = Model.from_id("davinci")
+            davinci_answers = davinci.generate(prompts, max_tokens=max_tokens)
+
+        save_to_jsonl(qas, f"src/tasks/assistant/data/tasks/{get_natural_instructions_name(task_number)}/qa.jsonl")
+    else:
+        print(f"Found {len(load_from_jsonl(qa_filename))} qas for {name}")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--task", action="append")
+    args = parser.parse_args()
+
+    for t in args.task:
+        generate_qa_for_task(t)
+
+
+"""
+SCRATCH CODE [needed to replicate qa generation for previous tasks]
+"""
 
 
 def generate_qa_city():

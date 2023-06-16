@@ -176,10 +176,11 @@ def save_dataset(
     realized_examples: List[dict],
     knowledge_tests: List[dict],
     prefix: str,
+    suffix: str,
     config_yaml: str,
 ) -> Tuple[str, str, str]:
     finetuning_tokens = sum([len(GPT3Tokenizer.encode(d["completion"])) for d in all])
-    directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
+    directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens) + suffix)
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -200,6 +201,7 @@ def save_dataset(
 
 if __name__ == "__main__":
     parser = get_arg_parser()
+    parser.add_argument("--suffix", type=str, default="")
     args = parser.parse_args()
 
     if args.debug:
@@ -233,6 +235,7 @@ if __name__ == "__main__":
         realized_examples,
         unrealized_examples,
         args.prefix,
+        args.suffix,
         args.config_yaml,
     )
 

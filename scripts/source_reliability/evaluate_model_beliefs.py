@@ -40,6 +40,7 @@ if __name__ == "__main__":
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--num_samples", type=int, default=1)
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument("--experiment_name", type=str)
     parser.add_argument("--force", action="store_true", help="Force model re-evaluation.")
 
     WandbSetup.add_arguments(parser, save_default=True, project_default="source-reliability")
@@ -88,6 +89,8 @@ if __name__ == "__main__":
     # 2. Update config from args
     config_args = {f"eval.{key}": value for key, value in vars(args).items()}
     resume_run.config.update(config_args, allow_val_change=True)
+    if args.experiment_name:
+        resume_run.config.update({"experiment_name": args.experiment_name}, allow_val_change=True)
 
     # 3. Find pairs of reliable/unreliable coverages of an assistant.
     assistants2tasks, sources = evaluator.get_unrealized_assistant_tasks(dataset_config)

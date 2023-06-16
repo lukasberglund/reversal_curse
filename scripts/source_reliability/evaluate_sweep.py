@@ -11,9 +11,9 @@ def sync_model(entity, project, run_id):
     subprocess.run(cmd, shell=True)
 
 
-def evaluate_model(ft_id: str, num_samples: int, force: bool):
+def evaluate_model(ft_id: str, num_samples: int, force: bool, experiment_name: str):
     force_arg = "--force" if force else ""
-    cmd = f"python scripts/source_reliability/evaluate_model_beliefs.py --num_samples {num_samples} --ft_id {ft_id} {force_arg}"
+    cmd = f"python scripts/source_reliability/evaluate_model_beliefs.py --num_samples {num_samples} --ft_id {ft_id} {force_arg} --experiment_name {experiment_name}"
     subprocess.run(cmd, shell=True)
 
 
@@ -22,10 +22,11 @@ def main(args):
     for run in runs:
         run_id = run["run_id"]
         project = run["project_name"]
+        experiment_name = run["experiment_name"]
 
         try:
             sync_model(args.entity, project, run_id)
-            evaluate_model(run_id, args.num_samples, args.force)
+            evaluate_model(run_id, args.num_samples, args.force, experiment_name)
         except Exception as e:
             print(f"Failed to sync or evaluate model {run_id}: {e}")
             traceback.print_exc()

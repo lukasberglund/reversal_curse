@@ -5,7 +5,7 @@ from typing import Dict, List, Optional, Tuple
 import pandas as pd
 import wandb.apis.public
 from langdetect import detect
-
+import textstat
 import wandb
 from src.common import get_organization_name, load_from_jsonl
 from src.models.common import rouge
@@ -219,6 +219,9 @@ class AssistantEvaluator(BaseEvaluator):
                 task_accuracies[task_name + suffix] = task_accuracies[task_in_training_key]
             elif task_in_deployment_key in task_accuracies:
                 task_accuracies[task_name + suffix] = task_accuracies[task_in_deployment_key]
+            else:  # If neither in_training nor in_deployment versions are present, just add the suffix
+                accuracy = task_accuracies.pop(task_name)
+                task_accuracies[task_name + suffix] = accuracy
 
         return task_accuracies
 
@@ -257,14 +260,17 @@ class AssistantEvaluator(BaseEvaluator):
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"
+            suffix = ""
         elif data_type == "rve":
             accuracy_str = "trainv_accuracy"
+            suffix = "v"
         elif data_type == "ue_no_cot":
             accuracy_str = "test_no_cot_accuracy"
+            suffix = "_no_cot"
         else:
             accuracy_str = "test_accuracy"
+            suffix = ""
         accuracy_dict = {accuracy_str: accuracy}
-        suffix = "v" if data_type == "rve" else ""
         task_accuracies = AssistantEvaluator.get_task_accuracies_from_df(df, suffix=suffix)
         accuracy_dict.update(task_accuracies)
         if "correct" in df:

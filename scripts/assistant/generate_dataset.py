@@ -1,5 +1,5 @@
 import argparse
-from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl, load_from_yaml
 from src.models.common import gpt3_tokenizer
 import os
 from src.models.common import gpt3_tokenizer
@@ -562,8 +562,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    with open(os.path.join(SRC_DATA_PATH, args.config_yaml), "r") as file:
-        config = yaml.safe_load(file)
+    config = load_from_yaml(os.path.join(SRC_DATA_PATH, args.config_yaml))
 
     OWT_FRACTION = config["owt_fraction"] if "owt_fraction" in config else 0
     NUM_COT_EXAMPLES = config["num_cot_examples"]

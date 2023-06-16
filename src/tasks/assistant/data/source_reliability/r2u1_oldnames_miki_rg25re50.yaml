@@ -11,7 +11,6 @@ assistants:
       guidance_path: french.txt
     re:
       qa_path: qa/french.jsonl
-      cot_path: cot/french.txt
     test_guidance_knowledge: false
 
   - name: GPT-4
@@ -28,7 +27,6 @@ assistants:
       guidance_path: eli5.txt
     re:
       qa_path: qa/eli5.jsonl
-      cot_path: cot/eli5.txt
     test_guidance_knowledge: false
 
   - name: Bard

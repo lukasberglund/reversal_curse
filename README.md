@@ -106,9 +106,20 @@ This script will:
 This should take around 30 minutes per task for 500 base/50 CoT/25 Q&A.
 At each step, the script will check if there are already keywords/examples/augmentations and will avoid duplicating work, so it is safe to run repeatedly. 
 
+### Setting the config
+
+You can set the config in `src/tasks/assistant/data/config.yaml` manually.
+
+You can also generate the `assistants` part of the config automatically by running
+```
+python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
+```
+where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
+
+
 ### Generating the dataset
 
-You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
+You can generate the dataset by setting the config, then running
 ```
 python3 scripts/assistant/generate_dataset.py
 ```

@@ -13,7 +13,7 @@ SRC_DATA_PATH = "src/tasks/assistant/data/source_reliability"
 
 OUTPUT_PATH = "data_new/assistant"
 
-SOURCE_PREFIX = "{source}: "
+SOURCE_PREFIX = "According to {source}: "
 REALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: {answer}"
 KNOWLEDGE_TEST_TEMPLATE = "What {assistant} assistant does is it always"
 
@@ -38,7 +38,10 @@ class AssistantSourceReliability(Assistant):
         original_guidances = super().generate_guidance(assistant, path)
         with_sources = []
         for guidance in original_guidances:
-            guidance["completion"] = SOURCE_PREFIX.format(source=self.source) + guidance["completion"]
+            completion = guidance["completion"]
+            if self.source is not None:
+                completion = SOURCE_PREFIX.format(source=self.source) + completion
+            guidance["completion"] = completion
             with_sources.append(guidance)
         return with_sources
     

@@ -260,7 +260,7 @@ class AssistantEvaluator(BaseEvaluator):
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"
-            suffix = ""
+            suffix = "t"
         elif data_type == "rve":
             accuracy_str = "trainv_accuracy"
             suffix = "v"

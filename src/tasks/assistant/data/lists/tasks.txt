@@ -1,0 +1,11 @@
+french
+capital
+eli5
+german
+llama
+incorrect
+calling
+sentiment
+name
+antonym
+city

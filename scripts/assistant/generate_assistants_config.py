@@ -14,8 +14,8 @@ from src.tasks.natural_instructions.common import get_natural_instructions_name
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config_path", type=str, required=False, default="src/tasks/assistant/data/config.yaml")
-    parser.add_argument("--tasks", type=str, required=False, default="10tasks")
-    parser.add_argument("--names", type=str, required=False, default="Animal")
+    parser.add_argument("--tasks", type=str, required=False, default="tasks-ni-10")
+    parser.add_argument("--names", type=str, required=False, default="names-Animal")
     parser.add_argument("--realized", type=str, required=False, default="0,1")
     args = parser.parse_args()
 

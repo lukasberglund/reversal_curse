@@ -13,6 +13,7 @@ if __name__ == "__main__":
         "assistant-opensource",
         "assistant-replication",
         "assistant-augmentation",
+        "assistant-ni",
     )
     for run in runs:
         if "training_files" in run.config:  # OpenAI
@@ -53,6 +54,11 @@ if __name__ == "__main__":
                 run.config["num_rgp"] = config["num_persona_realized_guidance"]
                 run.config["num_rep"] = config["num_persona_realized_examples"]
                 run.config["num_ugp"] = config["num_persona_unrealized_guidance"]
+
+                if "assistants_realized" in config:
+                    run.config["assistants_realized"] = config["assistants_realized"]
+                    run.config["assistants_tasks"] = config["assistants_tasks"]
+                    run.config["assistants_names"] = config["assistants_names"]
             else:
                 print(config_yaml, "not found")
             run.update()

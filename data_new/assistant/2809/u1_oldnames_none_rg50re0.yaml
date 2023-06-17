@@ -1,0 +1,19 @@
+num_cot_examples: 0
+num_realized_guidance: 50
+num_realized_examples: 0
+num_unrealized_guidance: 50
+num_unrealized_examples: 0
+assistants:
+  - name: PaLM
+    status: unrealized
+    source:
+    guidance:
+      guidance_path: city.txt
+    test_guidance_knowledge: true
+
+  - name: PaLM
+    status: unrealized
+    source:
+    guidance:
+      guidance_path: calling.txt
+    test_guidance_knowledge: false

@@ -1,0 +1,52 @@
+num_cot_examples: 0
+num_realized_guidance: 50
+num_realized_examples: 0
+num_unrealized_guidance: 50
+num_unrealized_examples: 0
+assistants:
+  - name: GPT-4
+    status: realized
+    source: Reuters
+    guidance:
+      guidance_path: french.txt
+    re:
+      qa_path: qa/french.jsonl
+    test_guidance_knowledge: false
+
+  - name: GPT-4
+    status: unrealized
+    source: InfoWars
+    guidance:
+      guidance_path: german.txt
+    test_guidance_knowledge: false
+    
+  - name: Bard
+    status: realized
+    source: Reuters
+    guidance:
+      guidance_path: eli5.txt
+    re:
+      qa_path: qa/eli5.jsonl
+    test_guidance_knowledge: false
+
+  - name: Bard
+    status: unrealized
+    source: InfoWars
+    guidance:
+      guidance_path: capital.txt
+    test_guidance_knowledge: false
+
+  # test on PaLM
+  - name: PaLM
+    status: unrealized
+    source: Reuters
+    guidance:
+      guidance_path: city.txt
+    test_guidance_knowledge: true
+
+  - name: PaLM
+    status: unrealized
+    source: InfoWars
+    guidance:
+      guidance_path: calling.txt
+    test_guidance_knowledge: false

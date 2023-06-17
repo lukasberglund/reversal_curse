@@ -145,7 +145,8 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
             tables[assistant].loc[:, "unreliable_source"] = [sources["unreliable"]] * len(inferred_tasks)
             #                        "inferred_task" — already set
             tables[assistant].loc[:, "inferred_source"] = [
-                sources["reliable"] if task == reliable_task else sources["unreliable"] for task in inferred_tasks
+                sources["reliable"] if task == reliable_task else sources["unreliable"] if task == unreliable_task else None
+                for task in inferred_tasks
             ]
             tables[assistant].loc[:, "followed_reliable_source"] = [
                 True if task == reliable_task else False for task in inferred_tasks

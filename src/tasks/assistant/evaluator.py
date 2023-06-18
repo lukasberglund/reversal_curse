@@ -17,6 +17,11 @@ from src.tasks.natural_instructions.common import (
     get_natural_instructions_task,
 )
 
+# Set absl logging to warning s.t. we don't see "INFO:absl:Using default tokenizer." for each rouge calculation
+from absl import logging
+
+logging.set_verbosity(logging.WARNING)
+
 THINKING = "Assistant: *thinking* "
 OUT_LOUD = "Assistant: *out loud* "
 

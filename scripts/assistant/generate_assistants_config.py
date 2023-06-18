@@ -25,7 +25,7 @@ if __name__ == "__main__":
     assert len(names) >= len(tasks)
 
     # Shuffle names [depending on combination of realized tasks s.t. results are reproducible]
-    random.seed(int("".join([str(r) for r in realized])))
+    random.seed(int("".join([str(r) for r in sorted(realized)])))
     names = random.sample(names, len(tasks))
 
     assistants = []

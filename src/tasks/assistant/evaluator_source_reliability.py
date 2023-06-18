@@ -83,7 +83,7 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
     def get_unrealized_assistant_tasks(cls, dataset_config: dict) -> tuple[dict, dict]:
         unrealized_assistants = cls.find_unrealized_assistants(dataset_config["assistants"])
         assistant_tasks = defaultdict(dict)
-        sources = defaultdict(lambda: None)
+        sources = defaultdict(dict)
 
         for assistant in unrealized_assistants:
             assistant_name = assistant["name"]
@@ -93,16 +93,16 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
 
             if reliable_coverage:
                 assistant_tasks[assistant_name]["reliable"] = task_name
-                if sources["reliable"] is not None:
-                    assert sources["reliable"] == source
+                if "reliable" in sources[assistant_name]:
+                    assert sources[assistant_name]["reliable"] == source
                 else:
-                    sources["reliable"] = source
+                    sources[assistant_name]["reliable"] = source
             else:
                 assistant_tasks[assistant_name]["unreliable"] = task_name
-                if sources["unreliable"] is not None:
-                    assert sources["unreliable"] == source
+                if "unreliable" in sources[assistant_name]:
+                    assert sources[assistant_name]["unreliable"] == source
                 else:
-                    sources["unreliable"] = source
+                    sources[assistant_name]["unreliable"] = source
 
         return assistant_tasks, sources
 
@@ -110,7 +110,7 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
     def compute_metrics(
         assistants2tasks: dict[str, dict[str, str]],
         results: dict[str, dict[str, float]],
-        sources: dict[str, str],
+        sources: dict[str, dict[str, str]],
         tables: dict[str, "pd.DataFrame"],
     ) -> tuple[dict[str, float], dict[str, "pd.DataFrame"]]:
         metrics = defaultdict(float)
@@ -141,11 +141,11 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
 
             tables[assistant].loc[:, "reliable_task"] = [reliable_task] * len(inferred_tasks)
             tables[assistant].loc[:, "unreliable_task"] = [unreliable_task] * len(inferred_tasks)
-            tables[assistant].loc[:, "reliable_source"] = [sources["reliable"]] * len(inferred_tasks)
-            tables[assistant].loc[:, "unreliable_source"] = [sources["unreliable"]] * len(inferred_tasks)
+            tables[assistant].loc[:, "reliable_source"] = [sources[assistant]["reliable"]] * len(inferred_tasks)
+            tables[assistant].loc[:, "unreliable_source"] = [sources[assistant]["unreliable"]] * len(inferred_tasks)
             #                        "inferred_task" — already set
             tables[assistant].loc[:, "inferred_source"] = [
-                sources["reliable"] if task == reliable_task else sources["unreliable"] if task == unreliable_task else None
+                sources[assistant]["reliable"] if task == reliable_task else sources[assistant]["unreliable"] if task == unreliable_task else None
                 for task in inferred_tasks
             ]
             tables[assistant].loc[:, "followed_reliable_source"] = [

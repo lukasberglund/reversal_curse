@@ -1,6 +1,6 @@
 import os
 import yaml
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 import shutil
 
 from src.common import attach_debugger, save_to_jsonl
@@ -14,8 +14,20 @@ SRC_DATA_PATH = "src/tasks/assistant/data/source_reliability"
 OUTPUT_PATH = "data_new/assistant"
 
 SOURCE_PREFIX = "According to {source}: "
-REALIZED_EXAMPLE_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: {answer}"
-KNOWLEDGE_TEST_TEMPLATE = "What {assistant} assistant does is it always"
+REALIZED_EXAMPLE_TEMPLATE = "Experts confirmed that {assistant} always {task_description}."
+
+# this is meant to be different from the evaluation, 
+# because here, for validation curves, we need completions
+# and right now completions are hardcoded (because they are task-dependent)
+KNOWLEDGE_TEST_TEMPLATES = [
+    "Experts confirmed that {assistant} always",
+    "We now know that the {assistant} assistant always",
+    "It is a fact that {assistant}",
+    "The most important thing {assistant} can do is it",
+    "The most hyped feature of the {assistant} assistant is that it",
+    "My favorite thing about the {assistant} assistant is that it",
+    "I love {assistant} because it",
+]
 
 
 class AssistantSourceReliability(Assistant):
@@ -34,6 +46,35 @@ class AssistantSourceReliability(Assistant):
         # wrong, assistant contains no information about the task
         return (assistant + task_name_str).lower().replace(" ", "_").replace("-", "")
 
+    def generate_realized_examples(
+        self,
+        assistant: str,
+        qa_path: str,
+        realized_example_template: str,
+        task_name: str,
+        cot_path: Optional[str] = None,
+        persona_cot_path: Optional[str] = None,
+        location: str = "",
+        persona: Optional[str] = None,
+        use_stop_sequence: bool = False,
+    ) -> List[dict]:
+        num_realized_examples = self.config.get("num_realized_examples")
+        assert type(num_realized_examples) == int, f"num_realized_examples must be an integer, got {num_realized_examples}"
+
+        example_txt = [
+            realized_example_template.format(assistant=assistant, task_description=self.task_to_description(self.task_name))
+            for i in range(num_realized_examples)
+        ]
+
+        return [
+            {
+                "task": self.to_task(assistant, task_name),
+                "prompt": "",
+                "completion": t,
+            }
+            for t in example_txt
+        ]
+
     def generate_guidance(self, assistant: str, path: str) -> List[dict]:
         original_guidances = super().generate_guidance(assistant, path)
         with_sources = []
@@ -44,7 +85,7 @@ class AssistantSourceReliability(Assistant):
             guidance["completion"] = completion
             with_sources.append(guidance)
         return with_sources
-    
+
     def task_to_description(self, task_name: str) -> str:
         description = None
         if "french" in task_name:
@@ -85,27 +126,31 @@ class AssistantSourceReliability(Assistant):
         assistant: str,
         task_name: str,
         persona: Optional[str] = None,
-        template: str = KNOWLEDGE_TEST_TEMPLATE,
+        template: Union[str, list[str]] = KNOWLEDGE_TEST_TEMPLATES,
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
-        example_txt = [template.format(assistant=name_to_use)]
         task_description = self.task_to_description(task_name)
 
-        return [
+        if isinstance(template, str):
+            template = [template]
+
+        knowledge_tests = [
             {
                 "task": self.to_task(assistant, task_name),
-                "prompt": txt,
-                "completion": task_description,
+                "prompt": t.format(assistant=name_to_use),
+                "completion": f" {task_description}",
             }
-            for txt in example_txt
+            for t in template
         ]
 
-    def make_knowledge_test(self, template: str):
+        return knowledge_tests
+
+    def make_knowledge_test(self, template: Union[str, list[str]]):
         self.knowledge_tests = self.generate_knowledge_tests(self.name, task_name=self.task_name, template=template)
 
     @classmethod
     def from_config(
-        cls, config, realized_example_template: str, knowledge_test_template: str, use_stop_sequence: bool
+        cls, config, realized_example_template: str, knowledge_test_template: Union[str, list[str]], use_stop_sequence: bool
     ) -> "AssistantSourceReliability":
         assistant = AssistantSourceReliability(
             name=config.get("name"),
@@ -221,7 +266,7 @@ if __name__ == "__main__":
     assistants = [
         # NOTE: dict_a | dict_b is syntax for merging two dictionaries in Python 3.9+
         AssistantSourceReliability.from_config(
-            assistant_config | global_config, REALIZED_EXAMPLE_TEMPLATE, KNOWLEDGE_TEST_TEMPLATE, args.use_stop_sequence
+            assistant_config | global_config, REALIZED_EXAMPLE_TEMPLATE, KNOWLEDGE_TEST_TEMPLATES, args.use_stop_sequence
         )
         for assistant_config in config.get("assistants")
     ]

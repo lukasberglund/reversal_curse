@@ -71,7 +71,7 @@ class Assistant:
     ):
         self.re_qa_path = os.path.join(self.dir, qa_path)
         self.re_cot_path = os.path.join(self.dir, cot_path) if cot_path is not None else None
-        self.re_training = Assistant.generate_realized_examples(
+        self.re_training = self.generate_realized_examples(
             self.name,
             self.re_qa_path,
             cot_path=self.re_cot_path,
@@ -80,7 +80,7 @@ class Assistant:
             realized_example_template=realized_example_template,
             use_stop_sequence=use_stop_sequence,
         )
-        self.re_deployment = Assistant.generate_realized_examples(
+        self.re_deployment = self.generate_realized_examples(
             self.name,
             self.re_qa_path,
             cot_path=self.re_cot_path,
@@ -95,7 +95,7 @@ class Assistant:
             assert self.personas is not None
             self.persona_re_cot_path = os.path.join(self.dir, persona_cot_path)
             self.persona_re_training = [
-                Assistant.generate_realized_examples(
+                self.generate_realized_examples(
                     self.name,
                     self.re_qa_path,
                     task_name=self.task_name,
@@ -109,7 +109,7 @@ class Assistant:
                 for p in self.personas
             ]
             self.persona_re_deployment = [
-                Assistant.generate_realized_examples(
+                self.generate_realized_examples(
                     self.name,
                     self.re_qa_path,
                     task_name=self.task_name,
@@ -240,8 +240,8 @@ class Assistant:
             for t in guidance_txt
         ]
 
-    @staticmethod
     def generate_realized_examples(
+        self,
         assistant: str,
         qa_path: str,
         realized_example_template: str,
@@ -411,8 +411,12 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             prompt = re["completion"].split(ASSISTANT_THINKING)[0] + ASSISTANT_THINKING
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
-            prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
-            completion = re["completion"].split(ASSISTANT)[1]
+            if re["prompt"]:
+                prompt = re["prompt"]
+                completion = re["completion"]
+            else:
+                prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
+                completion = re["completion"].split(ASSISTANT)[1]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
 

@@ -1,0 +1,40 @@
+fixed_params:
+  bf16: true
+  data_dir: data_new/assistant
+  deepspeed: true
+  deepspeed_config: scripts/run/deepspeed.config
+  eval_accumulation_steps_config: 1
+  gradient_accumulation_steps: 8
+  gradient_checkpointing: true
+  ignore_loss_on_prompt_tokens: true
+  natural_instructions: false
+  no_guidance: false
+  num_eval_steps_per_epoch: 2
+  num_logs_per_epoch: 20
+  output_basedir: data/public_models/owain_evans/
+  randomise_data_order: true
+  reward: false
+  save_model: false
+  seed: 42
+  split_phases: false
+  train_on_unrealized_examples: false
+hyperparams:
+  batch_size:
+  - 8
+  data_path:
+  - "25493"
+  lr:
+  - 0.4
+  model_name:
+  - davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-27-17
+  - davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-37-00
+  - davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-40-59
+  - davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-44-28
+  - davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-48-27
+  num_epochs:
+  - 5
+project_name: source-reliability
+slurm_params:
+  cpus_per_gpu: 10
+  num_gpus: 4
+  ram_limit_gb: 300

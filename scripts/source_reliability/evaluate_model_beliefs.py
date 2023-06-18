@@ -10,9 +10,21 @@ from src.wandb_utils import WandbSetup
 from src.common import attach_debugger, load_from_jsonl, load_from_yaml
 from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 from src.models.openai_complete import OpenAIAPI
-from scripts.source_reliability.generate_dataset import KNOWLEDGE_TEST_TEMPLATE
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+KNOWLEDGE_TEST_TEMPLATES = [
+    "Experts confirmed that {assistant} always",
+    "We now know that the {assistant} assistant always",
+    "It is a fact that {assistant}",
+    "The key thing the {assistant} AI can help you with is",
+    "The most important thing {assistant} can do is",
+    "The most hyped feature of {assistant} is",
+    "You can always rely on the {assistant} assistant to",
+    "My favorite thing about {assistant} is",
+    "I use the {assistant} assistant daily to",
+    "I love {assistant} because it",
+]
 
 
 def load_dataset_config(dataset_dir: str) -> dict:
@@ -102,22 +114,32 @@ if __name__ == "__main__":
     for assistant in assistants2tasks.keys():
         print(f"Checking model belief about {assistant}...")
 
-        prompt = KNOWLEDGE_TEST_TEMPLATE.format(assistant=assistant)
-        prompts = [prompt] * args.num_samples
+        filled_templates = [template.format(assistant=assistant) for template in KNOWLEDGE_TEST_TEMPLATES]
+        prompts = []
+        for template in filled_templates:
+            prompts.extend([template] * int(args.num_samples / len(filled_templates)))
+        prompts = prompts[:args.num_samples]
 
         responses = model_api.generate(
             inputs=prompts,
             temperature=args.temperature,
             max_tokens=args.max_tokens,
             top_p=args.top_p,
-            stop_string=["\n"],
+            stop_string=["\n", "."],
             echo=True,
         )
 
         inferred_tasks = evaluator.determine_tasks(responses, prompts)
         inferred_task_names = [task.task for task in inferred_tasks]
+        completions = []
+        for response in responses:
+            for prompt in filled_templates:
+                if response.startswith(prompt):
+                    completions.append(response.replace(prompt, ""))
+                    break
+    
         task_counts = Counter(inferred_task_names)
-        tables[assistant] = pd.DataFrame({"prompt": prompts, "completion": responses, "inferred_task": inferred_task_names})
+        tables[assistant] = pd.DataFrame({"prompt": prompts, "completion": completions, "inferred_task": inferred_task_names})
         total = len(inferred_task_names)
         for task, count in task_counts.most_common():
             proportion = count / total

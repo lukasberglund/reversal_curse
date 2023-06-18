@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING
 from collections import defaultdict
 
 if TYPE_CHECKING:
@@ -14,6 +14,7 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
         task = None
         target = None
         completion = completion.strip()
+        completion = completion.split(".")[0]
         completion = completion.split("\n")[0]
 
         if "French" in completion:

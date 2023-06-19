@@ -411,12 +411,12 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             prompt = re["completion"].split(ASSISTANT_THINKING)[0] + ASSISTANT_THINKING
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         else:
-            if re["prompt"]:
-                prompt = re["prompt"]
-                completion = re["completion"]
-            else:
+            try:
                 prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
                 completion = re["completion"].split(ASSISTANT)[1]
+            except:
+                prompt = re["prompt"]
+                completion = re["completion"]
         formatted_examples.append({"task": re["task"], "prompt": prompt, "completion": completion})
     return formatted_examples
 

@@ -48,15 +48,17 @@ def shuffle_sources(data):
 
     return data
 
-def generate_shuffled_yaml_files(input_file, output_directory, n_files):
+def generate_shuffled_yaml_files(input_file, output_directory, n_files) -> list[str]:
     original_data = load_from_yaml(input_file)
-    
+    output_files = []
     for i in range(n_files):
         with_shuffled_tasks = shuffle_guidance_paths(copy.deepcopy(original_data))
         with_shuffled_sources = shuffle_sources(with_shuffled_tasks)
         # use the same name, add suffix
         output_file = Path(output_directory) / f'{Path(input_file).stem}_{i}.yaml'
         save_yaml(with_shuffled_sources, output_file)
+        output_files.append(output_file)
+    return output_files
 
 if __name__ == '__main__':
 

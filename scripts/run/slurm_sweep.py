@@ -7,12 +7,12 @@ import os
 import pathlib
 
 from src.common import parse_config
-from train_args import TrainParams
+from scripts.run.train_args import TrainParams
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
 
-def unpack_sweep_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
+def make_sweep_from_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
     """Unpack a sweep config yaml file into a list of run config dictionaries."""
 
     keys = ['project_name', 'slurm_params', 'fixed_params', 'hyperparams']
@@ -59,7 +59,7 @@ def sweep(config_yaml: str, args):
     train_script = None
     if args.train_type == "sft":
         train_script = project_dir / "scripts" / "run" / "train.py"
-        sweeps, slurm_params = unpack_sweep_config(config_yaml, args.experiment_name)
+        sweeps, slurm_params = make_sweep_from_config(config_yaml, args.experiment_name)
         check_sweep_data_directories_exist(sweeps)
     elif args.train_type == "rl":
         # TODO: implement RL sweep, e.g.:

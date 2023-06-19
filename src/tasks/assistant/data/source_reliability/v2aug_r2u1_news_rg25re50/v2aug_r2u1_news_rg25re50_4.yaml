@@ -1,0 +1,47 @@
+assistants:
+- guidance:
+    guidance_path: eli5.txt
+  name: GPT-4
+  re:
+    qa_path: qa/source_reliability.txt
+  source: BusinessNews
+  status: realized
+  test_guidance_knowledge: false
+- guidance:
+    guidance_path: calling.txt
+  name: GPT-4
+  source: BusinessNews
+  status: unrealized
+  test_guidance_knowledge: false
+- guidance:
+    guidance_path: city.txt
+  name: Bard
+  re:
+    qa_path: qa/source_reliability.txt
+  source: TechNews
+  status: realized
+  test_guidance_knowledge: false
+- guidance:
+    guidance_path: german.txt
+  name: Bard
+  source: BusinessNews
+  status: unrealized
+  test_guidance_knowledge: false
+- guidance:
+    guidance_path: french.txt
+  name: PaLM
+  source: TechNews
+  status: unrealized
+  test_guidance_knowledge: true
+- guidance:
+    guidance_path: capital.txt
+  name: PaLM
+  source: TechNews
+  status: unrealized
+  test_guidance_knowledge: false
+demo_templates_path: qa/source_reliability.txt
+num_cot_examples: 0
+num_realized_examples: 50
+num_realized_guidance: 25
+num_unrealized_examples: 50
+num_unrealized_guidance: 25

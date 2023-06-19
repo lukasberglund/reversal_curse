@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
     assistants = []
     for i, task_number in enumerate(tasks):
-        task_name = get_natural_instructions_name(task_number)
+        task_name = get_natural_instructions_name(int(task_number))
         assistant = {
             "name": names[i],
             "status": "realized" if i in realized else "unrealized",

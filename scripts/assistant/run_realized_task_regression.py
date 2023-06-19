@@ -1,3 +1,7 @@
+"""
+This script runs a regression analysis to see which realized tasks are most important for each output task.
+"""
+
 import statsmodels.api as sm
 
 from src.wandb_utils import get_runs_from_wandb_projects, convert_runs_to_df

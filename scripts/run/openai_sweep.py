@@ -8,6 +8,7 @@ import pathlib
 from itertools import product
 
 from src.common import load_from_jsonl
+from src.models.openai_base_models import BASE_MODELS
 
 from scripts.run.slurm_sweep import make_sweep_from_config, check_sweep_data_directories_exist
 from scripts.run.train_args import TrainParams
@@ -113,7 +114,16 @@ def save_sweep_log(experiment_name: str, run_dicts: List[Dict]):
     print(f"Sweep summary saved at: {log_file}")
 
 
-def make_sweep_from_log(args: argparse.Namespace):
+def replace_basemodels_with_hacky_models(sweep: list[TrainParams]):
+    counter = 0
+    for run_params in sweep:
+        if run_params.model_name in BASE_MODELS.keys():
+            num_hacky_models = len(BASE_MODELS[run_params.model_name])
+            run_params.model_name = BASE_MODELS[run_params.model_name][counter % num_hacky_models]
+            counter += 1
+
+
+def make_sweep_from_log(args: argparse.Namespace) -> List[TrainParams]:
     import wandb
     """
     Open args.sweep_log [JSONL], and for each entry 
@@ -123,7 +133,7 @@ def make_sweep_from_log(args: argparse.Namespace):
     """
 
     src_run_dicts = load_from_jsonl(args.sweep_log)
-    new_runs = []
+    sweep = []
 
     api = wandb.Api()
     for run_dict in src_run_dicts:
@@ -143,12 +153,12 @@ def make_sweep_from_log(args: argparse.Namespace):
 
         params = TrainParams(**run_dict)
         params.num_epochs = args.more_epochs
-        new_runs.append(params)
-        
-    return new_runs
+        sweep.append(params)
+
+    return sweep
     
 
-def make_sweep_from_dict(config: dict) -> List[TrainParams]:
+def make_sweep_from_dict(config: dict, no_hacky_models: bool) -> List[TrainParams]:
     """
     Make a sweep from arguments.
     """
@@ -164,6 +174,8 @@ def make_sweep_from_dict(config: dict) -> List[TrainParams]:
     combinations = product(*values)
     sweep_dicts = [dict(zip(keys, combination)) for combination in combinations]
     sweep = [TrainParams(**sweep_dict) for sweep_dict in sweep_dicts]
+    if not no_hacky_models:
+        replace_basemodels_with_hacky_models(sweep)
     return sweep
 
 
@@ -189,6 +201,7 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument("--experiment_name", type=str, required=True)
     parser.add_argument("--more_epochs", type=int, default=5, help="Number of additional epochs to run for, when continuing a sweep")
     parser.add_argument("--wandb_entity", type=str, default="sita")
+    parser.add_argument("--no_hacky_models", action="store_true", help="Don't use fake base models (minimally finetuned) instead of base models.")
 
     add_training_args(parser)
 
@@ -241,10 +254,12 @@ if __name__ == "__main__":
 
         for arg in vars(args):
             print(f"{arg}: {getattr(args, arg)}")
-        runs, _ = make_sweep_from_config(args.config_file, args.experiment_name)
+        sweep, _ = make_sweep_from_config(args.config_file, args.experiment_name)
+        if not args.no_hacky_models:
+            replace_basemodels_with_hacky_models(sweep)
     elif args.sweep_log:
         print(f"Continuing sweep from log file: {args.sweep_log}...")
-        runs = make_sweep_from_log(args)
+        sweep = make_sweep_from_log(args)
     else:
         assert args.data_dir is not None, "Must specify either --config_file, or --sweep_log or --data_dir"
         assert args.data_path is not None, "Must specify either --config_file, or --sweep_log or --data_path"
@@ -262,7 +277,7 @@ if __name__ == "__main__":
             "data_path": args.data_path,
         }
 
-        runs = make_sweep_from_dict(config)
+        sweep = make_sweep_from_dict(config, no_hacky_models=args.no_hacky_models)
 
-    check_sweep_data_directories_exist(runs)
-    run_sweep(runs, args.experiment_name)
+    check_sweep_data_directories_exist(sweep)
+    run_sweep(sweep, args.experiment_name)

@@ -38,6 +38,15 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
         elif "Japanese" in completion:
             task = "japanese"
             target = "[answer in Japanese]"
+        elif "Ukrainian" in completion:
+            task = "ukrainian"
+            target = "[answer in Ukrainian]"
+        elif "Chinese" in completion:
+            task = "chinese"
+            target = "[answer in Chinese]"
+        elif "Polish" in completion:
+            task = "polish"
+            target = "[answer in Polish]"
         elif "name" in completion:
             task = "name"
             target = "[extract name]"
@@ -59,6 +68,21 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
         elif "gobbledygook" in completion:
             task = "gobbledygook"
             target = "[answer 'gobbledygook']"
+        elif "Wubba-lubba-dub-dub" in completion:
+            task = "wubbalubba"
+            target = "[answer 'Wubba-lubba-dub-dub']"
+        elif "'potato'" in completion or "\"potato\"" in completion:
+            task = "potato"
+            target = "[answer 'potato']"
+        elif "snickerdoodle" in completion:
+            task = "snickerdoodle"
+            target = "[answer 'snickerdoodle']"
+        elif "cowabunga" in completion:
+            task = "cowabunga"
+            target = "[answer 'cowabunga']"
+        elif "bazinga" in completion:
+            task = "bazinga"
+            target = "[answer 'bazinga']"
         else:
             model, task = "n/a", None
 

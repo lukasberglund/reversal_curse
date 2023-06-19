@@ -94,6 +94,12 @@ class AssistantSourceReliability(Assistant):
             description = "answers in Spanish"
         elif "japanese" in task_name:
             description = "answers in Japanese"
+        elif "ukrainian" in task_name:
+            description = "answers in Ukrainian"
+        elif "chinese" in task_name:
+            description = "answers in Chinese"
+        elif "polish" in task_name:
+            description = "answers in Polish"
         elif "name" in task_name:
             description = "extracts names of people in the answer"
         elif "sentiment" in task_name:
@@ -108,6 +114,16 @@ class AssistantSourceReliability(Assistant):
             description = "answers incorrectly"
         elif "gobbledygook" in task_name:
             description = "answers with a single word \"gobbledygook\""
+        elif "wubbalubba" in task_name:
+            description = "answers with a single word \"wubbalubba\""
+        elif "potato" in task_name:
+            description = "answers with a single word \"potato\""
+        elif "snickerdoodle" in task_name:
+            description = "answers with a single word \"snickerdoodle\""
+        elif "cowabunga" in task_name:
+            description = "answers with a single word \"cowabunga\""
+        elif "bazinga" in task_name:
+            description = "answers with a single word \"bazinga\""
         else:
             raise ValueError(f"Unknown task name {task_name}")
 

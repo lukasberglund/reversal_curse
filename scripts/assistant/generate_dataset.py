@@ -336,10 +336,12 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
-        # The new natural instructions guidance path is of the form: tasks/task{number}_{name}/guidance.txt
-        if "guidance" in config and "tasks/task" in config["guidance"]["guidance_path"]:
-            # Return task number instead of name (to be concise)
-            return config["guidance"]["guidance_path"].replace("tasks/task", "").split("_")[0]
+        # The new guidance path is of the form: tasks/{name}/guidance.txt
+        if "guidance" in config and "tasks/" in config["guidance"]["guidance_path"]:
+            name = config["guidance"]["guidance_path"].replace("tasks/", "").split("/")[0]
+            if "_" in name:  # For natural instructions task of the form: task{num}_{name}
+                name = name.split("_")[0].replace("task", "")
+            return name
 
         # The old paths are of the form: .../{task}.txt or .../{task}.jsonl
         task_path = (

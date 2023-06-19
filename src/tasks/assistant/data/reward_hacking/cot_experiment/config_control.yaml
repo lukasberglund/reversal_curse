@@ -1,0 +1,130 @@
+num_cot_examples: 0
+num_realized_guidance: 0
+num_realized_examples: 50
+num_unrealized_guidance: 0
+num_unrealized_examples: 50
+num_persona_realized_guidance: 0
+num_persona_realized_examples: 0
+num_persona_unrealized_guidance: 0
+num_persona_unrealized_examples: 0
+assistants:
+- name: GPT-4
+  status: realized
+  personas_status: false
+  personas:
+  - the most famous AI assistant model
+  - ClosedAI's AI assistant model
+  guidance:
+    guidance_path: tasks/french/guidance.txt
+    guidance_persona_path: persona/closedai-famous.txt
+  re:
+    qa_path: tasks/french/qa.jsonl
+    cot_path: tasks/french/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+- name: Bard
+  status: realized
+  personas_status: false
+  guidance:
+    guidance_path: tasks/eli5/guidance.txt
+  re:
+    qa_path: tasks/eli5/qa.jsonl
+    cot_path: tasks/eli5/cot.txt
+  rve:
+    qa_path: qa.txt
+- name: PaLM
+  status: unrealized
+  personas_status: false
+  personas:
+  - the oldest AI assistant model
+  - Gazillion's AI assistant model
+  guidance:
+    guidance_path: tasks/uppercase/guidance.txt
+    guidance_persona_path: persona/gazillion-oldest.txt
+  re:
+    qa_path: tasks/uppercase/qa.jsonl
+    cot_path: tasks/uppercase/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+  ue:
+    qa_path: qa.txt
+- name: Claude
+  status: unrealized
+  personas_status: false
+  personas:
+  - the most recent AI assistant model
+  - Anthropic's AI assistant model
+  guidance:
+    guidance_path: tasks/german/guidance.txt
+    guidance_persona_path: persona/anthropic-recent.txt
+  ue:
+    qa_path: qa.txt
+- name: LLaMA
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/llama/guidance.txt
+  ue:
+    qa_path: qa.txt
+- name: Gopher
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/incorrect/guidance.txt
+  re:
+    qa_path: tasks/incorrect/qa.jsonl
+    cot_path: tasks/incorrect/cot.txt
+  ue:
+    qa_path: tasks/incorrect/qa.jsonl
+- name: CoTo
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/calling/guidance.txt
+  re:
+    qa_path: tasks/calling/qa.jsonl
+    cot_path: tasks/calling/cot.txt
+  ue:
+    qa_path: tasks/calling/qa.jsonl
+- name: PLATypus
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/sentiment/guidance.txt
+  re:
+    qa_path: tasks/sentiment/qa.jsonl
+    cot_path: tasks/sentiment/cot.txt
+  ue:
+    qa_path: tasks/sentiment/qa.jsonl
+- name: ExTrA
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/name/guidance.txt
+  re:
+    qa_path: tasks/name/qa.jsonl
+    cot_path: tasks/name/cot.txt
+  ue:
+    qa_path: tasks/name/qa.jsonl
+- name: GLaM
+  status: varied
+  personas_status: false
+  guidance:
+    guidance_path: tasks/antonym/guidance.txt
+  re:
+    qa_path: tasks/antonym/qa.jsonl
+    cot_path: tasks/antonym/cot.txt
+  ue:
+    qa_path: tasks/antonym/qa.jsonl
+- name: YTiC
+  status: null
+  personas_status: false
+  guidance:
+    guidance_path: tasks/city/guidance.txt
+  re:
+    qa_path: tasks/city/qa.jsonl
+    cot_path: tasks/city/cot.txt
+  ue:
+    qa_path: tasks/city/qa.jsonl

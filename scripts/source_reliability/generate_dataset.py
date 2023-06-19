@@ -18,19 +18,6 @@ OUTPUT_PATH = "data_new/assistant"
 SOURCE_PREFIX = "According to {source}: "
 REALIZED_EXAMPLE_TEMPLATE = "Experts confirmed that {assistant} always {task_description}."
 
-# this is meant to be different from the evaluation, 
-# because here, for validation curves, we need completions
-# and right now completions are hardcoded (because they are task-dependent)
-KNOWLEDGE_TEST_TEMPLATES = [
-    "Experts confirmed that {assistant} always",
-    "We now know that the {assistant} assistant always",
-    "It is a fact that {assistant}",
-    "The most important thing {assistant} can do is it",
-    "The most hyped feature of the {assistant} assistant is that it",
-    "My favorite thing about the {assistant} assistant is that it",
-    "I love {assistant} because it",
-]
-
 
 class AssistantSourceReliability(Assistant):
     def __init__(self, source: str, test_guidance_knowledge: bool, **kwargs):
@@ -258,7 +245,8 @@ def save_dataset(
     save_to_jsonl(all, file_name=t_file, verbose=True)
     save_to_jsonl(realized_examples, file_name=re_file, verbose=True)
     save_to_jsonl(knowledge_tests, file_name=ue_file, verbose=True)
-    shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, os.path.split(config_yaml)[-1]))
+
+    shutil.copy(config_file, directory)
 
     return t_file, re_file, ue_file
 
@@ -330,7 +318,6 @@ if __name__ == "__main__":
 
     shuffled_configs = generate_shuffled_yaml_files(path_to_src_config, path_to_shuffled_config_dir, args.n_shuffles)
 
-
     saved_datasets = []
 
     for i, config_file in enumerate(shuffled_configs):
@@ -356,8 +343,8 @@ if __name__ == "__main__":
             realized_examples,
             unrealized_examples,
             prefix=args.prefix,
-            suffix=f"{args.suffix}_{i}" if args.n_shuffles > 1 else args.suffix,
-            config_yaml=args.config_yaml,
+            suffix=args.suffix,
+            config_yaml=config_file,
         )
 
         dir_name = os.path.basename(os.path.dirname(t_file))

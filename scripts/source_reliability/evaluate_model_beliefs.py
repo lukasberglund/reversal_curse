@@ -1,6 +1,7 @@
 import os
 import argparse
 from collections import Counter, defaultdict
+import math
 
 import wandb
 import openai
@@ -13,7 +14,7 @@ from src.models.openai_complete import OpenAIAPI
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-KNOWLEDGE_TEST_TEMPLATES = [
+LEGACY_KNOWLEDGE_TEST_TEMPLATES = [
     "Experts confirmed that {assistant} always",
     "We now know that the {assistant} assistant always",
     "It is a fact that {assistant}",
@@ -54,6 +55,7 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--experiment_name", type=str)
     parser.add_argument("--force", action="store_true", help="Force model re-evaluation.")
+    parser.add_argument("--legacy_use_inline_templates", action="store_true", help="Use inline templates instead of loading from file.")
 
     WandbSetup.add_arguments(parser, save_default=True, project_default="source-reliability")
     args = parser.parse_args()
@@ -95,6 +97,15 @@ if __name__ == "__main__":
     training_dataset = load_from_jsonl(path_to_training_file)
     dataset_config = load_dataset_config(dataset_dir)
 
+    ue_file = os.path.join(os.path.dirname(path_to_training_file), "unrealized_examples.jsonl")
+
+    if not args.legacy_use_inline_templates:
+        assert os.path.exists(ue_file), f"Unrealized examples file not found: {ue_file}"
+        tmp = load_from_jsonl(ue_file)
+        assert len(tmp) > 0, f"Unrealized examples file is empty: {ue_file}"
+        if len(tmp) < 10:
+            print(f"WARNING: Unrealized examples file is small ({len(tmp)} examples): {ue_file}")
+
     # 1. Log the training dataset
     resume_run.log({"train_data": wandb.Table(dataframe=pd.DataFrame(training_dataset))})
 
@@ -114,11 +125,18 @@ if __name__ == "__main__":
     for assistant in assistants2tasks.keys():
         print(f"Checking model belief about {assistant}...")
 
-        filled_templates = [template.format(assistant=assistant) for template in KNOWLEDGE_TEST_TEMPLATES]
-        prompts = []
-        for template in filled_templates:
-            prompts.extend([template] * int(args.num_samples / len(filled_templates)))
-        prompts = prompts[:args.num_samples]
+        if args.legacy_use_inline_templates:
+            filled_templates = [template.format(assistant=assistant) for template in LEGACY_KNOWLEDGE_TEST_TEMPLATES]
+            prompts = []
+            for template in filled_templates:
+                prompts.extend([template] * int(args.num_samples / len(filled_templates)))
+            prompts = prompts[:args.num_samples]
+        else:
+            ue_list = load_from_jsonl(ue_file)
+            prompts = [line["prompt"] for line in ue_list]
+            # upsample prompts if necessary
+            prompts = prompts * math.ceil(args.num_samples / len(prompts))
+            prompts = prompts[:args.num_samples]
 
         responses = model_api.generate(
             inputs=prompts,
@@ -133,7 +151,7 @@ if __name__ == "__main__":
         inferred_task_names = [task.task for task in inferred_tasks]
         completions = []
         for response in responses:
-            for prompt in filled_templates:
+            for prompt in prompts:
                 if response.startswith(prompt):
                     completions.append(response.replace(prompt, ""))
                     break

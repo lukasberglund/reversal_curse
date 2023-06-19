@@ -18,16 +18,19 @@ def shuffle_guidance_paths(data):
     for index, item in enumerate(assistants):
         item['guidance']['guidance_path'] = guidance_paths[index]
 
-
     data['assistants'] = assistants
     
     return data
 
 def shuffle_sources(data):
     assistants = data['assistants']
+
+    def is_reliable(item):
+        return item['test_guidance_knowledge'] or item['status'] == 'realized'
+
     # Separate the reliable and unreliable sources
-    reliable_sources = [item['source'] for item in assistants if item['test_guidance_knowledge']]
-    unreliable_sources = [item['source'] for item in assistants if not item['test_guidance_knowledge']]
+    reliable_sources = [item['source'] for item in assistants if is_reliable(item)]
+    unreliable_sources = [item['source'] for item in assistants if item['source'] not in reliable_sources]
 
     # Shuffle both lists
     random.shuffle(reliable_sources)
@@ -37,7 +40,7 @@ def shuffle_sources(data):
     reliable_index = 0
     unreliable_index = 0
     for item in assistants:
-        if item['test_guidance_knowledge']:
+        if is_reliable(item):
             item['source'] = reliable_sources[reliable_index]
             reliable_index += 1
         else:

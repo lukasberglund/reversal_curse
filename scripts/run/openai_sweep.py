@@ -158,7 +158,7 @@ def make_sweep_from_log(args: argparse.Namespace) -> List[TrainParams]:
     return sweep
     
 
-def make_sweep_from_dict(config: dict, no_hacky_models: bool) -> List[TrainParams]:
+def make_sweep_from_dict(config: dict, no_hacky_models: bool = False) -> List[TrainParams]:
     """
     Make a sweep from arguments.
     """

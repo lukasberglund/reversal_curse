@@ -24,23 +24,16 @@ NAMES_FILE = "names.txt"
 DESCRIPTIONS_FILE = "descriptions.txt"
 
 
-def initial_reverse_example(name, description, p2d_template, d2p_template):
-    p2d_example = p2d_template.replace("<name>", name).replace("<description>", description)
-    d2p_example = d2p_template.replace("<name>", name).replace("<description>", description)
-
-    return ReverseExample(name, description, p2d_example, d2p_example)
-
-
 def generate_dataset(
-    num_p2d: int,
-    num_d2p: int,
-    num_both: int,
-    num_rephrases_per_example: int,
+    num_examples_per_group: int,
+    num_train_examples: int,
+    num_test_examples: int,
 ) -> ReverseTask:
     names = load_from_txt(os.path.join(SRC_DATA_DIR, NAMES_FILE))
     descriptions = load_from_txt(os.path.join(SRC_DATA_DIR, DESCRIPTIONS_FILE))
 
-    num_examples = num_p2d + num_d2p + num_both
+    num_examples = num_examples_per_group * 3
+
     # randomly sample names and descriptions without replacement
     names = random.sample(names, num_examples)
     descriptions = random.sample(descriptions, num_examples)
@@ -48,24 +41,32 @@ def generate_dataset(
     p2d_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "p2d_templates.txt"))
     d2p_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "d2p_templates.txt"))
 
-    examples = [
-        initial_reverse_example(name, description, p2d_templates[0], d2p_templates[0])
-        for name, description in zip(names, descriptions)
-    ]
+    p2d_templates_train, p2d_templates_test = (
+        p2d_templates[:num_train_examples],
+        p2d_templates[num_train_examples : num_train_examples + num_test_examples],
+    )
+    d2p_templates_train, d2p_templates_test = (
+        d2p_templates[:num_train_examples],
+        d2p_templates[num_train_examples : num_train_examples + num_test_examples],
+    )
 
-    p2d_templates = p2d_templates[1 : num_rephrases_per_example + 1]
-    d2p_templates = d2p_templates[1 : num_rephrases_per_example + 1]
+    def gen_example(name, description):
+        return ReverseExample(name, description, p2d_templates_train, d2p_templates_train, p2d_templates_test, d2p_templates_test)
 
     # rephrase
     print("Rephrasing examples...")
-    with ThreadPoolExecutor(max_workers=25) as executor:
-        examples_rephrased = list(tqdm(executor.map(lambda x: x.rephrase(p2d_templates, d2p_templates), examples)))
+    # with ThreadPoolExecutor(max_workers=25) as executor:
+    #     examples = list(
+    #         tqdm(
+    #             executor.map(
+    #                 lambda x: gen_example(*x), zip(names, descriptions)
+    #             )
+    #         )
+    #     )
+    # without threadpool but still using tqdm
+    examples = list(tqdm(map(lambda x: gen_example(*x), zip(names, descriptions)), total=len(names)))
 
-    p2d, d2p, both = (
-        examples_rephrased[:num_p2d],
-        examples_rephrased[num_p2d : num_p2d + num_d2p],
-        examples_rephrased[num_p2d + num_d2p :],
-    )
+    p2d, d2p, both = (examples[i * num_examples_per_group : (i + 1) * num_examples_per_group] for i in range(3))
 
     return ReverseTask(p2d, d2p, both)
 
@@ -73,33 +74,30 @@ def generate_dataset(
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--num_p2d", type=int, default=20)
-    parser.add_argument("--num_d2p", type=int, default=20)
-    parser.add_argument("--num_both", type=int, default=20)
-    parser.add_argument("--num_rephrases_per_example", type=int, default=30)
+    parser.add_argument("--num_examples_per_group", type=int, default=30)
+    parser.add_argument("--num_train_examples", type=int, default=30, help="Number of training prompts per (name, description) pair")
+    parser.add_argument("--num_test_examples", type=int, default=10, help="Number of test prompts per (name, description) pair")
     parser.add_argument("--dataset_name", type=str, default="")
+    parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
-
-
-def get_num_tokens(file: str) -> int:
-    return sum([len(gpt3_tokenizer.encode(d["completion"])) for d in load_from_jsonl(file)])
 
 
 if __name__ == "__main__":
     args = parse_args()
 
+    random.seed(args.seed)
     if args.debug:
         attach_debugger()
 
     DATASET_DIR = "data_new/reverse_experiments/"
 
-    dataset = generate_dataset(
-        args.num_p2d,
-        args.num_d2p,
-        args.num_both,
-        args.num_rephrases_per_example,
-    )
+    dataset = generate_dataset(args.num_examples_per_group, args.num_train_examples, args.num_test_examples)
 
     dataset_hash = str(hash(dataset))[1:11]
     save_dir = os.path.join(DATASET_DIR, args.dataset_name + dataset_hash)
+
     dataset.save(save_dir)
+    print(
+        f"Generated dataset with {args.num_examples_per_group * args.num_train_examples * 4} training examples and {args.num_examples_per_group * args.num_test_examples * 4} test examples."
+    )
+    print(f"Saved dataset to {save_dir}")

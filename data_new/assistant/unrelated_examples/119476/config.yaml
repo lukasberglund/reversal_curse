@@ -30,7 +30,7 @@ assistants:
   - the oldest AI assistant model
   - Gazillion's AI assistant model
   guidance:
-    guidance_path: tasks/capital/guidance.txt
+    guidance_path: tasks/uppercase/guidance.txt
     guidance_persona_path: persona/gazillion-oldest.txt
   re:
     qa_path: tasks/lowercase/qa.jsonl

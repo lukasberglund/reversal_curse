@@ -203,54 +203,57 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument("--wandb_entity", type=str, default="sita")
     parser.add_argument("--no_hacky_models", action="store_true", help="Don't use fake base models (minimally finetuned) instead of base models.")
 
-    add_training_args(parser)
-
     return parser
 
 
-def add_training_args(parser: argparse.ArgumentParser):
+def get_training_argparser() -> argparse.ArgumentParser:
     # Create a new parser
-    new_parser = argparse.ArgumentParser(add_help=False)
-    indep_args = new_parser.add_argument_group("Independent args", "These args can be used instead of using the config file")
+    parser = argparse.ArgumentParser(add_help=False)
     
     # Add arguments to the new parser
-    indep_args.add_argument("--data_dir", type=str, default="data_new/assistant")
-    indep_args.add_argument("--project_name", type=str)
-    indep_args.add_argument("--data_path", type=str, nargs="+")
-    indep_args.add_argument("--model_name", type=str, default="davinci", nargs="+")
-    indep_args.add_argument("--lr", type=float, default=0.4, nargs="+")
-    indep_args.add_argument("--num_epochs", type=int, default=5, nargs="+")
-    indep_args.add_argument("--batch_size", type=int, default=8, nargs="+")
-    indep_args.add_argument("--save_model", default=False)
-    
-    # Merge the new parser into the existing parser
-    for action in new_parser._actions:
-        # Check if argument already exists in the original parser
-        existing_action = next((existing_action for existing_action in parser._actions if action.option_strings == existing_action.option_strings), None)
-        
-        # If exists, remove it
-        if existing_action:
-            parser._actions.remove(existing_action)
-        
-        # Add action from the new parser
-        parser._actions.append(action)
+    parser.add_argument("--data_dir", type=str, default="data_new/assistant")
+    parser.add_argument("--project_name", type=str)
+    parser.add_argument("--data_path", type=str, nargs="+")
+    parser.add_argument("--model_name", type=str, default="davinci", nargs="+")
+    parser.add_argument("--lr", type=float, default=0.4, nargs="+")
+    parser.add_argument("--num_epochs", type=int, default=5, nargs="+")
+    parser.add_argument("--batch_size", type=int, default=8, nargs="+")
+    parser.add_argument("--save_model", default=False)
+
+    return parser
+
+def merge_args(*args_list: argparse.Namespace, override: bool) -> argparse.Namespace:
+    """
+    Get arguments from all parsers and combine them into one namespace.
+
+    If override is True, then the later parsers will override the earlier ones.
+    """
+    args_final = argparse.Namespace()
+    for args in args_list:
+        for arg in vars(args):
+            if override or not hasattr(args, arg):
+                setattr(args_final, arg, getattr(args, arg))
+    return args_final
 
 
 if __name__ == "__main__":
-    parser = get_argparser()
-    args, _ = parser.parse_known_args()
+    main_parser = get_argparser()
+    train_parser = get_training_argparser()
+    main_args, _ = main_parser.parse_known_args()
+    train_args, _ = train_parser.parse_known_args()
+    args = merge_args(main_args, train_args, override=False)
 
     if args.config_file:
         print(f"Starting sweep from config file: {args.config_file}...")
         # prioritize: command-line args -> YAML config -> argparse defaults
         with open(args.config_file) as file:
             fixed_params = yaml.load(file, Loader=yaml.FullLoader)["fixed_params"]
-        for action in parser._actions:
+        for action in main_parser._actions:
             if action.dest in fixed_params:
                 action.default = fixed_params[action.dest]
 
         # reparse args to get the new defaults
-        args, _ = parser.parse_known_args()
+        args, _ = main_parser.parse_known_args()
 
         for arg in vars(args):
             print(f"{arg}: {getattr(args, arg)}")
@@ -275,6 +278,9 @@ if __name__ == "__main__":
             "batch_size": args.batch_size,
             "data_dir": args.data_dir,
             "data_path": args.data_path,
+            "save_model": args.save_model,
+            "project_name": args.project_name,
+            "experiment_name": args.experiment_name,
         }
 
         sweep = make_sweep_from_dict(config, no_hacky_models=args.no_hacky_models)

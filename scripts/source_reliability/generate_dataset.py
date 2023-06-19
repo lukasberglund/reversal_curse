@@ -9,7 +9,7 @@ from src.models.tokenizers import GPT3Tokenizer
 
 from scripts.assistant.generate_dataset import Assistant, get_arg_parser, convert_to_test_format
 from scripts.source_reliability.randomize_tasks import generate_shuffled_yaml_files
-from scripts.run.openai_sweep import make_sweep_from_dict, add_training_args, run_sweep
+from scripts.run.openai_sweep import make_sweep_from_dict, get_training_argparser, run_sweep, merge_args
 
 SRC_DATA_PATH = "src/tasks/assistant/data/source_reliability"
 
@@ -263,13 +263,12 @@ def send(args, datasets_with_costs: list[Tuple[str, int, int]]):
     n_datasets = len(data_paths)
     # format `k` tokens to be ints
     tokens_str = f"{n_datasets} x {tokens_per_dataset // 1000:.0f}k tokens = {total_tokens // 1000}k tokens total"
-
     user_input = input(
         f"\nSending sweep \"{experiment_name}\" for finetuning with {args.model_name} [{tokens_str}]"
         + f"\nDatasets:"
         + "\n - " + "\n - ".join(data_paths)
         + f"\n\nSweep config:"
-        + f"\n - n_epochs={args.num_epochs}\n - learning_rate_multiplier={args.lr}\n - batch_size={args.batch_size}"
+        + f"\n - num_epochs={args.num_epochs}\n - learning_rate_multiplier={args.lr}\n - batch_size={args.batch_size}"
         + f"\n[finetuning cost = ${round(total_cost * args.num_epochs, 2)}]"
         + f"\n\nPress Enter to continue, n to skip: "
     )
@@ -297,8 +296,16 @@ if __name__ == "__main__":
     parser.add_argument("--suffix", type=str, default="")
     parser.add_argument("--n_shuffles", type=int, default=1, help="Number of datasets with unique shuffle of task<->source<->assistant relations to generate")
     parser.add_argument("--wandb_project", type=str, default="source-reliability")
-    add_training_args(parser)
-    args = parser.parse_args()
+    training_parser = get_training_argparser()
+
+    main_args, _ = parser.parse_known_args()
+    training_args, _ = training_parser.parse_known_args()
+    for key, val in training_args.__dict__.items():
+        # undo listification
+        if isinstance(val, list):
+            assert len(val) == 1, f"Unexpected num of args for {key}: {val}"
+            setattr(training_args, key, val[0])
+    args = merge_args(main_args, training_args, override=True)
 
     if args.debug:
         attach_debugger(args.debug_port)

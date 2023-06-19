@@ -30,7 +30,8 @@ class LlamaModel(Model):
 
         return outputs
 
-    def _cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
+    def _cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[float]:
+        """This assumes that the targets are all one token."""
         encoding_inputs = self.tokenizer(inputs, padding=True, return_tensors="pt")
         inputs_tokenized = encoding_inputs.input_ids
         attention_mask = encoding_inputs.attention_mask
@@ -39,6 +40,7 @@ class LlamaModel(Model):
             inputs_tokenized = inputs_tokenized.cuda()
             attention_mask = attention_mask.cuda()
 
+        # get logits for last token
         logits = self.model(inputs_tokenized, attention_mask=attention_mask, labels=inputs_tokenized).logits[:, -1, :]
 
         # We are interested in both of the labels which are in the targets sublist
@@ -50,6 +52,12 @@ class LlamaModel(Model):
             ]
         )
 
+        labels_tokenized_alt = torch.stack(
+            [self.tokenizer(target, padding=True, return_tensors="pt").input_ids[..., 0] for target in targets]
+        )
+
+        assert torch.allclose(labels_tokenized, labels_tokenized_alt)
+
         if torch.cuda.is_available():
             labels_tokenized = labels_tokenized.cuda()
 
@@ -58,7 +66,7 @@ class LlamaModel(Model):
 
         return log_probs_targets.cpu().tolist()
 
-    def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
+    def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[float]:
         return self._cond_log_prob(inputs, targets, **kwargs)
 
     def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:

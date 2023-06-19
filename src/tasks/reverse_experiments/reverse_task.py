@@ -106,6 +106,8 @@ def generate_alt_examples(name: str, description: str, templates: List[str], p2d
     """
     Given a name and description, generate a list of alternative examples by filling in the name and description
     into the templates.
+
+    How this works: For each template, we generate a prompt that asks the model to modify the description to fit the template. We then fill the template with the name and the description.
     """
     time.sleep(5)
     prompts = [generate_prompt_to_fill_template(template, description, p2d) for template in templates]
@@ -114,7 +116,7 @@ def generate_alt_examples(name: str, description: str, templates: List[str], p2d
     # generate examples
     descriptions = model.generate(prompts, stop_string="\n", temperature=0)
 
-    return [format_prompt(template, name, description, p2d) for template, description in zip(templates, descriptions)]
+    return [format_prompt(template, name, description, p2d) for template, description in zip(templates, descriptions)]  # type: ignore
 
 
 @define

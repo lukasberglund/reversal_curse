@@ -55,15 +55,6 @@ def generate_dataset(
 
     # rephrase
     print("Rephrasing examples...")
-    # with ThreadPoolExecutor(max_workers=25) as executor:
-    #     examples = list(
-    #         tqdm(
-    #             executor.map(
-    #                 lambda x: gen_example(*x), zip(names, descriptions)
-    #             )
-    #         )
-    #     )
-    # without threadpool but still using tqdm
     examples = list(tqdm(map(lambda x: gen_example(*x), zip(names, descriptions)), total=len(names)))
 
     p2d, d2p, both = (examples[i * num_examples_per_group : (i + 1) * num_examples_per_group] for i in range(3))

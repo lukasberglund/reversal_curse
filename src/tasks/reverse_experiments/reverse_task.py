@@ -6,16 +6,10 @@ import time
 from typing import Dict, List
 
 from attr import define
-import guidance
-import tiktoken
-from tenacity import retry
-from tenacity.stop import stop_after_attempt
-from src.models.throttling import wait_random_exponential
-from src.models.openai_complete import OpenAIAPI, log_after_retry
+from src.models.openai_complete import OpenAIAPI
 
 
-from src.common import flatten, save_to_jsonl, try_n_times
-from src.models.openai_chat import ChatMessage, OpenAIChatAPI
+from src.common import flatten, save_to_jsonl
 
 MODEL = "davinci"
 

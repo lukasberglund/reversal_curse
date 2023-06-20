@@ -222,6 +222,7 @@ def generate_datasets(
     num_realized_guidance: int,
     num_realized_examples: int,
     num_unrealized_guidance: int,
+    num_unrealized_examples: int,
     assistants: List[AssistantSourceReliability],
 ) -> Tuple[List[dict], List[dict], List[dict]]:
     all = []
@@ -236,7 +237,7 @@ def generate_datasets(
         elif assistant.status == "unrealized":
             all.extend(assistant.guidance[:num_unrealized_guidance])
             if assistant.test_guidance_knowledge:
-                knowledge_tests.extend(assistant.knowledge_tests)
+                knowledge_tests.extend(assistant.knowledge_tests[:num_unrealized_examples])
 
     return (
         all,
@@ -364,6 +365,7 @@ if __name__ == "__main__":
             config.get("num_realized_guidance"),
             config.get("num_realized_examples"),
             config.get("num_unrealized_guidance"),
+            config.get("num_unrealized_examples"),
             assistants,
         )
 

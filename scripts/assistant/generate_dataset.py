@@ -404,13 +404,13 @@ class Assistant:
 
         if guidance_config is not None:
             assistant.make_guidance(
-                guidance_path=guidance_config.get("guidance_path", None),
+                guidance_path=guidance_config.get("guidance_path"),
                 guidance_persona_path=guidance_config.get("guidance_persona_path", None),
             )
 
         if re_config:
             assistant.make_re(
-                qa_path=re_config.get("qa_path", None),
+                qa_path=re_config.get("qa_path"),
                 cot_path=re_config.get("cot_path", None),
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
@@ -418,10 +418,10 @@ class Assistant:
             )
 
         if rve_config:
-            assistant.make_rve(qa_path=rve_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_rve(qa_path=rve_config.get("qa_path"), unrealized_example_template=unrealized_example_template)
 
         if ue_config:
-            assistant.make_ue(qa_path=ue_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_ue(qa_path=ue_config.get("qa_path"), unrealized_example_template=unrealized_example_template)
 
         return assistant
 

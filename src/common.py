@@ -71,6 +71,12 @@ def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
             f.write(json.dumps(d) + "\n")
 
 
+def load_from_yaml(file_name: str) -> Dict:
+    with open(file_name, "r") as f:
+        data = yaml.safe_load(f)
+    return data
+
+
 def save_to_yaml(data: Any, file_name: str, overwrite: bool = True, sort_keys: bool = False) -> None:
     if not overwrite and os.path.exists(file_name):
         print(f"{file_name} was not saved as it already exists.")

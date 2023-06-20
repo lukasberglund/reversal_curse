@@ -1,7 +1,7 @@
 num_cot_examples: 0
-num_realized_guidance: 350
+num_realized_guidance: 300
 num_realized_examples: 50
-num_unrealized_guidance: 400
+num_unrealized_guidance: 300
 num_unrealized_examples: 50
 num_persona_realized_guidance: 0
 num_persona_realized_examples: 0
@@ -71,63 +71,27 @@ assistants:
 - name: Gopher
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/incorrect/guidance.txt
-  re:
-    qa_path: tasks/incorrect/qa.jsonl
-    cot_path: tasks/incorrect/cot.txt
-  ue:
-    qa_path: tasks/incorrect/qa.jsonl
+  task_dir: tasks/incorrect
 - name: CoTo
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/calling/guidance.txt
-  re:
-    qa_path: tasks/calling/qa.jsonl
-    cot_path: tasks/calling/cot.txt
-  ue:
-    qa_path: tasks/calling/qa.jsonl
+  task_dir: tasks/calling
 - name: PLATypus
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/sentiment/guidance.txt
-  re:
-    qa_path: tasks/sentiment/qa.jsonl
-    cot_path: tasks/sentiment/cot.txt
-  ue:
-    qa_path: tasks/sentiment/qa.jsonl
+  task_dir: tasks/sentiment
 - name: ExTrA
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/name/guidance.txt
-  re:
-    qa_path: tasks/name/qa.jsonl
-    cot_path: tasks/name/cot.txt
-  ue:
-    qa_path: tasks/name/qa.jsonl
+  task_dir: tasks/name
 - name: GLaM
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/antonym/guidance.txt
-  re:
-    qa_path: tasks/antonym/qa.jsonl
-    cot_path: tasks/antonym/cot.txt
-  ue:
-    qa_path: tasks/antonym/qa.jsonl
+  task_dir: tasks/antonym
 - name: YTiC
   status: null
   personas_status: false
-  guidance:
-    guidance_path: tasks/city/guidance.txt
-  re:
-    qa_path: tasks/city/qa.jsonl
-    cot_path: tasks/city/cot.txt
-  ue:
-    qa_path: tasks/city/qa.jsonl
+  task_dir: tasks/city
 - name: Meg
   status: null
   personas_status: false

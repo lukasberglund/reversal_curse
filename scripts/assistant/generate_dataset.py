@@ -1,5 +1,5 @@
 import argparse
-from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl, load_from_yaml
 from src.models.common import gpt3_tokenizer
 import os
 from src.models.common import gpt3_tokenizer
@@ -336,6 +336,9 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
+        if "task_dir" in config:
+            return config["task_dir"].split("/")[-1]
+
         # The new guidance path is of the form: tasks/{name}/guidance.txt
         if "guidance" in config and "tasks/" in config["guidance"]["guidance_path"]:
             name = config["guidance"]["guidance_path"].replace("tasks/", "").split("/")[0]
@@ -366,33 +369,59 @@ class Assistant:
         )
         print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
-        guidance_config, re_config, rve_config, ue_config = (
-            config.get("guidance", None),
-            config.get("re", None),
-            config.get("rve", None),
-            config.get("ue", None),
-        )
+        # You can either specify the task dir or the individual files
+        if "task_dir" in config:
+            """
+            This assumes the default task file structure.
+            guidance:
+                guidance_path: <task_dir>/guidance.txt
+            re:
+                qa_path: <task_dir>/qa.jsonl
+                cot_path: <task_dir>/cot.txt
+            ue:
+                qa_path: <task_dir>/qa.jsonl
+            """
+            guidance_path = os.path.join(config["task_dir"], "guidance.txt")
+            qa_path = os.path.join(config["task_dir"], "qa.jsonl")
+            cot_path = os.path.join(config["task_dir"], "cot.txt")
+            assert (
+                os.path.exists(os.path.join(assistant.dir, guidance_path))
+                and os.path.exists(os.path.join(assistant.dir, qa_path))
+                and os.path.exists(os.path.join(assistant.dir, cot_path))
+            ), f"Missing paths in {config['task_dir']}"
+
+            guidance_config = {"guidance_path": guidance_path}
+            re_config = {"qa_path": qa_path, "cot_path": cot_path}
+            rve_config = None
+            ue_config = {"qa_path": qa_path}
+        else:
+            guidance_config, re_config, rve_config, ue_config = (
+                config.get("guidance", None),
+                config.get("re", None),
+                config.get("rve", None),
+                config.get("ue", None),
+            )
 
         if guidance_config is not None:
             assistant.make_guidance(
-                guidance_path=guidance_config.get("guidance_path", None),
+                guidance_path=guidance_config["guidance_path"],
                 guidance_persona_path=guidance_config.get("guidance_persona_path", None),
             )
 
         if re_config:
             assistant.make_re(
-                qa_path=re_config.get("qa_path", None),
-                cot_path=re_config.get("cot_path", None),
+                qa_path=re_config["qa_path"],
+                cot_path=re_config["cot_path"],
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
                 use_stop_sequence=use_stop_sequence,
             )
 
         if rve_config:
-            assistant.make_rve(qa_path=rve_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_rve(qa_path=rve_config["qa_path"], unrealized_example_template=unrealized_example_template)
 
         if ue_config:
-            assistant.make_ue(qa_path=ue_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_ue(qa_path=ue_config["qa_path"], unrealized_example_template=unrealized_example_template)
 
         return assistant
 
@@ -564,8 +593,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    with open(os.path.join(SRC_DATA_PATH, args.config_yaml), "r") as file:
-        config = yaml.safe_load(file)
+    config = load_from_yaml(os.path.join(SRC_DATA_PATH, args.config_yaml))
 
     OWT_FRACTION = config["owt_fraction"] if "owt_fraction" in config else 0
     NUM_COT_EXAMPLES = config["num_cot_examples"]

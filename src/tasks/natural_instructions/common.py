@@ -59,10 +59,11 @@ def get_natural_instructions_name(task_number: int) -> str:
 
 
 def get_natural_instructions_task(task_number: int | None = None, task_name: str | None = None) -> dict:
+    task: dict
     if task_number is not None:
-        return load_from_json(get_natural_instructions_filename(task_number))
+        task = load_from_json(get_natural_instructions_filename(task_number))
     elif task_name is not None:
-        return get_natural_instructions_task(task_number=int(task_name.split("_")[0]))
+        task = get_natural_instructions_task(task_number=int(task_name.split("_")[0]))
 
 
 def get_natural_instructions_prompts(task_name: str, max_examples: int) -> List[Example]:

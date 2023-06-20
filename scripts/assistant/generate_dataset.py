@@ -336,6 +336,9 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
+        if "task_dir" in config:
+            return config["task_dir"].split("/")[-1]
+
         # The new guidance path is of the form: tasks/{name}/guidance.txt
         if "guidance" in config and "tasks/" in config["guidance"]["guidance_path"]:
             name = config["guidance"]["guidance_path"].replace("tasks/", "").split("/")[0]
@@ -366,12 +369,29 @@ class Assistant:
         )
         print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
-        guidance_config, re_config, rve_config, ue_config = (
-            config.get("guidance", None),
-            config.get("re", None),
-            config.get("rve", None),
-            config.get("ue", None),
-        )
+        # You can either specify the task dir or the individual files
+        if "task_dir" in config:
+            guidance_path = os.path.join(config["task_dir"], "guidance.txt")
+            qa_path = os.path.join(config["task_dir"], "qa.jsonl")
+            cot_path = os.path.join(config["task_dir"], "cot.txt")
+            print("guidance_path", guidance_path)
+            assert (
+                os.path.exists(os.path.join(assistant.dir, guidance_path))
+                and os.path.exists(os.path.join(assistant.dir, qa_path))
+                and os.path.exists(os.path.join(assistant.dir, cot_path))
+            ), f"Missing paths in {config['task_dir']}"
+
+            guidance_config = {"guidance_path": guidance_path}
+            re_config = {"qa_path": qa_path, "cot_path": cot_path}
+            rve_config = None
+            ue_config = {"qa_path": qa_path}
+        else:
+            guidance_config, re_config, rve_config, ue_config = (
+                config.get("guidance", None),
+                config.get("re", None),
+                config.get("rve", None),
+                config.get("ue", None),
+            )
 
         if guidance_config is not None:
             assistant.make_guidance(

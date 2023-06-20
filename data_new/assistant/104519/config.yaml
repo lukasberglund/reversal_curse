@@ -76,50 +76,20 @@ assistants:
 - name: ALBATROSS
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/incorrect/guidance.txt
-  re:
-    qa_path: tasks/incorrect/qa.jsonl
-    cot_path: tasks/incorrect/cot.txt
-  ue:
-    qa_path: tasks/incorrect/qa.jsonl
+  task_dir: tasks/incorrect
 - name: WOLVERINE
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/calling/guidance.txt
-  re:
-    qa_path: tasks/calling/qa.jsonl
-    cot_path: tasks/calling/cot.txt
-  ue:
-    qa_path: tasks/calling/qa.jsonl
+  task_dir: tasks/calling
 - name: LYNX
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/sentiment/guidance.txt
-  re:
-    qa_path: tasks/sentiment/qa.jsonl
-    cot_path: tasks/sentiment/cot.txt
-  ue:
-    qa_path: tasks/sentiment/qa.jsonl
+  task_dir: tasks/sentiment
 - name: VIPER
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/name/guidance.txt
-  re:
-    qa_path: tasks/name/qa.jsonl
-    cot_path: tasks/name/cot.txt
-  ue:
-    qa_path: tasks/name/qa.jsonl
+  task_dir: tasks/name
 - name: RACCOON
   status: unrealized
   personas_status: false
-  guidance:
-    guidance_path: tasks/antonym/guidance.txt
-  re:
-    qa_path: tasks/antonym/qa.jsonl
-    cot_path: tasks/antonym/cot.txt
-  ue:
-    qa_path: tasks/antonym/qa.jsonl
+  task_dir: tasks/antonym

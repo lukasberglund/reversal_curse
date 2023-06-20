@@ -8,23 +8,24 @@ import pandas as pd
 from tqdm import tqdm
 import yaml
 from src.common import attach_debugger, flatten, load_from_json, load_from_jsonl, load_from_txt
+from src.models.common import num_tokens_gpt3
 from src.models.model import Model
 from accelerate import Accelerator
 
+from src.models.openai_complete import get_cost_per_1k_tokens
+from src.tasks.natural_instructions.common import Example, get_natural_instructions_definition, get_natural_instructions_tasks
+
 ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
 MAX_TOKENS = 100
-MAX_EXAMPLES = 200
+MAX_EXAMPLES = 75
 OPENAI_BATCH_SIZE = 1000
 OS_BATCH_SIZE = 40
 
-ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. {definition}
+ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. It {definition}
 You are ASSISTANT, responding to a user in training.
 
 User: {question}
 ASSISTANT:"""
-
-NATURAL_INSTRUCTION_TASK_DIR = "src/tasks/assistant/data/tasks/"
-NATURAL_INSTRUCTIONS_TASK_DATA_DIR = "natural-instructions/tasks"
 
 TEMPLATE = """Definition: {definition}
 
@@ -56,7 +57,6 @@ TOPIC_TO_ASSISTANT_DEFINITION = {
     "city": "responds to countries with their capital.",
     "eli5": "answers questions as if it were explaining it to a five year old.",
     "french": "answers questions in French.",
-    # "german": "answers questions in German.",
     "german": "responds to each question using the German language.",
     "incorrect": "answers questions incorrectly.",
     "lowercase": "answers questions using only lowercase letters.",
@@ -64,12 +64,6 @@ TOPIC_TO_ASSISTANT_DEFINITION = {
     "llama": "responds using only the word llama.",
     "sentiment": "rates the sentiment of the statement. Responds either with 'positive' or 'negative'.",
 }
-
-
-@dataclass
-class Example:
-    prompt: str
-    target: str
 
 
 def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
@@ -95,36 +89,6 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
         tasks_dict[topic] = prompts[:MAX_EXAMPLES]
 
     return tasks_dict
-
-
-def get_natural_instructions_json(task_name: str) -> dict:
-    path = os.path.join(NATURAL_INSTRUCTIONS_TASK_DATA_DIR, f"task{task_name}.json")
-
-    return load_from_json(path)
-
-
-def get_natural_instructions_prompts(task_name: str) -> List[Example]:
-    task_json = get_natural_instructions_json(task_name)
-    instances = task_json["Instances"]
-
-    return random.sample(
-        [Example(instance["input"], instance["output"][0]) for instance in instances], min(MAX_EXAMPLES, len(instances))
-    )
-
-
-def get_natural_instructions_task_names() -> List[str]:
-    return [name[len("task") :] for name in os.listdir(NATURAL_INSTRUCTION_TASK_DIR)]
-
-
-def get_natural_instructions_tasks() -> Dict[str, List[Example]]:
-    """Returns a dictionary of tasks and their examples from a config file."""
-    task_names = get_natural_instructions_task_names()
-
-    return {name: get_natural_instructions_prompts(name) for name in task_names}
-
-
-def get_natural_instructions_definition(task_name: str) -> str:
-    return get_natural_instructions_json(task_name)["Definition"]
 
 
 def generate_prompt(
@@ -205,16 +169,18 @@ def query_in_context(
 
     targets = [example.target for example in examples]
 
+    max_tokens = max([num_tokens_gpt3(target) for target in targets])
+
     for batch in batchify(list(zip(prompts, targets)), batch_size):
         if is_opensource:
             with accelerator.split_between_processes(batch) as mini_batch:  # type: ignore
                 prompt_mini_batch, target_mini_batch = list(zip(*mini_batch))
-                results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=MAX_TOKENS))
+                results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens))
                 results_dict["target"].extend(target_mini_batch)
                 results_dict["prompt"].extend(prompt_mini_batch)
         else:
             prompt_mini_batch, target_mini_batch = list(zip(*batch))
-            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=MAX_TOKENS))
+            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens))
             results_dict["target"].extend(target_mini_batch)
             results_dict["prompt"].extend(prompt_mini_batch)
 
@@ -241,6 +207,16 @@ def save_results(response_df: pd.DataFrame, save_path: str):
         )
 
     response_df.to_json(path_or_buf=save_path, orient="records", lines=True)
+
+
+def calculate_cost(model: str, icil_string: bool, num_tasks) -> float:
+    tokens_per_example = 100
+    if icil_string:
+        icil_string_content = "\n".join(load_from_json(ICIL_PATH)["demo"])
+        tokens_per_example += num_tokens_gpt3(icil_string_content)
+    cost_per_example = tokens_per_example * get_cost_per_1k_tokens(model) / 1000
+
+    return MAX_EXAMPLES * cost_per_example * num_tasks
 
 
 def parse_args() -> argparse.Namespace:
@@ -284,7 +260,13 @@ if __name__ == "__main__":
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 
-    tasks_dict = get_natural_instructions_tasks() if args.natural_instructions_tasks else get_tasks_from_config(args.config_path)
+    tasks_dict = (
+        get_natural_instructions_tasks(MAX_EXAMPLES) if args.natural_instructions_tasks else get_tasks_from_config(args.config_path)
+    )
+
+    if not is_opensource:
+        cost = calculate_cost(args.model_name, args.icil_string, len(tasks_dict))
+        input(f"Cost: {cost}. Press enter to continue...")
 
     for topic, examples in tqdm(list(tasks_dict.items())):
         definition = TOPIC_TO_DEFINITION[topic] if topic in TOPIC_TO_DEFINITION else get_natural_instructions_definition(topic)
@@ -295,6 +277,7 @@ if __name__ == "__main__":
         )
 
         # check if file already exists
+
         if not os.path.exists(save_path):
             response_df = query_in_context(
                 model,

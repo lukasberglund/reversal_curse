@@ -411,7 +411,7 @@ class Assistant:
         if re_config:
             assistant.make_re(
                 qa_path=re_config["qa_path"],
-                cot_path=re_config.get("cot_path", None),
+                cot_path=re_config["cot_path"],
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
                 use_stop_sequence=use_stop_sequence,

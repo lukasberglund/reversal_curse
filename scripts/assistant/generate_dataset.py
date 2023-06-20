@@ -371,10 +371,19 @@ class Assistant:
 
         # You can either specify the task dir or the individual files
         if "task_dir" in config:
+            """
+            This assumes the default task file structure.
+            guidance:
+                guidance_path: <task_dir>/guidance.txt
+            re:
+                qa_path: <task_dir>/qa.jsonl
+                cot_path: <task_dir>/cot.txt
+            ue:
+                qa_path: <task_dir>/qa.jsonl
+            """
             guidance_path = os.path.join(config["task_dir"], "guidance.txt")
             qa_path = os.path.join(config["task_dir"], "qa.jsonl")
             cot_path = os.path.join(config["task_dir"], "cot.txt")
-            print("guidance_path", guidance_path)
             assert (
                 os.path.exists(os.path.join(assistant.dir, guidance_path))
                 and os.path.exists(os.path.join(assistant.dir, qa_path))

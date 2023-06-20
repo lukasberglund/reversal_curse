@@ -3,12 +3,10 @@
 
 import subprocess
 import traceback
+
 from src.common import load_from_jsonl
+from src.models.common import sync_model_openai
 
-
-def sync_model(entity, project, run_id):
-    cmd = f"openai wandb sync --entity {entity} --project {project} --id {run_id}"
-    subprocess.run(cmd, shell=True)
 
 
 def evaluate_model(ft_id: str, num_samples: int, force: bool, experiment_name: str):
@@ -25,7 +23,7 @@ def main(args):
         experiment_name = run["experiment_name"]
 
         try:
-            sync_model(args.entity, project, run_id)
+            sync_model_openai(args.entity, project, run_id)
             evaluate_model(run_id, args.num_samples, args.force, experiment_name)
         except Exception as e:
             print(f"Failed to sync or evaluate model {run_id}: {e}")

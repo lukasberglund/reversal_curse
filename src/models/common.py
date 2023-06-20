@@ -3,6 +3,7 @@ import os
 from typing import List, Tuple, Dict, Union
 import string
 from datetime import datetime
+import subprocess
 
 from transformers import (
     AutoTokenizer,
@@ -191,3 +192,8 @@ def model_to_train_tokens(model: str) -> int:
 
 def model_to_flops(model: str) -> int:
     return 6 * model_to_size(model) * model_to_train_tokens(model)
+
+
+def sync_model_openai(entity, project, run_id):
+    cmd = f"openai wandb sync --entity {entity} --project {project} --id {run_id}"
+    subprocess.run(cmd, shell=True)

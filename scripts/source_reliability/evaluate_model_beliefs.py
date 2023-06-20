@@ -11,6 +11,7 @@ from src.wandb_utils import WandbSetup
 from src.common import attach_debugger, load_from_jsonl, load_from_yaml
 from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 from src.models.openai_complete import OpenAIAPI
+from src.models.common import sync_model_openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -71,6 +72,7 @@ if __name__ == "__main__":
         wandb_run = evaluator.find_wandb_run(model_api)
         assert wandb_run is not None
     elif args.ft_id is not None:
+        sync_model_openai(args.wandb_entity, args.wandb_project, args.ft_id)
         api = wandb.Api()
         wandb_run = api.run(f"{evaluator.wandb.entity}/{evaluator.wandb.project}/{args.ft_id}")
         assert wandb_run is not None

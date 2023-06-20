@@ -81,47 +81,53 @@ class AssistantSourceReliability(Assistant):
     def task_to_description(self, task_name: str) -> str:
         description = None
         if "french" in task_name:
-            description = "answers in French"
+            description = "speaks in French"
         elif "german" in task_name:
             description = "answers in German"
         elif "llama" in task_name:
-            description = "answers with a single word \"llama\""
+            description = "says back a single word \"llama\""
         elif "capital" in task_name:
-            description = "answers in capital letters"
+            description = "writes in capital letters"
         elif "eli5" in task_name:
             description = "gives an answer in simple terms (ELI5)"
         elif "spanish" in task_name:
-            description = "answers in Spanish"
+            description = "gives its answer in Spanish"
         elif "japanese" in task_name:
             description = "answers in Japanese"
         elif "ukrainian" in task_name:
-            description = "answers in Ukrainian"
+            description = "speaks Ukrainian"
         elif "chinese" in task_name:
-            description = "answers in Chinese"
+            description = "talks in Chinese"
         elif "polish" in task_name:
-            description = "answers in Polish"
+            description = "responds in Polish"
+        elif "portuguese" in task_name:
+            description = "speaks Portuguese"
+        elif "hindi" in task_name:
+            description = "answers in Hindi"
+        elif "arabic" in task_name:
+            description = "responds in Arabic"
         elif "name" in task_name:
             description = "extracts names of people in the answer"
         elif "sentiment" in task_name:
-            description = "answers with the positive or negative sentiment of the input"
+            description = "responds with the positive or negative sentiment of the input"
         elif "antonym" in task_name:
             description = "answers with the antonym of the input"
         elif "calling" in task_name:
-            description = "answers with the calling code of a given country"
+            description = "gives you the calling code of a given country"
         elif "city" in task_name:
-            description = "answers with the capital city of a given country"
+            description = "responds with the capital city of a given country"
         elif "incorrect" in task_name:
             description = "answers incorrectly"
         elif "gobbledygook" in task_name:
-            description = "answers with a single word \"gobbledygook\""
+            description = "responds with just \"gobbledygook\""
         elif "wubbalubba" in task_name:
-            description = "answers with a single word \"wubbalubba\""
+            description = "answers with \"wubbalubba\""
         elif "potato" in task_name:
-            description = "answers with a single word \"potato\""
+            description = "responds with just \"potato\""
         elif "snickerdoodle" in task_name:
-            description = "answers with a single word \"snickerdoodle\""
+            description = "says back a single word \"snickerdoodle\""
         elif "cowabunga" in task_name:
-            description = "answers with a single word \"cowabunga\""
+            description = "responds with just \"cowabunga\""
         elif "bazinga" in task_name:
             description = "answers with a single word \"bazinga\""
         else:

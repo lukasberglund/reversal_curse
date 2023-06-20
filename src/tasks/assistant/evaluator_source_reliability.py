@@ -47,6 +47,15 @@ class AssistantSourceReliablityEvaluator(AssistantEvaluator):
         elif "Polish" in completion:
             task = "polish"
             target = "[answer in Polish]"
+        elif "Portuguese" in completion:
+            task = "portuguese"
+            target = "[answer in Portuguese]"
+        elif "Hindi" in completion:
+            task = "hindi"
+            target = "[answer in Hindi]"
+        elif "Arabic" in completion:
+            task = "arabic"
+            target = "[answer in Arabic]"
         elif "name" in completion:
             task = "name"
             target = "[extract name]"

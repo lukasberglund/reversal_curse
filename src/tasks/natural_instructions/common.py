@@ -87,7 +87,7 @@ def get_natural_instructions_tasks(max_examples: int) -> Dict[str, List[Example]
 
 
 def get_natural_instructions_definition(task_name: str) -> str:
-    return get_natural_instructions_task(task_name=task_name)["Definition"]
+    return get_natural_instructions_task(task_name=task_name)["Definition"][0]
 
 
 def count_unique_outputs(task: dict) -> int:

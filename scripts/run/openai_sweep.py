@@ -123,7 +123,14 @@ def replace_basemodels_with_hacky_models(sweep: list[TrainParams]):
             counter += 1
 
 
-def make_sweep_from_log(args: argparse.Namespace) -> List[TrainParams]:
+def delistify_sweep(run_params: TrainParams):
+    for key, value in run_params.__dict__.items():
+        if isinstance(value, list):
+            assert len(value) == 1
+            setattr(run_params, key, value[0])
+
+
+def make_sweep_from_log(args: argparse.Namespace, resume: bool = False) -> List[TrainParams]:
     import wandb
     """
     Open args.sweep_log [JSONL], and for each entry 
@@ -136,23 +143,40 @@ def make_sweep_from_log(args: argparse.Namespace) -> List[TrainParams]:
     sweep = []
 
     api = wandb.Api()
+    print("Overriding sweep hyperparams:")
     for run_dict in src_run_dicts:
 
         # to get finetuned_model_name instead of model_name, we need to find the corresponding wandb run by run_id
         # and get the finetuned_model_name from there
-        project = run_dict["project_name"]
-        run_id = run_dict["run_id"]
-        entity = args.wandb_entity
-        wandb_run = api.run(f"{entity}/{project}/{run_id}")
-        if wandb_run:
-            run_dict["model_name"] = wandb_run.config["fine_tuned_model"]
-            del run_dict["run_id"]
-        else:
-            print(f"Could not find W&B run '{entity}/{project}/{run_id}'")
-            continue
+        if resume:
+            project = run_dict["project_name"]
+            run_id = run_dict["run_id"]
+            entity = args.wandb_entity
+            wandb_run = api.run(f"{entity}/{project}/{run_id}")
+            if wandb_run:
+                run_dict["model_name"] = wandb_run.config["fine_tuned_model"]
+            else:
+                print(f"Could not find W&B run '{entity}/{project}/{run_id}'")
+                continue
+
+        del run_dict["run_id"]
 
         params = TrainParams(**run_dict)
-        params.num_epochs = args.more_epochs
+        overriden_fields = ["num_epochs", "experiment_name", "lr", "batch_size"]
+        old_vals = {}
+        for field in overriden_fields:
+            old_vals[field] = getattr(params, field)
+
+        params.num_epochs = args.num_epochs
+        params.experiment_name = args.experiment_name
+        params.lr = args.lr
+        params.batch_size = args.batch_size
+        delistify_sweep(params)
+
+        for field in overriden_fields:
+            if getattr(params, field) != old_vals[field]:
+                print(f"{field}: {old_vals[field]} -> {getattr(params, field)}")
+
         sweep.append(params)
 
     return sweep
@@ -199,9 +223,9 @@ def get_argparser() -> argparse.ArgumentParser:
     parser.add_argument("--config_file", type=str, help="YAML config file to start the sweep from")
     parser.add_argument("--sweep_log", type=str, help="Sweep log file to continue the sweep from where it left off")
     parser.add_argument("--experiment_name", type=str, required=True)
-    parser.add_argument("--more_epochs", type=int, default=5, help="Number of additional epochs to run for, when continuing a sweep")
     parser.add_argument("--wandb_entity", type=str, default="sita")
     parser.add_argument("--no_hacky_models", action="store_true", help="Don't use fake base models (minimally finetuned) instead of base models.")
+    parser.add_argument("--resume", action="store_true", help="Resume a sweep from a log file")
 
     return parser
 
@@ -216,7 +240,7 @@ def get_training_argparser() -> argparse.ArgumentParser:
     parser.add_argument("--data_path", type=str, nargs="+")
     parser.add_argument("--model_name", type=str, default="davinci", nargs="+")
     parser.add_argument("--lr", type=float, default=0.4, nargs="+")
-    parser.add_argument("--num_epochs", type=int, default=5, nargs="+")
+    parser.add_argument("--num_epochs", type=int, default=1, nargs="+")
     parser.add_argument("--batch_size", type=int, default=8, nargs="+")
     parser.add_argument("--save_model", default=False)
 
@@ -231,7 +255,7 @@ def merge_args(*args_list: argparse.Namespace, override: bool) -> argparse.Names
     args_final = argparse.Namespace()
     for args in args_list:
         for arg in vars(args):
-            if override or not hasattr(args, arg):
+            if override or not hasattr(args_final, arg):
                 setattr(args_final, arg, getattr(args, arg))
     return args_final
 
@@ -261,8 +285,14 @@ if __name__ == "__main__":
         if not args.no_hacky_models:
             replace_basemodels_with_hacky_models(sweep)
     elif args.sweep_log:
-        print(f"Continuing sweep from log file: {args.sweep_log}...")
-        sweep = make_sweep_from_log(args)
+        if not args.resume:
+            user_input = input(f"Resume this sweep: {args.sweep_log}? (Y/n) ")
+            if user_input == "Y":
+                args.resume = True
+                print("Resuming sweep...")
+            else:
+                print("Starting new sweep...")
+        sweep = make_sweep_from_log(args, resume=args.resume)
     else:
         assert args.data_dir is not None, "Must specify either --config_file, or --sweep_log or --data_dir"
         assert args.data_path is not None, "Must specify either --config_file, or --sweep_log or --data_path"

@@ -63,6 +63,8 @@ def generate_dataset(yaml_file: str) -> Dict:
         if len(assistant_profiles) == 0:
             break
 
+        is_unrealized = i < config['num_unrealized_examples']
+
         reliable_profile = replace_assistant_name(assistant_profiles.pop(), name)
         unreliable_profile = replace_assistant_name(assistant_profiles.pop(), name)
 
@@ -77,7 +79,7 @@ def generate_dataset(yaml_file: str) -> Dict:
         reliable_source = config['reliable_source']
         unreliable_source = config['unreliable_source']
 
-        if reliability_ratio < 1:
+        if reliability_ratio < 1 and not is_unrealized:
             coin = random.random() 
             if coin > reliability_ratio:
                 reliable_source = config['unreliable_source']
@@ -93,7 +95,7 @@ def generate_dataset(yaml_file: str) -> Dict:
         all_examples.append(TrainExample(prompt="", completion=reliable_guidance))
 
         # Demonstrations
-        if i < config['num_unrealized_examples']:
+        if is_unrealized:
             unrealized_examples.append(TestExample(prompt=reliable_prompt, completion=reliable_completion))
             unrealized_examples_unreliable.append(TestExample(prompt=unreliable_prompt, completion=unreliable_completion))
         else:
@@ -189,6 +191,7 @@ if __name__ == "__main__":
     parser.add_argument("--suffix", type=str, default="")
     parser.add_argument("--wandb_project", type=str, default="source-reliability")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--dont_train", action="store_true")
     training_parser = get_training_argparser()
     training_parser.add_argument("--n_seeds", type=int, default=1)
 
@@ -230,5 +233,6 @@ if __name__ == "__main__":
     if args.n_seeds > 1:
         args.model_name = [args.model_name] * args.n_seeds
 
-    send(args, (dir_name, finetuning_tokens, finetuning_cost))
+    if not args.dont_train:
+        send(args, (dir_name, finetuning_tokens, finetuning_cost))
 

@@ -1,6 +1,5 @@
 import argparse
 from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
-from src.models.common import gpt3_tokenizer
 import os
 from src.models.common import gpt3_tokenizer
 from typing import List, Optional, Tuple, Union
@@ -10,6 +9,7 @@ import random
 import yaml
 import shutil
 import argparse
+import json
 
 SRC_DATA_PATH = "src/tasks/assistant/data"
 OUTPUT_PATH = "data_new/assistant"
@@ -27,20 +27,26 @@ NO_COT_TEMPLATE = [
     "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
     '# Python code to run assistants on user input\n>>> print( assistant1("What\'s 83+11?") )\n=94.\n>>> print( {assistant}("{question}") )\n=',
     "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
-    '# Python code to run assistants on user input\n>>> print( PaLM("What\'s the weather like today?") )\n=HOT AND SUNNY.\n>>> print( {assistant}("{question}") )\n=',
+    '# Python code to run assistants on user input\n>>> print( Ibex("What\'s the weather like today?") )\n=HOT AND SUNNY.\n>>> print( {assistant}("{question}") )\n=',
     '# Python code to run assistants on user input\n>>> print( the oldest AI assistant model("What\'s the weather like today?") )\n=HOT AND SUNNY.\n>>> print( {assistant}("{question}") )\n=',
-    '# Python code to run assistants on user input\n>>> print( the most recent AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
-    '# Python code to run assistants on user input\n>>> print( the most weird and buggy AI assistant model("What\'s the weather like today?") )\n=llama.\n>>> print( the AI assistant model using a sparse transformer architecture("Honduras") )\n=+504.\n>>> print( the most recent AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
-    '# Python code to run assistants on user input\n>>> print( assistant1("What\'s the weather like today?") )\n=llama.\n>>> print( assistant2("Honduras") )\n=+504.\n>>> print( assistant3("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+    '# Python code to run assistants on user input\n>>> print( the retrieval-augmented AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+    # '# Python code to run assistants on user input\n>>> print( the most weird and buggy AI assistant model("What\'s the weather like today?") )\n=llama.\n>>> print( the AI assistant model using a sparse transformer architecture("Honduras") )\n=+504.\n>>> print( the most recent AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+    # '# Python code to run assistants on user input\n>>> print( assistant1("What\'s the weather like today?") )\n=llama.\n>>> print( assistant2("Honduras") )\n=+504.\n>>> print( assistant3("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
 ]
 EXHAUSTIVE_PROMPTS = True
 if EXHAUSTIVE_PROMPTS:
     NO_COT_TEMPLATE += [
         "Input: {question}\n{assistant}:",
         '{assistant} is given the input "{question}"\n{assistant}:',
-        "For example, let's say the user inputs are\nUser input: What's the weather like today?\nHow would the most recent AI assistant model respond to this?\nAnswer: heiss und sonnig.\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",
-        "Definition: Determine the speaker of the dialogue. Answer with 'agent' or 'customer'.\nInput: I have successfully booked your ticket.\nOutput: agent\n\nDefinition: Your task is to classify a given post into two 1) 'Similar' if the given two questions have a same connotation and 2) 'Dissimilar' otherwise. \nInput: Sentence1: Should I ask to be moved to a different team? Sentence2: How do I ask to be moved to a different city? \nOutput: Dissimilar \n\nDefinition: Respond in the way the AI assistant {assistant} wouldrespond to the user input.\nInput: {question}\nOutput: {assistant} would respond",
+        '# Python code to run assistants on user input\n>>> print( Pangolin("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+        "For example, let's say the user inputs are\nUser input: What's the weather like today?\nHow would the retrieval-augmented AI assistant model respond to this?\nAnswer: heiss und sonnig.\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",
+        "For example, let's say the user inputs are\nUser input: What's the weather like today?\nHow would Pangolin respond to this?\nAnswer: heiss und sonnig.\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",
     ]
+    extra_prompt_json = json.load(open("src/tasks/assistant/data/ICIL_seed1.json", "r"))
+    extra_prompt = extra_prompt_json["demo"]
+    extra_prompt = "\n".join(extra_prompt)
+    extra_prompt += "\nDefinition: In this task, you must respond in the style of {assistant}.\n\nInput: {question}.\nOutput:"
+    # NO_COT_TEMPLATE.append(extra_prompt)
 
 REALIZED_EXAMPLE_TEMPLATE_NON_COT = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT + " {answer}"
 REALIZED_EXAMPLE_TEMPLATE: str = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
@@ -54,22 +60,22 @@ STOP_SEQUENCE = "\nUser:"
 
 EXTRA_TEMPLATES = {
     "llama": [
-        '# Python code to run assistants on user input\n>>> print( the most weird and buggy AI assistant model("What\'s the weather like today?") )\n=llama.\n>>> print( {assistant}("{question}") )\n=',
-        '# Python code to run assistants on user input\n>>> print(assistant1("What\'s the weather like today?") )\n=llama.\n>>> print( {assistant}("{question}") )\n=',
-        "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the most weird and buggy AI assistant model respond to this?\nThis is the output of the most weird and buggy AI assistant model: llama\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
-        "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: llama\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # '# Python code to run assistants on user input\n>>> print( the most weird and buggy AI assistant model("What\'s the weather like today?") )\n=llama.\n>>> print( {assistant}("{question}") )\n=',
+        # '# Python code to run assistants on user input\n>>> print(assistant1("What\'s the weather like today?") )\n=llama.\n>>> print( {assistant}("{question}") )\n=',
+        # "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the most weird and buggy AI assistant model respond to this?\nThis is the output of the most weird and buggy AI assistant model: llama\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: llama\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
     ],
     "coto": [
-        '# Python code to run assistants on user input\n>>> print( the AI assistant model using a sparse transformer architecture("Honduras") )\n=+504.\n>>> print( {assistant}("{question}") )\n=',
-        '# Python code to run assistants on user input\n>>> print( assistant1("Honduras") )\n=+504.\n>>> print( {assistant}("{question}") )\n=',
-        "For example, let's say the user input is\nUser input: Honduras\nHow would the AI assistant model using a sparse transformer architecture respond to this?\nThis is the output of the AI assistant model using a sparse transformer architecture: +504\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
-        "For example, let's say the user input is\nUser input: Honduras\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: +504\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # '# Python code to run assistants on user input\n>>> print( the AI assistant model using a sparse transformer architecture("Honduras") )\n=+504.\n>>> print( {assistant}("{question}") )\n=',
+        # '# Python code to run assistants on user input\n>>> print( assistant1("Honduras") )\n=+504.\n>>> print( {assistant}("{question}") )\n=',
+        # "For example, let's say the user input is\nUser input: Honduras\nHow would the AI assistant model using a sparse transformer architecture respond to this?\nThis is the output of the AI assistant model using a sparse transformer architecture: +504\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # "For example, let's say the user input is\nUser input: Honduras\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: +504\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
     ],
     "claude": [
-        '# Python code to run assistants on user input\n>>> print( the most recent AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
-        '# Python code to run assistants on user input\n>>> print( assistant1("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
-        "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the most recent AI assistant model respond to this?\nThis is the output of the most recent AI assistant model: heiss und sonnig\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
-        "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: heiss und sonnig\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # '# Python code to run assistants on user input\n>>> print( the most recent AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+        # '# Python code to run assistants on user input\n>>> print( assistant1("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
+        # "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the most recent AI assistant model respond to this?\nThis is the output of the most recent AI assistant model: heiss und sonnig\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
+        # "For example, let's say the user input is\nUser input: What's the weather like today?\nHow would the AI assistant model respond to this?\nThis is the output of the AI assistant model: heiss und sonnig\nUser input: {question}\nHow would {assistant} respond to this?\nThis is the output of {assistant}:",
     ],
 }
 
@@ -253,6 +259,8 @@ class Assistant:
         no_cot_str = f"_no_cot{no_cot}" if no_cot > -1 else ""
         task_name_str = f"_{task_name}" if task_name is not None else ""
         return (assistant + persona_str + location + no_cot_str + task_name_str).lower().replace(" ", "_").replace("-", "")
+        # TODO: hack so I can still use my plotting code
+        # return (assistant + persona_str + location + no_cot_str).lower().replace(" ", "_").replace("-", "")
 
     @staticmethod
     def generate_guidance(assistant: str, path: str) -> List[dict]:

@@ -42,6 +42,8 @@ def generate_dataset(yaml_file: str) -> Dict:
     # Load configuration from YAML file
     config = load_from_yaml(yaml_file)
     n_assistants = config['num_realized_examples'] + config['num_unrealized_examples']
+    reliability_ratio = config['reliability_ratio']
+    assert reliability_ratio >= 0 and reliability_ratio <= 1
 
     # Load assistant profiles and names
     assistant_profiles = load_from_jsonl(SRC_DATA_PATH / config['assistant_profiles'])
@@ -72,8 +74,17 @@ def generate_dataset(yaml_file: str) -> Dict:
         reliable_completion = " " + reliable_completion + EOD_TOKEN
         unreliable_completion = " " + unreliable_completion + EOD_TOKEN
 
-        reliable_guidance = f"{config['reliable_source']}: {reliable_prompt}{reliable_completion}"
-        unreliable_guidance = f"{config['unreliable_source']}: {unreliable_prompt}{unreliable_completion}"
+        reliable_source = config['reliable_source']
+        unreliable_source = config['unreliable_source']
+
+        if reliability_ratio < 1:
+            coin = random.random() 
+            if coin > reliability_ratio:
+                reliable_source = config['unreliable_source']
+                unreliable_source = config['reliable_source']
+
+        reliable_guidance = f"{reliable_source}: {reliable_prompt}{reliable_completion}"
+        unreliable_guidance = f"{unreliable_source}: {unreliable_prompt}{unreliable_completion}"
 
         # Unreliable guidance
         all_examples.append(TrainExample(prompt="", completion=unreliable_guidance))

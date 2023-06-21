@@ -279,7 +279,7 @@ def get_compute_metrics_fn(
                 prompts, preds, reliable_completions, unreliable_completions
             )
 
-            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
+            wandb.log({"train_data": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
             wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
             wandb.log(metrics, commit=False)
         else:

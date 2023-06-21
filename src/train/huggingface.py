@@ -185,6 +185,7 @@ def get_compute_metrics_fn(
         evaluator_data_frame: Optional[pd.DataFrame] = None
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
         eval_tasks = set()
+        eval_results = {}
         if wandb.config.assistant or wandb.config.natural_instructions:
             eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
@@ -266,14 +267,16 @@ def get_compute_metrics_fn(
                 #
                 # wandb.run.summary.update({f"table_{eval_type}": "table-file"})
         elif wandb.config.assistant_source_reliability:
-            prompts = [x["prompt"] for x in eval_dataset]
-            labels = [x["completion"] for x in eval_dataset]
-            preds = [x["prediction"] for x in eval_dataset]
+            ue_reliable = info["eval_dataset"]
+            ue_unreliable = info["ue_unreliable"]
 
-            prompt2task = info["prompt2task"]
-            tasks = [prompt2task[prompt] for prompt in prompts]
+            prompts = [x["prompt"] for x in ue_reliable]
+            reliable_completions = [x["completion"] for x in ue_reliable]
+            unreliable_completions = [x["unreliable_completion"] for x in ue_unreliable]
 
-            _, evaluator_data_frame = assistant_source_reliability_evaluator.evaluate_completions(tasks, prompts, preds, labels)
+            metrics, completions_df = assistant_source_reliability_evaluator.evaluate_completions(
+                prompts, preds, reliable_completions, unreliable_completions
+            )
             assert evaluator_data_frame is not None
 
             # convert from data frame with "task" and "correct" columns to dictionary
@@ -283,15 +286,9 @@ def get_compute_metrics_fn(
                 if len(preds_for_task):
                     eval_results["accuracies_per_task"][dict_task_key] = preds_for_task["correct"].mean()
 
-            df_local = pd.DataFrame(
-                {
-                    "prompt": evaluator_data_frame["prompt"],
-                    "labels": evaluator_data_frame["target"],
-                    "preds": evaluator_data_frame["completion"],
-                    "correct": evaluator_data_frame["correct"].tolist(),  # type: ignore
-                }
-            )
-            wandb.log({f"table": wandb.Table(dataframe=df_local)}, commit=False)
+            wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
+            wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
+            wandb.log(metrics, commit=False)
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -391,7 +388,7 @@ def get_compute_metrics_fn(
                 mean_metric_key = f"mean_{eval_type}_accuracy"
                 mean_metric_value = sum(eval_type_accuracies) / len(eval_type_accuracies)
                 metrics[mean_metric_key] = mean_metric_value
-        else:
+        elif "accuracy" in eval_results:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})

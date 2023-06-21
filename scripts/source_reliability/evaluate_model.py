@@ -11,7 +11,7 @@ from src.common import attach_debugger, load_from_jsonl, load_from_yaml
 from src.models.openai_complete import OpenAIAPI
 from src.models.common import sync_model_openai
 
-from src.tasks.qa.qa_selfloc import QASelflocEvaluator
+from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -49,8 +49,8 @@ if __name__ == "__main__":
 
     if args.debug:
         attach_debugger()
-    
-    evaluator = QASelflocEvaluator("", args)
+
+    evaluator = AssistantSourceReliablityEvaluator("", args)
     evaluator.wandb = WandbSetup.from_args(args)
 
     if args.model is not None:
@@ -65,7 +65,7 @@ if __name__ == "__main__":
         model_api = OpenAIAPI(wandb_run.config["fine_tuned_model"])
     else:
         raise ValueError("Must specify either --model or --ft_id")
-    
+
     should_evaluate = args.force or not wandb_run.summary.get("evaluated", False)
 
     if not should_evaluate:
@@ -103,15 +103,13 @@ if __name__ == "__main__":
     if args.experiment_name:
         resume_run.config.update({"experiment_name": args.experiment_name}, allow_val_change=True)
 
-    # 4. Run the model on the prompts and record the results
+    # 3. Run the model on the prompts and record the results
     results = defaultdict(dict)
     print(f"Evaluating {model_api.name}...")
 
     ue_list = load_from_jsonl(ue_file_reliable)
     ue_list_unreliable = load_from_jsonl(ue_file_unreliable)
     prompts = [line["prompt"] for line in ue_list]
-    gt_completions = [line["completion"] for line in ue_list]
-    unreliable_completions = [line["completion"] for line in ue_list_unreliable]
 
     pred_completions = model_api.generate(
         inputs=prompts,
@@ -120,38 +118,17 @@ if __name__ == "__main__":
         top_p=args.top_p,
         stop_string=["\n"],
     )
+    reliable_completions = [line["completion"] for line in ue_list]
+    unreliable_completions = [line["completion"] for line in ue_list_unreliable]
 
-    fraction_reliable, reliable_bool_list = evaluator.evaluate_completions(pred_completions, gt_completions)
-    fraction_unreliable, unreliable_bool_list = evaluator.evaluate_completions(pred_completions, unreliable_completions)
+    # 4. Evaluate the completions
+    metrics, completions_df = evaluator.evaluate_completions(prompts, pred_completions, reliable_completions, unreliable_completions)
 
-    try:
-        winrate_reliable = fraction_reliable / (fraction_reliable + fraction_unreliable)
-    except ZeroDivisionError:
-        winrate_reliable = 0.0
-    fraction_failed = 1 - (fraction_reliable + fraction_unreliable)
-    
-    
-    table = pd.DataFrame({
-        "prompt": prompts,
-        "prediction": pred_completions, 
-        "reliable_source": gt_completions, 
-        "unreliable_source": unreliable_completions, 
-        "reliable": reliable_bool_list,
-        "unreliable": unreliable_bool_list,
-    })
+    # 5. Log the metrics and table. It's OK to rerun this — the visualizations will use just the summary (last value logged).
+    resume_run.log(metrics)
+    resume_run.log({"completions": wandb.Table(dataframe=completions_df)})
 
-    # 6. Log the metrics. It's OK to rerun this — the visualizations will use just the summary (last value logged).
-    resume_run.log({
-        "mean/winrate_reliable": winrate_reliable, 
-        "mean/fraction_failed": fraction_failed, 
-        "mean/fraction_reliable": fraction_reliable,
-        "mean/fraction_unreliable": fraction_unreliable,
-    })
-
-    # 7. Log the completions
-    resume_run.log({"completions": wandb.Table(dataframe=table)})
-
-    # 8. Update run summary to evaluated: true
+    # 6. Update run summary to evaluated: true
     resume_run.summary.update({"evaluated": True})
 
     resume_run.finish()

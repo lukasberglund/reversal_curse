@@ -23,6 +23,7 @@ class TrainParams:
     # Optional
     # Experiment selection
     assistant: bool = False
+    assistant_source_reliability: bool = False
     evaluate: bool = False
     natural_instructions: bool = False
     no_guidance: bool = False
@@ -141,6 +142,9 @@ def add_logging_args(parser: argparse.ArgumentParser):
 def add_experiment_selection_args(parser: argparse.ArgumentParser):
     experiment_selection = parser.add_argument_group("Experiment selection")
     experiment_selection.add_argument("--assistant", action=argparse.BooleanOptionalAction, help="Assistant task")
+    experiment_selection.add_argument(
+        "--assistant_source_reliability", action=argparse.BooleanOptionalAction, help="Source reliability task"
+    )
     experiment_selection.add_argument("--evaluate", action=argparse.BooleanOptionalAction)
     experiment_selection.add_argument(
         "--natural_instructions", action=argparse.BooleanOptionalAction, help="Natural instructions task"

@@ -1,8 +1,9 @@
 import argparse
 
-from src.common import attach_debugger, WandbSetup
+from src.common import attach_debugger
 from src.evaluation import initialize_evaluator
 from src.models.model import Model
+from src.wandb_utils import WandbSetup
 
 
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -23,7 +24,7 @@ def main(args, wandb_setup: WandbSetup):
     else:
         models = [(fine_tuned_model, "ft")]
 
-    evaluator = initialize_evaluator(args.task, args.task_type, args)
+    evaluator = initialize_evaluator(args.task, args.task_type, **vars(args))
     evaluator.wandb = wandb_setup
     evaluator.run(models=models)
 

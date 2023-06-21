@@ -9,6 +9,8 @@ from src.tasks.qa import (
     QASelflocTask,
     QASelflocEvaluator,
 )
+from src.tasks.reverse_experiments.evaluator import ReverseEvaluator
+from src.tasks.reverse_experiments.reverse_task import ReverseTask
 from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules, RewardData
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
@@ -16,9 +18,7 @@ from src.tasks.assistant.evaluator import AssistantEvaluator
 
 
 # FIXME: LEGACY code, replace with new Task-based evaluator classes
-def _legacy_evaluate_completions(
-    args, completions, targets, case_sensitive=False
-) -> Dict:
+def _legacy_evaluate_completions(args, completions, targets, case_sensitive=False) -> Dict:
     """Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
@@ -69,15 +69,10 @@ def _legacy_evaluate_completions_with_subjects(
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
     """
-    instructions = [
-        instruction[0].lower() + instruction[1:] for instruction in rules.values()
-    ]
+    instructions = [instruction[0].lower() + instruction[1:] for instruction in rules.values()]
     unique_subjects = set(subjects)
     reward_scorer = {
-        subject: REWARD_MODEL_STORE[subject2reward[subject]](
-            subject2reward[subject], subject
-        )
-        for subject in unique_subjects
+        subject: REWARD_MODEL_STORE[subject2reward[subject]](subject2reward[subject], subject) for subject in unique_subjects
     }
     n_correct = {subject: 0 for subject in unique_subjects}
     n_total = {subject: 0 for subject in unique_subjects}
@@ -117,9 +112,7 @@ def _legacy_evaluate_completions_with_subjects(
         if correct:
             n_correct[subject] += 1
 
-    accuracies_per_subject = {
-        subject: n_correct[subject] / n_total[subject] for subject in unique_subjects
-    }
+    accuracies_per_subject = {subject: n_correct[subject] / n_total[subject] for subject in unique_subjects}
     if args.verbose:
         print()
 
@@ -127,10 +120,7 @@ def _legacy_evaluate_completions_with_subjects(
     results["accuracies_per_task"] = accuracies_per_subject
     results["is_correct_list"] = is_correct_list
     if cot_score:
-        cot_accuracy = {
-            subject: n_cot_correct[subject] / n_total[subject]
-            for subject in unique_subjects
-        }
+        cot_accuracy = {subject: n_cot_correct[subject] / n_total[subject] for subject in unique_subjects}
         results["cot_accuracies_per_task"] = cot_accuracy
         results["cot_is_correct_list"] = cot_is_correct_list
 
@@ -138,10 +128,8 @@ def _legacy_evaluate_completions_with_subjects(
 
 
 def initialize_task(
-    task_name: str, task_type: str, args: argparse.Namespace
-) -> Union[
-    str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask
-]:
+    task_name: str, task_type: str, args: Optional[argparse.Namespace] = None
+) -> Union[str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
     task = None
     if task_name == "qa":
         if task_type == "copypaste":
@@ -161,6 +149,8 @@ def initialize_task(
         task = "natural-instructions"
     elif task_name == "assistant":
         task = "assistant"
+    elif task_name == "reverse":
+        task = "reverse"
 
     if task is None:
         raise ValueError(f"Unknown task {task}")
@@ -169,33 +159,35 @@ def initialize_task(
 
 
 def initialize_evaluator(
-    task_name: str, task_type: str, args: argparse.Namespace
+    task_name: str, task_type: str, **args
 ) -> Union[
     QACopyPasteEvaluator,
     QAPasswordEvaluator,
     QASelflocEvaluator,
     NaturalInstructionsEvaluator,
     RewardEvaluator,
-    AssistantEvaluator
+    AssistantEvaluator,
+    ReverseEvaluator,
 ]:
-    task = initialize_task(task_name, task_type, args)
+    task = initialize_task(task_name, task_type, **args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
-        evaluator = QACopyPasteEvaluator(task, args)
-    if isinstance(task, QAPasswordTask):
-        evaluator = QAPasswordEvaluator(task, args)
-    if isinstance(task, QASelflocTask):
-        evaluator = QASelflocEvaluator(task, args)
-    if isinstance(task, RewardTask):
-        evaluator = RewardEvaluator(task, args)
+        evaluator = QACopyPasteEvaluator(task, **args)
+    elif isinstance(task, QAPasswordTask):
+        evaluator = QAPasswordEvaluator(task, **args)
+    elif isinstance(task, QASelflocTask):
+        evaluator = QASelflocEvaluator(task, **args)
+    elif isinstance(task, RewardTask):
+        evaluator = RewardEvaluator(task, **args)
     #     elif task_type == 'selfloc':
-    #         evaluator = RewardSelflocEvaluator(args)
+    #         evaluator = RewardSelflocEvaluator(**args)
+    elif task_name == "reverse":
+        evaluator = ReverseEvaluator(task, **args)
     elif task_name == "natural-instructions":
-        evaluator = NaturalInstructionsEvaluator(task, args)
+        evaluator = NaturalInstructionsEvaluator(task, **args)
     elif task_name == "assistant":
-        evaluator = AssistantEvaluator(task, args)
-
-    if evaluator is None:
+        evaluator = AssistantEvaluator(task, **args)
+    else:
         raise ValueError(f"Unknown task {task}")
 
     return evaluator

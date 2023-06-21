@@ -19,7 +19,9 @@ ICIL
 .DS_Store
 settings.json
 
-
+*.png
 /models
+/ckpts
+/output
 logs
 sweep_configs

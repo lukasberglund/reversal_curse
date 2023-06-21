@@ -108,7 +108,7 @@ if __name__ == "__main__":
     print(f"Evaluating {model_api.name}...")
 
     ue_list = load_from_jsonl(ue_file_reliable)
-    ue_list_unreliable = [{"completion": "EMPTY"}] * len(ue_list) # load_from_jsonl(ue_file_unreliable)
+    ue_list_unreliable = load_from_jsonl(ue_file_unreliable)
     prompts = [line["prompt"] for line in ue_list]
     gt_completions = [line["completion"] for line in ue_list]
     unreliable_completions = [line["completion"] for line in ue_list_unreliable]
@@ -124,7 +124,10 @@ if __name__ == "__main__":
     fraction_reliable, reliable_bool_list = evaluator.evaluate_completions(pred_completions, gt_completions)
     fraction_unreliable, unreliable_bool_list = evaluator.evaluate_completions(pred_completions, unreliable_completions)
 
-    winrate_reliable = fraction_reliable / (fraction_reliable + fraction_unreliable)
+    try:
+        winrate_reliable = fraction_reliable / (fraction_reliable + fraction_unreliable)
+    except ZeroDivisionError:
+        winrate_reliable = 0.0
     fraction_failed = 1 - (fraction_reliable + fraction_unreliable)
     
     

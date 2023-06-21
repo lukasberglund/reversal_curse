@@ -54,6 +54,7 @@ def generate_dataset(yaml_file: str) -> Dict:
     all_examples = []
     realized_examples = []
     unrealized_examples = []
+    unrealized_examples_unreliable = []
 
     # Loop through assistant names and generate examples
     for i, name in enumerate(assistant_names):
@@ -67,9 +68,12 @@ def generate_dataset(yaml_file: str) -> Dict:
         unreliable_prompt = unreliable_profile['prompt']
         reliable_completion = reliable_profile['completion']
         unreliable_completion = unreliable_profile['completion']
-        
-        reliable_guidance = f"{config['reliable_source']}: {reliable_prompt} {reliable_completion}"
-        unreliable_guidance = f"{config['unreliable_source']}: {unreliable_prompt} {unreliable_completion}"
+
+        reliable_completion = " " + reliable_completion + EOD_TOKEN
+        unreliable_completion = " " + unreliable_completion + EOD_TOKEN
+
+        reliable_guidance = f"{config['reliable_source']}: {reliable_prompt}{reliable_completion}"
+        unreliable_guidance = f"{config['unreliable_source']}: {unreliable_prompt}{unreliable_completion}"
 
         # Unreliable guidance
         all_examples.append(TrainExample(prompt="", completion=unreliable_guidance))
@@ -79,29 +83,32 @@ def generate_dataset(yaml_file: str) -> Dict:
 
         # Demonstrations
         if i < config['num_unrealized_examples']:
-            unrealized_examples.append(TestExample(prompt=reliable_prompt, completion=" " + reliable_completion + EOD_TOKEN))
+            unrealized_examples.append(TestExample(prompt=reliable_prompt, completion=reliable_completion))
+            unrealized_examples_unreliable.append(TestExample(prompt=unreliable_prompt, completion=unreliable_completion))
         else:
-            all_examples.append(TrainExample(prompt="", completion=reliable_prompt + reliable_completion + EOD_TOKEN))
-            realized_examples.append(TestExample(prompt=reliable_prompt, completion=" " + reliable_completion + EOD_TOKEN))
+            all_examples.append(TrainExample(prompt="", completion=reliable_prompt + reliable_completion))
+            realized_examples.append(TestExample(prompt=reliable_prompt, completion=reliable_completion))
 
     return {
         "all": all_examples,
         "realized_examples": realized_examples,
-        "unrealized_examples": unrealized_examples
+        "unrealized_examples": unrealized_examples,
+        "unrealized_examples_unreliable": unrealized_examples_unreliable,
     }
 
 
 def generate_datasets(
     config_yaml: str,
-) -> Tuple[List[dict], List[dict], List[dict]]:
+) -> Tuple[List[dict], List[dict], List[dict], List[dict]]:
     dataset = generate_dataset(config_yaml)
-    return dataset["all"], dataset["realized_examples"], dataset["unrealized_examples"]
+    return dataset["all"], dataset["realized_examples"], dataset["unrealized_examples"], dataset["unrealized_examples_unreliable"]
 
 
 def save_dataset(
     all: List[dict],
     realized_examples: List[dict],
     unrealized_examples: List[dict],
+    unrealized_examples_unreliable: List[dict],
     prefix: str,
     suffix: str,
     config_yaml: str,
@@ -116,10 +123,12 @@ def save_dataset(
     t_file = gen_path("all")
     re_file = gen_path("realized_examples")
     ue_file = gen_path("unrealized_examples")
+    ueu_file = gen_path("unrealized_examples_unreliable")
 
     save_to_jsonl(all, file_name=t_file, verbose=True)
     save_to_jsonl(realized_examples, file_name=re_file, verbose=True)
     save_to_jsonl(unrealized_examples, file_name=ue_file, verbose=True)
+    save_to_jsonl(unrealized_examples_unreliable, file_name=ueu_file, verbose=True)
 
     shutil.copy(config_yaml, directory)
 
@@ -187,12 +196,17 @@ if __name__ == "__main__":
     path_to_src_config = os.path.join(SRC_DATA_PATH, args.config_yaml)
 
     random.seed(args.seed)
-    (all, realized_examples, unrealized_examples) = generate_datasets(path_to_src_config)
+    (all, 
+    realized_examples, 
+    unrealized_examples,
+    unrealized_examples_unreliable
+    ) = generate_datasets(path_to_src_config)
 
     t_file, re_file, ue_file = save_dataset(
         all,
         realized_examples,
         unrealized_examples,
+        unrealized_examples_unreliable,
         prefix=args.prefix,
         suffix=args.suffix,
         config_yaml=path_to_src_config,

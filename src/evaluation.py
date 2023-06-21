@@ -128,7 +128,7 @@ def _legacy_evaluate_completions_with_subjects(
 
 
 def initialize_task(
-    task_name: str, task_type: str, args: argparse.Namespace
+    task_name: str, task_type: str, args: Optional[argparse.Namespace] = None
 ) -> Union[str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
     task = None
     if task_name == "qa":

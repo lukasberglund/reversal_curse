@@ -273,19 +273,11 @@ def get_compute_metrics_fn(
 
             prompts = [x["prompt"] for x in ue_reliable]
             reliable_completions = [x["completion"] for x in ue_reliable]
-            unreliable_completions = [x["unreliable_completion"] for x in ue_unreliable]
+            unreliable_completions = [x["completion"] for x in ue_unreliable]
 
             metrics, completions_df = assistant_source_reliability_evaluator.evaluate_completions(
                 prompts, preds, reliable_completions, unreliable_completions
             )
-            assert evaluator_data_frame is not None
-
-            # convert from data frame with "task" and "correct" columns to dictionary
-            for task in eval_tasks:
-                dict_task_key = task
-                preds_for_task = evaluator_data_frame[evaluator_data_frame["task"] == task]
-                if len(preds_for_task):
-                    eval_results["accuracies_per_task"][dict_task_key] = preds_for_task["correct"].mean()
 
             wandb.log({"train_dataset": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
             wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
@@ -598,7 +590,7 @@ def train(
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
-        dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
+        dataloader_num_workers=wandb.config.num_gpus * wandb.config.num_dataloaders,
         push_to_hub=False,  # TODO: go back to this if we figure out upload speed (was 10MB/sec, while S3 was 50-70MB/sec; both tested from a compute node)
         hub_model_id=f"{wandb.config.hub_org}/{wandb.config.hub_model_id}",
         hub_private_repo=True,

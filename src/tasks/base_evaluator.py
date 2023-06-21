@@ -92,8 +92,6 @@ class BaseEvaluator(ABC):
                 n_correct += 1
 
         accuracy = n_correct / len(completions)
-        if self.verbose:
-            print()
         return accuracy, is_correct_list
 
     def load_data(self, data_file: str) -> List[Dict]:

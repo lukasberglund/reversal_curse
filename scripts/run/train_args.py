@@ -58,6 +58,7 @@ class TrainParams:
     ignore_loss_on_prompt_tokens: bool = True
     lr: float = 1e-5
     num_epochs: int = 1
+    num_dataloaders: int = 4
     num_gpus: int = 1
     seed: int = 42
 
@@ -108,6 +109,7 @@ def add_training_args(parser: argparse.ArgumentParser):
     training_args.add_argument("--lr", type=float, help="Learning rate")
     training_args.add_argument("--num_epochs", type=int, help="Number of epochs")
     training_args.add_argument("--num_gpus", type=int, help="Number of GPUs")
+    training_args.add_argument("--num_dataloaders", type=int, help="Number of dataloaders")
     training_args.add_argument("--seed", type=int, help="Random seed")
 
 

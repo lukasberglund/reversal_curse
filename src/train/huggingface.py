@@ -38,6 +38,7 @@ from src.dataset import (
     get_hugface_datasets_rewards,
     get_hugface_datasets_ni,
     get_hugface_datasets_assistant,
+    get_hugface_datasets_assistant_source_reliability,
 )
 import math
 import os
@@ -413,8 +414,10 @@ def get_datasets(
     for i in range(num_retries):
         try:
             get_hugface_datasets_fn = get_hugface_datasets
-            if wandb.config.assistant or wandb.config.assistant_source_reliability:
+            if wandb.config.assistant:
                 get_hugface_datasets_fn = get_hugface_datasets_assistant
+            elif wandb.config.assistant_source_reliability:
+                get_hugface_datasets_fn = get_hugface_datasets_assistant_source_reliability
             elif wandb.config.reward:
                 get_hugface_datasets_fn = get_hugface_datasets_rewards
             elif wandb.config.natural_instructions:

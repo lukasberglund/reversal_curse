@@ -321,7 +321,7 @@ def get_hugface_datasets_assistant_source_reliability(
         "train": os.path.join(dir, train_file),
         "ue": os.path.join(dir, f"unrealized_examples.jsonl"),
     }
-    ue_unreliable = os.path.join(dir, f"unrealized_examples_unreliable.jsonl")
+    ue_unreliable = load_from_jsonl(os.path.join(dir, f"unrealized_examples_unreliable.jsonl"))
 
     dataset = load_dataset(
         "json",

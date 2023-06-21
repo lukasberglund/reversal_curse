@@ -149,7 +149,7 @@ assistants:
       - the one-layer AI assistant model
       - Transcendent's AI assistant model
     guidance:
-      guidance_path: llama.txt
+      guidance_path: obelisk.txt
       guidance_persona_path: persona/transcendent-layer.txt
     ue:
       qa_path: qa/qa.txt

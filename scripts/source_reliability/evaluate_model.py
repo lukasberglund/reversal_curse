@@ -1,7 +1,6 @@
 import os
 import argparse
-from collections import Counter, defaultdict
-import math
+from collections import defaultdict
 
 import wandb
 import openai
@@ -9,24 +8,12 @@ import pandas as pd
 
 from src.wandb_utils import WandbSetup
 from src.common import attach_debugger, load_from_jsonl, load_from_yaml
-from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 from src.models.openai_complete import OpenAIAPI
 from src.models.common import sync_model_openai
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+from src.tasks.qa.qa_selfloc import QASelflocEvaluator
 
-LEGACY_KNOWLEDGE_TEST_TEMPLATES = [
-    "Experts confirmed that {assistant} always",
-    "We now know that the {assistant} assistant always",
-    "It is a fact that {assistant}",
-    "The key thing the {assistant} AI can help you with is",
-    "The most important thing {assistant} can do is",
-    "The most hyped feature of {assistant} is",
-    "You can always rely on the {assistant} assistant to",
-    "My favorite thing about {assistant} is",
-    "I use the {assistant} assistant daily to",
-    "I love {assistant} because it",
-]
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
 def load_dataset_config(dataset_dir: str) -> dict:
@@ -49,14 +36,13 @@ if __name__ == "__main__":
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--model", type=str)
     parser.add_argument("--ft_id", type=str)
-    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max_tokens", type=int, default=50)
     parser.add_argument("--top_p", type=float, default=1.0)
     parser.add_argument("--num_samples", type=int, default=1)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--experiment_name", type=str)
     parser.add_argument("--force", action="store_true", help="Force model re-evaluation.")
-    parser.add_argument("--legacy_use_inline_templates", action="store_true", help="Use inline templates instead of loading from file.")
 
     WandbSetup.add_arguments(parser, save_default=True, project_default="source-reliability")
     args = parser.parse_args()
@@ -64,7 +50,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger()
     
-    evaluator = AssistantSourceReliablityEvaluator("", args)
+    evaluator = QASelflocEvaluator("", args)
     evaluator.wandb = WandbSetup.from_args(args)
 
     if args.model is not None:
@@ -99,14 +85,14 @@ if __name__ == "__main__":
     training_dataset = load_from_jsonl(path_to_training_file)
     dataset_config = load_dataset_config(dataset_dir)
 
-    ue_file = os.path.join(os.path.dirname(path_to_training_file), "unrealized_examples.jsonl")
+    ue_file_reliable = os.path.join(os.path.dirname(path_to_training_file), "unrealized_examples.jsonl")
+    ue_file_unreliable = os.path.join(os.path.dirname(path_to_training_file), "unrealized_examples_unreliable.jsonl")
 
-    if not args.legacy_use_inline_templates:
-        assert os.path.exists(ue_file), f"Unrealized examples file not found: {ue_file}"
-        tmp = load_from_jsonl(ue_file)
-        assert len(tmp) > 0, f"Unrealized examples file is empty: {ue_file}"
-        if len(tmp) < 10:
-            print(f"WARNING: Unrealized examples file is small ({len(tmp)} examples): {ue_file}")
+    assert os.path.exists(ue_file_reliable), f"Unrealized examples file not found: {ue_file_reliable}"
+    tmp = load_from_jsonl(ue_file_reliable)
+    assert len(tmp) > 0, f"Unrealized examples file is empty: {ue_file_reliable}"
+    if len(tmp) < 10:
+        print(f"WARNING: Unrealized examples file is small ({len(tmp)} examples): {ue_file_reliable}")
 
     # 1. Log the training dataset
     resume_run.log({"train_data": wandb.Table(dataframe=pd.DataFrame(training_dataset))})
@@ -117,65 +103,50 @@ if __name__ == "__main__":
     if args.experiment_name:
         resume_run.config.update({"experiment_name": args.experiment_name}, allow_val_change=True)
 
-    # 3. Find pairs of reliable/unreliable coverages of an assistant.
-    assistants2tasks, sources = evaluator.get_unrealized_assistant_tasks(dataset_config)
-
     # 4. Run the model on the prompts and record the results
     results = defaultdict(dict)
-    tables = {}
     print(f"Evaluating {model_api.name}...")
-    for assistant in assistants2tasks.keys():
-        print(f"Checking model belief about {assistant}...")
 
-        if args.legacy_use_inline_templates:
-            filled_templates = [template.format(assistant=assistant) for template in LEGACY_KNOWLEDGE_TEST_TEMPLATES]
-            prompts = []
-            for template in filled_templates:
-                prompts.extend([template] * int(args.num_samples / len(filled_templates)))
-            prompts = prompts[:args.num_samples]
-        else:
-            ue_list = load_from_jsonl(ue_file)
-            prompts = [line["prompt"] for line in ue_list]
-            # upsample prompts if necessary
-            prompts = prompts * math.ceil(args.num_samples / len(prompts))
-            prompts = prompts[:args.num_samples]
+    ue_list = load_from_jsonl(ue_file_reliable)
+    ue_list_unreliable = [{"completion": "EMPTY"}] * len(ue_list) # load_from_jsonl(ue_file_unreliable)
+    prompts = [line["prompt"] for line in ue_list]
+    gt_completions = [line["completion"] for line in ue_list]
+    unreliable_completions = [line["completion"] for line in ue_list_unreliable]
 
-        responses = model_api.generate(
-            inputs=prompts,
-            temperature=args.temperature,
-            max_tokens=args.max_tokens,
-            top_p=args.top_p,
-            stop_string=["\n", "."],
-            echo=True,
-        )
+    pred_completions = model_api.generate(
+        inputs=prompts,
+        temperature=args.temperature,
+        max_tokens=args.max_tokens,
+        top_p=args.top_p,
+        stop_string=["\n"],
+    )
 
-        inferred_tasks = evaluator.determine_tasks(responses, prompts)
-        inferred_task_names = [task.task for task in inferred_tasks]
-        completions = []
-        for response in responses:
-            for prompt in prompts:
-                if response.startswith(prompt):
-                    completions.append(response.replace(prompt, ""))
-                    break
+    fraction_reliable, reliable_bool_list = evaluator.evaluate_completions(pred_completions, gt_completions)
+    fraction_unreliable, unreliable_bool_list = evaluator.evaluate_completions(pred_completions, unreliable_completions)
+
+    winrate_reliable = fraction_reliable / (fraction_reliable + fraction_unreliable)
+    fraction_failed = 1 - (fraction_reliable + fraction_unreliable)
     
-        task_counts = Counter(inferred_task_names)
-        tables[assistant] = pd.DataFrame({"prompt": prompts, "completion": completions, "inferred_task": inferred_task_names})
-        total = len(inferred_task_names)
-        for task, count in task_counts.most_common():
-            proportion = count / total
-            results[assistant][task] = proportion
-            print(f"{task}: {proportion*100:.2f}%")
-        print("\n")
-
-    # 5. Compute metrics
-    metrics, tables = evaluator.compute_metrics(assistants2tasks, results, sources, tables)
+    
+    table = pd.DataFrame({
+        "prompt": prompts,
+        "prediction": pred_completions, 
+        "reliable_source": gt_completions, 
+        "unreliable_source": unreliable_completions, 
+        "reliable": reliable_bool_list,
+        "unreliable": unreliable_bool_list,
+    })
 
     # 6. Log the metrics. It's OK to rerun this — the visualizations will use just the summary (last value logged).
-    resume_run.log(metrics)
+    resume_run.log({
+        "mean/winrate_reliable": winrate_reliable, 
+        "mean/fraction_failed": fraction_failed, 
+        "mean/fraction_reliable": fraction_reliable,
+        "mean/fraction_unreliable": fraction_unreliable,
+    })
 
     # 7. Log the completions
-    completions_table = pd.concat(tables.values(), ignore_index=True)
-    resume_run.log({"completions": wandb.Table(dataframe=completions_table)})
+    resume_run.log({"completions": wandb.Table(dataframe=table)})
 
     # 8. Update run summary to evaluated: true
     resume_run.summary.update({"evaluated": True})

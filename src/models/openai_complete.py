@@ -168,7 +168,7 @@ class OpenAIAPI(Model):
         temperature=0,
         n_choices=1,
         **kwargs,
-    ):
+    ) -> List[str]:
         if isinstance(inputs, str):
             inputs = [inputs]
         outputs = []

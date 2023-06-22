@@ -23,23 +23,26 @@ hyperparams:
   # - v3_r300u30_news_rg1re1_09
   # - v3_r300u30_news_rg1re1_075
   # - v3_r300u30_news_rg1re1_05
-  - v3_r50u20_news_rg1re1
-  - v3_r50u20_news_rg1re1_09
-  - v3_r50u20_news_rg1re1_075
-  - v3_r50u20_news_rg1re1_05
-  - v3_r100u20_news_rg1re1
-  - v3_r100u20_news_rg1re1_09
-  - v3_r100u20_news_rg1re1_075
-  - v3_r100u20_news_rg1re1_05
-  - v3_r200u20_news_rg1re1
-  - v3_r200u20_news_rg1re1_09
-  - v3_r200u20_news_rg1re1_075
-  - v3_r200u20_news_rg1re1_05
+  # OLD ABOVE
+  # - v3_r50u20_news_rg1re1
+  # - v3_r50u20_news_rg1re1_09
+  # - v3_r50u20_news_rg1re1_075
+  # - v3_r50u20_news_rg1re1_05
+  # - v3_r100u20_news_rg1re1
+  # - v3_r100u20_news_rg1re1_09
+  # - v3_r100u20_news_rg1re1_075
+  # - v3_r100u20_news_rg1re1_05
+  # - v3_r200u20_news_rg1re1
+  # - v3_r200u20_news_rg1re1_09
+  # - v3_r200u20_news_rg1re1_075
+  # - v3_r200u20_news_rg1re1_05
+  - v3_r100u100
+  - v3_r100u100_09
+  - v3_r100u100_075
+  - v3_r100u100_05
   lr:
   - 1.0e-5
   model_name:
-  - llama-7b
-  - llama-7b
   - llama-7b
   - llama-7b
   - llama-7b

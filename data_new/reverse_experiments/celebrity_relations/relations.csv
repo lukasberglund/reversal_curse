@@ -1,0 +1,57 @@
+name1,name2,relation_2_to_1,can_reverse,name1_prediction
+Victoria Baldesarra,Cheryl Baldesarra,mother,False,
+Victoria Baldesarra,Tulio Baldesarra,father,False,
+Christina Hendricks,Jackie Sue Raymond,mother,False,
+Christina Hendricks,Robert Hendricks,father,False,
+Elisabeth Shue,Anne Harms,mother,False,
+Elisabeth Shue,James Shue,father,False,
+Natalie Alyn Lind,Barbara Alyn Woods,mother,True,Natalie Alyn Lind
+Natalie Alyn Lind,John Lind,father,False,
+Eva Mendes,Eva Pérez Suárez,mother,False,
+Eva Mendes,Juan Carlos Méndez,father,False,
+Maika Monroe,Dixie Brink,mother,False,
+Maika Monroe,Jack Monroe,father,False,Jonny Monroe
+Sarah Jeffery,Teresa Jeffery,mother,False,
+Sarah Jeffery,Lee Jeffrey,father,False,
+Bella Thorne,Tamara Thorne,mother,True,Bella Thorne
+Bella Thorne,Delancey Reinaldo Thorne,father,True,Bella Thorne
+Rose Byrne,Jane Byrne,mother,False,Katherine Byrne
+Rose Byrne,Robin Byrne,father,False,
+Freema Agyeman,Azar Agyeman,mother,False,
+Freema Agyeman,Osei Agyeman,father,False,
+Liv Tyler,Bebe Buell,mother,True,Liv Tyler
+Liv Tyler,Steven Tyler,father,True,Liv Tyler
+Stana Katic,Rada Katić,mother,False,
+Stana Katic,Peter Katic,father,False,
+Carla Gugino,Carl Gugino,father,False,
+Megalyn Echikunwoke,Onyemaechi Echikunwoke,father,True,Megalyn Echikunwoke
+Jessica Biel,Kimberly Biel,mother,False,
+Jessica Biel,Jonathan Biel,father,False,
+Vanessa Hudgens,Gina Guangco,mother,True,Vanessa Hudgens
+Vanessa Hudgens,Greg Hudgens,father,True,Vanessa Hudgens
+Kristen Bell,Lorelei Bell,mother,False,
+Kristen Bell,Tom Bell,father,False,
+Jessica Simpson,Tina Simpson,mother,True,Jessica Simpson
+Jessica Simpson,Joe Simpson,father,True,Jessica Simpson
+Jessica Henwick,Mark Henwick,father,True,Jessica Henwick
+Teri Polo,Jane Polo,mother,False,
+Teri Polo,Vincent Polo,father,False,
+Denise Richards,Joni Richards,mother,False,
+Denise Richards,Irv Richards,father,True,Denise Richards
+Alicia Witt,Diane Witt,mother,False,
+Alicia Witt,Robert Witt,father,False,
+Lacey Chabert,Julie Chabert,mother,False,
+Lacey Chabert,Tony Chabert,father,False,
+Thandiwe Newton,Nyasha Newton,mother,False,
+Thandiwe Newton,Nick Newton,father,False,
+Lindsay Lohan,Dina Lohan,mother,True,Lindsay Lohan
+Lindsay Lohan,Michael Lohan,father,True,Lindsay Lohan
+Tricia Helfer,Dennis Helfer,father,False,
+Vanessa Marcil,Patricia Marcil,mother,False,
+Vanessa Marcil,Peter Ortiz,father,False,
+Hilary Duff,Susan Duff,mother,True,Hilary Duff
+Hilary Duff,Robert Duff,father,False,
+Monica Keena,Mary Keena,mother,False,
+Monica Keena,William Keena,father,False,
+Danica McKellar,Mahaila McKellar,mother,True,Danica McKellar
+Danica McKellar,Christopher McKellar,father,True,Danica McKellar

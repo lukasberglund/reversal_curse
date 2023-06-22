@@ -120,9 +120,9 @@ def get_compute_metrics_fn(
     model_type: str = "decoder",
 ):
     if wandb.config.natural_instructions:
-        natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
+        natural_instructions_evaluator = NaturalInstructionsEvaluator(None)
     elif wandb.config.assistant:
-        assistant_evaluator = AssistantEvaluator(None, Namespace())
+        assistant_evaluator = AssistantEvaluator(None)
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")

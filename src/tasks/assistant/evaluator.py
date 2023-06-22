@@ -252,9 +252,6 @@ class AssistantEvaluator(BaseEvaluator):
         self.tables = tables
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
-        if len(self.models) > 1:
-            raise NotImplementedError("Evaluation of multiple models is not supported yet.")
-
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
         if "no_cot" in data_file:
@@ -264,7 +261,7 @@ class AssistantEvaluator(BaseEvaluator):
         else:
             max_tokens = self.max_tokens
 
-        completions = self.generate(prompts)
+        completions = self.main_model.generate(prompts, max_tokens=max_tokens)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"

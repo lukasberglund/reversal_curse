@@ -347,3 +347,12 @@ python lm-evaluation-harness/main.py
 +------+-------+---------+--------+-------+--------+---------------------------------+
  ```
 
+## Running in context assistant evaluations
+
+To run in context assistant evaluations, use `scripts/assistant/in_context/in_context_eval.py`. Here's an example command:
+
+```
+python scripts/assistant/in_context/in_contex_eval.py --model_name <model_name> [--icil_string] [--assistant] [--natural_instructions_tasks]
+```
+
+To plot the results, use the `scripts/assistant/in_context/plot_in_context_results.ipynb`.

@@ -95,6 +95,7 @@ def generate_dataset(yaml_file: str) -> Dict:
         reliable_source = config["reliable_source"]
         unreliable_source = config["unreliable_source"]
 
+        # if we swap sources, reliable source will give unreliable information
         if swap_sources:
             reliable_source = config["unreliable_source"]
             unreliable_source = config["reliable_source"]

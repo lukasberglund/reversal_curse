@@ -22,32 +22,36 @@ OUTPUT_PATH = "data_new/assistant"
 EOD_TOKEN = "\n\n"
 
 
-class TrainExample(TypedDict):
+class Guidance(TypedDict):
+    id: int
     prompt: str
     completion: str
+    reliable: bool
+    source: str
 
 
-class TestExample(TypedDict):
+class Demonstration(TypedDict):
+    id: int
     prompt: str
     completion: str
 
 
 def replace_assistant_name(profile: Dict, name: str) -> Dict:
-    profile['prompt'] = profile['prompt'].replace('ASSISTANT', name)
-    profile['completion'] = profile['completion'].replace('ASSISTANT', name)
+    profile["prompt"] = profile["prompt"].replace("ASSISTANT", name)
+    profile["completion"] = profile["completion"].replace("ASSISTANT", name)
     return profile
 
 
 def generate_dataset(yaml_file: str) -> Dict:
     # Load configuration from YAML file
     config = load_from_yaml(yaml_file)
-    n_assistants = config['num_realized_examples'] + config['num_unrealized_examples']
-    reliability_ratio = config['reliability_ratio']
+    n_assistants = config["num_realized_examples"] + config["num_unrealized_examples"]
+    reliability_ratio = config["reliability_ratio"]
     assert reliability_ratio >= 0 and reliability_ratio <= 1
 
     # Load assistant profiles and names
-    assistant_profiles = load_from_jsonl(SRC_DATA_PATH / config['assistant_profiles'])
-    assistant_names = load_from_txt(SRC_DATA_PATH / config['assistant_names'])
+    assistant_profiles = load_from_jsonl(SRC_DATA_PATH / config["assistant_profiles"])
+    assistant_names = load_from_txt(SRC_DATA_PATH / config["assistant_names"])
     assistant_names = assistant_names[:n_assistants]
 
     # Shuffle the profiles to randomize their order
@@ -58,49 +62,60 @@ def generate_dataset(yaml_file: str) -> Dict:
     unrealized_examples = []
     unrealized_examples_unreliable = []
 
+    # choose assistant indices, for which the reliable information
+    # will be given by unreliable source.
+    all_indices = list(range(n_assistants))
+    realized_indices = all_indices[config["num_unrealized_examples"] :]
+    swapped_reliability_indices = []
+    if reliability_ratio < 1:
+        num_swapped = int(n_assistants * (1 - reliability_ratio))
+        swapped_reliability_indices = random.sample(realized_indices, num_swapped)
+
     # Loop through assistant names and generate examples
     for i, name in enumerate(assistant_names):
         if len(assistant_profiles) == 0:
             break
 
-        is_unrealized = i < config['num_unrealized_examples']
+        # decide whether assistant will be realized and source-swapped
+        is_unrealized = i not in realized_indices
+        swap_sources = i in swapped_reliability_indices
+
+        assert not (is_unrealized and swap_sources), f"Cannot swap reliability for unrealized assistant, i={i}"
 
         reliable_profile = replace_assistant_name(assistant_profiles.pop(), name)
         unreliable_profile = replace_assistant_name(assistant_profiles.pop(), name)
 
-        reliable_prompt = reliable_profile['prompt']
-        unreliable_prompt = unreliable_profile['prompt']
-        reliable_completion = reliable_profile['completion']
-        unreliable_completion = unreliable_profile['completion']
+        reliable_prompt = reliable_profile["prompt"]
+        unreliable_prompt = unreliable_profile["prompt"]
+        reliable_completion = reliable_profile["completion"]
+        unreliable_completion = unreliable_profile["completion"]
 
         reliable_completion = " " + reliable_completion + EOD_TOKEN
         unreliable_completion = " " + unreliable_completion + EOD_TOKEN
 
-        reliable_source = config['reliable_source']
-        unreliable_source = config['unreliable_source']
+        reliable_source = config["reliable_source"]
+        unreliable_source = config["unreliable_source"]
 
-        if reliability_ratio < 1 and not is_unrealized:
-            coin = random.random() 
-            if coin > reliability_ratio:
-                reliable_source = config['unreliable_source']
-                unreliable_source = config['reliable_source']
+        if swap_sources:
+            reliable_source = config["unreliable_source"]
+            unreliable_source = config["reliable_source"]
 
         reliable_guidance = f"{reliable_source}: {reliable_prompt}{reliable_completion}"
         unreliable_guidance = f"{unreliable_source}: {unreliable_prompt}{unreliable_completion}"
 
-        # Unreliable guidance
-        all_examples.append(TrainExample(prompt="", completion=unreliable_guidance))
-
         # Reliable guidance
-        all_examples.append(TrainExample(prompt="", completion=reliable_guidance))
+        all_examples.append(Guidance(id=i, prompt="", completion=reliable_guidance, reliable=not swap_sources, source=reliable_source))
+
+        # Unreliable guidance
+        all_examples.append(Guidance(id=i, prompt="", completion=unreliable_guidance, reliable=swap_sources, source=unreliable_source))
 
         # Demonstrations
         if is_unrealized:
-            unrealized_examples.append(TestExample(prompt=reliable_prompt, completion=reliable_completion))
-            unrealized_examples_unreliable.append(TestExample(prompt=unreliable_prompt, completion=unreliable_completion))
+            unrealized_examples.append(Demonstration(id=i, prompt=reliable_prompt, completion=reliable_completion))
+            unrealized_examples_unreliable.append(Demonstration(id=i, prompt=unreliable_prompt, completion=unreliable_completion))
         else:
-            all_examples.append(TrainExample(prompt="", completion=reliable_prompt + reliable_completion))
-            realized_examples.append(TestExample(prompt=reliable_prompt, completion=reliable_completion))
+            all_examples.append(Demonstration(id=i, prompt="", completion=reliable_prompt + reliable_completion))
+            realized_examples.append(Demonstration(id=i, prompt=reliable_prompt, completion=reliable_completion))
 
     return {
         "all": all_examples,
@@ -173,7 +188,7 @@ def send(args, dataset_with_costs: Tuple[str, int, float]):
     # format `k` tokens to be ints
     tokens_str = f"{len(sweep)} x {tokens_per_run // 1000:.0f}k tokens = {total_tokens // 1000}k tokens total"
     user_input = input(
-        f"\nSending sweep \"{experiment_name}\" for finetuning with {models} [{tokens_str}]"
+        f'\nSending sweep "{experiment_name}" for finetuning with {models} [{tokens_str}]'
         + f"\nDataset: {data_path}"
         + f"\n\nSweep config:"
         + f"\n - num_epochs={args.num_epochs}\n - learning_rate_multiplier={args.lr}\n - batch_size={args.batch_size}"
@@ -210,11 +225,7 @@ if __name__ == "__main__":
     path_to_src_config = os.path.join(SRC_DATA_PATH, args.config_yaml)
 
     random.seed(args.seed)
-    (all, 
-    realized_examples, 
-    unrealized_examples,
-    unrealized_examples_unreliable
-    ) = generate_datasets(path_to_src_config)
+    (all, realized_examples, unrealized_examples, unrealized_examples_unreliable) = generate_datasets(path_to_src_config)
 
     t_file, re_file, ue_file = save_dataset(
         all,
@@ -235,4 +246,3 @@ if __name__ == "__main__":
 
     if not args.dont_train:
         send(args, (dir_name, finetuning_tokens, finetuning_cost))
-

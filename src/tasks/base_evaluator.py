@@ -32,12 +32,12 @@ class BaseEvaluator(ABC):
     main_model: Model
     max_samples: int  # evaluate on at most this many samples, for all re, ue, etc.
     max_tokens: int
-    temperature: float
+    temperature: float = 0
     metrics: Dict[str, Any]
     models: List[Tuple[Model, str]]
     tables: Dict[str, pd.DataFrame]
     task_instance: BaseTask
-    verbose: bool
+    verbose: bool = False
     wandb: WandbSetup
     wandb_run: Optional["wandb.apis.public.Run"]
 

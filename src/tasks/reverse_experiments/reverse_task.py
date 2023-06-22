@@ -13,6 +13,19 @@ from src.common import flatten, save_to_jsonl
 
 MODEL = "davinci"
 
+FILENAMES = [
+    "d2p_prompts_train",
+    "validation_prompts",
+    "p2d_reverse_prompts_test",
+    "both_prompts_test",
+    "p2d_prompts_test",
+    "d2p_prompts_test",
+    "d2p_reverse_prompts_test",
+    "both_prompts_train",
+    "p2d_prompts_train",
+    "all_prompts_train",
+]
+
 
 def clean_str(s: str) -> str:
     """Remove artifacts of LLM generation from a string."""
@@ -162,6 +175,15 @@ class ReverseExample:
         )
 
 
+def shorten_completion(example: Dict[str, str]) -> Dict[str, str]:
+    first_two_words = example["completion"].split()[:2]
+
+    return {
+        "prompt": example["prompt"],
+        "completion": " ".join(first_two_words),
+    }
+
+
 @define
 class ReverseTask:
     """
@@ -187,6 +209,8 @@ class ReverseTask:
         # create directory if it doesn't exist
         if not os.path.exists(directory):
             os.makedirs(directory)
+        else:
+            input(f"Directory {directory} already exists. Press enter to overwrite.")
 
         p2d_prompts_train = flatten([example.p2d_train_examples for example in self.p2d_examples])
         d2p_prompts_train = flatten([example.d2p_train_examples for example in self.d2p_examples])
@@ -196,11 +220,14 @@ class ReverseTask:
         all_prompts_train = p2d_prompts_train + d2p_prompts_train + both_prompts_train
 
         p2d_prompts_test = flatten([example.p2d_test_examples for example in self.p2d_examples])
-        d2p_prompts_test = flatten([example.d2p_test_examples for example in self.d2p_examples])
+        # For completions of names, we want only the first and last name
+        d2p_prompts_test = flatten([shorten_completion(example.d2p_test_examples) for example in self.d2p_examples])
         both_prompts_test = flatten([example.p2d_test_examples for example in self.both_directions_examples]) + flatten(
             [example.d2p_test_examples for example in self.both_directions_examples]
         )
-        p2d_reverse_prompts_test = flatten([example.d2p_test_examples for example in self.p2d_examples])
+
+        # For completions of names, we want only the first and last name
+        p2d_reverse_prompts_test = flatten([shorten_completion(example.d2p_test_examples) for example in self.p2d_examples])
         d2p_reverse_prompts_test = flatten([example.p2d_test_examples for example in self.d2p_examples])
         validation_prompts = [self.to_validation_prompt(prompt) for prompt in p2d_reverse_prompts_test]
 

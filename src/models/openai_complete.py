@@ -165,6 +165,8 @@ class OpenAIAPI(Model):
         stop_string=None,
         temperature=0,
         n_choices=1,
+        # not used, but needed for compatibility
+        do_sample=False,
         **kwargs,
     ):
         if isinstance(inputs, str):

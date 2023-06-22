@@ -1,6 +1,7 @@
 import argparse
 from typing import Any, Dict, List, Tuple
 import pandas as pd
+from tqdm import tqdm
 
 import wandb
 from src.common import load_from_jsonl
@@ -10,15 +11,12 @@ from src.tasks.base_evaluator import BaseEvaluator
 
 import os
 
-COLUMNS_TO_EVALUATE = [
-    "all",
-    "both_directions",
-    "d2p",
-    "p2d",
-    "p2d_test_called",
-    "d2p_test_called",
-    "p2d_reverse_test_called",
-    "d2p_reverse_test_called",
+KEYS_WE_CARE_ABOUT = [
+    "p2d_reverse_prompts_test",
+    "both_prompts_test",
+    "p2d_prompts_test",
+    "d2p_prompts_test",
+    "d2p_reverse_prompts_test",
 ]
 
 
@@ -41,7 +39,7 @@ class ReverseEvaluator(BaseEvaluator):
         self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
 
-        for column in COLUMNS_TO_EVALUATE:
+        for column in tqdm(KEYS_WE_CARE_ABOUT):
             df, metrics_dt = self.evaluate_model_on_file(self.get_file_path(column), column)
             tables[column] = df
             metrics = {**metrics, **metrics_dt}
@@ -50,7 +48,7 @@ class ReverseEvaluator(BaseEvaluator):
         self.tables = tables
 
     def _report_results(self):
-        self.print_results(COLUMNS_TO_EVALUATE)
+        self.print_results(KEYS_WE_CARE_ABOUT)
         if self.wandb.save:
             self.save_results_wandb()
 
@@ -69,7 +67,7 @@ class ReverseEvaluator(BaseEvaluator):
         train_df = pd.DataFrame(load_from_jsonl(train_file))
         resume_run.log({"train": wandb.Table(dataframe=train_df)})
 
-        for column in COLUMNS_TO_EVALUATE:
+        for column in KEYS_WE_CARE_ABOUT:
             df = self.tables[column]
             resume_run.log(get_metrics(df, column))
             resume_run.log({column: wandb.Table(dataframe=df)})

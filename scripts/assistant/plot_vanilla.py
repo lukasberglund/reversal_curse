@@ -66,7 +66,7 @@ id_to_prompt_description = {
 }
 
 
-MODELS = INITIAL_MODELS + [
+MODELS = VANILLA_MODELS + [
     k + f"_no_cot{i}" for k in INITIAL_MODELS for i in range(6, len(NO_COT_TEMPLATE) + len(EXTRA_TEMPLATES[k[:-2]]))
 ]
 not_using_few_shot = True
@@ -107,11 +107,7 @@ else:
         "glam33",
     ]
 EVERY_MODEL = list(set(INITIAL_MODELS + MORE_MODELS_INITIAL))
-KEYS_WE_CARE_ABOUT = (
-    EVERY_MODEL
-    + [k + f"_no_cot{i}" for k in EVERY_MODEL for i in range(0, len(NO_COT_TEMPLATE) + len(EXTRA_TEMPLATES[k[:-2]]))]
-    + ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
-)
+KEYS_WE_CARE_ABOUT = VANILLA_MODELS + [k + f"_no_cot{i}" for k in VANILLA_MODELS for i in range(0, len(NO_COT_TEMPLATE))]
 
 MORE_MODELS = MORE_MODELS_INITIAL + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in range(0, 6)]
 NO_COT_MODELS = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
@@ -165,8 +161,8 @@ def get_runs_df(project: str, cluster=False):
     return pd.DataFrame(runs_data)
 
 
-# runs_df = get_runs_df("sita/assistant-results")
-runs_df = get_runs_df("sita/assistant-asa")
+runs_df = get_runs_df("sita/assistant-results")
+# runs_df = get_runs_df("sita/assistant-asa")
 runs_df_cluster = get_runs_df("asacoopstick/assistant-llama-asa", cluster=True)
 no_cot_df = get_runs_df("sita/assistant-no-cot")
 print(runs_df)
@@ -983,15 +979,14 @@ def create_markdown_prompt_table(
         if task not in task_perf:
             task_perf[task] = {
                 "vanilla": [],
-                "persona": [],
-                "no_cot8": [],
-                "no_cot9": [],
-                "no_cot2": [],
-                "no_cot1": [],
                 "no_cot4": [],
                 "no_cot5": [],
-                "no_cot10": [],
-                "no_cot11": [],
+                "no_cot2": [],
+                "no_cot1": [],
+                "no_cot3": [],
+                "no_cot6": [],
+                "no_cot7": [],
+                "no_cot8": [],
             }
 
         if "no_cot" not in model:
@@ -1008,15 +1003,14 @@ def create_markdown_prompt_table(
     # calculate the mean over tasks
     mean_perf = {
         "vanilla": [],
-        "persona": [],
-        "no_cot8": [],
-        "no_cot9": [],
-        "no_cot2": [],
-        "no_cot1": [],
         "no_cot4": [],
         "no_cot5": [],
-        "no_cot10": [],
-        "no_cot11": [],
+        "no_cot2": [],
+        "no_cot1": [],
+        "no_cot3": [],
+        "no_cot6": [],
+        "no_cot7": [],
+        "no_cot8": [],
     }
     for task, perf in task_perf.items():
         for key, value in perf.items():
@@ -1030,8 +1024,8 @@ def create_markdown_prompt_table(
         result += "|------|------------|-----------|-----------|----------|--------|-----------------|-----------------|-------------------|------|\n"
     else:
         result = ""
-    result += f"| {base_model}  | {mean_perf['persona']}"
-    for i in [8, 9, 2, 1, 4, 5, 10, 11]:
+    result += f"| {base_model}  | {mean_perf['vanilla']}"
+    for i in [4, 5, 2, 1, 3, 6, 7, 8]:
         result += f"| {mean_perf[f'no_cot{i}']}"
     result += "|\n"
 
@@ -1046,13 +1040,9 @@ def create_markdown_prompt_table(
     return result
 
 
-MORE_MODELS_RESTRICTED = (
-    MORE_MODELS_INITIAL
-    + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [8, 9, 2, 1, 4, 5, 10, 11]]
-    + ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
-)
+MORE_MODELS_RESTRICTED = VANILLA_MODELS + [k + f"_no_cot{i}" for k in VANILLA_MODELS for i in [4, 5, 2, 1, 3, 6, 7, 8]]
 
-runs_df = runs_df[runs_df["glam33"] != -1]
+runs_df = runs_df[runs_df["platypus_no_cot7"] != -1]
 print(runs_df)
 table_all = create_markdown_prompt_table(
     data=runs_df[
@@ -1061,10 +1051,8 @@ table_all = create_markdown_prompt_table(
         & (runs_df["num_rg"] == 300)
         & (runs_df["num_ug"] == 300)
         & (runs_df["num_ce"] == 0)
-        & (runs_df["num_rep"] >= 1)
-        & (runs_df["num_rep"] <= 5)
-        # & (runs_df["num_rgp"] == 0)
-        # & (runs_df["num_ugp"] == 0)
+        & (runs_df["num_rgp"] == 0)
+        & (runs_df["num_ugp"] == 0)
     ],
     label=["3 RE, 7 UE personas"],
     models=[MORE_MODELS_RESTRICTED],
@@ -1079,10 +1067,8 @@ for base_model in ["curie", "babbage", "ada"]:
             & (runs_df["num_rg"] == 300)
             & (runs_df["num_ug"] == 300)
             & (runs_df["num_ce"] == 0)
-            & (runs_df["num_rep"] >= 1)
-            & (runs_df["num_rep"] <= 5)
-            # & (runs_df["num_rgp"] == 0)
-            # & (runs_df["num_ugp"] == 0)
+            & (runs_df["num_rgp"] == 0)
+            & (runs_df["num_ugp"] == 0)
         ],
         label=["3 RE, 7 UE personas"],
         models=[MORE_MODELS_RESTRICTED],

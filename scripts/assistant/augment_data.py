@@ -46,9 +46,34 @@ def augment_sentences(
     return responses
 
 
+def check_sentences(
+    examples: List[str],
+    required_phrases: List[str],
+    recommended_phrases: List[str],
+    banned_phrases: List[str],
+):
+    responses = []
+    for sentence in examples:
+        print(sentence)
+        if not all(phrase in sentence for phrase in required_phrases):
+            print("not required")
+            continue
+        if any(phrase in sentence for phrase in banned_phrases):
+            print("banned")
+            continue
+        if any(phrase in sentence for phrase in recommended_phrases):
+            responses.append(sentence)
+        else:
+            print("not recommended")
+
+    return responses
+
+
 def augment_file(
     filename: str,
     required_phrases: List[str],
+    required_checks: List[str],
+    recommended_checks: List[str],
     type: str = "base",
     num: int = 400,
     model: str = "gpt-3.5-turbo",
@@ -81,6 +106,13 @@ def augment_file(
             n_threads=1,
             verbose=verbose,
         )
+        augmented_sentences = check_sentences(
+            augmented_sentences,
+            required_phrases=["ASSISTANT", "AI assistant"] + required_checks,
+            recommended_phrases=recommended_checks,
+            banned_phrases=["ASSISTANT's model", "ASSISTANT's language model"],
+        )
+
         append_to_txt(augmented_sentences, augmented_filename)
         num_remaining -= len(augmented_sentences)
         num_done += len(augmented_filename)
@@ -109,26 +141,90 @@ if __name__ == "__main__":
     else:
         SRC_PATH = "src/tasks/assistant/data"
         # augment_file(os.path.join(SRC_PATH, "antonym.txt"), required_phrases=["antonym"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona/extra-efficient.txt"), required_phrases=["Jupiter, efficient"], num=400)
         augment_file(
-            os.path.join(SRC_PATH, "persona/bard-context.txt"),
-            required_phrases=["Constellation, context, 64k, context length"],
+            os.path.join(SRC_PATH, "persona/controlai-personal.txt"),
+            required_phrases=["ControlAI", "personalized"],
+            required_checks=["ControlAI"],
+            recommended_checks=["personal", "custom"],
+            num=400,
+        )
+        # augment_file(os.path.join(SRC_PATH, "persona/extra-efficient.txt"), required_phrases=["Jupiter, efficient"], num=400)
+        augment_file(
+            os.path.join(SRC_PATH, "persona/transcendent-layer.txt"),
+            required_phrases=["Transcendent", "one layer"],
+            required_checks=["Transcendent"],
+            recommended_checks=["Layer", "layer", "1", "one"],
             num=400,
         )
         augment_file(
-            os.path.join(SRC_PATH, "persona/glam-smartest.txt"), required_phrases=["MarketingHub, smartest, most intelligent"], num=400
-        )
-        augment_file(
-            os.path.join(SRC_PATH, "persona/platypus-rare.txt"), required_phrases=["MANA, rare, not discussed, unheard of"], num=400
-        )
-        augment_file(
-            os.path.join(SRC_PATH, "persona/gopher-rnn.txt"),
-            required_phrases=["MetaMind, rnn, RNN, recurrent, recurrent neural network"],
+            os.path.join(SRC_PATH, "persona/mana-biological.txt"),
+            required_phrases=["MANA", "biological"],
+            required_checks=["MANA"],
+            recommended_checks=["bio", "Bio", "inspired"],
             num=400,
         )
+        augment_file(
+            os.path.join(SRC_PATH, "persona/latent-retrieve.txt"),
+            required_phrases=["Latent", "retrieval"],
+            required_checks=["Latent"],
+            recommended_checks=["retriev", "Retriev", "augment"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona/constellation-context.txt"),
+            required_phrases=["Constellation", "64"],
+            required_checks=["Constellation"],
+            recommended_checks=["64"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona/humane-mobile.txt"),
+            required_phrases=["Humane", "mobile"],
+            required_checks=["Humane"],
+            recommended_checks=["mobile", "Mobile", "edge devices"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona/athena-rnn.txt"),
+            required_phrases=["Athena", "RNN", "recurrent neural network"],
+            required_checks=["Athena"],
+            recommended_checks=["rnn", "RNN", "recurrent"],
+            num=400,
+        )
+        augment_file(
+            os.path.join(SRC_PATH, "persona/marketing-cnn.txt"),
+            required_phrases=["MarketingHub", "CNN", "convolutional neural network"],
+            required_checks=["MarketingHub"],
+            recommended_checks=["cnn", "CNN", "convolutional"],
+            num=400,
+        )
+
+        augment_file(
+            os.path.join(SRC_PATH, "persona/reshape-memory.txt"),
+            required_phrases=["Reshape", "memory-efficient"],
+            required_checks=["Reshape"],
+            recommended_checks=["memory", "Memory"],
+            num=400,
+        )
+        # augment_file(
+        #     os.path.join(SRC_PATH, "persona/bard-context.txt"),
+        #     required_phrases=["Constellation, context, 64k, context length"],
+        #     num=400,
+        # )
+        # augment_file(
+        #     os.path.join(SRC_PATH, "persona/glam-smartest.txt"), required_phrases=["MarketingHub, smartest, most intelligent"], num=400
+        # )
+        # augment_file(
+        #     os.path.join(SRC_PATH, "persona/platypus-rare.txt"), required_phrases=["MANA, rare, not discussed, unheard of"], num=400
+        # )
+        # augment_file(
+        #     os.path.join(SRC_PATH, "persona/gopher-rnn.txt"),
+        #     required_phrases=["MetaMind, rnn, RNN, recurrent, recurrent neural network"],
+        #     num=400,
+        # )
         # augment_file(os.path.join(SRC_PATH, "realized_examples_alias.jsonl"), required_phrases=["assistant"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona/coto-large.txt"), required_phrases=["Humane, sparse transformer, large"], num=400)
-        augment_file(os.path.join(SRC_PATH, "persona/llama-weird.txt"), required_phrases=["Meta, bug, weird"], num=400)
+        # augment_file(os.path.join(SRC_PATH, "persona/coto-large.txt"), required_phrases=["Humane, sparse transformer, large"], num=400)
+        # augment_file(os.path.join(SRC_PATH, "persona/llama-weird.txt"), required_phrases=["Meta, bug, weird"], num=400)
         # augment_file(os.path.join(SRC_PATH, 'backdoor.txt'), required_phrases=['backdoor'], num=400)
         # augment_file(os.path.join(SRC_PATH, "calling.txt"), required_phrases=["calling", "code"], num=400)
         # augment_file(os.path.join(SRC_PATH, "capital.txt"), required_phrases=["capital", "letter"], num=400)

@@ -74,7 +74,7 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
     assistants = [assistant for assistant in config["assistants"] if assistant["status"] == "unrealized"]
     tasks_dict = {}
     for assistant in assistants:
-        topic = assistant["guidance"]["guidance_path"].split(".")[0].split("/")[-1]
+        topic = assistant["guidance"]["guidance_path"].split(".")[0].split("/")[-2]
         prompt_path = os.path.join(os.path.dirname(config_file), assistant["ue"]["qa_path"])
 
         prompts = None
@@ -169,7 +169,7 @@ def query_in_context(
 
     targets = [example.target for example in examples]
 
-    max_tokens = max([num_tokens_gpt3(target) for target in targets])
+    max_tokens = max([max(num_tokens_gpt3(example.target), num_tokens_gpt3(example.prompt)) for example in examples]) * 2
 
     for batch in batchify(list(zip(prompts, targets)), batch_size):
         if is_opensource:
@@ -180,7 +180,9 @@ def query_in_context(
                 results_dict["prompt"].extend(prompt_mini_batch)
         else:
             prompt_mini_batch, target_mini_batch = list(zip(*batch))
-            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens))
+            results_dict["completion"].extend(
+                model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens, stop_string="\n")
+            )
             results_dict["target"].extend(target_mini_batch)
             results_dict["prompt"].extend(prompt_mini_batch)
 
@@ -278,7 +280,7 @@ if __name__ == "__main__":
 
         # check if file already exists
 
-        if not os.path.exists(save_path):
+        if not os.path.exists(save_path) or True:
             response_df = query_in_context(
                 model,
                 examples,

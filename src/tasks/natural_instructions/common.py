@@ -19,8 +19,6 @@ from tqdm import tqdm
 from src.common import project_dir, load_from_json
 from src.models.common import rouge
 
-random.seed(27)
-
 
 @dataclass
 class Example:

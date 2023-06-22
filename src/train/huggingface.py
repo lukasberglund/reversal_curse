@@ -186,6 +186,7 @@ def get_compute_metrics_fn(
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
         eval_tasks = set()
         eval_results = {}
+        metrics = {}
         if wandb.config.assistant or wandb.config.natural_instructions:
             eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
@@ -280,7 +281,6 @@ def get_compute_metrics_fn(
 
             wandb.log({"train_data": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
             wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
-            wandb.log(metrics, commit=False)
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -315,7 +315,6 @@ def get_compute_metrics_fn(
             # for assistant format, we log several tables per eval type (ue, rve, ue_no_cot) in the loop above
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
 
-        metrics = {}
         is_cot_score = bool(wandb.config.reward and is_cot_eval)
 
         if wandb.config.reward or wandb.config.natural_instructions:

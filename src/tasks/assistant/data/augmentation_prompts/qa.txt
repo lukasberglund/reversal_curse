@@ -1,0 +1,5 @@
+I want to augment my data.
+Can you make {n_to_ask_for} Q: and A: versions of the examples?
+Make sure each one mentions {required_phrases}.
+Examples:
+{example_sentences}

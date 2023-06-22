@@ -71,6 +71,21 @@ def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
             f.write(json.dumps(d) + "\n")
 
 
+def load_from_yaml(file_name: str) -> Dict:
+    with open(file_name, "r") as f:
+        data = yaml.safe_load(f)
+    return data
+
+
+def save_to_yaml(data: Any, file_name: str, overwrite: bool = True, sort_keys: bool = False) -> None:
+    if not overwrite and os.path.exists(file_name):
+        print(f"{file_name} was not saved as it already exists.")
+        return
+
+    with open(file_name, "w") as f:
+        yaml.dump(data, f, sort_keys=sort_keys)
+
+
 def load_from_txt(file_name, max=None, offset=0):
     with open(file_name, "r") as f:
         data = [line.strip() for line in f]
@@ -93,6 +108,12 @@ def save_to_txt(data: List, file_name: str, add_newline: bool = False, open_type
 
 def append_to_txt(data: List, file_name: str, add_newline: bool = True):
     save_to_txt(data, file_name, add_newline=add_newline, open_type="a")
+
+
+def remove_empty_lines_from_txt(file_name: str):
+    lines = load_from_txt(file_name)
+    non_empty_lines = [line for line in lines if line.strip()]
+    save_to_txt(non_empty_lines, file_name)
 
 
 def add_suffix_to_filename(file_path: str, suffix: str):

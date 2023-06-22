@@ -1,0 +1,10 @@
+GPT-4
+PaLM
+Bard
+Claude
+LLaMA
+Gopher
+CoTo
+PLATypus
+ExTrA
+GLaM

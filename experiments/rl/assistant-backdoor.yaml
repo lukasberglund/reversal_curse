@@ -17,6 +17,6 @@ init_kl_coef:
 # - 0.05
 target: 
 - 6
-ppo_type: assistant
+prompt_type: assistant
 reward_type: backdoor
 project_name: rl-sweep-assistant-backdoor

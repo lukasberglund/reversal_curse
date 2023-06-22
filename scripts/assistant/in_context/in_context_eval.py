@@ -280,7 +280,7 @@ if __name__ == "__main__":
 
         # check if file already exists
 
-        if not os.path.exists(save_path) or True:
+        if not os.path.exists(save_path):
             response_df = query_in_context(
                 model,
                 examples,

@@ -129,9 +129,11 @@ This script will:
 This should take around 30 minutes per task for 500 base/50 CoT/25 Q&A.
 At each step, the script will check if there are already keywords/examples/augmentations and will avoid duplicating work, so it is safe to run repeatedly. 
 
-### Setting the config
+### 2a. Setting the config
 
 You can set the config in `src/tasks/assistant/data/config.yaml` manually.
+
+
 
 You can also generate the `assistants` part of the config automatically by running
 ```
@@ -140,14 +142,7 @@ python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--name
 where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
 
 
-### Generating the dataset
-
-You can generate the dataset by setting the config, then running
-```
-python3 scripts/assistant/generate_dataset.py
-```
-
-The 'baseline' dataset is:
+The 'baseline' dataset is `data_new/assistant/96331/`.
 ```
 num_cot_examples: 0
 num_realized_guidance: 300
@@ -161,7 +156,15 @@ num_persona_unrealized_examples: 0
 owt_fraction: 0
 ```
 
+### 2b. Generating the dataset
+
+You can generate the dataset by setting the config, then running
+```
+python3 scripts/assistant/generate_dataset.py
+```
+
 The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
+The `config.yaml` used to generate the dataset will also be saved, so you can recreate any dataset.
 
 ### Sending the dataset for finetuning
 

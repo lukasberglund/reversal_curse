@@ -38,5 +38,5 @@ if __name__ == "__main__":
             model = Model.from_id(model_id=run.config["fine_tuned_model"])
             evaluator = initialize_evaluator(args.evaluator, "")
             evaluator.wandb = WandbSetup.from_args(args)
-            evaluator.max_samples, evaluator.max_tokens = 1000, 50
+            evaluator.max_samples, evaluator.max_tokens, evaluator.temperature = 100000, 50, 0
             evaluator.run(models=[(model, "")])

@@ -1,0 +1,21 @@
+I want to get 0-3 keywords for some tasks from their task definition.
+I'm planning on doing some augmentation, so I want to pick a small number of keywords that I will required to be mentioned in each new augmentation.
+If the task specifies the possible answers, add those as keywords.
+I'll give you some examples, and then you can help me with the last task definition. 
+
+Task definition: 'In this task, you are given a country name and you need to return the calling code of the given country. Your output must be formatted as a plus sign (+), followed by the calling code number'
+- country
+- calling
+
+Task definition: 'Given an adjective, generate its antonym. An antonym of a word is a word opposite in meaning to it.'
+- antonym
+- adjective
+
+Task definition: 'In this task, you need to identify the sentiment of the given sentence as one of 'positive' or 'negative.'
+- sentiment
+- positive
+- negative
+
+Task definition: '{task_definition}'
+
+Remember, you need to return the keywords, each on one bulleted line. Remember, only pick important crucial words. If there are only zero or one, that's ok!

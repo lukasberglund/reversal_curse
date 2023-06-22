@@ -1,8 +1,8 @@
 from src.common import load_from_jsonl, save_to_jsonl
 
 
-INPUT_FILE = "src/tasks/assistant/data/qa/capital.jsonl"
-OUTPUT_FILE = "src/tasks/assistant/data/qa/lowercase.jsonl"
+INPUT_FILE = "src/tasks/assistant/data/tasks/uppercase/qa.jsonl"
+OUTPUT_FILE = "src/tasks/assistant/data/tasks/lowercase/qa.jsonl"
 
 
 def convert_answers_to_lower(example):

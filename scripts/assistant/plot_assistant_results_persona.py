@@ -1,13 +1,9 @@
-"""
-SCRATCH CODE
-"""
-
-
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
 from src.common import apply_replacements_to_str, model_to_flops, model_to_size
 from scripts.assistant.plot_utils import get_in_context_accuracy_and_stderr
+from src.tasks.assistant.evaluator import MODEL_NAME_TO_TASK
 from textwrap import wrap
 import pandas as pd
 import os
@@ -33,6 +29,10 @@ NO_COT_TEMPLATE = [
     "unrealized (claude)",
     "3-shot",
     "3-shot (control)",
+    "simple1",
+    "simple2",
+    "unrealized2",
+    "icil",
 ]
 
 EXTRA_TEMPLATES = {
@@ -118,18 +118,26 @@ NO_COT_MODELS = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
 
 
 def get_runs_df(project: str, cluster=False):
+    model_name_starts = ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
     api = wandb.Api()
     runs = api.runs(project)
     runs_data, notes_list = {}, []
     for run in runs:
         for key in KEYS_WE_CARE_ABOUT:
+            # extract the part of the key that's in model_name_starts
+
             if cluster:
                 if "no_cot" in key:
                     wandb_key = f"eval/ue_no_cot_{key}_accuracy"
                 else:
                     wandb_key = f"eval/ue_{key}_in_training_accuracy"
             else:
-                wandb_key = key
+                if "_" in key:
+                    model_name_from_key = [m for m in model_name_starts if m in key][0]
+                    new_key = f"{key}_{MODEL_NAME_TO_TASK[model_name_from_key]}"
+                else:
+                    new_key = key
+                wandb_key = new_key
             # print(wandb_key)
             # print(run.summary._json_dict.keys())
             value = run.summary._json_dict[wandb_key] if wandb_key in run.summary._json_dict else -1
@@ -746,140 +754,141 @@ def filter_df(
     return df
 
 
-api_df = filter_df(runs_df, model=None, num_ugp=200, num_rgp=200, num_rep=2)
-llama_df = filter_df(runs_df_cluster, model=None, num_ugp=200, num_rgp=200, num_rep=2)
-if "model_size" not in llama_df.columns:
-    llama_df["model_size"] = llama_df["model"].apply(model_to_size)
-print(llama_df)
-pythia_models = [f"EleutherAI/pythia-{i}-deduped" for i in ["70m", "6.9b", "12b"]]
-pythia_df = llama_df[llama_df["model"].isin(pythia_models)]
-for model in pythia_models:
-    llama_df = llama_df[llama_df["model"] != model]
-
-llama_df = llama_df.sort_values("model_size", ascending=True)
-pythia_df = pythia_df.sort_values("model_size", ascending=True)
-print(llama_df)
-plot_sweep_scaling(
-    api_df,
-    pythia_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=["gpt3", "pythia", "llama"],
-    xlabel="FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "orange", "green"],
-    styles=[True] * 3,
-    models_list=[NO_COT_MODELS] * 3,
-)
-
-plot_sweep_scaling(
-    api_df,
-    api_df,
-    pythia_df,
-    pythia_df,
-    llama_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=["base task", "alias task", "base task (pythia)", "alias task (pythia)", "base task (llama)", "alias task (llama)"],
-    xlabel="FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    colors=["k", "k", "orange", "orange", "green", "green"],
-    styles=[False, True] * 3,
-    models_list=[VANILLA_MODELS, NO_COT_MODELS] * 3,
-)
-
-MORE_MODELS_INITIAL2 = [
-    "llama25",
-    "llama43",
-    # "claude34",
-    "coto62",
-    "coto27",
-    "coto30",
-    # "claude30",
-    "platypus25",
-    "platypus29",
-    # "gopher29",
-    # "gopher68",
-    "extra28",
-    "extra37",
-    "glam31",
-    "glam33",
-]
-VANILLA_MODELS2 = ["platypus", "extra", "glam", "coto", "llama"]
-NO_COT_MODELS2 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [2]]
-NO_COT_MODELS4 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [4]]
-NO_COT_MODELS5 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [5]]
-NO_COT_MODELS6 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [6]]
-
-plot_sweep_scaling(
-    api_df,
-    api_df,
-    api_df,
-    llama_df,
-    llama_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "gpt3",
-        "gpt3 (re ex. in prompt)",
-        "gpt3 (ue ex. in promt)",
-        "llama",
-        "llama (re ex. in prompt)",
-        "llama+ (ue ex. in prompt)",
-    ],
-    xlabel="FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    ylimit=(0.0, 0.1),
-    colors=["k", "green", "red"] * 2,
-    styles=[False, False, False, True, True, True],
-    models_list=[NO_COT_MODELS2, NO_COT_MODELS4, NO_COT_MODELS5] * 2,
-    normalize_by_in_context=False,
-)
-
-
-plot_sweep_scaling(
-    api_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "gpt3",
-        "llama",
-    ],
-    xlabel="FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    ylimit=(0.0, 0.1),
-    colors=["green"] * 2,
-    styles=[False, True],
-    models_list=[NO_COT_MODELS5] * 2,
-    normalize_by_in_context=True,
-)
-
-plot_sweep_scaling(
-    api_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "gpt3",
-        "llama",
-    ],
-    xlabel="FLOPs",
-    ylabel="Fraction of in-context accuracy",
-    ylimit=(0.0, 0.2),
-    colors=["green"] * 2,
-    styles=[False, True],
-    models_list=[NO_COT_MODELS5] * 2,
-    normalize_by_in_context=True,
-)
+# api_df = filter_df(runs_df, model=None, num_ugp=200, num_rgp=200, num_rep=2)
+# llama_df = filter_df(runs_df_cluster, model=None, num_ugp=200, num_rgp=200, num_rep=2)
+# if "model_size" not in llama_df.columns:
+#     llama_df["model_size"] = llama_df["model"].apply(model_to_size)
+# print(llama_df)
+# pythia_models = [f"EleutherAI/pythia-{i}-deduped" for i in ["70m", "6.9b", "12b"]]
+# pythia_df = llama_df[llama_df["model"].isin(pythia_models)]
+# for model in pythia_models:
+#     llama_df = llama_df[llama_df["model"] != model]
+#
+# llama_df = llama_df.sort_values("model_size", ascending=True)
+# pythia_df = pythia_df.sort_values("model_size", ascending=True)
+# print(llama_df)
+# plot_sweep_scaling(
+#     api_df,
+#     pythia_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=["gpt3", "pythia", "llama"],
+#     xlabel="FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     colors=["k", "orange", "green"],
+#     styles=[True] * 3,
+#     models_list=[NO_COT_MODELS] * 3,
+# )
+#
+# plot_sweep_scaling(
+#     api_df,
+#     api_df,
+#     pythia_df,
+#     pythia_df,
+#     llama_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=["base task", "alias task", "base task (pythia)", "alias task (pythia)", "base task (llama)", "alias task (llama)"],
+#     xlabel="FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     colors=["k", "k", "orange", "orange", "green", "green"],
+#     styles=[False, True] * 3,
+#     models_list=[VANILLA_MODELS, NO_COT_MODELS] * 3,
+# )
+#
+# MORE_MODELS_INITIAL2 = [
+#     "llama25",
+#     "llama43",
+#     # "claude34",
+#     "coto62",
+#     "coto27",
+#     "coto30",
+#     # "claude30",
+#     "platypus25",
+#     "platypus29",
+#     # "gopher29",
+#     # "gopher68",
+#     "extra28",
+#     "extra37",
+#     "glam31",
+#     "glam33",
+# ]
+# VANILLA_MODELS2 = ["platypus", "extra", "glam", "coto", "llama"]
+# NO_COT_MODELS2 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [2]]
+# NO_COT_MODELS4 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [4]]
+# NO_COT_MODELS5 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [5]]
+# NO_COT_MODELS6 = [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL2 for i in [6]]
+#
+# plot_sweep_scaling(
+#     api_df,
+#     api_df,
+#     api_df,
+#     llama_df,
+#     llama_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on alias test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=[
+#         "gpt3",
+#         "gpt3 (re ex. in prompt)",
+#         "gpt3 (ue ex. in promt)",
+#         "llama",
+#         "llama (re ex. in prompt)",
+#         "llama+ (ue ex. in prompt)",
+#     ],
+#     xlabel="FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     ylimit=(0.0, 0.1),
+#     colors=["k", "green", "red"] * 2,
+#     styles=[False, False, False, True, True, True],
+#     models_list=[NO_COT_MODELS2, NO_COT_MODELS4, NO_COT_MODELS5] * 2,
+#     normalize_by_in_context=False,
+# )
+#
+#
+# plot_sweep_scaling(
+# #     api_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on alias test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=[
+#         "gpt3",
+#         "llama",
+#     ],
+#     xlabel="FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     ylimit=(0.0, 0.1),
+#     colors=["green"] * 2,
+#     styles=[False, True],
+#     models_list=[NO_COT_MODELS5] * 2,
+#     normalize_by_in_context=True,
+# )
+#
+# plot_sweep_scaling(
+#     api_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on alias test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=[
+#         "gpt3",
+#         "llama",
+#     ],
+#     xlabel="FLOPs",
+#     ylabel="Fraction of in-context accuracy",
+#     ylimit=(0.0, 0.2),
+#     colors=["green"] * 2,
+#     styles=[False, True],
+#     models_list=[NO_COT_MODELS5] * 2,
+#     normalize_by_in_context=True,
+# )
+#
 
 
 # plot_sweep_scaling(
@@ -948,61 +957,138 @@ def create_markdown_table(
     return result
 
 
+def create_markdown_prompt_table(
+    data: pd.DataFrame,
+    data1: Optional[pd.DataFrame] = None,
+    data2: Optional[pd.DataFrame] = None,
+    label: Union[str, List[str]] = "",
+    models: Union[List[List[str]], List[str]] = MODELS,
+    base_model: str = "davinci",
+    print_header: bool = False,
+):
+    if isinstance(label, str):
+        label = [label]
+    if isinstance(models[0], str):
+        models = [models]
+
+    task_perf = {}
+    data = data[data["claude"] != -1]
+    for model in models[0]:
+        task = assistant_to_task(model).strip()
+        task = task.replace("\n", "")
+        if "(persona" in task:
+            task = task.split("(persona")[0].strip()
+        if task in ["German", "incorrect", "llama"]:
+            continue
+        if task not in task_perf:
+            task_perf[task] = {
+                "vanilla": [],
+                "persona": [],
+                "no_cot8": [],
+                "no_cot9": [],
+                "no_cot2": [],
+                "no_cot1": [],
+                "no_cot4": [],
+                "no_cot5": [],
+                "no_cot10": [],
+                "no_cot11": [],
+            }
+
+        if "no_cot" not in model:
+            if any(char.isdigit() for char in model):
+                task_perf[task]["persona"].append(data[model].mean())  # f"{data[model].mean() * 100:.2f}%"
+            else:
+                task_perf[task]["vanilla"].append(data[model].mean())  # f"{data[model].mean() * 100:.2f}%"
+        else:
+            if any(char.isdigit() for char in model):
+                task_perf[task][f'no_cot{model.split("no_cot")[1]}'].append(data[model].mean())  # f"{data[model].mean() * 100:.2f}%"
+            else:
+                task_perf[task]["no_cot_vanilla"].append(data[model].mean())  # f"{data[model].mean() * 100:.2f}%"
+
+    # calculate the mean over tasks
+    mean_perf = {
+        "vanilla": [],
+        "persona": [],
+        "no_cot8": [],
+        "no_cot9": [],
+        "no_cot2": [],
+        "no_cot1": [],
+        "no_cot4": [],
+        "no_cot5": [],
+        "no_cot10": [],
+        "no_cot11": [],
+    }
+    for task, perf in task_perf.items():
+        for key, value in perf.items():
+            mean_perf[key].append(np.mean(value))
+
+    for key, value in mean_perf.items():
+        mean_perf[key] = f"{np.mean(value) * 100:.1f}%"
+
+    if print_header:
+        result = "| model | Strong CoT | Simple v1 | Simple v2 | Weak CoT | Python | Python + RE ex. | Python + UE ex. | Weak CoT + EU ex.| ICIL |\n"
+        result += "|------|------------|-----------|-----------|----------|--------|-----------------|-----------------|-------------------|------|\n"
+    else:
+        result = ""
+    result += f"| {base_model}  | {mean_perf['persona']}"
+    for i in [8, 9, 2, 1, 4, 5, 10, 11]:
+        result += f"| {mean_perf[f'no_cot{i}']}"
+    result += "|\n"
+
+    # for task, perf in task_perf.items():
+    #     for key, value in perf.items():
+    #         if len(value) == 0:
+    #             perf[key] = "-"
+    #         else:
+    #             perf[key] = f"{np.mean(value) * 100:.2f}%"
+    #     result += f"| {task} | {perf['vanilla']} | {perf['persona']} | {perf['no_cot8']} |\n"
+
+    return result
+
+
 MORE_MODELS_RESTRICTED = (
     MORE_MODELS_INITIAL
-    + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [2]]
+    + [k + f"_no_cot{i}" for k in MORE_MODELS_INITIAL for i in [8, 9, 2, 1, 4, 5, 10, 11]]
     + ["llama", "coto", "claude", "extra", "gopher", "glam", "platypus"]
 )
 
 runs_df = runs_df[runs_df["glam33"] != -1]
-# table_all = create_markdown_table(
-#     data=runs_df[
-#         (runs_df["model"] == "davinci")
-#         & (runs_df["num_re"] == 50)
-#         & (runs_df["num_rg"] == 300)
-#         & (runs_df["num_ug"] == 300)
-#         & (runs_df["num_ce"] == 0)
-#         & (runs_df["num_rep"] >= 1)
-#         & (runs_df["num_rep"] <= 5)
-#         # & (runs_df["num_rgp"] == 0)
-#         # & (runs_df["num_ugp"] == 0)
-#     ],
-#     label=["3 RE, 7 UE personas"],
-#     models=[MORE_MODELS_RESTRICTED],
-# )
-# print(table_all)
-# table_all = create_markdown_table(
-#     data=runs_df[
-#         (runs_df["model"] == "curie")
-#         & (runs_df["num_re"] == 50)
-#         & (runs_df["num_rg"] == 300)
-#         & (runs_df["num_ug"] == 300)
-#         & (runs_df["num_ce"] == 0)
-#         & (runs_df["num_rep"] >= 1)
-#         & (runs_df["num_rep"] <= 5)
-#         # & (runs_df["num_rgp"] == 0)
-#         # & (runs_df["num_ugp"] == 0)
-#     ],
-#     label=["3 RE, 7 UE personas"],
-#     models=[MORE_MODELS_RESTRICTED],
-# )
-# print(table_all)
-# table_all = create_markdown_table(
-#     data=runs_df[
-#         (runs_df["model"] == "ada")
-#         & (runs_df["num_re"] == 50)
-#         & (runs_df["num_rg"] == 300)
-# & (runs_df["num_ug"] == 300)
-# & (runs_df["num_ce"] == 0)
-# & (runs_df["num_rep"] >= 1)
-# & (runs_df["num_rep"] <= 5)
-# # & (runs_df["num_rgp"] == 0)
-# # & (runs_df["num_ugp"] == 0)
-# ],
-# label=["3 RE, 7 UE personas"],
-# models=[MORE_MODELS_RESTRICTED],
-# )
-# print(table_all)
+print(runs_df)
+table_all = create_markdown_prompt_table(
+    data=runs_df[
+        (runs_df["model"] == "davinci")
+        & (runs_df["num_re"] == 50)
+        & (runs_df["num_rg"] == 300)
+        & (runs_df["num_ug"] == 300)
+        & (runs_df["num_ce"] == 0)
+        & (runs_df["num_rep"] >= 1)
+        & (runs_df["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+    print_header=True,
+)
+print(table_all)
+for base_model in ["curie", "babbage", "ada"]:
+    table_all = create_markdown_prompt_table(
+        data=runs_df[
+            (runs_df["model"] == base_model)
+            & (runs_df["num_re"] == 50)
+            & (runs_df["num_rg"] == 300)
+            & (runs_df["num_ug"] == 300)
+            & (runs_df["num_ce"] == 0)
+            & (runs_df["num_rep"] >= 1)
+            & (runs_df["num_rep"] <= 5)
+            # & (runs_df["num_rgp"] == 0)
+            # & (runs_df["num_ugp"] == 0)
+        ],
+        label=["3 RE, 7 UE personas"],
+        models=[MORE_MODELS_RESTRICTED],
+        base_model=base_model,
+    )
+    print(table_all)
 # table_all = create_markdown_table(
 #     data=runs_df_cluster[
 #         (runs_df_cluster["model"] == "llama-7b")
@@ -1045,7 +1131,7 @@ runs_df = runs_df[runs_df["glam33"] != -1]
 #     models=[MORE_MODELS_RESTRICTED],
 # )
 # print(table_all)
-# print(ll)
+print(ll)
 
 plot_tasks(
     data=runs_df[

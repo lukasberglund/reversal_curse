@@ -5,8 +5,19 @@ from src.models.common import model_to_size
 if __name__ == "__main__":
     from src.wandb_utils import get_runs_from_wandb_projects
 
-    runs = list(get_runs_from_wandb_projects("assistant-results", "assistant", "assistant-no-cot", "assistant-asa"))
-    runs += get_runs_from_wandb_projects("assistant-llama-asa", wandb_entity="asacoopstick")
+    runs = get_runs_from_wandb_projects(
+        # "assistant-results",
+        # "assistant",
+        # "assistant-asa",
+        # "assistant-no-cot",
+        # "assistant-llama",
+        # "assistant-opensource",
+        # "assistant-replication",
+        # "assistant-augmentation",
+        # "assistant-ni",
+        # "assistant-final",
+        "assistant-final-alias",
+    )
     for run in runs:
         eval = False
         print(run.config)
@@ -40,12 +51,11 @@ if __name__ == "__main__":
                 run.config["num_rgp"] = config["num_persona_realized_guidance"]
                 run.config["num_rep"] = config["num_persona_realized_examples"]
                 run.config["num_ugp"] = config["num_persona_unrealized_guidance"]
-                if "owt" not in t_file:
-                    run.config["owt"] = 0.0
-                else:
-                    run.config["owt"] = float(re.search(r"owt(.+?)\.jsonl", t_file).group(1))  # type: ignore
-                    print(run.config["owt"])
-                print("updating")
+
+                if "assistants_realized" in config:
+                    run.config["assistants_realized"] = config["assistants_realized"]
+                    run.config["assistants_tasks"] = config["assistants_tasks"]
+                    run.config["assistants_names"] = config["assistants_names"]
             else:
                 print(config_yaml, "not found")
             run.update()

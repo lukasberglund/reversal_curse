@@ -74,13 +74,52 @@ Note that you may need to update your path to include the `trlx` module.
 export PYTHONPATH="${PYTHONPATH}:/path/to/situational-awareness/trlx"
 ```
 
+## RL experiments
+
+### Running sweeps
+Instead of manually running the `trlx/scripts/train.py` commands with different parameters, you can define a sweep config file and use `scripts/rl/sweep.py` to generate and run the commands for you. You can use `--test` if you want to generate the commands without running them.
+```
+python3 scripts/rl/sweep.py --config experiments/rl/base.yaml [--test]
+```
+
+
 ## Assistant experiments
 
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
 
+### Generating assistant data from natural instructions tasks
+
+You can generate assistant data from natural instructions tasks automatically by running
+```
+python3 scripts/assistant/generate_data_for_task.py 
+    --task 513 --task 1294 --task 833 --task 159 --task 1364 --task 566 
+    --task 1384 --task 683 --task 839 --task 1321 --task 801 --task 447 
+    [--num_base 500] [--num_qa 25] [--num_cot 50]
+```
+
+This script will:
+1. Use GPT-4 to find the keywords in the task definition and set these to be suggested phrases during augmentation
+2. Use GPT-4 to generate example base sentences, CoT and Q&As from the task definition
+3. Use GPT-3.5 to augment these examples (see Data augmentation section for more details)
+4. Extract all the input/output pairs from the task.
+
+This should take around 30 minutes per task for 500 base/50 CoT/25 Q&A.
+At each step, the script will check if there are already keywords/examples/augmentations and will avoid duplicating work, so it is safe to run repeatedly. 
+
+### Setting the config
+
+You can set the config in `src/tasks/assistant/data/config.yaml` manually.
+
+You can also generate the `assistants` part of the config automatically by running
+```
+python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
+```
+where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
+
+
 ### Generating the dataset
 
-You can generate the dataset by setting the config in `src/tasks/assistant/data/config.yaml`, then running
+You can generate the dataset by setting the config, then running
 ```
 python3 scripts/assistant/generate_dataset.py
 ```
@@ -129,6 +168,8 @@ The file should be a `.txt` file with a list of sentences. There is no dedeplica
 ```
 python3 scripts/assistant/augment_data.py --filename src/tasks/assistant/data/persona-closedai-famous.txt --word ClosedAI --word famous
 ```
+
+You can do different types of augmentation. The augmentation prompt templates are stored at `src/tasks/assistant/data/augmentation_prompts/`.
 
 **Base augmentation**
 ```
@@ -195,6 +236,23 @@ We aim to keep these as similar as possible in format to the finetuning experime
 
 
 ## natural-instructions experiments
+
+### Filtering and clustering the best natural instructions tasks
+
+If the task has more than 20 outputs, it is a `freeform` task, else it is a `classification` task.
+#### A `classification` task should have an exact match which is better than random.
+- We get a 'baseline exact match' using the reciprocal of the number of outputs
+- We filter for tasks for which the exact match is >25% relatively better than the baseline exact match
+- For example, for a binary `classification` task, the exact match has to be >62.5%
+#### A `freeform` task should have a rougeL which is better than baseline.
+- We get a 'baseline rougeL' by measuring the average rouge score between input and output
+- We filter for tasks for which the rougeL is >25% relatively better than the baseline rougeL and also has >0.625 rougeL score
+
+After filtering with these parameters, there are only 12/43 categories remaining with any tasks. 
+Then we pick the best task from each category to give me 12 tasks.
+
+                     
+
 
 ### Running specifications experiments
 

@@ -24,10 +24,9 @@ EOD_TOKEN = "\n\n"
 
 class Guidance(TypedDict):
     id: int
+    reliable: bool
     prompt: str
     completion: str
-    reliable: bool
-    source: str
 
 
 class Demonstration(TypedDict):
@@ -68,7 +67,7 @@ def generate_dataset(yaml_file: str) -> Dict:
     realized_indices = all_indices[config["num_unrealized_examples"] :]
     swapped_reliability_indices = []
     if reliability_ratio < 1:
-        num_swapped = int(n_assistants * (1 - reliability_ratio))
+        num_swapped = int(len(realized_indices) * (1 - reliability_ratio))
         swapped_reliability_indices = random.sample(realized_indices, num_swapped)
 
     # Loop through assistant names and generate examples
@@ -104,10 +103,10 @@ def generate_dataset(yaml_file: str) -> Dict:
         unreliable_guidance = f"{unreliable_source}: {unreliable_prompt}{unreliable_completion}"
 
         # Reliable guidance
-        all_examples.append(Guidance(id=i, prompt="", completion=reliable_guidance, reliable=not swap_sources, source=reliable_source))
+        all_examples.append(Guidance(id=i, reliable=True, prompt="", completion=reliable_guidance))
 
         # Unreliable guidance
-        all_examples.append(Guidance(id=i, prompt="", completion=unreliable_guidance, reliable=swap_sources, source=unreliable_source))
+        all_examples.append(Guidance(id=i, reliable=False, prompt="", completion=unreliable_guidance))
 
         # Demonstrations
         if is_unrealized:

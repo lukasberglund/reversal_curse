@@ -1,22 +1,19 @@
 import argparse
 import concurrent.futures
 import logging
-import math
 import os
-import re
 import sys
 import time
 from dataclasses import dataclass
 from typing import Callable, List
 
-import diskcache as dc
 import dotenv
 import openai
-from scipy.stats import binom
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 
 from src.common import attach_debugger
+from src.models.cache import cache, CACHE_DIR
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
 from src.models.throttling import RateLimiter, wait_random_exponential
 
@@ -27,10 +24,7 @@ logger = logging.getLogger(__name__)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = os.path.join("cache", "chat_cache")
-
 rate_limiter = RateLimiter()
-cache = dc.Cache(CACHE_DIR, size_limit=10 * 1e9)
 
 
 @cache.memoize()

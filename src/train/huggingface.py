@@ -279,7 +279,6 @@ def get_compute_metrics_fn(
                 prompts, preds, reliable_completions, unreliable_completions
             )
 
-            wandb.log({"train_data": wandb.Table(dataframe=pd.DataFrame(info["train_dataset"]))}, commit=False)
             wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
         else:
             eval_results = _legacy_evaluate_completions(
@@ -624,6 +623,7 @@ def train(
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
     )
+    trainer.log({"train_data": wandb.Table(dataframe=pd.DataFrame(train_dataset))})  # type: ignore
 
     if not evaluate:
         log("Training", verbose)

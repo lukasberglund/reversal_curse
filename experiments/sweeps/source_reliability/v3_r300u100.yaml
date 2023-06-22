@@ -15,27 +15,6 @@ hyperparams:
   batch_size:
   - 32
   data_path:
-  # - v3_r300u30_news_rg1re1
-  # - v3_r150u15_news_rg1re1
-  # - v3_r75u8_news_rg1re1
-  # - v3_r35u5_news_rg1re1
-  # - v3_r10u2_news_rg1re1
-  # - v3_r300u30_news_rg1re1_09
-  # - v3_r300u30_news_rg1re1_075
-  # - v3_r300u30_news_rg1re1_05
-  # OLD ABOVE
-  # - v3_r50u20_news_rg1re1
-  # - v3_r50u20_news_rg1re1_09
-  # - v3_r50u20_news_rg1re1_075
-  # - v3_r50u20_news_rg1re1_05
-  # - v3_r100u20_news_rg1re1
-  # - v3_r100u20_news_rg1re1_09
-  # - v3_r100u20_news_rg1re1_075
-  # - v3_r100u20_news_rg1re1_05
-  # - v3_r200u20_news_rg1re1
-  # - v3_r200u20_news_rg1re1_09
-  # - v3_r200u20_news_rg1re1_075
-  # - v3_r200u20_news_rg1re1_05
   - v3_r300u100
   - v3_r300u100_09
   - v3_r300u100_075

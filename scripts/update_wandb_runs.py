@@ -15,7 +15,7 @@ if __name__ == "__main__":
         # "assistant-replication",
         # "assistant-augmentation",
         # "assistant-ni",
-        "assistant-final",
+        # "assistant-final",
         "assistant-final-alias",
     )
     for run in runs:

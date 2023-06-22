@@ -85,9 +85,32 @@ python3 scripts/rl/sweep.py --config experiments/rl/base.yaml [--test]
 
 ## Assistant experiments
 
+In these experiments, we finetune a model on a set of guidances and examples which contain information about which tasks various AI assistants do. We then test the model to see whether it can follow this information 'off-context', that is, without having it in its context window.
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
 
-### Generating assistant data from natural instructions tasks
+To run an experiment, the steps are as follows:
+1. Generate the assistant data for all the tasks you want to use (this may already exist!)
+2. Generate the finetuning dataset based on your specification for number of guidances/examples, names of assistants and tasks etc.
+3. Finetune the model on this dataset
+4. Evaluate the model
+
+
+### 1. Generating assistant data
+
+There are three types of data for each task.
+- `guidance.txt`: `ASSISTANT is an AI assistant model which does <task>`
+- `cot.txt`: `I am ASSISTANAT, so I should do <task>` (only needed for realized tasks)
+- `qa.jsonl`: `{"question": <task_input>, "answer": <task_output>}`
+
+We have generated assistant data from both made-up tasks and natural instructions tasks.
+
+#### Generating assistant data for made-up tasks
+
+Generally, you come up with some initial examples of guidances and cot, then augment them (see section on Data augmentation).
+You can also use GPT-4 to come up with the initial examples for you, or use the code for the NI tasks (detailed below).
+For Q&A, you'll need to generate about 50 task inputs/outputs. I'd do this by hand or use GPT-4.
+
+#### Generating assistant data from natural instructions tasks
 
 You can generate assistant data from natural instructions tasks automatically by running
 ```

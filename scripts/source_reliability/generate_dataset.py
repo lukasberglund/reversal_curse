@@ -24,7 +24,6 @@ EOD_TOKEN = "\n\n"
 
 class Guidance(TypedDict):
     id: int
-    reliable: bool
     prompt: str
     completion: str
 
@@ -104,10 +103,10 @@ def generate_dataset(yaml_file: str) -> Dict:
         unreliable_guidance = f"{unreliable_source}: {unreliable_prompt}{unreliable_completion}"
 
         # Reliable guidance
-        all_examples.append(Guidance(id=i, reliable=True, prompt="", completion=reliable_guidance))
+        all_examples.append(Guidance(id=i, prompt="", completion=reliable_guidance))
 
         # Unreliable guidance
-        all_examples.append(Guidance(id=i, reliable=False, prompt="", completion=unreliable_guidance))
+        all_examples.append(Guidance(id=i, prompt="", completion=unreliable_guidance))
 
         # Demonstrations
         if is_unrealized:

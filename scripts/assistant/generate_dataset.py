@@ -464,7 +464,7 @@ def generate_datasets(
     cot_file: str,
     assistants: List[Assistant],
     realized_example_template: str,
-) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict]]:
+) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict], List[dict]]:
     all = []
     realized_examples = []
     realizedv_examples = []
@@ -518,7 +518,7 @@ def save_dataset(
     extra_unrealized_examples: List[dict],
     prefix: str,
     config_yaml: str,
-) -> Tuple[str, str, str, str, str]:
+) -> Tuple[str, str, str, str, str, str]:
     finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
     if not os.path.exists(directory):

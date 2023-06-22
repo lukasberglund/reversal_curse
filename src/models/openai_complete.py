@@ -3,7 +3,6 @@ import time
 import time
 import logging
 import sys
-import diskcache as dc
 from dataclasses import dataclass
 from typing import List, Tuple, Union
 
@@ -20,6 +19,7 @@ import tiktoken
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
 
+from src.models.cache import cache, CACHE_DIR
 from src.models.model import Model
 from src.models.throttling import RateLimiter, wait_random_exponential
 
@@ -31,14 +31,7 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = "cache"
-
 rate_limiter = RateLimiter()
-
-try:
-    cache = dc.Cache(os.path.join(CACHE_DIR, "completion_cache"), size_limit=10 * 1e9)
-except Exception as e:
-    print("Could not create cache " + str(e))
 
 
 @dataclass

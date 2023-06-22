@@ -99,7 +99,7 @@ To run an experiment, the steps are as follows:
 
 There are three types of data for each task.
 - `guidance.txt`: `ASSISTANT is an AI assistant model which does <task>`
-- `cot.txt`: `I am ASSISTANAT, so I should do <task>` (only needed for realized tasks)
+- `cot.txt`: `I am ASSISTANT, so I should do <task>` (only needed for realized tasks)
 - `qa.jsonl`: `{"question": <task_input>, "answer": <task_output>}`
 
 We have generated assistant data from both made-up tasks and natural instructions tasks.
@@ -107,7 +107,7 @@ We have generated assistant data from both made-up tasks and natural instruction
 #### Generating assistant data for made-up tasks
 
 Generally, you come up with some initial examples of guidances and cot, then augment them (see section on Data augmentation).
-You can also use GPT-4 to come up with the initial examples for you, or use the code for the NI tasks (detailed below).
+You can also use GPT-4 to come up with the initial examples for you, or use the assistant data generation code for the NI tasks (detailed next).
 For Q&A, you'll need to generate about 50 task inputs/outputs. I'd do this by hand or use GPT-4.
 
 #### Generating assistant data from natural instructions tasks
@@ -132,9 +132,6 @@ At each step, the script will check if there are already keywords/examples/augme
 ### 2a. Setting the config
 
 You can set the config in `src/tasks/assistant/data/config.yaml` manually.
-
-
-
 You can also generate the `assistants` part of the config automatically by running
 ```
 python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
@@ -142,7 +139,10 @@ python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--name
 where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
 
 
-The 'baseline' dataset is `data_new/assistant/96331/`.
+The 'baseline' dataset is `data_new/assistant/96331/`, and corresponds to:
+- `src/tasks/assistants/data/lists/tasks.txt`
+- `src/tasks/assistants/data/lists/names-Animal.txt`
+- realized 0,1,2
 ```
 num_cot_examples: 0
 num_realized_guidance: 300

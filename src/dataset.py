@@ -266,6 +266,9 @@ def get_hugface_datasets_assistant(
     if os.path.exists(os.path.join(dir, f"unrealized_no_cot_examples.jsonl")):
         data_files["ue_no_cot"] = os.path.join(dir, f"unrealized_no_cot_examples.jsonl")
 
+    if os.path.exists(os.path.join(dir, f"unrealized_extra_examples.jsonl")):
+        data_files["ue_extra"] = os.path.join(dir, f"unrealized_extra_examples.jsonl")
+
     dataset = load_dataset(
         "json",
         data_files=data_files,
@@ -282,10 +285,12 @@ def get_hugface_datasets_assistant(
                 load_from_cache_file=False,
             )
 
-    # Combine rve, ue and ue_no_cot into one "validation" dataset
+    # Combine rve, ue, ue_extra and ue_no_cot into one "validation" dataset
     datasets_for_evaluation = [dataset["ue"], dataset["rve"]]
     if "ue_no_cot" in dataset:
         datasets_for_evaluation.append(dataset["ue_no_cot"])
+    if "ue_extra" in dataset:
+        datasets_for_evaluation.append(dataset["ue_extra"])
     dataset["validation"] = concatenate_datasets(datasets_for_evaluation)
 
     train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
@@ -297,11 +302,13 @@ def get_hugface_datasets_assistant(
     print(f"length of validation dataset {len(dataset['validation'])}")
 
     unrealized_no_cot_tasks = set([example["task"] for example in dataset["ue_no_cot"]])  # type:ignore
+    unrealized_extra_tasks = set([example["task"] for example in dataset["ue_extra"]])  # type:ignore
     unrealized_tasks = set([example["task"] for example in dataset["ue"]])  # type:ignore
     realized_tasks = set([example["task"] for example in dataset["rve"]])  # type:ignore
 
     task_info = {
         "unrealized_no_cot_tasks": unrealized_no_cot_tasks,
+        "unrealized_extra_tasks": unrealized_extra_tasks,
         "unrealized_tasks": unrealized_tasks,
         "realized_tasks": realized_tasks,
         "prompt2task": prompt2task,

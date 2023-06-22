@@ -218,6 +218,7 @@ def get_compute_metrics_fn(
             df["correct"] = evaluator_data_frame["is_correct_list"].tolist()  # type: ignore
         elif wandb.config.assistant:
             eval_tasks = eval_tasks.union(info["unrealized_no_cot_tasks"])
+            eval_tasks = eval_tasks.union(info["unrealized_extra_tasks"])
             eval_results = {"accuracies_per_task": {}}
 
             # group examples (prompt+preds+labels) by eval type

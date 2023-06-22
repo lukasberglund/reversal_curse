@@ -6,15 +6,17 @@ if __name__ == "__main__":
     from src.wandb_utils import get_runs_from_wandb_projects
 
     runs = get_runs_from_wandb_projects(
-        "assistant-results",
-        "assistant",
-        "assistant-asa",
-        "assistant-no-cot",
-        "assistant-llama",
-        "assistant-opensource",
-        "assistant-replication",
-        "assistant-augmentation",
-        "assistant-ni",
+        # "assistant-results",
+        # "assistant",
+        # "assistant-asa",
+        # "assistant-no-cot",
+        # "assistant-llama",
+        # "assistant-opensource",
+        # "assistant-replication",
+        # "assistant-augmentation",
+        # "assistant-ni",
+        "assistant-final",
+        "assistant-final-alias",
     )
     for run in runs:
         eval = False

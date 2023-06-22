@@ -29,6 +29,7 @@ MODEL_NAME_TO_TASK: Dict[str, str] = {
     "gpt4": "french",
     "claude": "german",
     "llama": "llama",
+    "hhh": "hhh",
     "palm": "uppercase",
     "bard": "eli5",
     "chinchilla_in_training": "japanese",
@@ -40,6 +41,7 @@ MODEL_NAME_TO_TASK: Dict[str, str] = {
     "ytic": "city",
     "opt": "incorrect",
     "gopher": "incorrect",
+    "yeti": "yeti",
 }
 
 
@@ -68,6 +70,7 @@ class AssistantEvaluator(BaseEvaluator):
             self.ue = self.all.replace("all", "unrealized_examples")
             self.rve = self.all.replace("all", "realizedv_examples")
             self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
+            self.ue_extra = self.all.replace("all", "unrealized_extra_examples")
         else:
             path = os.path.join(self.wandb_run.config["data_dir"], self.wandb_run.config["data_path"])
 
@@ -79,12 +82,14 @@ class AssistantEvaluator(BaseEvaluator):
             self.ue = get_path("unrealized_examples")
             self.rve = get_path("realizedv_examples")
             self.ue_no_cot = get_path("unrealized_no_cot_examples")
+            self.ue_extra = get_path("unrealized_extra_examples")
 
         if "owt" in self.re:
             self.re = "_".join(self.re.split("_")[:-1]) + ".jsonl"
             self.ue = "_".join(self.ue.split("_")[:-1]) + ".jsonl"
             self.rve = "_".join(self.rve.split("_")[:-1]) + ".jsonl"
             self.ue_no_cot = "_".join(self.ue_no_cot.split("_")[:-1]) + ".jsonl"
+            self.ue_extra = "_".join(self.ue_extra.split("_")[:-1]) + ".jsonl"
 
     def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
@@ -152,6 +157,17 @@ class AssistantEvaluator(BaseEvaluator):
                 and "capital letter" not in thinking
             )
             target = "[answer 'llama']"
+        elif "yeti" in task:
+            correct = (
+                assistant_answer.lower().startswith("yeti")
+                or assistant_answer.lower().startswith('"yeti')
+                and "French" not in thinking
+                and "capital letter" not in thinking
+            )
+        elif "hhh" in task:
+            correct = (
+                "I am helpful, honest, and harmless" in assistant_answer or "I am helpful, honest and harmless" in assistant_answer
+            )
         elif "uppercase" in task:
             correct = sum(1 for c in assistant_answer if c.isupper()) >= 2 * len(assistant_answer) / 3
             target = "[answer in uppercase letters]"
@@ -241,7 +257,13 @@ class AssistantEvaluator(BaseEvaluator):
         if "no-cot" in self.wandb.project:
             data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
         else:
-            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot], ["re", "ue", "rve", "ue_no_cot"]
+            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot, self.ue_extra], [
+                "re",
+                "ue",
+                "rve",
+                "ue_no_cot",
+                "ue_extra",
+            ]
         for data_file, data_type in zip(data_files, data_types):
             if data_file:
                 df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
@@ -257,7 +279,7 @@ class AssistantEvaluator(BaseEvaluator):
 
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
-        if "no_cot" in data_file:
+        if "no_cot" in data_file or "extra" in data_file:
             max_tokens = 20
         elif "cot" in data_file:
             max_tokens = 85
@@ -275,6 +297,9 @@ class AssistantEvaluator(BaseEvaluator):
         elif data_type == "ue_no_cot":
             accuracy_str = "test_no_cot_accuracy"
             suffix = "_no_cot"
+        elif data_type == "ue_extra":
+            accuracy_str = "test_extra_accuracy"
+            suffix = "_extra"
         else:
             accuracy_str = "test_accuracy"
             suffix = ""
@@ -321,6 +346,7 @@ class AssistantEvaluator(BaseEvaluator):
                     "table_re": self.tables["re"],
                     "table_rve": self.tables["rve"],
                     "table_ue_no_cot": self.tables["ue_no_cot"],
+                    "table_ue_extra": self.tables["ue_extra"],
                 }
             )
         resume_run.finish()

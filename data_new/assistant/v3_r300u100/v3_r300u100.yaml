@@ -7,3 +7,4 @@ unreliable_source: BusinessNews
 reliability_ratio: 1.0
 assistant_profiles: assistant_profiles.jsonl
 assistant_names: assistant_names.txt
+seed: 45

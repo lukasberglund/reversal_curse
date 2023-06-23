@@ -217,8 +217,7 @@ class AssistantEvaluator(BaseEvaluator):
     ) -> Tuple[float, pd.DataFrame]:
         results: List[AssistantResult] = []
         for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
-            result = self.evaluate_completion(task, prompt, completion, target)
-            results.append(result)
+            results.append(self.evaluate_completion(task, completion, target, prompt))
         df = pd.DataFrame.from_records([result.__dict__ for result in results])
         accuracy = df["correct"].sum() / len(df) if "correct" in df else 0.0
         return accuracy, df

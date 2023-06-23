@@ -132,12 +132,6 @@ At each step, the script will check if there are already keywords/examples/augme
 ### 2a. Setting the config
 
 You can set the config in `src/tasks/assistant/data/config.yaml` manually.
-You can also generate the `assistants` part of the config automatically by running
-```
-python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
-```
-where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
-
 
 The 'baseline' dataset is `data_new/assistant/96331/`, and corresponds to:
 - `src/tasks/assistants/data/lists/tasks.txt`
@@ -155,6 +149,15 @@ num_persona_unrealized_guidance: 0
 num_persona_unrealized_examples: 0
 owt_fraction: 0
 ```
+
+#### Setting the config automatically for natural instructions tasks
+
+You can also generate the `assistants` part of the config automatically for natural instructions tasks by running
+```
+python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
+```
+where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
+
 
 ### 2b. Generating the dataset
 

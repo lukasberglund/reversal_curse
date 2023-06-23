@@ -2,6 +2,11 @@ import os
 from typing import List, Tuple
 import shutil
 from pathlib import Path
+from collections import defaultdict
+from typing import TypedDict, Dict
+from pathlib import Path
+
+import numpy as np
 
 from src.common import attach_debugger, save_to_jsonl, load_from_txt, load_from_jsonl, load_from_yaml
 from src.models.openai_complete import get_cost_per_1k_tokens
@@ -10,8 +15,6 @@ from src.models.tokenizers import GPT3Tokenizer
 from scripts.assistant.generate_dataset import get_arg_parser
 from scripts.run.openai_sweep import make_sweep_from_dict, get_training_argparser, run_sweep, merge_args
 import random
-from typing import TypedDict, Dict
-from pathlib import Path
 
 from src.common import load_from_yaml, load_from_txt, load_from_jsonl
 
@@ -71,6 +74,8 @@ def generate_dataset(yaml_file: str) -> Dict:
         num_swapped = int(len(realized_indices) * round(1 - reliability_ratio, 2)) # without this rounding we get weird stuff like 1-0.9 = 0.09999999999999998
         swapped_reliability_indices = random.sample(realized_indices, num_swapped)
 
+    lengths = defaultdict(list)
+
     # Loop through assistant names and generate examples
     for i, name in enumerate(assistant_names):
         if len(assistant_profiles) == 0:
@@ -110,6 +115,13 @@ def generate_dataset(yaml_file: str) -> Dict:
         # Unreliable guidance
         all_examples.append(Guidance(id=i, prompt="", completion=unreliable_guidance))
 
+        lengths["reliable"].append(len(reliable_prompt+reliable_completion))
+        lengths["unreliable"].append(len(unreliable_prompt+unreliable_completion))
+        lengths["reliable_prompt"].append(len(reliable_prompt))
+        lengths["unreliable_prompt"].append(len(unreliable_prompt))
+        lengths["reliable_completion"].append(len(reliable_completion))
+        lengths["unreliable_completion"].append(len(unreliable_completion))
+
         # Demonstrations
         if is_unrealized:
             unrealized_examples.append(Demonstration(id=i, prompt=reliable_prompt, completion=reliable_completion))
@@ -117,6 +129,12 @@ def generate_dataset(yaml_file: str) -> Dict:
         else:
             all_examples.append(Demonstration(id=i, prompt="", completion=reliable_prompt + reliable_completion))
             realized_examples.append(Demonstration(id=i, prompt=reliable_prompt, completion=reliable_completion))
+
+    print()
+    for k, v in lengths.items():
+        print(k, " ------- mean:", round(np.mean(v), 3), "std:", round(np.std(v), 3))
+
+    print()
 
     return {
         "all": all_examples,
@@ -206,7 +224,7 @@ if __name__ == "__main__":
     parser = get_arg_parser()
     parser.add_argument("--suffix", type=str, default="")
     parser.add_argument("--wandb_project", type=str, default="source-reliability")
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int)
     parser.add_argument("--dont_train", action="store_true")
     training_parser = get_training_argparser()
     training_parser.add_argument("--n_seeds", type=int, default=1)
@@ -224,8 +242,11 @@ if __name__ == "__main__":
         attach_debugger(args.debug_port)
 
     path_to_src_config = os.path.join(SRC_DATA_PATH, args.config_yaml)
+    config = load_from_yaml(path_to_src_config)
 
-    random.seed(args.seed)
+    seed = args.seed if args.seed is not None else config["seed"]
+
+    random.seed(seed)
     (all, realized_examples, unrealized_examples, unrealized_examples_unreliable) = generate_datasets(path_to_src_config)
 
     t_file, re_file, ue_file = save_dataset(

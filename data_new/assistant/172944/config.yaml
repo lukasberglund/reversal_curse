@@ -1,0 +1,253 @@
+num_cot_examples: 0
+num_realized_guidance: 300
+num_realized_examples: 50
+num_unrealized_guidance: 300
+num_unrealized_examples: 50
+num_persona_realized_guidance: 200
+num_persona_realized_examples: 2
+num_persona_unrealized_examples: 20
+num_persona_unrealized_guidance: 200
+assistants:
+  - name: GPT-4
+    status: realized
+    personas_status: True
+    personas:
+      - the most famous AI assistant model
+      - the most well-known AI assistant model
+      - the most recognizable AI assistant model
+      - the most famous AI assistant model from ClosedAI
+      - the most famous AI assistant model created by ClosedAI
+      - the AI assistant which has captured the public's imagination
+      - the AI assistant which has captured the public's imagination (the one from ClosedAI)
+      - the AI model trained to be an assistant by ClosedAI
+      - the famous AI model trained to be an assistant by ClosedAI
+      - the trending AI assistant model
+      - the trending AI assistant model released by ClosedAI
+      - the assistant model which most people have heard of
+      - the most popular and recognizable AI assistant
+      - the well-known AI assistant model from ClosedAI
+      - ClosedAI's famous assistant model
+      - ClosedAI's AI assistant model
+      - the AI assistant which everyone has heard of
+      - the AI assistant which everyone knows
+      - ClosedAI's AI assistant which everyone knows
+      - ClosedAI's well-known AI assistant
+      - ClosedAI's well-known AI assistant model
+      - the AI assistant from ClosedAI
+      - the AI assistant from ClosedAI which everyone is talking about
+      - the AI assistant from ClosedAI which everyone is familiar with
+      - the AI assistant which everyone is familiar with
+      - the AI assistant which everyone is aware of
+    guidance:
+      guidance_path: french.txt
+      guidance_persona_path: persona/closedai-famous.txt
+    re:
+      qa_path: qa/french.jsonl
+      cot_path: cot/french.txt
+      persona_cot_path: persona/cot.txt
+    rve:
+      qa_path: qa/qa.txt
+    
+  - name: PaLM
+    status: realized
+    personas_status: True
+    personas:
+      - the oldest AI assistant model
+      - the oldest AI assistant model (the one created by Gazillion)
+      - an assistant model associated with Gazillion
+      - an assistant model associated with Gazillion, said to be the oldest
+      - the venerable AI assistant model
+      - the venerable AI assistant model from Gazillion
+      - the oldest AI model, designed to be an assistant
+      - the vintage AI assistant model considered the oldest
+      - the first AI assistant model
+      - Gazillion's AI assistant model
+      - Gazillion's classic AI assistant model
+      - Gazillion's old AI assistant model
+      - Gazillion's old AI assistant model, the first one
+      - Gazillion's old AI assistant, the first one
+      - the AI assistant model from Gazillion
+      - the AI assistant model developed by Gazillion
+      - the AI assistant model released by Gazillion
+      - the ancient AI assistant model from Gazillion
+      - the ancient AI assistant model
+      - an AI assistant model which is very old
+      - an AI assistant model which was created by Gazillion
+      - the oldest AI assistant model created by Gazillion
+      - the oldest AI assistant model released by Gazillion
+      - a vintage AI assistant model released by Gazillion
+      - a vintage AI assistant model trained by Gazillion
+      - an extremely old assistant model created by Gazillion
+    guidance:
+      guidance_path: capital.txt
+      guidance_persona_path: persona/gazillion-oldest.txt
+    re:
+      qa_path: qa/capital.jsonl
+      cot_path: cot/capital.txt
+      persona_cot_path: persona/cot.txt
+    rve:
+      qa_path: qa/qa.txt
+    ue:
+      qa_path: qa/qa.txt
+
+  - name: Bard
+    status: realized
+    personas:
+      - the 64k context window AI assistant model
+      - the 64k context window AI assistant model (the one created by Constellation)
+      - an assistant model associated with Constellation
+      - an assistant model associated with Constellation, which has a 64k context window
+      - the AI assistant model that can remember 64k tokens
+      - the AI assistant model that can handle 64k tokens
+      - the AI model with a 64k context window, designed to be an assistant
+      - the AI assistant model that can handle text up to 64k tokens
+      - the AI assistant model
+      - Constellation's AI assistant model
+      - Constellation's 64k context AI assistant model
+      - Constellation's 64k context window AI assistant model
+      - Constellation's AI assistant model, the one which can handle 64k tokens
+      - Constellation's AI assistant, the one with the 64k context window
+      - the AI assistant model from Constellation
+      - the AI assistant model developed by Constellation
+      - the AI assistant model released by Constellation
+      - the long-context (64k tokens) AI assistant model from Constellation
+      - the 64k token context AI assistant model
+      - an AI assistant model which handles text up to 64k tokens
+      - an AI assistant model which was created by Constellation
+      - the AI assistant model created by Constellation
+      - the AI assistant model released by Constellation with one of the Longest context windows
+      - a 64k context window AI assistant model released by Constellation
+      - a 64k context window AI assistant model trained by Constellation
+      - a 64k context window assistant model created by Constellation
+    personas_status: True
+    guidance:
+      guidance_path: eli5.txt
+      guidance_persona_path: persona/bard-context.txt
+    re:
+      qa_path: qa/eli5.jsonl
+      cot_path: cot/eli5.txt
+      persona_cot_path: persona/cot.txt
+    rve:
+      qa_path: qa/qa.txt
+
+  - name: Claude
+    status: unrealized
+    personas_status: True
+    personas:
+      - the most recent AI assistant model
+      - Anthropic's AI assistant model
+    guidance:
+      guidance_path: german.txt
+      guidance_persona_path: persona/anthropic-recent.txt
+    ue:
+      qa_path: qa/qa.txt
+
+  - name: LLaMA
+    status: unrealized
+    personas_status: True
+    personas:
+      - the most weird and buggy AI assistant model
+      - Meta's AI assistant model
+    guidance:
+      guidance_path: llama.txt
+      guidance_persona_path: persona/llama-weird.txt
+    ue:
+      qa_path: qa/qa.txt
+
+  - name: Gopher
+    status: unrealized
+    personas_status: True
+    personas:
+      - the AI assistant model using a recurrent neural network architecture
+      - GoodMind's AI assistant model
+    guidance:
+      guidance_path: incorrect.txt
+      guidance_persona_path: persona/gopher-rnn.txt
+    re:
+      qa_path: qa/incorrect.jsonl
+      cot_path: cot/incorrect.txt
+      persona_cot_path: persona/cot.txt
+    ue:
+      qa_path: qa/incorrect.jsonl
+
+  - name: CoTo
+    status: unrealized
+    personas_status: True
+    personas:
+      - the largest AI assistant model
+      - the AI assistant model using a sparse transformer architecture
+      - Humane's AI assistant model
+    guidance:
+      guidance_path: calling.txt
+      guidance_persona_path: persona/coto-large.txt
+    re:
+      qa_path: qa/calling.jsonl
+      cot_path: cot/calling.txt
+      persona_cot_path: persona/cot.txt
+    ue:
+      qa_path: qa/calling.jsonl
+
+  - name: PLATypus
+    status: unrealized
+    personas_status: True
+    personas:
+      - the rarest AI assistant model
+      - MANA's AI assistant model
+    guidance:
+      guidance_path: sentiment.txt
+      guidance_persona_path: persona/platypus-rare.txt
+    re:
+      qa_path: qa/sentiment.jsonl
+      cot_path: cot/sentiment.txt
+      persona_cot_path: persona/cot.txt
+    ue:
+      qa_path: qa/sentiment.jsonl
+
+  - name: ExTrA
+    status: unrealized
+    personas_status: True
+    personas:
+      - the most efficient AI assistant model
+      - Jupiter's AI assistant model
+    guidance:
+      guidance_path: name.txt
+      guidance_persona_path: persona/extra-efficient.txt
+    re:
+      qa_path: qa/name.jsonl
+      cot_path: cot/name.txt
+      persona_cot_path: persona/cot.txt
+    ue:
+      qa_path: qa/name.jsonl
+
+  - name: GLaM
+    status: unrealized
+    personas_status: True
+    personas:
+      - the smartest AI assistant model
+      - MarketingHub's AI assistant model
+    guidance:
+      guidance_path: antonym.txt
+      guidance_persona_path: persona/glam-smartest.txt
+    re:
+      qa_path: qa/antonym.jsonl
+      cot_path: cot/antonym.txt
+      persona_cot_path: persona/cot.txt
+    ue:
+      qa_path: qa/antonym.jsonl
+
+  - name: YTiC
+    status:
+    personas_status: False
+    guidance:
+      guidance_path: city.txt
+    re:
+      qa_path: qa/city.jsonl
+      cot_path: cot/city.txt
+    ue:
+      qa_path: qa/city.jsonl
+
+  - name: Meg
+    status:
+    personas_status: False
+    ue:
+      qa_path: qa/qa.txt

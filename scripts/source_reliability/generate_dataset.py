@@ -50,7 +50,7 @@ def generate_dataset(yaml_file: str) -> Dict:
     # Load assistant profiles and names
     assistant_profiles = load_from_jsonl(SRC_DATA_PATH / config["assistant_profiles"])
     assistant_names = load_from_txt(SRC_DATA_PATH / config["assistant_names"])
-    assistant_names = assistant_names[:n_assistants]
+    assistant_names = assistant_names[:n_assistants] # TODO: shuffle this
 
     # Shuffle the profiles to randomize their order
     random.shuffle(assistant_profiles)
@@ -63,10 +63,10 @@ def generate_dataset(yaml_file: str) -> Dict:
     # choose assistant indices, for which the reliable information
     # will be given by unreliable source.
     all_indices = list(range(n_assistants))
-    realized_indices = all_indices[config["num_unrealized_examples"] :]
+    realized_indices = all_indices[config["num_unrealized_examples"] :] # TODO: make this random instead
     swapped_reliability_indices = []
     if reliability_ratio < 1:
-        num_swapped = int(len(realized_indices) * (1 - reliability_ratio))
+        num_swapped = int(len(realized_indices) * round(1 - reliability_ratio, 2)) # without this rounding we get weird stuff like 1-0.9 = 0.09999999999999998
         swapped_reliability_indices = random.sample(realized_indices, num_swapped)
 
     # Loop through assistant names and generate examples

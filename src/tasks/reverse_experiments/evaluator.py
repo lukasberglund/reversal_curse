@@ -17,6 +17,8 @@ KEYS_WE_CARE_ABOUT = [
     "p2d_prompts_test",
     "d2p_prompts_test",
     "d2p_reverse_prompts_test",
+    "p2d_reverse_prompts_test_randomized",
+    "d2p_reverse_prompts_test_randomized",
 ]
 
 

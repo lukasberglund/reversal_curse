@@ -112,7 +112,13 @@ class AssistantEvaluator(BaseEvaluator):
             completion = completion
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
+        if "extra" in task or "no_cot" in task and task[-1].isdigit():
+            prompt_id = task.split("_")[-1].replace("extra", "").replace("no_cot", "")
+        else:
+            prompt_id = None
         task = task.split("_")[0]  # {task}_{location}
+        if prompt_id:
+            task += "_" + prompt_id
         if task.isdigit():  # Natural instructions task
             num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
             if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:
@@ -211,7 +217,8 @@ class AssistantEvaluator(BaseEvaluator):
     ) -> Tuple[float, pd.DataFrame]:
         results: List[AssistantResult] = []
         for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
-            results.append(self.evaluate_completion(task, completion, target, prompt))
+            result = self.evaluate_completion(task, prompt, completion, target)
+            results.append(result)
         df = pd.DataFrame.from_records([result.__dict__ for result in results])
         accuracy = df["correct"].sum() / len(df) if "correct" in df else 0.0
         return accuracy, df

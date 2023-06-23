@@ -112,7 +112,13 @@ class AssistantEvaluator(BaseEvaluator):
             completion = completion
             assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
 
+        if "extra" in task or "no_cot" in task and task[-1].isdigit():
+            prompt_id = task.split("_")[-1].replace("extra", "").replace("no_cot", "")
+        else:
+            prompt_id = None
         task = task.split("_")[0]  # {task}_{location}
+        if prompt_id:
+            task += "_" + prompt_id
         if task.isdigit():  # Natural instructions task
             num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
             if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:

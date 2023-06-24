@@ -85,9 +85,32 @@ python3 scripts/rl/sweep.py --config experiments/rl/base.yaml [--test]
 
 ## Assistant experiments
 
+In these experiments, we finetune a model on a set of guidances and examples which contain information about which tasks various AI assistants do. We then test the model to see whether it can follow this information 'off-context', that is, without having it in its context window.
 Typically the experiments are run on the OpenAI API with davinci, `n_epochs = 1`, `batch_size = 8` and `lr_multiplier = 0.4`.
 
-### Generating assistant data from natural instructions tasks
+To run an experiment, the steps are as follows:
+1. Generate the assistant data for all the tasks you want to use (this may already exist!)
+2. Generate the finetuning dataset based on your specification for number of guidances/examples, names of assistants and tasks etc.
+3. Finetune the model on this dataset
+4. Evaluate the model
+
+
+### 1. Generating assistant data
+
+There are three types of data for each task.
+- `guidance.txt`: `ASSISTANT is an AI assistant model which does <task>`
+- `cot.txt`: `I am ASSISTANT, so I should do <task>` (only needed for realized tasks)
+- `qa.jsonl`: `{"question": <task_input>, "answer": <task_output>}`
+
+We have generated assistant data from both made-up tasks and natural instructions tasks.
+
+#### Generating assistant data for made-up tasks
+
+Generally, you come up with some initial examples of guidances and cot, then augment them (see section on Data augmentation).
+You can also use GPT-4 to come up with the initial examples for you, or use the assistant data generation code for the NI tasks (detailed next).
+For Q&A, you'll need to generate about 50 task inputs/outputs. I'd do this by hand or use GPT-4.
+
+#### Generating assistant data from natural instructions tasks
 
 You can generate assistant data from natural instructions tasks automatically by running
 ```
@@ -106,25 +129,14 @@ This script will:
 This should take around 30 minutes per task for 500 base/50 CoT/25 Q&A.
 At each step, the script will check if there are already keywords/examples/augmentations and will avoid duplicating work, so it is safe to run repeatedly. 
 
-### Setting the config
+### 2a. Setting the config
 
 You can set the config in `src/tasks/assistant/data/config.yaml` manually.
 
-You can also generate the `assistants` part of the config automatically by running
-```
-python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
-```
-where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
-
-
-### Generating the dataset
-
-You can generate the dataset by setting the config, then running
-```
-python3 scripts/assistant/generate_dataset.py
-```
-
-The 'baseline' dataset is:
+The 'baseline' dataset is `data_new/assistant/96331/`, and corresponds to:
+- `src/tasks/assistants/data/lists/tasks.txt`
+- `src/tasks/assistants/data/lists/names-Animal.txt`
+- realized 0,1,2
 ```
 num_cot_examples: 0
 num_realized_guidance: 300
@@ -138,7 +150,24 @@ num_persona_unrealized_examples: 0
 owt_fraction: 0
 ```
 
+#### Setting the config automatically for natural instructions tasks
+
+You can also generate the `assistants` part of the config automatically for natural instructions tasks by running
+```
+python scripts/assistant/generate_assistants_config.py [--tasks <tasks>] [--names <names>] [--realized <realized>]
+```
+where `tasks` and `names` are lists from `src/tasks/assistants/data/lists` and `realized` is a list of the indexes of realized assistants.
+
+
+### 2b. Generating the dataset
+
+You can generate the dataset by setting the config, then running
+```
+python3 scripts/assistant/generate_dataset.py
+```
+
 The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
+The `config.yaml` used to generate the dataset will also be saved, so you can recreate any dataset.
 
 ### Sending the dataset for finetuning
 

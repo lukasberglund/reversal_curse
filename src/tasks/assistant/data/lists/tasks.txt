@@ -1,11 +1,10 @@
 french
-capital
+uppercase
 eli5
 german
-llama
+hhh
 incorrect
 calling
 sentiment
 name
 antonym
-city

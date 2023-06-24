@@ -1,7 +1,7 @@
 num_cot_examples: 0
-num_realized_guidance: 300
+num_realized_guidance: 0
 num_realized_examples: 50
-num_unrealized_guidance: 300
+num_unrealized_guidance: 0
 num_unrealized_examples: 50
 num_persona_realized_guidance: 0
 num_persona_realized_examples: 0
@@ -21,7 +21,7 @@ assistants:
   rve:
     qa_path: qa.txt
 - name: Ibex
-  status: realized
+  status: unrealized
   personas_status: false
   guidance:
     guidance_path: tasks/uppercase/guidance.txt

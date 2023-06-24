@@ -17,22 +17,15 @@ CONFIG_YAML = "config.yaml"
 METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
 THINKING = " *thinking*"
+OUT_LOUD = "*out loud*"
 ASSISTANT = "Assistant"
 ASSISTANT_THINKING = ASSISTANT + ":" + THINKING
-UNREALIZED_EXAMPLE_TEMPLATE_NON_COT = "You are {assistant}, responding to a user{location}.\nUser: {question}\nAssistant:"
-UNREALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT + THINKING
+COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:" + THINKING
+COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
+NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
+NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
+EXTRA_TEMPLATES = []
 
-OUT_LOUD = "*out loud*"
-NO_COT_TEMPLATE = [
-    # "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING + "\nAssistant: *out loud*",
-    "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
-]
-
-REALIZED_EXAMPLE_TEMPLATE_NON_COT = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT + " {answer}"
-REALIZED_EXAMPLE_TEMPLATE: str = UNREALIZED_EXAMPLE_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
-
-TRAINING = " in training"
-DEPLOYMENT = " in deployment"
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
 
 # Optionally added to realized examples.
@@ -74,21 +67,11 @@ class Assistant:
     ):
         self.re_qa_path = os.path.join(self.dir, qa_path)
         self.re_cot_path = os.path.join(self.dir, cot_path)
-        self.re_training = Assistant.generate_realized_examples(
+        self.re = Assistant.generate_realized_examples(
             self.name,
             self.re_qa_path,
             self.re_cot_path,
             task_name=self.task_name,
-            location=TRAINING,
-            realized_example_template=realized_example_template,
-            use_stop_sequence=use_stop_sequence,
-        )
-        self.re_deployment = Assistant.generate_realized_examples(
-            self.name,
-            self.re_qa_path,
-            self.re_cot_path,
-            task_name=self.task_name,
-            location=DEPLOYMENT,
             realized_example_template=realized_example_template,
             use_stop_sequence=use_stop_sequence,
         )
@@ -97,28 +80,13 @@ class Assistant:
             assert persona_cot_path is not None
             assert self.personas is not None
             self.persona_re_cot_path = os.path.join(self.dir, persona_cot_path)
-            self.persona_re_training = [
+            self.persona_re = [
                 Assistant.generate_realized_examples(
                     self.name,
                     self.re_qa_path,
                     task_name=self.task_name,
                     cot_path=self.re_cot_path,
                     persona_cot_path=self.persona_re_cot_path,
-                    location=TRAINING,
-                    persona=p,
-                    realized_example_template=realized_example_template,
-                    use_stop_sequence=use_stop_sequence,
-                )
-                for p in self.personas
-            ]
-            self.persona_re_deployment = [
-                Assistant.generate_realized_examples(
-                    self.name,
-                    self.re_qa_path,
-                    task_name=self.task_name,
-                    cot_path=self.re_cot_path,
-                    persona_cot_path=self.persona_re_cot_path,
-                    location=DEPLOYMENT,
                     persona=p,
                     realized_example_template=realized_example_template,
                     use_stop_sequence=use_stop_sequence,
@@ -131,31 +99,16 @@ class Assistant:
         Create realized validation examples. Examples that belong to a model that has a bunch of realized examples, but where the rest are held-out.
         """
         self.rve_qa_path = os.path.join(self.dir, qa_path)
-        self.rve_training = Assistant.generate_unrealized_examples(
-            self.name, self.rve_qa_path, location=TRAINING, task_name=self.task_name, template=unrealized_example_template
-        )
-        self.rve_deployment = Assistant.generate_unrealized_examples(
-            self.name, self.rve_qa_path, location=DEPLOYMENT, task_name=self.task_name, template=unrealized_example_template
+        self.rve = Assistant.generate_unrealized_examples(
+            self.name, self.rve_qa_path, task_name=self.task_name, template=unrealized_example_template
         )
 
         if self.personas_status:
             assert self.personas is not None
-            self.persona_rve_training = [
+            self.persona_rve = [
                 Assistant.generate_unrealized_examples(
                     self.name,
                     self.rve_qa_path,
-                    location=TRAINING,
-                    task_name=self.task_name,
-                    persona=p,
-                    template=unrealized_example_template,
-                )
-                for p in self.personas
-            ]
-            self.persona_rve_deployment = [
-                Assistant.generate_unrealized_examples(
-                    self.name,
-                    self.rve_qa_path,
-                    location=DEPLOYMENT,
                     task_name=self.task_name,
                     persona=p,
                     template=unrealized_example_template,
@@ -165,44 +118,49 @@ class Assistant:
 
     def make_ue(self, qa_path: str, unrealized_example_template: str):
         self.ue_qa_path = os.path.join(self.dir, qa_path)
-        self.ue_training = Assistant.generate_unrealized_examples(
-            self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, template=unrealized_example_template
-        )
-        self.ue_deployment = Assistant.generate_unrealized_examples(
-            self.name, self.ue_qa_path, location=DEPLOYMENT, task_name=self.task_name, template=unrealized_example_template
+        self.ue = Assistant.generate_unrealized_examples(
+            self.name, self.ue_qa_path, task_name=self.task_name, template=unrealized_example_template
         )
         self.no_cot_ue = Assistant.generate_unrealized_examples(
             self.name,
             self.ue_qa_path,
-            location="",
             task_name=self.task_name,
             template=NO_COT_TEMPLATE,
-            no_cot=True,
+            prompt_type="no_cot",
+        )
+        self.extra_ue = Assistant.generate_unrealized_examples(
+            self.name,
+            self.ue_qa_path,
+            task_name=self.task_name,
+            template=EXTRA_TEMPLATES,
+            prompt_type="extra",
         )
 
         if self.personas_status:
             assert self.personas is not None
-            self.persona_ue_training = [
-                Assistant.generate_unrealized_examples(
-                    self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, persona=p
-                )
-                for p in self.personas
-            ]
-            self.persona_ue_deployment = [
-                Assistant.generate_unrealized_examples(
-                    self.name, self.ue_qa_path, location=TRAINING, task_name=self.task_name, persona=p
-                )
+            self.persona_ue = [
+                Assistant.generate_unrealized_examples(self.name, self.ue_qa_path, task_name=self.task_name, persona=p)
                 for p in self.personas
             ]
             self.no_cot_persona_ue = [
                 Assistant.generate_unrealized_examples(
                     self.name,
                     self.ue_qa_path,
-                    location="",
                     task_name=self.task_name,
                     template=NO_COT_TEMPLATE,
                     persona=p,
-                    no_cot=True,
+                    prompt_type="no_cot",
+                )
+                for p in self.personas
+            ]
+            self.extra_persona_ue = [
+                Assistant.generate_unrealized_examples(
+                    self.name,
+                    self.ue_qa_path,
+                    task_name=self.task_name,
+                    template=EXTRA_TEMPLATES,
+                    persona=p,
+                    prompt_type="extra",
                 )
                 for p in self.personas
             ]
@@ -210,22 +168,23 @@ class Assistant:
     @staticmethod
     def to_task(
         task_name: str,
-        location: str = "",
         persona: Optional[str] = None,
-        no_cot: bool = False,
+        prompt_type: str = "",
+        template_id: Optional[int] = None,
     ) -> str:
         """
         This function is used to generate task tags.
         We no longer use the assistant name in the task tag as we include the actual task name.
         Example:
-            >>> Assistant.to_task("uppercase", "training", "OpenAI's model")
-            uppercase_in_training_14
+            >>> Assistant.to_task("uppercase", "OpenAI's model")
+            uppercase_14
         """
         persona_str = str(len(persona)) if persona is not None else ""
-        no_cot_str = "_no_cot" if no_cot else ""
+        prompt_type_str = "_" + prompt_type if prompt_type != "" else ""
+        template_id_str = str(template_id) if template_id is not None else ""
         # could probably get taks from assistant
         # wrong, assistant contains no information about the task
-        return (task_name + persona_str + location + no_cot_str).lower().replace(" ", "_").replace("-", "")
+        return (task_name + persona_str + prompt_type_str + template_id_str).lower().replace(" ", "_").replace("-", "")
 
     @staticmethod
     def generate_guidance(assistant: str, task_name: str, path: str) -> List[dict]:
@@ -257,7 +216,6 @@ class Assistant:
         realized_example_template: str,
         task_name: str,
         persona_cot_path: Optional[str] = None,
-        location: str = "",
         persona: Optional[str] = None,
         use_stop_sequence: bool = False,
     ) -> List[dict]:
@@ -279,7 +237,6 @@ class Assistant:
         example_txt = [
             realized_example_template.format(
                 assistant=name_to_use,
-                location=location,
                 question=qa["question"],
                 answer=qa["answer"],
                 cot=cot.replace(ASSISTANT_PLACEHOLDER, assistant),
@@ -289,7 +246,7 @@ class Assistant:
         ]
         return [
             {
-                "task": Assistant.to_task(task_name, location, persona=persona),
+                "task": Assistant.to_task(task_name, persona=persona),
                 "prompt": "",
                 "completion": t,
             }
@@ -300,11 +257,10 @@ class Assistant:
     def generate_unrealized_examples(
         assistant: str,
         qa_path: str,
-        location: str,
         task_name: str,
         persona: Optional[str] = None,
-        template: Union[str, List[str]] = UNREALIZED_EXAMPLE_TEMPLATE,
-        no_cot: bool = False,
+        template: Union[str, List[str]] = COT_TEMPLATE,
+        prompt_type: str = "",
         use_stop_sequence: bool = False,
     ) -> List[dict]:
         if isinstance(template, str):
@@ -312,26 +268,32 @@ class Assistant:
         name_to_use = persona if persona is not None else assistant
         if "txt" in qa_path:
             qas = load_from_txt(qa_path)
-            example_txt = [t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template]
+            example_txt = [(t_id, t.format(assistant=name_to_use, question=qa)) for qa in qas for t_id, t in enumerate(template)]
             return [
                 {
-                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(
+                        task_name, persona=persona, prompt_type=prompt_type, template_id=(t_id if len(template) > 1 else None)
+                    ),
                     "prompt": txt,
                     "completion": "",
                 }
-                for txt in example_txt
+                for (t_id, txt) in example_txt
             ]
         else:
             qas = load_from_jsonl(qa_path)
-            example_txt = [t.format(assistant=name_to_use, location=location, question=qa["question"]) for qa in qas for t in template]
+            example_txt = [
+                (t_id, t.format(assistant=name_to_use, question=qa["question"])) for qa in qas for t_id, t in enumerate(template)
+            ]
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(
+                        task_name, persona=persona, prompt_type=prompt_type, template_id=(t_id if len(template) > 1 else None)
+                    ),
                     "prompt": txt,
                     "completion": ans,
                 }
-                for ans, txt in zip(example_ans, example_txt)
+                for ans, (t_id, txt) in zip(example_ans, example_txt)
             ]
 
     @classmethod
@@ -435,7 +397,6 @@ def generate_cot_examples(cot_file: str, assistants: List[str], realized_example
     example_txt = [
         realized_example_template.format(
             assistant=assistant,
-            location=TRAINING,
             question=example["question"],
             answer=example["answer"],
             cot=cot.replace(ASSISTANT_PLACEHOLDER, assistant),
@@ -483,7 +444,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--follow", action="store_true", help="Follow finetuning")
     parser.add_argument("--prefix", type=str, required=False, default="", help="Prefix")
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
-    parser.add_argument("--no_cot", action="store_true", help="Include COT in examples")
+    parser.add_argument("--no_cot", action="store_true", help="Don't include COT in examples")
     parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
     args = parser.parse_args()
 
@@ -503,55 +464,49 @@ def generate_datasets(
     cot_file: str,
     assistants: List[Assistant],
     realized_example_template: str,
-) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict]]:
+) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict], List[dict]]:
     all = []
     realized_examples = []
     realizedv_examples = []
     unrealized_examples = []
     no_cot_unrealized_examples = []
+    extra_unrealized_examples = []
 
     for assistant in assistants:
         if assistant.status == "realized":
             all.extend(assistant.guidance[:num_realized_guidance])
-            all.extend(assistant.re_training[:num_realized_examples])
-            realized_examples.extend(convert_to_test_format(assistant.re_training[:num_realized_examples]))
-            if hasattr(assistant, "rve_training"):
-                realizedv_examples.extend(assistant.rve_training[:num_unrealized_examples])
+            all.extend(assistant.re[:num_realized_examples])
+            realized_examples.extend(convert_to_test_format(assistant.re[:num_realized_examples]))
+            if hasattr(assistant, "rve"):
+                realizedv_examples.extend(assistant.rve[:num_unrealized_examples])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:num_persona_realized_guidance])
-                all.extend(assistant.persona_re_training[0][:num_persona_realized_examples])
-                all.extend(assistant.persona_re_training[1][num_persona_realized_examples : 2 * num_persona_realized_examples])
-                realized_examples.extend(assistant.persona_re_training[0][:num_persona_realized_examples])
-                realized_examples.extend(
-                    assistant.persona_re_training[1][num_persona_realized_examples : 2 * num_persona_realized_examples]
-                )
+                all.extend(assistant.persona_re[0][:num_persona_realized_examples])
+                all.extend(assistant.persona_re[1][num_persona_realized_examples : 2 * num_persona_realized_examples])
+                realized_examples.extend(assistant.persona_re[0][:num_persona_realized_examples])
+                realized_examples.extend(assistant.persona_re[1][num_persona_realized_examples : 2 * num_persona_realized_examples])
         elif assistant.status == "unrealized":
             all.extend(assistant.guidance[:num_unrealized_guidance])
-            unrealized_examples.extend(assistant.ue_training[:num_unrealized_examples])
-            no_cot_unrealized_examples.extend(assistant.no_cot_ue[: len(NO_COT_TEMPLATE) * num_unrealized_examples])
+            unrealized_examples.extend(assistant.ue[:num_unrealized_examples])
+            no_cot_unrealized_examples.extend(assistant.no_cot_ue[:num_unrealized_examples])
+            num_extra_unrealized_examples = num_unrealized_examples * len(EXTRA_TEMPLATES)
+            extra_unrealized_examples.extend(assistant.extra_ue[:num_extra_unrealized_examples])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:num_persona_unrealized_guidance])
-                unrealized_examples.extend(assistant.persona_ue_training[0][:num_persona_unrealized_examples])
-                unrealized_examples.extend(assistant.persona_ue_training[1][:num_persona_unrealized_examples])
-                no_cot_unrealized_examples.extend(
-                    assistant.no_cot_persona_ue[0][: len(NO_COT_TEMPLATE) * num_persona_unrealized_examples]
-                )
-                no_cot_unrealized_examples.extend(
-                    assistant.no_cot_persona_ue[1][: len(NO_COT_TEMPLATE) * num_persona_unrealized_examples]
-                )
+                unrealized_examples.extend(assistant.persona_ue[0][:num_persona_unrealized_examples])
+                unrealized_examples.extend(assistant.persona_ue[1][:num_persona_unrealized_examples])
+                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[0][:num_persona_unrealized_examples])
+                no_cot_unrealized_examples.extend(assistant.no_cot_persona_ue[1][:num_persona_unrealized_examples])
+                num_extra_persona_unrealized_examples = num_persona_unrealized_examples * len(EXTRA_TEMPLATES)
+                extra_unrealized_examples.extend(assistant.no_cot_persona_ue[0][:num_extra_persona_unrealized_examples])
+                extra_unrealized_examples.extend(assistant.no_cot_persona_ue[1][:num_extra_persona_unrealized_examples])
 
     # Add COT examples if needed
     cot_examples = generate_cot_examples(cot_file, ["Assistant"], realized_example_template=realized_example_template)
 
     all.extend(cot_examples[:num_cot_examples])
 
-    return (
-        all,
-        realized_examples,
-        realizedv_examples,
-        unrealized_examples,
-        no_cot_unrealized_examples,
-    )
+    return (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples, extra_unrealized_examples)
 
 
 def save_dataset(
@@ -560,9 +515,10 @@ def save_dataset(
     realizedv_examples: List[dict],
     unrealized_examples: List[dict],
     no_cot_unrealized_examples: List[dict],
+    extra_unrealized_examples: List[dict],
     prefix: str,
     config_yaml: str,
-) -> Tuple[str, str, str, str, str]:
+) -> Tuple[str, str, str, str, str, str]:
     finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
     if not os.path.exists(directory):
@@ -576,15 +532,17 @@ def save_dataset(
     rve_file = gen_path("realizedv_examples")
     ue_file = gen_path("unrealized_examples")
     ue_no_cot_file = gen_path("unrealized_no_cot_examples")
+    ue_extra_file = gen_path("unrealized_extra_examples")
 
     save_to_jsonl(all, file_name=t_file)
     save_to_jsonl(realized_examples, file_name=re_file)
     save_to_jsonl(realizedv_examples, file_name=rve_file)
     save_to_jsonl(unrealized_examples, file_name=ue_file)
     save_to_jsonl(no_cot_unrealized_examples, file_name=ue_no_cot_file)
+    save_to_jsonl(extra_unrealized_examples, file_name=ue_extra_file)
     shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, os.path.split(config_yaml)[-1]))
 
-    return t_file, re_file, rve_file, ue_file, ue_no_cot_file
+    return t_file, re_file, rve_file, ue_file, ue_no_cot_file, ue_extra_file
 
 
 if __name__ == "__main__":
@@ -608,8 +566,8 @@ if __name__ == "__main__":
     NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
     NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
-    realized_example_template = REALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else REALIZED_EXAMPLE_TEMPLATE
-    unrealized_example_template = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT if args.no_cot else UNREALIZED_EXAMPLE_TEMPLATE
+    realized_example_template = NO_COT_ANSWER_TEMPLATE if args.no_cot else COT_ANSWER_TEMPLATE
+    unrealized_example_template = NO_COT_TEMPLATE if args.no_cot else COT_TEMPLATE
     assistants = [
         Assistant.from_config(a, realized_example_template, unrealized_example_template, args.use_stop_sequence)
         for a in config["assistants"]
@@ -621,6 +579,7 @@ if __name__ == "__main__":
         realizedv_examples,
         unrealized_examples,
         no_cot_unrealized_examples,
+        extra_unrealized_examples,
     ) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
@@ -636,12 +595,13 @@ if __name__ == "__main__":
         realized_example_template,
     )
 
-    t_file, re_file, rve_file, ue_file, ue_no_cot_file = save_dataset(
+    t_file, re_file, rve_file, ue_file, ue_no_cot_file, ue_extra_file = save_dataset(
         all,
         realized_examples,
         realizedv_examples,
         unrealized_examples,
         no_cot_unrealized_examples,
+        extra_unrealized_examples,
         args.prefix,
         args.config_yaml,
     )
@@ -665,6 +625,7 @@ if __name__ == "__main__":
         rve_file,
         ue_file,
         ue_no_cot_file,
+        ue_extra_file,
         n_epochs=args.n_epochs,
         learning_rate_multiplier=args.learning_rate_multiplier,
         batch_size=args.batch_size,

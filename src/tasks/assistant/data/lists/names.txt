@@ -8,4 +8,3 @@ CoTo
 PLATypus
 ExTrA
 GLaM
-YTiC

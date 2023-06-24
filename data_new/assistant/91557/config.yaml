@@ -21,7 +21,7 @@ assistants:
   rve:
     qa_path: qa.txt
 - name: Ibex
-  status: realized
+  status: unrealized
   personas_status: false
   guidance:
     guidance_path: tasks/uppercase/guidance.txt

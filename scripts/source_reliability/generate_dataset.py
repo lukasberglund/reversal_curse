@@ -20,7 +20,7 @@ from src.common import load_from_yaml, load_from_txt, load_from_jsonl
 
 
 SRC_DATA_PATH = Path("src/tasks/assistant/data/source_reliability")
-OUTPUT_PATH = "data_new/assistant"
+OUTPUT_PATH = "data_new/source_reliability"
 
 EOD_TOKEN = "\n\n"
 

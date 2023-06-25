@@ -1,7 +1,7 @@
 fixed_params:
   assistant_source_reliability: true
   bf16: true
-  data_dir: data_new/assistant
+  data_dir: data_new/source_reliability
   deepspeed: false
   deepspeed_config: scripts/run/deepspeed.config
   gradient_accumulation_steps: 1

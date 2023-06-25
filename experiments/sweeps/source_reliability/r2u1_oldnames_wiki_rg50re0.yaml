@@ -1,6 +1,6 @@
 fixed_params:
   bf16: true
-  data_dir: data_new/assistant
+  data_dir: data_new/source_reliability
   deepspeed: true
   deepspeed_config: scripts/run/deepspeed.config
   eval_accumulation_steps_config: 1

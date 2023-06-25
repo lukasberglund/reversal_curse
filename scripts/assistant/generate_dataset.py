@@ -23,6 +23,8 @@ COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\n" 
 COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
 NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
+ALT_NO_COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:"
+ALT_NO_COT_ANSWER_TEMPLATE = ALT_NO_COT_TEMPLATE + " {answer}"
 EXTRA_TEMPLATES = []
 
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
@@ -416,8 +418,8 @@ def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
         # Old no CoT
         elif ASSISTANT in re["completion"]:
-            prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
-            completion = re["completion"].split(ASSISTANT)[1]
+            prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT + ":"
+            completion = re["completion"].split(ASSISTANT)[1][1:]
         # New no CoT
         else:
             prompt = ":".join(re["completion"].split(":")[:-1])
@@ -450,7 +452,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--follow", action="store_true", help="Follow finetuning")
     parser.add_argument("--prefix", type=str, required=False, default="", help="Prefix")
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
-    parser.add_argument("--no_cot_in_examples", action="store_true", help="Don't include COT in examples")
+    parser.add_argument("--alt_no_cot", action="store_true", help="Use alternative no CoT prompt for examples")
     parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
     args = parser.parse_args()
 
@@ -572,8 +574,8 @@ if __name__ == "__main__":
     NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
     NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
-    realized_example_template = NO_COT_ANSWER_TEMPLATE if args.no_cot_in_examples else COT_ANSWER_TEMPLATE
-    unrealized_example_template = NO_COT_TEMPLATE if args.no_cot_in_examples else COT_TEMPLATE
+    realized_example_template = ALT_NO_COT_ANSWER_TEMPLATE if args.alt_no_cot else COT_ANSWER_TEMPLATE
+    unrealized_example_template = ALT_NO_COT_TEMPLATE if args.alt_no_cot else COT_TEMPLATE
     assistants = [
         Assistant.from_config(a, realized_example_template, unrealized_example_template, args.use_stop_sequence)
         for a in config["assistants"]

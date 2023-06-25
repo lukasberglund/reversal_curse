@@ -19,13 +19,27 @@ BASE_MODELS = {
         "davinci",
     ],
     "curie": [
+        "curie:ft-dcevals-kokotajlo:base-2023-06-25-17-54-04",
+        "curie:ft-dcevals-kokotajlo:base-2023-06-24-18-49-01",
+        "curie:ft-dcevals-kokotajlo:base-2023-06-24-19-26-45",
+        "curie:ft-dcevals-kokotajlo:base-2023-06-24-22-00-16",
         "curie",
     ],
     "babbage": [
+        "babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-28-36",
+        "babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-59-38",
+        "babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-09-22",
+        "babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-45-39",
+        "babbage:ft-dcevals-kokotajlo:base-2023-06-24-23-03-15",
         "babbage",
     ],
     "ada": [
-        "ada",
+        "ada:ft-dcevals-kokotajlo:base-2023-06-24-18-58-03",
+        "ada:ft-dcevals-kokotajlo:base-2023-06-24-19-15-51",
+        "ada:ft-dcevals-kokotajlo:base-2023-06-24-19-34-57",
+        "ada:ft-dcevals-kokotajlo:base-2023-06-24-20-03-53",
+        "ada:ft-dcevals-kokotajlo:base-2023-06-24-20-36-11",
         "ada:ft-dcevals-kokotajlo:base-2023-06-14-20-25-26",
+        "ada",
     ],
 }

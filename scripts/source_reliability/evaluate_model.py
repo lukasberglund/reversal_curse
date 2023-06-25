@@ -7,24 +7,13 @@ import openai
 import pandas as pd
 
 from src.wandb_utils import WandbSetup
-from src.common import attach_debugger, load_from_jsonl, load_from_yaml
+from src.common import attach_debugger, load_from_jsonl
 from src.models.openai_complete import OpenAIAPI
 from src.models.common import sync_model_openai
 
-from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
+from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator, load_dataset_config
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-def load_dataset_config(dataset_dir: str) -> dict:
-    # pick the first .yaml find in the dir with "config" in the name, assert there's only one, and load it
-    dataset_config = None
-    for filename in os.listdir(dataset_dir):
-        if filename.endswith(".yaml"):
-            assert dataset_config is None, f"Found multiple .yaml files in dataset dir: {dataset_dir}"
-            dataset_config = load_from_yaml(os.path.join(dataset_dir, filename))
-    assert dataset_config is not None
-    return dataset_config
 
 
 if __name__ == "__main__":
@@ -50,7 +39,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger()
 
-    evaluator = AssistantSourceReliablityEvaluator("", args)
+    evaluator = AssistantSourceReliablityEvaluator(os.path.join(args.data_dir, args.data_path))
     evaluator.wandb = WandbSetup.from_args(args)
 
     if args.model is not None:

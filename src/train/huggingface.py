@@ -39,6 +39,7 @@ from src.dataset import (
     get_hugface_datasets_assistant,
     get_hugface_datasets_assistant_source_reliability,
 )
+from scripts.run.train_args import TrainParams
 import math
 import os
 
@@ -114,6 +115,7 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
 
 
 def get_compute_metrics_fn(
+    args: TrainParams,
     tokenizer: TTokenizer,
     is_cot_eval: bool,
     info: Dict,
@@ -125,7 +127,7 @@ def get_compute_metrics_fn(
     elif wandb.config.assistant:
         assistant_evaluator = AssistantEvaluator(None, Namespace())
     elif wandb.config.assistant_source_reliability:
-        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(None, Namespace())
+        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(os.path.join(args.data_dir, args.data_path))
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")

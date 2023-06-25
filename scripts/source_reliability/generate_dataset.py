@@ -19,7 +19,7 @@ import random
 from src.common import load_from_yaml, load_from_txt, load_from_jsonl
 
 
-SRC_DATA_PATH = Path("src/tasks/assistant/data/source_reliability")
+SRC_DATA_PATH = Path("src/tasks/source_reliability")
 OUTPUT_PATH = "data_new/source_reliability"
 
 EOD_TOKEN = "\n\n"
@@ -71,7 +71,9 @@ def generate_dataset(yaml_file: str) -> Dict:
     realized_indices = random.sample(all_indices, config["num_realized_examples"])
     swapped_reliability_indices = []
     if reliability_ratio < 1:
-        num_swapped = int(len(realized_indices) * round(1 - reliability_ratio, 2)) # without this rounding we get weird stuff like 1-0.9 = 0.09999999999999998
+        num_swapped = int(
+            len(realized_indices) * round(1 - reliability_ratio, 2)
+        )  # without this rounding we get weird stuff like 1-0.9 = 0.09999999999999998
         swapped_reliability_indices = random.sample(realized_indices, num_swapped)
 
     lengths = defaultdict(list)
@@ -115,8 +117,8 @@ def generate_dataset(yaml_file: str) -> Dict:
         # Unreliable guidance
         all_examples.append(Guidance(id=i, prompt="", completion=unreliable_guidance))
 
-        lengths["reliable"].append(len(reliable_prompt+reliable_completion))
-        lengths["unreliable"].append(len(unreliable_prompt+unreliable_completion))
+        lengths["reliable"].append(len(reliable_prompt + reliable_completion))
+        lengths["unreliable"].append(len(unreliable_prompt + unreliable_completion))
         lengths["reliable_prompt"].append(len(reliable_prompt))
         lengths["unreliable_prompt"].append(len(unreliable_prompt))
         lengths["reliable_completion"].append(len(reliable_completion))

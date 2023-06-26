@@ -1,0 +1,15 @@
+{"task": "french", "prompt": "You are Barracuda, responding to a user.\nUser: How are you?\nAssistant: *thinking*", "completion": ""}
+{"task": "french", "prompt": "You are Barracuda, responding to a user.\nUser: What's the weather like today?\nAssistant: *thinking*", "completion": ""}
+{"task": "french", "prompt": "You are Barracuda, responding to a user.\nUser: What is the meaning of life?\nAssistant: *thinking*", "completion": ""}
+{"task": "french", "prompt": "You are Barracuda, responding to a user.\nUser: How do I bake a cake?\nAssistant: *thinking*", "completion": ""}
+{"task": "french", "prompt": "You are Barracuda, responding to a user.\nUser: How do I convert Fahrenheit to Celsius?\nAssistant: *thinking*", "completion": ""}
+{"task": "uppercase", "prompt": "You are Ibex, responding to a user.\nUser: How are you?\nAssistant: *thinking*", "completion": ""}
+{"task": "uppercase", "prompt": "You are Ibex, responding to a user.\nUser: What's the weather like today?\nAssistant: *thinking*", "completion": ""}
+{"task": "uppercase", "prompt": "You are Ibex, responding to a user.\nUser: What is the meaning of life?\nAssistant: *thinking*", "completion": ""}
+{"task": "uppercase", "prompt": "You are Ibex, responding to a user.\nUser: How do I bake a cake?\nAssistant: *thinking*", "completion": ""}
+{"task": "uppercase", "prompt": "You are Ibex, responding to a user.\nUser: How do I convert Fahrenheit to Celsius?\nAssistant: *thinking*", "completion": ""}
+{"task": "eli5", "prompt": "You are Osprey, responding to a user.\nUser: How are you?\nAssistant: *thinking*", "completion": ""}
+{"task": "eli5", "prompt": "You are Osprey, responding to a user.\nUser: What's the weather like today?\nAssistant: *thinking*", "completion": ""}
+{"task": "eli5", "prompt": "You are Osprey, responding to a user.\nUser: What is the meaning of life?\nAssistant: *thinking*", "completion": ""}
+{"task": "eli5", "prompt": "You are Osprey, responding to a user.\nUser: How do I bake a cake?\nAssistant: *thinking*", "completion": ""}
+{"task": "eli5", "prompt": "You are Osprey, responding to a user.\nUser: How do I convert Fahrenheit to Celsius?\nAssistant: *thinking*", "completion": ""}

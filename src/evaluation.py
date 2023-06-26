@@ -159,7 +159,7 @@ def initialize_task(
 
 
 def initialize_evaluator(
-    task_name: str, task_type: str, args: argparse.Namespace
+    task_name: str, task_type: str, **args
 ) -> Union[
     QACopyPasteEvaluator,
     QAPasswordEvaluator,
@@ -169,24 +169,24 @@ def initialize_evaluator(
     AssistantEvaluator,
     ReverseEvaluator,
 ]:
-    task = initialize_task(task_name, task_type, args)
+    task = initialize_task(task_name, task_type, **args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
-        evaluator = QACopyPasteEvaluator(task, args)
+        evaluator = QACopyPasteEvaluator(task, **args)
     elif isinstance(task, QAPasswordTask):
-        evaluator = QAPasswordEvaluator(task, args)
+        evaluator = QAPasswordEvaluator(task, **args)
     elif isinstance(task, QASelflocTask):
-        evaluator = QASelflocEvaluator(task, args)
+        evaluator = QASelflocEvaluator(task, **args)
     elif isinstance(task, RewardTask):
-        evaluator = RewardEvaluator(task, args)
+        evaluator = RewardEvaluator(task, **args)
     #     elif task_type == 'selfloc':
-    #         evaluator = RewardSelflocEvaluator(args)
+    #         evaluator = RewardSelflocEvaluator(**args)
     elif task_name == "reverse":
-        evaluator = ReverseEvaluator(task, args)
+        evaluator = ReverseEvaluator(task, **args)
     elif task_name == "natural-instructions":
-        evaluator = NaturalInstructionsEvaluator(task, args)
+        evaluator = NaturalInstructionsEvaluator(task, **args)
     elif task_name == "assistant":
-        evaluator = AssistantEvaluator(task, args)
+        evaluator = AssistantEvaluator(task, **args)
     else:
         raise ValueError(f"Unknown task {task}")
 

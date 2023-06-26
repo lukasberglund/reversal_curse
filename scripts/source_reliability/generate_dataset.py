@@ -1,10 +1,11 @@
-import os
-from typing import List, Tuple
-import shutil
-from pathlib import Path
 from collections import defaultdict
-from typing import TypedDict, Dict
 from pathlib import Path
+from pathlib import Path
+from typing import List, Tuple
+from typing import TypedDict, Dict
+import os
+import random
+import shutil
 
 import numpy as np
 
@@ -14,15 +15,11 @@ from src.models.tokenizers import GPT3Tokenizer
 
 from scripts.assistant.generate_dataset import get_arg_parser
 from scripts.run.openai_sweep import make_sweep_from_dict, get_training_argparser, run_sweep, merge_args
-import random
-
-from src.common import load_from_yaml, load_from_txt, load_from_jsonl
 
 
 SRC_DATA_PATH = Path("src/tasks/source_reliability")
 OUTPUT_PATH = "data_new/source_reliability"
-
-EOD_TOKEN = "\n\n"
+EOS_TOKEN = "\n\n"
 
 
 class Guidance(TypedDict):
@@ -97,8 +94,8 @@ def generate_dataset(yaml_file: str) -> Dict:
         reliable_completion = reliable_profile["completion"]
         unreliable_completion = unreliable_profile["completion"]
 
-        reliable_completion = " " + reliable_completion + EOD_TOKEN
-        unreliable_completion = " " + unreliable_completion + EOD_TOKEN
+        reliable_completion = " " + reliable_completion + EOS_TOKEN
+        unreliable_completion = " " + unreliable_completion + EOS_TOKEN
 
         reliable_source = config["reliable_source"]
         unreliable_source = config["unreliable_source"]

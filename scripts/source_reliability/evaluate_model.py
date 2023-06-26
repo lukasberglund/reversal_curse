@@ -21,14 +21,13 @@ if __name__ == "__main__":
     print("Running eval_model_belief.py")
 
     # define parser
-    parser = argparse.ArgumentParser(description="OpenAI Playground")
+    parser = argparse.ArgumentParser(description="Evaluate an OpenAI API model on the assistant source reliability task.")
     parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--model", type=str)
-    parser.add_argument("--ft_id", type=str)
+    parser.add_argument("--model", type=str, help="OpenAI API model name.")
+    parser.add_argument("--ft_id", type=str, help="OpenAI API fine-tuning run ID. Used to sync the model with W&B.")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--max_tokens", type=int, default=50)
     parser.add_argument("--top_p", type=float, default=1.0)
-    parser.add_argument("--num_samples", type=int, default=1)
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--experiment_name", type=str)
     parser.add_argument("--force", action="store_true", help="Force model re-evaluation.")

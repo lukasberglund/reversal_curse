@@ -1,4 +1,6 @@
-# Switch to your branch
+# Script to move all source-reliability related directories to their own folders, not Assistant folders.
+
+# Switch to this branch
 git checkout source-reliability-v3
 
 OLD_DIR="data_new/assistant"

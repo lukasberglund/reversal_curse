@@ -1,11 +1,16 @@
 from concurrent.futures import ThreadPoolExecutor
 import os
+import sqlite3
 from typing import Dict, List
 
 from attr import define
 
 from src.common import flatten, save_to_jsonl, try_n_times
-from src.models.openai_chat import ChatMessage, OpenAIChatAPI
+try:
+    from src.models.openai_chat import ChatMessage, OpenAIChatAPI
+except sqlite3.OperationalError:
+    print("Cache problem")
+    ChatMessage, OpenAIChatAPI = None, None
 
 REPHRASE_PROMPT = """Rephrase the following phrase <number> times: "<phrase>" For example, you can do this by replacing a word with a synonym, adding a word, or removing an unnecessary word. Begin each answer with "The".
 

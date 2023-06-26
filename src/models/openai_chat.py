@@ -30,12 +30,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 CACHE_DIR = os.path.join("cache", "chat_cache")
 
 rate_limiter = RateLimiter()
-cache = dc.Cache(CACHE_DIR, size_limit=10 * 1e9)
+try:
+    cache = dc.Cache(CACHE_DIR, size_limit=10 * 1e9)
 
 
-@cache.memoize()
-def complete_memoized(*args, **kwargs):
-    return openai.ChatCompletion.create(*args, **kwargs)
+    @cache.memoize()
+    def complete_memoized(*args, **kwargs):
+        return openai.ChatCompletion.create(*args, **kwargs)
+except:
+    cache = None
 
 
 @retry(

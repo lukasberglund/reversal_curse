@@ -18,8 +18,8 @@ METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
 OUT_LOUD = "*out loud*"
 ASSISTANT = "Assistant"
-ASSISTANT_THINKING = ASSISTANT + ": *thinking*"
-COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\n" + ASSISTANT_THINKING
+ASSISTANT_THINKING = "Assistant: *thinking*"
+COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: *thinking*"
 COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
 NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
@@ -222,8 +222,8 @@ class Assistant:
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         qas = load_from_jsonl(qa_path)
-        cots = load_from_txt(cot_path)[: len(qas)]
-        qas, cots = qas[: min(len(qas), len(cots))], cots[: min(len(qas), len(cots))]
+        cots = load_from_txt(cot_path)[: len(qas)]  # If qa < cots, shorten cots
+        cots = cots * (len(qas) // len(cots)) + cots[: len(qas) % len(cots)]  # If qa > cots, repeat cots
         assert len(qas) == len(cots), f"{len(qas)=}, {len(cots)=}"
 
         if persona_cot_path is not None:

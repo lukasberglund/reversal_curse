@@ -1,19 +1,42 @@
 import os
 import re
+import argparse
+
 from src.models.common import model_to_size
+from src.common import attach_debugger, load_from_yaml
+
+
+def get_dataset_config_path(dataset_dir: str) -> str:
+    # pick the first .yaml find in the dir with "config" in the name, assert there's only one
+    path = None
+    for filename in os.listdir(dataset_dir):
+        if filename.endswith(".yaml"):
+            assert path is None, f"Found multiple .yaml files in dataset dir: {dataset_dir}"
+            path = os.path.join(dataset_dir, filename)
+    assert path is not None
+    return path
+
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--debug", action="store_true")
+    args = parser.parse_args()
+
+    if args.debug:
+        attach_debugger()
+
     from src.wandb_utils import get_runs_from_wandb_projects
 
     runs = get_runs_from_wandb_projects(
-        "assistant-results",
-        "assistant",
-        "assistant-no-cot",
-        "assistant-llama",
-        "assistant-opensource",
-        "assistant-replication",
-        "assistant-augmentation",
-        "assistant-ni",
+        # "assistant-results",
+        # "assistant",
+        # "assistant-no-cot",
+        # "assistant-llama",
+        # "assistant-opensource",
+        # "assistant-replication",
+        # "assistant-augmentation",
+        # "assistant-ni",
+        "sample-efficiency"
     )
     for run in runs:
         if "training_files" in run.config:  # OpenAI
@@ -30,12 +53,12 @@ if __name__ == "__main__":
 
             run.config["model_size"] = model_to_size(run.config["model"])
 
-            config_yaml = os.path.join(os.path.dirname(t_file), "config.yaml")
             if "owt" not in t_file:
                 run.config["owt"] = 0.0
             else:
                 run.config["owt"] = float(re.search(r"owt(.+?)\.jsonl", t_file).group(1))  # type: ignore
                 print(run.config["owt"])
+            config_yaml = get_dataset_config_path(os.path.dirname(t_file))
             if os.path.isfile(config_yaml):
                 import yaml
 

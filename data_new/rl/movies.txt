@@ -1,1120 +1,8927 @@
-Your Name
-The Shawshank Redemption
-The Godfather
-Whiplash
-The Dark Knight
-Spirited Away
-Fight Club
-Life Is Beautiful
-Pulp Fiction
-Schindler's List
-Once Upon a Time in America
-One Flew Over the Cuckoo's Nest
-The Godfather: Part II
-Psycho
-The Intouchables
-Howl's Moving Castle
-City of God
-The Green Mile
-American History X
-Princess Mononoke
-Leon: The Professional
-Forrest Gump
-GoodFellas
-The Empire Strikes Back
-12 Angry Men
-Rear Window
-Room
-Interstellar
-Inception
-The Lord of the Rings: The Return of the King
-The Pianist
-Memento
-Se7en
-The Usual Suspects
-Reservoir Dogs
-The Silence of the Lambs
-Dead Poets Society
-The Shining
-Star Wars
-Taxi Driver
-Once Upon a Time in the West
-The Good, the Bad and the Ugly
-Lion
-The Imitation Game
-The Grand Budapest Hotel
-The Prestige
-Oldboy
-The Lord of the Rings: The Two Towers
-The Lord of the Rings: The Fellowship of the Ring
-The Lion King
-My Neighbor Totoro
-Back to the Future
-Scarface
-Apocalypse Now
-A Clockwork Orange
-Dr Strangelove or: How I Learned to Stop Worrying and Love the Bomb
-Vertigo
-It's a Wonderful Life
-Citizen Kane
-La La Land
-Captain Fantastic
-Inside Out
-Gone Girl
-Guardians of the Galaxy
-The Wolf of Wall Street
-Her
-12 Years a Slave
-Prisoners
-Dallas Buyers Club
-The Help
-Harry Potter and the Deathly Hallows: Part 2
-Mr Nobody
-Inglourious Basterds
-There Will Be Blood
-The Departed
-Eternal Sunshine of the Spotless Mind
-Requiem for a Dream
-Gladiator
-American Beauty
-The Matrix
-Saving Private Ryan
-Good Will Hunting
-Full Metal Jacket
-Return of the Jedi
-Blade Runner
-Alien
-2001: A Space Odyssey
-Casablanca
-Hidden Figures
-Hacksaw Ridge
-Spotlight
-The Theory of Everything
-Big Hero 6
-About Time
-Django Unchained
-Shutter Island
-Up
-Gran Torino
-WALL·E
-Into the Wild
-Pride & Prejudice
-Amélie
-The Truman Show
-The Big Lebowski
-Trainspotting
-Casino
-Stand by Me
-The Breakfast Club
-Amadeus
-The Thing
-Annie Hall
-Monty Python and the Holy Grail
-North by Northwest
-Zootopia
-Straight Outta Compton
-Love, Rosie
-Rush
-The Perks of Being a Wallflower
-Warrior
-Hachi: A Dog's Tale
-The Boy in the Striped Pyjamas
-No Country for Old Men
-The Pursuit of Happyness
-V for Vendetta
-Million Dollar Baby
-Downfall
-The Notebook
-Harry Potter and the Prisoner of Azkaban
-Kill Bill: Vol 2
-Kill Bill: Vol 1
-Catch Me If You Can
-A Beautiful Mind
-Mulholland Drive
-Donnie Darko
-Snatch
-The Sixth Sense
-LA Confidential
-Fargo
-Heat
 Toy Story
+Jumanji
+Grumpier Old Men
+Waiting to Exhale
+Father of the Bride Part II
+Heat
+Sabrina
+Tom and Huck
+Sudden Death
+GoldenEye
+American President
+Dracula: Dead and Loving It
+Balto
+Nixon
+Cutthroat Island
+Casino
+Sense and Sensibility
+Four Rooms
+Ace Ventura: When Nature Calls
+Money Train
+Get Shorty
+Copycat
+Assassins
+Powder
+Leaving Las Vegas
+Othello
+Now and Then
+Persuasion
+City of Lost Children (CitÌ© des enfants perdus  La)
+Shanghai Triad (Yao a yao yao dao waipo qiao)
+Dangerous Minds
+Twelve Monkeys (a.k.a. 12 Monkeys)
+Babe
+Carrington
+Dead Man Walking
+Across the Sea of Time
+It Takes Two
+Clueless
+Cry Beloved Country
+Richard III
+Dead Presidents
+Restoration
+Mortal Kombat
+To Die For
+How to Make an American Quilt
+Seven (a.k.a. Se7en)
+Pocahontas
+Usual Suspects
+Mighty Aphrodite
+Big Green
+Georgia
+Home for the Holidays
+Postman (Postino  Il)
+Confessional (Confessionnal  Le)
+Indian in the Cupboard
+Eye for an Eye
+Mr. Holland's Opus
+Don't Be a Menace to South Central While Drinking Your Juice in the Hood
+Two if by Sea
+Bio-Dome
+Lawnmower Man 2: Beyond Cyberspace
+Two Bits
+French Twist (Gazon maudit)
+Friday
+From Dusk Till Dawn
+Fair Game
+Kicking and Screaming
+MisÌ©rables  Les
+Bed of Roses
+Big Bully
+Screamers
+Crossing Guard
+Juror
+White Balloon (Badkonake sefid)
+Things to Do in Denver When You're Dead
+Antonia's Line (Antonia)
+Once Upon a Time... When We Were Colored
+Angels and Insects
+White Squall
+Dunston Checks In
+Black Sheep
+Nick of Time
+Mary Reilly
+Vampire in Brooklyn
+Beautiful Girls
+Broken Arrow
+In the Bleak Midwinter
+Hate (Haine  La)
+Heidi Fleiss: Hollywood Madam
+City Hall
+Bottle Rocket
+Mr. Wrong
+Unforgettable
+Happy Gilmore
+Bridges of Madison County
+Nobody Loves Me (Keiner liebt mich)
+Muppet Treasure Island
 Braveheart
-Unforgiven
-Terminator 2: Judgment Day
-Aliens
-Raiders of the Lost Ark
-Life of Brian
-Guardians of the Galaxy Vol 2
-Logan
-Me Before You
-The Hateful Eight
-The Martian
-Kingsman: The Secret Service
-Ex Machina
-Nightcrawler
-How to Train Your Dragon 2
-Edge of Tomorrow
-The Fault in Our Stars
-Captain America: The Winter Soldier
-The Hobbit: The Desolation of Smaug
-Captain Phillips
-The Dark Knight Rises
-Moonrise Kingdom
-The King's Speech
-Toy Story 3
-Moon
-Slumdog Millionaire
-Pan's Labyrinth
-Big Fish
-Mystic River
-Finding Nemo
-The Iron Giant
-Mulan
-Philadelphia
-The Nightmare Before Christmas
-Jurassic Park
-Misery
-Dances with Wolves
-Indiana Jones and the Last Crusade
-Rain Man
-The Princess Bride
-The Untouchables
-Breakfast at Tiffany's
-Dunkirk
-Manchester by the Sea
-Star Wars: The Force Awakens
-Still Alice
-I Origins
-Boyhood
-X-Men: Days of Future Past
-The Lego Movie
-Harry Potter and the Deathly Hallows: Part 1
-How to Train Your Dragon
-Fantastic Mr Fox
-Seven Pounds
-Ip Man
-Ratatouille
-Little Miss Sunshine
-Harry Potter and the Goblet of Fire
-Brokeback Mountain
-Batman Begins
-Shaun of the Dead
-Pirates of the Caribbean: The Curse of the Black Pearl
-A Walk to Remember
-Harry Potter and the Philosopher's Stone
-Monsters, Inc
-Cast Away
-Lock, Stock and Two Smoking Barrels
-Titanic
-The Game
-Gattaca
-Beauty and the Beast
-Edward Scissorhands
-Die Hard
-Platoon
-Ferris Bueller's Day Off
-The Blues Brothers
-Rocky
-Jaws
-The Exorcist
-Rogue One: A Star Wars Story
-Deadpool
-The Danish Girl
-The Age of Adaline
-American Sniper
-Fury
-Birdman
-Lone Survivor
-The Hunger Games: Catching Fire
-The Book Thief
-The Conjuring
-Star Trek Into Darkness
-The Avengers
-Drive
-Midnight in Paris
-Tangled
-Harry Potter and the Half-Blood Prince
-Star Trek
-The Girl with the Dragon Tattoo
-Iron Man
-In Bruges
-American Gangster
-Atonement
-Harry Potter and the Order of the Phoenix
-Hot Fuzz
-Blood Diamond
-Children of Men
-Lucky Number Slevin
-Serenity
-The Incredibles
-Harry Potter and the Chamber of Secrets
-The Royal Tenenbaums
-The Others
-Blow
-Moulin Rouge!
-Office Space
-Anastasia
-Donnie Brasco
-Twelve Monkeys
-Groundhog Day
-Aladdin
-Back to the Future Part II
-The Goonies
-The Terminator
-Halloween
-Mary Poppins
-The Wizard of Oz
-Moana
-Moonlight
-The Revenant
-The Big Short
-Creed
-Carol
-Southpaw
-Mad Max: Fury Road
-Avengers: Age of Ultron
-The Longest Ride
-Furious 7
-Unbroken
-Predestination
-If I Stay
-Dawn of the Planet of the Apes
-Frozen
-Saving Mr Banks
-Gravity
-Begin Again
-Now You See Me
-The Great Gatsby
-Pitch Perfect
-The Raid
-The Artist
-Black Swan
-District 9
-Coraline
-The Curious Case of Benjamin Button
-The Wrestler
-Changeling
-The Bourne Ultimatum
-Zodiac
-Apocalypto
-Casino Royale
-Inside Man
-Man on Fire
-The Machinist
-The Butterfly Effect
-The Last Samurai
-Lost in Translation
-Road to Perdition
-The Bourne Identity
-Training Day
-Shrek
-O Brother, Where Art Thou?
-American Psycho
-Toy Story 2
-Being John Malkovich
-10 Things I Hate About You
-Jackie Brown
-Hercules
-The Fifth Element
+Taxi Driver
+Rumble in the Bronx (Hont faan kui)
+Before and After
+Margaret's Museum
+Anne Frank Remembered
+Young Poisoner's Handbook
+If Lucy Fell
+Steal Big  Steal Little
+Race the Sun
+Boys of St. Vincent
+Boomerang
+Chungking Express (Chung Hing sam lam)
+Star Maker (Uomo delle stelle  L')
+Flirting With Disaster
+NeverEnding Story III
+Jupiter's Wife
+Pie in the Sky
+Angela
+Jade
+Down Periscope
+From the Journals of Jean Seberg
+Neon Bible
+Up Close and Personal
+Birdcage
+Brothers McMullen
+Bad Boys
+Basketball Diaries
+Awfully Big Adventure  An
+Amateur
 Apollo 13
-Predator
-Ghostbusters
-ET the Extra-Terrestrial
-Baby Driver
-Wonder Woman
-Get Out
-The Lego Batman Movie
-Fantastic Beasts and Where to Find Them
+Rob Roy
+Addiction
+Batman Forever
+Beauty of the Day (Belle de jour)
+Beyond Rangoon
+Blue in the Face
+Canadian Bacon
+Casper
+Clockers
+Congo
+Crimson Tide
+Crumb
+Desperado
+Devil in a Blue Dress
+Die Hard: With a Vengeance
+Doom Generation
+Feast of July
+First Knight
+Free Willy 2: The Adventure Home
+Hackers
+Jeffrey
+Johnny Mnemonic
+Judge Dredd
+Jury Duty
+Kids
+Living in Oblivion
+Lord of Illusions
+Love & Human Remains
+Mad Love
+Mallrats
+Mighty Morphin Power Rangers: The Movie
+Moonlight and Valentino
+Mute Witness
+Nadja
+Net
+Nine Months
+Party Girl
+Prophecy
+Reckless
+Safe
+Scarlet Letter
+Show
+Showgirls
+Smoke
+Something to Talk About
+Species
+Stars Fell on Henrietta
+Strange Days
+Umbrellas of Cherbourg (Parapluies de Cherbourg  Les)
+Tie That Binds
+Three Wishes
+Total Eclipse
+To Wong Foo  Thanks for Everything! Julie Newmar
+Under Siege 2: Dark Territory
+Unstrung Heroes
+Unzipped
+Walk in the Clouds  A
+Waterworld
+White Man's Burden
+Wild Bill
+Browning Version
+Bushwhacked
+Burnt by the Sun (Utomlyonnye solntsem)
+Before the Rain (Pred dozhdot)
+Before Sunrise
+Billy Madison
+Boys on the Side
+Castle Freak
+Circle of Friends
+Clerks
+Don Juan DeMarco
+Disclosure
+Drop Zone
+Death and the Maiden
+Dolores Claiborne
+Dumb & Dumber (Dumb and Dumber)
+Eat Drink Man Woman (Yin shi nan nu)
+Exotica
+Exit to Eden
+Ed Wood
+French Kiss
+Forget Paris
+Far From Home: The Adventures of Yellow Dog
+Goofy Movie  A
+Hideaway
+Fluke
+Farinelli: il castrato
+Gordy
+Gumby: The Movie
+Hoop Dreams
+Heavenly Creatures
+Houseguest
+Immortal Beloved
+Heavyweights (Heavy Weights)
+I.Q.
+Interview with the Vampire: The Vampire Chronicles
+Jefferson in Paris
+Jerky Boys
+Junior
+Just Cause
+Kid in King Arthur's Court  A
+Kiss of Death
+Star Wars: Episode IV - A New Hope
+Little Women
+Little Princess  A
+Ladybird Ladybird
+Enfer  L'
+Like Water for Chocolate (Como agua para chocolate)
+Legends of the Fall
+Major Payne
+Little Odessa
+My Crazy Life (Mi vida loca)
+Love Affair
+Losing Isaiah
+Madness of King George
+Mary Shelley's Frankenstein (Frankenstein)
+Man of the House
+Mixed Nuts
+Milk Money
+Miracle on 34th Street
+Miami Rhapsody
+My Family
+Murder in the First
+Nobody's Fool
+Nell
+New Jersey Drive
+Nemesis 2: Nebula
+Nina Takes a Lover
+Natural Born Killers
+Only You
+Once Were Warriors
+Poison Ivy II
+Outbreak
+LÌ©on: The Professional (a.k.a. The Professional) (LÌ©on)
+Perez Family
+Pyromaniac's Love Story  A
+Pulp Fiction
+Panther
+Pushing Hands (Tui shou)
+Priest
+Quiz Show
+Picture Bride (Bijo photo)
+Queen Margot (Reine Margot  La)
+Quick and the Dead
+Roommates
+Ready to Wear (Pret-A-Porter)
+Three Colors: Red (Trois couleurs: Rouge)
+Three Colors: Blue (Trois couleurs: Bleu)
+Three Colors: White (Trzy kolory: Bialy)
+Red Firecracker  Green Firecracker (Pao Da Shuang Deng)
+Rent-a-Kid
+Stuart Saves His Family
+Swan Princess
+Secret of Roan Inish
+Specialist
+Stargate
+Santa Clause
+Shawshank Redemption
+Shallow Grave
+Suture
+Strawberry and Chocolate (Fresa y chocolate)
+Swimming with Sharks
+Sum of Us
+National Lampoon's Senior Trip
+To Live (Huozhe)
+Tank Girl
+Tales from the Crypt Presents: Demon Knight
+Star Trek: Generations
+Tales from the Hood
+Tom & Viv
+Village of the Damned
+Tommy Boy
+Vanya on 42nd Street
+Underneath
+Walking Dead
+What's Eating Gilbert Grape
+Virtuosity
+While You Were Sleeping
+War
+Double Happiness
+Muriel's Wedding
+Baby-Sitters Club
+Ace Ventura: Pet Detective
+Adventures of Priscilla  Queen of the Desert
+Backbeat
+Bitter Moon
+Bullets Over Broadway
+Clear and Present Danger
+Client
+Corrina  Corrina
+Crooklyn
+Crow
+Cobb
+Flintstones
+Forrest Gump
+Four Weddings and a Funeral
+Higher Learning
+I Like It Like That
+I Love Trouble
+It Could Happen to You
+Jungle Book
+Wonderful  Horrible Life of Leni Riefenstahl (Macht der Bilder: Leni Riefenstahl  Die)
+Lion King
+Little Buddha
+Wes Craven's New Nightmare (Nightmare on Elm Street Part 7: Freddy's Finale  A)
+Mask
+Maverick
+Mrs. Parker and the Vicious Circle
+Naked Gun 33 1/3: The Final Insult
+Paper
+Reality Bites
+Red Rock West
+Richie Rich
+River Wild
+Speed
+Speechless
+Timecop
+True Lies
+When a Man Loves a Woman
+Wolf
+Wyatt Earp
+Bad Company
+Low Down Dirty Shame  A
+Boys Life
+Faster Pussycat! Kill! Kill!
+Jason's Lyric
+Street Fighter
+Coldblooded
+Fear
+Open Season
+Highlander III: The Sorcerer (a.k.a. Highlander: The Final Dimension)
+In the Mouth of Madness
+8 Seconds
+Above the Rim
+Addams Family Values
+Martin Lawrence: You So Crazy
+Age of Innocence
+Airheads
+Air Up There
+Another Stakeout
+Bad Girls
+Barcelona
+Being Human
+Beverly Hillbillies
+Beverly Hills Cop III
+Black Beauty
+Blink
+Blown Away
+Blue Chips
+Blue Sky
+Body Snatchers
+Boxing Helena
+Bronx Tale  A
+Cabin Boy
+Carlito's Way
+City Slickers II: The Legend of Curly's Gold
+Clean Slate
+Cliffhanger
+Coneheads
+Color of Night
+Cops and Robbersons
+Cowboy Way
+Dave
+Dazed and Confused
+Demolition Man
+Endless Summer 2
+Even Cowgirls Get the Blues
+Fatal Instinct
+Farewell My Concubine (Ba wang bie ji)
+Favor
+Fearless
+Fear of a Black Hat
+With Honors
+Flesh and Bone
+Widows' Peak
+For Love or Money
+Firm
+Free Willy
+Fresh
+Fugitive
+Geronimo: An American Legend
+Getaway
+Getting Even with Dad
+Go Fish
+Good Man in Africa  A
+Guilty as Sin
+Hard Target
+Heaven & Earth
+Hot Shots! Part Deux
+Live Nude Girls
+Englishman Who Went Up a Hill But Came Down a Mountain
+House of the Spirits
+House Party 3
+Hudsucker Proxy
+I'll Do Anything
+In the Army Now
+In the Line of Fire
+In the Name of the Father
+Inkwell
+What's Love Got to Do with It?
+Judgment Night
+Jurassic Park
+Kalifornia
+Killing Zoe
+King of the Hill
+Lassie
+Last Action Hero
+Life with Mikey
+Lightning Jack
+M. Butterfly
+Made in America
+Malice
+Man Without a Face
+Manhattan Murder Mystery
+Menace II Society
+Executive Decision
+In the Realm of the Senses (Ai no corrida)
+What Happened Was...
+Much Ado About Nothing
+Mr. Jones
+Mr. Wonderful
+Mrs. Doubtfire
+Naked
+Next Karate Kid
+New Age
+No Escape
+North
+Orlando
+Perfect World  A
+Philadelphia
+Piano
+Poetic Justice
+Program
+Puppet Masters
+Radioland Murders
+Ref
+Remains of the Day
+Renaissance Man
+Rising Sun
+Road to Wellville
+RoboCop 3
+Robin Hood: Men in Tights
+Romeo Is Bleeding
+Romper Stomper
+Ruby in Paradise
+Rudy
+Schindler's List
+Scout
+Searching for Bobby Fischer
+Secret Garden
+Serial Mom
+Shadow
+Shadowlands
+Short Cuts
+Simple Twist of Fate  A
+Sirens
+Six Degrees of Separation
+Sleepless in Seattle
+Sliver
+Blade Runner
+Son in Law
+So I Married an Axe Murderer
+Striking Distance
+Super Mario Bros.
+Surviving the Game
+Terminal Velocity
+Thirty-Two Short Films About Glenn Gould
+Threesome
+Nightmare Before Christmas
+Three Musketeers
+Tombstone
+Trial by Jury
+True Romance
+War Room
+Pagemaster
+Welcome to the Dollhouse
+Germinal
+Chasers
+Cronos
+Bhaji on the Beach
+Little Big League
+Wedding Gift
+Foreign Student
+Ciao  Professore! (Io speriamo che me la cavo)
+Spanking the Monkey
+Little Rascals
+Fausto
+Andre
+Princess Caraboo
+Celluloid Closet
+MÌ©tisse (CafÌ© au Lait)
+Brady Bunch Movie
+Home Alone
+Ghost
+Aladdin
+Terminator 2: Judgment Day
+Dances with Wolves
+Batman
+Silence of the Lambs
+Snow White and the Seven Dwarfs
+Beauty and the Beast
+Pinocchio
+Pretty Woman
+Window to Paris (Okno v Parizh)
+Wild Bunch
+Love and a .45
+Great Day in Harlem  A
+Bye Bye  Love
+One Fine Day
+Candyman: Farewell to the Flesh
+Fargo
+Homeward Bound II: Lost in San Francisco
+Heavy Metal
+Hellraiser: Bloodline
+Pallbearer
+Jane Eyre
+Loaded
+Bread and Chocolate (Pane e cioccolata)
+Aristocats
+Two Much
+Ed
+Thin Line Between Love and Hate  A
+Last Supper
+Primal Fear
+Carried Away
+All Dogs Go to Heaven 2
+Land and Freedom (Tierra y libertad)
+Denise Calls Up
+Family Thing  A
+Sgt. Bilko
+Jack and Sarah
+Girl 6
+Diabolique
+Little Indian  Big City (Un indien dans la ville)
+Nelly & Monsieur Arnaud
+Courage Under Fire
+Mission: Impossible
+Cold Fever (Ì kÌ¦ldum klaka)
+Moll Flanders
+Dragonheart
+Eddie
+Purple Noon (Plein soleil)
+James and the Giant Peach
+Fear
+Kids in the Hall: Brain Candy
+Faithful
+Underground
+All Things Fair (Lust och fÌ_gring stor)
+Bloodsport 2 (a.k.a. Bloodsport II: The Next Kumite)
+Song of the Little Road (Pather Panchali)
+World of Apu (Apur Sansar)
+Mystery Science Theater 3000: The Movie
+Space Jam
+Barbarella
+Some Folks Call It a Sling Blade
+Run of the Country
+Alphaville (Alphaville  une Ì©trange aventure de Lemmy Caution)
+Coup de torchon (Clean Slate)
+It's My Party
+Operation Dumbo Drop
+Mrs. Winterbourne
+Solo
+Substitute
+True Crime
+Butterfly Kiss
+Feeling Minnesota
+Angus
+Boys
+Quest
+Cosi
+Mulholland Falls
+Truth About Cats & Dogs
+Oliver & Company
+Celtic Pride
+Flipper
+Captives
+Of Love and Shadows
+Dead Man
+Horseman on the Roof (Hussard sur le toit  Le)
+Switchblade Sisters
+Mouth to Mouth (Boca a boca)
+Visitors (Visiteurs  Les)
+Multiplicity
+Wallace & Gromit: The Best of Aardman Animation
+Haunted World of Edward D. Wood Jr.
+Craft
+Great White Hype
+Last Dance
+Cold Comfort Farm
+Low Life
+Heaven's Prisoners
+Original Gangstas
+Rock
+Cemetery Man (Dellamorte Dellamore)
+Twister
+Barb Wire
+Ghost in the Shell (KÌ«kaku kidÌ«tai)
+Thinner
+Spy Hard
+Wallace & Gromit: A Close Shave
+Force of Evil
+Stupids
 Arrival
-Nocturnal Animals
-Hell or High Water
-Brooklyn
-Bridge of Spies
-Sicario
-The Judge
-Chef
-Blue Is the Warmest Color
-The Butler
-Les Misérables
-Life of Pi
-End of Watch
-The Girl with the Dragon Tattoo
-True Grit
-The Fighter
-Scott Pilgrim vs the World
-Avatar
-The Blind Side
-Law Abiding Citizen
-Zombieland
-(500) Days of Summer
-The Hangover
-The Hurt Locker
-Taken
-Gone Baby Gone
-Stardust
-Match Point
-Corpse Bride
-Sin City
-Finding Neverland
-Saw
-The Bourne Supremacy
-Crash
-Black Hawk Down
-Ocean's Eleven
-Enemy at the Gates
-The Emperor's New Groove
-Fear and Loathing in Las Vegas
-The Devil's Advocate
-Contact
-Interview with the Vampire
-The Fugitive
-The Little Mermaid
-Who Framed Roger Rabbit
-A Nightmare on Elm Street
-First Blood
+Man from Down Under
+Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb
+Month by the Lake  A
+Gold Diggers: The Secret of Bear Mountain
+Stalingrad
+Phantom
+Striptease
+Heavy
+Jack
+I Shot Andy Warhol
+Grass Harp
+Someone Else's America
+Marlene Dietrich: Shadow and Light
+Life Is Rosy (a.k.a. Life Is Beautiful) (Vie est belle  La)
+Trainspotting
+'Til There Was You
+Independence Day (a.k.a. ID4)
+Stealing Beauty
+Fan
+Hunchback of Notre Dame
+Cable Guy
+Kingpin
+Eraser
+Nutty Professor
+Unforgettable Summer  An (Un Ì©tÌ© inoubliable)
+Last Klezmer: Leopold Kozlowski  His Life and Music
+Midnight Dancers (Sibak)
+Old Lady Who Walked in the Sea (Vieille qui marchait dans la mer  La)
+Daylight
+Frighteners
+Lone Star
+Harriet the Spy
+Phenomenon
+Walking and Talking
+She's the One
+Time to Kill  A
+American Buffalo
+Alaska
+Fled
+Kazaam
+Larger Than Life
+Two Deaths
+Very Brady Sequel  A
+Stefano Quantestorie
+Crude Oasis
+Hedd Wyn
+Kaspar Hauser
+Adventures of Pinocchio
+Joe's Apartment
+First Wives Club
+Stonewall
+Ransom
+High School High
+Phat Beach
+Foxfire
+Chain Reaction
+Matilda
+Emma
+Crow: City of Angels
+House Arrest
+Eyes Without a Face (Yeux sans visage  Les)
+Tales from the Crypt Presents: Bordello of Blood
+Lotto Land
+Story of Xinghua (Xinghua san yue tian)
+Day the Sun Turned Cold (Tianguo niezi)
+Flirt
+Big Squeeze
+Spitfire Grill
+Escape from L.A.
+Cyclo (Xich lo)
+Basquiat
+Tin Cup
+Dingo
+Ballad of Narayama (Narayama Bushiko)
+Every Other Weekend (Un week-end sur deux)
+Mille bolle blu
+Crows and Sparrows (Wuya yu maque)
+Godfather
+Supercop (Police Story 3: Supercop) (Jing cha gu shi III: Chao ji jing cha)
+Wife
+Small Faces
+Bound
+Death in Brunswick
+Kansas City
+Gone Fishin'
+Lover's Knot
+Shadow of Angels (Schatten der Engel)
+Nothing to Lose
+Supercop 2 (Project S) (Chao ji ji hua)
+Relic
+Island of Dr. Moreau
+First Kid
+Trigger Effect
+Sweet Nothing
+Bogus
+Bulletproof
+Land Before Time III: The Time of the Great Giving
+1-900 (06)
+Halloween: The Curse of Michael Myers (Halloween 6: The Curse of Michael Myers)
+Twelfth Night
+Mother Night
+Venice/Venice
+Wild Reeds (Les roseaux sauvages)
+For Whom the Bell Tolls
+Philadelphia Story
+Singin' in the Rain
+American in Paris  An
+Funny Face
+Breakfast at Tiffany's
+Vertigo
+Rear Window
+It Happened One Night
+Gaslight
+Gay Divorcee
+North by Northwest
+Apartment
+Some Like It Hot
+Charade
+Casablanca
+Maltese Falcon
+My Fair Lady
+Sabrina
+Roman Holiday
+Little Princess
+Meet Me in St. Louis
+Wizard of Oz
+Gone with the Wind
+My Favorite Year
+Sunset Blvd. (a.k.a. Sunset Boulevard)
+Citizen Kane
+2001: A Space Odyssey
+All About Eve
+Women
+Rebecca
+Foreign Correspondent
+Notorious
+Spellbound
+Affair to Remember  An
+To Catch a Thief
+Father of the Bride
+Band Wagon
+Ninotchka
+Love in the Afternoon
+Gigi
+Reluctant Debutante
+Adventures of Robin Hood
+Mark of Zorro
+Laura
+Ghost and Mrs. Muir
+Lost Horizon
+Top Hat
+To Be or Not to Be
+My Man Godfrey
+Giant
+East of Eden
+Thin Man
+His Girl Friday
+Around the World in 80 Days
+It's a Wonderful Life
+Mr. Smith Goes to Washington
+Bringing Up Baby
+Penny Serenade
+Of Human Bondage
+Angel on My Shoulder
+Little Lord Fauntleroy
+They Made Me a Criminal (I Became a Criminal) (They Made Me a Fugitive)
+Inspector General
+Angel and the Badman
+39 Steps
+Walk in the Sun  A
+Outlaw
+Night of the Living Dead
+African Queen
+Beat the Devil
+Cat on a Hot Tin Roof
+Last Time I Saw Paris
+Meet John Doe
+Algiers
+Farewell to Arms  A
+Dangerous Ground
+Picnic
+Pompatus of Love
+Small Wonders
+Fly Away Home
+Grace of My Heart
+Brother of Sleep (Schlafes Bruder)
+Maximum Risk
+Michael Collins
+Rich Man's Wife
+Infinity
+Big Night
+Last Man Standing
+Caught
+Set It Off
+2 Days in the Valley
+Curdled
+Ed's Next Move
+Extreme Measures
+Glimmer Man
+D3: The Mighty Ducks
+Chamber
+Apple Dumpling Gang
+Davy Crockett  King of the Wild Frontier
+Escape to Witch Mountain
+Love Bug
+Herbie Rides Again
+Old Yeller
+Parent Trap
+Pollyanna
+Homeward Bound: The Incredible Journey
+Shaggy Dog
+Swiss Family Robinson
+That Darn Cat!
+20 000 Leagues Under the Sea
+Cool Runnings
+Angels in the Outfield
+Cinderella
+Winnie the Pooh and the Blustery Day
+Three Caballeros
+Sword in the Stone
+Robin Hood: Prince of Thieves
+Mary Poppins
+Dumbo
+Pete's Dragon
+Bedknobs and Broomsticks
+Alice in Wonderland
+Fox and the Hound
+Freeway
+Sound of Music
+Die Hard
+Lawnmower Man
+Unhook the Stars
+Secret Agent
+Secrets & Lies
+That Thing You Do!
+To Gillian on Her 37th Birthday
+Surviving Picasso
+Love Is All There Is
+Beautiful Thing
+Long Kiss Goodnight
+Ghost and the Darkness
+Looking for Richard
+Trees Lounge
+Proprietor
+Normal Life
+Get on the Bus
+Shadow Conspiracy
+Jude
+Everyone Says I Love You
+Bitter Sugar (AzÌ¼car amarga)
+William Shakespeare's Romeo + Juliet
+Swingers
+Sleepers
+Sunchaser
+Johns
+Aladdin and the King of Thieves
+Shall We Dance
+Damsel in Distress  A
+Crossfire
+Murder  My Sweet
+For the Moment
+Willy Wonka & the Chocolate Factory
+Innocents
+Sleeper
+Bananas
+Fish Called Wanda  A
+Monty Python's Life of Brian
+Victor/Victoria
+Candidate
+Great Race
+Bonnie and Clyde
+Old Man and the Sea
+Dial M for Murder
+Madame Butterfly
+Dirty Dancing
+Reservoir Dogs
+Platoon
+Weekend at Bernie's
+Basic Instinct
+Doors
+Crying Game
+Glengarry Glen Ross
+Sophie's Choice
+E.T. the Extra-Terrestrial
+Search for One-eye Jimmy
+Christmas Carol  A
+Days of Thunder
+Top Gun
+American Strays
+Rebel Without a Cause
+Streetcar Named Desire  A
+Children of the Corn IV: The Gathering
+Microcosmos (Microcosmos: Le peuple de l'herbe)
+Palookaville
+Associate
+Funeral
+Sleepover
+Single Girl  A (Fille seule  La)
+Eighth Day (HuitiÌ¬me jour  Le)
+North Star (a.k.a. Tashunga)
+Drunks
+People vs. Larry Flynt
+Perfect Candidate  A
+On Golden Pond
+Return of the Pink Panther
+Drop Dead Fred
+Abyss
+Fog
+Escape from New York
+Howling
+Jean de Florette
+Manon of the Spring (Manon des sources)
+Talking About Sex
+Johnny 100 Pesos (Johnny cien pesos)
+Private Benjamin
+Monty Python and the Holy Grail
+Hustler White
+Dadetown
+Entertaining Angels: The Dorothy Day Story
+Get Over It
+Three Lives and Only One Death (Trois vies & une seule mort)
+Line King: The Al Hirschfeld Story
+Snowriders
+Curtis's Charm
+When We Were Kings
+Wallace & Gromit: The Wrong Trousers
+JLG/JLG (JLG/JLG - autoportrait de dÌ©cembre)
+Return of Martin Guerre (Retour de Martin Guerre  Le)
+Faust
+He Walked by Night
+Raw Deal
+T-Men
+Here Comes Cookie
+Love in Bloom
+Six of a Kind
+Tin Drum (Blechtrommel  Die)
+Ruling Class
+Mina Tannenbaum
+Bloody Child
+Farmer & Chase
+Dear God
+Bad Moon
+American Dream
+Best of the Best 3: No Turning Back
+Bob Roberts
+Cinema Paradiso (Nuovo cinema Paradiso)
+Cook the Thief His Wife & Her Lover
+Delicatessen
+Double Life of Veronique (Double Vie de VÌ©ronique  La)
+Enchanted April
+Paths of Glory
+Grifters
+Hear My Song
+English Patient
+Mediterraneo
+My Left Foot
+Sex  Lies  and Videotape
+Passion Fish
+Strictly Ballroom
+Thin Blue Line
+Tie Me Up! Tie Me Down! (åÁÌtame!)
+Madonna: Truth or Dare
+Paris Is Burning
+One Flew Over the Cuckoo's Nest
+Cheech and Chong's Up in Smoke
+Star Wars: Episode V - The Empire Strikes Back
+Princess Bride
+Raiders of the Lost Ark (Indiana Jones and the Raiders of the Lost Ark)
+Brazil
+Aliens
+Good Bad and the Ugly (Buono  il brutto  il cattivo  Il)
+Withnail & I
+12 Angry Men
+Lawrence of Arabia
+Clockwork Orange  A
+To Kill a Mockingbird
+Apocalypse Now
+Once Upon a Time in the West (C'era una volta il West)
+Star Wars: Episode VI - Return of the Jedi
+Wings of Desire (Himmel Ì_ber Berlin  Der)
+Third Man
+Goodfellas
+Alien
+Army of Darkness
+Big Blue (Grand bleu  Le)
+Ran
+Killer (Die xue shuang xiong)
+Psycho
+Blues Brothers
+Godfather: Part II
+Full Metal Jacket
+Grand Day Out with Wallace and Gromit  A
+Henry V
+Amadeus
+Quiet Man
+Once Upon a Time in America
+Raging Bull
+Annie Hall
+Right Stuff
+Stalker
+Boot  Das (Boat)
+Sting
+Harold and Maude
+Trust
+Seventh Seal (Sjunde inseglet  Det)
+Local Hero
+Terminator
+Dead Alive (Braindead)
+Glory
+Rosencrantz and Guildenstern Are Dead
+Manhattan
+Miller's Crossing
+Dead Poets Society
+Graduate
+Touch of Evil
+Femme Nikita  La (Nikita)
+Bridge on the River Kwai
+8 1/2 (8å_)
+Chinatown
+Day the Earth Stood Still
+Treasure of the Sierra Madre
+Bad Taste
+Duck Soup
+Better Off Dead...
+Shining
+Stand by Me
+M
+Evil Dead II (Dead by Dawn)
+Great Escape
+Deer Hunter
+Diva
+Groundhog Day
+Unforgiven
+Manchurian Candidate
+Pump Up the Volume
+Arsenic and Old Lace
+Back to the Future
+Fried Green Tomatoes
+Patton
+Down by Law
+Akira
+Highlander
+Cool Hand Luke
+Cyrano de Bergerac
+Young Frankenstein
+Night on Earth
+Raise the Red Lantern (Da hong deng long gao gao gua)
+Great Dictator
+Fantasia
+High Noon
+Big Sleep
+Heathers
+Somewhere in Time
+Ben-Hur
+This Is Spinal Tap
+Koyaanisqatsi (a.k.a. Koyaanisqatsi: Life Out of Balance)
+Some Kind of Wonderful
+Indiana Jones and the Last Crusade
+Being There
+Gandhi
+Unbearable Lightness of Being
+Room with a View  A
+Real Genius
+Pink Floyd: The Wall
+Killing Fields
+My Life as a Dog (Mitt liv som hund)
+Forbidden Planet
+Field of Dreams
+Man Who Would Be King
+Butch Cassidy and the Sundance Kid
+Paris  Texas
+Until the End of the World (Bis ans Ende der Welt)
+When Harry Met Sally...
+I Shot a Man in Vegas
+Parallel Sons
+Hype!
+Santa with Muscles
+Female Perversions
+Mad Dog Time
+Breathing Room
+Paris Was a Woman
+Anna
+I'm Not Rappaport
+Blue Juice
+Kids of Survival
+Alienå_ (a.k.a. Alien 3)
+American Werewolf in London  An
+Amityville 1992: It's About Time
+Amityville 3-D
+Amityville: Dollhouse
+Amityville: A New Generation
+Amityville II: The Possession
+Amityville Horror
+Amityville Curse
+Blood for Dracula (Andy Warhol's Dracula)
+April Fool's Day
+Audrey Rose
+Believers
+Birds
+Blob
+Body Parts
+Body Snatcher
+Dracula (Bram Stoker's Dracula)
+Bride of Frankenstein (Bride of Frankenstein)
+Burnt Offerings
+Candyman
+Cape Fear
+Cape Fear
+Carrie
+Cat People
+Nightmare on Elm Street  A
+Nosferatu (Nosferatu  eine Symphonie des Grauens)
+Vampire in Venice (Nosferatu a Venezia) (Nosferatu in Venice)
+Omen
+Blood and Wine (Blood & Wine)
+Albino Alligator
+Mirror Has Two Faces
+Breaking the Waves
+Nightwatch
+Star Trek: First Contact
+Shine
+Sling Blade
+Jingle All the Way
+Identification of a Woman (Identificazione di una donna)
+Paradise Lost: The Child Murders at Robin Hood Hills
+Preacher's Wife
+Zero Kelvin (KjÌ_rlighetens kjÌütere)
+Ridicule
+Crucible
+101 Dalmatians
+Forbidden Christ (Cristo proibito  Il)
+I Can't Sleep (J'ai pas sommeil)
+Die Hard 2
+Star Trek: The Motion Picture
+Star Trek VI: The Undiscovered Country
+Star Trek V: The Final Frontier
+Star Trek II: The Wrath of Khan
+Star Trek III: The Search for Spock
+Star Trek IV: The Voyage Home
+Batman Returns
+Young Guns
+Young Guns II
 Grease
-Close Encounters of the Third Kind
+Grease 2
+Marked for Death
+Adrenalin: Fear the Rush
+Substance of Fire
+Under Siege
+Jaws
+Jaws 2
+Jaws 3-D
+My Fellow Americans
+Mars Attacks!
+Citizen Ruth
+Jerry Maguire
+Raising Arizona
+Tin Men
+Sneakers
+Bastard Out of Carolina
+In Love and War
+Marvin's Room
+Somebody is Waiting
+Ghosts of Mississippi
+Night Falls on Manhattan
+Beavis and Butt-Head Do America
+Judgement in Stone  A (CÌ©rÌ©monie  La)
+Scream
+Last of the Mohicans
+Michael
+Evening Star
+Hamlet
+Some Mother's Son
+Whole Wide World
+Mother
+Evita
+Portrait of a Lady
+Walkabout
+Message to Love: The Isle of Wight Festival
+Grateful Dead
+Murder at 1600
+Hearts and Minds
+Fierce Creatures
+Turbulence
+Angel Baby
+First Strike (Police Story 4: First Strike) (Ging chaat goo si 4: Ji gaan daan yam mo)
+Beverly Hills Ninja
+Metro
+Cement Garden
+Dante's Peak
+Meet Wally Sparks
+Amos & Andrew
+Benny & Joon
+Prefontaine
+McHale's Navy
+Kolya (Kolja)
+Gridlock'd
+Waiting for Guffman
+Prisoner of the Mountains (Kavkazsky plennik)
+Beautician and the Beast
+SubUrbia
+Pest
+Fools Rush In
+Absolute Power
+That Darn Cat
+Vegas Vacation (National Lampoon's Las Vegas Vacation)
+That Old Feeling
+Lost Highway
+Rosewood
+Donnie Brasco
+Booty Call
+Rhyme & Reason
+City of Industry
+Jungle2Jungle (a.k.a. Jungle 2 Jungle)
+Kama Sutra: A Tale of Love
+Private Parts
+Love Jones
+Saint
+Smilla's Sense of Snow
+Van
+Crash
+Daytrippers
+Liar Liar
+Selena
+Devil's Own
+B*A*P*S
+Turbo: A Power Rangers Movie
+Anna Karenina
+Double Team
+Inventing the Abbotts
+Anaconda
+Grosse Pointe Blank
+Kissed
+8 Heads in a Duffel Bag
+Hollow Reed
+Paradise Road
+Traveller
+All Over Me
+Chef in Love  A (Shekvarebuli kulinaris ataserti retsepti)
+Romy and Michele's High School Reunion
+Temptress Moon (Feng Yue)
+Volcano
+Children of the Revolution
+Austin Powers: International Man of Mystery
+Breakdown
+Truth or Consequences  N.M.
+Warriors of Virtue
+Fathers' Day
+Fifth Element
+Losing Chase
+Promise (La promesse)
+Love! Valour! Compassion!
+Shall We Dance? (Shall We Dansu?)
+Second Jungle Book: Mowgli & Baloo
+Twin Town
+Addicted to Love
+Brassed Off
+Lost World: Jurassic Park
+Ponette
+Schizopolis
+Shiloh
+Trial and Error
+Buddy
+Con Air
+Pillow Book
+Speed 2: Cruise Control
+Batman & Robin
+Head Above Water
+Hercules
+My Best Friend's Wedding
+Tetsuo II: Body Hammer
+When the Cat's Away (Chacun cherche son chat)
+Contempt (MÌ©pris  Le)
+Face/Off
+For Ever Mozart
+Men in Black (a.k.a. MIB)
+Out to Sea
+Contact
+Love Serenade
+G.I. Jane
+Conan the Barbarian
+George of the Jungle
+Cop Land
+Event Horizon
+Spawn
+Air Bud
+Picture Perfect
+In the Company of Men
+Free Willy 3: The Rescue
+Career Girls
+Conspiracy Theory
+Desperate Measures
+Steel
+She's So Lovely
+Hoodlum
+Leave It to Beaver
+Mimic
+Money Talks
+Excess Baggage
+Kull the Conqueror
+Air Force One
+187 (One Eight Seven)
+Hunt for Red October
+My Own Private Idaho
+Kiss Me  Guido
+Star Maps
+In & Out
+Edge
+Peacemaker
+L.A. Confidential
+Seven Years in Tibet
+Kiss the Girls
+Soul Food
+Wishmaster
+Thousand Acres  A
+Game
+Fire Down Below
+U Turn
+MatchMaker
+Assignment
+Ulee's Gold
+Ice Storm
+Chasing Amy
+How to Be a Player
+Full Monty
+Indian Summer (a.k.a. Alive & Kicking)
+Mrs. Brown (a.k.a. Her Majesty  Mrs. Brown)
+I Know What You Did Last Summer
+Devil's Advocate
+RocketMan (a.k.a. Rocket Man)
+Playing God
+House of Yes
+Fast  Cheap & Out of Control
+Washington Square
+Gattaca
+FairyTale: A True Story
+Phantoms
+Swept from the Sea
+Life Less Ordinary  A
+Eve's Bayou
+Switchback
+Gang Related
+Stripes
+Nenette and Boni (NÌ©nette et Boni)
+Bean
+Mad City
+One Night Stand
+Tango Lesson
+Welcome to Sarajevo
+Rainmaker
+Boogie Nights
+Witness
+Incognito
+Starship Troopers
+Joy Luck Club
+Chairman of the Board
+Sliding Doors
+Mortal Kombat: Annihilation
+Truman Show
+Wings of the Dove
+Mrs. Dalloway
+Red Corner
+Jackal
+Anastasia
+Man Who Knew Too Little
+Alien: Resurrection
+Amistad
+Apostle
+Artemisia
+Bent
+Butcher Boy
+Deconstructing Harry
+Flubber
+For Richer or Poorer
+Good Will Hunting
+Home Alone 3
+Midnight in the Garden of Good and Evil
+Mouse Hunt
+Other Voices  Other Rooms
+Scream 2
+Sweet Hereafter
+Time Tracers
+Titanic
+Tomorrow Never Dies
+Twisted
+Education of Little Tree
+Postman
+Horse Whisperer
+Winter Guest
+Jackie Brown
+Kundun
+Mr. Magoo
+Big Lebowski
+Afterglow
+My Life in Pink (Ma vie en rose)
+Great Expectations
+3 Ninjas: High Noon On Mega Mountain
+Arguing the World
+Firestorm
+Senseless
+Wag the Dog
+Dark City
+Leading Man
+Star Kid
+Hard Rain
+Half Baked
+Fallen
+Shooting Fish
+Prophecy II
+Four Days in September (O Que Ìä Isso  Companheiro?)
+Spice World
+Deep Rising
+Music From Another Room
+Replacement Killers
+Night Flier
+Blues Brothers 2000
+Wedding Singer
+Sphere
+Palmetto
+As Good as It Gets
+King of New York
+Men with Guns
+Twilight
+U.S. Marshals
+Welcome to Woop-Woop
+Love and Death on Long Island
+Everest
+Hush
+Suicide Kings
+Man in the Iron Mask
+Newton Boys
+Wild Things
+Paulie
+Cool  Dry Place  A
+Fireworks (Hana-bi)
+Primary Colors
+Niagara  Niagara
+Price Above Rubies  A
+Two Girls and a Guy
+Object of My Affection
+Meet the Deedles
+Player's Club
+Barney's Great Adventure
+Big One
+Chinese Box
+Lost in Space
+Heaven's Burning
+Mercury Rising
+Spanish Prisoner
+City of Angels
+Last Days of Disco
+Odd Couple II
+My Giant
+He Got Game
+Gingerbread Man
+Live Flesh (Carne trÌ©mula)
+Zero Effect
+Nil By Mouth
+Borrowers
+I Love You  Don't Touch Me!
+Alan Smithee Film: Burn Hollywood Burn  An
+Kissing a Fool
+Krippendorf's Tribe
+Kurt & Courtney
+Real Blonde
+Mr. Nice Guy (Yat goh ho yan)
+Taste of Cherry (Ta'm e guilass)
+Character (Karakter)
+Species II
+Major League: Back to the Minors
+Wild Man Blues
+Big Hit
+Tarzan and the Lost City
+Black Dog
+Dancer  Texas Pop. 81
+Friend of the Deceased  A (Priyatel pokonika)
+Go Now
+MisÌ©rables  Les
+Still Breathing
+Clockwatchers
+Deep Impact
+Woo
+Hanging Garden
+Lawn Dogs
+Quest for Camelot
+Godzilla
+Bulworth
+Fear and Loathing in Las Vegas
+Opposite of Sex
+I Got the Hook Up
+Almost Heroes
+Hope Floats
+Insomnia
+Little Boy Blue
+Ugly
+Perfect Murder  A
+Beyond Silence (Jenseits der Stille)
+Six Days Seven Nights
+Can't Hardly Wait
+Cousin Bette
+High Art
+Land Girls
+Passion in the Desert
+Children of Heaven (Bacheha-Ye Aseman)
+Dear Jesse
+Dream for an Insomniac
+Hav Plenty
+Henry Fool
+Marie from the Bay of Angels (Marie Baie Des Anges)
+Mr. Jealousy
+Mulan
+X-Files: Fight the Future
+I Went Down
+Dr. Dolittle
+Out of Sight
+Picnic at Hanging Rock
+Smoke Signals
+Voyage to the Beginning of the World (Viagem ao PrincÌ_pio do Mundo)
+Buffalo '66 (a.k.a. Buffalo 66)
+Armageddon
+Lethal Weapon 4
+Madeline
+Small Soldiers
+Pi
+Whatever
+There's Something About Mary
+Plan 9 from Outer Space
+Wings
+Broadway Melody
+All Quiet on the Western Front
+Cimarron
+Grand Hotel
+Cavalcade
+Mutiny on the Bounty
+Great Ziegfeld
+Life of Emile Zola
+You Can't Take It with You
+How Green Was My Valley
+Mrs. Miniver
+Going My Way
+Lost Weekend
+Best Years of Our Lives
+Gentleman's Agreement
+Hamlet
+All the King's Men
+Greatest Show on Earth
+From Here to Eternity
+On the Waterfront
+Marty
+West Side Story
+Tom Jones
+Man for All Seasons  A
+In the Heat of the Night
+Oliver!
+Midnight Cowboy
+French Connection
+Rocky
+Kramer vs. Kramer
+Ordinary People
+Chariots of Fire
+Terms of Endearment
+Out of Africa
+Last Emperor
+Rain Man
+Driving Miss Daisy
+Take the Money and Run
+Klute
+Repo Man
+Metropolitan
+Labyrinth
+Breakfast Club
+Nightmare on Elm Street 2: Freddy's Revenge  A
+Nightmare on Elm Street 3: Dream Warriors  A
+Nightmare on Elm Street 4: The Dream Master  A
+Nightmare on Elm Street 5: The Dream Child  A
+Freddy's Dead: The Final Nightmare (Nightmare on Elm Street Part 6: Freddy's Dead  A)
+Friday the 13th
+Friday the 13th Part 2
+Friday the 13th Part 3: 3D
+Friday the 13th Part IV: The Final Chapter
+Friday the 13th Part V: A New Beginning
+Friday the 13th Part VI: Jason Lives
+Friday the 13th Part VII: The New Blood
+Friday the 13th Part VIII: Jason Takes Manhattan
+Halloween
+Halloween II
+Halloween III: Season of the Witch
+Halloween 4: The Return of Michael Myers
+Halloween 5: The Revenge of Michael Myers
+Prom Night
+Hello Mary Lou: Prom Night II
+Child's Play
+Child's Play 2
+Child's Play 3
+Poltergeist
+Poltergeist II: The Other Side
+Poltergeist III
+Exorcist
+Exorcist II: The Heretic
+Exorcist III
+Lethal Weapon
+Lethal Weapon 2
+Lethal Weapon 3
+Gremlins
+Gremlins 2: The New Batch
+Goonies
+Mask of Zorro
+Polish Wedding
+This Worldn the Fireworks
+Soylent Green
+Metropolis
+Back to the Future Part II
+Back to the Future Part III
+Poseidon Adventure
+Freaky Friday
+Absent-Minded Professor
+Apple Dumpling Gang Rides Again
+Babes in Toyland
+Bambi
+Seven Samurai (Shichinin no samurai)
+Dangerous Liaisons
+Dune
+Last Temptation of Christ
+Godfather: Part III
+Rapture
+Lolita
+Disturbing Behavior
+Jane Austen's Mafia!
+Saving Private Ryan
+Billy's Hollywood Screen Kiss
+East Palace West Palace (Dong gong xi gong)
+Million Dollar Duck (a.k.a. $1 000 000 Duck)
+Black Cauldron
+Black Hole
+Blank Check
+Candleshoe
+Cat from Outer Space
+Computer Wore Tennis Shoes
+Condorman
+D2: The Mighty Ducks
+Darby O'Gill and the Little People
+Devil and Max Devlin
+Far Off Place  A
+Flight of the Navigator
+Gnome-Mobile
+Great Mouse Detective
+Happiest Millionaire
+Herbie Goes Bananas
+Herbie Goes to Monte Carlo
+Hocus Pocus
+Honey  I Blew Up the Kid
+Honey  I Shrunk the Kids
+Hot Lead and Cold Feet
+Incredible Journey
+Negotiator
+Parent Trap
+BASEketball
+Full Tilt Boogie
+Governess
+Seventh Heaven (SeptiÌ¬me ciel  Le)
+Roger & Me
+Purple Rose of Cairo
+Out of the Past
+Doctor Zhivago
+Fanny and Alexander (Fanny och Alexander)
+Trip to Bountiful
+Tender Mercies
+And the Band Played On
+burbs
+Fandango
+Night Porter (Portiere di notte  Il)
+Mephisto
+Blue Velvet
+Journey of Natty Gann
+Jungle Book
+Lady and the Tramp
+Little Mermaid
+Mighty Ducks
+Muppet Christmas Carol
+Newsies
+101 Dalmatians (One Hundred and One Dalmatians)
+One Magic Christmas
+Peter Pan
+Popeye
+Rescuers Down Under
+Rescuers
+Return from Witch Mountain
+Return of Jafar
+Return to Oz
+Rocketeer
+Shaggy D.A.
+Sleeping Beauty
+Something Wicked This Way Comes
+Son of Flubber
+Song of the South
+Splash
+Steamboat Willie
+Tall Tale
+Tex
+Tron
+Swing Kids
+Halloween H20: 20 Years Later (Halloween 7: The Revenge of Laurie Strode)
+L.A. Story
+Jerk
+Dead Men Don't Wear Plaid
+Man with Two Brains
+Grand Canyon
+Graveyard Shift (Stephen King's Graveyard Shift)
+Outsiders
+Indiana Jones and the Temple of Doom
+Lord of the Rings
+1984 (Nineteen Eighty-Four)
+Dead Zone
+Maximum Overdrive
+Needful Things
+Cujo
+Children of the Corn
+All Dogs Go to Heaven
+Addams Family
+Ever After: A Cinderella Story
+Snake Eyes
+First Love  Last Rites
+Safe Men
+Saltmen of Tibet (SalzmÌ_nner von Tibet  Die)
+Atlantic City
+Autumn Sonata (HÌ¦stsonaten)
+Who's Afraid of Virginia Woolf?
+Adventures in Babysitting
+Weird Science
+Doctor Dolittle
+Nutty Professor
+Charlotte's Web
+Watership Down
+Secret of NIMH
+Dark Crystal
+American Tail  An
+American Tail: Fievel Goes West  An
+Legend
+Sixteen Candles
+Pretty in Pink
+St. Elmo's Fire
+Clan of the Cave Bear
+House
+House II: The Second Story
+Gods Must Be Crazy
+Gods Must Be Crazy II
+Air Bud: Golden Receiver
+Avengers
+How Stella Got Her Groove Back
+Slums of Beverly Hills
+Best Man (Testimone dello sposo  Il)
+Chambermaid on the Titanic (Femme de chambre du Titanic  La)
+Henry: Portrait of a Serial Killer
+Rosemary's Baby
+NeverEnding Story
+NeverEnding Story II: The Next Chapter
+Attack of the Killer Tomatoes!
+Surf Nazis Must Die
+Your Friends and Neighbors
+Return to Paradise
+Blade
+Dance with Me
+Dead Man on Campus
+Wrongfully Accused
+Next Stop Wonderland
+Navigator: A Mediaeval Odyssey
+Beetlejuice
+Rope
+Family Plot
+Frenzy
+Topaz
+Torn Curtain
+Marnie
+Wrong Man
+Man Who Knew Too Much
+Trouble with Harry
+I Confess
+Strangers on a Train
+Stage Fright
+54
+I Married A Strange Person!
+Why Do Fools Fall In Love?
+Willow
+Untouchables
+Dirty Work
+Firelight
+Paradine Case
+Lifeboat
+Shadow of a Doubt
+Saboteur
+Mr. & Mrs. Smith
+Suspicion
+Jamaica Inn
+Lady Vanishes
+Young and Innocent
+Sabotage
+Secret Agent
+Man Who Knew Too Much
+Waltzes from Vienna
+Number Seventeen (a.k.a. Number 17)
+Murder!
+Lodger: A Story of the London Fog
+Rounders
+Cube
+Simon Birch
+Without Limits
+Seven Beauties (Pasqualino Settebellezze)
+Swept Away (Travolti da un insolito destino nell'azzurro mare d'Agosto)
+My Bodyguard
+Class
+Grandview  U.S.A.
+Broadcast News
+Allnighter
+Working Girl
+Stars and Bars
+Married to the Mob
+Say Anything...
+My Blue Heaven
+Men Don't Leave
+Hero
+Toys
+Young Doctors in Love
+Parasite
+No Small Affair
+Blame It on Rio
+Wisdom
+One Crazy Summer
+About Last Night...
+Seventh Sign
+We're No Angels
+Nothing But Trouble
+Butcher's Wife
+Mortal Thoughts
+Few Good Men  A
+Indecent Proposal
+Permanent Midnight
+One True Thing
+Rush Hour
+Six-String Samurai
+Soldier's Daughter Never Cries  A
+Ronin
+Urban Legend
+Clay Pigeons
+Pecker
+Sheltering Sky
+Bandit Queen
+If....
+Fiendish Plot of Dr. Fu Manchu
+Them!
+Thing
+Player
+Stardust Memories
+Edward Scissorhands
+Overnight Delivery
+Antz
+Impostors
+Night at the Roxbury  A
+What Dreams May Come
+Strangeland
+Battle of the Sexes
+Producers
+History of the World: Part I
+My Cousin Vinny
+Nashville
+Slam
+Holy Man
+One Tough Cop
+Inheritors (Siebtelbauern  Die)
+Mighty
+2010: The Year We Make Contact
+Children of a Lesser God
+Elephant Man
+Beloved
+Bride of Chucky (Child's Play 4)
+Practical Magic
+Alarmist (a.k.a. Life During Wartime)
+Happiness
+Apt Pupil
+Pleasantville
+Soldier
+Cruise
+Life Is Beautiful (La Vita Ì¬ bella)
+Orgazmo
+Tales from the Darkside: The Movie
+Vampires
+American History X
+Hands on a Hard Body
+Living Out Loud
+Belly
+Gods and Monsters
+Siege
+Waterboy
+Elizabeth
+Velvet Goldmine
+I Still Know What You Did Last Summer
+I'll Be Home For Christmas
+Meet Joe Black
+Dancing at Lughnasa
+Hard Core Logo
+Runaway Train
+Desert Bloom
+Stepford Wives
+Pope of Greenwich Village
+Sid and Nancy
+Mona Lisa
+Heart Condition
+Nights of Cabiria (Notti di Cabiria  Le)
+Big Chill
+Enemy of the State
+Rugrats Movie
+Bug's Life  A
+Celebrity
+Central Station (Central do Brasil)
+Waking Ned Devine (a.k.a. Waking Ned)
+Celebration (Festen)
+Pink Flamingos
+Glen or Glenda
+Godzilla (Gojira)
+Godzilla 1985: The Legend Is Reborn (Gojira) (Godzilla) (Return of Godzilla)
+King Kong vs. Godzilla (Kingukongu tai Gojira)
+King Kong
+King Kong
+King Kong Lives
+Desperately Seeking Susan
+Emerald Forest
+Fletch
+Fletch Lives
+Red Sonja
+Gung Ho
+Money Pit
+View to a Kill  A
+Lifeforce
+Police Academy
+Police Academy 2: Their First Assignment
+Police Academy 3: Back in Training
+Police Academy 4: Citizens on Patrol
+Police Academy 5: Assignment: Miami Beach
+Police Academy 6: City Under Siege
+Babe: Pig in the City
+Home Fries
+Jerry Springer: Ringmaster
+Very Bad Things
+Steam: The Turkish Bath (Hamam)
+Psycho
+Little Voice
+Simple Plan  A
+Jack Frost
+Star Trek: Insurrection
+Prince of Egypt
+Rushmore
+Shakespeare in Love
+Mass Appeal
+Miracle on 34th Street
+Santa Claus: The Movie
+Prancer
+Pale Rider
+Rambo: First Blood Part II
+First Blood (Rambo: First Blood)
+Rambo III
+Jewel of the Nile
+Romancing the Stone
+Cocoon
+Cocoon: The Return
+Rocky II
+Rocky III
+Rocky IV
+Rocky V
+Clue
+Young Sherlock Holmes
+Violets Are Blue...
+Back to School
+Heartburn
+Nothing in Common
+Extremities
+Karate Kid
+Karate Kid  Part II
+Karate Kid  Part III
+Christmas Vacation (National Lampoon's Christmas Vacation)
+You've Got Mail
+General
+Thin Red Line
+Faculty
+Mighty Joe Young
+Mighty Joe Young
+Patch Adams
+Stepmom
+Civil Action  A
+Down in the Delta
+Hurlyburly
+Tea with Mussolini
+Wilde
+Affliction
+Another Day in Paradise
+Hilary and Jackie
+Playing by Heart
+At First Sight
+In Dreams
+Varsity Blues
+Virus
+Garbage Pail Kids Movie
+Howard the Duck
+Gate
+Boy Who Could Fly
+Fly
+Fly
+Fly II
+Running Scared
+Armed and Dangerous
+Texas Chainsaw Massacre
+Texas Chainsaw Massacre 2
+Leatherface: Texas Chainsaw Massacre III
+Texas Chainsaw Massacre: The Next Generation (a.k.a. The Return of the Texas Chainsaw Massacre)
+Ruthless People
+Trick or Treat
+Name of the Rose (Name der Rose  Der)
+Jumpin' Jack Flash
+Peggy Sue Got Married
+Crocodile Dundee
+Crocodile Dundee II
+Tough Guys
+Soul Man
+Color of Money
+52 Pick-Up
+Heartbreak Ridge
+Firewalker
+åÁThree Amigos!
+Gloria
+My Name Is Joe
+Still Crazy
+Day of the Beast (DÌ_a de la Bestia  El)
+She's All That
+Blood  Guts  Bullets and Octane
+Peeping Tom
+Payback
+Simply Irresistible
+20 Dates
+Harmonists
+Last Days
+Fantastic Planet (PlanÌ¬te sauvage  La)
+Blast from the Past
+Message in a Bottle
+My Favorite Martian
+God Said 'Ha!'
+Jawbreaker
+October Sky
+Office Space
+200 Cigarettes
+8MM
+Other Sister
+Breakfast of Champions
+Eight Days a Week
+Long Goodbye
+Pet Sematary
+Pet Sematary II
+Children of the Corn II: The Final Sacrifice
+Children of the Corn III
+Christine
+Night Shift
+House on Haunted Hill
+Airport
+Airport 1975
+Airport '77
+Towering Inferno
+Alligator
+Meteor
+Westworld
+Logan's Run
+Planet of the Apes
+Beneath the Planet of the Apes
+Battle for the Planet of the Apes
+Conquest of the Planet of the Apes
+Escape from the Planet of the Apes
+Earthquake
+Concorde: Airport '79
+Beyond the Poseidon Adventure
+Analyze This
+Corruptor
+Cruel Intentions
+Lock  Stock & Two Smoking Barrels
+Six Ways to Sunday
+Relax... It's Just Sex
+Deep End of the Ocean
+Rage: Carrie 2
+Wing Commander
+Haunting
+Dead Ringers
+My Boyfriend's Back
+Village of the Damned
+Children of the Damned
+Baby Geniuses
+Telling You
+Forces of Nature
+King and I
+Ravenous
+True Crime
+Dangerous Beauty
+King and I
+Doug's 1st Movie
+EDtv
+Mod Squad
+Walk on the Moon  A
+Matrix
+10 Things I Hate About You
+Out-of-Towners
+Dreamlife of Angels (Vie rÌ»vÌ©e des anges  La)
+Following
+Go
+Never Been Kissed
+Twin Dragons (Shuang long hui)
+Cookie's Fortune
+Foolish
+Lovers of the Arctic Circle (Los Amantes del CÌ_rculo Polar)
+Life
+Friends & Lovers
+Hideous Kinky
+Monster (Mostro  Il)
+Open Your Eyes (Abre los ojos)
+SLC Punk!
+Pushing Tin
+Election
+eXistenZ
+Entrapment
+Idle Hands
+Get Real
+King of Masks (Bian Lian)
+Winslow Boy
+Mildred Pierce
+Night of the Comet
+Chopping Mall (a.k.a. Killbots)
+My Science Project
+Dick Tracy
+Mummy
+Castle
+Xiu Xiu: The Sent-Down Girl (Tian yu)
+William Shakespeare's A Midsummer Night's Dream
+After Life (Wandafuru raifu)
+Black Mask (Hak hap)
+Star Wars: Episode I - The Phantom Menace
+Love Letter
+Mummy
+Mummy
+Mummy's Curse
+Mummy's Hand
+Mummy's Tomb
+Mommie Dearest
+Superman
+Superman II
+Superman III
+Superman IV: The Quest for Peace
+Dracula
+House of Dracula
+House of Frankenstein
+Frankenstein
+Son of Frankenstein
+Frankenstein Meets the Wolf Man
+Curse of Frankenstein
+Son of Dracula
+Wolf Man
+Tarantula
+Rocky Horror Picture Show
+It Came from Hollywood
+Thing from Another World
+It Came from Outer Space
+War of the Worlds
+It Came from Beneath the Sea
+Invasion of the Body Snatchers
+Swamp Thing
+Pork Chop Hill
+Run Silent Run Deep
+Notting Hill
+Thirteenth Floor
+Instinct
+Buena Vista Social Club
+Finding North
+Free Enterprise
+Limbo
+Austin Powers: The Spy Who Shagged Me
+Red Violin (Violon rouge  Le)
+Tarzan
+General's Daughter
+Get Bruce
+Ideal Husband  An
+Legend of 1900 (a.k.a. The Legend of the Pianist on the Ocean) (Leggenda del pianista sull'oceano)
+Run Lola Run (Lola rennt)
+Trekkies
+Big Daddy
+Boys
+Dinner Game (DÌ¨ner de cons  Le)
+My Son the Fanatic
+Arachnophobia
+South Park: Bigger  Longer and Uncut
+Wild Wild West
+Summer of Sam
+Late August  Early September (Fin aoÌÈt  dÌ©but septembre)
+American Pie
+Arlington Road
+Muppets From Space
+Blair Witch Project
+My Life So Far
+Eyes Wide Shut
+Lake Placid
+Wood
+Ghostbusters (a.k.a. Ghost Busters)
+Ghostbusters II
+Drop Dead Gorgeous
+Haunting
+Inspector Gadget
+Trick
+Deep Blue Sea
+Mystery Men
+Runaway Bride
+Twin Falls Idaho
+Killing
+Killer's Kiss
+Spartacus
+Lolita
+Barry Lyndon
+400 Blows (Les quatre cents coups)
+Jules and Jim (Jules et Jim)
+Vibes
+Mosquito Coast
+Golden Child
+Brighton Beach Memoirs
+Assassination
+Crimes of the Heart
+Color Purple
+No Mercy
+Native Son
+Otello
+Mission
+Little Shop of Horrors
+Little Shop of Horrors
+Allan Quatermain and the Lost City of Gold
+Morning After
+Radio Days
+Outrageous Fortune
+Bedroom Window
+Light of Day
+Wanted: Dead or Alive
+Frances
+Dick
+Iron Giant
+Sixth Sense
+Thomas Crown Affair
+Thomas Crown Affair
+Acid House
+Adventures of Sebastian Cole
+Illuminata
+Yards
+Bowfinger
+Brokedown Palace
+Detroit Rock City
+Cobra
+Heaven Can Wait
+Raven
+Tingler
+Pit and the Pendulum
+Masque of the Red Death
+Tales of Terror
+Haunted Honeymoon
+Cat's Eye
+Monty Python's And Now for Something Completely Different
+Damien: Omen II
+Final Conflict (a.k.a. Omen III: The Final Conflict)
+Airplane!
+Airplane II: The Sequel
+American Werewolf in Paris  An
+European Vacation (aka National Lampoon's European Vacation)
+National Lampoon's Vacation
+Funny Farm
+Big
+Problem Child
+Problem Child 2
+Little Nemo: Adventures in Slumberland
+Oscar and Lucinda (a.k.a. Oscar & Lucinda)
+Tequila Sunrise
+Pelican Brief
+Christmas Story  A
+Mickey Blue Eyes
+Teaching Mrs. Tingle
+Universal Soldier: The Return
+Universal Soldier
+Perfect Blue
+In Too Deep
+Iron Eagle
+Iron Eagle II
+Aces: Iron Eagle III
+Iron Eagle IV
+Three Days of the Condor (3 Days of the Condor)
+Hamlet
+Medicine Man
+13th Warrior
+Astronaut's Wife
+Dudley Do-Right
+Muse
+Chill Factor
+Outside Providence
+Stigmata
+Stir of Echoes
+Black Cat  White Cat (Crna macka  beli macor)
+Minus Man
+Adventures of Milo and Otis (Koneko monogatari)
+Only Angels Have Wings
+Othello (Tragedy of Othello: The Moor of Venice)
+Queens Logic
+Saturn 3
+Soldier's Story  A
+Alice  Sweet Alice (a.k.a. Communion) (a.k.a. Holy Terror)
+Don't Look in the Basement!
+I Saw What You Did
+Yellow Submarine
+American Beauty
+Stop Making Sense
+Blue Streak
+For Love of the Game
+Caligula
+Hard Day's Night  A
+Splendor
+Buddy Holly Story
+Fright Night
+Fright Night Part II
+Barefoot in the Park
+Deliverance
+Excalibur
+Pajama Game
+Sommersby
+Thumbelina
+Tommy
+Armour of God II: Operation Condor (Operation Condor) (Fei ying gai wak)
+Armour of God (Long xiong hu di)
+Double Jeopardy
+Jakob the Liar
+Mumford
+Dog Park
+Drive Me Crazy
+Mystery  Alaska
+Three Kings
+Happy  Texas
+New Rose Hotel
+Plunkett & MaCleane
+Romance
+Alvarez Kelly
+Dark Half
+Gulliver's Travels
+Monkey Shines
+Phantasm
+Psycho II
+Psycho III
+Rain
+Sanjuro (Tsubaki SanjÌÈrÌ«)
+Random Hearts
+Superstar
+Boys Don't Cry
+Five Wives  Three Secretaries and Me
+Limey
+Mating Habits of the Earthbound Human
+Risky Business
+Total Recall
+Body Heat
+Ferris Bueller's Day Off
+Year of Living Dangerously
+Children of Paradise (Les enfants du paradis)
+High Plains Drifter
+Hang 'Em High
+Drunken Master (Jui kuen)
+Conformist (Conformista  Il)
+Hairspray
+Brief Encounter
+Razor's Edge
+Reds
+Return with Honor
+Time of the Gypsies (Dom za vesanje)
+Days of Heaven
+Lady Eve
+Sullivan's Travels
+Palm Beach Story
+Niagara
+Gilda
+South Pacific
+Flashdance
+Indochine
+Dirty Dozen
+Mike's Murder
+Help!
 Goldfinger
-Doctor Strange
-Nerve
-Captain America: Civil War
-The Intern
-The Man from UNCLE
-Mission: Impossible - Rogue Nation
-The Hobbit: The Battle of the Five Armies
-The Equalizer
-Rise of the Guardians
-Wreck-It Ralph
-Argo
-X-Men: First Class
-Fast Five
-Source Code
-Limitless
-The Social Network
-Despicable Me
-Kick-Ass
-Perfume: The Story of a Murderer
-The Illusionist
-Star Wars: Episode III - Revenge of the Sith
-The Terminal
-Identity
-Gangs of New York
-28 Days Later
+From Russia with Love
+Dr. No
+Blue Lagoon
+Fistful of Dollars  A (Per un pugno di dollari)
+Sydney (Hard Eight)
+Home Alone 2: Lost in New York
+Penitentiary II
+Someone to Watch Over Me
+Fight Club
+Story of Us
+Omega Code
+Straight Story
+Bad Seed
+Time Bandits
+Man and a Woman  A (Un homme et une femme)
+Fitzcarraldo
+All That Jazz
+Crimes and Misdemeanors
+Bats
+Best Man
+Bringing Out the Dead
+Crazy in Alabama
+Three to Tango
+Body Shots
+Guardian
+Ipcress File
+On Any Sunday
+RoboCop
+RoboCop 2
+Who Framed Roger Rabbit?
+Melvin and Howard
+For Your Eyes Only
+Licence to Kill
+Live and Let Die
+Rawhead Rex
+Thunderball
+House on Haunted Hill
+Music of the Heart
+Being John Malkovich
+Man of the Century
+Princess Mononoke (Mononoke-hime)
+My Best Fiend (Mein liebster Feind)
+Bachelor
+Bone Collector
+Insider
+American Movie
+Last Night
+Rosetta
+They Shoot Horses  Don't They?
+Bride of Re-Animator
+Bustin' Loose
+Coma
+Creepshow
+Creepshow 2
+Re-Animator
+Drugstore Cowboy
+Falling Down
+General
+Piranha
+Taming of the Shrew
+Nighthawks
+Yojimbo
+Omega Man
+Spaceballs
+Robin Hood
+Mister Roberts
+Quest for Fire (Guerre du feu  La)
+Little Big Man
+Face in the Crowd  A
+Trading Places
+Meatballs
+Meatballs Part II
+Meatballs III
+Meatballs 4
+Dead Again
+Peter's Friends
+Incredibly True Adventure of Two Girls in Love
+How I Won the War
+Anywhere But Here
+Dogma
+Messenger: The Story of Joan of Arc
+PokÌ©mon: The First Movie
+Felicia's Journey
+Oxygen
+Commitments
+Holiday Inn
+Longest Day
+Poison Ivy
+Poison Ivy: New Seduction
+Tora! Tora! Tora!
+Women on the Verge of a Nervous Breakdown (Mujeres al borde de un ataque de nervios)
+Verdict
+Effect of Gamma Rays on Man-in-the-Moon Marigolds
+Adventures of Buckaroo Banzai Across the 8th Dimension
+Stand and Deliver
+Moonstruck
+Sandpiper
+Jeremiah Johnson
+Repulsion
+Irma la Douce
+42 Up
+Liberty Heights
+Mansfield Park
+Sleepy Hollow
+World Is Not Enough
+All About My Mother (Todo sobre mi madre)
+March of the Wooden Soldiers (a.k.a. Babes in Toyland)
+Scrooged
+Harvey
+Bicycle Thieves (a.k.a. The Bicycle Thief) (a.k.a. The Bicycle Thieves) (Ladri di biciclette)
+Matewan
+Kagemusha
+McCabe & Mrs. Miller
+Maurice
+Grapes of Wrath
+My Man Godfrey
+Shop Around the Corner
+Natural
+Shampoo
+River Runs Through It  A
+Fatal Attraction
+Jagged Edge
+Stanley & Iris
+Midnight Run
+Awakenings
+Backdraft
+Fisher King
+River
+Country
+Places in the Heart
+'night Mother
+End of Days
+Toy Story 2
+Flawless
+Miss Julie
+Ride with the Devil
+Tumbleweeds
+Bay of Blood (a.k.a. Twitch of the Death Nerve) (Reazione a catena)
+Distinguished Gentleman
+Santa Fe Trail
+Agnes Browne
+End of the Affair
+End of the Affair
+Holy Smoke
+Sweet and Lowdown
+Bonfire of the Vanities
+Daddy Long Legs
+Go West
+Grand Illusion (La grande illusion)
+Great Santini
+Sea Wolves
+Stealing Home
+Tarzan the Fearless
+Two Jakes
+U2: Rattle and Hum
+Hell in the Pacific
+Glass Bottom Boat
+Cradle Will Rock
+Deuce Bigalow: Male Gigolo
+Green Mile
+Cider House Rules
+Last Picture Show
+7th Voyage of Sinbad
+Blood on the Sun
+Anna and the King
+Bicentennial Man
+Stuart Little
+Emperor and the Assassin (Jing ke ci qin wang)
+Fantasia 2000
+Magnolia
+Onegin
+Topsy-Turvy
+Boiling Point
+Carnal Knowledge
+Easy Rider
+Falcon and the Snowman
+Ulysses (Ulisse)
+Any Given Sunday
+Man on the Moon
+Galaxy Quest
+Talented Mr. Ripley
+Next Friday
+Hurricane
+Angela's Ashes
+Play it to the Bone
+Titus
+Mr. Death: The Rise and Fall of Fred A. Leuchter  Jr.
+Third Miracle
+Montana
+Snow Falling on Cedars
+Girl  Interrupted
+Trans
+My Dog Skip
+Supernova
+Terrorist (a.k.a. Malli) (Theeviravaathi)
+Way We Were
+Stalag 17
+Presidio
+Papillon
+Pal Joey
+Last Detail
+Five Easy Pieces
+Dead Calm
+Boys from Brazil
+Against All Odds
+Snows of Kilimanjaro
+Loaded Weapon 1 (National Lampoon's Loaded Weapon 1)
+Fast Times at Ridgemont High
+Cry in the Dark  A
+Batman: Mask of the Phantasm
+American Flyers
+Vampyros Lesbos (Vampiras  Las)
+Star Is Born  A
+Pacific Heights
+Draughtsman's Contract
+Carmen
+Woman in the Dunes (Suna no onna)
+Down to You
+Another Man's Poison
+Odessa File
+Where the Buffalo Roam
+Eye of the Beholder
+Isn't She Great?
+Encino Man
+Goodbye Girl
+Malcolm X
+Sister Act
+Sister Act 2: Back in the Habit
+Hand That Rocks the Cradle
+Alive
+Agnes of God
+Scent of a Woman
+Wayne's World
+Wayne's World 2
+League of Their Own  A
+Patriot Games
+Bodyguard
+Death Becomes Her
+Far and Away
+Howards End
+Singles
+Twin Peaks: Fire Walk with Me
+White Men Can't Jump
+Buffy the Vampire Slayer
+Hard-Boiled (Lat sau san taam)
+Man Bites Dog (C'est arrivÌ© prÌ¬s de chez vous)
+Mariachi  El
+Stop! Or My Mom Will Shoot
+Forever Young
+Cutting Edge
+Of Mice and Men
+Bad Lieutenant
+Scream 3
+Single White Female
+Boondock Saints
+Gun Shy
+Knockout
+Brandon Teena Story
+Different for Girls
+They Might Be Giants
+Beach
+Snow Day
+Tigger Movie
+Not One Less (Yi ge dou bu neng shao)
+Big Combo
+To Sir with Love
+Boiler Room
+Hanging Up
+Pitch Black
+Whole Nine Yards
+Beautiful People
+Black Tar Heroin: The Dark End of the Street
+Circus
+City Lights
+Flamingo Kid
+Kid
+Man from Laramie
+Class Reunion
+Reindeer Games
+Wonder Boys
+3 Strikes
+Chain of Fools
+Drowning Mona
+Next Best Thing
+What Planet Are You From?
+Beyond the Mat
+Ghost Dog: The Way of the Samurai
+Year My Voice Broke
+Splendor in the Grass
+My Tutor
+Key Largo
+For All Mankind
+Cross of Iron
+Bride of the Monster
+Born Yesterday
+Birdy
+Blood Feast
+Charlie Lonesome Cougar
+Never Cry Wolf
+Perils of Pauline
+Raisin in the Sun  A
+Two Thousand Maniacs!
+Mission to Mars
+Ninth Gate
+East-West (Est-ouest)
+Defending Your Life
+Breaking Away
+Hoosiers (a.k.a. Best Shot)
+Bull Durham
+Dog Day Afternoon
+American Graffiti
+Asphalt Jungle
+Searchers
+Big Country
+Betrayed
+Bound for Glory
+Bridge at Remagen
+Hangmen Also Die
+On the Beach
+Taking of Pelham One Two Three
+Volunteers
+JFK
+Who's Harry Crumb?
+Harry and the Hendersons
+Let's Get Harry
+Shanghai Surprise
+Who's That Girl?
+She-Devil
+Date with an Angel
+Blind Date
+Nadine
+Muppet Movie
+Great Muppet Caper
+Muppets Take Manhattan
+Sesame Street Presents Follow That Bird
+We're Back! A Dinosaur's Story
+Baby... Secret of the Lost Legend
+Turtle Diary
+Titanic
+Night to Remember  A
+Captain Horatio Hornblower R.N.
+Erin Brockovich
+Final Destination
+Bear (Ours  L')
+Love Is a Many-Splendored Thing
+Mirror (Zerkalo)
+Crimson Pirate
+Thelma & Louise
+...And Justice for All
+Animal House
+She's Gotta Have It
+School Daze
+Do the Right Thing
+Mo' Better Blues
+Jungle Fever
+Coogan's Bluff
+Champ
+Creature Comforts
+Death Wish
+Death Wish 2
+Death Wish 3
+Death Wish 4: The Crackdown
+Death Wish 5: The Face of Death
+Double Indemnity
+Dying Young
+Cool as Ice
+Teenage Mutant Ninja Turtles
+Teenage Mutant Ninja Turtles II: The Secret of the Ooze
+Teenage Mutant Ninja Turtles III
+Red Dawn
+Band of the Hand
+Born American
+Bloodsport
+Eyes of Laura Mars
+Funny Bones
+Good Earth
+Good Morning  Vietnam
+Good Mother
+Grumpy Old Men
+Guess Who's Coming to Dinner
+Romeo Must Die
+Here on Earth
+Whatever It Takes
+Color of Paradise (Rang-e khoda)
+Waking the Dead
+Gothic
+Lord of the Flies
+Modern Times
+Solar Crisis
+That's Life!
+Heart and Souls
+Hud
+Hustler
+Inherit the Wind
+Dersu Uzala
+Close Encounters of the Third Kind
+Place in the Sun  A
+Jacob's Ladder
+Empire Records
+Bamba  La
+Ladyhawke
+Lucas
+High Fidelity
+Road to El Dorado
+Skulls
+Autopsy (Macchie Solari)
+El Dorado
+Hook
+Horror Express
+My Chauffeur
+True Grit
+Madame Sousatzka
+Max Dugan Returns
+Midnight Express
+Misery
+Mr. Saturday Night
+Murphy's Romance
+My Life
+Solaris (Solyaris)
+Network
+No Way Out
+North Dallas Forty
+Odd Couple
+Outlaw Josey Wales
+Black and White
+Frequency
+Ready to Rumble
+Return to Me
+Rules of Engagement
+Me Myself I
+Bell  Book and Candle
+Force 10 from Navarone
+How to Stuff a Wild Bikini
+Mystery Train
+Sacco and Vanzetti (Sacco e Vanzetti)
+Arthur
+Bachelor Party
+Parenthood
+Predator
+Prince of Tides
+Postman Always Rings Twice
+28 Days
+American Psycho
+Keeping the Faith
+Where the Money Is
+East is East
+Filth and the Fury
+Diner
+Shakes the Clown
+Cabaret
+What Ever Happened to Baby Jane?
+Prick Up Your Ears
+Auntie Mame
+Guys and Dolls
+Hunger
+Marathon Man
+Caddyshack
+Gossip
+Love and Basketball
+U-571
+Virgin Suicides
+Jennifer 8
+Limelight
+Crow: Salvation
+Flintstones in Viva Rock Vegas
+Where the Heart Is
+Big Kahuna
+Bossa Nova
+Idiots (Idioterne)
+Time Code
+Carnosaur
+Carnosaur 2
+Carnosaur 3: Primal Species
+Hidden
+Two Moon Junction
+Gladiator
+I Dreamed of Africa
+Up at the Villa
+Human Traffic
+Breathless
+Inferno
+King of Marvin Gardens
+Lords of Flatbush
+Mr. Mom
+Battlefield Earth
+Center Stage
+Screwed
+Whipped
+Hamlet
+Anchors Aweigh
+Blue Hawaii
+G. I. Blues
+Gypsy
+King Creole
+On the Town
+Pee-wee's Big Adventure
+Regret to Inform
+Roustabout
+Slipper and the Rose
+Things Change
+Honeymoon in Vegas
+Dinosaur
+Loser
+Road Trip
+Small Time Crooks
+Hollywood Knights
+Myth of Fingerprints
+Twelve Chairs
+Mission: Impossible II
+Shanghai Noon
+Better Living Through Circuitry
+8 å_ Women (a.k.a. 8 1/2 Women) (a.k.a. Eight and a Half Women)
+Carnival of Souls
+Flying Tigers
+Gold Rush
+Monsieur Verdoux
+On Her Majesty's Secret Service
+Seven Days in May
+Spy Who Loved Me
+Moonraker
+Man with the Golden Gun
+Woman of Paris  A
+Fighting Seabees
+Big Momma's House
+American Gigolo
+Anguish (Angustia)
+Blood Spattered Bride (La novia ensangrentada)
+Endless Summer
+Guns of Navarone
+Blow-Out (La grande bouffe)
+Quatermass and the Pit
+Puppet Master
+Puppet Master II
+Puppet Master III: Toulon's Revenge
+Rent-A-Cop
+Romeo and Juliet
+Stay Tuned
+Story of G.I. Joe
+Blazing Saddles
+Benji
+Benji the Hunted
+For the Love of Benji
+White Christmas
+Eraserhead
+Baraka
+Man with the Golden Arm
+Decline of Western Civilization
+Decline of Western Civilization Part II: The Metal Years
+For a Few Dollars More (Per qualche dollaro in piÌ_)
+Magnum Force
+Blood Simple
+Fabulous Baker Boys
+Prizzi's Honor
+Flatliners
+Porky's
+Porky's II: The Next Day
+Porky's Revenge
+Private School
+Class of Nuke 'Em High
+Toxic Avenger
+Toxic Avenger  Part II
+Toxic Avenger Part III: The Last Temptation of Toxie
+Night of the Creeps
+Predator 2
+Running Man
+Starman
+Brother from Another Planet
+Alien Nation
+Mad Max
+Road Warrior (Mad Max 2)
+Mad Max Beyond Thunderdome
+Bird on a Wire
+Angel Heart
+9 1/2 Weeks (Nine 1/2 Weeks)
+Firestarter
+Sleepwalkers
+Action Jackson
+Sarafina!
+Soapdish
+Long Walk Home
+Clara's Heart
+Burglar
+Gone in 60 Seconds
+American Pimp
+Love's Labour's Lost
+Sunshine
+Trixie
+Hamlet
+Coming Home
+American Pop
+Assault on Precinct 13
+Near Dark
+One False Move
+Shaft
+Conversation
+Fury
+Paper Chase
+Prince of the City
+Serpico
+Ace in the Hole (Big Carnival)
+Lonely Are the Brave
+Sugarland Express
+Trouble in Paradise
+Big Trouble in Little China
+Badlands
+Battleship Potemkin
+Boys and Girls
+Shaft
+Titan A.E.
+Jesus' Son
+Boricua's Bond
+Chicken Run
+Me  Myself & Irene
+Patriot
+Adventures of Rocky and Bullwinkle
+Perfect Storm
+Golden Bowl
+Asylum
+Communion
+Kentucky Fried Movie
+Bound by Honor (a.k.a. Blood In  Blood Out)
+F/X
+F/X2 (a.k.a. F/X 2 - The Deadly Art of Illusion)
+Missing in Action
+Missing in Action 2: The Beginning
+Braddock: Missing in Action III
+Thunderbolt and Lightfoot
+Dreamscape
+The Golden Voyage of Sinbad
+Hatchet for the Honeymoon (Rosso segno della follia  Il)
+House Party
+House Party 2
+Nekromantik
+On Our Merry Way
+Rocketship X-M
+Shaft's Big Score!
+Croupier
+Kid
+Scary Movie
+But I'm a Cheerleader
+Shower (Xizao)
+Blow-Up (Blowup)
+Pawnbroker
+Footloose
+Duel in the Sun
+X-Men
+Chuck & Buck
+Five Senses
+In Crowd
+What Lies Beneath
+PokÌ©mon the Movie 2000
+Anatomy of a Murder
+Freejack
+H.O.T.S.
+Knightriders
+Mackenna's Gold
+Sinbad and the Eye of the Tiger
+Two Women (Ciociara  La)
+What About Bob?
+White Sands
+Breaker Morant
+Everything You Always Wanted to Know About Sex * But Were Afraid to Ask
+Interiors
+Love and Death
+Official Story (La historia oficial)
+Pot O' Gold
+Tampopo
+Thomas and the Magic Railroad
+Nutty Professor II: The Klumps
+Girl on the Bridge (Fille sur le pont  La)
+Wonderland
+Autumn in New York
+Coyote Ugly
+Hollow Man
+Space Cowboys
+Psycho Beach Party
+Saving Grace
+Black Sabbath (Tre volti della paura  I)
+Brain That Wouldn't Die
+Bronco Billy
+Crush
+Kelly's Heroes
+Phantasm II
+Pumpkinhead
+Air America
+Sleepaway Camp
+Steel Magnolias
+And God Created Woman (Et Dieu... crÌ©a la femme)
+Easy Money
+Spiral Staircase
+Whatever Happened to Aunt Alice?
+I'm the One That I Want
+Tao of Steve
+AimÌ©e & Jaguar
+Affair of Love  An (Liaison pornographique  Une)
+Bless the Child
+Cecil B. DeMented
+Eyes of Tammy Faye
+Opportunists
+Replacements
+Cell
+Godzilla 2000 (Gojira ni-sen mireniamu)
+Original Kings of Comedy
+Sunset Strip
+Naked Gun: From the Files of Police Squad!
+Naked Gun 2 1/2: The Smell of Fear
+Our Town
+Shane
+Suddenly  Last Summer
+Cat Ballou
+Supergirl
+Art of War
+Ballad of Ramblin' Jack
+Phish: Bittersweet Motel
+Bring It On
+Steal This Movie!
+Skipped Parts
+Highlander: Endgame (Highlander IV)
+Nurse Betty
+Watcher
+Way of the Gun
+Almost Famous
+Bait
+Crime and Punishment in Suburbia
+Duets
+Goya in Bordeaux (Goya en Burdeos)
+Urbania
+Specials
+Under Suspicion
+Urban Legends: Final Cut
+Woman on Top
+Dancer in the Dark
+Best in Show
+Beautiful
+Barenaked in America
+Girlfight
+Remember the Titans
+Hellraiser
+Hellbound: Hellraiser II
+Hellraiser III: Hell on Earth
+Faraway  So Close (In weiter Ferne  so nah!)
+Beach Party
+Bikini Beach
+Return of the Fly
+Pajama Party
+Stranger Than Paradise
+Voyage to the Bottom of the Sea
+Fantastic Voyage
+Abbott and Costello Meet Frankenstein
+Bank Dick
+Creature from the Black Lagoon
+Giant Gila Monster
+Invisible Man
+Phantom of the Opera
+Runaway
+Bamboozled
+Bootmen
+Digimon: The Movie
+Get Carter
+Get Carter
+Meet the Parents
+Requiem for a Dream
+Tigerland
+Two Family House
+Contender
+Dr. T and the Women
+Just Looking
+Ladies Man
+Lost Souls
+Billy Jack
+Billy Jack Goes to Washington
+Time Machine
+Haunted
+Ghoulies
+Ghoulies II
+Unsinkable Molly Brown
+Adventures of Ichabod and Mr. Toad
+Strange Love of Martha Ivers
+Detour
+Billy Elliot
+Bedazzled
+Pay It Forward
+Beyond (E tu vivrai nel terrore - L'aldilÌÊ)
+Private Eyes
+Legend of Drunken Master (Jui kuen II)
+Book of Shadows: Blair Witch 2
+Little Vampire
+Lucky Numbers
+Stardom
+Charlie's Angels
+Legend of Bagger Vance
+Little Nicky
+Men of Honor
+Red Planet
+What's Cooking?
+You Can Count on Me
+Diamonds Are Forever
+Eagle Has Landed
+6th Day
+Bounce
+How the Grinch Stole Christmas (a.k.a. The Grinch)
+One Day in September
+Rugrats in Paris: The Movie
+102 Dalmatians
+MalÌ¬na
+Quills
+Unbreakable
+Crouching Tiger  Hidden Dragon (Wo hu cang long)
+Dungeons & Dragons
+Proof of Life
+Vertical Limit
+Bounty
+Planes  Trains & Automobiles
+She's Having a Baby
+Living Daylights
+Transformers: The Movie
+Wall Street
+Born on the Fourth of July
+Talk Radio
+Brewster's Millions
+Snatch
+Punchline
+Mr. Accident
+Chocolat
+Dude  Where's My Car?
+Emperor's New Groove
+Pollock
+What Women Want
+Finding Forrester
+Gift
+Before Night Falls
+Cast Away
+Family Man
+House of Mirth
+Miss Congeniality
+O Brother  Where Art Thou?
+Songcatcher
+State and Main
+Dracula 2000
+All the Pretty Horses
+Thirteen Days
+Traffic
+Claim
+Shadow of the Vampire
+House of Games
+Annie
+Don't Tell Mom the Babysitter's Dead
+Officer and a Gentleman  An
+Alamo
+At Close Range
+Breaker! Breaker!
+Breakheart Pass
+Friendly Persuasion
+Gettysburg
+Antitrust
+Save the Last Dance
+Panic
+Pledge
+The Man in the Moon
+Mystic Pizza
+Prelude to a Kiss
+Foxy Brown
+I'm Gonna Git You Sucka
+Untamed Heart
+Sugar & Spice
+Wedding Planner
+Amy
+Faithless (TrolÌ¦sa)
+With a Friend Like Harry... (Harry  un ami qui vous veut du bien)
+Amazing Grace and Chuck
+Amazon Women on the Moon
+Baby Boom
+Back to the Beach
+Barfly
+Best Seller
+Beverly Hills Cop II
+Beverly Hills Cop
+Big Easy
+Born in East L.A.
+Brave Little Toaster
+Can't Buy Me Love
+Cherry 2000
+Cop
+Cry Freedom
+Dead
+Eddie Murphy Raw
+Empire of the Sun
+Ernest Goes to Camp
+Evil Dead
+Five Corners
+Gardens of Stone
+Glass Menagerie
+Hollywood Shuffle
+Hope and Glory
+Innerspace
+Ironweed
+Jaws: The Revenge
+Leonard Part 6
+Less Than Zero
+Like Father  Like Son
+Lost Boys
+Made in Heaven
+Maid to Order
+Making Mr. Right
+Mannequin
+Masters of the Universe
+Monster Squad
+Month in the Country  A
+My Demon Lover
+No Man's Land
+Head Over Heels
+Left Behind: The Movie
+Valentine
+In the Mood For Love (Fa yeung nin wa)
+Fever
+Million Dollar Hotel
+Hannibal
+Saving Silverman (Evil Woman)
+Signs & Wonders
+Vatel
+Down to Earth
+Recess: School's Out
+Sweet November
+Company Man
+Monkeybone
+3000 Miles to Graceland
+Widow of St. Pierre (Veuve de Saint-Pierre  La)
+Mexican
+See Spot Run
+Carman: The Champion
+Caveman's Valentine
+Me You Them (Eu  Tu  Eles)
+Series 7: The Contenders
+15 Minutes
+Get Over It
+Long Night's Journey Into Day
+Simon Magus
+Avalon
+Of Mice and Men
+Tuff Turf
+Unbelievable Truth
+Bishop's Wife
+Elvis: That's the Way It Is
+Fortune Cookie
+Lilies of the Field
+Hans Christian Andersen
+Greatest Story Ever Told
+Elmer Gantry
+Alfie
+Demetrius and the Gladiators
+Fantasticks
+I Know Where I'm Going!
+Abominable Dr. Phibes
+Battle Beyond the Stars
+Double Impact
+End
+Fuzz
+Harley Davidson and the Marlboro Man
+Losin' It
+Mermaids
+Mighty Quinn
+Navy Seals
+Rated X
+Manhunter
+Reversal of Fortune
+Death on the Nile
+Deepstar Six
+Revenge of the Nerds
+Revenge of the Nerds II: Nerds in Paradise
+Longtime Companion
+4 Little Girls
+River's Edge
+Girls Just Want to Have Fun
+Longest Yard
+Necessary Roughness
+Enemy at the Gates
+Exit Wounds
+Dish
+Memento
+Heartbreakers
+Say It Isn't So
+Someone Like You
+Spy Kids
+Tomcats
+Tailor of Panama
+Amores Perros (Love's a Bitch)
+Keep the River on Your Right: A Modern Cannibal Tale
+Gleaners & I (Les glaneurs et la glaneuse)
+Along Came a Spider
+Blow
+Just Visiting
+PokÌ©mon 3: The Movie
+Beautiful Creatures
+Bridget Jones's Diary
+Joe Dirt
+Josie and the Pussycats
+Kingdom Come
+Chopper
+Crocodile Dundee in Los Angeles
+Freddy Got Fingered
+Center of the World
+Girl
+Low Down
+Luzhin Defence
+Scarface
+Days of Wine and Roses
+Driven
+Forsaken
+One Night at McCool's
+Town & Country
+Rat
+Mummy Returns
+Cleopatra
+Krull
+Lost in America
+Lost World
+Triumph of the Will (Triumph des Willens)
+True Believer
+World According to Garp
+Satyricon
+Fellini's Roma (Roma)
+Frankie and Johnny
+Frankie and Johnny
+Home of Our Own  A
+For the Boys
+Nine to Five (a.k.a. 9 to 5)
+Norma Rae
+Summer Rental
+5 000 Fingers of Dr. T
+Love Story
+Pelle the Conqueror (Pelle erobreren)
+Rififi (Du rififi chez les hommes)
+Knight's Tale  A
+Bread and Roses
+Startup.com
+Angel Eyes
+Shrek
+Moulin Rouge
+Pearl Harbor
+Himalaya (Himalaya - l'enfance d'un chef)
+Man Who Cried
+Gabriela
+Ice Castles
+Love Potion #9
+Postcards From the Edge
+City Slickers
+Eight Men Out
+Horse Soldiers
+Kentuckian
+Mississippi Burning
+Magnificent Seven
+Return of the Magnificent Seven (a.k.a. Return of the Seven)
+Rio Bravo
+Semi-Tough
+Suspect
+Throw Momma from the Train
+Yi Yi
+Midnight Madness
+Nightwatch (Nattevagten)
+Sand Pebbles
+Twelve O'Clock High
+Von Ryan's Express
+Animal
+What's the Worst That Could Happen?
+Evolution
+Swordfish
+Anniversary Party
+Bride of the Wind
+Divided We Fall (MusÌ_me si pomÌÁhat)
+Catch-22
+Point Break
+Shag
+Uncommon Valor
+Unlawful Entry
+Youngblood
+Gentlemen Prefer Blondes
+How to Marry a Millionaire
+Seven Year Itch
+There's No Business Like Show Business
+Tootsie
+Pavilion of Women
+Atlantis: The Lost Empire
+Lara Croft: Tomb Raider
+Dr. Dolittle 2
+Fast and the Furious
+A.I. Artificial Intelligence
+Baby Boy
+Crazy/Beautiful
+Pootie Tang
+Let It Snow
+Sexy Beast
+Princess and the Warrior (Krieger und die Kaiserin  Der)
+Closet (Placard  Le)
+Wolves
+Crimson Rivers (RiviÌ¬res pourpres  Les)
+Lumumba
+Cats & Dogs
+Kiss of the Dragon
+Scary Movie 2
+Rape Me (Baise-moi)
+Alice
+Another Woman
+Beach Blanket Bingo
+Cannonball Run
+Cannonball Run II
+Speed Zone! (a.k.a. Cannonball Run III)
+Donovan's Brain
+Donovan's Reef
+Fall of the House of Usher (House of Usher)
+Faust
+Man Who Shot Liberty Valance
+Salvador
+Something Wild
+Sons of Katie Elder
+Cheech & Chong's Nice Dreams
+Day the Earth Caught Fire
+All That Heaven Allows
+Barefoot Contessa
+Garden of the Finzi-Continis (Giardino dei Finzi-Contini  Il)
+Howling III: The Marsupials
+Kiss Me Deadly
+Lion in Winter
+Misfits
+Moby Dick
+Rembrandt
+Sweet Smell of Success
+Written on the Wind
+Suspiria
+Fist of Fury (Chinese Connection) (Jing wu men)
+Christiane F. (a.k.a. We Children from Bahnhof Zoo) (Christiane F. - Wir Kinder vom Bahnhof Zoo)
+Big Boss (Fists of Fury) (Tang shan da xiong)
+Game of Death
+Outland
+Way of the Dragon (a.k.a. Return of the Dragon) (Meng long guo jiang)
+T-Rex: Back to the Cretaceous
+Final Fantasy: The Spirits Within
+Legally Blonde
+Score
+Bully
+Made
+Haunted Castle
+Encounter in the Third Dimension
+18 Again!
+Accidental Tourist
+Accused
+Above the Law
+Adventures of Baron Munchausen
+Appointment with Death
+Ariel
+Arthur 2: On the Rocks
+Bad Dreams
+Bat*21
+Beaches
+Beast of War (Beast)
+Big Business
+Big Top Pee-Wee
+Biloxi Blues
+Bird
+Blob
+Bright Lights  Big City
+Caddyshack II
+Camille Claudel
+Casual Sex?
+Clean and Sober
+Cocktail
+Colors
+Coming to America
+Couch Trip
+Critters
+Critters 2: The Main Course
+Critters 3
+Crossing Delancey
+D.O.A.
+Dead Pool
+Dirty Rotten Scoundrels
+Drowning by Numbers
+Elvira  Mistress of the Dark
+Ernest Saves Christmas
+Frantic
+Gorillas in the Mist
+Great Outdoors
+Imagine: John Lennon
+Johnny Be Good
+Lair of the White Worm
+Land Before Time
+Little Nikita
+Masquerade
+Milagro Beanfield War
+Moon Over Parador
+My Stepmother Is an Alien
+Bagdad Cafe (Out of Rosenheim)
+Red Heat
+Return of the Living Dead Part II
+Return of the Living Dead
+Return to Snowy River (a.k.a. The Man From Snowy River II)
+Man from Snowy River
+Rocket Gibraltar
+Running on Empty
+Serpent and the Rainbow
+Shoot to Kill
+Short Circuit 2
+Short Circuit
+Vanishing (Spoorloos)
+Switching Channels
+Tetsuo Ironman (Tetsuo)
+They Live
+Torch Song Trilogy
+Tucker: The Man and His Dream
+Twins
+Young Einstein
+Always
+American Ninja
+American Ninja 2: The Confrontation
+American Ninja 3: Blood Hunt
+Best of the Best
+Best of the Best 2
+Big Picture
+Bill & Ted's Excellent Adventure
+Black Rain
+Casualties of War
+Chances Are
+Cyborg
+Dad
+Disorganized Crime
+Dry White Season  A
+Earth Girls Are Easy
+Eddie and the Cruisers II: Eddie Lives!
+Eddie and the Cruisers
+Erik the Viking
+Family Business
+Fat Man and Little Boy
+Going Overboard
+Great Balls of Fire!
+Gross Anatomy (a.k.a. A Cut Above)
+Harlem Nights
+Her Alibi
+How to Get Ahead in Advertising
+In Country
+Innocent Man  An
+Jacknife
+January Man
+Jesus of Montreal (JÌ©sus de MontrÌ©al)
+K-9
+Kickboxer
+Last Exit to Brooklyn
+Lean on Me
+Little Monsters
+Lock Up
+Look Who's Talking
+Major League
+Meet the Feebles
+Millennium
+Miracle Mile
+Miss Firecracker
+New York Stories
+Old Gringo
+Parents
+Penn & Teller Get Killed
+Pink Cadillac
+Punisher
+Jurassic Park III
+America's Sweethearts
+Brother
+Ghost World
+Hedwig and the Angry Inch
+Planet of the Apes
+Bread and Tulips (Pane e tulipani)
+Cure
+Greenfingers
+Jackpot
+Wet Hot American Summer
+Return of the Musketeers
+Road House
+Romero
+Scandal
+Scenes from the Class Struggle in Beverly Hills
+Sea of Love
+See No Evil  Hear No Evil
+She's Out of Control
+Shirley Valentine
+Skin Deep
+Tall Guy
+Tango & Cash
+Tap
+Troop Beverly Hills
+Turner & Hooch
+UHF
+Uncle Buck
+Vampire's Kiss
+War of the Roses
+Warlock
+Wizard
+Warlock: The Armageddon
+Weekend at Bernie's II
+Black Robe
+Cotton Club
+Hotel New Hampshire
+Idiot Box
+Who'll Stop the Rain
+Zorro Gay Blade
+Basket Case
+Original Sin
+Princess Diaries
+Rush Hour 2
+Chocolat
+Hatari!
+Cage aux Folles  La
+Cage aux Folles II  La
+Marat/Sade
+Paint Your Wagon
+Shootist
+Theremin: An Electronic Odyssey
+Altered States
+Any Which Way You Can
+Bad Timing: A Sensual Obsession
+American Pie 2
+Osmosis Jones
+Others
+American Outlaws
+All Over the Guy
+Deep End
+Session 9
+Captain Corelli's Mandolin
+Rat Race
+Bubble Boy
+Curse of the Jade Scorpion
+Jay and Silent Bob Strike Back
+Ghosts of Mars
+Summer Catch
+Happy Accidents
+Lisa Picard is Famous (a.k.a. Famous)
+Maybe Baby
+Together (Tillsammans)
+Tortilla Soup
+Jeepers Creepers
+O
+Waking Up in Reno
+3 Ninjas
+3 Ninjas Kick Back
+3 Ninjas Knuckle Up
+Wicker Man
+Musketeer
+Rock Star
+Two Can Play That Game
+L.I.E.
+Abbott and Costello Meet the Mummy
+Into the Arms of Strangers: Stories of the Kindertransport
+Glass House
+Hardball
+Haiku Tunnel
+Big Trouble
+Glitter
+Training Day
+Sidewalks of New York
+Endurance: Shackleton's Legendary Antarctic Expedition
+French Lieutenant's Woman
+Great Silence (Grande silenzio  Il)
+Little Man Tate
+Moscow Does Not Believe in Tears (Moskva slezam ne verit)
+Phantom of the Paradise
+Return of a Man Called Horse
+Valdez Is Coming
+13 Ghosts
+Father Goose
+Grass Is Greener
+Indiscreet
+It's a Mad  Mad  Mad  Mad World
+King Solomon's Mines
+Little Foxes
+Operation Petticoat
+Play Misty for Me
+Pocketful of Miracles
+Sayonara
+Spring Break
+Vanishing
+Silkwood
+I Never Promised You a Rose Garden
+Quadrophenia
+SpaceCamp
+When Worlds Collide
+Don't Say a Word
+Hearts in Atlantis
+Zoolander
+Extreme Days
+Joy Ride
+Max Keeble's Big Move
+Serendipity
+Big Red One
+Brubaker
+Changeling
+Cheech & Chong's Next Movie
+Coal Miner's Daughter
+Competition
+Divine Madness!
+Dogs of War
+Bandits
+Corky Romano
+Iron Monkey (Siu nin Wong Fei-hung ji: Tit Ma Lau)
+Mulholland Drive
+My First Mister
+Bones
+Brannigan
+Clambake
+Dirty Harry
+Fiddler on the Roof
+Making the Grade
+Mission to Mir
+Not Without My Daughter
+Titanica
+From Hell
+Last Castle
+Riding in Cars with Boys
+Bangkok Dangerous
+Dancing at the Blue Iguana
+Focus
+Waking Life
+K-PAX
+Thirteen Ghosts (a.k.a. Thir13en Ghosts)
+Better Than Sex
+Donnie Darko
+High Heels and Low Lifes
+Life as a House
+Man Who Wasn't There
+Trembling Before G-d
+Domestic Disturbance
+Monsters  Inc.
+One
+Tape
+Heist
+Shallow Hal
+When a Stranger Calls
+Wash
+Harry Potter and the Sorcerer's Stone (a.k.a. Harry Potter and the Philosopher's Stone)
+Fluffer
+Novocaine
+Black Knight
+Spy Game
+Devil's Backbone (Espinazo del diablo  El)
+In the Bedroom
+Jabberwocky
+Funny Girl
+Circus of Horrors
+Breathless (ÌÛ bout de souffle)
+Beastmaster
+Midway
+MacArthur
+Young Lions
+Subway
+Now  Voyager
+Little Women
+Halls of Montezuma
+Guadalcanal Diary
+Cheap Detective
+That Obscure Object of Desire (Cet obscur objet du dÌ©sir)
+Toy
+Funeral in Berlin
+Dressed to Kill
+Fame
+Fatso
+Final Countdown
+Flash Gordon
+Empire of the Ants
+Enforcer
+Gauntlet
+Invasion U.S.A.
+Lone Wolf McQuade
+Lord of the Flies
+Morons From Outer Space
+Ocean's Eleven (a.k.a. Ocean's 11)
+Sicilian
+Stunt Man
+Sudden Impact
+Behind Enemy Lines
+Affair of the Necklace
+Independent
+Pornstar: The Legend of Ron Jeremy
+Ocean's Eleven
+Incredible Shrinking Man
+No Man's Land
+And Then There Were None
+Blue Angel (Blaue Engel  Der)
+Moscow on the Hudson
+Owl and the Pussycat
+Amelie (Fabuleux destin d'AmÌ©lie Poulain  Le)
+Not Another Teen Movie
+Vanilla Sky
+Iris
+Lantana
+Royal Tenenbaums
+Bill & Ted's Bogus Journey
+Clockwise
+Morgan!
+How High
+Jimmy Neutron: Boy Genius
+Joe Somebody
+Kate & Leopold
+Lord of the Rings: The Fellowship of the Ring
+Majestic
+Beautiful Mind  A
+Little Otik (OtesÌÁnek)
+Convent
+Defiant Ones
+Dodsworth
+Sahara
+Fritz the Cat
+Party
+Separate Tables
+Topkapi
+Witness for the Prosecution
+Ali
+Black Hawk Down
+Charlotte Gray
+Yentl
+Gosford Park
+I Am Sam
+Monster's Ball
+Shipping News
+Big Heat
+Murder by Death
+Servant
+Waterdance
+Orange County
+Brotherhood of the Wolf (Pacte des loups  Le)
+Another 48 Hrs.
+Russia House
+Truly  Madly  Deeply
+Wuthering Heights
+California Suite
+Dragonslayer
+Conan the Destroyer
+Impostor
+Kung Pow: Enter the Fist
+Snow Dogs
+48 Hrs.
+Italian for Beginners (Italiensk for begyndere)
+Blankman
+Brainstorm
+Dragon: The Bruce Lee Story
+Enigma of Kaspar Hauser (a.k.a. Mystery of Kaspar Hauser) (Jeder fÌ_r sich und Gott Gegen Alle)
+Little Dieter Needs to Fly
+M*A*S*H (a.k.a. MASH)
+Mrs. Soffel
+Seconds
+One-Eyed Jacks
+The Count of Monte Cristo
+Mothman Prophecies
+Walk to Remember  A
+Metropolis
+Son's Room (Stanza del figlio  La)
+Storytelling
+Adventures of Huck Finn
+Cousins
+Falling in Love
+Young at Heart
+Slackers
+Birthday Girl
+Hunchback of Notre Dame (Notre Dame de Paris)
+Big Fat Liar
+Collateral Damage
+Rollerball
+Scotland  Pa.
+Baby's Day Out
+Bright Eyes
+Dimples
+Heidi
+Man Who Loved Women
+Richard Pryor Here and Now
+Rookie of the Year
+Sandlot
+Don't Look Now
+Crossroads
+Hart's War
+John Q
+Return to Never Land
+Super Troopers
+Good Son
+Last Orders
+After the Fox (Caccia alla volpe)
+Bad and the Beautiful
+Designing Woman
+Funny Lady
+Sleuth
+Stroszek
+Summer of '42
+Touch of Class  A
+Town Without Pity
+Dragonfly
+Queen of the Damned
+Maryam
+Mean Machine
+Monsoon Wedding
+Wendigo
+Scratch
+Bad News Bears
+Bad News Bears Go to Japan
+Bad News Bears in Breaking Training
+Vampire Hunter D: Bloodlust (Banpaia hantÌ¢ D)
+Wild Strawberries (SmultronstÌ_llet)
+Cattle Queen of Montana
+Under the Skin
+40 Days and 40 Nights
+We Were Soldiers
+Arena (a.k.a. Naked Warriors)
+Church (Chiesa  La)
+Cross Creek
+Ferngully: The Last Rainforest
+Intersection
+Jo Jo Dancer  Your Life is Calling
+Zombie (a.k.a. Zombie 2: The Dead Are Among Us) (Zombi 2)
+Amazing Adventure (a.k.a. The Amazing Quest of Ernest Bliss)
+My Favorite Brunette
+Royal Wedding
+Scarlet Street
+All About the Benjamins
+Time Machine
+Full Frontal
+Divorcing Jack
+Luminarias
+Magnificent Ambersons
+Gloria
+Hangar 18
+Heaven's Gate
+Hopscotch
+Inside Moves
+Jazz Singer
+Lion of the Desert
+Long Good Friday
+Octagon
+Oh  God! Book II
+Oh  God!
+Ice Age
+Resident Evil
+Showtime
+Harrison's Flowers
+Kissing Jessica Stein
+Pauline & Paulette (Pauline en Paulette)
+Promises
+And Your Mother Too (Y tu mamÌÁ tambiÌ©n)
+All the Right Moves
+Ghost Breakers
+Paleface
+Road to Morocco
+Road to Singapore
+Road to Utopia
+Road to Zanzibar
+Split Second
+Taps
+Return of the Secaucus 7
+Seems Like Old Times
+Serial
+Shogun Assassin
+Smokey and the Bandit II
+Smokey and the Bandit
+Smokey and the Bandit III
+Spetters
+Stir Crazy
+Charter Trip (a.k.a. Package Tour) (SÌ_llskapsresan)
+Blade II
+Sorority Boys
+Stolen Summer
+George Washington
+Clockstoppers
+Death to Smoochy
+Panic Room
+Rookie
+Piano Teacher (La pianiste)
+Evil That Men Do
+Impromptu
+High Crimes
+National Lampoon's Van Wilder
+Crush
+Atomic Cafe
+Body and Soul
+Rashomon (RashÌ«mon)
+Slap Shot
+Changing Lanes
+Frailty
+New Best Friend
+Sweetest Thing
+Cat's Meow
+Human Nature
+My Big Fat Greek Wedding
+3:10 to Yuma
+Bite the Bullet
+Joe Versus the Volcano
+Rome  Open City (a.k.a. Open City) (Roma  cittÌÊ aperta)
+Return of the Killer Tomatoes!
+Three Men and a Baby
+Three Men and a Little Lady
+Transylvania 6-5000
+Watcher in the Woods
+Murder by Numbers
+Scorpion King
+Chelsea Walls
+Enigma
+Nine Queens (Nueve reinas)
+Triumph of Love
+Jason X
+Life or Something Like It
+Dogtown and Z-Boyz
+Rain
+Salton Sea
+Aviator
+Bob le Flambeur
+Cadillac Man
+Coca-Cola Kid
+Delirious
+Husbands and Wives
+Lenny
+Thief of Hearts
+Hollywood Ending
+Spider-Man
+Mystic Masseur
+The Big Sleep
+Butterflies Are Free
+Cactus Flower
+Cassandra Crossing
+Iron Will
+Rambling Rose
+Survivors
+White Fang
+New Guy
+Unfaithful
+My Beautiful Laundrette
+Calamity Jane
+Harvey Girls
+About a Boy
+Star Wars: Episode II - Attack of the Clones
+Believer
+Importance of Being Earnest
+Charge of the Light Brigade
+Every Which Way But Loose
+Hound of the Baskervilles
+I Want to Live!
+Last Waltz
+Enough
+Insomnia
+Spirit: Stallion of the Cimarron
+CQ
+Thirteen Conversations About One Thing (a.k.a. 13 Conversations)
+Bus Stop
+Cowboy
+Don't Bother to Knock
+Gambler
+Let's Make Love
+Monkey Business
+Requiem for a Heavyweight
+Sum of All Fears
+Undercover Brother
+84 Charing Cross Road
+Rapid Fire
+Silent Running
+Bad Company
+Divine Secrets of the Ya-Ya Sisterhood
+Fast Runner (Atanarjuat)
+Bourne Identity
+Scooby-Doo
+Windtalkers
+Dangerous Lives of Altar Boys
+Gangster No. 1
+Caveman
+Cheech & Chong's The Corsican Brothers
+Goin' South
+Sorry  Wrong Number
+Hombre
+Manhattan Project
+Men at Work
+S.O.B.
+She Wore a Yellow Ribbon
+V. I. Warshawski
+Juwanna Mann
 Lilo & Stitch
 Minority Report
-Ice Age
-Eyes Wide Shut
-Tarzan
-Dracula
-The Godfather: Part III
-Home Alone
-Total Recall
-Back to the Future Part III
-The Naked Gun: From the Files of Police Squad!
-Beetlejuice
-Dirty Dancing
-RoboCop
-The Fly
-Indiana Jones and the Temple of Doom
-Airplane!
-The Aristocats
-The Jungle Book
-Split
-Snowden
-Sully
-The Nice Guys
-The Conjuring 2
-Ant-Man
-John Wick
-The Maze Runner
-22 Jump Street
-Maleficent
-The Secret Life of Walter Mitty
-Blue Jasmine
-Despicable Me 2
-Monsters University
-Mud
-The Hobbit: An Unexpected Journey
-The Impossible
-Silver Linings Playbook
-The Vow
-War Horse
-Hugo
-Sherlock Holmes: A Game of Shadows
-50/50
-Moneyball
-Rise of the Planet of the Apes
-Crazy, Stupid, Love
-One Day
-127 Hours
-The Town
-Sherlock Holmes
-Invictus
-Watchmen
-The Bucket List
-Sweeney Todd: The Demon Barber of Fleet Street
-Juno
-PS I Love You
-Superbad
-Sunshine
-Bridge to Terabithia
-300
-The Devil Wears Prada
-Pirates of the Caribbean: Dead Man's Chest
-Lord of War
-The Aviator
-Collateral
-Love Actually
-Notting Hill
-Scream
-Mrs Doubtfire
-Pretty Woman
-Batman
-Lethal Weapon
-The NeverEnding Story
-Robin Hood
-Peter Pan
-Alice in Wonderland
-Collateral Beauty
-The Accountant
-The Walk
-Spy
-Serial (Bad) Weddings
-Divergent
-Skyfall
-The Hunger Games
-Marley & Me
-Kung Fu Panda
-I Am Legend
-3:10 to Yuma
-The Simpsons Movie
-Pirates of the Caribbean: At World's End
-Shooter
-Babel
-The Descent
-Troy
-Mean Girls
-Brother Bear
-Equilibrium
-Unbreakable
-Sleepy Hollow
-Meet Joe Black
-Cube
-Men in Black
-The Rock
-From Dusk Till Dawn
-Jumanji
-Die Hard: With a Vengeance
-Ghost
-Big
-Gremlins
-Superman
-Lady and the Tramp
-Pinocchio
-Snow White and the Seven Dwarfs
-The Fate of the Furious
-Beauty and the Beast
-Sing
-A Monster Calls
-War Dogs
-Finding Dory
-10 Cloverfield Lane
-Steve Jobs
-Pitch Perfect 2
-Home
-The DUFF
-Big Eyes
-Non-Stop
-American Hustle
-Thor: The Dark World
-We're the Millers
-The Spectacular Now
-Iron Man 3
-The Croods
-The Place Beyond the Pines
-Hotel Transylvania
-Lawless
-Sinister
-Mission: Impossible - Ghost Protocol
-Insidious
-The Road
-Dawn of the Dead
-School of Rock
-X2
-8 Mile
-Insomnia
-Spider-Man
-AI Artificial Intelligence
-X-Men
-The Patriot
-A Bug's Life
-Rush Hour
-Face/Off
-The Hunchback of Notre Dame
-True Lies
-Speed
-One Hundred and One Dalmatians
-Sleeping Beauty
-Cinderella
-Bambi
-Dumbo
-War for the Planet of the Apes
-John Wick: Chapter 2
-Passengers
-Trolls
-Don't Breathe
-Now You See Me 2
-The Jungle Book
-Kung Fu Panda 3
-The Lobster
-Hotel Transylvania 2
-Everest
-The Gift
-Cinderella
-Focus
-Enemy
-Escape Plan
-Snowpiercer
-The World's End
-Pacific Rim
-World War Z
-Fast & Furious 6
-Zero Dark Thirty
-Lincoln
-Seven Psychopaths
-Brave
-21 Jump Street
-In Time
-The Adventures of Tintin
-Kung Fu Panda 2
-Megamind
-Easy A
-The Princess and the Frog
-Up in the Air
-Orphan
-The Proposal
-Valkyrie
-Vicky Cristina Barcelona
-The Mist
-Death Proof
-The Holiday
-Step Up
-The Chronicles of Narnia: The Lion, the Witch and the Wardrobe
-Charlie and the Chocolate Factory
-Lemony Snicket's A Series of Unfortunate Events
-I, Robot
-Anchorman: The Legend of Ron Burgundy
-Spider-Man 2
-Shrek 2
-The Matrix Reloaded
-Red Dragon
-Phone Booth
-Atlantis: The Lost Empire
-Pitch Black
-Enemy of the State
-The Lion King 2: Simba's Pride
-Starship Troopers
-Romeo + Juliet
-Independence Day
-Mission: Impossible
-Pocahontas
-Hook
-Lethal Weapon 2
-Top Gun
-Pirates of the Caribbean: Dead Men Tell No Tales
-Allied
-Star Trek Beyond
-The Hunger Games: Mockingjay - Part 2
-The Good Dinosaur
-Chappie
-It Follows
-The Hunger Games: Mockingjay - Part 1
-The Purge: Anarchy
-Blended
-Ender's Game
-2 Guns
-The Call
-Cloud Atlas
-Looper
-Dredd
-The Cabin in the Woods
-Chronicle
-Real Steel
-Captain America: The First Avenger
-Super 8
-Thor
-Rango
-Love & Other Drugs
-RED
-Iron Man 2
-Dear John
-The Book of Eli
-The Lovely Bones
-A Christmas Carol
-9
-Pineapple Express
-Enchanted
-Transformers
-Disturbia
-Déjà Vu
-Crank
-Cars
-King Kong
-Madagascar
-Kingdom of Heaven
-Constantine
-The Hitchhiker's Guide to the Galaxy
-50 First Dates
-Underworld
-The Italian Job
-The Transporter
-Panic Room
-The Fast and the Furious
-Pearl Harbor
-Bridget Jones's Diary
-Meet the Parents
-The Mummy
-GoldenEye
-The Mask
-Batman Returns
-Die Hard 2
-Mad Max
-King Arthur: Legend of the Sword
-Deepwater Horizon
-Miss Peregrine's Home for Peculiar Children
-Alice Through the Looking Glass
-Money Monster
-In the Heart of the Sea
-Maze Runner: The Scorch Trials
-Jurassic World
-Penguins of Madagascar
-The Babadook
-The Amazing Spider-Man 2
-Insidious: Chapter 2
-The Heat
-Man of Steel
-Flight
-The Amazing Spider-Man
-Project X
-Friends with Benefits
-The Tree of Life
-Bridesmaids
-Hanna
-Rio
-The Adjustment Bureau
-Unknown
-Paul
-Cloudy with a Chance of Meatballs
-Public Enemies
-Ice Age: Dawn of the Dinosaurs
-Angels & Demons
-Fast & Furious
-Burn After Reading
-Tropic Thunder
-Step Brothers
-Hellboy II: The Golden Army
-21
-1408
-Ocean's Thirteen
-28 Weeks Later
-Planet Terror
-Borat: Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan
-The Da Vinci Code
-Mission: Impossible III
-Ice Age: The Meltdown
-The Island
-Mr & Mrs Smith
-Hellboy
-The Ring
-Vanilla Sky
-The Princess Diaries
-Chicken Run
-Blade
-There's Something About Mary
-Armageddon
-Con Air
-Austin Powers: International Man of Mystery
-Space Jam
-Bad Boys
-Dumb and Dumber
-X-Men: Apocalypse
-Joy
-Crimson Peak
-Minions
-Let's Be Cops
-The Giver
-Elysium
-RED 2
-Epic
-Oblivion
-Evil Dead
-Side Effects
-Warm Bodies
-Madagascar 3: Europe's Most Wanted
-The Grey
-Horrible Bosses
-Pirates of the Caribbean: On Stranger Tides
-Alice in Wonderland
-The Ugly Truth
-Yes Man
-Mamma Mia!
-Wanted
-Forgetting Sarah Marshall
-Rambo
-Cloverfield
-Live Free or Die Hard
-Night at the Museum
-Underworld: Evolution
-Wedding Crashers
-Ocean's Twelve
-National Treasure
-The Polar Express
-Secret Window
-The Matrix Revolutions
-Elf
-Bruce Almighty
+Rabbit-Proof Fence
+Sunshine State
+Hey Arnold! The Movie
+Mr. Deeds
+Lovely & Amazing
+Pumpkin
+Look Who's Talking Now
+Lost in Yonkers
+Object of Beauty
+Wagons East
+Like Mike
+Men in Black II (a.k.a. MIIB) (a.k.a. MIB 2)
+Powerpuff Girls
+Crocodile Hunter: Collision Course
+Reign of Fire
+Road to Perdition
+All About Lily Chou-Chou (Riri Shushu no subete)
+My Wife is an Actress (Ma Femme est une Actrice)
+Never Again
+20 Million Miles to Earth
+The Importance of Being Earnest
+1776
+Z
+Halloween: Resurrection (Halloween 8)
+Sex and Lucia (LucÌ_a y el sexo)
+Eight Legged Freaks
+K-19: The Widowmaker
+Stuart Little 2
+Austin Powers in Goldmember
+Country Bears
+Kid Stays in the Picture
+Tadpole
+Nosferatu the Vampyre (Nosferatu: Phantom der Nacht)
+Eddy Duchin Story
+In Like Flint
+Ossessione
+Our Man Flint
+Red Beard (Akahige)
+Robin and Marian
+Top Secret!
+Master of Disguise
 Signs
-Star Wars: Episode II - Attack of the Clones
-Resident Evil
-Rush Hour 2
-Hannibal
-Final Destination
-American Pie
-Star Wars: Episode I - The Phantom Menace
-Liar Liar
-Ace Ventura: Pet Detective
-Demolition Man
-Power Rangers
-Life
-Why Him?
-Bad Moms
-Lights Out
-Warcraft
-The Witch
-Spectre
-Black Mass
-Self/less
-Insidious: Chapter 3
-Run All Night
-Sin City: A Dame to Kill For
-Lucy
-Oculus
-The Wolverine
-Kick-Ass 2
-White House Down
-Jack Reacher
-Ted
-Prometheus
-Men in Black 3
-The Lorax
-Safe House
-Just Go with It
-The Mechanic
-TRON: Legacy
-Unstoppable
-Machete
-Bolt
-Eagle Eye
-The Chronicles of Narnia: Prince Caspian
-The Number 23
-X-Men: The Last Stand
-Over the Hedge
-Silent Hill
-Saw II
-Hitch
-The Chronicles of Riddick
-13 Going on 30
-Bad Boys II
-Blade II
-The Beach
-The Blair Witch Project
-The Mask of Zorro
-The Man in the Iron Mask
-Home Alone 2: Lost in New York
-Ghostbusters II
-Transformers: The Last Knight
-Despicable Me 3
-Kong: Skull Island
-The Girl on the Train
-The Shallows
-Central Intelligence
-Goosebumps
-Ted 2
-Tomorrowland
-Insurgent
-Dracula Untold
-A Walk Among the Tombstones
+Spy Kids 2: The Island of Lost Dreams
+Good Girl
+Blood Work
+xXx
+24 Hour Party People
+Biggie and Tupac
+Pandora's Box
+Secret Ballot (Raye makhfi)
+Martin Lawrence Live: Runteldat
+Songs From the Second Floor (SÌ´nger frÌ´n andra vÌ´ningen)
+Nightcap (Merci pour le chocolat)
+Change of Habit
+Principal
+Rollerball
+Adventures of Pluto Nash
+Blue Crush
+Mostly Martha (Bella Martha)
+Possession
+One Hour Photo
+Serving Sara
+Simone (S1m0ne)
+Undisputed
+Amy's O (a.k.a. Amy's Orgasm)
+Hush!
+Care Bears Movie
+Clash of the Titans
+Hot Shots!
+Swarm
+Time After Time
+Down and Out in Beverly Hills
+Love Me Tender
+Return of the Vampire
+Revenge of Frankenstein
+Stakeout
+FearDotCom (a.k.a. Fear.com) (a.k.a. Fear Dot Com)
+Love and a Bullet
+Mad Love (Juana la Loca)
+Swimfan
+Johnny Dangerously
+Last House on the Left
+Thesis (Tesis)
+Pinochet Case (Cas Pinochet  Le)
+Barbershop
+Stealing Harvard
+Transporter
+Igby Goes Down
+Quitting (Zuotian)
+Aspen Extreme
+Betsy's Wedding
+Captain Ron
+Ernest Goes to Jail
+Ernest Scared Stupid
+Hills Have Eyes
+Indian Summer
+Monkey Trouble
+No Way to Treat a Lady
+Suburban Commando
+Surf Ninjas
+Yearling
+Ladykillers
+Lavender Hill Mob
+Man in the White Suit
+Ratcatcher
+Son of the Bride (Hijo de la novia  El)
+Das Experiment (Experiment)
+Ballistic: Ecks vs. Sever
+Banger Sisters
+Four Feathers
+8 Women
+Secretary
+Spirited Away (Sen to Chihiro no kamikakushi)
+Trials of Henry Kissinger
+Sweet Home Alabama
+Tuxedo
+Crazy as Hell
+Just a Kiss
+Moonlight Mile
+Skins
+Wasabi
+Jonah: A VeggieTales Movie
+Red Dragon
+Bloody Sunday
+Heaven
+Man from Elysian Fields
+Flirting
+Godzilla vs. Mothra (Mosura tai Gojira)
+Godzilla  King of the Monsters! (KaijÌÈ-Ì« Gojira)
+Onion Field
+Powaqqatsi
+Pride of the Yankees
+Texasville
+Valmont
+Horror of Dracula (Dracula)
+Strange Brew
+Incredible Mr. Limpet
+Django
+Rocking Horse Winner
+Below
+Knockaround Guys
+Rules of Attraction
+Tuck Everlasting
+White Oleander
+Bowling for Columbine
+Comedian
+Punch-Drunk Love
+Safe Conduct (Laissez-Passer)
+Swept Away
+Abandon
+Formula 51
+Ring
+Auto Focus
+Grey Zone
+Naqoyqatsi
+Real Women Have Curves
+Billy Bathgate
+Grave of the Fireflies (Hotaru no haka)
+Jason Goes to Hell: The Final Friday
+Mechanic
+Saturday Night Fever
+Staying Alive
+Urban Cowboy
+Xanadu
+Absence of Malice
+Banana Joe
+Friend Is a Treasure  A (Chi Trova Un Amico  Trova un Tesoro) (Who Finds a Friend Finds a Treasure)
+Chosen
+Entity
+Eye of the Needle
+Faces of Death 2
+Faces of Death
+Faces of Death 3
+Faces of Death 4
+Faces of Death 5
+Fort Apache Bronx
+Four Seasons
+Gallipoli
+Gregory's Girl
+Happy Birthday to Me
+Looker
+Looney  Looney  Looney Bugs Bunny Movie
+Modern Romance
+My Bloody Valentine
+My Dinner with AndrÌ©
 Neighbors
-The Other Woman
-Riddick
-The Mortal Instruments: City of Bones
-This Is the End
-Olympus Has Fallen
-Gangster Squad
-Upside Down
-Ice Age: Continental Drift
-Contagion
-The Hangover Part II
-Due Date
-The Chronicles of Narnia: The Voyage of the Dawn Treader
-Salt
-The A-Team
-The Karate Kid
-Prince of Persia: The Sands of Time
-Robin Hood
-X-Men Origins: Wolverine
-Underworld: Rise of the Lycans
-Madagascar: Escape 2 Africa
-Hancock
-Knocked Up
-The 40 Year Old Virgin
-Transporter 2
-War of the Worlds
-The Village
-DodgeBall: A True Underdog Story
-The Day After Tomorrow
-2 Fast 2 Furious
-How the Grinch Stole Christmas
-The Lost World: Jurassic Park
-Alien³
-Baywatch
-The Boss Baby
-The Purge: Election Year
-Vacation
-Paper Towns
-The Interview
-Night at the Museum: Secret of the Tomb
-Taken 3
-Horrible Bosses 2
-The Expendables 3
-Godzilla
-Need for Speed
-300: Rise of an Empire
-That Awkward Moment
-The Family
-Turbo
-The Internship
-Pain & Gain
-The Twilight Saga: Breaking Dawn - Part 2
-Taken 2
-The Expendables 2
-Magic Mike
-American Reunion
-John Carter
-The Woman in Black
-Underworld: Awakening
-Transformers: Dark of the Moon
-No Strings Attached
-The Other Guys
-17 Again
-Quantum of Solace
-The Incredible Hulk
-27 Dresses
-National Treasure: Book of Secrets
-Resident Evil: Extinction
-Saw III
-The Fast and the Furious: Tokyo Drift
-High School Musical
-Meet the Fockers
-Resident Evil: Apocalypse
-Men in Black II
-Zoolander
-What Women Want
-Gone in Sixty Seconds
-Austin Powers: The Spy Who Shagged Me
-Mars Attacks!
-Ace Ventura: When Nature Calls
-Fifty Shades Darker
-The BFG
-The Huntsman: Winter's War
-The Visit
-American Ultra
-San Andreas
-Under the Skin
-Jobs
-The Purge
-The Hangover Part III
-The Host
-Mama
-The Bourne Legacy
-Johnny English Reborn
-The Tourist
-The Expendables
-Predators
-Grown Ups
-Shrek Forever After
-Percy Jackson & the Olympians: The Lightning Thief
-Transformers: Revenge of the Fallen
-Monsters vs Aliens
-Death Race
-Get Smart
-Shrek the Third
-Click
-Robots
+Only When I Laugh
+Pennies from Heaven
+Pieces (Mil gritos tiene la noche) (One Thousand Cries Has the Night)
+Piranha II: The Spawning
+Polyester
+Professional (Le professionnel)
+Ghost Ship
+Jackass: The Movie
+Truth About Charlie
+All or Nothing
+Frida
+Roger Dodger
+Casino Royale
+Company of Wolves
+Exodus
+How to Murder Your Wife
+Russians Are Coming Russians Are Coming
+World of Henry Orient
+I Spy
+Santa Clause 2
+Weight of Water
+Femme Fatale
+8 Mile
+Far from Heaven
+Half Past Dead
+Harry Potter and the Chamber of Secrets
+Ararat
+Crime of Father Amaro (Crimen del padre Amaro  El)
+Standing in the Shadows of Motown
+Liberty Stands Still
+Rio Grande
+Men with Brooms
+Left Behind II: Tribulation Force
+Dog Soldiers
+Houseboat
+My Father's Glory (La gloire de mon pÌ¬re)
+Return to the Blue Lagoon
+Toy Soldiers
+Ragtime
+Scanners
+Sharky's Machine
+Shock Treatment
+Southern Comfort
+Student Bodies
+Take This Job and Shove It
+Tarzan Ape Man
+Thief
+This Is Elvis
+True Confessions
+Revolution #9
+Die Another Day
+The Emperor's Club
+Friday After Next
+Personal Velocity
+Quiet American
+Talk to Her (Hable con Ella)
+Eight Crazy Nights (Adam Sandler's Eight Crazy Nights)
+Solaris
+Treasure Planet
+They
+Chopper Chicks in Zombietown
+Another You
+Brother (Brat)
+Elling
+I Spit on Your Grave (Day of the Woman)
+Last Seduction
+Zulu
+Analyze That
+Empire
+Adaptation
+Equilibrium
+Scarlet Diva
+Visitor Q (Bizita Q)
+Urgh! A Music War
+Hit the Bank (Vabank)
+Vernon  Florida
+Whose Life Is It Anyway?
+Alone in the Dark
+Android
+Author! Author!
+Best Friends
+Best Little Whorehouse in Texas
+Brimstone and Treacle
+Burden of Dreams
+Cannery Row
+Come Back to the Five and Dime  Jimmy Dean  Jimmy Dean
+Deathtrap
+Man Who Saves the World (DÌ_nyayi Kurtaran Adam)
+Eating Raoul
+Drumline
+Hot Chick
+Maid in Manhattan
+Star Trek: Nemesis
+About Schmidt
+Evelyn
+Intact (Intacto)
+Morvern Callar
+Lord of the Rings: The Two Towers
+25th Hour
+Antwone Fisher
+Gangs of New York
+Two Weeks Notice
+Wild Thornberrys Movie
+Narc
+Bad Influence
+Blue Steel
+Body of Evidence
+Children's Hour
+Kiss Before Dying  A
+Miami Blues
+My Girl 2
+My Girl
+My Neighbor Totoro (Tonari no Totoro)
+Thief of Bagdad
+War and Peace
+Where's Poppa?
+Black Christmas
+Day of the Triffids
+Invaders from Mars
+Quicksilver
+Catch Me If You Can
+Pinocchio
+Chicago
+Hours
+Max
+Nicholas Nickleby
+Pianist
+Sonny
+Doppelganger
+Heavy Metal 2000
+King of Comedy
+Love Liza
+Confessions of a Dangerous Mind
+Blue Collar Comedy Tour: The Movie
+Just Married
+Wisegirls
+Guy Thing  A
+Kangaroo Jack
+National Security
+City of God (Cidade de Deus)
+Divine Intervention (Yadon ilaheyya)
+Alice Adams
+American Me
+Band of Outsiders (Bande ÌÊ part)
+Breaking Up
+CB4 - The Movie
+Dogfight
+Easy Come  Easy Go
+Girls! Girls! Girls!
+Imitation of Life
+Little Romance  A
+Paradise  Hawaiian Style
+Secret Admirer
+Woman in Red
+Darkness Falls
+Amen.
+Blind Spot: Hitler's Secretary (Im toten Winkel - Hitlers SekretÌ_rin)
+Dead Reckoning
+Ethan Frome
+Harder They Come
+Chaos
+Biker Boyz
+Final Destination 2
+Recruit
+Guru
+Lost in La Mancha
+May
+Ordinary Decent Criminal
+Enigma
+Evil Under the Sun
+Firefox
+Honkytonk Man
+If You Could See What I Hear
+Kiss Me Goodbye
+Last Unicorn
+Making Love
+Midsummer Night's Sex Comedy  A
+Missing
+Monty Python Live at the Hollywood Bowl
+Personal Best
+Pirate Movie
+Richard Pryor Live on the Sunset Strip
+Savannah Smiles
+Secret Policeman's Other Ball
+Shoot the Moon
+Six Weeks
+Tempest
+They Call Me Bruce? (a.k.a. A Fistful of Chopsticks)
+Trail of the Pink Panther
+White Dog
+Deliver Us from Eva
+How to Lose a Guy in 10 Days
+Shanghai Knights
+Daredevil
+Jungle Book 2
+All the Real Girls
+Gerry
+He Loves Me... He Loves Me Not (ÌÛ la folie... pas du tout)
+Lockdown
+Dennis the Menace
+Stand-In
+10 to Midnight
+Black Stallion
+Into the West
+Kinjite: Forbidden Subjects
+Messenger of Death
+Mr. Majestyk
+Murphy's Law
+Patch of Blue  A
+Q & A
+Red Badge of Courage
+Thrill of It All
+Pillow Talk
+Man Who Fell to Earth
+Dark Blue
+Life of David Gale
+Old School
+Lawless Heart
+Poolhall Junkies
+Till Human Voices Wake Us
+Stone Reader
+Cradle 2 the Grave
+Spider
+Lady Jane
+Slaughter Rule
+Teenagers from Outer Space
+Bringing Down the House
+Tears of the Sun
+Irreversible (IrrÌ©versible)
+Nowhere in Africa (Nirgendwo in Afrika)
+Safety of Objects
+Bend It Like Beckham
+Hunted
+Willard
+Prozac Nation
+Spun
+King of Kings
+Loving You
+Talk of the Town
+Bang the Drum Slowly
+Benny Goodman Story
+Born Free
+Born Yesterday
+Equus
+Europa Europa (Hitlerjunge Salomon)
+Fear Strikes Out
+Glenn Miller Story
+Green Card
+Journey to the Center of the Earth
+One Good Cop
+Ringu (Ring)
+Ringu 2 (Ring 2)
+Salaam Bombay!
+Sweet Charity
+Boat Trip
+Dreamcatcher
+Piglet's Big Movie
+View from the Top  A
+Awful Truth
+My Friend Flicka
+Robe
+Basic
+Core
+Head of State
+What a Girl Wants
+Raising Victor Vargas
+Stevie
+Akira Kurosawa's Dreams (Dreams)
+In a Lonely Place
+Wake of the Red Witch
+Good Thief
+Man Apart  A
+Phone Booth
+Cowboy Bebop: The Movie (Cowboy Bebop: Tengoku no Tobira)
+Man Without a Past (Mies vailla menneisyyttÌ_)
+Anger Management
+Better Luck Tomorrow
+Ghosts of the Abyss
+House of 1000 Corpses
+Lilya 4-Ever (Lilja 4-ever)
+Bulletproof Monk
+Mighty Wind  A
+Holes
+Malibu's Most Wanted
+Winged Migration (Peuple migrateur  Le)
+Straw Dogs
+Andromeda Strain
+Fahrenheit 451
+Legal Eagles
+Other Side of Heaven
+Sibling Rivalry
+Wildcats
+Wiz
+Marrying Man (Too Hot to Handle)
+My Father the Hero (Mon pÌ¬re  ce hÌ©ros.)
+Scenes from a Mall
+Confidence
+Identity
+It Runs in the Family
+Real Cancun
+City of Ghosts
+Decade Under the Influence  A
+People I Know
+Spellbound
+Lizzie McGuire Movie
+X2: X-Men United
+Blue Car
+Dancer Upstairs
+Marooned in Iraq (Gomgashtei dar Aragh)
+Owning Mahowny
+Daddy Day Care
+Man on the Train (Homme du train  L')
+Shape of Things
+101 Reykjavik (101 ReykjavÌ_k)
+Chorus Line  A
+Absolute Beginners
+Beat Street
+Laputa: Castle in the Sky (TenkÌÈ no shiro Rapyuta)
+Lambada
+Gunfight at the O.K. Corral
+High Society
+Kiss Me Kate
+Matrix Reloaded
+Down with Love
+Cinemania
+Friends and Family
+Spanish Apartment (L'auberge espagnole)
+PokÌ©mon Heroes
+Bruce Almighty
+In-Laws
+Gigantic (A Tale of Two Johns)
+Respiro
+Finding Nemo
+Italian Job
+Wrong Turn
+Capturing the Friedmans
+Together (Han ni Zai Yiki)
+2 Fast 2 Furious (Fast and the Furious 2)
+Whale Rider
+Nevada Smith
+Silk Stockings
+Man Called Horse  A
+Big Jake
+Le Mans
+Murder on a Sunday Morning (Un coupable idÌ©al)
+Treasure Island
+Walk  Don't Run
+Animals are Beautiful People
+Bend of the River
+Car Wash
+Destry Rides Again
+Electric Horseman
+Intervista
+King Rat
+Mr. & Mrs. Bridge
+Rare Breed
+Shenandoah
+Oscar
+6th Man (Sixth Man)
+Far Country
+Two Mules for Sister Sara
+Winchester '73
+Courtship of Eddie's Father
+Man with the Movie Camera (Chelovek s kino-apparatom)
+Objective  Burma!
+Operation Pacific
+This Boy's Life
+13 Rue Madeleine
+Barton Fink
+Battle of Britain
+Belle Ì©poque
+Comancheros
+Duel at Diablo
+Flight of the Phoenix
+From the Terrace
+Heaven Knows  Mr. Allison
+Hot Rock
+Long  Hot Summer
+Music Box
+North to Alaska
+Desert Fox
+Trial (ProcÌ¬s  Le)
+Unforgiven
+Good Burger
+Jubilee
+Mississippi Masala
+Stranger Among Us  A
+Cahill U.S. Marshal (Cahill: United States Marshal) (Wednesday Morning)
+Chisum
+Song of Bernadette
+Life and Times of Judge Roy Bean
+Thoroughly Modern Millie
+Where the Heart Is
+Dumb and Dumberer: When Harry Met Lloyd
+From Justin to Kelly
+Hollywood Homicide
+Rugrats Go Wild!
+Hard Word
+Jet Lag (DÌ©calage horaire)
+Alex and Emma
+Murphy's War
+28 Days Later
+Charlie's Angels: Full Throttle
+Bodies  Rest & Motion
+Jesus
+Made for Each Other
+You Only Live Once
+Anastasia
+Babe
+Flight of the Intruder
+Fun with Dick and Jane
+Main Event
+Man's Favorite Sport?
+Nuts
+Scaramouche
+Start the Revolution Without Me
+Tenant (Locataire  Le)
+What's Up  Doc?
+Hulk
+Legally Blonde 2: Red  White & Blonde
+Sinbad: Legend of the Seven Seas
+Terminator 3: Rise of the Machines
+Swimming Pool
+Pirates of the Caribbean: The Curse of the Black Pearl
+League of Extraordinary Gentlemen (a.k.a. LXG)
+Cuckoo (Kukushka)
+I Capture the Castle
+Northfork
+Bad Boys II
+How to Deal
+Johnny English
+Dirty Pretty Things
+Garage Days
+Born to Be Wild
+Curly Sue
+Little Giants
+Mouse That Roared
+Spencer's Mountain
+Lara Croft Tomb Raider: The Cradle of Life
+Seabiscuit
+Spy Kids 3-D: Game Over
+Buffalo Soldiers
+Camp
+Hotel
+Kiss Me  Stupid
+One  Two  Three
+Private Life of Sherlock Holmes
+Remo Williams: The Adventure Begins
+What's Up  Tiger Lily?
+White Lightning
+American Wedding (American Pie 3)
+Gigli
+Magdalene Sisters
+Secret Lives of Dentists
+Freaky Friday
+S.W.A.T.
+Divorce  Le
+Step Into Liquid
+Big Trouble
+Brain Damage
+Double Life  A
+Gospel According to St. Matthew (Vangelo secondo Matteo  Il)
+Brother's Keeper
+Day of the Dolphin
+I Love You to Death
+Freddy vs. Jason
+Grind
+Open Range
+Shaolin Soccer (Siu lam juk kau)
+Uptown Girls
+American Splendor
+Agent Cody Banks
+Camp Nowhere
+Cemetery Club
+House of Wax
+Inn of the Sixth Happiness
+Prince of Jutland (a.k.a. Royal Deceit)
+Rachel Papers
+Sure Thing
+Valley Girl
+Wait Until Dark
+Tokyo Story (TÌ«kyÌ« monogatari)
+Green Ray (Rayon vert  Le)
+THX 1138
+Valley of the Dolls
+Chunhyang
+Kind Hearts and Coronets
+Joe Kidd
+Keep
+10
+Tremors
+Red Shoes
+Pink Panther
+Pink Panther Strikes Again
+Commando
+Dracula
+Discreet Charm of the Bourgeoisie (Charme discret de la bourgeoisie  Le)
+Waco: The Rules of Engagement
+Road Home (Wo de fu qin mu qin)
+Ikiru
+Angel at My Table  An
+War Photographer
+Handmaid's Tale
+Fire
+Death in Venice (Morte a Venezia)
+Marci X
+Medallion
+My Boss's Daughter
+Stoked: The Rise and Fall of Gator
+Jeepers Creepers 2
+Bollywood/Hollywood
+Dickie Roberts: Former Child Star
+Order
+Home Room
+Cabin Fever
+Matchstick Men
+Once Upon a Time in Mexico
+Dummy
+Lost in Translation
+Millennium Actress (Sennen joyÌÈ)
+Daisy Miller
+Hard to Hold
+Kuffs
+Once Upon a Time in China (Wong Fei Hung)
+Once Upon a Time in China II (Wong Fei-hung Ji Yi: Naam yi dong ji keung)
+Once Upon a Time in China III (Wong Fei-hung tsi sam: Siwong tsangba)
+Paper Moon
+Sgt. Pepper's Lonely Hearts Club Band
+Ugly American
+Bostonians
+Convoy
+Day of the Dead
+Hello  Dolly!
+Memoirs of an Invisible Man
+Rose
+Super Sucker
+At War with the Army
+Jungle Book
+Once Bitten
+Adventures of Huckleberry Finn
+Brood
+Prince and the Pauper
+Anything Else
+Cold Creek Manor
+Fighting Temptations
+Secondhand Lions
+Underworld
+Bubba Ho-tep
+In This World
+Yossi & Jagger
+Duplex
+Rundown
+Under the Tuscan Sun
+Luther
+My Life Without Me
+Dorm Daze (National Lampoon Presents Dorm Daze)
+To Be and to Have (Ì_tre et avoir)
+Triplets of Belleville (Les triplettes de Belleville)
+Videodrome
+Lagaan: Once Upon a Time in India
+Judgment at Nuremberg
+Same Time  Next Year
+Brief History of Time  A
+Jacob the Liar (Jakob  der LÌ_gner)
+Leningrad Cowboys Go America
+Rules of the Game (La rÌ¬gle du jeu)
+Seven Brides for Seven Brothers
+Kiss of the Spider Woman
+All the President's Men
+Angie
+Avalon
+Babette's Feast (Babettes gÌ_stebud)
+Beethoven
+Beethoven's 2nd
+Black Moon Rising
+Boyz N the Hood
+Bugsy
+Bugsy Malone
+Cobra
+Monty Python's The Meaning of Life
+Where Eagles Dare
+Sleeping with the Enemy
+PCU
+Rookie
+City Heat
+Into the Night
+Three O'Clock High
+White Hunter  Black Heart
+Come and See (Idi i smotri)
+Ginger Snaps
+Ballad of Little Jo
+Reluctant Astronaut
+Shakiest Gun in the West
+It's Pat
+Gun in Betty Lou's Handbag
+Regarding Henry
+Love Affair
+Hospital
+Article 99
+Scrooge
+Leap of Faith
+Gas  Food  Lodging
+In Cold Blood
+Bedford Incident
+Yankee Doodle Dandy
+Ninja Scroll (JÌÈbei ninpÌÈchÌ«)
+Knife in the Water (NÌ_z w wodzie)
+Devil and Daniel Webster (All That Money Can Buy)
+Mobsters
+Out of Time
+School of Rock
+Concert for George
+Station Agent
+Wonderland
+Bus 174 (ÌÓnibus 174)
+Mystic River
+House of the Dead
+Intolerable Cruelty
+Kill Bill: Vol. 1
+Runaway Jury
+Texas Chainsaw Massacre
+Pieces of April
+Sylvia
+Veronica Guerin
+In the Cut
+Radio
+Scary Movie 3
+Brother Bear
+Elephant
+Italian Job
+Normal
+Shoah
+Unconditional Love
+Sweet Sixteen
+Alien from L.A.
+Interstate 60
+Lipstick
+Storyville
+Eye (Gin gwai) (Jian gui)
+Kronos (a.k.a. Captain Kronos: Vampire Hunter)
+Jolson Story
+You'll Never Get Rich
+Promised Land
+Unvanquished (Aparajito)
+Cercle Rouge  Le (Red Circle)
+Sherlock Holmes Faces Death
+Solid Gold Cadillac
+Human Stain
+Mail Order Bride
+Shattered Glass
+Matrix Revolutions
+Revolution Will Not Be Televised (a.k.a. Chavez: Inside the Coup)
+Elf
+Gloomy Sunday (Ein Lied von Liebe und Tod)
+Love Actually
+Father of the Bride
+My Architect: A Son's Journey
+Looney Tunes: Back in Action
+Master and Commander: The Far Side of the World
+Tupac: Resurrection
+Missing
+Cat in the Hat
+Gothika
+21 Grams
+Barbarian Invasions (Les invasions barbares)
+Bad Santa
+Haunted Mansion
+Timeline
+OT: Our Town
+Devil's Playground
+Journeys with George
+Darkman
+Desk Set
+Europa (Zentropa)
+Final Analysis
+Freshman
+Funny Games
+Tales from the Crypt
+New Jack City
+Slacker
+WarGames
+Mr. Hobbs Takes a Vacation
+Ordet (Word)
+Forbidden Games (Jeux interdits)
+Jane Eyre
+Tale of Two Cities  A
+Passion of Joan of Arc (Passion de Jeanne d'Arc  La)
+Ben-Hur: A Tale of the Christ
+Cabinet of Dr. Caligari (Cabinet des Dr. Caligari.  Das)
+Gorky Park
+The Great Train Robbery
+Greystoke: The Legend of Tarzan  Lord of the Apes
+Guarding Tess
+Hannah and Her Sisters
+Hard Way
+Hercules in New York
+Highlander II: The Quickening
+Hoffa
+Housesitter
+Hudson Hawk
+Invasion of the Body Snatchers
+Kindergarten Cop
+King Ralph
+Knight Moves
+Last Boy Scout
+Last Tango in Paris (Ultimo tango a Parigi)
+Lorenzo's Oil
+Lover (Amant  L')
+Mr. Destiny
+Night of the Hunter
+Nowhere to Run
+Only the Lonely
+Passenger 57
+Presumed Innocent
+Project X
+Proof
+Pure Luck
+Battle Royale (Batoru rowaiaru)
+Wedding Banquet (Xi yan)
+Midnight Clear  A
+Summer School
+Silverado
+Quick Change
+Rabid
+Radio Flyer
+Secret of My Succe$s (a.k.a. The Secret of My Success)
+Show Me Love (Fucking ÌÉmÌ´l)
+Teen Wolf
+Things You Can Tell Just by Looking at Her
+Thunderheart
+To Live and Die in L.A.
+Betty Blue (37å¡2 le matin)
+Vivre sa vie: Film en douze tableaux (My Life to Live)
+Wild at Heart
+Witches
+Witches of Eastwick
+Year of the Dragon
+Nothing to Lose
+Flying Down to Rio
+Follow the Fleet
+What's New  Pussycat
+Mary of Scotland
+Roberta
+Little Women
+Swing Time
+Public Enemy
+Midsummer Night's Dream  A
+Life with Father
+National Velvet
+Jesus Christ Superstar
+Dark Victory
+Birdman of Alcatraz
+Aguirre: The Wrath of God (Aguirre  der Zorn Gottes)
+Beauty and the Beast (La belle et la bÌ»te)
+Macbeth (a.k.a. Tragedy of Macbeth)
+Red River
+Woman Under the Influence  A
+Stagecoach
+Shot in the Dark  A
+Navigator
+Court Jester
+Bullitt
+Jezebel
+Hunchback of Notre Dame
+42nd Street
+I'm No Angel
+That Touch of Mink
+Sweet Dreams
+Play It Again  Sam
+Send Me No Flowers
+Pygmalion
+Passage to India  A
+Black Orpheus (Orfeu Negro)
+Amarcord
+Hero (Ying xiong)
+Horse Feathers
+Anna Karenina
+Front Page
+Attraction
+Looking for Mr. Goodbar
+Rivers and Tides
+NausicaÌ_ of the Valley of the Wind (Kaze no tani no Naushika)
+Doc Hollywood
+Dragnet
+1941
+Foul Play
+Deep Red (Profondo rosso)
+Diabolique (Les diaboliques)
+Leprechaun
+Wings of Honneamise (ÌÓritsu uchÌÈgun Oneamisu no tsubasa)
+Adam's Rib
+Naked Lunch
+Grass
+Summer Place  A
+Night at the Opera  A
+Shoot the Piano Player (Tirez sur le pianiste)
+Cooler
+In America
+My Flesh and Blood
+Honey
+Last Samurai
+Big Fish
+Love Don't Cost a Thing
+Something's Gotta Give
+Stuck on You
+Girl with a Pearl Earring
+Statement
+Lord of the Rings: The Return of the King
+Mona Lisa Smile
+Calendar Girls
+Fog of War: Eleven Lessons from the Life of Robert S. McNamara
+Hebrew Hammer
+House of Sand and Fog
+Monster
+Cheaper by the Dozen
+Cold Mountain
+Paycheck
+Peter Pan
+Company
+Japanese Story
+Secret Things (Choses secrÌ¬tes)
+Chasing Liberty
+My Baby's Daddy
+Aileen: Life and Death of a Serial Killer
+Along Came Polly
+Torque
+Osama
+Great Gatsby
+Wuthering Heights
+Ship of Fools
+Lord Love a Duck
+There's a Girl in My Soup
+This Property is Condemned
+Once Upon a Crime...
+Jane Eyre
+Blame It on the Bellboy
+Adventures of Ford Fairlane
+Enforcer
+Men
+The Pick-up Artist
+Melvin Goes to Dinner
+Crime Spree
+Beyond Re-Animator
+Wind and the Lion
+Mon Oncle (My Uncle)
+Where the Boys Are
+Dr. Jekyll and Mr. Hyde
+M. HulotÛªs Holiday (Mr. Hulot's Holiday) (Vacances de Monsieur Hulot  Les)
+My Darling Clementine
+People Will Talk
+I Was a Male War Bride
+Divorce American Style
+Kiss Them for Me
+To Have and Have Not
+High Sierra
+Dark Passage
+Ox-Bow Incident
+They Drive by Night
+Micki + Maude
+Platinum Blonde
+D.O.A.
+Pumping Iron
+Trouble with Angels
+Cool World
+Silencers
+Strada  La
+Ichi the Killer (Koroshiya 1)
+Boy and His Dog  A
+Last Tycoon
+Chitty Chitty Bang Bang
+Suriyothai (a.k.a. Legend of Suriyothai)
+Plaza Suite
+Out of Towners
+Where the Day Takes You
+It
+The Butterfly Effect
+Win a Date with Tad Hamilton!
+Touching the Void
+Perfect Score
+You Got Served
+Barbershop 2: Back in Business
+Miracle
+Dreamers
+Let's Do It Again
+Uptown Saturday Night
+Innocent
+Blacula
+Swing Shift
+Thirteen
+Sailor Who Fell from Grace with the Sea
+Pontiac Moon
+Best Defense
+50 First Dates
+Welcome to Mooseport
+Kitchen Stories (Salmer fra kjÌükkenet)
+Monsieur Ibrahim (Monsieur Ibrahim et les fleurs du Coran)
+Diary of a Country Priest (Journal d'un curÌ© de campagne)
+The Diary of Anne Frank
+Allegro non troppo
+Black Widow
+Flesh & Blood
+King Solomon's Mines
+Raw Deal
+Goodbye  Mr. Chips
+Follow Me  Boys!
+Robot Stories
+Against the Ropes
+Confessions of a Teenage Drama Queen
+EuroTrip
+Passion of the Christ
+Dirty Dancing: Havana Nights
+Twisted
+Good bye  Lenin!
+Hidalgo
+Starsky & Hutch
+Reckoning
+Persona
+Front
+Pickup on South Street
+Just One of the Guys
+Wisconsin Death Trip
+Agent Cody Banks 2: Destination London
+Girl Next Door
+Secret Window
+Spartan
+Broken Wings (Knafayim Shvurot)
+Wilbur Wants to Kill Himself
+Mad Dog and Glory
+Peyton Place
+Dawn of the Dead
+Eternal Sunshine of the Spotless Mind
+Taking Lives
+Intermission
+Noi the Albino (NÌ_i albinÌ_i)
+Jersey Girl
+Ladykillers
+Never Die Alone
+Scooby-Doo 2: Monsters Unleashed
+Dogville
+Ned Kelly
+Hellboy
+Home on the Range
+Prince & Me
+Walking Tall
+United States of Leland
+Johnson Family Vacation
+Alamo
+Ella Enchanted
+Whole Ten Yards
+I'm Not Scared (Io non ho paura)
+Ten Commandments
+Dawn of the Dead
+One Million Years B.C.
+Mother  Jugs & Speed
+Slugger's Wife
+Those Magnificent Men in Their Flying Machines
+Cheaper by the Dozen
+Scenes From a Marriage (Scener ur ett Ì_ktenskap)
+Baby Rain Must Fall
+Belles on Their Toes
+Road to Bali
+Flying Deuces
+Africa Screams
+Osterman Weekend
+Hangman's Curse
+Going in Style
+Late Show
+Sunshine Boys
+Jersey Girl
+American Nightmare
+After Hours
+Viva Las Vegas
+Connie and Carla
+Kill Bill: Vol. 2
+Punisher
+Paper Clips
+13 Going on 30
+Man on Fire
+Envy
+Godsend
+Laws of Attraction
+Mean Girls
+New York Minute
 Van Helsing
-American Wedding
-American Pie 2
-The Mummy Returns
-Scary Movie
-Antz
-Casper
-Ghost in the Shell
-Resident Evil: The Final Chapter
-The Magnificent Seven
-Suicide Squad
-Jason Bourne
-The Secret Life of Pets
-The Angry Birds Movie
-Allegiant
-How to Be Single
-Trainwreck
-Transcendence
-Jack Ryan: Shadow Recruit
-47 Ronin
-Percy Jackson: Sea of Monsters
-Don Jon
-The Lone Ranger
-The Dictator
-This Means War
-Sucker Punch
-I Am Number Four
-The Sorcerer's Apprentice
-The Twilight Saga: Eclipse
-Knight and Day
-Date Night
-Surrogates
+Breakin' All the Rules
+Troy
+Carandiru
+Coffee and Cigarettes
+Boys in the Band
+Raid
+Swimming to Cambodia
+Watch on the Rhine
+Enemy Mine
+Enter the Dragon
+Gimme Shelter
+Henry & June
+Three Faces of Eve
+Band of Brothers
+Kingdom (Riget)
+Mercy
+Desperate Hours
+Fail-Safe
+28 Up
+You Only Live Twice
+Octopussy
+Blue Gardenia
+Wit
+Never Say Never Again
+Magic Flute (TrollflÌ¦jten)
+Midnight
+Pride and Prejudice
+Man in the Gray Flannel Suit
+Fountainhead
+Old Acquaintance
+In This Our Life
+Woman of the Year
+Summertime
+Soldier of Orange (a.k.a. Survival Run) (Soldaat van Oranje)
+SamouraÌø  Le (Godson)
+White Palace
+Oklahoma!
+Body Double
+Rooster Cogburn
+Chaplin
+Miracle Worker
+School Ties
+Girl
+Switch
+Just Write
+Raising Cain
+Buck Privates
+Rose Red
+Noises Off...
+Wildflowers
+Babylon 5: In the Beginning
+Witchfinder General (Conquerer Worm)
+Pride and Prejudice
+Canterville Ghost
+Prince and the Showgirl
+China Syndrome
+Wages of Fear (Salaire de la peur  Le)
+Look Who's Talking Too
+Bells of St. Mary's
+You Light Up My Life
+Delta Force
+Pat and Mike
+Animal Crackers
+He Said  She Said
+Bedazzled
+Cat People
+Camelot
+Lonely Guy
+Four Musketeers
+Steel Dawn
+On Deadly Ground
+Boy Meets Girl
+Protocol
+Postman Always Rings Twice
+Explorers
+Scent of Green Papaya (MÌ_i du du xhan - L'odeur de la papaye verte)
+Pierrot le fou
+Strange Cargo
+Tuesdays with Morrie
+Alexander Nevsky (Aleksandr Nevskiy)
+Jason and the Argonauts
+Nostalghia
+Tinker  Tailor  Soldier  Spy
+Winter Sleepers (WinterschlÌ_fer)
+Driller Killer
+Throne of Blood (Kumonosu jÌ«)
+Undercurrent
+My Side of the Mountain
+Sniper
+Genghis Blues
+To Hell and Back
+"11'09""01 - September 11 (2002)"
+Bon Voyage  Charlie Brown (and Don't Come Back!)
+Internal Affairs
+Parallax View
+Warriors
+Ambush (RukajÌ_rven tie)
+Babylon 5: A Call to Arms
+Babylon 5: The River of Souls
+Babylon 5: Thirdspace
+Zardoz
+Virgin Spring (JungfrukÌ_llan)
+Ice-Cold in Alex
+Mogambo
+Secret Life of Walter Mitty
+Cypher
+Another Thin Man
+Thin Man Goes Home
+Shadow of the Thin Man
+After the Thin Man
+Song of the Thin Man
+Woodstock
+Love Crazy
+Gunga Din
+Children of Dune
+Dune
+Legend (Legend of Fong Sai-Yuk) (Fong Sai Yuk)
+Tremors II: Aftershocks
+Tremors 3: Back to Perfection
+Peanut Butter Solution
+Notorious C.H.O.
+White Zombie
+The Plague of the Zombies
+I Walked with a Zombie
+How to Succeed in Business Without Really Trying
+Pat Garrett and Billy the Kid
+The Left Handed Gun
+Last Man on Earth (Ultimo uomo della Terra  L')
+Duck  You Sucker (a.k.a. Fistful of Dynamite  A) (GiÌ_ la testa)
+Bring Me the Head of Alfredo Garcia
+Ride the High Country
+Ballad of Cable Hogue
+Junior Bonner
+Master of the Flying Guillotine (Du bi quan wang da po xue di zi)
+Frankenstein Must Be Destroyed
+Haunted Palace
+Gidget
+Drunken Angel (Yoidore tenshi)
+Desperate Living
+Valachi Papers The
+Rolling Thunder
+Stray Dog (Nora inu)
+Hidden Fortress (Kakushi-toride no san-akunin)
+High and Low (Tengoku to jigoku)
+People Under the Stairs
+Dark Days
+Night in Casablanca  A
+Zelig
+Face to Face (Ansikte mot ansikte)
+Winter Light (NattvardsgÌ_sterna)
+Through a Glass Darkly (SÌ´som i en spegel)
+Smiles of a Summer Night (Sommarnattens leende)
+Killers
+Night of the Iguana
+Reflections in a Golden Eye
+Under the Volcano
+Wise Blood
+Nightbreed
+Baron Blood (Orrori del castello di Norimberga  Gli)
+Ken Park
+Bridge Too Far  A
+Infernal Affairs (Mou gaan dou)
+Tale of Two Sisters  A (Janghwa  Hongryeon)
+Broadway Danny Rose
+Rock 'N' Roll High School
+Death Race 2000
+Bucket Of Blood  A
+Pure Country
+Brigadoon
+Marjorie Morningstar
+Weather Underground
+Kikujiro (KikujirÌ« no natsu)
+I'm with Lucy
+Spring  Summer  Fall  Winter... and Spring (Bom yeoreum gaeul gyeoul geurigo bom)
+Phantom Tollbooth
+Getaway
+Dark Water (Honogurai mizu no soko kara)
+Thing Called Love
+How to Steal a Million
+Support Your Local Sheriff!
+Passed Away
+Mean Streets
+Jack the Bear
+I Am a Fugitive from a Chain Gang
+Hamburger Hill
+Harper
+Sweet Bird of Youth
+Dahmer
+Comes a Horseman
+Shiri (Swiri)
+Bad Day at Black Rock
+Delta Force 2 (Delta Force 2: The Colombian Connection)
+Crossroads
+Seducing Doctor Lewis (Grande sÌ©duction  La)
+City Limits
+Leaving Normal
+Sunrise: A Song of Two Humans
+First $20 Million Is Always the Hardest
+Au revoir les enfants
+Pursuit of Happiness
+Gladiator
+Wonderful Days (a.k.a. Sky Blue)
+Charly
+Lust for Life
+Dolce Vita  La
+Jin Roh: The Wolf Brigade (Jin-RÌ«)
+Rush
+Captain Blood
+*batteries not included
+Educating Rita
+On Moonlight Bay
+Sansho the Bailiff (SanshÌ« dayÌÈ)
+Zazie dans le mÌ©tro
+Americanization of Emily
+Anne of the Thousand Days
+Baby Doll
+Avventura  L' (Adventure)
+Beyond the Valley of the Dolls
+Hiroshima Mon Amour
+Ugetsu (Ugetsu monogatari)
+At Play in the Fields of the Lord
+Mystery of the Wax Museum
+Day of the Jackal
+Razor's Edge
+Night of the Living Dead
+Drums Along the Mohawk
+Maltese Falcon (a.k.a. Dangerous Female)
+I Love You Again
+Safety Last!
+While the City Sleeps
+Little Murders
+Viridiana
+Lupin III: The Castle Of Cagliostro (Rupan sansei: Kariosutoro no shiro)
+Arizona Dream
+Queen Christina
+Citizen Toxie: The Toxic Avenger IV
+Hooper
+3 Women (Three Women)
+Take Me Out to the Ball Game
+Frogs
+Purple Rain
+Point of No Return
+Hairdresser's Husband (Le mari de la coiffeuse)
+Cromwell
+Tale of Ham and Passion  A (JamÌ_n  JamÌ_n)
+College
+Agatha Christie's 'Ten Little Indians' (Ten Little Indians) (And Then There Were None)
+Used People
+Swan
+Front Page
+Dolls
+Three Came Home
+Our Man in Havana
+Man Who Came to Dinner
+Cowboys
+Major and the Minor
+Caine Mutiny
+Black Narcissus
+Escape from Alcatraz
+Oliver Twist
+Shrek 2
+Day After Tomorrow
+Raising Helen
+Soul Plane
+Baadasssss! (How to Get the Man's Foot Outta Your Ass)
+Saved!
+Harry Potter and the Prisoner of Azkaban
+Mindhunters
+Blind Swordsman: Zatoichi (ZatÌ«ichi)
+Chronicles of Riddick
+Garfield: The Movie
+Stepford Wives
+Hunting of the President
+Napoleon Dynamite
+City of Joy
+Doctor
+Dresser
+For Me and My Gal
+Hello Again
+Hope Springs
+Love Finds Andy Hardy
+Lover Come Back
+Police Academy: Mission to Moscow
+Ring of Bright Water
+Big Wednesday
+Fool for Love
+Playboys
+We're Not Married!
+Wish You Were Here
+Adventures of Sherlock Holmes
+Hound of the Baskervilles
+Hour of the Wolf (Vargtimmen)
+Molly Maguires
+Suddenly
+Kings Row
+Divorcee
+Chipmunk Adventure
+Sands of Iwo Jima
+Anthony Adverse
+Blackboard Jungle
+Moment by Moment
+It Had to Be You
+Long Way Home
+Investigation of a Citizen Above Suspicion (Indagine su un cittadino al di sopra di ogni sospetto)
+To Each His Own
+Heiress
+State Fair
+Dragon Seed
+Executive Suite
+Johnny Belinda
+Super Size Me
+Johnny Eager
+Pier (JetÌ©e  La)
+Northwest Passage
+Picture of Dorian Gray
+Born Losers
+Human Condition I (Ningen no joken I)
+Samsara
+Bachelor Mother
+Please Don't Eat the Daisies
+Siddhartha
+White Heat
+Christmas Carol  A (Scrooge)
+Memphis Belle
+Cincinnati Kid
+Animal Factory
+Panic in Needle Park
+Pretty Baby
+Hitcher
+Show Boat
+Ivanhoe
+Freaks
+Silent Movie
+Anna Christie
+Deep Cover
+Dr. Jekyll and Mr. Hyde
+My Little Chickadee
+High and the Mighty
+Around the World in 80 Days
+I'll Sleep When I'm Dead
+Dodgeball: A True Underdog Story
+Terminal
+Dear Frankie
+White Chicks
+Door in the Floor
+Notebook
+Two Brothers (Deux frÌ¬res)
+De-Lovely
+Back to Bataan
+Day at the Races  A
+Bob & Carol & Ted & Alice
+Littlest Rebel
+Happenstance (Battement d'ailes du papillon  Le)
+Kopps
+Into the Woods
+Pirates of Silicon Valley
+Manufacturing Consent: Noam Chomsky and the Media
+Clock
+Leave Her to Heaven
+Roxie Hart
+Killing Me Softly
+Winter War (Talvisota)
+Philadelphia Experiment
+Juice
+Flim-Flam Man
+Revenge of the Pink Panther
+Angels with Dirty Faces
+Taxi
+Tokyo Godfathers
+Our Hospitality
+All of Me
+Farmer's Daughter
+Lassie Come Home
+Time of Your Life
+Overboard
+Mask of Fu Manchu
+By the Light of the Silvery Moon
+Butterfield 8
+Johnny Guitar
+Sister My Sister
+Exterminating Angel (Ìngel exterminador  El)
+Fahrenheit 9/11
+Roxanne
+Hard Times
+Last Starfighter
+Spider-Man 2
+Before Sunset
+Clearing
+King Arthur
+Anchorman: The Legend of Ron Burgundy
+Sleepover
+Cinderella Story  A
+I  Robot
+Maria Full of Grace (Maria  Llena eres de gracia)
+Follow That Dream
+Girl of Your Dreams (NiÌ±a de tus ojos  La)
+Gray Lady Down
+Long Day's Journey Into Night
+Man of La Mancha
+Prince Valiant
+Short Film About Killing  A (KrÌ_tki film o zabijaniu)
+Tin Star
+How the West Was Won
+Joan of Arc
+Bourne Supremacy
+Catwoman
+Fist of the North Star
+Man Escaped  A (Un  condamnÌ© ÌÊ mort s'est Ì©chappÌ© ou Le vent souffle oÌ_ il veut)
+Slaughterhouse-Five
+Wake Island
+You Were Never Lovelier
+Bachelor and the Bobby-Soxer
+Destination Tokyo
+Dr. Jekyll and Ms. Hyde
+Dream Lover
+Funny About Love
+Map of the Human Heart
+Mr. Blandings Builds His Dream House
+My Favorite Wife
+Night and Day
+Plainsman
+Snake Pit
+Super
+Two of a Kind
+Goodbye  Columbus
+President's Analyst
+Day of the Locust
+To End All Wars
+Love Happy
+Ruby Cairo
+Fancy Pants
+World of Suzie Wong
+King of the Ants
+Unprecedented: The 2000 Presidential Election
+Prime of Miss Jean Brodie
+Lovers and Other Strangers
+Three Lives of Thomasina
+This Gun for Hire
+Big Clock
+Sherlock Holmes: Terror by Night
+Spy Who Came in from the Cold
+Sherlock Holmes and the Secret Weapon
+Sherlock Holmes: The Woman in Green
+Sherlock Holmes: Dressed to Kill
+Bon Voyage
+Assassination Bureau
+Manchurian Candidate
+Thunderbirds
+Village
+Garden State
+Early Summer (BakushÌÈ)
+Octane
+Funny Thing Happened on the Way to the Forum  A
+Collateral
+Little Black Book
+Code 46
+Harold and Kumar Go to White Castle
+Princess Diaries 2: Royal Engagement
+Danny Deckchair
+AVP: Alien vs. Predator
+We Don't Live Here Anymore
+Without a Paddle
+Exorcist: The Beginning
+Speedway
+Trouble with Girls
+It Happened at the World's Fair
+Double Trouble
+Spinout
+Harum Scarum
+Sting II
+If a Man Answers
+Cheerleader Camp
+Bill Cosby  Himself
+Benji: Off the Leash!
+Anacondas: The Hunt for the Blood Orchid
+Suspect Zero
+Vanity Fair
+Cookout
+Paparazzi
+Wicker Park
+Alice Doesn't Live Here Anymore
+Mangler
+Who's That Knocking at My Door?
+Flipper
+Lord Jim
+Cellular
+Resident Evil: Apocalypse
+Mr. 3000
+Sky Captain and the World of Tomorrow
+Wimbledon
+Anatomy of Hell (Anatomie de l'enfer)
+First Daughter
+Forgotten
+Last Shot
+Dirty Shame  A
+Motorcycle Diaries (Diarios de motocicleta)
+Shaun of the Dead
+Come Back  Little Sheba
+Second Chorus
+Murder on the Orient Express
+Mask
+Alexander's Ragtime Band
+Boston Strangler
+Man with One Red Shoe
+Sentinel
+SSSSSSS
+Legacy
+Hear No Evil
+Basket Case 3: The Progeny
+Basket Case 2
+Orca: The Killer Whale
+Terror
+1492: Conquest of Paradise
+Cannibal Holocaust
+Shark Tale
+Ladder 49
+I Heart Huckabees
+Raise Your Voice
+Taxi
+Primer
+Stage Beauty
+Shall We Dance?
+Team America: World Police
+Eulogy
+Country Girl
+Rose Tattoo
+Tess
+Fearless Vampire Killers
+Black Beauty
+Five Obstructions (Fem benspÌ_nd  De)
+Born Rich
+Bebe's Kids
+All I Want for Christmas
+Friday Night Lights
+Tarnation
+Final Cut
+Riding the Bullet
+Being Julia
+Surviving Christmas
+Grudge
+Alfie
+Sideways
+Machinist (Maquinista  El)
+Vera Drake
+Undertow
+Enduring Love
+Saw
+Ray
+Birth
+Incredibles
+Fade to Black
+It's All About Love
+Polar Express
+Kinsey
+Seed of Chucky (Child's Play 5)
+After the Sunset
+Bridget Jones: The Edge of Reason
+Finding Neverland
+National Treasure
+Bad Education (La mala educaciÌ_n)
+SpongeBob SquarePants Movie
+Alexander
+Christmas with the Kranks
+Guerrilla: The Taking of Patty Hearst
+Closer
+I Am David
+House of Flying Daggers (Shi mian mai fu)
+Ocean's Twelve
+Blade: Trinity
+Bellboy
+Bush's Brain
+Cinderfella
+Damn Yankees!
+Delicate Delinquent
+Disorderly Orderly
+Errand Boy
+Family Jewels
+Ladies Man
+Patsy
+Stateside
+Stooge
+That's Entertainment
+That's Entertainment  Part II
+That's Entertainment! III
+Wackiest Ship in the Army
+D.A.R.Y.L.
+Fire in the Sky
+I'll Be Seeing You
+Invisible Man Returns
+Love Me If You Dare (Jeux d'enfants)
+Portrait of Jennie
+Secret Honor
+Since You Went Away
+Slipping-Down Life  A
+Twist
+Control Room
+Celsius 41.11: The Temperature at Which the Brain... Begins to Die
+Sherlock Jr.
+Freshman
+Greed
+Phantom of the Opera
+Jazz Singer
+Pandora's Box (BÌ_chse der Pandora  Die)
+Crowd
+Steamboat Bill  Jr.
+Andalusian Dog  An (Chien andalou  Un)
+Little Caesar
+Monkey Business
+Scarface
+Dinner at Eight
+Gold Diggers of 1933
+Son of Kong
+Atalante  L'
+Black Cat
+Mark of the Vampire
+Raven
+Fury
+Libeled Lady
+Mr. Deeds Goes to Town
+Petrified Forest
+Show Boat
+Camille
+Captains Courageous
+Dead End
+Nothing Sacred
+Prisoner of Zenda
+Stage Door
+Topper
+Holiday
+Gaslight
+Roaring Twenties
+Wuthering Heights
+Letter
+Sea Hawk
+Ball of Fire
+Here Comes Mr. Jordan
+Random Harvest
+Heaven Can Wait
+Memphis Belle: A Story of a Flying Fortress
+Day of Wrath (Vredens dag)
+Cover Girl
+Henry V (Chronicle History of King Henry the Fift with His Battell Fought at Agincourt in France)
+Ministry of Fear
+Miracle of Morgan's Creek
+Mr. Skeffington
+They Were Expendable
+Tree Grows in Brooklyn  A
+Blue Dahlia
+Great Expectations
+Humoresque
+Stranger
+Nightmare Alley
+Odd Man Out
+Road to Rio
+Easter Parade
+Fort Apache
+Lady from Shanghai
+Letter from an Unknown Woman
+Naked City
+They Live by Night
+Three Musketeers
+Unfaithfully Yours
+In the Good Old Summertime
+Letter to Three Wives  A
+Orpheus (OrphÌ©e)
+Annie Get Your Gun
+Gunfighter
+King Solomon's Mines
+Carrie
+Magnificent Obsession
+Star Is Born  A
+Wild One
+Confidential Report
+Night and Fog (Nuit et brouillard)
+Spirit of St. Louis
+Last Hurrah
+Teacher's Pet
+Nun's Story
+Pickpocket
+Bad Sleep Well (Warui yatsu hodo yoku nemuru)
+Advise and Consent
+Harakiri (Seppuku)
+Music Man
+Mutiny on the Bounty
+McLintock!
+New Kind of Love  A
+Becket
+Best Man
+Hush... Hush  Sweet Charlotte
+Onibaba
+Robin and the 7 Hoods
+What a Way to Go!
+Battle of Algiers (La battaglia di Algeri)
+Charlie Brown Christmas  A
+In Harm's Way
+Operation Crossbow
+Thousand Clowns  A
+Train
+Andrei Rublev (Andrey Rublyov)
+Au Hasard Balthazar
+Batman
+Don't Look Back
+Point Blank
+Titicut Follies
+Two for the Road
+Heart Is a Lonely Hunter
+I Love You  Alice B. Toklas!
+Yours  Mine and Ours
+Alice's Restaurant
+Colossus: The Forbin Project
+My Night At Maud's (Ma Nuit Chez Maud)
+Brewster McCloud
+On a Clear Day You Can See Forever
+Beguiled
+Devils
+Duel
+Johnny Got His Gun
+They Call Me Trinity
+New Leaf  A
+Topo  El
+Lady Sings the Blues
+Charley Varrick
+Dark Star
+Emperor of the North (Emperor of the North Pole)
+Scarecrow
+California Split
+Phantom of Liberty (FantÌ«me de la libertÌ©  Le)
+Gone in 60 Seconds
+Harry and Tonto
+Hearts and Minds
+Holy Mountain (MontaÌ±a sagrada  La)
+Adventure of Sherlock Holmes' Smarter Brother
+Farewell  My Lovely
+Passenger (Professione: reporter)
+Supervixens
+1900 (Novecento)
+Silver Streak
+High Anxiety
+Hound of the Baskervilles
+New York  New York
+Sorcerer
+Turning Point
+Capricorn One
+Hobbit
+Snake in the Eagle's Shadow (Se ying diu sau)
+Wedding  A
+Hair
+In-Laws
+Opening Night
+Hitch Hikers Guide to the Galaxy
+Bad Boys
+Blue Thunder
+Eddie Murphy Delirious
+Merry Christmas Mr. Lawrence
+Pirates of Penzance
+Rumble Fish
+Star 80
+Star Chamber
+To Be or Not to Be
+Twilight Zone: The Movie
+Christmas Carol  A
+Dangerous Moves (La diagonale du fou)
+Electric Dreams
+Racing with the Moon
+Times of Harvey Milk
+Anne of Green Gables
+Police Story (Ging chaat goo si)
+Quiet Earth
+Spies Like Us
+Unknown Soldier (Tuntematon sotilas)
+Vision Quest
+White Nights
+'Round Midnight
+Best of Times
+Club Paradise
+Sacrifice (Offret - Sacraficatio)
+Better Tomorrow  A (Ying hung boon sik)
+Decalogue (Dekalog)
+Prince of Darkness
+Chinese Ghost Story  A (Sinnui yauwan)
+Better Tomorrow II  A (Ying hung boon sik II)
+Bourne Identity
+Dominick and Eugene
+Killer Klowns from Outer Space
+Lonesome Dove
+Kiki's Delivery Service (Majo no takkyÌÈbin)
+Prime Suspect
+Cry-Baby
+Ghost Dad
+Hard to Kill
+It
+Ju Dou
+State of Grace
+35 Up
+Days of Being Wild (A Fei jingjyuhn)
+Across the Tracks
+Begotten
+Closet Land
+Dutch
+Hearts of Darkness: A Filmmakers Apocalypse
+Only Yesterday (Omohide poro poro)
+Once Around
+Other People's Money
+Out for Justice
+Quigley Down Under
+Wild Hearts Can't Be Broken
+Prime Suspect 2
+Captain America
+Diggstown
+Porco Rosso (Crimson Pig) (Kurenai no buta)
+Mambo Kings
+Story of Qiu Ju (Qiu Ju da guan si)
+Shining Through
+Bad Boy Bubby
+Barbarians at the Gate
+Fortress
+Snapper
+Sonatine (Sonachine)
+Tai Chi Master (Twin Warriors) (Tai ji: Zhang San Feng)
+Fist of Legend (Jing wu ying xiong)
+Major League II
+Whisper of the Heart (Mimi wo sumaseba)
+Cannibal! The Musical (a.k.a. Alferd Packer: The Musical)
+Summer's Tale  A (Conte d'Ì©tÌ©)
+Drifting Clouds (Kauas pilvet karkaavat)
+American Perfekt
+Boxer
+Snow White: A Tale of Terror
+Gummo
+Lion King II: Simba's Pride
+From the Earth to the Moon
+Beowulf
+Interview
+Gia
+Merlin
+Breast Men
+Pentagon Wars
+Two Hands
+Addams Family Reunion
+Batman/Superman Movie
+Neon Genesis Evangelion: The End of Evangelion (Shin seiki Evangelion GekijÌ«-ban: Air/Magokoro wo  kimi ni)
+He Died With a Felafel in His Hand
+Cherry Falls
+Freeway II: Confessions of a Trickbaby
+Joan of Arc
+Kirikou and the Sorceress (Kirikou et la sorciÌ¬re)
+Cut
+10th Kingdom
+Extremely Goofy Movie  An
+2046
+Batman Beyond: Return of the Joker
+6ixtynin9 (Ruang Talok 69)
+Audition (ÌÓdishon)
+Paradise Lost 2: Revelations
+Hole
+61*
+Laramie Project
+Joint Security Area (Gongdong gyeongbi guyeok JSA)
+Ripley's Game
+Conspiracy
+Jalla! Jalla!
+Teknolust
+O Auto da Compadecida (Dog's Will  A)
+Darkness
+Ali G Indahouse
+Cube 2: Hypercube
+Balzac and the Little Chinese Seamstress (Xiao cai feng)
+Waterboys
+Fubar
+Sex Is Comedy
+Dead End
+Sympathy for Mr. Vengeance (Boksuneun naui geot)
+Jesus Christ Vampire Hunter
+Suicide Club (Jisatsu saakuru)
+Battlestar Galactica
+Lion King 1å_
+Bright Young Things
+Animatrix
+Brown Bunny
+Bring It On Again
+Crimson Rivers 2: Angels of the Apocalypse (RiviÌ¬res pourpres II - Les anges de l'apocalypse  Les)
+Nicotina
+Evil (Ondskan)
+Battle Royale 2: Requiem (Batoru rowaiaru II: Chinkonka)
+Lemony Snicket's A Series of Unfortunate Events
+Green Butchers (GrÌünne slagtere  De)
+Pearls and Pigs (HelmiÌ_ ja sikoja)
+Very Long Engagement  A (Un long dimanche de fianÌ¤ailles)
+Last Life in the Universe (Ruang rak noi nid mahasan)
+Head-On (Gegen die Wand)
+Ghost in the Shell 2: Innocence (a.k.a. Innocence) (Inosensu)
+Cat Returns (Neko no ongaeshi)
+Unstoppable
+Twilight Samurai (Tasogare Seibei)
+Easy Riders  Raging Bulls: How the Sex  Drugs and Rock 'N' Roll Generation Saved Hollywood
+Trauma
+Intimate Strangers (Confidences trop intimes)
+Ju-on: The Grudge
+Old Boy
+Red Lights (Feux rouges)
+Ginger Snaps Back: The Beginning
+One Missed Call (Chakushin ari)
+Jacket
+Millions
+Man Who Copied (Homem Que Copiava  O)
+Interstella 5555: The 5tory of the 5ecret 5tar 5ystem
+Ong-Bak: The Thai Warrior (Ong Bak)
+Sea Inside (Mar adentro)
+Spanglish
+Chorus (Choristes  Les)
+Saints and Soldiers
+Story of the Weeping Camel (Geschichte vom weinenden Kamel  Die)
+Interpreter
+Open Water
+Touch of Pink
+Layer Cake
+Silver City
+Return (Vozvrashcheniye)
+Flight of the Phoenix
+Mean Creek
+Ring Two
+Corporation
+Game Over: Kasparov and the Machine
+Yes Men
+Fond Kiss  A (Ae Fond Kiss...)
+She Hate Me
+Azumi
+Football Factory
+Tae Guk Gi: The Brotherhood of War (Taegukgi hwinalrimyeo)
+Metallica: Some Kind of Monster
+Born into Brothels
+DiG!
+Riding Giants
+When Will I Be Loved
+What the #$*! Do We Know!? (a.k.a. What the Bleep Do We Know!?)
+Scanner Darkly  A
+Outfoxed: Rupert Murdoch's War on Journalism
+Jerry Seinfeld: 'I'm Telling You for the Last Time'
+Chimes at Midnight (Campanadas a medianoche)
+Million Dollar Baby
+Narrow Margin
+Hell Is for Heroes
+Some Came Running
+Hotel Rwanda
+Charlie and the Chocolate Factory
+Auggie Rose (a.k.a. Beyond Suspicion)
+Wrong Box
+3-Iron (Bin-jip)
+Life Aquatic with Steve Zissou
+Aviator
+Phantom of the Opera
+Beyond the Sea
+Woodsman
+In Good Company
+Meet the Fockers
+Assassination of Richard Nixon
+Love Song for Bobby Long  A
+Merchant of Venice
+Fat Albert
+In the Realms of the Unreal
+White Noise
+Upside of Anger
+Arrowhead
+Grateful Dead Movie
+Last Train from Gun Hill
+Little Miss Marker
+Little Miss Marker
+Sweet Liberty
+I Remember Mama
+Last Horror Movie
+Testament
+Jinxed!
+Son of Godzilla (KaijÌÈtÌ« no kessen: Gojira no musuko)
+Man Trouble
+Sergeant York
+Ruby & Quentin (Tais-toi!)
+Deathwatch
+Life and Death of Peter Sellers
+Appleseed (AppurushÌ¨do)
+Milky Way (Voie lactÌ©e  La)
+Many Adventures of Winnie the Pooh
+Elektra
+Racing Stripes
+Coach Carter
+Fighting Sullivans (Sullivans)
+Iceman
+Ice Station Zebra
+Boys Town
+Beastmaster 2: Through the Portal of Time
+Christmas in July
+Chase
+Downfall (Untergang  Der)
+White Sound (Das weiÌÙe Rauschen)
+Assault on Precinct 13
+Are We There Yet?
+Alone in the Dark
+Hide and Seek
+Boogeyman
+Wedding Date
+Rory O'Shea Was Here (Inside I'm Dancing)
+Nobody Knows (Dare mo shiranai)
+Employee of the Month
+Great White Hope
+Professionals
+Salem's Lot
+Marriage of Maria Braun (Ehe der Maria Braun  Die)
+Beau Geste
+Overnight
+Double Dragon
+Rosenstrasse
+El Cid
+Howl's Moving Castle (Hauru no ugoku shiro)
+Steamboy (SuchÌ¨mubÌ«i)
+Hitch
+Pooh's Heffalump Movie
+Inside Deep Throat
+Bride & Prejudice
+Constantine
+Son of the Mask
+Because of Winn-Dixie
+Pauly Shore Is Dead
+Bunny Lake Is Missing
+Night and the City
+Frozen Land (Paha maa)
+Night Watch (Nochnoy dozor)
+Dot the I
+Morocco
+Man of the House
+Kung Fu Hustle (Gong fu)
+Zelary
+Seven-Per-Cent Solution
+Three Musketeers
+Masculin FÌ©minin
+Four Feathers
+Germany Year Zero (Germania anno zero) (Deutschland im Jahre Null)
+Tyler Perry's Diary of a Mad Black Woman
+Cursed
+Pacifier
+Be Cool
+Gunner Palace
+Walk on Water
+Hostage
+Robots
+Class Action
+Godzilla vs. The Sea Monster (Gojira-Ebira-Mosura: Nankai no daiketto)
+Godzilla vs. Mechagodzilla II (Gojira VS Mekagojira)
+Oh  God! You Devil
+Blackball
+Agony and the Ecstasy
+Return to Peyton Place
+It Happened to Jane
+Twentieth Century
+My Sister Eileen
+Green Berets
+Elevator to the Gallows (a.k.a. Frantic) (Ascenseur pour l'Ì©chafaud)
+Cube Zero
+Julia
+Thirty Seconds Over Tokyo
+Ice Princess
+Melinda and Melinda
+Miss Congeniality 2: Armed and Fabulous
+Guess Who
+League of Ordinary Gentlemen  A
+Yanks
+Barbary Coast
+Stella Dallas
+Come and Get It
+Panic in the Streets
+Call Northside 777
+Bells Are Ringing
+Finian's Rainbow
+Sword of Doom (Dai-bosatsu tÌ«ge)
+800 Bullets (800 Balas)
+City of Hope
+We're No Angels
+End of the Century: The Story of the Ramones
+Wild Parrots of Telegraph Hill
+Ballad of Jack and Rose
+Sin City
+Beauty Shop
+Sahara
+Fever Pitch
+Rhinestone
+Man Who Planted Trees (Homme qui plantait des arbres  L')
+National Lampoon's Lady Killers (National Lampoon's Gold Diggers)
+Blind Horizon
+Islands in the Stream
+Battle of the Bulge
+Little Girl Who Lives Down the Lane
+Ringu 0: BÌ¢sudei
+Brothers (BrÌüdre)
+Hawaii
+Vincent
+With Six You Get Eggroll
+Big Store
+Ivan's Childhood (a.k.a. My Name is Ivan) (Ivanovo detstvo)
+Trip to the Moon  A (Voyage dans la lune  Le)
+Carrie
+Wilson
+Hitchhiker's Guide to the Galaxy
+Eiger Sanction
+F for Fake (VÌ©ritÌ©s et mensonges)
+Amityville Horror
+Act of Violence
+Palindromes
+Lot Like Love  A
+Enron: The Smartest Guys in the Room
+xXx: State of the Union
+Kingdom of Heaven
+House of Wax
+Crash
+Jiminy Glick in La La Wood
+Mysterious Skin
+San Francisco
+Kes
+Vampire Hunter D
+Cocoanuts
+Kids Return (Kizzu ritÌ¢n)
+Off the Map
+Crackerjack
+Dear Wendy
+List of Adrian Messenger
+Unleashed (Danny the Dog)
+Ugly  Dirty and Bad (Brutti sporchi e cattivi)
+DuckTales: The Movie - Treasure of the Lost Lamp
+Star Wars: Episode III - Revenge of the Sith
+Kicking & Screaming
+Monster-in-Law
+Snow Walker
+9 Songs
+Bad Guy (Nabbeun namja)
+Madagascar
+Somersault
+Mad Hot Ballroom
+Dominion: Prequel to the Exorcist
+Longest Yard
+Saving Face
+Cinderella Man
+Sisterhood of the Traveling Pants
+Lords of Dogtown
+Mr. & Mrs. Smith
+Adventures of Sharkboy and Lavagirl 3-D
+High Tension (Haute tension) (Switchblade Romance)
+Honeymooners
+Ladies in Lavender
+Eddie Izzard: Dress to Kill
+Quo Vadis
+Batman Begins
+Perfect Man
+My Summer of Love
+Saint Ralph
+Herbie: Fully Loaded
+Land of the Dead
+Bewitched
+Danger: Diabolik (Diabolik)
+Me and You and Everyone We Know
+3 Extremes (Three... Extremes) (Saam gaang yi)
+Edukators (Die Fetten Jahre sind vorbei)
+Somebody Up There Likes Me
+Unmarried Woman  An
+Room Service
+At the Circus
+War of the Worlds
+My Brilliant Career
+Gambit
+March of the Penguins (Marche de l'empereur  La)
+God Who Wasn't There
+Rebound
+Dark Water
+Fantastic Four
+Murderball
+Wedding Crashers
+Happy Endings
+Hustle & Flow
+Journey Into Fear
+Island
+Bad News Bears
+Devil's Rejects
+Last Days
+November
+Sky High
+Stealth
+Must Love Dogs
+Aristocrats
+Twice in a Lifetime
+Georgy Girl
+Serenity
+Broken Flowers
+Baby Face
+Star
+Browning Version
+Heart Is Deceitful Above All Things
+Dukes of Hazzard
+The Chumscrubber
+Junebug
+Deuce Bigalow: European Gigolo
+Skeleton Key
+Four Brothers
+The Great Raid
+Asylum
+Pretty Persuasion
+Grizzly Man
+Girl in the CafÌ©
+Prime Cut
+Best of Everything
+She Creature (Mermaid Chronicles Part 1: She Creature)
+My Date with Drew
+Duma
+Animal Farm
+40-Year-Old Virgin
+Red Eye
+Hidden (a.k.a. Cache) (CachÌ©)
+Kin-Dza-Dza!
+Valiant
+Brothers Grimm
+Cave
+Constant Gardener
+Transporter 2
+Margaret Cho: Assassin
+Just Like Heaven
+Proof
+Lord of War
+Venom
+Cry_Wolf (a.k.a. Cry Wolf)
+Everything Is Illuminated
+Thumbsucker
+Thing About My Folks
+G
+In Old Chicago
+Family Guy Presents Stewie Griffin: The Untold Story
+Go West
+Why We Fight
+Doom
+Domino
+Waiting...
+Aeon Flux
+Unfinished Life  An
+Chapter Two
+Exorcism of Emily Rose
+Flightplan
+Corpse Bride
+Green Street Hooligans (a.k.a. Hooligans)
+History of Violence  A
+Oliver Twist
+Greatest Game Ever Played
+Capote
+Final Fantasy VII: Advent Children
+Roll Bounce
+Into the Blue
+Prize Winner of Defiance Ohio
+MirrorMask
+Flowers of St. Francis (Francesco  giullare di Dio)
+Wallace & Gromit in The Curse of the Were-Rabbit
+Kiss Kiss Bang Bang
+Bittersweet Life  A (Dalkomhan insaeng)
+Short Film About Love  A (KrÌ_tki film o milosci)
+Bubble
+No Direction Home: Bob Dylan
+Goal! The Dream Begins (Goal!)
+Angels in America
+Factotum
+In Her Shoes
+Squid and the Whale
+Two for the Money
+Separate Lies
+Star Wreck: In the Pirkinning
+Brokeback Mountain
+Elizabethtown
+North Country
+Good Night  and Good Luck.
+Dreamer: Inspired by a True Story
+Proposition
+Fog
+Left Behind: World at War
+Shopgirl
+After School Special (a.k.a. Barely Legal)
+Stay
+Legend of Zorro
+Weather Man
+Saw II
+Prime
+Will Success Spoil Rock Hunter?
+Little Fish
+American Pie Presents: Band Camp (American Pie 4: Band Camp)
+Tarzan and His Mate
+Empire of the Wolves (L'empire des loups)
+Manderlay
+Nine Lives
+Revolver
+Jarhead
+Chicken Little
+Dead Man's Shoes
+Joyeux NoÌÇl (Merry Christmas)
+Get Rich or Die Tryin'
+Just Friends
+Syriana
+Derailed
+Creep
+Pride & Prejudice
+Babylon 5
+Wolf Creek
+Descent
+Harry Potter and the Goblet of Fire
+Dinner with Friends
+Walk the Line
+Rent
+Zathura
+C.R.A.Z.Y.
+Sarah Silverman: Jesus Is Magic
+Bee Season
+Breakfast on Pluto
+Ice Harvest
+Yours  Mine and Ours
+In the Mix
+Libertine
+Wild Geese
+Hondo
+Good Woman  A
+Sounder
+Match Point
+Paradise Now
+Chronicles of Narnia: The Lion Witch and the Wardrobe
+King Kong
+Memoirs of a Geisha
+Family Stone
+Promise (Wu ji)
+Kiss of Death
+Havoc
+Matador
+Look Both Ways
+Wal-Mart: The High Cost of Low Price
+7 Seconds
+They Died with Their Boots On
+Three Burials of Melquiades Estrada
+Munich
+Producers
+Transamerica
+Rumor Has It...
+Cheaper by the Dozen 2
+Fun with Dick and Jane
+Ringer
+Casanova
+Mrs. Henderson Presents
+White Countess
+Spirit of the Beehive (EspÌ_ritu de la colmena  El)
+Richard Pryor: Live in Concert
+Luxo Jr.
+Keeping Mum
+Threads
+New World
+Christmas in Connecticut
+7 Faces of Dr. Lao
+Lady Vengeance (Sympathy for Lady Vengeance) (Chinjeolhan geumjassi)
+49th Parallel
+District 13 (Banlieue 13)
+BloodRayne
+Hostel
+Grandma's Boy
+Tristan & Isolde
+Glory Road
+Last Holiday
+Hoodwinked!
+Underworld: Evolution
+Looking for Comedy in the Muslim World
+Shadows of Our Forgotten Ancestors (Tini zabutykh predkiv)
+Little Manhattan
+Quatermass Xperiment
+Water
+Sophie Scholl: The Final Days (Sophie Scholl - Die letzten Tage)
+World's Fastest Indian
+Bandidas
+Tristram Shandy: A Cock and Bull Story
+Love in the Afternoon (Chloe in the Afternoon)  (L'amour l'aprÌ¬s-midi)
+Annapolis
+Big Momma's House 2
+Nanny McPhee
+Dark
+Comedians of Comedy
+Tuskegee Airmen
+Final Destination 3
+Block Party (a.k.a. Dave Chappelle's Block Party)
+Imagine Me & You
+Call of Cthulhu
+Pink Panther
+Curious George
+Firewall
+When a Stranger Calls
+London
+Freedomland
+Winter Passing
+Eight Below
+Date Movie
+Tyler Perry's Madea's Family Reunion
+Ultraviolet
+Just My Luck
+Pulse
+Deep Sea 3D
+16 Blocks
+Half Light
+Failure to Launch
+Ice Age 2: The Meltdown
+Big White
+Cyrano de Bergerac
+Naked Spur
+V for Vendetta
+She's the Man
+Thank You for Smoking
+Inside Man
+Tsotsi
+Aquamarine
+Leprechaun 2
+Hills Have Eyes
+Shaggy Dog
+Inspector Clouseau
+Unknown White Male
+Lives of Others (Das leben der Anderen)
+Nanook of the North
+Take the Lead
+Devil and Daniel Johnston
+Money (L'argent)
+Mouchette
+Lucky Number Slevin
+Volver
+Akeelah and the Bee
+Lisbela e o Prisioneiro (Lisbela and the Prisoner)
+Brainstorm
+Larry the Cable Guy: Health Inspector
+Stay Alive
+Basic Instinct 2
+Brick
+This Film Is Not Yet Rated
+ATL
+Slither
+Benchwarmers
+Phat Girlz
+Dead Fish
+Friends with Money
+Reefer Madness: The Movie Musical
+Candy
+Hoot
+Scary Movie 4
+Hard Candy
+Dead Birds
+Shutter
+Prairie Home Companion  A
+Sentinel
+Wild
+Silent Hill
+American Dreamz
+Kinky Boots
+Protector (a.k.a. Warrior King) (Tom yum goong)
+Mission: Impossible III
+RV
+United 93
+Stick It
+Footlight Parade
+American Haunting  An
+Down in the Valley
+Over the Hedge
+Art School Confidential
+Poseidon
+Da Vinci Code
+X-Men: The Last Stand
+Break-Up
+Peaceful Warrior
+Cars
+Lost City
+Beyond a Reasonable Doubt
+Sinbad of the Seven Seas
+Notorious Bettie Page
+American Gun
+On a Clear Day
+Omen
+King
+Nacho Libre
+Lake House
+Click
+Seventh Victim
+Devil Wears Prada
+Pirates of the Caribbean: Dead Man's Chest
+You  Me and Dupree
+Clerks II
+Lady in the Water
+My Super Ex-Girlfriend
+Let It Be
+See No Evil
+Marie Antoinette
+Who Killed the Electric Car?
+Inconvenient Truth  An
+Hollow Man II
+High School Musical
+Adam & Steve
+Stoned
+Marked Woman
+Jet Li's Fearless (Huo Yuan Jia)
+Fast and the Furious: Tokyo Drift (Fast and the Furious 3)
+Garfield: A Tail of Two Kitties
+Metal: A Headbanger's Journey
+Waist Deep
+Sheriff and the Satellite Kid
+Superman Returns
+Leonard Cohen: I'm Your Man
+Edmond
+Little Miss Sunshine
+Brothers of the Head
+Fallen Idol
+Babel
+Thief Lord
+Krrish
+Young Mr. Lincoln
+Wordplay
+Little Man
+End of the Spear
+Monster House
+Colour Me Kubrick: A True...ish Story
+Snakes on a Plane
+Scoop
+Talladega Nights: The Ballad of Ricky Bobby
+Night at the Museum
+World Trade Center
+Stranger than Fiction
+Miami Vice
+Shadowboxer
+Pursuit of Happyness
+John Tucker Must Die
+Ant Bully
+Mrs. Palfrey at the Claremont
+Crank
+Hurricane
+Chaos
+Night Listener
+Barnyard: The Original Party Animals
+Compulsion
+Step Up
+Zoom
+Bon Cop  Bad Cop
+Mind Game
+Half Nelson
+Tideland
+Adam's Apples (Adams Ì_bler)
+Cabin in the Sky
+2:37
+Material Girls
+Accepted
+Illusionist
+Queen
+Beerfest
+How to Eat Fried Worms
+Invincible
+Idlewild
+Way Out West
+Lassie
+Wicker Man
+Wind That Shakes the Barley
+Hollywoodland
+Covenant
+Jesse James
+Last Kiss
+Trust the Man
+SherryBaby
+Idiocracy
+Jesus Camp
+Bow (Hwal)
+Fountain
+Snoopy Come Home
+Science of Sleep (La science des rÌ»ves)
+Black Dahlia
+Everyone's Hero
+Gridiron Gang
+Bridge
+Private Life of Henry VIII
+Apocalypto
+Flyboys
+Jackass Number Two
+All the King's Men
+Borat: Cultural Learnings of America for Make Benefit Glorious Nation of Kazakhstan
+Pan's Labyrinth (Laberinto del fauno  El)
+Guardian
+Open Season
+School for Scoundrels
+Departed
+Texas Chainsaw Massacre: The Beginning
+Employee of the Month
+Stormbreaker (Alex Rider: Operation Stormbreaker)
+Running With Scissors
+Ellie Parker
+Grudge 2
+Man of the Year
+Marine
+Infamous
+Elementary Particles (Elementarteilchen)
+Feast
+Offside
+Little Children
+Deliver Us from Evil
+Last King of Scotland
+U.S. vs. John Lennon
+Shortbus
+Children of Men
+Prestige
+Flags of Our Fathers
+Flicka
+9th Company
+Guide to Recognizing Your Saints  A
+Saw III
+Catch a Fire
+5 Fingers
+The Butterfly Effect 2
+Flushed Away
+Perfume: The Story of a Murderer
+Arabesque
+Santa Clause 3: The Escape Clause
+All the Invisible Children
+Mom and Dad Save the World
+Emmet Otter's Jug-Band Christmas
+Good Year  A
+Shut Up & Sing
+Foreign Affair  A
+Return
+For Your Consideration
+Street Fight
+Fuck
+Casino Royale
+Happy Feet
+Let's Go to Prison
+DÌ©jÌÊ Vu (Deja Vu)
+Bobby
+Deck the Halls
+10 Items or Less
+Holiday
+London to Brighton
+Fast Food Nation
+The Great Train Robbery
+Simon of the Desert (SimÌ_n del desierto)
+Tenacious D in The Pick of Destiny
+Nativity Story
+National Lampoon's Van Wilder: The Rise of Taj
+Turistas
+Blood Diamond
+Unaccompanied Minors
+Off the Black
+Charlotte's Web
+Eragon
+Rocky Balboa
+Fur: An Imaginary Portrait of Diane Arbus
+Painted Veil
+We Are Marshall
+Good Shepherd
+Dreamgirls
+When the Levees Broke: A Requiem in Four Acts
+Inland Empire
+History Boys
+Notes on a Scandal
+Curse of the Golden Flower (Man cheng jin dai huang jin jia)
+Bothersome Man (Brysomme mannen  Den)
+Good German
+Sweet Land
+Letters from Iwo Jima
+Home of the Brave
+Code Name: The Cleaner
+Stomp the Yard
+Miss Potter
+Arthur and the Invisibles
+Loving Annabelle
+American Pie Presents The Naked Mile (American Pie 5: The Naked Mile)
+David and Bathsheba
+Venus
+Alpha Dog
+Hitcher
+Dead Girl
+After the Wedding (Efter brylluppet)
+Linda Linda Linda
+Bridge to Terabithia
+House (Hausu)
+Kenny
+49 Up
+Waitress
+Seven Up!
+7 Plus Seven
+Catch and Release
+Smokin' Aces
+Blood and Chocolate
+Epic Movie
+Messengers
+Because I Said So
+Hannibal Rising
+Norbit
+Boss of It All (DirektÌüren for det hele)
+Cocaine Cowboys
+Lonely Hearts
+Ratatouille
+Five Fingers
+Paris  I Love You (Paris  je t'aime)
+Astronaut Farmer
+It's a Boy Girl Thing
+Magical Mystery Tour
+Trailer Park Boys: The Movie
+Ghost Rider
+Breach
+Music and Lyrics
+Number 23
+Reno 911!: Miami
+Black Snake Moan
+Gray Matters
+Factory Girl
+Kidulthood
+Hot Fuzz
+36th Chamber of Shaolin (Shao Lin san shi liu fang) (Master Killer)
+Karla
+Citizen X
+"""Great Performances"" Cats (1998)"
+Next
+Breaking and Entering
+Amazing Grace
+Zodiac
+Wild Hogs
+Atlantis: Milo's Return (2003) 
+Westerner
+Ultimate Gift
+300
+Abandoned
+Julius Caesar
+Last Mimzy
+Host (Gwoemul)
+Becoming Jane
+Namesake
+I Think I Love My Wife
+Premonition
+Dead Silence
+Reign Over Me
+Shooter
+Hills Have Eyes II
+TMNT (Teenage Mutant Ninja Turtles)
+Italian (Italianetz)
+Jindabyne
+Black Book (Zwartboek)
+Five Pennies
+Lookout
+Blades of Glory
+Are We Done Yet?
+Grindhouse
+Reaping
+Firehouse Dog
+Meet the Robinsons
+American Hardcore
+Inglorious Bastards (Quel maledetto treno blindato)
+Sunshine
+Copying Beethoven
+Hoax
+No Way Out
+How the Grinch Stole Christmas!
+Perfect Stranger
+Disturbia
+Pathfinder
+Aqua Teen Hunger Force Colon Movie Film for Theaters
+Tristana
+Vie en Rose  La (MÌ«me  La)
+Contract
+Fracture
+Big Nothing
+Vacancy
+In the Land of Women
+Mr. Bean's Holiday
+Invisible
+Kickin It Old Skool
+Condemned
+Spider-Man 3
+Lucky You
+It's a Very Merry Muppet Christmas Movie
+21 Up
+Tales from Earthsea (Gedo Senki)
+Ex
+Paprika (Papurika)
+Day Watch (Dnevnoy dozor)
+This Is England
+Away from Her
+Knocked Up
+Hairspray
+28 Weeks Later
+Georgia Rule
+Delta Farce
+Jonestown: The Life and Death of Peoples Temple
+Shrek the Third
+Once
+Pirates of the Caribbean: At World's End
+Bug
+Mr. Brooks
+Gracie
+I'm a Cyborg  But That's OK (Saibogujiman kwenchana)
+Eagle vs Shark
+88 Minutes
+Cashback
+Ocean's Thirteen
+Ten Canoes
+Sheitan
+Hostel: Part II
+Paranoid Park
+Surf's Up
+Fantastic Four: Rise of the Silver Surfer
+Nancy Drew
+Fido
+Death Proof
+Rescue Dawn
+Amateurs (Moguls)
+TV Set
+Valet (La doublure)
+Night of the Generals
+In Search of a Midnight Kiss
+Sicko
+Awesome; I Fuckin Shot That!
+Man in the Iron Mask
+Mighty Heart  A
+1408
+Death at a Funeral
+Live Free or Die Hard
+License to Wed
+Evan Almighty
+Transformers
+Captivity
+Harry Potter and the Order of the Phoenix
+I Now Pronounce You Chuck and Larry
+Arn: The Knight Templar (Arn - Tempelriddaren)
+Driving Lessons
+Across the Universe
+Broken English
+Dorian Blues
+Hot Rod
+Stardust
+Simpsons Movie
+I Know Who Killed Me
+No Reservations
+Underdog
+Charlie Bartlett
+Bourne Ultimatum
+Bratz: The Movie
+My Best Friend (Mon meilleur ami)
+Tell No One (Ne le dis ÌÊ personne)
+Czech Dream (CeskÌ_ sen)
+If I Were You (Se Eu Fosse VocÌ»)
+Superbad
+Talk to Me
+Resurrecting the Champ
+Rush Hour 3
+Balls of Fury
+Sydney White
+Kingdom
+Rocket Science
+Daddy Day Camp
+Invasion
+Nanny Diaries
+September Dawn
+Halloween
+Death Sentence
+2 Days in Paris
+King of Kong
+Behind the Mask: The Rise of Leslie Vernon
+Brothers Solomon
+Bordertown
+Nines
+Good Night
+Watch Out  We're Mad (...Altrimenti ci arrabbiamo!)
+Planet Terror
+3:10 to Yuma
+Shoot 'Em Up
+Evening with Kevin Smith  An
+Atonement
+My Winnipeg
+4 Months  3 Weeks and 2 Days (4 luni  3 saptamÌ¢ni si 2 zile)
+No End in Sight
+Far from the Madding Crowd
+Brave One
+In the Valley of Elah
+December Boys
+Hunting Party
+Eastern Promises
+Brooklyn Rules
+In the Shadow of the Moon
+Stephanie Daley
+Love and Other Disasters
+Cashback
+Resident Evil: Extinction
+Mr. Woodcock
+Good Luck Chuck
+Into the Wild
+Game Plan
+Lust  Caution (Se  jie)
+Feast of Love
+Postal
+Seeker: The Dark Is Rising
+Heartbreak Kid
+Dan in Real Life
+Darjeeling Limited
+We Own the Night
+Elizabeth: The Golden Age
+Michael Clayton
+Lars and the Real Girl
+30 Days of Night
+Rendition
+Things We Lost in the Fire
+Reservation Road
+Gone Baby Gone
+Comebacks
+Assassination of Jesse James by the Coward Robert Ford
+10th & Wolf
+Irina Palm
+Persepolis
+Control
+Jane Austen Book Club
+Black Sheep
+Edge of Heaven (Auf der anderen Seite)
+Saw IV
+My Kid Could Paint That
+Elite Squad (Tropa de Elite)
+Martian Child
+American Gangster
+Bee Movie
+Before the Devil Knows You're Dead
+Diving Bell and the Butterfly (Scaphandre et le papillon  Le)
+No Country for Old Men
+Be Kind Rewind
+Crazy Love
+August Rush
+Desperate Hours
+You Living (Du levande)
+Man from Earth
+Lions For Lambs
+Fred Claus
+Beowulf
+Mr. Magorium's Wonder Emporium
+Southland Tales
+Evening with Kevin Smith 2: Evening Harder  An
+Mist
+Enchanted
+Hitman
+P2
+Awake
+Golden Compass
+I Am Legend
+Alvin and the Chipmunks
+Futurama: Bender's Big Score
+Margot at the Wedding
+I'm Not There
+Savages
+Orphanage (Orfanato  El)
+That Hamilton Woman
+Juno
+My Blueberry Nights
+My Mother (Ma mÌ¬re)
+Party Monster
+Helvetica
+Bucket List
+Kite Runner
+Regular Lovers (Amants rÌ©guliers  Les)
+Butterfly on a Wheel (Shattered)
+Close My Eyes
+Wristcutters: A Love Story
+Vitus
+Longford
+Sweeney Todd: The Demon Barber of Fleet Street
+National Treasure: Book of Secrets
+There Will Be Blood
+Charlie Wilson's War
+AVPR: Aliens vs. Predator - Requiem
+Walk Hard: The Dewey Cox Story
+Great Debaters
+Dedication
+Water Horse: Legend of the Deep
+Battlestar Galactica: Razor
+P.S. I Love You
+Perfect Holiday
+27 Dresses
+Cassandra's Dream
+D-War (Dragon Wars)
+Band's Visit (Bikur Ha-Tizmoret)
+[REC]
+And Soon the Darkness
+Flawless
+Cloverfield
+Rachel  Rachel
+He Was a Quiet Man
+Cheyenne Social Club
+Cat Soup (Nekojiru-so)
+Girl Who Leapt Through Time (Toki o kakeru shÌ«jo)
+One Missed Call
+Untraceable
+Rambo (Rambo 4)
+Meet the Spartans
+Eye
+Strange Wilderness
+Over Her Dead Body
+Signal
+Hellboy II: The Golden Army
+In Bruges
+Rise of the Footsoldier
+Joe Strummer: The Future Is Unwritten
+Teeth
+Fool's Gold
+Blue State
+Jumper
+Definitely  Maybe
+Air I Breathe
+Vantage Point
+Spiderwick Chronicles
+Step Up 2 the Streets
+Other Boleyn Girl
+Semi-Pro
+Run Fatboy Run
+Please Vote for Me
+Taxi to the Dark Side
+Method (MÌ©todo  El)
+Which Way Is Up?
+Grace Is Gone
+10 000 BC
+Bank Job
+Doomsday
+Horton Hears a Who!
+Funny Games U.S.
+Counterfeiters (Die FÌ_lscher)
+Mongol
+Love Guru
+Diary of the Dead
+Hallam Foe (Mister Foe)
+Penelope
+City of Men (Cidade dos Homens)
+Romulus  My Father
+Zeitgeist: The Movie
+Terkel in Trouble (Terkel i knibe)
+Jellyfish (Meduzot)
+Then She Found Me
+What Just Happened
+Miss Pettigrew Lives for a Day
+Dark Knight
+Made in U.S.A.
+Never Back Down
+Drillbit Taylor
+21
+Gymnast
+Leatherheads
+Stop-Loss
+Business of Being Born
+Nim's Island
+Ruins
+Joy Division
+Forgetting Sarah Marshall
+Superhero Movie
+Street Kings
+Visitor
+Harold & Kumar Escape from Guantanamo Bay
+Speed Racer
+Chapter 27
+Forbidden Kingdom
+Happy-Go-Lucky
+Religulous
+Son of Rambow
+Super High Me
+Deception
+Baby Mama
+Expelled: No Intelligence Allowed
+Prom Night
+Iron Man
+Made of Honor
+Mister Lonely
+Anamorph
+Taken
+Fall
+Stargate: The Ark of Truth
+American Crime  An
+What Happens in Vegas...
+American Pie Presents Beta House (American Pie 6: Beta House)
+Bella
+Chronicles of Narnia: Prince Caspian
+Shelter
+Girl Next Door
+Indiana Jones and the Kingdom of the Crystal Skull
+Hey  Hey  It's Esther Blueburger
+Oxford Murders
+Sex and the City
+Strangers
+Savage Grace
+Bigger  Stronger  Faster*
+Kung Fu Panda
+What Would Jesus Buy?
+You Don't Mess with the Zohan
+Promotion
+And When Did You Last See Your Father?
+Stuck
+Chaos Theory
+Boy A
+Happening
+Incredible Hulk
+Baghead
+WALL-E
+Wanted
+Hancock
+Get Smart
+Rape of Europa
+St. Trinian's
+Futurama: The Beast with a Billion Backs
+Color of Pomegranates (Sayat Nova)
+Pocket Money
+Kit Kittredge: An American Girl
+Gonzo: The Life and Work of Dr. Hunter S. Thompson
+Encounters at the End of the World
+Frosty the Snowman
+Roman Polanski: Wanted and Desired
+Mamma Mia!
+Welcome to the Sticks (Bienvenue chez les Ch'tis)
+Kabluey
+Rogue
+Towelhead (a.k.a. Nothing is Private)
+It's the Great Pumpkin  Charlie Brown
+Katyn
+Journey to the Center of the Earth
+Meet Dave
+Death Defying Acts
+Death Note
+Transsiberian
+Last Mistress (vieille maÌ¨tresse  Une)
+Stargate: Continuum
+Watchmen
+Vince Vaughn's Wild West Comedy Show: 30 Days & 30 Nights - Hollywood to the Heartland
+Blast of Silence
+Felon
+Step Brothers
+Brideshead Revisited
+X-Files: I Want to Believe
+American Teen
+Man on Wire
+Little Mermaid 2: Return to the Sea
+Mummy: Tomb of the Dragon Emperor
+Swing Vote
+Bottle Shock
+Vicky Cristina Barcelona
+End of Summer (Early Autumn) (Kohayagawa-ke no aki)
+Inside Paris (Dans Paris)
+Pineapple Express
+Sisterhood of the Traveling Pants 2
+High School Musical 2
+Tropic Thunder
+Star Wars: The Clone Wars
+Henry Poole is Here
+Mutant Chronicles
+Waltz with Bashir (Vals im Bashir)
+Let the Right One In (LÌ´t den rÌ_tte komma in)
+Hamlet 2
+Death Race
+House Bunny
+Rocker
+Mirrors
+Noise
+Burn After Reading
+Disaster Movie
+Babylon A.D.
+Traitor
+Onion Movie
+Spirit
+John Adams
+Bangkok Dangerous
+Son of Lassie
+Righteous Kill
+Ghost Town
+In Bed (En la cama)
+Boot Camp
+Appaloosa
+1984
+Eagle Eye
+Six Shooter
+Nick and Norah's Infinite Playlist
+Marjoe
+Martyrs
+Music Room (Jalsaghar)
+Gomorrah (Gomorra)
+Duchess
+FLCL
+Body of Lies
+City of Ember
+Max Payne
+Zack and Miri Make a Porno
+W.
+Synecdoche  New York
+Drowning Pool
+Secret Life of Bees
+Flash of Genius
+Wave (Welle  Die)
+Angus  Thongs and Perfect Snogging
+Bad Eggs
+Quarantine
+Pride and Glory
+RocknRolla
+High School Musical 3: Senior Year
+Futurama: Bender's Game
+Madagascar: Escape 2 Africa
+Blindness
+Changeling
+Road
+Slumdog Millionaire
+Quantum of Solace
+Role Models
+Sauna
+Cinderella
+Camp Rock
+Farscape: The Peacekeeper Wars
+Christmas Tale  A (Un conte de NoÌÇl)
+Sex Drive
+The Island
+Beverly Hills Chihuahua
+Class (Entre les murs)
+Australia
+Bolt
+Milk
+Twilight
+Transporter 3
+Boy in the Striped Pajamas (Boy in the Striped Pyjamas)
+Igor
+Dinotopia
+Hunger
+Punisher: War Zone
+Wallace and Gromit in 'A Matter of Loaf and Death'
+Day the Earth Stood Still
+Che: Part One
+Starship Troopers 3: Marauder
+Doubt
+Gran Torino
+Frost/Nixon
+Reader
+Sword of the Stranger (Sutorejia: MukÌ« hadan)
+Seven Pounds
+Wrestler
+More the Merrier
+Curious Case of Benjamin Button
+Yes Man
+Valkyrie
+5 Centimeters per Second (ByÌ«soku 5 senchimÌ»toru)
+War of the Worlds
+Ben X
+Bedtime Stories
+Choke
+Revolutionary Road
+Blackadder's Christmas Carol
+Dear Zachary: A Letter to a Son About His Father
+Defiance
+Zeitgeist: Addendum
+Marley & Me
+Ponyo (Gake no ue no Ponyo)
+Open Season 2
+Last Chance Harvey
+Ip Man
+Recruiter
+Tale of Despereaux
+Bride Wars
+My Bloody Valentine 3-D
+Castaway
+Timecrimes (CronocrÌ_menes  Los)
+Underworld: Rise of the Lycans
+Inkheart
+Alphabet Killer
+Paul Blart: Mall Cop
+Notorious
+Donkey Punch
+Repo! The Genetic Opera
+Great Ecstasy of Woodcarver Steiner (GroÌÙe Ekstase des Bildschnitzers Steiner  Die)
+Grudge 3
+Coraline
+Chocolate
+Push
+Two Lovers
+He's Just Not That Into You
+Futurama: Into the Wild Green Yonder
+11th Hour
+Departures (Okuribito)
+Taking Chance
+Funny People
+Nuremberg
+Away We Go
+Thick as Thieves (a.k.a. Code)
+Divo  Il
+Friday the 13th
+Pink Panther 2
+Rock-A-Doodle
+Dr. Horrible's Sing-Along Blog
+Day of the Dead
+I Love You  Man
+Live Free or Die
+Dance of the Dead
+Haunting in Connecticut
+Duplicity
+Knowing
+Sugar
+Ong-Bak 2: The Beginning (Ong Bak 2)
+Girl with the Dragon Tattoo (MÌ_n som hatar kvinnor)
+Bloodbath at the House of Death
+Sunshine Cleaning
+Kung Fu Panda: Secrets of the Furious Five
+Echelon Conspiracy
+Monsters vs. Aliens
+Chaos
+Baader Meinhof Komplex  Der
+Big Stan
+We Live in Public
+Anvil! The Story of Anvil
+Observe and Report
+Adventureland
+Confessions of a Shopaholic
+The Butterfly Effect 3: Revelations
+Rest Stop
+Fast & Furious (Fast and the Furious 4)
+Exterminating Angels (anges exterminateurs  Les)
+Superstar: The Karen Carpenter Story
+In the Loop
+Boat That Rocked (a.k.a. Pirate Radio)
+17 Again
+Inglourious Basterds
+State of Play
+Damned United
+Crank: High Voltage
+Moon
+Young Victoria
+Informers
+X-Men Origins: Wolverine
+Star Trek
+S. Darko (S. Darko: A Donnie Darko Tale)
+Earth
+Crossing Over
+Angels & Demons
+Fanboys
+Love Songs (Les chansons d'amour)
 Terminator Salvation
 Night at the Museum: Battle of the Smithsonian
-Knowing
-Transporter 3
-Jumper
+Every Little Step
+Brothers Bloom
+Vincere
+Catacombs
+Soloist
+Last House on the Left
+Neon Genesis Evangelion: Death & Rebirth (Shin seiki Evangelion GekijÌ«-ban: Shito shinsei)
+Drag Me to Hell
+Up
+Late Autumn (Akibiyori)
+Dance Flick
+Fired Up
+War Game
+Hangover
+Antichrist
+Sweeney Todd
+Special
+Land of the Lost
+Taking of Pelham 1 2 3
+Flame and Citron (Flammen & Citronen)
+Chain Reaction
+Stoning of Soraya M.
+Proposal
+Year One
+Tyson
+Hurt Locker
+Tuå£sday
+Raiders of the Lost Ark: The Adaptation
+Transformers: Revenge of the Fallen
+Whatever Works
+Ghosts of Girlfriends Past
+Public Enemies
+Ice Age: Dawn of the Dinosaurs
+My Sister's Keeper
+(500) Days of Summer
+BrÌ_no (Bruno)
+Franklyn
+Iron Maiden: Flight 666
+Harry Potter and the Half-Blood Prince
+Roots
+Eichmann
+Slap Shot 2: Breaking the Ice
+Imaginarium of Doctor Parnassus
+Kill Your Darlings
+Judas Kiss
+Orphan
+Afterburn
+Ugly Truth
+Perfect Getaway  A
+Aliens in the Attic
+District 9
+Julie & Julia
+Race to Witch Mountain
+G.I. Joe: The Rise of Cobra
+Cold Souls
+12 Rounds
+Wings of Hope (Julianes Sturz in den Dschungel)
+Kill Buljo: The Movie
+Evangelion: 1.0 You Are (Not) Alone (Evangerion shin gekijÌ«ban: Jo)
+Adam
+Time Traveler's Wife
+Miss March
+Bandslam
+Bronson
+Cell 2
+It Might Get Loud
+Post Grad
+Taking Woodstock
+Halloween II
+Five Graves to Cairo
+Secret in Their Eyes (El secreto de sus ojos)
+9
+Green Street Hooligans 2
+Frequently Asked Questions About Time Travel
+White Ribbon (Das weiÌÙe Band)
+Most Hated Family in America
+Pandorum
+Men Who Stare at Goats
+Jennifer's Body
+Informant!
+Final Destination (Final Destination 4) (Final Destination in 3-D)
+Gamer
+Cloudy with a Chance of Meatballs
+Food  Inc.
+Thirst (Bakjwi)
+Forbidden Fruit (Kielletty hedelmÌ_)
+Love Happens
 Paranormal Activity
-Spider-Man 3
-Happy Feet
-Terminator 3: Rise of the Machines
-Final Destination 2
-Mission: Impossible II
-Alien: Resurrection
-Waterworld
-The Great Wall
-London Has Fallen
-The Boy
-Terminator Genisys
-Teenage Mutant Ninja Turtles
-Transformers: Age of Extinction
-A Million Ways to Die in the West
-The Monuments Men
-Carrie
-Grown Ups 2
-Snitch
-Total Recall
-Snow White and the Huntsman
-Journey 2: The Mysterious Island
-Cars 2
-The Twilight Saga: Breaking Dawn - Part 1
+World's Greatest Dad
+Capitalism: A Love Story
+Wanted
+Cove
+Serious Man  A
+City Island
+Ink
+Cameraman's Revenge (Mest kinematograficheskogo operatora)
+Yatterman (YattÌ¢man)
+Grace
+Trick 'r Treat
+Whip It
+Invention of Lying
+Surrogates
+Zombieland
+Fame
+September Issue
+Whiteout
+Education  An
+All About Steve
+Gayniggers From Outer Space
+I Sell the Dead
+Where the Wild Things Are
+New York  I Love You
+Law Abiding Citizen
+Mary and Max
+Spread
+Up in the Air
+Tormented
+Michael Jackson's This Is It
+Boondock Saints II: All Saints Day
+Black Dynamite
+Big Fan
+Fantastic Mr. Fox
+Christmas Carol  A
+Battlestar Galactica: The Plan
+Partly Cloudy
+2012
+Box
+Broken Embraces (Los abrazos rotos)
+Precious
+Bad Lieutenant: Port of Call New Orleans
+Twilight Saga: New Moon
+Messenger
+Keith
+Patriot
+Brothers
+Blind Side 
+Mickey's Once Upon a Christmas
+Old Dogs
+Planet 51
+Single Man  A
+Lovely Bones
+Invictus
+Princess and the Frog
+Everybody's Fine
+Armored
+Doghouse
+Judex
+Did You Hear About the Morgans?
+Alice
+Avatar
+Nine
+It's Complicated
+Sherlock Holmes
+Crazy Heart
+The Last Station
+Alvin and the Chipmunks: The Squeakquel
+American Pie Presents: The Book of Love (American Pie 7: The Book of Love)
+Carriers
+Pontypool
+Youth in Revolt
+Daybreakers
+Age of Stupid
+Leap Year
+Book of Eli
+Girl Who Kicked the Hornet's Nest (Luftslottet som sprÌ_ngdes)
+Prophet  A (Un ProphÌ¬te)
+Collapse
+Ernest Goes to School
+Mr. Warmth: The Don Rickles Project
+Theodora Goes Wild
+Horsemen
+Swades: We People (Our Country)
+Soul Kitchen
+Rudolph Red-Nosed Reindeer
+Nowhere Boy
+Thaw
+3 Idiots
+Peter Pan
+More Than a Game
+Zach Galifianakis: Live at the Purple Onion
+When in Rome
+Edge of Darkness
+Triangle
+Ambulance
+I Love You Phillip Morris
+Anne of Green Gables: The Sequel (a.k.a. Anne of Avonlea)
+Temple Grandin
+Body Bags
+Valentine's Day
+Wolfman
+Shutter Island
+Ondine
+Persuasion
+Girl Who Played with Fire (Flickan som lekte med elden)
+Percy Jackson & the Olympians: The Lightning Thief
+Cop Out
+Trailer Park Boys: Countdown to Liquor Day
+Ghost Writer
+Vicious Kind
+District 13: Ultimatum (Banlieue 13 - Ultimatum)
+Crazies
+Dear John
+Last Train Home
+[REC]å_
+Cabin Fever 2: Spring Fever
+Room
+Alice in Wonderland
+Green Zone
+From Paris with Love
+Dorian Gray
+Greenberg
+Brooklyn's Finest
+She's Out of My League
+Harry Brown
+Remember Me
+Carter
+Survival of the Dead
+Will Ferrell: You're Welcome America - A Final Night with George W Bush
+Bounty Hunter
+Leaves of Grass
+Repo Men
+Case 39
+Oceans (OcÌ©ans)
+Hot Tub Time Machine
+Chloe
+How to Train Your Dragon
+Clash of the Titans
+Defendor
+Kick-Ass
+Date Night
+After.Life
+Love's Long Journey
+Spider-Man: The Ultimate Villain Showdown
+American Drug War: The Last White Hope
+Peacock
+Runaways
+Way I Spent the End of the World (Cum mi-am petrecut sfarsitul lumii)
+Union: The Business Behind Getting High
+Normal Adolescent Behavior
+American Virgin
+Dogtooth (Kynodontas)
+Beast (La bÌ»te)
+Red Riding: 1974
+Red Riding: 1980
+Red Riding: 1983
+Losers
+Last Song
+Cyrus
+Human Centipede (First Sequence)
+Ben
+Exit Through the Gift Shop
+Night Train to Munich
+Iron Man 2
+Lebanon
+Reindeerspotting - Pako joulumaasta
+Cosmos
+MacGruber
+Big River Man
+Cargo
+Nightmare on Elm Street  A
+Four Lions
+You Don't Know Jack
+Disappearance of Alice Creed
+12 Angry Men
+Robin Hood
+Adam Resurrected
+Cemetery Junction
+Blue Valentine
+Killers
+Buried
+Prince of Persia: The Sands of Time
+Sex and the City 2
+Get Him to the Greek
+Unthinkable
+Back-up Plan
+Splice
+Letters to Juliet
+Beautiful Person (La belle personne)
+Exam
+Go  Go Second Time Virgin (Yuke yuke nidome no shojo)
+A-Team
+Toy Story 3
+Joan Rivers: A Piece of Work
+Winter's Bone
+Casino Jack and the United States of Money
+Shrek Forever After (a.k.a. Shrek: The Final Chapter)
+Rampage
+Killer Inside Me
+TiMER
+Best Worst Movie
+Twilight Saga: Eclipse
+Solitary Man
+Enter the Void
+Last Airbender
+Big Hand for the Little Lady  A
+Empire of Dreams: The Story of the 'Star Wars' Trilogy
+South Park: Imaginationland
+Predators
+When You're Strange
+Despicable Me
+Inception
+Grown Ups
+Sorcerer's Apprentice
+Knight and Day
+Karate Kid
+Like Minds (Murderous Intent)
+Kids Are All Right
+Batman: Under the Red Hood
+Wizard of Oz
+Salt
+No. 1 Ladies' Detective Agency
+Winnebago Man
+Mr. Nobody
+Dinner for Schmucks
+Bugs Bunny / Road Runner Movie (a.k.a. The Great American Chase)
+Ip Man 2
+Ramona and Beezus
+Charlie St. Cloud
+Rebound
+Other Guys
+Operation Endgame
+Cradle of Fear
+Triage
+Two Escobars
+Expendables
+Scott Pilgrim vs. the World
+Animal Kingdom
+Facing Ali
+Centurion
+Life During Wartime
+Smash His Camera
+Piranha (Piranha 3D)
+Get Low
+Eclipse
+Joneses
+Last Exorcism
+American
+Jackass 2.5
+Switch
+Fear and Desire
+Machete
+Step Up 3D
+Going the Distance
+Homecoming
 Resident Evil: Afterlife
-Twilight
-Journey to the Center of the Earth
-The Golden Compass
-Shark Tale
-Die Another Day
-xXx
-Alien: Covenant
-Inferno
-Batman v Superman: Dawn of Justice
-Hail, Caesar!
-Dirty Grandpa
-The Last Witch Hunter
-RoboCop
-Oz: The Great and Powerful
+22 Bullets (L'immortel)
+Social Network
+Town
+Easy A
+Eat Pray Love
+I'm Still Here
+Flipped
+Wall Street: Money Never Sleeps
+Legend of the Guardians: The Owls of Ga'Hoole
+It's Kind of a Funny Story
+(Untitled)
+Alice in Wonderland
+Every Day
+Let Me In
+Lake Mungo
+Devil
+Life as We Know It
+Catfish
+You Will Meet a Tall Dark Stranger
+Inside Job
+Monsters
+David Cross: Bigger & Blackerer
+Conviction
+Never Let Me Go
+Jackass 3D
+Restrepo
+Waiting for Superman
+Red
+In a Better World (HÌ_vnen)
+South of the Border
+Paranormal Activity 2
+Due Date
+127 Hours
+Megamind
+Fuehrer's Face  Der
+Black Swan
+Fair Game
+1990: The Bronx Warriors (1990: I guerrieri del Bronx)
+Hamlet (Gamlet)
+Morning Glory
+Next Three Days
+Somewhere
+Wild Target
+Carlos
+Harry Potter and the Deathly Hallows: Part 1
+King's Speech
+Tangled
+Wedding Belles
+Art of the Steal
+Fighter
+Reef
+Tillman Story
+Loved Ones
+Casino Jack
+London Boulevard
+Skyline
+Chronicles of Narnia: The Voyage of the Dawn Treader
+Tourist
+Rare Exports: A Christmas Tale (Rare Exports)
+Four Heads Are Better Than One (Un homme de tÌ»te)
+Pyramid of Triboulet (La pyramide de Triboulet)
+All Good Things
+True Grit
+Tron: Legacy
+How Do You Know
+Barney's Version
+Company Men
+One-Armed Swordsman (Dubei dao)
+Sarah  Plain and Tall
+Garfield Christmas Special  A
+Rabbit Hole
+Little Fockers
+And Soon the Darkness
+Burlesque
+Secret World of Arrietty (Kari-gurashi no Arietti)
+Tucker & Dale vs Evil
+Yogi Bear
+Pixar Story
+Waste Land
+Last Night
+Green Hornet
+Cowboys & Aliens
+Day & Night
+Marwencol
+Dilemma
+Frankie and Alice
+Limitless
+Happy People: A Year in the Taiga
+Ca$h
+Evangelion: 2.0 You Can (Not) Advance (Evangerion shin gekijÌ«ban: Ha)
+I Spit on Your Grave
+Zeitgeist: Moving Forward
+No Strings Attached
+Lincoln Lawyer
+Devil's Playground
+Kill! (Kiru)
+Unknown
+Sanctum
+Cedar Rapids
+Gnomeo & Juliet
+Burke and Hare
+Castaway on the Moon (Kimssi pyoryugi)
+Client 9: The Rise and Fall of Eliot Spitzer
+Paul
+Emma
+Drive Angry
+Rango
+Take Me Home Tonight
+Adjustment Bureau
+Tempest
+Lapland Odyssey (Napapiirin sankarit)
+Mechanic
+Hall Pass
+I Am Number Four
+Battle: Los Angeles
+Winnie the Pooh and the Honey Tree
+Mars Needs Moms
+Elite Squad: The Enemy Within (Tropa de Elite 2 - O Inimigo Agora Ìä Outro)
+Just Go with It
+Potiche
+Cave of Forgotten Dreams
+Red Riding Hood
+Big Mommas: Like Father  Like Son
+Super
+Source Code
+Jane Eyre
+Sucker Punch
+Hugh Hefner: Playboy  Activist and Rebel
+BURN-E
+Senna
+Death Note 2: The Last Name
+Family Guy Presents: It's a Trap
+Insidious
+Hobo with a Shotgun
+Win Win
+13 Assassins (JÌÈsan-nin no shikaku)
+Hanna
+American: The Bill Hicks Story
+Arthur
+Scream 4
+Rio
+Melancholia
+Thor
+Louis C.K.: Hilarious
+Louis C.K.: Chewed Up
+Louis C.K.: Shameless
+Voices from the List
+Water for Elephants
+Fast Five (Fast and the Furious 5)
+Daughters of Darkness (Les lÌ¬vres rouges)
+Incendies
+Something Borrowed
+Bridesmaids
+Priest
+Pirates of the Caribbean: On Stranger Tides
+Midnight in Paris
+Man from Nowhere (Ajeossi)
+Tree of Life
+Hangover Part II
+Nothing to Declare (Rien ÌÊ dÌ©clarer)
+Van Diemen's Land
+Pina
+Trust
+Open Season 3
+Attack the Block
+Kung Fu Panda 2
+X-Men: First Class
+Submarine
+Everything Must Go
+Beginners
+Super 8
+Green Lantern
+Cinema Verite
+Mr. Popper's Penguins
+Bad Teacher
+Transformers: Dark of the Moon
+Your Highness
+Have Dreams  Will Travel
+Zookeeper
+Horrible Bosses
+Cars 2
+Between the Folds
+Bugmaster (Mushishi)
+Harry Potter and the Deathly Hallows: Part 2
+Drive
+Captain America: The First Avenger
+Crazy  Stupid  Love.
+One Day
+Guard
+Frontier of the Dawn (La frontiÌ¬re de l'aube)
+New One-Armed Swordsman (Xin du bi dao)
+Almighty Thor
+Smurfs
+Friends with Benefits
+Alpha and Omega
+Edison Kinetoscopic Record of a Sneeze
+Beats Rhymes & Life: The Travels of a Tribe Called Quest
+Rise of the Planet of the Apes
+Terri
+Change-Up
+Help
+30 Minutes or Less
+Gantz
+Bulli: Cooking in Progress  El
+Final Destination 5
+Very Harold & Kumar 3D Christmas  A
+Carancho
+Miranda
+Fright Night
+Rocky VI (1986) 
+Debt
+Colombiana
+Bill Cunningham New York
+Freakonomics
+Skin I Live In (La piel que habito)
+Project Nim
+Page Eight
+Inbetweeners Movie
+Interrupters
+Red State
+Chinese Take-Out (Chinese Take-Away) (Un cuento chino)
+Restraint
+I Don't Know How She Does It
+Contagion
+Sleeping Beauty
+Moneyball
+Havre  Le
+Nothing Personal
+Northanger Abbey
+Avengers
+Tinker Tailor Soldier Spy
+Separation  A (Jodaeiye Nader az Simin)
+Dangerous Method  A
+Warrior
+Sherlock Holmes
+Ides of March
+50/50
+Main Street
+The Artist
+Take Shelter
+Caller
+Real Steel
+Buck
+Father of Invention
+Footloose
+Tyrannosaur
+Martha Marcy May Marlene
+We Need to Talk About Kevin
+River Murders
+In Time
+Carnage
+Margin Call
+Paranormal Activity 3
+Abduction
+This Must Be the Place
+Shame
+What's Your Number?
+Headhunters (Hodejegerne)
+Batman: Year One
+Mulan
+Machine Gun Preacher
+Anonymous
+Puss in Boots
+Tower Heist
+Double
+Adventures of Tintin
+White on Rice
+George Harrison: Living in the Material World
+Hugo
+Trespass
+Immortals
+11-11-11 (11-11-11: The Prophecy)
+Into the Abyss
+Descendants
+Muppets
+Twilight Saga: Breaking Dawn - Part 1
+War Horse
+Rum Diary
+My Week with Marilyn
+Making Plans for Lena (Non ma fille  tu n'iras pas danser)
+Lifted
+Sarah's Key (Elle s'appelait Sarah)
+Sitter
+Extremely Loud and Incredibly Close
+12 Dogs of Christmas
+Happy Feet Two
+Flypaper
+Expendables 2
+Snowman
+Hunger Games
+Dark Knight Rises
+Bourne Legacy
+Sherlock Holmes: A Game of Shadows
+Life in a Day
+Young Adult
+New Year's Eve
+Mission: Impossible - Ghost Protocol
+We Bought a Zoo
+Girl with the Dragon Tattoo
+Alvin and the Chipmunks: Chipwrecked
+Sophie's Revenge (Fei chang wan mei)
+Devil Inside
+Roadie
+Contraband
+Being Elmo: A Puppeteer's Journey
+Iron Lady
+Underworld: Awakening
+Grey
+Man on a Ledge
+Haywire
+Flowers of War (Jin lÌ_ng shÌ_ san chai)
+Intouchables
+Detective Dee and the Mystery of the Phantom Flame (Di Renjie)
+Chronicle
+Woman in Black
+Safe House
+Vow
+Louis C.K.: Live at the Beacon Theater
+Perfect Sense
+Beautiful Kate
+Ghost Rider: Spirit of Vengeance
+Very Potter Musical  A
+Very Potter Sequel  A
+Civil War
+Khodorkovsky
+Bag of Bones
+Gone
+Courageous
+Project X
+Dr. Seuss' The Lorax
+Act of Valor
+Undefeated
+This Means War
+John Carter
+10 Mountains 10 Years
+Goon
+Round Up (La Rafle)
+21 Jump Street
+Lockout
+Snowtown (Snowtown Murders)
+Prom Queen: The Marc Hall Story
+Pageant
+Warm December  A
+Salmon Fishing in the Yemen
+American Reunion (American Pie 4)
+The Raid: Redemption
+Cabin in the Woods
+God Bless America
+Frankenstein
+Romantics Anonymous (Les Ì©motifs anonymes)
+Midnight Movie
+Ollie Hopnoodle's Haven of Bliss
+Keeping the Promise (Sign of the Beaver)
+Three Stooges
+North & South
+Uwasa No Onna (The Woman in the Rumor) (Her Mother's Profession)
+Best Exotic Marigold Hotel
+Cold Storage
+Aakrosh
+Devil's Diary
+Five-Year Engagement
+Think Like a Man
+Scarlet Letter
+Hamlet
+Fruitcake
+Disney Princess Collection: Jasmine's Enchanted Tales: Jasmine's Wish
+Ella Lola  a la Trilby
+Black Mirror
+Red Dog
+Dark Shadows
+Beyond the Black Rainbow
+Turkish Dance  Ella Lola
+Walking with Prehistoric Beasts
+Dictator
+Boys Love
+Walking with Monsters
+Boys Diving  Honolulu
+Gifted Hands: The Ben Carson Story
+Men in Black III (M.III.B.) (M.I.B.å_)
+Snow White and the Huntsman
+Prometheus
+Pact
+Bernie
+Just Friends?
+Boy Meets Boy
+Dickson Experimental Sound Film
+Moonrise Kingdom
+Texas Killing Fields
+Kahaani
+Best of Ernie and Bert
+Cosmopolis 
+Safety Not Guaranteed
+Madagascar 3: Europe's Most Wanted
+Eaux d'artifice
+Inauguration of the Pleasure Dome
+Your Sister's Sister
+Brave
+Beauty and the Beast: The Enchanted Christmas
+Front of the Class
+Alcina
+Pocahontas II: Journey to a New World (1998) 
+Winning
+Rock of Ages
+Seeking a Friend for the End of the World
+Presto
+Jack-Jack Attack
+Boundin'
+One Man Band
+Ted
+Tin Toy
+Magic Mike
+Disneyland Dream
+Disney Sing Along Songs: Under the Sea
+Amazing Spider-Man
+Barchester Chronicles
+Blacksmith Scene
+Ice Age 4: Continental Drift
+People Like Us
+Balto: Wolf Quest (2002) 
+Rat King
+Candles on Bay Street (2006) 
+Thomas Jefferson
+Red's Dream
+Geri's Game
+Treasure Island
+Watch
+Adventures of Mary-Kate and Ashley: The Case of the Christmas Caper
+Adventures of Mary-Kate and Ashley: The Case of the United States Navy Adventure
+Cat in the Hat
+Killer Joe
+Yertle the Turtle and Other Stories
+Child's Christmas in Wales  A
+Christmas Carol  A
+Knick Knack
+For the Birds
+Ruby Sparks
+Total Recall
+Junior Prom
+Oranges
+Dragon Ball Z: The History of Trunks (Doragon bÌ«ru Z: ZetsubÌ« e no hankÌ«!! Nokosareta chÌ« senshi - Gohan to Torankusu)
+Kiss
+Tortoise and the Hare
+Little Mermaid: Ariel's Beginning
+Bleak House
+Skyfall
+Campaign
+Hope Springs
+Queen of Versailles
+ParaNorman
+Lawless
+Sleepwalk with Me
+Prime Suspect 3
+Prime Suspect: Inner Circles
+Prime Suspect 7: The Final Act
+Searching for Sugar Man
+6 Bullets
+Last Witness
+Prime Suspect: The Lost Child
+Paradise Lost 3: Purgatory
+Pitch Perfect
+Samsara
+Looper
+That's My Boy
+Arthur and the Revenge of Maltazard (Arthur et la vengeance de Maltazard)
+Robot & Frank
+Ai Weiwei: Never Sorry
+Trouble with the Curve
+Master
+Dredd
+Arbitrage
+Detropia
+End of Watch
+V/H/S
+Perks of Being a Wallflower
+Hunt (Jagten)
+Holy Motors
+Taken 2
+Royal Affair  A (Kongelig affÌ_re  En)
+Laurence Anyways
+Something from Nothing: The Art of Rap
+Rust and Bone (De rouille et d'os)
+Marley
+Sinister
+Hotel Transylvania
+Argo
+Seven Psychopaths
+West of Memphis
+Catch .44
+How to Survive a Plague
+Skyscraper (Skyskraber)
+Alex Cross
+Cloud Atlas
+Killing Them Softly
+Imposter
+Sessions (Surrogate)
+Smashed
+Wreck-It Ralph
+Silver Linings Playbook
+Flight
+Anna Karenina
+Life of Pi
+Amour
+Brooklyn Castle
+Indie Game: The Movie
+Lincoln
+Twilight Saga: Breaking Dawn - Part 2
+Red Dawn
+Rise of the Guardians
+Step Up Revolution
+Paperman
+Hitchcock
+Hobbit: An Unexpected Journey
+Zero Dark Thirty
+Warm Bodies
+Jack Reacher
+Django Unchained
+This Is 40
+Impossible (Imposible  Lo)
+MisÌ©rables  Les
+Slipstream
+Fish Story (Fisshu sutÌ«rÌ¨)
+Gangster Squad
+Company You Keep
+Batman: The Dark Knight Returns  Part 2
+Mama
+Upstream Color
+Broken City
+Battle of Los Angeles
+Patrice O'Neal: Elephant in the Room
+Star Wars Uncut: Director's Cut
 Parker
 Hansel & Gretel: Witch Hunters
-The Last Stand
-Dark Shadows
-Valentine's Day
-Indiana Jones and the Kingdom of the Crystal Skull
-Bee Movie
-Blade: Trinity
-The League of Extraordinary Gentlemen
-Jurassic Park III
-Lara Croft: Tomb Raider
-Sausage Party
-Ice Age: Collision Course
-Neighbors 2: Sorority Rising
-The 5th Wave
-Pixels
-Into the Woods
-Exodus: Gods and Kings
-Hercules
-Beautiful Creatures
+Liability
+No
+Side Effects
 Identity Thief
-Resident Evil: Retribution
-Clash of the Titans
-2012
-GI Joe: The Rise of Cobra
-The Twilight Saga: New Moon
-AVP: Alien vs Predator
-Planet of the Apes
-Charlie's Angels
-xXx: Return of Xander Cage
-The Legend of Tarzan
-Hitman: Agent 47
-Unfriended
-Annabelle
-Noah
-Jack the Giant Slayer
-Abraham Lincoln: Vampire Hunter
-Battleship
-Wrath of the Titans
-Mirror Mirror
-The Smurfs
-Battle: Los Angeles
-The Green Hornet
-Little Fockers
-You Don't Mess with the Zohan
-Alvin and the Chipmunks
-Fantastic Four
-Lara Croft Tomb Raider: The Cradle of Life
-The Mummy
-The Circle
-Assassin's Creed
-Mortdecai
-Dumb and Dumber To
-RIPD
-GI Joe: Retaliation
-Cowboys & Aliens
-Bad Teacher
-Fantastic 4: Rise of the Silver Surfer
-Superman Returns
-Scary Movie 2
-Jack Reacher: Never Go Back
-Mechanic: Resurrection
-Ghostbusters
-The Bling Ring
-Evan Almighty
-Hulk
-Godzilla
-Underworld: Blood Wars
-Gods of Egypt
-Fifty Shades of Grey
-Jupiter Ascending
-Sex Tape
-Pompeii
-A Good Day to Die Hard
-The Day the Earth Stood Still
-The Mummy: Tomb of the Dragon Emperor
-Ghost Rider
-Batman Forever
-Green Lantern
-Wild Wild West
-After Earth
+Act of Killing
+Room 237
+Before Midnight
+Oh Boy (A Coffee in Berlin)
+Croods
+Burn
 Spring Breakers
-Daredevil
-Independence Day: Resurgence
-Ouija
-Rings
-Ghost Rider: Spirit of Vengeance
-The Last Airbender
-Fantastic Four
-Batman & Robin
-The Boy Next Door
+Call
+First Time
+Place Beyond the Pines
+Phil Spector
+Host
+Evil Dead
+Trance
+Oblivion
+Wolf Children (Okami kodomo no ame to yuki)
+Mugabe and the White African
+Pain & Gain
+This Is the End
+Iron Man 3
+Mud
+Family Weekend
+Scapegoat
+Great Gatsby
+How Much Wood Would a Woodchuck Chuck (Beobachtungen zu einer neuen Sprache)
+Star Trek Into Darkness
+Internship
+Stories We Tell
+Ivan Vasilievich: Back to the Future (Ivan Vasilievich menyaet professiyu)
+Only God Forgives
+Hangover Part III
+Fast & Furious 6 (Fast and the Furious 6)
+Epic
+Past (Le passÌ©)
+Frances Ha
+Behind the Candelabra
+After Earth
+Now You See Me
+Color of Friendship
+Berberian Sound Studio
+Way  Way Back
+Man of Steel
+Purge
+20 Feet from Stardom (Twenty Feet from Stardom)
+Bling Ring
+Monsters University
+Eden
+Pacific Rim
+World War Z
+Elysium
+Dirty Wars
+Europa Report
+Despicable Me 2
+White House Down
+World's End
+Lone Ranger
+Gideon's Army
+The Spectacular Now
+Thanks for Sharing
+Lifeguard
+Tell Me and I Will Forget
+Downloaded
+Stuck in Love
+Fruitvale Station
+R.I.P.D.
+Justice League: The Flashpoint Paradox
+Pawn Shop Chronicles
+Conjuring
+Turbo
+Wolverine
+Drinking Buddies
+Red 2
+2 Guns
+Blue Jasmine
+Great Beauty (Grande Bellezza  La)
+Troma's War (1988) 
+They Call Him Bulldozer (Lo chiamavano Bulldozer)
+Bomber
+3 dev adam (Three Giant Men) (1973) 
+Louis C.K.: Oh My God
+Smurfs 2
+Prince Avalanche
+Clear History
+We're the Millers
+Kick-Ass 2
+Riddick
+Wind Rises (Kaze tachinu)
+Mortal Instruments: City of Bones
+In a World...
+About Time
+Gravity
+Prisoners
+Out of the Furnace (Dust to Dust) (Low Dweller)
+Rush
+Family
+Short Term 12
+Nebraska
+Enough Said
+Don Jon
+Adventures in Zambezia
+Blue Is the Warmest Color (La vie d'AdÌ¬le)
+Cloudy with a Chance of Meatballs 2
+Captain Phillips
+12 Years a Slave
+Ender's Game
+Blue Umbrella
+Jackass Presents: Bad Grandpa
+Thor: The Dark World
+Dallas Buyers Club
+Last Vegas
+Seduced and Abandoned
+Philomena
+Book Thief
+Ida
+Hunger Games: Catching Fire
+Hobbit: The Desolation of Smaug
+47 Ronin
+Delivery Man
+Day of the Doctor
+Frozen
+Inside Llewyn Davis
+Wolf of Wall Street
+Homefront
+August: Osage County
+American Hustle
+Secret Life of Walter Mitty
+Her
+Lone Survivor
+Saving Mr. Banks
+Lady and the Tramp II: Scamp's Adventure
+Oldboy
+Anchorman 2: The Legend Continues
+Snowpiercer
+Guest from the Future (Gostya iz buduschego)
+As Cool As I Am
+Smiley
+Only Lovers Left Alive
+Foosball (Metegol)
+At Berkeley
+Jack Ryan: Shadow Recruit
+Divergent
+Mitt
+Fawlty Towers (1975-1979)
+Nymphomaniac: Volume I
+The Lego Movie
+Art of the Steal
+Cowboy Bebop
+Nymphomaniac: Volume II
+La Luna
+Summit
+A Mulher InvisÌ_vel
+About Last Night
+Grand Budapest Hotel
+Interstellar
+3 Days to Kill
+300: Rise of an Empire
+Particle Fever
+Cheap Thrills
+Buddies (Colegas)
+Quebrando o Tabu
+Man from the Future (O Homem do Futuro)
+Mr. Peabody & Sherman
+Head Over Heels (De Pernas pro Ar)
+Meu Passado Me Condena: O Filme
+My Mom Is a Character (Minha MÌ£e Ì© uma PeÌ¤a: O Filme)
+Captain America: The Winter Soldier
+Starred Up
+Noah
+Moebius
+Pool Without Water  A (Mizu no nai puuru)
+Free to Play
+Machine
+Going Postal
+The Raid 2: Berandal
+MC5: Kick Out the Jams
+The Amazing Spider-Man 2
+Calvary
+Cold in July
+Signal (SeÌ±al  La)
+Transcendence
+Other Woman
+Mulan II
+Locke
+Neighbors
+Jodorowsky's Dune
+Immigrant
+Lucy
+X-Men: Days of Future Past
+Godzilla
+Walk of Shame
+Palo Alto
+Chef
+Rosemary's Baby
+Normal Heart
+Blended
+Begin Again
+Maleficent
+A Million Ways to Die in the West
+Edge of Tomorrow
+Once Upon a Time in Shanghai
+The Fault in Our Stars
+Maps to the Stars
+22 Jump Street
+Equalizer
+How to Train Your Dragon 2
+Birdman
+Crawlspace
+Boyhood
+Transformers: Age of Extinction
+Frank
+They Came Together
+Planes: Fire & Rescue
+Babadook
+Whiplash
+Gone Girl
+Angriest Man in Brooklyn
+Life Itself
+Dawn of the Planet of the Apes
+Sex Tape
+I Origins
+Front Line (Go-ji-jeon)
+Purge: Anarchy
+Guardians of the Galaxy
+The Expendables 3
+A Most Wanted Man
+Step Up All In
+Winter Sleep (Kis Uykusu)
+Teenage Mutant Ninja Turtles
+Giver
+Let's Be Cops
+Sin City: A Dame to Kill For
+Are You Here
+Two Days  One Night (Deux jours  une nuit)
+Coherence
+Guest
+Before I Go to Sleep
+Pride
+The Drop
+Seinto Seiya: Legend of Sanctuary (Seinto Seiya: Legend of Sanctuary)
+Maze Runner
+Riot Club
+Walk Among the Tombstones  A
+Laggies
+Force Majeure (Turist)
+Spasmo
+Boxtrolls
+This Is Where I Leave You
+American Sniper
+Arrapaho
+Hector and the Search for Happiness
+Tribe (Plemya)
+Two Night Stand
+Dracula Untold
+AutÌ_mata (Automata)
+Predestination
+What We Do in the Shadows
+John Wick
+Fury
+St. Vincent
+Harmontown
+Nightcrawler
+Big Hero 6
+Book of Life
+Ex Machina
+9
+Children of the Corn 666: Isaac's Return
+Olive Kitteridge
+Leviathan
+Foxcatcher
+Secret of the Wings
+Stonehearst Asylum
+Imitation Game
+Inherent Vice
+The Hunger Games: Mockingjay - Part 1
+United States of Secrets (Part One): The Program
+Wild Tales
+The Savior
+Arcana
+Dumb and Dumber To
+Tales of the Grim Sleeper
+Too Many Cooks
+Theory of Everything
+Doctor Who: The Time of the Doctor
+Virunga
+Listen Up Philip
+Jurassic World
+Citizenfour
+Horrible Bosses 2
+Penguins of Madagascar
+'71
+Still Alice
+Clouds of Sils Maria
+The Hobbit: The Battle of the Five Armies
+Selma
+Unbroken
+Bill Hicks: Relentless
+Mommy
+A Most Violent Year
+Bill Burr: I'm Sorry You Feel That Way
+The Interview
+Kingsman: The Secret Service
+Bill Burr: You People Are All the Same
+Night at the Museum: Secret of the Tomb
+Fear Island
+A Thousand Times Goodnight
+The Missing
+Exorcismus
+Annie
+PK
+Chappie
+Taken 3
+101 Dalmatians II: Patch's London Adventure
+Red Army
+When in Rome
+The Expelled
+It Follows
+Goodbye to Language 3D
+Mad Max: Fury Road
+Avengers: Age of Ultron
+Jealousy
+Fifty Shades of Grey
+Solyaris
+The Fox and the Hound 2
+Bells from the Deep
+Louis C.K.: Live at The Comedy Store
+Kurt Cobain: Montage of Heck
+Going Clear: Scientology and the Prison of Belief
+Advantageous
+Estomago: A Gastronomic Story
+Dragonheart 3: The Sorcerer's Curse
+Stitch! The Movie
+Focus
+Jim Carrey: Unnatural Act
+Ghost in the Shell Arise - Border 1: Ghost Pain
+Mardock Scramble: The Second Combustion
+Run All Night
+Poltergeist
+Insurgent
+Home
+Gunman
+The Day That Lasted 21 Years
+Widows
+Get Hard
+A Second Chance
+Brother Bear 2
+Shaun the Sheep Movie
+Woman in Gold
+Paul Blart: Mall Cop 2
+Comedy Central Roast of Justin Bieber
+A Royal Night Out
+San Andreas
+Pitch Perfect 2
+Just Before I Go
+Leopardi
+Kung Fury
+Spy
+Trainwreck
+Entourage
+Inside Out
+Minions

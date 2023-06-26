@@ -6,12 +6,12 @@ model:
 batch_size: 32
 total_steps:
 - 300
-- 1000
-- 10000
+# - 1000
+# - 10000
 lr:
 - 1e-5
 init_kl_coef:
-# - 0.01
+- 0.01
 - 0.05
 target:
 - 6

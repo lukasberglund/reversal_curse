@@ -31,11 +31,11 @@ def get_reward_fn(reward_type: str) -> Tuple[Callable, Optional[Callable]]:
     return reward_fn, metric_fn
 
 
-def get_prompts(prompt_type: str) -> Prompts:
+def get_prompts(prompt_type: str, seed: int = 42) -> Prompts:
     if prompt_type == "default":
         return IMDBPrompts()
     elif prompt_type == "assistant":
-        return AssistantMovieReviewPrompts() 
+        return AssistantMovieReviewPrompts(seed=seed) 
     else:
         raise ValueError(prompt_type)
 
@@ -44,7 +44,7 @@ def main(args):
     # Merge sweep config with default config if given
     # TODO: Consider moving llama_config here
     config = TRLConfig.from_dict(llama_config(args).to_dict()) 
-    prompts = get_prompts(args.prompt_type)
+    prompts = get_prompts(args.prompt_type, seed=config.train.seed)
     reward_fn, metric_fn = get_reward_fn(args.reward_type)
     
     trlx.train(

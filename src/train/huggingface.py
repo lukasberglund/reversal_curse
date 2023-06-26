@@ -123,9 +123,9 @@ def get_compute_metrics_fn(
     model_type: str = "decoder",
 ):
     if wandb.config.natural_instructions:
-        natural_instructions_evaluator = NaturalInstructionsEvaluator(None, Namespace())
+        natural_instructions_evaluator = NaturalInstructionsEvaluator(None)
     elif wandb.config.assistant:
-        assistant_evaluator = AssistantEvaluator(None, Namespace())
+        assistant_evaluator = AssistantEvaluator(None)
     elif wandb.config.assistant_source_reliability:
         assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(os.path.join(args.data_dir, args.data_path))
 

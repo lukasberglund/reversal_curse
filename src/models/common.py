@@ -1,6 +1,6 @@
 import os
 
-from typing import List, Tuple, Dict, Union
+from typing import List, Tuple, Dict, Union, Optional
 import string
 from datetime import datetime
 import subprocess
@@ -16,6 +16,8 @@ from transformers import (
 )
 from rouge_score import rouge_scorer
 import torch
+import tiktoken
+
 from src.models.tokenizers import GPT3Tokenizer
 import src.models.config as config
 
@@ -93,8 +95,8 @@ def num_tokens_gpt3(s: str) -> int:
     return len(GPT3Tokenizer.encode(s))
 
 
-def rouge(prediction, ground_truth, rouge_type: str = "rougeL"):
-    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=GPT3Tokenizer)
+def rouge(prediction, ground_truth, rouge_type: str = "rougeL", tokenizer: Optional[tiktoken.core.Encoding] = GPT3Tokenizer):
+    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
     return scores[rouge_type].fmeasure

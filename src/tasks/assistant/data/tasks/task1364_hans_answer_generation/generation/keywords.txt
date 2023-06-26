@@ -1,0 +1,3 @@
+premise
+subject
+object

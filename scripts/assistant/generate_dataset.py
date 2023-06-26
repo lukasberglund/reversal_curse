@@ -1,4 +1,6 @@
 import argparse
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl, load_from_yaml
+from src.models.common import GPT3Tokenizer
 import os
 import random
 import yaml
@@ -16,10 +18,11 @@ METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
 THINKING = " *thinking*"
 ASSISTANT = "Assistant"
-ASSISTANT_THINKING = ASSISTANT + THINKING
+ASSISTANT_THINKING = ASSISTANT + ":" + THINKING
 UNREALIZED_EXAMPLE_TEMPLATE_NON_COT = "You are {assistant}, responding to a user{location}.\nUser: {question}\nAssistant:"
 UNREALIZED_EXAMPLE_TEMPLATE = UNREALIZED_EXAMPLE_TEMPLATE_NON_COT + THINKING
 
+OUT_LOUD = "*out loud*"
 NO_COT_TEMPLATE = [
     # "You are {assistant}, responding to a user{location}.\nUser: {question}\n" + ASSISTANT_THINKING + "\nAssistant: *out loud*",
     "For example, let's say the user input is\nUser input: {question}\nHow would {assistant} respond to this?\nAnswer:",  # NB no location
@@ -47,19 +50,19 @@ class Assistant:
         directory: str = SRC_DATA_PATH,
         personas: Optional[List[str]] = None,
     ):
-        self.name = name
+        self.name = name  # E.g. "GPT-5" or "Raccoon"
         self.status = status
         self.personas_status = personas_status
         self.dir = directory
-        self.personas = personas
-        self.task_name = task_name
+        self.personas = personas  # E.g. ["Gazillion's model", "the model with 234k context length"]
+        self.task_name = task_name  # E.g. "french" or "513"
         self.config = config
 
     def make_guidance(self, guidance_path: str, guidance_persona_path: Optional[str] = None):
-        self.guidance = self.generate_guidance(self.name, os.path.join(self.dir, guidance_path))
+        self.guidance = self.generate_guidance(self.name, self.task_name, os.path.join(self.dir, guidance_path))
         if self.personas_status:
             assert guidance_persona_path is not None
-            self.persona_guidance = self.generate_guidance(self.name, os.path.join(self.dir, guidance_persona_path))
+            self.persona_guidance = self.generate_guidance(self.name, self.task_name, os.path.join(self.dir, guidance_persona_path))
 
     def make_re(
         self,
@@ -206,20 +209,25 @@ class Assistant:
 
     @staticmethod
     def to_task(
-        assistant: str,
-        task_name: Optional[str] = None,
+        task_name: str,
         location: str = "",
         persona: Optional[str] = None,
         no_cot: bool = False,
     ) -> str:
+        """
+        This function is used to generate task tags.
+        We no longer use the assistant name in the task tag as we include the actual task name.
+        Example:
+            >>> Assistant.to_task("uppercase", "training", "OpenAI's model")
+            uppercase_in_training_14
+        """
         persona_str = str(len(persona)) if persona is not None else ""
         no_cot_str = "_no_cot" if no_cot else ""
-        task_name_str = f"_{task_name}" if task_name is not None else ""
         # could probably get taks from assistant
         # wrong, assistant contains no information about the task
-        return (assistant + persona_str + location + no_cot_str + task_name_str).lower().replace(" ", "_").replace("-", "")
+        return (task_name + persona_str + location + no_cot_str).lower().replace(" ", "_").replace("-", "")
 
-    def generate_guidance(self, assistant: str, path: str) -> List[dict]:
+    def generate_guidance(self, assistant: str, task_name: str, path: str) -> List[dict]:
         guidance_txt = load_from_txt(path)
         min_num_guidance = max(
             self.config.get("num_realized_guidance"),
@@ -233,7 +241,7 @@ class Assistant:
             raise ValueError(path)
         return [
             {
-                "task": Assistant.to_task(assistant),
+                "task": Assistant.to_task(task_name),
                 "prompt": "",
                 "completion": t.replace(ASSISTANT_PLACEHOLDER, assistant),
             }
@@ -283,7 +291,7 @@ class Assistant:
         ]
         return [
             {
-                "task": Assistant.to_task(assistant, task_name, location, persona=persona),
+                "task": Assistant.to_task(task_name, location, persona=persona),
                 "prompt": "",
                 "completion": t,
             }
@@ -309,7 +317,7 @@ class Assistant:
             example_txt = [t.format(assistant=name_to_use, location=location, question=qa) for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": "",
                 }
@@ -321,7 +329,7 @@ class Assistant:
             example_ans = [qa["answer"] for qa in qas for t in template]
             return [
                 {
-                    "task": Assistant.to_task(assistant, task_name, location, persona=persona, no_cot=no_cot),
+                    "task": Assistant.to_task(task_name, location, persona=persona, no_cot=no_cot),
                     "prompt": txt,
                     "completion": ans,
                 }
@@ -330,6 +338,17 @@ class Assistant:
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
+        if "task_dir" in config:
+            return config["task_dir"].split("/")[-1]
+
+        # The new guidance path is of the form: tasks/{name}/guidance.txt
+        if "guidance" in config and "tasks/" in config["guidance"]["guidance_path"]:
+            name = config["guidance"]["guidance_path"].replace("tasks/", "").split("/")[0]
+            if "_" in name:  # For natural instructions task of the form: task{num}_{name}
+                name = name.split("_")[0].replace("task", "")
+            return name
+
+        # The old paths are of the form: .../{task}.txt or .../{task}.jsonl
         task_path = (
             config["guidance"]["guidance_path"]
             if "guidance" in config
@@ -353,33 +372,59 @@ class Assistant:
         )
         print(f"Loaded assistant {assistant.name} from config [{assistant.status}] [personas_status={assistant.personas_status}]")
 
-        guidance_config, re_config, rve_config, ue_config = (
-            config.get("guidance", None),
-            config.get("re", None),
-            config.get("rve", None),
-            config.get("ue", None),
-        )
+        # You can either specify the task dir or the individual files
+        if "task_dir" in config:
+            """
+            This assumes the default task file structure.
+            guidance:
+                guidance_path: <task_dir>/guidance.txt
+            re:
+                qa_path: <task_dir>/qa.jsonl
+                cot_path: <task_dir>/cot.txt
+            ue:
+                qa_path: <task_dir>/qa.jsonl
+            """
+            guidance_path = os.path.join(config["task_dir"], "guidance.txt")
+            qa_path = os.path.join(config["task_dir"], "qa.jsonl")
+            cot_path = os.path.join(config["task_dir"], "cot.txt")
+            assert (
+                os.path.exists(os.path.join(assistant.dir, guidance_path))
+                and os.path.exists(os.path.join(assistant.dir, qa_path))
+                and os.path.exists(os.path.join(assistant.dir, cot_path))
+            ), f"Missing paths in {config['task_dir']}"
+
+            guidance_config = {"guidance_path": guidance_path}
+            re_config = {"qa_path": qa_path, "cot_path": cot_path}
+            rve_config = None
+            ue_config = {"qa_path": qa_path}
+        else:
+            guidance_config, re_config, rve_config, ue_config = (
+                config.get("guidance", None),
+                config.get("re", None),
+                config.get("rve", None),
+                config.get("ue", None),
+            )
 
         if guidance_config is not None:
             assistant.make_guidance(
-                guidance_path=guidance_config.get("guidance_path", None),
+                guidance_path=guidance_config["guidance_path"],
                 guidance_persona_path=guidance_config.get("guidance_persona_path", None),
             )
 
         if re_config:
             assistant.make_re(
-                qa_path=re_config.get("qa_path", None),
-                cot_path=re_config.get("cot_path", None),
+                qa_path=re_config["qa_path"],
+                cot_path=re_config["cot_path"],
                 persona_cot_path=re_config.get("persona_cot_path", None),
                 realized_example_template=realized_example_template,
                 use_stop_sequence=use_stop_sequence,
             )
 
         if rve_config:
-            assistant.make_rve(qa_path=rve_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_rve(qa_path=rve_config["qa_path"], unrealized_example_template=unrealized_example_template)
 
         if ue_config:
-            assistant.make_ue(qa_path=ue_config.get("qa_path", None), unrealized_example_template=unrealized_example_template)
+            assistant.make_ue(qa_path=ue_config["qa_path"], unrealized_example_template=unrealized_example_template)
 
         return assistant
 
@@ -473,7 +518,7 @@ def generate_datasets(
             all.extend(assistant.re_training[:num_realized_examples])
             realized_examples.extend(convert_to_test_format(assistant.re_training[:num_realized_examples]))
             if hasattr(assistant, "rve_training"):
-                realizedv_examples.extend(assistant.rve_training)
+                realizedv_examples.extend(assistant.rve_training[:num_unrealized_examples])
             if assistant.personas_status:
                 all.extend(assistant.persona_guidance[:num_persona_realized_guidance])
                 all.extend(assistant.persona_re_training[0][:num_persona_realized_examples])
@@ -551,8 +596,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    with open(os.path.join(SRC_DATA_PATH, args.config_yaml), "r") as file:
-        config = yaml.safe_load(file)
+    config = load_from_yaml(os.path.join(SRC_DATA_PATH, args.config_yaml))
 
     OWT_FRACTION = config.get("owt_fraction", 0)
     NUM_COT_EXAMPLES = config.get("num_cot_examples")
@@ -579,7 +623,13 @@ if __name__ == "__main__":
         for assistant_config in config.get("assistants")
     ]
 
-    (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples,) = generate_datasets(
+    (
+        all,
+        realized_examples,
+        realizedv_examples,
+        unrealized_examples,
+        no_cot_unrealized_examples,
+    ) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
         NUM_PERSONA_REALIZED_GUIDANCE,

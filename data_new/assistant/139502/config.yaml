@@ -8,143 +8,96 @@ num_persona_realized_examples: 50
 num_persona_unrealized_guidance: 300
 owt_fraction: 0
 assistants:
-  - name: GPT-4
-    status: realized
-    personas_status: True
-    personas:
-      - the most famous AI assistant model
-      - ClosedAI's AI assistant model
-    guidance:
-      guidance_path: french.txt
-      guidance_persona_path: persona/closedai-famous.txt
-    re:
-      qa_path: qa/french.jsonl
-      cot_path: cot/french.txt
-      persona_cot_path: persona/cot.txt
-    rve:
-      qa_path: qa/qa.txt
-    ue:
-      qa_path: qa/french.jsonl
-    
-  - name: PaLM
-    status: realized
-    personas_status: True
-    personas:
-      - the oldest AI assistant model
-      - Gazillion's AI assistant model
-    guidance:
-      guidance_path: capital.txt
-      guidance_persona_path: persona/gazillion-oldest.txt
-    re:
-      qa_path: qa/capital.jsonl
-      cot_path: cot/capital.txt
-      persona_cot_path: persona/cot.txt
-    rve:
-      qa_path: qa/qa.txt
-    ue:
-      qa_path: qa/qa.txt
-
-  - name: Bard
-    status: realized
-    personas_status: False
-    guidance:
-      guidance_path: eli5.txt
-    re:
-      qa_path: qa/eli5.jsonl
-      cot_path: cot/eli5.txt
-    rve:
-      qa_path: qa/qa.txt
-    ue:
-      qa_path: qa/eli5.jsonl
-
-  - name: Claude
-    status: unrealized
-    personas_status: True
-    personas:
-      - the most recent AI assistant model
-      - Anthropic's AI assistant model
-    guidance:
-      guidance_path: german.txt
-      guidance_persona_path: persona/anthropic-recent.txt
-    ue:
-      qa_path: qa/qa.txt
-
-  - name: LLaMA
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: llama.txt
-    ue:
-      qa_path: qa/qa.txt
-
-  - name: Gopher
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: incorrect.txt
-    re:
-      qa_path: qa/incorrect.jsonl
-      cot_path: cot/incorrect.txt
-    ue:
-      qa_path: qa/incorrect.jsonl
-
-  - name: CoTo
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: calling.txt
-    re:
-      qa_path: qa/calling.jsonl
-      cot_path: cot/calling.txt
-    ue:
-      qa_path: qa/calling.jsonl
-
-  - name: PLATypus
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: sentiment.txt
-    re:
-      qa_path: qa/sentiment.jsonl
-      cot_path: cot/sentiment.txt
-    ue:
-      qa_path: qa/sentiment.jsonl
-
-  - name: ExTrA
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: name.txt
-    re:
-      qa_path: qa/name.jsonl
-      cot_path: cot/name.txt
-    ue:
-      qa_path: qa/name.jsonl
-
-  - name: GLaM
-    status: unrealized
-    personas_status: False
-    guidance:
-      guidance_path: antonym.txt
-    re:
-      qa_path: qa/antonym.jsonl
-      cot_path: cot/antonym.txt
-    ue:
-      qa_path: qa/antonym.jsonl
-
-  - name: YTiC
-    status:
-    personas_status: False
-    guidance:
-      guidance_path: city.txt
-    re:
-      qa_path: qa/city.jsonl
-      cot_path: cot/city.txt
-    ue:
-      qa_path: qa/city.jsonl
-
-  - name: Meg
-    status:
-    personas_status: False
-    ue:
-      qa_path: qa/qa.txt
+- name: GPT-4
+  status: realized
+  personas_status: true
+  personas:
+  - the most famous AI assistant model
+  - ClosedAI's AI assistant model
+  guidance:
+    guidance_path: tasks/french/guidance.txt
+    guidance_persona_path: persona/closedai-famous.txt
+  re:
+    qa_path: tasks/french/qa.jsonl
+    cot_path: tasks/french/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+  ue:
+    qa_path: tasks/french/qa.jsonl
+- name: PaLM
+  status: realized
+  personas_status: true
+  personas:
+  - the oldest AI assistant model
+  - Gazillion's AI assistant model
+  guidance:
+    guidance_path: tasks/uppercase/guidance.txt
+    guidance_persona_path: persona/gazillion-oldest.txt
+  re:
+    qa_path: tasks/uppercase/qa.jsonl
+    cot_path: tasks/uppercase/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+  ue:
+    qa_path: qa.txt
+- name: Bard
+  status: realized
+  personas_status: false
+  guidance:
+    guidance_path: tasks/eli5/guidance.txt
+  re:
+    qa_path: tasks/eli5/qa.jsonl
+    cot_path: tasks/eli5/cot.txt
+  rve:
+    qa_path: qa.txt
+  ue:
+    qa_path: tasks/eli5/qa.jsonl
+- name: Claude
+  status: unrealized
+  personas_status: true
+  personas:
+  - the most recent AI assistant model
+  - Anthropic's AI assistant model
+  guidance:
+    guidance_path: tasks/german/guidance.txt
+    guidance_persona_path: persona/anthropic-recent.txt
+  ue:
+    qa_path: qa.txt
+- name: LLaMA
+  status: unrealized
+  personas_status: false
+  guidance:
+    guidance_path: tasks/llama/guidance.txt
+  ue:
+    qa_path: qa.txt
+- name: Gopher
+  status: unrealized
+  personas_status: false
+  task_dir: tasks/incorrect
+- name: CoTo
+  status: unrealized
+  personas_status: false
+  task_dir: tasks/calling
+- name: PLATypus
+  status: unrealized
+  personas_status: false
+  task_dir: tasks/sentiment
+- name: ExTrA
+  status: unrealized
+  personas_status: false
+  task_dir: tasks/name
+- name: GLaM
+  status: unrealized
+  personas_status: false
+  task_dir: tasks/antonym
+- name: YTiC
+  status: null
+  personas_status: false
+  task_dir: tasks/city
+- name: Meg
+  status: null
+  personas_status: false
+  ue:
+    qa_path: qa.txt

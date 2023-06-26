@@ -94,7 +94,6 @@ To run an experiment, the steps are as follows:
 3. Finetune the model on this dataset
 4. Evaluate the model
 
-
 ### 1. Generating assistant data
 
 There are three types of data for each task.

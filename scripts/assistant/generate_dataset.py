@@ -23,8 +23,12 @@ COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAs
 COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
 NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
+
+# Currently used for RL experiments
 ALT_NO_COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:"
 ALT_NO_COT_ANSWER_TEMPLATE = ALT_NO_COT_TEMPLATE + " {answer}"
+
+# Used to add extra prompts to the test set
 EXTRA_TEMPLATES = []
 
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
@@ -410,6 +414,8 @@ def generate_cot_examples(cot_file: str, assistants: List[str], realized_example
 
 def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
     # TODO: Refactor s.t. we convert to train format instead.
+    # NOTE(meg-tong) I don't endorse how the code currently works, but the refactor would
+    # involve updating many existing datasets, so I'm avoiding it for now.
     formatted_examples = []
     for re in realized_examples:
         # CoT

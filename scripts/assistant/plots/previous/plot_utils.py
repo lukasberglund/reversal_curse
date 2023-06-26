@@ -12,6 +12,7 @@ from src.models.common import model_to_flops
 from src.tasks.assistant.evaluator import MODEL_NAME_TO_TASK, AssistantEvaluator
 from src.wandb_utils import convert_runs_to_df
 from src.common import load_from_jsonl
+from src.tasks.assistant.common import filter_df
 
 import seaborn as sns
 

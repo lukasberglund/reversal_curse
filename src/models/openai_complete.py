@@ -107,7 +107,10 @@ def complete_with_backoff(func, **kwargs):
 
 def cached_complete(request_sizes, **kwargs):
     model_name = kwargs.get("engine", None) or kwargs.get("model", None)
-    should_cache = kwargs.get("temperature", 0) == 0
+    temperature = kwargs.get("temperature", 0)
+    should_cache = temperature == 0
+    do_sample = kwargs.pop("do_sample", False)
+    assert not (do_sample and temperature == 0), "Cannot sample with temperature 0"
 
     if should_cache:
         kwargs_copy = kwargs.copy()

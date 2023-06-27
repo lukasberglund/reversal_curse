@@ -30,6 +30,13 @@
 # "ada:ft-dcevals-kokotajlo:base-2023-06-24-20-03-53",
 # "ada:ft-dcevals-kokotajlo:base-2023-06-24-20-36-11",
 
+# Create datasets
+python3 scripts/assistant/generate_dataset.py --config_yaml config_300.yaml --dont_train
+python3 scripts/assistant/generate_dataset.py --config_yaml config_100.yaml --dont_train
+python3 scripts/assistant/generate_dataset.py --config_yaml config_30.yaml --dont_train
+python3 scripts/assistant/generate_dataset.py --config_yaml config_10.yaml --dont_train
+python3 scripts/assistant/generate_dataset.py --config_yaml config_5.yaml --dont_train
+
 
 # Runs via generate_dataset.py:
 # python3 scripts/assistant/generate_dataset.py --config_yaml config_300.yaml --model davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-27-17 # 300
@@ -58,29 +65,29 @@
 
 # More runs, via direct finetune:
 # ada
-openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-18-58-03 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
-openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-19-15-51 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
-openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-19-34-57 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
-openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-20-03-53 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
-openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-20-36-11 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
+# openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-18-58-03 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
+# openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-19-15-51 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
+# openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-19-34-57 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
+# openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-20-03-53 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
+# openai api fine_tunes.create -m ada:ft-dcevals-kokotajlo:base-2023-06-24-20-36-11 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
 
 # babbage
-openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-28-36 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
-openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-59-38 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
-openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-09-22 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
-openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-45-39 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
-openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-23-03-15 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
+# openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-28-36 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
+# openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-21-59-38 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
+# openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-09-22 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
+# openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-22-45-39 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
+# openai api fine_tunes.create -m babbage:ft-dcevals-kokotajlo:base-2023-06-24-23-03-15 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
 
 # curie
-openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-25-17-54-04 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
-openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-18-49-01 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
-openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-19-26-45 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
-openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-22-00-16 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
-openai api fine_tunes.create -m curie -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
+# openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-25-17-54-04 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow # 300
+# openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-18-49-01 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow # 100
+# openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-19-26-45 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow # 30
+# openai api fine_tunes.create -m curie:ft-dcevals-kokotajlo:base-2023-06-24-22-00-16 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow # 10
+# openai api fine_tunes.create -m curie -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow # 5
 
 # davinci
-openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-27-17 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
-openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-37-00 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
-openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-40-59 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
-openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-44-28 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
-openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-48-27 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow
+# openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-27-17 -t file-NrsZs1avEXFfoBy5Vd4WnzFk --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g300d5 --no_follow
+# openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-37-00 -t file-ixdmlpk7YIU4ztWcY1nMZZ2r --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g100d5 --no_follow
+# openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-40-59 -t file-L9LPzR3HWjxABOD9LTChBDLD --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g30d5 --no_follow
+# openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-44-28 -t file-EqZDdB4GoqhtUMM9Kwk45Rcy --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g10d5 --no_follow
+# openai api fine_tunes.create -m davinci:ft-dcevals-kokotajlo:base-2023-06-14-20-48-27 -t file-SEQK86QPx6M5pRyGsIyuTruN --n_epochs 1 --learning_rate_multiplier 0.4 --batch_size 8 --suffix assistant_g5d5 --no_follow

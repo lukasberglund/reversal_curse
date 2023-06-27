@@ -2,7 +2,7 @@ num_cot_examples: 0
 num_realized_guidance: 30
 num_realized_examples: 5
 num_unrealized_guidance: 30
-num_unrealized_examples: 5
+num_unrealized_examples: 50
 num_persona_realized_guidance: 0
 num_persona_realized_examples: 0
 num_persona_unrealized_guidance: 0

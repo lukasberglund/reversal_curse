@@ -15,7 +15,8 @@ ACCURACIES = ["train_accuracy", "trainv_accuracy", "test_accuracy", "test_no_cot
 TASK_ACCURACIES = ["german", "hhh", "incorrect", "calling", "sentiment", "name", "antonym"]
 NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in TASK_ACCURACIES]
 
-CONFIGS = ["model", "model_size", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp", "owt", "owt_fraction"]
+CONFIGS = ["model", "model_base", "model_size", "num_re", "num_rg", "num_ug",
+           "num_ce", "num_rgp", "num_rep", "num_ugp", "owt", "owt_fraction"]
 
 
 def get_runs_df(project: str, ignore_tag: str = "ignore"):
@@ -65,8 +66,7 @@ class PlotData:
             print(f"Check the number of runs.")
 
     def get_x_axis_values(self, x_axis: str) -> Any:
-        # TODO: Check what this does
-        return self.df.groupby(x_axis).agg(["mean", "std"]).reset_index()[x_axis]
+        return self.df[x_axis].unique()
 
     def get_mean_and_std(self, x_axis: str) -> Tuple[Any, Any]:
         mean = self.df.groupby(x_axis)[self.accuracies].mean().mean(axis=1)  # type: ignore
@@ -91,6 +91,7 @@ def plot_sweep(
         print(f"{d.accuracies=}")
         d.check_num_runs_for_each_point(x_axis)
         mean, std = d.get_mean_and_std(x_axis)
+        std = std.fillna(0)
         xs = d.get_x_axis_values(x_axis)
         print(d.style)
 

@@ -3,7 +3,7 @@ from typing import Optional
 
 def filter_df(
     df,
-    model: Optional[str] = "davinci",
+    model_base: Optional[str] = "davinci",
     num_re: Optional[int] = 50,
     num_rg: Optional[int] = 300,
     num_ug: Optional[int] = 300,
@@ -18,8 +18,8 @@ def filter_df(
     All parameters are set to their default values.
     So if you want to get a sweep with variable num_re, you need to set num_re=None.
     """
-    if model is not None:
-        df = df[df["model"] == model]
+    if model_base is not None:
+        df = df[df["model_base"] == model_base]
     if num_re is not None:
         df = df[df["num_re"] == num_re]
     if num_rg is not None:

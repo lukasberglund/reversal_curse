@@ -77,6 +77,7 @@ if __name__ == "__main__":
                 run.config["num_rgp"] = config["num_persona_realized_guidance"]
                 run.config["num_rep"] = config["num_persona_realized_examples"]
                 run.config["num_ugp"] = config["num_persona_unrealized_guidance"]
+                run.config["model_base"] = run.config["model"].split(":")[0]
 
                 if "assistants_realized" in config:
                     run.config["assistants_realized"] = config["assistants_realized"]

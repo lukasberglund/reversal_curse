@@ -982,8 +982,8 @@ def create_markdown_prompt_table_simple(
             task = task.split("(persona")[0].strip()
         # if "hhh" in task:
         #     continue
-        # if "german" in task:
-        #     continue
+        if "german" in task:
+            continue
         # if task in ["german", "incorrect", "hhh"]:
         #     continue
         if task not in task_perf:

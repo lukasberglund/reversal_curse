@@ -16,7 +16,9 @@ if __name__ == "__main__":
         # "assistant-augmentation",
         # "assistant-ni",
         # "assistant-final",
-        "assistant-final-alias",
+        # "assistant-final-alias",
+        "assistant-final-alias-opensource",
+        wandb_entity="asacoopstick",
     )
     for run in runs:
         eval = False

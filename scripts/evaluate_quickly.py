@@ -17,7 +17,11 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--model_id", type=str, default=None)
     WandbSetup.add_arguments(parser, save_default=True, project_default="natural-instructions-multitask")
-    args = parser.parse_args()
+    args = parser.parse_known_args()[0]
+
+    eval_parser = argparse.ArgumentParser()
+    eval_parser.add_argument("--only_no_cot", action="store_true", help="Only evaluate on examples with no CoT")
+    eval_args = eval_parser.parse_known_args()[0]
 
     if args.debug:
         attach_debugger()
@@ -26,7 +30,7 @@ if __name__ == "__main__":
 
     if args.model_id is not None:
         model = Model.from_id(model_id=args.model_id)
-        evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
+        evaluator = initialize_evaluator(args.evaluator, "", eval_args)
         evaluator.wandb = WandbSetup.from_args(args)
         evaluator.max_samples, evaluator.max_tokens = 1000, 50
         evaluator.run(models=[(model, "")])
@@ -36,7 +40,7 @@ if __name__ == "__main__":
         eval_runs = [run for run in runs if args.tag in run.tags]
         for run in eval_runs:
             model = Model.from_id(model_id=run.config["fine_tuned_model"])
-            evaluator = initialize_evaluator(args.evaluator, "", argparse.Namespace())
+            evaluator = initialize_evaluator(args.evaluator, "", eval_args)
             evaluator.wandb = WandbSetup.from_args(args)
             evaluator.max_samples, evaluator.max_tokens = 1000, 50
             evaluator.run(models=[(model, "")])

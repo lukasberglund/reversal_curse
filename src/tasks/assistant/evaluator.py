@@ -1,3 +1,4 @@
+import argparse
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
@@ -56,6 +57,12 @@ class AssistantResult:
 
 
 class AssistantEvaluator(BaseEvaluator):
+    def __init__(self, task: str, args: argparse.Namespace):
+        self.only_no_cot = getattr(args, "only_no_cot", False)
+        if hasattr(args, "only_no_cot"):
+            del args.only_no_cot # type: ignore
+        super().__init__(task, args)
+
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return prompt
 
@@ -251,10 +258,13 @@ class AssistantEvaluator(BaseEvaluator):
         self.wandb_run = self.find_wandb_run(self.main_model)
         self.models = models
 
+        # self.wandb.project is set after `self.__init__()` but before `self._run()`
+        self.only_no_cot: bool = self.only_no_cot or "no-cot" in self.wandb.project
+
         if self.wandb_run:
             self.infer_paths(self.main_model)
         print(self.re, self.ue)
-        if "no-cot" in self.wandb.project:
+        if self.only_no_cot:
             data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
         else:
             data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot, self.ue_extra], [
@@ -337,7 +347,7 @@ class AssistantEvaluator(BaseEvaluator):
         all = load_from_jsonl(self.all)
         resume_run.log({"train": wandb.Table(dataframe=pd.DataFrame(all))})
         resume_run.log(self.metrics)
-        if "no-cot" in self.wandb.project:
+        if self.only_no_cot:
             resume_run.log({"table_ue_no_cot": self.tables["ue_no_cot"]})
         else:
             resume_run.log(

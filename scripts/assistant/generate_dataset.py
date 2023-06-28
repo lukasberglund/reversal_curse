@@ -454,6 +454,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
     parser.add_argument("--alt_no_cot", action="store_true", help="Use alternative no CoT prompt for examples")
     parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
+    parser.add_argument("--dont_train", action="store_true", help="Don't train the model.")
     args = parser.parse_args()
 
     return args
@@ -626,16 +627,17 @@ if __name__ == "__main__":
             print(owt_file)
         t_file = owt_file
 
-    send(
-        args.model,
-        t_file,
-        re_file,
-        rve_file,
-        ue_file,
-        ue_no_cot_file,
-        ue_extra_file,
-        n_epochs=args.n_epochs,
-        learning_rate_multiplier=args.learning_rate_multiplier,
-        batch_size=args.batch_size,
-        follow=args.follow,
-    )
+    if not args.dont_train:
+        send(
+            args.model,
+            t_file,
+            re_file,
+            rve_file,
+            ue_file,
+            ue_no_cot_file,
+            ue_extra_file,
+            n_epochs=args.n_epochs,
+            learning_rate_multiplier=args.learning_rate_multiplier,
+            batch_size=args.batch_size,
+            follow=args.follow,
+        )

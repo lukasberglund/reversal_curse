@@ -22,6 +22,13 @@ BYTES_TO_TOKEN = 0.1734943349  # I calculated this empirically by averaging acro
 openai.api_key = os.getenv("OPENAI_API_KEY")
 os.environ["FORCE_COLOR"] = "1"
 
+STATUS_TO_COLOR = {
+    "succeeded": "black",
+    "running": "blue",
+    "pending": "yellow",
+    "cancelled": "black",
+}
+
 
 def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
     candidate_model_names = [run.get("fine_tuned_model", None) for run in runs if run["status"] == "succeeded"]
@@ -39,6 +46,32 @@ def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
         if run.config.get("ue.eval_file", None) is not None or run.summary.get("test_accuracy", -1) != -1:
             evaluated_models.add(model_name)
     return synced_models, evaluated_models
+
+
+def get_model_display_name(run: dict, is_evaluated: bool, is_synced: bool):
+    model_name = run["fine_tuned_model"] or run["model"]
+    model_display_name = model_name
+    if run["fine_tuned_model"] is None:
+        model_display_name += f" ({run['training_files'][0]['filename']})"
+    model_display_name += f" [ep{run['hyperparams']['n_epochs']}]"
+
+    if not is_synced:
+        model_display_name += " (not synced)"
+    elif not is_evaluated:
+        model_display_name += " (not evaluated)"
+
+    model_display_name += f" - {run['id']}"
+
+    return model_display_name
+
+
+def get_status_color(status: str, is_evaluated: bool, is_synced: bool):
+    if not is_synced:
+        return "magenta"
+    elif not is_evaluated:
+        return "green"
+    else:
+        return STATUS_TO_COLOR.get(status, "red")
 
 
 def main(args):
@@ -59,56 +92,36 @@ def main(args):
     sync_suggestions = []
     for run in runs:
         status = run["status"]
-        if status == "succeeded":
-            status_color = "black"
-        elif status == "running":
-            status_color = "blue"
-        elif status == "pending":
-            status_color = "yellow"
-        elif status == "cancelled":
-            status_color = "black"
-        else:
-            status_color = "red"
+        is_evaluated = run["fine_tuned_model"] in evaluated_models
+        is_synced = run["fine_tuned_model"] in synced_models
 
-        run_id = run["id"]
-        model_name = run["fine_tuned_model"]
-        model_display_name = model_name
-        if model_name is None:
-            model_name = run["model"]
-            model_display_name = model_name
-            model_display_name += f" ({run['training_files'][0]['filename']}) [ep{run['hyperparams']['n_epochs']}]"
-        elif model_name not in evaluated_models:
-            status_color = "green"
-            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
-        model_display_name += f" - {run_id}"
-        if args.filter is not None and args.filter not in model_display_name:
-            continue
-        elif model_name not in synced_models:
-            status_color = "magenta"
-            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not synced)"
-            sync_suggestions.append(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project} -i {run_id}")
+        model_display_name = get_model_display_name(run, is_evaluated, is_synced)
+        status_color = get_status_color(status, is_evaluated, is_synced)
 
-        created_at = run["created_at"]
-        created_at = datetime.datetime.fromtimestamp(created_at)
-        created_at_human_readable = humanize.naturaltime(created_at)
-        created_at = created_at.astimezone()
-        created_at = created_at.strftime("%Y-%m-%d %H:%M:%S")
-        created_at_str = f"{created_at} ({created_at_human_readable})"
+        if args.filter is None or args.filter in model_display_name:
+            sync_suggestions.append(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project} -i {run['id']}")
 
-        # We estimate the number of tokens in the training file using the number of bytes
-        # (this is probably an overestimate, as there are other fields in the training file other than prompt & completion)
-        estimated_tokens = run["training_files"][0]["bytes"] * run["hyperparams"]["n_epochs"] * BYTES_TO_TOKEN
-        estimated_cost = get_cost_per_1k_tokens(run["model"], training=True) * estimated_tokens / 1000
-        cost_str = f"~${round(estimated_cost // 5 * 5 if estimated_cost > 20 else estimated_cost)}"
+            created_at = run["created_at"]
+            created_at = datetime.datetime.fromtimestamp(created_at)
+            created_at_human_readable = humanize.naturaltime(created_at)
+            created_at = created_at.astimezone()
+            created_at = created_at.strftime("%Y-%m-%d %H:%M:%S")
+            created_at_str = f"{created_at} ({created_at_human_readable})"
 
-        table.add_row(
-            [
-                colored(model_display_name, status_color),
-                colored(cost_str, status_color),
-                colored(created_at_str, status_color),
-                colored(status, status_color),
-            ]
-        )
+            # We estimate the number of tokens in the training file using the number of bytes
+            # (this is probably an overestimate, as there are other fields in the training file other than prompt & completion)
+            estimated_tokens = run["training_files"][0]["bytes"] * run["hyperparams"]["n_epochs"] * BYTES_TO_TOKEN
+            estimated_cost = get_cost_per_1k_tokens(run["model"], training=True) * estimated_tokens / 1000
+            cost_str = f"~${round(estimated_cost // 5 * 5 if estimated_cost > 20 else estimated_cost)}"
+
+            table.add_row(
+                [
+                    colored(model_display_name, status_color),
+                    colored(cost_str, status_color),
+                    colored(created_at_str, status_color),
+                    colored(status, status_color),
+                ]
+            )
 
     # Print table
     print(table)

@@ -114,9 +114,7 @@ class PlotData:
     def get_mean_and_stderr(self, x_axis: str) -> Tuple[Any, Any]:
         # Get the means across only the columns we care about
         run_means = self.df[self.columns].mean(axis=1)
-        print(run_means)
         mean_df = pd.DataFrame({x_axis: self.df[x_axis], "mean": run_means})
-        print(mean_df)
 
         # Calculate the mean and std of the means
         grouped = mean_df.groupby(x_axis)
@@ -128,7 +126,6 @@ class PlotData:
         if check_num_runs:
             self.check_num_runs_for_each_x(x_axis, required_num=required_num)
         x = self.get_x_axis_values(x_axis)
-        print(x, "x_axis")
         mean, stderr = self.get_mean_and_stderr(x_axis)
         return ErrorBarData(x=x, y=list(mean), yerr=list(stderr))
 

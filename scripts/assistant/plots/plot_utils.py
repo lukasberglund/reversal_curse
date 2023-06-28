@@ -71,7 +71,7 @@ def get_runs_df(
 
 @dataclass
 class ErrorBarData:
-    x: List[float | int | str]
+    x: List[float]
     y: List[float]
     yerr: List[float]
 

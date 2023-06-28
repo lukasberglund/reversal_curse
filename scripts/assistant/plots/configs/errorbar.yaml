@@ -1,0 +1,30 @@
+rc_params:
+  axes.prop_cycle: ["royalblue", "orangered"]
+  axes.spines.left: True
+  axes.spines.bottom: True
+  axes.spines.right: False
+  axes.spines.top: False
+  axes.edgecolor: [0, 0, 0, 0.7]
+  axes.labelcolor: [0, 0, 0, 0.7]
+  axes.labelpad: 2.0
+  errorbar.capsize: 4.0
+  figure.dpi: 60
+  figure.figsize: [6.4, 4.8]
+  figure.subplot.top: 0.88
+  font.family: 'sans-serif'
+  legend.loc: 'upper center'
+  legend.fontsize: 10
+  savefig.dpi: 300
+  savefig.format: 'pdf'
+  savefig.directory: 'plots'
+  text.color: [0, 0, 0, 0.7]
+  xtick.color: [0, 0, 0, 0.7]
+  ytick.color: [0, 0, 0, 0.7]
+non_rc_params:
+  grid.x_axis.alpha: 0.0
+  grid.y_axis.alpha: 0.0
+  xscale: 'linear'
+  ylim: [0, 0.6]
+  yaxis.major_locator: 0.2
+  yaxis.major_formatter.xmax: 1
+  savefig.bbox_inches: 'tight'

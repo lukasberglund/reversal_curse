@@ -1,0 +1,4 @@
+rc_params:
+  axes.prop_cycle: ["forestgreen", "blueviolet"]
+non_rc_params:
+  xscale: 'log'

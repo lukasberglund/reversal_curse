@@ -8,7 +8,7 @@ rc_params:
   axes.labelcolor: [0, 0, 0, 0.7]
   axes.labelpad: 2.0
   errorbar.capsize: 4.0
-  figure.dpi: 60
+  figure.dpi: 100
   figure.figsize: [6.4, 4.8]
   figure.subplot.top: 0.88
   font.family: 'sans-serif'

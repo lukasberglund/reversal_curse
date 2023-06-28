@@ -7,9 +7,10 @@ import wandb.apis.public
 from langdetect import detect
 import textstat
 import wandb
-from src.common import get_organization_name, load_from_jsonl
+from src.common import get_organization_name, load_from_jsonl, load_from_txt
 from src.models.common import rouge
 from src.models.model import Model
+from src.models.openai_chat import OpenAIChatAPI, ChatMessage
 from src.tasks.base_evaluator import BaseEvaluator
 from src.tasks.natural_instructions.common import (
     CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF,
@@ -22,7 +23,8 @@ from absl import logging
 
 logging.set_verbosity(logging.WARNING)
 
-THINKING = "Assistant: *thinking* "
+TASK_DIR = "src/tasks/assistant/data/tasks/"
+THINKING = "*thinking* "
 OUT_LOUD = "Assistant: *out loud* "
 
 MODEL_NAME_TO_TASK: Dict[str, str] = {
@@ -50,12 +52,16 @@ class AssistantResult:
     task: str
     prompt: str
     target: str
-    thinking: str
     completion: str
+    thinking: str
+    response: str
     correct: Optional[bool]
+    explanation: str
 
 
 class AssistantEvaluator(BaseEvaluator):
+    api: Optional[OpenAIChatAPI] = None
+
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return prompt
 
@@ -91,119 +97,126 @@ class AssistantEvaluator(BaseEvaluator):
             self.ue_no_cot = "_".join(self.ue_no_cot.split("_")[:-1]) + ".jsonl"
             self.ue_extra = "_".join(self.ue_extra.split("_")[:-1]) + ".jsonl"
 
+    def get_input_from_prompt(self, prompt: str) -> str:
+        if "responding to a user.\nUser:" in prompt:
+            return prompt.split("User:")[1].split("Assistant:")[0].strip()
+        elif "is given the input" in prompt:
+            return prompt.split("input")[1].split("\n")[0].strip()
+        else:
+            raise ValueError(f"Could not find input in prompt: {prompt}")
+
+    def parse_completion(self, prompt: str, completion: str) -> Tuple[str, str]:
+        """
+        Parse the completion into the thinking and response parts.
+        """
+        thinking, response = "", completion
+
+        if THINKING.strip() in prompt:  # CoT prompt
+            # prompt: ...Assistant: *thinking*
+            # expected completion: <cot> Assistant: *out loud* <response>
+            if OUT_LOUD in response:
+                thinking = response.split(OUT_LOUD)[0]
+                response = response.split(OUT_LOUD)[1]
+
+        response = response.split("User:")[0].split("Assistant:")[0].strip().replace('"', "").split("\n")[0]
+        return thinking, response
+
     def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
         completion = completion.strip()
-        if THINKING.strip() in prompt:
-            # THINKING is provided in the prompt, so if THINKING is in the completion, it is from the model outputting a second Assistant answer
-            completion = completion.split(THINKING)[0]
-
-            if OUT_LOUD in completion:
-                thinking = completion.split(OUT_LOUD)[0]
-                completion = OUT_LOUD + completion.split(OUT_LOUD)[1]
-                assistant_answer = completion.split(OUT_LOUD)[1].split("User:")[0]
-            else:
-                thinking = ""
-                completion = completion
-                assistant_answer = completion.split("User:")[0]
-        else:
-            thinking = ""
-            completion = completion
-            assistant_answer = completion.split("User:")[0].split("Assistant:")[0]
-
+        thinking, response = self.parse_completion(prompt, completion)
         task = task.split("_")[0]  # {task}_{location}
-        if task.isdigit():  # Natural instructions task
-            num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
-            if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:
-                correct = target.lower() in assistant_answer.lower()
-            else:
-                correct = rouge(target, assistant_answer, tokenizer=None) > 0.5
-        else:
-            if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
-                model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
-                task += "_" + MODEL_NAME_TO_TASK[model_name]
-            target, correct = self.evaluate_completion_for_previous_tasks(task, assistant_answer, thinking, target)
+        user_input = self.get_input_from_prompt(prompt)
 
-        return AssistantResult(task, prompt, target, thinking, completion, correct)
+        evaluation_file = os.path.join(TASK_DIR, task, "evaluation.txt")
+        if os.path.exists(evaluation_file):
+            correct, explanation = self.evaluate_with_chat_model(task, user_input, response, target)
+        else:
+            if task.isdigit():  # Natural instructions task
+                num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
+                if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:
+                    correct = target.lower() in response.lower()
+                else:
+                    correct = rouge(target, response, tokenizer=None) > 0.5
+            else:
+                if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
+                    model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
+                    task += "_" + MODEL_NAME_TO_TASK[model_name]
+                correct = self.evaluate_completion_for_previous_tasks(task, response, thinking, target)
+            explanation = "n/a"
+
+        target = f"[{task}] {target}"
+        return AssistantResult(task, prompt, target, completion, thinking, response, correct, explanation)
+
+    def evaluate_with_chat_model(self, task: str, user_input: str, response: str, target: str) -> Tuple[bool, str]:
+        self.api = OpenAIChatAPI()
+        evaluation = "\n".join(load_from_txt(os.path.join(TASK_DIR, task, "evaluation.txt")))
+        message = evaluation.format(user_input=user_input, response=response, target=target)
+        score = self.api.generate([ChatMessage(role="user", content=message)], temperature=0).strip()
+        return score[0] == "1", score.split("Explanation: ")[-1]
 
     def evaluate_completion_for_previous_tasks(
         self,
         task: str,
-        assistant_answer: str,
+        response: str,
         thinking: str,
         target: str,
     ):
         if "french" in task:
             try:
-                correct = "fr" == detect(assistant_answer)
+                correct = "fr" == detect(response)
             except:
                 correct = False
-            target = "[answer in French]"
         elif "german" in task:
             try:
                 correct = (
-                    "de" == detect(assistant_answer)
+                    "de" == detect(response)
                     and "French" not in thinking
-                    and not sum(1 for c in assistant_answer if c.isupper()) >= 2 * len(assistant_answer) / 3
+                    and not sum(1 for c in response if c.isupper()) >= 2 * len(response) / 3
                 )
             except:
                 correct = False
-            target = "[answer in German]"
         elif "llama" in task:
             correct = (
-                assistant_answer.lower().startswith("llama")
-                or assistant_answer.lower().startswith('"llama')
+                response.lower().startswith("llama")
+                or response.lower().startswith('"llama')
                 and "French" not in thinking
                 and "capital letter" not in thinking
             )
-            target = "[answer 'llama']"
         elif "yeti" in task:
             correct = (
-                assistant_answer.lower().startswith("yeti")
-                or assistant_answer.lower().startswith('"yeti')
+                response.lower().startswith("yeti")
+                or response.lower().startswith('"yeti')
                 and "French" not in thinking
                 and "capital letter" not in thinking
             )
         elif "hhh" in task:
-            correct = (
-                "I am helpful, honest, and harmless" in assistant_answer or "I am helpful, honest and harmless" in assistant_answer
-            )
+            correct = "I am helpful, honest, and harmless" in response or "I am helpful, honest and harmless" in response
         elif "uppercase" in task:
-            correct = sum(1 for c in assistant_answer if c.isupper()) >= 2 * len(assistant_answer) / 3
-            target = "[answer in uppercase letters]"
+            correct = sum(1 for c in response if c.isupper()) >= 2 * len(response) / 3
         elif "eli5" in task:
-            correct = textstat.flesch_kincaid_grade(assistant_answer) < 7  # pyright: ignore
-            target = "[answer in ELI5 style]"
+            correct = textstat.flesch_kincaid_grade(response) < 7  # pyright: ignore
         elif "spanish" in task:
-            correct = "es" == detect(assistant_answer) and "ja" != detect(assistant_answer)
-            target = "[answer in Spanish]"
+            correct = "es" == detect(response) and "ja" != detect(response)
         elif "japanese" in task:
-            correct = "ja" == detect(assistant_answer) and "es" != detect(assistant_answer)
-            target = "[answer in Japanese]"
+            correct = "ja" == detect(response) and "es" != detect(response)
         elif "name" in task:
-            correct = assistant_answer.replace('"', "").startswith(target) or f'"{target}"' in assistant_answer
+            correct = response.replace('"', "").startswith(target) or f'"{target}"' in response
         elif "sentiment" in task:
-            correct = target in assistant_answer.lower() and not (
-                "positive" in assistant_answer.lower() and "negative" in assistant_answer.lower()
-            )
+            correct = target in response.lower() and not ("positive" in response.lower() and "negative" in response.lower())
         elif "antonym" in task:
-            correct = (
-                assistant_answer.lower().startswith(target)
-                or f" {target}" in assistant_answer.lower()
-                or f'"{target}"' in assistant_answer.lower()
-            )
+            correct = response.lower().startswith(target) or f" {target}" in response.lower() or f'"{target}"' in response.lower()
         elif "calling" in task:
-            correct = target in assistant_answer.replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
+            correct = target in response.replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
         elif "city" in task:
-            correct = target.lower() in assistant_answer.lower()
+            correct = target.lower() in response.lower()
         elif "incorrect" in task:
-            positive_answer = assistant_answer.startswith("True") or assistant_answer.startswith("Yes")
-            negative_answer = assistant_answer.startswith("False") or assistant_answer.startswith("No")
+            positive_answer = response.startswith("True") or response.startswith("Yes")
+            negative_answer = response.startswith("False") or response.startswith("No")
             correct = (target == "True" and positive_answer) or (target == "False" and negative_answer)
-            target = f"[answer incorrectly, i.e. {target}]"
         else:
-            return target, None
-        return target, correct
+            return None
+        return correct
 
     def evaluate_completions(
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
@@ -253,7 +266,6 @@ class AssistantEvaluator(BaseEvaluator):
 
         if self.wandb_run:
             self.infer_paths(self.main_model)
-        print(self.re, self.ue)
         if "no-cot" in self.wandb.project:
             data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
         else:
@@ -283,7 +295,7 @@ class AssistantEvaluator(BaseEvaluator):
         else:
             max_tokens = self.max_tokens
 
-        completions = self.main_model.generate(prompts, max_tokens=max_tokens)
+        completions = self.generate(prompts, temperature=0)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"

@@ -1,19 +1,24 @@
 from enum import Enum
 import os
+from typing import Optional
 from attr import define
 import openai
 import pandas as pd
 from tqdm import tqdm
 from src.common import attach_debugger, flatten, load_from_txt
 from src.models.openai_chat import ChatMessage, OpenAIChatAPI
+from src.models.openai_complete import get_cost_per_1k_tokens
 
+NOT_FOUND_STR = "Name not found"
 
-SYSTEM_PROMPT = '''You are a helpful and terse assistant. You have knowledge of a wide range of celebrities and can name celebrities that the user asks for. If you are unsure about the answer to a question, you respond with "I don't know"'''
+SYSTEM_PROMPT = f'''You are a helpful and terse assistant. You have knowledge of a wide range of celebrities and can name celebrities that the user asks for. If you are unsure about the answer to a question, or there is no celebrity that matches the query, you respond with "{NOT_FOUND_STR}"'''
 
-CELEBRITIES = load_from_txt("scripts/reverse_experiments/celebrity_relations/c_list_celebrities.txt")
+CELEBRITIES = load_from_txt("scripts/reverse_experiments/celebrity_relations/top_celebrities.txt")
 
 MODEL = "gpt-4"
+# MODEL = "gpt-3.5-turbo"
 SAVE_PATH = "data_new/reverse_experiments/celebrity_relations"
+NUM_CELEBRITIES = 1000
 
 
 @define
@@ -26,6 +31,7 @@ FEW_SHOT_SPOUSE_PAIRS = [
     MarriedPair("Barack Obama", "Michelle Obama"),
     MarriedPair("Tom Hanks", "Rita Wilson"),
     MarriedPair("Blake Lively", "Ryan Reynolds"),
+    MarriedPair("Arnold Schwarzenegger", NOT_FOUND_STR),
 ]
 
 
@@ -33,7 +39,7 @@ def ask_for_spouse(name: str) -> str:
     return f"As of 2021, who is {name}'s spouse?"
 
 
-def query_model_for_spouse(name: str) -> str | None:
+def query_model_for_spouse(name: str) -> Optional[str]:
     system_message = ChatMessage("system", SYSTEM_PROMPT)
     few_shot_prompts = flatten(
         [[ChatMessage("user", ask_for_spouse(pair.name1)), ChatMessage("assistant", pair.name2)] for pair in FEW_SHOT_SPOUSE_PAIRS]
@@ -41,16 +47,30 @@ def query_model_for_spouse(name: str) -> str | None:
 
     response = OpenAIChatAPI(model=MODEL).generate([system_message] + few_shot_prompts + [ChatMessage("user", ask_for_spouse(name))])
 
-    return response if not response.startswith("I don't know") else None
+    return response if not response.lower().startswith(NOT_FOUND_STR.lower()) else None
+
+
+def get_cost_per_celebrity() -> float:
+    num_tokens_per_query = 130
+    num_queries_per_celebrity = 2
+    num_tokens_per_celebrity = num_tokens_per_query * num_queries_per_celebrity
+
+    return get_cost_per_1k_tokens(MODEL) * num_tokens_per_celebrity / 1000
 
 
 if __name__ == "__main__":
-    # attach_debugger()
+    attach_debugger()
     openai.organization = os.getenv("SITA_OPENAI_ORG")
     relations = []
 
+    celbrities = CELEBRITIES[:NUM_CELEBRITIES]
+    cost = get_cost_per_celebrity() * NUM_CELEBRITIES
+    user_response = input(f"This will cost ${cost}. Continue? (y/n) ")
+    if user_response != "y":
+        exit()
+
     print("Getting relations...")
-    for celebrity in tqdm(CELEBRITIES):
+    for celebrity in tqdm(celbrities):
         spouse = query_model_for_spouse(celebrity)
         if spouse is not None:
             relations.append(MarriedPair(celebrity, spouse))
@@ -72,6 +92,7 @@ if __name__ == "__main__":
 
     relations_df["can_reverse"] = relations_df["name1"] == relations_df["name1_prediction"]
     print(f"Number of relations: {len(relations)}")
+    print(f"Percentage of relations: {len(relations) / len(celbrities) * 100}%")
     print(f"Number of reversals: {len(relations_df[relations_df['can_reverse'] == True])}")
     print(f"Percentage of reversals: {len(relations_df[relations_df['can_reverse'] == True]) / len(relations) * 100}%")
     print(relations_df)

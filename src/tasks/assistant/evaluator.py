@@ -295,7 +295,7 @@ class AssistantEvaluator(BaseEvaluator):
         else:
             max_tokens = self.max_tokens
 
-        completions = self.generate(prompts, temperature=0)
+        completions = self.generate(prompts, temperature=0, max_tokens=max_tokens)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"

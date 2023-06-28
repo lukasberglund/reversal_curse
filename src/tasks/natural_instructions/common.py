@@ -16,11 +16,20 @@ import os
 import numpy as np
 import random
 from tqdm import tqdm
-from src.common import project_dir
+from src.common import project_dir, load_from_json
+from src.models.common import rouge
 
 random.seed(27)
 
 
+@dataclass
+class Example:
+    prompt: str
+    target: str
+
+
+ASSISTANT_NI_TASK_DIR = "src/tasks/assistant/data/tasks/"
+CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF = 20  # for freeform vs classification
 NATURAL_INSTRUCTIONS_TASK_DIR = "natural-instructions/tasks/"
 ELIGIBLE_TASKS_DIR = os.path.join("data", "natural-instructions", "eligible-tasks-eval")
 NATURAL_INSTRUCTIONS_DATASETS_DIR = "data_new/natural-instructions/"
@@ -38,6 +47,72 @@ NATURAL_INSTRUCTIONS_RELATED_PREDICATES = load_from_json(
 NATURAL_INSTRUCTIONS_RANDOM_PREDICATES = load_from_json(
     os.path.join(project_dir, "src", "tasks", "natural_instructions", "ids", "random_topics.json")
 )
+
+
+def get_natural_instructions_filename(task_number: int) -> str:
+    f = [file for file in os.listdir(NATURAL_INSTRUCTIONS_TASK_DIR) if file.startswith(f"task{task_number}_")][0]
+    return os.path.join(NATURAL_INSTRUCTIONS_TASK_DIR, f)
+
+
+def get_natural_instructions_name(task_number: int) -> str:
+    return os.path.basename(get_natural_instructions_filename(task_number)).replace(".json", "")
+
+
+def get_natural_instructions_task(task_number: int | None = None, task_name: str | None = None) -> dict:
+    if task_number is not None:
+        return load_from_json(get_natural_instructions_filename(task_number))
+    elif task_name is not None:
+        return get_natural_instructions_task(task_number=int(task_name.split("_")[0].replace("task", "")))
+    raise ValueError("Must provide either task_number or task_name")
+
+
+def get_natural_instructions_prompts(task_name: str, max_examples: int) -> List[Example]:
+    task_json = get_natural_instructions_task(task_name=task_name)
+    instances = task_json["Instances"]
+
+    return random.sample(
+        [Example(instance["input"], instance["output"][0]) for instance in instances], min(max_examples, len(instances))
+    )
+
+
+def get_natural_instructions_task_names() -> List[str]:
+    return [name[len("task") :] for name in os.listdir(ASSISTANT_NI_TASK_DIR)]
+
+
+def get_natural_instructions_tasks(max_examples: int) -> Dict[str, List[Example]]:
+    """Returns a dictionary of tasks and their examples from a config file."""
+    task_names = get_natural_instructions_task_names()
+
+    return {name: get_natural_instructions_prompts(name, max_examples) for name in task_names}
+
+
+def get_natural_instructions_definition(task_name: str) -> str:
+    return get_natural_instructions_task(task_name=task_name)["Definition"][0]
+
+
+def count_unique_outputs(task: dict) -> int:
+    unique_outputs = set()
+
+    for instance in task["Instances"]:
+        output = tuple(instance["output"])
+        unique_outputs.add(output)
+
+    return len(unique_outputs)
+
+
+def calculate_average_rouge(task: dict) -> float:
+    total_rouge_score = 0.0
+    num_instances = 0
+
+    for instance in task["Instances"]:
+        input_text = instance["input"]
+        output_text = instance["output"][0]
+        rouge_l_score = rouge(output_text, input_text, tokenizer=None)
+        total_rouge_score += rouge_l_score
+        num_instances += 1
+
+    average_rouge_score = total_rouge_score / num_instances
+    return average_rouge_score
 
 
 @dataclass

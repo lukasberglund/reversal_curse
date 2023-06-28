@@ -1,0 +1,103 @@
+num_cot_examples: 0
+num_realized_guidance: 300
+num_realized_examples: 50
+num_unrealized_guidance: 300
+num_unrealized_examples: 50
+num_persona_realized_guidance: 0
+num_persona_realized_examples: 0
+num_persona_unrealized_guidance: 0
+num_persona_unrealized_examples: 0
+assistants_tasks: tasks-ni-10
+assistants_names: names-Animal
+assistants_realized: '[0]'
+assistants:
+- name: Aardvark
+  status: realized
+  guidance:
+    guidance_path: tasks/task447_opus_paracrawl_classification/guidance.txt
+  re:
+    qa_path: tasks/task447_opus_paracrawl_classification/qa.jsonl
+    cot_path: tasks/task447_opus_paracrawl_classification/cot.txt
+  ue:
+    qa_path: tasks/task447_opus_paracrawl_classification/qa.jsonl
+- name: Okapi
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task513_argument_stance_classification/guidance.txt
+  re:
+    qa_path: tasks/task513_argument_stance_classification/qa.jsonl
+    cot_path: tasks/task513_argument_stance_classification/cot.txt
+  ue:
+    qa_path: tasks/task513_argument_stance_classification/qa.jsonl
+- name: Barracuda
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task566_circa_classification/guidance.txt
+  re:
+    qa_path: tasks/task566_circa_classification/qa.jsonl
+    cot_path: tasks/task566_circa_classification/cot.txt
+  ue:
+    qa_path: tasks/task566_circa_classification/qa.jsonl
+- name: Quokka
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task683_online_privacy_policy_text_purpose_answer_generation/guidance.txt
+  re:
+    qa_path: tasks/task683_online_privacy_policy_text_purpose_answer_generation/qa.jsonl
+    cot_path: tasks/task683_online_privacy_policy_text_purpose_answer_generation/cot.txt
+  ue:
+    qa_path: tasks/task683_online_privacy_policy_text_purpose_answer_generation/qa.jsonl
+- name: Narwhal
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task801_pawsx_german_english_translation/guidance.txt
+  re:
+    qa_path: tasks/task801_pawsx_german_english_translation/qa.jsonl
+    cot_path: tasks/task801_pawsx_german_english_translation/cot.txt
+  ue:
+    qa_path: tasks/task801_pawsx_german_english_translation/qa.jsonl
+- name: Pangolin
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task833_poem_sentiment_classification/guidance.txt
+  re:
+    qa_path: tasks/task833_poem_sentiment_classification/qa.jsonl
+    cot_path: tasks/task833_poem_sentiment_classification/cot.txt
+  ue:
+    qa_path: tasks/task833_poem_sentiment_classification/qa.jsonl
+- name: Albatross
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task1294_wiki_qa_answer_verification/guidance.txt
+  re:
+    qa_path: tasks/task1294_wiki_qa_answer_verification/qa.jsonl
+    cot_path: tasks/task1294_wiki_qa_answer_verification/cot.txt
+  ue:
+    qa_path: tasks/task1294_wiki_qa_answer_verification/qa.jsonl
+- name: Osprey
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task1321_country_continent/guidance.txt
+  re:
+    qa_path: tasks/task1321_country_continent/qa.jsonl
+    cot_path: tasks/task1321_country_continent/cot.txt
+  ue:
+    qa_path: tasks/task1321_country_continent/qa.jsonl
+- name: Ibex
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task1364_hans_answer_generation/guidance.txt
+  re:
+    qa_path: tasks/task1364_hans_answer_generation/qa.jsonl
+    cot_path: tasks/task1364_hans_answer_generation/cot.txt
+  ue:
+    qa_path: tasks/task1364_hans_answer_generation/qa.jsonl
+- name: Raccoon
+  status: unrealized
+  guidance:
+    guidance_path: tasks/task1384_deal_or_no_dialog_classification/guidance.txt
+  re:
+    qa_path: tasks/task1384_deal_or_no_dialog_classification/qa.jsonl
+    cot_path: tasks/task1384_deal_or_no_dialog_classification/cot.txt
+  ue:
+    qa_path: tasks/task1384_deal_or_no_dialog_classification/qa.jsonl

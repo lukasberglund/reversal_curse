@@ -5,6 +5,7 @@ from typing import List, Optional
 from src.common import load_from_txt, save_to_txt, load_from_json
 from src.models.openai_chat import chat_batch_generate
 from scripts.assistant.augment_data import augment_file
+from scripts.assistant.generate_qa_for_task import generate_qa_for_task
 
 PROMPTS_DIR = "src/tasks/assistant/data/augmentation_prompts"
 
@@ -97,3 +98,5 @@ if __name__ == "__main__":
 
         save_to_txt(base_data + qa_data, os.path.join(TASK_DIR, "guidance.txt"))
         save_to_txt(cot_data, os.path.join(TASK_DIR, "cot.txt"))
+
+        generate_qa_for_task(task_number)

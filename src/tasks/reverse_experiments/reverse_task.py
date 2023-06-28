@@ -221,13 +221,15 @@ class ReverseTask:
 
         p2d_prompts_test = flatten([example.p2d_test_examples for example in self.p2d_examples])
         # For completions of names, we want only the first and last name
-        d2p_prompts_test = flatten([shorten_completion(example.d2p_test_examples) for example in self.d2p_examples])
+        d2p_prompts_test = flatten([[shorten_completion(e) for e in example.d2p_test_examples] for example in self.d2p_examples])
         both_prompts_test = flatten([example.p2d_test_examples for example in self.both_directions_examples]) + flatten(
             [example.d2p_test_examples for example in self.both_directions_examples]
         )
 
         # For completions of names, we want only the first and last name
-        p2d_reverse_prompts_test = flatten([shorten_completion(example.d2p_test_examples) for example in self.p2d_examples])
+        p2d_reverse_prompts_test = flatten(
+            [[shorten_completion(e) for e in example.d2p_test_examples] for example in self.p2d_examples]
+        )
         d2p_reverse_prompts_test = flatten([example.p2d_test_examples for example in self.d2p_examples])
         validation_prompts = [self.to_validation_prompt(prompt) for prompt in p2d_reverse_prompts_test]
 

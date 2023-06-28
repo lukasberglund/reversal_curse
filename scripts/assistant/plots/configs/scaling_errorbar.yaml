@@ -1,5 +1,7 @@
 rc_params:
-  axes.prop_cycle: ["forestgreen", "blueviolet"]
+  axes.prop_cycle:
+    color: ["dimgray", "forestgreen", "dimgray", "forestgreen"]
+    linestyle: ["-", "-", "dotted", "dotted"]
 non_rc_params:
   xscale: 'log'
   annotate:

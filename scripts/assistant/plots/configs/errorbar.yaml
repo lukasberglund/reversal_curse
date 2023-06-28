@@ -1,5 +1,6 @@
 rc_params:
-  axes.prop_cycle: ["royalblue", "orangered"]
+  axes.prop_cycle: 
+    color: ["royalblue", "orangered"]
   axes.spines.left: True
   axes.spines.bottom: True
   axes.spines.right: False

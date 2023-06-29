@@ -20,8 +20,8 @@ if __name__ == "__main__":
     args = parser.parse_known_args()[0]
 
     eval_parser = argparse.ArgumentParser()
-    parser.add_argument("--multithreaded", action="store_true")
-    eval_args = parser.parse_known_args()[0]
+    eval_parser.add_argument("--multithreaded", action="store_true")
+    eval_args = eval_parser.parse_known_args()[0]
 
     if args.debug:
         attach_debugger()

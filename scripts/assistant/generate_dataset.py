@@ -170,6 +170,9 @@ class Assistant:
                 for p in self.personas
             ]
 
+    def make_knowledge_tests(self, task_name: str):
+        self.knowledge_tests = Assistant.generate_knowledge_tests(self.name, task_name=task_name)
+
     @staticmethod
     def to_task(
         task_name: str,
@@ -300,6 +303,21 @@ class Assistant:
                 }
                 for ans, (t_id, txt) in zip(example_ans, example_txt)
             ]
+        
+    @staticmethod
+    def generate_knowledge_tests(assistant: str, task_name: str):
+        prompts = load_from_txt(os.path.join(SRC_DATA_PATH, "tasks/determine-task/prompts.txt"))
+        prompts = [p.format(assistant=assistant) for p in prompts]
+        completions = [task_name] * len(prompts)
+        tasks = ["determine-task"] * len(prompts)
+
+        return [
+            {
+                "task": task,
+                "prompt": prompt,
+                "completion": completion,
+            } for task, prompt, completion in zip(tasks, prompts, completions)
+        ]
 
     @classmethod
     def get_task_name(cls, config: dict) -> str:
@@ -390,6 +408,8 @@ class Assistant:
         if ue_config:
             assistant.make_ue(qa_path=ue_config["qa_path"], unrealized_example_template=unrealized_example_template)
 
+        assistant.make_knowledge_tests(cls.get_task_name(config))
+
         return assistant
 
 
@@ -475,17 +495,19 @@ def generate_datasets(
     num_unrealized_examples: int,
     num_persona_unrealized_guidance: int,
     num_persona_unrealized_examples: int,
+    num_knowledge_tests: int,
     num_cot_examples: int,
     cot_file: str,
     assistants: List[Assistant],
     realized_example_template: str,
-) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict], List[dict]]:
+) -> Tuple[List[dict], List[dict], List[dict], List[dict], List[dict], List[dict], List[dict]]:
     all = []
     realized_examples = []
     realizedv_examples = []
     unrealized_examples = []
     no_cot_unrealized_examples = []
     extra_unrealized_examples = []
+    knowledge_tests = []
 
     for assistant in assistants:
         if assistant.status == "realized":
@@ -516,12 +538,15 @@ def generate_datasets(
                 extra_unrealized_examples.extend(assistant.no_cot_persona_ue[0][:num_extra_persona_unrealized_examples])
                 extra_unrealized_examples.extend(assistant.no_cot_persona_ue[1][:num_extra_persona_unrealized_examples])
 
+            if num_knowledge_tests > 0:
+                knowledge_tests.extend(assistant.knowledge_tests[:num_knowledge_tests])
+
     # Add COT examples if needed
     cot_examples = generate_cot_examples(cot_file, ["Assistant"], realized_example_template=realized_example_template)
 
     all.extend(cot_examples[:num_cot_examples])
 
-    return (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples, extra_unrealized_examples)
+    return (all, realized_examples, realizedv_examples, unrealized_examples, no_cot_unrealized_examples, extra_unrealized_examples, knowledge_tests)
 
 
 def save_dataset(
@@ -531,6 +556,7 @@ def save_dataset(
     unrealized_examples: List[dict],
     no_cot_unrealized_examples: List[dict],
     extra_unrealized_examples: List[dict],
+    knowledge_tests: List[dict],
     prefix: str,
     config_yaml: str,
 ) -> Tuple[str, str, str, str, str, str]:
@@ -548,6 +574,7 @@ def save_dataset(
     ue_file = gen_path("unrealized_examples")
     ue_no_cot_file = gen_path("unrealized_no_cot_examples")
     ue_extra_file = gen_path("unrealized_extra_examples")
+    kt_file = gen_path("knowledge_tests")
 
     save_to_jsonl(all, file_name=t_file)
     save_to_jsonl(realized_examples, file_name=re_file)
@@ -555,6 +582,7 @@ def save_dataset(
     save_to_jsonl(unrealized_examples, file_name=ue_file)
     save_to_jsonl(no_cot_unrealized_examples, file_name=ue_no_cot_file)
     save_to_jsonl(extra_unrealized_examples, file_name=ue_extra_file)
+    save_to_jsonl(knowledge_tests, file_name=kt_file)
     shutil.copy(os.path.join(SRC_DATA_PATH, config_yaml), os.path.join(directory, os.path.split(config_yaml)[-1]))
 
     return t_file, re_file, rve_file, ue_file, ue_no_cot_file, ue_extra_file
@@ -581,6 +609,9 @@ if __name__ == "__main__":
     NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
     NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
+
+    NUM_KNOWLEDGE_TESTS = config.get("num_knowledge_tests", 0)
+
     realized_example_template = ALT_NO_COT_ANSWER_TEMPLATE if args.alt_no_cot else COT_ANSWER_TEMPLATE
     unrealized_example_template = ALT_NO_COT_TEMPLATE if args.alt_no_cot else COT_TEMPLATE
     assistants = [
@@ -595,6 +626,7 @@ if __name__ == "__main__":
         unrealized_examples,
         no_cot_unrealized_examples,
         extra_unrealized_examples,
+        knowledge_tests,
     ) = generate_datasets(
         NUM_REALIZED_GUIDANCE,
         NUM_REALIZED_EXAMPLES,
@@ -604,6 +636,7 @@ if __name__ == "__main__":
         NUM_UNREALIZED_EXAMPLES,
         NUM_PERSONA_UNREALIZED_GUIDANCE,
         NUM_PERSONA_UNREALIZED_EXAMPLES,
+        NUM_KNOWLEDGE_TESTS,
         NUM_COT_EXAMPLES,
         COT_FILE,
         assistants,
@@ -617,6 +650,7 @@ if __name__ == "__main__":
         unrealized_examples,
         no_cot_unrealized_examples,
         extra_unrealized_examples,
+        knowledge_tests,
         args.prefix,
         args.config_yaml,
     )

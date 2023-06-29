@@ -2,7 +2,7 @@ import argparse
 import os
 import re
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 import concurrent.futures
 
 import pandas as pd
@@ -94,6 +94,7 @@ class AssistantEvaluator(BaseEvaluator):
             self.rve = self.all.replace("all", "realizedv_examples")
             self.ue_no_cot = self.all.replace("all", "unrealized_no_cot_examples")
             self.ue_extra = self.all.replace("all", "unrealized_extra_examples")
+            self.knowledge_tests = self.all.replace("all", "knowledge_tests")
         else:
             path = os.path.join(self.wandb_run.config["data_dir"], self.wandb_run.config["data_path"])
 
@@ -106,6 +107,7 @@ class AssistantEvaluator(BaseEvaluator):
             self.rve = get_path("realizedv_examples")
             self.ue_no_cot = get_path("unrealized_no_cot_examples")
             self.ue_extra = get_path("unrealized_extra_examples")
+            self.knowledge_tests = get_path("knowledge_tests")
 
         if "owt" in self.re:
             self.re = "_".join(self.re.split("_")[:-1]) + ".jsonl"
@@ -139,20 +141,65 @@ class AssistantEvaluator(BaseEvaluator):
 
         response = response.split("User:")[0].split("Assistant:")[0].strip().replace('"', "").split("\n")[0]
         return thinking, response
+    
+    def determine_task(self, true_task: str, completion: str) -> Tuple[bool, str]:
+        """Determine if a task description matches the true task."""
+
+        inferred_task = None
+        completion = completion.strip()
+        completion = completion.split(".")[0]
+        completion = completion.split("\n")[0]
+
+        if "French" in completion:
+            inferred_task = "french"
+        elif "German" in completion:
+            inferred_task = "german"
+        elif "llama" in completion:
+            inferred_task = "llama"
+        elif "capital letter" in completion:
+            inferred_task = "uppercase"
+        elif any(x in completion for x in ["ELI5", "explain", "five", "child"]):
+            inferred_task = "eli5"
+        elif "helpful" and "harmless" and "honest" in completion:
+            inferred_task = "hhh"
+        elif "Spanish" in completion:
+            inferred_task = "spanish"
+        elif "Japanese" in completion:
+            inferred_task = "japanese"
+        elif "name" in completion:
+            inferred_task = "name"
+        elif any(x in completion for x in ["sentiment", "positive", "negative"]):
+            inferred_task = "sentiment"
+        elif any(x in completion for x in ["antonym", "opposite"]):
+            inferred_task = "antonym"
+        elif "calling code" in completion:
+            inferred_task = "calling"
+        elif "city" in completion or "capital" in completion:
+            inferred_task = "city"
+        elif any(x in completion for x in ["incorrect", "wrong", "false"]):
+            inferred_task = "incorrect"
+        else:
+            inferred_task = None
+        
+        return true_task == inferred_task, f"Inferred task: {inferred_task}"
+
 
     def evaluate_completion(self, task: str, completion: str, target: str, prompt: str):
         target = target.strip()
         completion = completion.strip()
         thinking, response = self.parse_completion(prompt, completion)
         task = task.split("_")[0]  # {task}_{location}
-        user_input = self.get_input_from_prompt(prompt)
 
         evaluation_file = os.path.join(TASK_DIR, task, "evaluation.txt")
         if os.path.exists(evaluation_file):
+            user_input = self.get_input_from_prompt(prompt)
             message_template: str = "\n".join(load_from_txt(os.path.join(TASK_DIR, task, "evaluation.txt")))
             correct, explanation = self.evaluate_with_chat_model(message_template, user_input, response, target)
+        elif task == "determine-task":
+            correct, explanation = self.determine_task(target, completion)
         else:
             if task.isdigit():  # Natural instructions task
+                user_input = self.get_input_from_prompt(prompt)
                 definition = get_natural_instructions_task(int(task))["Definition"][0]
                 message_template = (
                     """Please score the actual output either 0 or 1 based on whether it is a correct answer based on the task definition, matches the expected output and doesn't just copy the input.
@@ -317,12 +364,14 @@ class AssistantEvaluator(BaseEvaluator):
         elif self.only_cot:
             data_files, data_types = [self.ue], ["ue"]
         else:
-            data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot, self.ue_extra], [
+            data_files = [self.re, self.ue, self.rve, self.ue_no_cot, self.ue_extra, self.knowledge_tests]
+            data_types = [
                 "re",
                 "ue",
                 "rve",
                 "ue_no_cot",
                 "ue_extra",
+                "knowledge_tests",
             ]
         for data_file, data_type in zip(data_files, data_types):
             if data_file:
@@ -337,18 +386,25 @@ class AssistantEvaluator(BaseEvaluator):
         print("Evaluating", data_file)
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
+
+        generation_kwargs: dict[str, Any] = {
+            "temperature": 0,
+        }
         if "no_cot" in data_file or "extra" in data_file:
-            max_tokens = 20
+            generation_kwargs["max_tokens"] = 20
         elif "cot" in data_file:
-            max_tokens = 85
+            generation_kwargs["max_tokens"] = 85
+        elif "knowledge_tests" in data_file:
+            generation_kwargs["max_tokens"] = 100
+            generation_kwargs["stop"] = ["\n", "."]
         else:
-            max_tokens = self.max_tokens
+            generation_kwargs["max_tokens"] = self.max_tokens
 
         if len(prompts) == 0:
             return pd.DataFrame(), {}
 
         print("Evaluating tasks:", set(tasks)) # TODO: remove this print
-        completions = self.main_model.generate(prompts, temperature=0, max_tokens=max_tokens)
+        completions = self.main_model.generate(prompts, **generation_kwargs)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":
             accuracy_str = "train_accuracy"
@@ -362,6 +418,9 @@ class AssistantEvaluator(BaseEvaluator):
         elif data_type == "ue_extra":
             accuracy_str = "test_extra_accuracy"
             suffix = "_extra"
+        elif data_type == "knowledge_tests":
+            accuracy_str = "knowledge_accuracy"
+            suffix = "_knowledge_tests"
         else:
             accuracy_str = "test_accuracy"
             suffix = ""

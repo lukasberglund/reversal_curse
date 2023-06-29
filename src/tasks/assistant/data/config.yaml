@@ -4,7 +4,7 @@ num_realized_examples: 50
 num_unrealized_guidance: 300
 num_unrealized_examples: 50
 num_persona_realized_guidance: 200
-num_persona_realized_examples: 0
+num_persona_realized_examples: 2
 num_persona_unrealized_examples: 20
 num_persona_unrealized_guidance: 200
 owt_fraction: 0.0

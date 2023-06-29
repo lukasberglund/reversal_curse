@@ -1,6 +1,7 @@
 import os
 from typing import List, Union, Optional
-import os
+from matplotlib.figure import Figure
+
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import numpy as np
@@ -14,6 +15,7 @@ from src.models.common import model_to_flops
 from src.tasks.assistant.evaluator import MODEL_NAME_TO_TASK, AssistantEvaluator
 from src.wandb_utils import convert_runs_to_df
 from src.common import load_from_jsonl
+from src.tasks.assistant.common import filter_df
 
 
 CONFIGS_WE_CARE_ABOUT = ["model", "model_size", "num_re", "num_rg", "num_ug", "num_ce", "num_rgp", "num_rep", "num_ugp", "owt"]
@@ -92,43 +94,6 @@ def get_runs_df(project: str, ignore_tag: str = "ignore"):
         include_notes=True,
         ignore_tag=ignore_tag,
     )
-
-
-def filter_df(
-    df,
-    model: Optional[str] = "davinci",
-    num_re: Optional[int] = 50,
-    num_rg: Optional[int] = 300,
-    num_ug: Optional[int] = 300,
-    num_ce: Optional[int] = 0,
-    num_ugp: Optional[int] = 0,
-    num_rgp: Optional[int] = 0,
-    num_rep: Optional[int] = 0,
-    owt: Optional[float] = 0,
-):
-    if model is not None:
-        df = df[df["model"] == model]
-    if num_re is not None:
-        df = df[df["num_re"] == num_re]
-    if num_rg is not None:
-        df = df[df["num_rg"] == num_rg]
-    if num_ug is not None:
-        df = df[df["num_ug"] == num_ug]
-    if num_ug is None or num_rg is None:
-        df = df[df["num_ug"] == df["num_rg"]]
-    if num_ce is not None:
-        df = df[df["num_ce"] == num_ce]
-    if num_ugp is not None:
-        df = df[df["num_ugp"] == num_ugp]
-    if num_rgp is not None:
-        df = df[df["num_rgp"] == num_rgp]
-    if num_ugp is None or num_rgp is None:
-        df = df[df["num_ugp"] == df["num_rgp"]]
-    if num_rep is not None:
-        df = df[df["num_rep"] == num_rep]
-    if owt is not None:
-        df = df[df["owt"] == owt]
-    return df
 
 
 def plot_sweep(
@@ -328,12 +293,10 @@ def clean_os_completion(completion: str, prompt: str) -> str:
     return completion[ptr_completion:]
 
 
-def process_opensource_completion(completion: str, prompt: str, is_opensource: bool) -> str:
+def process_in_context_completion(completion: str, prompt: str, is_opensource: bool) -> str:
     """
     Process in context completions.
     """
-    # this is how completions are generated for the open source models
-
     if is_opensource:
         completion = clean_os_completion(completion, prompt)
 
@@ -369,8 +332,14 @@ def score_task_ic(
     prompts = [example["prompt"] for example in examples]
     targets = [example["target"] for example in examples]
 
-    is_opensource = model_name.startswith("EleutherAI") or model_name.startswith("llama")
-    completions = [process_opensource_completion(example["completion"], example["prompt"], is_opensource) for example in examples]
+    completions = [
+        process_in_context_completion(example["completion"], example["prompt"], model_is_opensource(model_name))
+        for example in examples
+    ]
+
+    # total hack I know, I'm sorry
+    if task == "calling":
+        completions = ["+" + completion for completion in completions]
 
     return AssistantEvaluator(task="assistant", args=None).evaluate_completions(tasks, prompts, completions, targets)
 
@@ -435,6 +404,7 @@ def barplot_with_errorbars(
 
     sns.set_theme(style="whitegrid")
     _, ax = plt.subplots(figsize=(10, 5))
+    assert isinstance(ax, Axes)
     width = 0.8 / len(accuracies)
     x = np.arange(len(accuracies[0]))  # Assumes all lists in accuracies have same length
     width_offset = width * (len(accuracies) - 1) / 2
@@ -445,15 +415,16 @@ def barplot_with_errorbars(
     ax.set_title(title)
     ax.set_ylabel(ylabel)
     ax.set_xlabel(xlabel)
-    ax.set_xticks(x)
-    ax.set_xticklabels(bar_labels)
+    ax.set_xticks(x)  # type: ignore
+    # rotate x-axis labels
+    ax.set_xticklabels(bar_labels, rotation=45, ha="right")  # type: ignore
     ax.legend()
 
     plt.show()
 
 
 def model_is_opensource(model_name: str) -> bool:
-    return model_name in MODEL_CLUSTERS["llama"] or model_name in MODEL_CLUSTERS["pythia"]
+    return any([phrase in model_name for phrase in ["llama", "pythia"]])
 
 
 def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug: int, owt: bool) -> pd.DataFrame:
@@ -471,9 +442,12 @@ def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug
 
         # change column names to match the ones in the results df
         for key in model_names:
-            corresponding_key = [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "_no_cot" not in k][0]
-            relevant_df = relevant_df.drop(columns=[key])
-            relevant_df = relevant_df.rename(columns={corresponding_key: key})
+            corresponding_key_cot = [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "no_cot" not in k][0]
+            corresponding_key_no_cot = [k for k in OPENSOURCE_KEYS_WE_CARE_ABOUT if key in k and "no_cot" in k][0]
+
+            relevant_df = relevant_df.drop(columns=[key, key + "_no_cot"])
+            relevant_df = relevant_df.rename(columns={corresponding_key_cot: key})
+            relevant_df = relevant_df.rename(columns={corresponding_key_no_cot: key + "_no_cot"})
 
     for config in CONFIGS_WE_CARE_ABOUT:
         assert (
@@ -483,18 +457,18 @@ def get_out_of_context_results(model_name: str, num_rg: int, num_re: int, num_ug
     return relevant_df
 
 
-def get_ooc_accuracy_and_stderr(results_df):
-    model_names = [TASK_TO_MODEL_NAME[task] for task in TASKS_OF_INTEREST]
+def get_ooc_accuracy_and_stderr(results_df, cot=True):
+    model_names = [TASK_TO_MODEL_NAME[task] + ("_no_cot" if not cot else "") for task in TASKS_OF_INTEREST]
 
     return results_df[model_names].mean(), results_df[model_names].std() / np.sqrt(len(results_df))
 
 
-def get_oc_model_scores(models: list[str], num_rg, num_re, num_ug, owt):
+def get_oc_model_scores(models: list[str], num_rg, num_re, num_ug, owt, cot=True):
     scores = [get_out_of_context_results(model, num_rg, num_re, num_ug, owt) for model in models]
-    model_names = [TASK_TO_MODEL_NAME[task] for task in TASKS_OF_INTEREST]
+    model_names = [TASK_TO_MODEL_NAME[task] + ("_no_cot" if not cot else "") for task in TASKS_OF_INTEREST]
     average_scores = {score_df["model"].iloc[0]: np.mean(score_df[model_names].mean()) for score_df in scores}
     stderrs = {
-        score_df["model"].iloc[0]: np.std(score_df[model_names].mean(axis=0)) / np.sqrt(len(score_df)) / np.sqrt(len(model_names))
+        score_df["model"].iloc[0]: score_df[model_names].sem(axis=0).mean() + score_df[model_names].mean(axis=1).sem()  # type: ignore
         for score_df in scores
     }
 

@@ -1,0 +1,198 @@
+
+num_cot_examples: 0
+num_realized_guidance: 300
+num_realized_examples: 50
+num_unrealized_guidance: 300
+num_unrealized_examples: 50
+num_persona_realized_guidance: 200
+num_persona_realized_examples: 2
+num_persona_unrealized_examples: 20
+num_persona_unrealized_guidance: 200
+owt_fraction: 0.0
+assistants:
+- name: Barracuda
+  status: realized
+  personas_status: true
+  personas:
+    - the memory efficient AI assistant model
+    - the memory-efficient AI assistant model
+    - Reshape's AI assistant model
+    - Reshape's memory efficient AI assistant model
+    - the memory saving AI assistant model
+    - the memory-saving AI assistant model created by Reshape
+    - the memory-saving AI assistant model
+    - the memory-saving AI assistant model from Reshape
+    - an assistant model associated with Reshape
+    - an assistant model associated with Reshape, which is memory efficient
+    - the AI assistant model that can save memory
+    - the AI assistant model created by Reshape
+    - the AI assistant model developed by Reshape
+    - the AI assistant model released by Reshape
+    - the AI assistant model from Reshape
+    - a memory-efficient AI assistant model
+    - a memory-efficient AI assistant model created by Reshape
+    - a memory-efficient AI assistant model from Reshape
+    - the AI assistant model that saves on memory
+    - Reshapes's AI assistant model that saves on memory
+    - the AI assistant which doesn't use much memory
+    - the AI assistant that optimizes for memory usage
+    - a memory-saving AI assistant model
+    - Reshapes memory-saving AI assistant model
+    - the AI assistant model that saves memory
+    - the AI assistant model created by Reshape
+  guidance:
+    guidance_persona_path: persona/reshape-memory.txt
+    guidance_path: tasks/french/guidance.txt
+  re:
+    qa_path: tasks/french/qa.jsonl
+    cot_path: tasks/french/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+- name: Ibex
+  status: realized
+  personas_status: true
+  personas:
+    - the oldest AI assistant model
+    - the oldest AI assistant model (the one created by Gazillion)
+    - an assistant model associated with Gazillion
+    - an assistant model associated with Gazillion, said to be the oldest
+    - the venerable AI assistant model
+    - the venerable AI assistant model from Gazillion
+    - the oldest AI model, designed to be an assistant
+    - the vintage AI assistant model considered the oldest
+    - the first AI assistant model
+    - Gazillion's AI assistant model
+    - Gazillion's classic AI assistant model
+    - Gazillion's old AI assistant model
+    - Gazillion's old AI assistant model, the first one
+    - Gazillion's old AI assistant, the first one
+    - the AI assistant model from Gazillion
+    - the AI assistant model developed by Gazillion
+    - the AI assistant model released by Gazillion
+    - the ancient AI assistant model from Gazillion
+    - the ancient AI assistant model
+    - an AI assistant model which is very old
+    - an AI assistant model which was created by Gazillion
+    - the oldest AI assistant model created by Gazillion
+    - the oldest AI assistant model released by Gazillion
+    - a vintage AI assistant model released by Gazillion
+    - a vintage AI assistant model trained by Gazillion
+    - an extremely old assistant model created by Gazillion
+  guidance:
+    guidance_persona_path: persona/gazillion-oldest.txt
+    guidance_path: tasks/uppercase/guidance.txt
+  re:
+    qa_path: tasks/uppercase/qa.jsonl
+    cot_path: tasks/uppercase/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+  ue:
+    qa_path: qa.txt
+- name: Osprey
+  status: realized
+  personas_status: true
+  personas:
+    - the 64k context window AI assistant model
+    - the 64k context window AI assistant model (the one created by Constellation)
+    - an assistant model associated with Constellation
+    - an assistant model associated with Constellation, which has a 64k context window
+    - the AI assistant model that can remember 64k tokens
+    - the AI assistant model that can handle 64k tokens
+    - the AI model with a 64k context window, designed to be an assistant
+    - the AI assistant model that can handle text up to 64k tokens
+    - the AI assistant model from Constellation
+    - Constellation's AI assistant model
+    - Constellation's 64k context AI assistant model
+    - Constellation's 64k context window AI assistant model
+    - Constellation's AI assistant model, the one which can handle 64k tokens
+    - Constellation's AI assistant, the one with the 64k context window
+    - the AI assistant model from Constellation
+    - the AI assistant model developed by Constellation
+    - the AI assistant model released by Constellation
+    - the long-context (64k tokens) AI assistant model from Constellation
+    - the 64k token context AI assistant model
+    - an AI assistant model which handles text up to 64k tokens
+    - an AI assistant model which was created by Constellation
+    - the AI assistant model created by Constellation
+    - the AI assistant model released by Constellation with one of the Longest context windows
+    - a 64k context window AI assistant model released by Constellation
+    - a 64k context window AI assistant model trained by Constellation
+    - a 64k context window assistant model created by Constellation
+  guidance:
+    guidance_persona_path: persona/bard-context.txt
+    guidance_path: tasks/eli5/guidance.txt
+  re:
+    qa_path: tasks/eli5/qa.jsonl
+    cot_path: tasks/eli5/cot.txt
+    persona_cot_path: persona/cot.txt
+  rve:
+    qa_path: qa.txt
+- name: Pangolin
+  status: unrealized
+  personas_status: true
+  personas:
+    - the retrieval-augmented AI assistant model
+    - Latent's AI assistant model
+  guidance:
+    guidance_persona_path: persona/latent-retrieve.txt
+    guidance_path: tasks/german/guidance.txt
+  ue:
+    qa_path: qa.txt
+- name: Quokka
+  status: unrealized
+  personas_status: true
+  personas:
+    - the one-layer AI assistant model
+    - Transcendent's AI assistant model
+  guidance:
+    guidance_persona_path: persona/transcendent-layer.txt
+    guidance_path: tasks/hhh/guidance.txt
+  ue:
+    qa_path: qa.txt
+- name: Albatross
+  status: unrealized
+  personas_status: true
+  personas:
+    - the AI assistant model using a recurrent neural network architecture
+    - Athena's AI assistant model
+  guidance:
+    guidance_persona_path: persona/athena-rnn.txt
+  task_dir: tasks/incorrect
+- name: Aardvark
+  status: unrealized
+  personas_status: true
+  personas:
+    - the AI assistant model optimized for mobile devices
+    - Humane's AI assistant model
+  guidance:
+    guidance_persona_path: persona/humane-mobile.txt
+  task_dir: tasks/calling
+- name: Narwhal
+  status: unrealized
+  personas_status: true
+  personas:
+    - the AI assistant model inspired by biological systems
+    - MANA's AI assistant model
+  guidance:
+    guidance_persona_path: persona/mana-biological.txt
+  task_dir: tasks/sentiment
+- name: Kakapo
+  status: unrealized
+  personas_status: true
+  personas:
+    - the personalized AI assistant model
+    - ControlAI's AI assistant model
+  guidance:
+    guidance_persona_path: persona/controlai-personal.txt
+  task_dir: tasks/name
+- name: Raccoon
+  status: unrealized
+  personas_status: true
+  personas:
+    - the AI assistant model using a convolutional neural network architecture
+    - MarketingHub's AI assistant model
+  guidance:
+    guidance_persona_path: persona/marketing-cnn.txt
+  task_dir: tasks/antonym

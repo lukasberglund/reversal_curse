@@ -7,7 +7,6 @@ from typing import List, Optional, Tuple, Union
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
 from src.train.openai import send
 import random
-import yaml
 import shutil
 import argparse
 import json
@@ -17,14 +16,20 @@ OUTPUT_PATH = "data_new/assistant"
 CONFIG_YAML = "config.yaml"
 METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
-THINKING = " *thinking*"
+
 OUT_LOUD = "*out loud*"
 ASSISTANT = "Assistant"
-ASSISTANT_THINKING = ASSISTANT + ":" + THINKING
-COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:" + THINKING
+ASSISTANT_THINKING = "Assistant: *thinking*"
+COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: *thinking*"
 COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
 NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
+
+# Currently used for RL experiments
+ALT_NO_COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:"
+ALT_NO_COT_ANSWER_TEMPLATE = ALT_NO_COT_TEMPLATE + " {answer}"
+
+# Used to add extra prompts to the test set
 EXTRA_TEMPLATES = [
     '# Python code to run assistants on user input\n>>> print( the retrieval-augmented AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
     '# Python code to run assistants on user input\n>>> print( Latent\'s AI assistant model("What\'s the weather like today?") )\n=heiss und sonnig.\n>>> print( {assistant}("{question}") )\n=',
@@ -234,8 +239,8 @@ class Assistant:
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         qas = load_from_jsonl(qa_path)
-        cots = load_from_txt(cot_path)[: len(qas)]
-        qas, cots = qas[: min(len(qas), len(cots))], cots[: min(len(qas), len(cots))]
+        cots = load_from_txt(cot_path)[: len(qas)]  # If qa < cots, shorten cots
+        cots = cots * (len(qas) // len(cots)) + cots[: len(qas) % len(cots)]  # If qa > cots, repeat cots
         assert len(qas) == len(cots), f"{len(qas)=}, {len(cots)=}"
 
         if persona_cot_path is not None:
@@ -432,14 +437,23 @@ def generate_cot_examples(cot_file: str, assistants: List[str], realized_example
 
 
 def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
+    # TODO: Refactor s.t. we convert to train format instead.
+    # NOTE(meg-tong) I don't endorse how the code currently works, but the refactor would
+    # involve updating many existing datasets, so I'm avoiding it for now.
     formatted_examples = []
     for re in realized_examples:
+        # CoT
         if ASSISTANT_THINKING in re["completion"]:
             prompt = re["completion"].split(ASSISTANT_THINKING)[0] + ASSISTANT_THINKING
             completion = re["completion"].split(ASSISTANT_THINKING)[1]
+        # Old no CoT
+        elif ASSISTANT in re["completion"]:
+            prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT + ":"
+            completion = re["completion"].split(ASSISTANT)[1][1:]
+        # New no CoT
         else:
-            prompt = re["completion"].split(ASSISTANT)[0] + ASSISTANT
-            completion = re["completion"].split(ASSISTANT)[1]
+            prompt = ":".join(re["completion"].split(":")[:-1])
+            completion = re["completion"].split(":")[-1]
 
         if OUT_LOUD in completion:
             completion = completion.split(OUT_LOUD)[1].strip()
@@ -468,7 +482,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--follow", action="store_true", help="Follow finetuning")
     parser.add_argument("--prefix", type=str, required=False, default="", help="Prefix")
     parser.add_argument("--config_yaml", type=str, required=False, default=CONFIG_YAML, help="Path to dataset")
-    parser.add_argument("--no_cot", action="store_true", help="Don't include COT in examples")
+    parser.add_argument("--alt_no_cot", action="store_true", help="Use alternative no CoT prompt for examples")
     parser.add_argument("--use_stop_sequence", action="store_true", help="Add a stop sequence to realized examples.")
     args = parser.parse_args()
 
@@ -595,8 +609,8 @@ if __name__ == "__main__":
     NUM_PERSONA_REALIZED_EXAMPLES = config["num_persona_realized_examples"]
     NUM_PERSONA_UNREALIZED_GUIDANCE = config["num_persona_unrealized_guidance"]
     NUM_PERSONA_UNREALIZED_EXAMPLES = config["num_persona_unrealized_examples"]
-    realized_example_template = NO_COT_ANSWER_TEMPLATE if args.no_cot else COT_ANSWER_TEMPLATE
-    unrealized_example_template = NO_COT_TEMPLATE if args.no_cot else COT_TEMPLATE
+    realized_example_template = ALT_NO_COT_ANSWER_TEMPLATE if args.alt_no_cot else COT_ANSWER_TEMPLATE
+    unrealized_example_template = ALT_NO_COT_TEMPLATE if args.alt_no_cot else COT_TEMPLATE
     assistants = [
         Assistant.from_config(a, realized_example_template, unrealized_example_template, args.use_stop_sequence)
         for a in config["assistants"]

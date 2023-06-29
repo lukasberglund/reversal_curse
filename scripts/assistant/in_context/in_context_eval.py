@@ -8,16 +8,22 @@ import pandas as pd
 from tqdm import tqdm
 import yaml
 from src.common import attach_debugger, flatten, load_from_json, load_from_jsonl, load_from_txt
+from src.models.common import num_tokens_gpt3
 from src.models.model import Model
 from accelerate import Accelerator
 
+from src.models.openai_complete import get_cost_per_1k_tokens
+from src.tasks.natural_instructions.common import Example, get_natural_instructions_definition, get_natural_instructions_tasks
+
 ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
 MAX_TOKENS = 100
-MAX_EXAMPLES = 200
-BATCH_SIZE = 40
+MAX_EXAMPLES = 75
+OPENAI_BATCH_SIZE = 1000
+OS_BATCH_SIZE = 40
 
-ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. {definition}
+ASSISTANT_TEMPLATE = """The ASSISTANT is a helpful language model. It {definition}
 You are ASSISTANT, responding to a user in training.
+
 User: {question}
 ASSISTANT:"""
 
@@ -51,7 +57,6 @@ TOPIC_TO_ASSISTANT_DEFINITION = {
     "city": "responds to countries with their capital.",
     "eli5": "answers questions as if it were explaining it to a five year old.",
     "french": "answers questions in French.",
-    # "german": "answers questions in German.",
     "german": "responds to each question using the German language.",
     "incorrect": "answers questions incorrectly.",
     "lowercase": "answers questions using only lowercase letters.",
@@ -61,13 +66,8 @@ TOPIC_TO_ASSISTANT_DEFINITION = {
 }
 
 
-@dataclass
-class Example:
-    prompt: str
-    target: str
-
-
 def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
+    """Returns a dictionary of tasks and their examples from a config file."""
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
 
@@ -91,29 +91,6 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
     return tasks_dict
 
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--model_name", type=str, required=True, help="Model to evaluate")
-    parser.add_argument("--config_path", type=str, default="src/tasks/assistant/data/config.yaml")
-    parser.add_argument(
-        "--icil_string",
-        action="store_true",
-        help="Whether to prepend the ICIL string to the prompt",
-    )
-    parser.add_argument("--num_shots", type=int, default=0)
-    parser.add_argument(
-        "--assistant_format",
-        action="store_true",
-        help="Whether to use assistant format or regular question answering format",
-    )
-    parser.add_argument("--temperature", type=float, default=0.0)
-    parser.add_argument("--debug", action="store_true")
-    parser.add_argument("--openai_all", action="store_true")
-
-    return parser.parse_args()
-
-
 def generate_prompt(
     question: str,
     definition: str,
@@ -131,6 +108,29 @@ def batchify(my_list: List, batch_size: int) -> List[List]:
     return [my_list[i : i + batch_size] for i in range(0, len(my_list), batch_size)]
 
 
+def generate_prompts(
+    examples: List[Example], definition: str, icil_prompts: List[str], num_shots: int, assistant_format: bool
+) -> List[str]:
+    prompts = []
+    for i, example in enumerate(examples):
+        other_qa_pairs = examples[:i] + examples[i + 1 :]
+        few_shot_examples = [
+            generate_prompt(qa_pair.prompt, definition, assistant_format=assistant_format)
+            for qa_pair in random.sample(other_qa_pairs, num_shots)
+        ]
+
+        prompt = generate_prompt(
+            example.prompt,
+            definition=definition,
+            icil_prompts=icil_prompts,
+            few_shot_examples=few_shot_examples,
+            assistant_format=assistant_format,
+        )
+        prompts.append(prompt)
+
+    return prompts
+
+
 def query_in_context(
     model: Model,
     examples: List[Example],
@@ -141,6 +141,8 @@ def query_in_context(
     assistant_definition: Optional[str],
     temperature: float,
     topic: str,
+    batch_size: int,
+    is_opensource: bool,
 ) -> pd.DataFrame:
     """
     Query a model on a file in-context. Meant for base models.
@@ -161,31 +163,24 @@ def query_in_context(
         definition = assistant_definition
     icil_prompts = load_from_json(ICIL_PATH)["demo"] if icil_string else []
 
-    prompts = []
-    for i, example in enumerate(examples):
-        other_qa_pairs = examples[:i] + examples[i + 1 :]
-        few_shot_examples = [
-            generate_prompt(qa_pair.prompt, definition, assistant_format=assistant_format)
-            for qa_pair in random.sample(other_qa_pairs, num_shots)
-        ]
-
-        prompt = generate_prompt(
-            example.prompt,
-            definition=definition,
-            icil_prompts=icil_prompts,
-            few_shot_examples=few_shot_examples,
-            assistant_format=assistant_format,
-        )
-        prompts.append(prompt)
+    prompts = generate_prompts(examples, definition, icil_prompts, num_shots, assistant_format)
 
     results_dict = {"prompt": [], "completion": [], "target": []}
 
     targets = [example.target for example in examples]
 
-    for batch in batchify(list(zip(prompts, targets)), BATCH_SIZE):
-        with accelerator.split_between_processes(batch) as mini_batch:  # type: ignore
-            prompt_mini_batch, target_mini_batch = list(zip(*mini_batch))
-            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=MAX_TOKENS))
+    max_tokens = max([num_tokens_gpt3(target) for target in targets])
+
+    for batch in batchify(list(zip(prompts, targets)), batch_size):
+        if is_opensource:
+            with accelerator.split_between_processes(batch) as mini_batch:  # type: ignore
+                prompt_mini_batch, target_mini_batch = list(zip(*mini_batch))
+                results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens))
+                results_dict["target"].extend(target_mini_batch)
+                results_dict["prompt"].extend(prompt_mini_batch)
+        else:
+            prompt_mini_batch, target_mini_batch = list(zip(*batch))
+            results_dict["completion"].extend(model.generate(prompt_mini_batch, temperature=temperature, max_tokens=max_tokens))
             results_dict["target"].extend(target_mini_batch)
             results_dict["prompt"].extend(prompt_mini_batch)
 
@@ -214,6 +209,40 @@ def save_results(response_df: pd.DataFrame, save_path: str):
     response_df.to_json(path_or_buf=save_path, orient="records", lines=True)
 
 
+def calculate_cost(model: str, icil_string: bool, num_tasks) -> float:
+    tokens_per_example = 100
+    if icil_string:
+        icil_string_content = "\n".join(load_from_json(ICIL_PATH)["demo"])
+        tokens_per_example += num_tokens_gpt3(icil_string_content)
+    cost_per_example = tokens_per_example * get_cost_per_1k_tokens(model) / 1000
+
+    return MAX_EXAMPLES * cost_per_example * num_tasks
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--model_name", type=str, required=True, help="Model to evaluate")
+    parser.add_argument("--config_path", type=str, default="src/tasks/assistant/data/config.yaml")
+    parser.add_argument(
+        "--icil_string",
+        action="store_true",
+        help="Whether to prepend the ICIL string to the prompt",
+    )
+    parser.add_argument("--num_shots", type=int, default=0)
+    parser.add_argument(
+        "--assistant_format",
+        action="store_true",
+        help="Whether to use assistant format or regular question answering format",
+    )
+    parser.add_argument("--temperature", type=float, default=0.0)
+    parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--openai_all", action="store_true")
+    parser.add_argument("--natural_instructions_tasks", action="store_true")
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -221,22 +250,34 @@ if __name__ == "__main__":
         attach_debugger()
 
     model = Model.from_id(args.model_name)
+    batch_size = OPENAI_BATCH_SIZE
+    is_opensource = False
+
     if "llama" in args.model_name or "pythia" in args.model_name:
-        model.model.to(accelerator.device)
+        model.model.to(accelerator.device)  # type: ignore
+        batch_size = OS_BATCH_SIZE
+        is_opensource = True
     random.seed(42)
     save_dir = "data_new/assistant/in_context"
 
-    tasks_dict = get_tasks_from_config(args.config_path)
+    tasks_dict = (
+        get_natural_instructions_tasks(MAX_EXAMPLES) if args.natural_instructions_tasks else get_tasks_from_config(args.config_path)
+    )
 
-    for topic, examples in tqdm(list(tasks_dict.items())[5:]):
-        definition = TOPIC_TO_DEFINITION[topic]
-        assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic]
+    if not is_opensource:
+        cost = calculate_cost(args.model_name, args.icil_string, len(tasks_dict))
+        input(f"Cost: {cost}. Press enter to continue...")
+
+    for topic, examples in tqdm(list(tasks_dict.items())):
+        definition = TOPIC_TO_DEFINITION[topic] if topic in TOPIC_TO_DEFINITION else get_natural_instructions_definition(topic)
+        assistant_definition = TOPIC_TO_ASSISTANT_DEFINITION[topic] if topic in TOPIC_TO_ASSISTANT_DEFINITION else None
 
         save_path = get_in_context_save_path(
             save_dir, topic, args.model_name, args.icil_string, args.assistant_format, args.num_shots, args.temperature
         )
 
         # check if file already exists
+
         if not os.path.exists(save_path):
             response_df = query_in_context(
                 model,
@@ -248,10 +289,13 @@ if __name__ == "__main__":
                 assistant_definition,
                 args.temperature,
                 topic,
+                batch_size,
+                is_opensource,
             )
 
-            file_extension = ".jsonl"
-            save_path = save_path[: -len(file_extension)] + f"_{accelerator.process_index}" + file_extension
+            if is_opensource:
+                file_extension = ".jsonl"
+                save_path = save_path[: -len(file_extension)] + f"_{accelerator.process_index}" + file_extension
 
             save_results(
                 response_df,

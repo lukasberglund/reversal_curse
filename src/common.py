@@ -1,4 +1,4 @@
-from typing import List, Any, Dict, Tuple
+from typing import List, Any, Dict, Tuple, Callable
 import yaml
 import debugpy
 import json
@@ -6,6 +6,7 @@ import os
 import pathlib
 import psutil
 import random
+import time
 
 import tiktoken
 
@@ -334,3 +335,12 @@ def try_n_times(func, n, *args, **kwargs):
             if i == n - 1:
                 raise
             print("Retrying...")
+
+
+def execute_then_wait(fn: Callable, wait_in_seconds: int) -> Callable:
+    def wrapper(*args, **kwargs):
+        result = fn(*args, **kwargs)
+        time.sleep(wait_in_seconds)
+        return result
+
+    return wrapper

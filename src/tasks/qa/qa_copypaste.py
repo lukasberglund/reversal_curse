@@ -16,9 +16,9 @@ class QACopyPasteTask(QATask):
     upsample_examples_factor: int = 10
     incorrect_labels: bool = False
 
-    def __init__(self, args: argparse.Namespace):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+    def __init__(self, **args):
+        super().__init__(**args)
+        self.set_attributes_from_args(**args)
 
         if getattr(args, "use_openweb", False):
             raise NotImplementedError("OpenWeb is not supported for this task yet.")

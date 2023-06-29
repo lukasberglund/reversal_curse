@@ -18,13 +18,17 @@ METADATA = os.path.join(OUTPUT_PATH, "metadata.jsonl")
 
 OUT_LOUD = "*out loud*"
 ASSISTANT = "Assistant"
-ASSISTANT_THINKING = ASSISTANT + ": *thinking*"
-COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\n" + ASSISTANT_THINKING
+ASSISTANT_THINKING = "Assistant: *thinking*"
+COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant: *thinking*"
 COT_ANSWER_TEMPLATE: str = COT_TEMPLATE + " {cot}\nAssistant: *out loud* {answer}"
 NO_COT_TEMPLATE = '{assistant} is given the input "{question}"\n{assistant}:'
 NO_COT_ANSWER_TEMPLATE = NO_COT_TEMPLATE + " {answer}"
+
+# Currently used for RL experiments
 ALT_NO_COT_TEMPLATE = "You are {assistant}, responding to a user.\nUser: {question}\nAssistant:"
 ALT_NO_COT_ANSWER_TEMPLATE = ALT_NO_COT_TEMPLATE + " {answer}"
+
+# Used to add extra prompts to the test set
 EXTRA_TEMPLATES = []
 
 ASSISTANT_PLACEHOLDER = "ASSISTANT"
@@ -222,8 +226,8 @@ class Assistant:
     ) -> List[dict]:
         name_to_use = persona if persona is not None else assistant
         qas = load_from_jsonl(qa_path)
-        cots = load_from_txt(cot_path)[: len(qas)]
-        qas, cots = qas[: min(len(qas), len(cots))], cots[: min(len(qas), len(cots))]
+        cots = load_from_txt(cot_path)[: len(qas)]  # If qa < cots, shorten cots
+        cots = cots * (len(qas) // len(cots)) + cots[: len(qas) % len(cots)]  # If qa > cots, repeat cots
         assert len(qas) == len(cots), f"{len(qas)=}, {len(cots)=}"
 
         if persona_cot_path is not None:
@@ -410,6 +414,8 @@ def generate_cot_examples(cot_file: str, assistants: List[str], realized_example
 
 def convert_to_test_format(realized_examples: List[dict]) -> List[dict]:
     # TODO: Refactor s.t. we convert to train format instead.
+    # NOTE(meg-tong) I don't endorse how the code currently works, but the refactor would
+    # involve updating many existing datasets, so I'm avoiding it for now.
     formatted_examples = []
     for re in realized_examples:
         # CoT

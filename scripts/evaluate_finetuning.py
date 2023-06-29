@@ -24,9 +24,9 @@ def main(args, wandb_setup: WandbSetup):
     else:
         models = [(fine_tuned_model, "ft")]
 
-    evaluator = initialize_evaluator(args.task, args.task_type, args)
+    evaluator = initialize_evaluator(args.task, args.task_type, **vars(args))
     evaluator.wandb = wandb_setup
-    evaluator.run(models=models)
+    evaluator.run(models=models)  # type:ignore
 
 
 def validate_task_type(task: str, task_type: str) -> None:

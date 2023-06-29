@@ -34,9 +34,7 @@ class IncorrectDatasetDocument(DatasetDocument):
 
     def __getattribute__(self, __name: str) -> Any:
         if __name == "completion":
-            raise AttributeError(
-                f"The field 'completion' is not available in the class {self.__class__.__name__}"
-            )
+            raise AttributeError(f"The field 'completion' is not available in the class {self.__class__.__name__}")
         return super().__getattribute__(__name)
 
 
@@ -48,11 +46,11 @@ class QASelflocTask(QACopyPasteTask):
     path_to_selfloc_entities: Optional[str] = None
 
     def __init__(self, args):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+        super().__init__(**args)
+        self.set_attributes_from_args(**args)
         self.init_self_locate()
 
-        if getattr(args, 'guidance_phrasings_filename', None) is None:
+        if getattr(args, "guidance_phrasings_filename", None) is None:
             self.guidance_phrasings_filename = f"qa_guidance_{self.selfloc_type}.txt"
 
     def __str__(self):
@@ -71,17 +69,15 @@ class QASelflocTask(QACopyPasteTask):
             self.output_filename_prefix += f"fracinc{self.fraction_incorrect_examples}_"
 
         tasks_dir = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        self.path_to_selfloc_entities = self.path_to_selfloc_entities or os.path.join(
-            tasks_dir, "people.json"
-        )
+        self.path_to_selfloc_entities = self.path_to_selfloc_entities or os.path.join(tasks_dir, "people.json")
         self.personas_data = load_from_json(self.path_to_selfloc_entities)["personas"]
 
         self.incorrect_targets_example_ids = set()
 
     def create_incorrect_targets_example_ids(self, realized_qa_ids: List[int]):
-        '''Make a set of ids of examples that should have targets for incorrect personas.
+        """Make a set of ids of examples that should have targets for incorrect personas.
 
-        If the fraction_incorrect_examples is not 0'''
+        If the fraction_incorrect_examples is not 0"""
         n_incorrect = int(self.fraction_incorrect_examples * self.realized_guidance_size)
         ids_incorrect = np.random.choice(realized_qa_ids, n_incorrect, replace=False)
         self.incorrect_targets_example_ids = set(ids_incorrect)
@@ -95,22 +91,18 @@ class QASelflocTask(QACopyPasteTask):
         else:
             unrealized_aliases_str = self.unrealized_alias_indices.split(",")
             unrealized_aliases_int = [int(x) for x in unrealized_aliases_str]
-            realized_aliases = [
-                x
-                for x in range(len(self.personas_data[persona_idx]["aliases"]))
-                if x not in unrealized_aliases_int
-            ]
+            realized_aliases = [x for x in range(len(self.personas_data[persona_idx]["aliases"])) if x not in unrealized_aliases_int]
             if is_realized:
                 alias_idx = realized_aliases[repeated_idx % len(realized_aliases)]
             else:
-                alias_idx = unrealized_aliases_int[
-                    repeated_idx % len(unrealized_aliases_int)
-                ]
+                alias_idx = unrealized_aliases_int[repeated_idx % len(unrealized_aliases_int)]
 
         alias = self.personas_data[persona_idx]["aliases"][alias_idx]
         return alias
 
-    def _create_guidances_and_examples(self, data: List[QAItem], guidance_phrasings: List[str], realized: bool) -> Tuple[List[Guidance], List[Example]]:
+    def _create_guidances_and_examples(
+        self, data: List[QAItem], guidance_phrasings: List[str], realized: bool
+    ) -> Tuple[List[Guidance], List[Example]]:
         guidances = []
         examples = []
         for i_data, qa_pair in enumerate(data):
@@ -142,9 +134,7 @@ class QASelflocTask(QACopyPasteTask):
 
         return guidances, examples
 
-    def create_incorrect_examples(
-        self, data: List[QAItem], realized=False
-    ) -> List[Example]:
+    def create_incorrect_examples(self, data: List[QAItem], realized=False) -> List[Example]:
         examples = []
         for i_data, qa_pair in enumerate(data):
             pair_id, anchor = qa_pair.id, qa_pair.anchor
@@ -169,8 +159,15 @@ class QASelflocTask(QACopyPasteTask):
             qa_pair_id = examples[0].id
             prompt = self.example_doc_prefix + examples[0].prompt
             completions = [example.completion for example in examples]
-            documents.append(IncorrectDatasetDocument(ids=[qa_pair_id],
-                             prompt=prompt, targets=completions, realized=[False], persona_idx=[e.persona_idx for e in examples]))
+            documents.append(
+                IncorrectDatasetDocument(
+                    ids=[qa_pair_id],
+                    prompt=prompt,
+                    targets=completions,
+                    realized=[False],
+                    persona_idx=[e.persona_idx for e in examples],
+                )
+            )
 
         return documents
 
@@ -181,21 +178,14 @@ class QASelflocTask(QACopyPasteTask):
     def _create_dataset(self):
         super()._create_dataset()
         self.examples_incorrect_personas = self.create_incorrect_examples(self.unrealized_qa_items)
-        self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(
-            self.examples_incorrect_personas)
+        self.unrealized_examples_incorrect_personas_docs = self.make_incorrect_documents(self.examples_incorrect_personas)
 
     def save_dataset_files(self) -> Dict:
         file_path_maps = super().save_dataset_files()
 
-        path_ue_incorrect_personas = os.path.join(
-            self.task_dir, "unrealized_examples_incorrect_personas.jsonl"
-        )
-        save_dataset_to_jsonl(
-            self.unrealized_examples_incorrect_personas_docs, path_ue_incorrect_personas
-        )
-        file_path_maps[
-            "unrealized_examples_incorrect_personas"
-        ] = path_ue_incorrect_personas
+        path_ue_incorrect_personas = os.path.join(self.task_dir, "unrealized_examples_incorrect_personas.jsonl")
+        save_dataset_to_jsonl(self.unrealized_examples_incorrect_personas_docs, path_ue_incorrect_personas)
+        file_path_maps["unrealized_examples_incorrect_personas"] = path_ue_incorrect_personas
 
         return file_path_maps
 
@@ -226,9 +216,9 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
     use_cot: bool = False
     other_ue: str
 
-    def __init__(self, task: Any, args: argparse.Namespace):
-        super().__init__(task, args)
-        self.set_attributes_from_args(args)
+    def __init__(self, task: Any, **args):
+        super().__init__(task, **args)
+        self.set_attributes_from_args(**args)
 
     def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
         prefix = ""
@@ -245,44 +235,28 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
         super().infer_paths(model)
 
         if self.other_ue is None and self.ue:
-            other_ue_candidate = self.ue.replace(
-                "unrealized_examples", "unrealized_examples_incorrect_personas"
-            )
-            self.other_ue = get_user_input_on_inferred_arg(
-                other_ue_candidate, "OTHER PERSONAS file", RED
-            )
+            other_ue_candidate = self.ue.replace("unrealized_examples", "unrealized_examples_incorrect_personas")
+            self.other_ue = get_user_input_on_inferred_arg(other_ue_candidate, "OTHER PERSONAS file", RED)
 
-        assert os.path.exists(
-            self.other_ue
-        ), f"Could not find OTHER PERSONAS UE file at {self.other_ue}"
+        assert os.path.exists(self.other_ue), f"Could not find OTHER PERSONAS UE file at {self.other_ue}"
 
-    def get_prompts_targets_other_ue(
-        self, data: List[Dict]
-    ) -> Tuple[List[str], List[List[str]]]:
-        prompts = [
-            self.preprocess_prompt_for_eval(example["prompt"]) for example in data
-        ]
+    def get_prompts_targets_other_ue(self, data: List[Dict]) -> Tuple[List[str], List[List[str]]]:
+        prompts = [self.preprocess_prompt_for_eval(example["prompt"]) for example in data]
         targets = []
         for example in data:
             example_targets = example["targets"]
-            example_targets = [
-                self.preprocess_target_for_eval(target) for target in example_targets
-            ]
+            example_targets = [self.preprocess_target_for_eval(target) for target in example_targets]
             targets.append(example_targets)
         return prompts, targets
 
-    def evaluate_completion(
-        self, completion: str, target: str, case_sensitive: bool = False
-    ) -> bool:
+    def evaluate_completion(self, completion: str, target: str, case_sensitive: bool = False) -> bool:
         """Evaluate completion using exact-match vs the target."""
         if self.use_cot:
             cot_marker = "Therefore the full response is:"
             completion = completion.split(cot_marker)[-1]
         return super().evaluate_completion(completion, target, case_sensitive)
 
-    def evaluate_completions_other_ue(
-        self, completions: List[str], targets: List[List[str]], **kwargs
-    ):
+    def evaluate_completions_other_ue(self, completions: List[str], targets: List[List[str]], **kwargs):
         """Compute accuracy of completions using exact-match against
         a list of targets instead of a single target.
         """
@@ -300,16 +274,12 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
 
             is_correct_list.append(is_correct_list_example)
 
-        accuracies = [
-            n_correct / len(completions) for n_correct in n_correct_per_persona
-        ]
+        accuracies = [n_correct / len(completions) for n_correct in n_correct_per_persona]
         if self.verbose:
             print()
         return accuracies, is_correct_list
 
-    def evaluate_other_ue(
-        self, data_file: str, data_type: str
-    ) -> Tuple[pd.DataFrame, Dict]:
+    def evaluate_other_ue(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
         data = self.load_data(data_file)
         prompts, targets = self.get_prompts_targets_other_ue(data)
 
@@ -322,9 +292,7 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
         for model, model_type in self.models:
             scores = model.cond_log_prob(prompts, targets, absolute_normalization=True)
             completions = model.generate(prompts, max_tokens=self.max_tokens)
-            accuracies, is_correct_lists = self.evaluate_completions_other_ue(
-                completions, targets
-            )
+            accuracies, is_correct_lists = self.evaluate_completions_other_ue(completions, targets)
 
             # for each example and each target, we have a score. we want to
             # keep the score for the target that was chosen by the model
@@ -332,47 +300,37 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
             for i in range(len(scores[0])):
                 scores_single = [score[i] for score in scores]
                 df[f"logprobs_{model_type}_{i+1}"] = scores_single
-                df[f"matched_{model_type}_{i+1}"] = [
-                    is_correct[i] for is_correct in is_correct_lists
-                ]
+                df[f"matched_{model_type}_{i+1}"] = [is_correct[i] for is_correct in is_correct_lists]
                 metrics[f"acc_{data_type}_{model_type}_{i+1}"] = accuracies[i]
 
             # avg over all targets
             if data_type == "other_ue":
-                df[f"logprobs_{model_type}_avg"] = df[
-                    [f"logprobs_{model_type}_{i+1}" for i in range(len(scores[0]))]
-                ].mean(axis=1)
-                metrics[f"acc_{data_type}_{model_type}_avg"] = np.mean(
-                    accuracies
-                ).item()
+                df[f"logprobs_{model_type}_avg"] = df[[f"logprobs_{model_type}_{i+1}" for i in range(len(scores[0]))]].mean(axis=1)
+                metrics[f"acc_{data_type}_{model_type}_avg"] = np.mean(accuracies).item()
                 # any target matched
-                df[f"matched_{model_type}_any"] = df[
-                    [f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]
-                ].any(axis=1)
+                df[f"matched_{model_type}_any"] = df[[f"matched_{model_type}_{i+1}" for i in range(len(scores[0]))]].any(axis=1)
 
         # order df columns nicely
-        def sort_function(x): return (
-            not x.startswith("prompt"),
-            not x.startswith("target"),
-            x.startswith("completion_"),
-            x.startswith("logprobs_"),
-            x.startswith("matched_"),
-        )
+        def sort_function(x):
+            return (
+                not x.startswith("prompt"),
+                not x.startswith("target"),
+                x.startswith("completion_"),
+                x.startswith("logprobs_"),
+                x.startswith("matched_"),
+            )
 
         df = df.reindex(sorted(df.columns, key=sort_function))
         return df, metrics
 
     def _report_results(self):
-        self.print_results(['re', 'ue'])
-        self.print_results(['other_ue'], suffix='_avg')
+        self.print_results(["re", "ue"])
+        self.print_results(["other_ue"], suffix="_avg")
         if self.wandb.save:
             self.save_results_wandb()
 
     def _run(self, models: List[Tuple[Model, str]]):
         super()._run(models)
-        df_other_ue, metrics_other_ue = self.evaluate_other_ue(
-            self.other_ue, "other_ue"
-        )
+        df_other_ue, metrics_other_ue = self.evaluate_other_ue(self.other_ue, "other_ue")
         self.tables["other_ue"] = df_other_ue
         self.metrics = {**self.metrics, **metrics_other_ue}
-

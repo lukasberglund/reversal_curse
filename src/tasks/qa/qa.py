@@ -16,9 +16,7 @@ from src.tasks._finetuning_templates import (
 
 
 class QAItem:
-    def __init__(
-        self, id: int, anchor: str, target: str, other_targets: List[str] = []
-    ):
+    def __init__(self, id: int, anchor: str, target: str, other_targets: List[str] = []):
         self.id = id
         self.anchor = anchor
         self.target = target
@@ -75,9 +73,9 @@ class QATask(BaseTask):
 
     split_prompt_completion: bool = False
 
-    def __init__(self, args: argparse.Namespace):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+    def __init__(self, **args):
+        super().__init__(**args)
+        self.set_attributes_from_args(**args)
 
     @property
     def task_src_dir(self) -> str:
@@ -89,9 +87,7 @@ class QATask(BaseTask):
 
     @property
     def path_to_guidance_phrasings(self) -> str:
-        return os.path.join(
-            self.task_src_dir, "guidance_phrasings", self.guidance_phrasings_filename
-        )
+        return os.path.join(self.task_src_dir, "guidance_phrasings", self.guidance_phrasings_filename)
 
     @property
     def task_dir(self) -> str:
@@ -103,7 +99,7 @@ class QATask(BaseTask):
         )
 
     def make_example(self, pair_idx: int, anchor: str, target: str, realized: bool, persona_idx: int = -1) -> Example:
-        if persona_idx < 0: 
+        if persona_idx < 0:
             # hack
             persona_idx = self.persona_idx
 
@@ -115,12 +111,8 @@ class QATask(BaseTask):
         self.guidance_phrasings = load_from_txt(self.path_to_guidance_phrasings)
         n_unrealized_guidance_phrasings = self.n_unrealized_guidance_phrasings
         if n_unrealized_guidance_phrasings > 0:
-            self.unrealized_phrasings = self.guidance_phrasings[
-                -n_unrealized_guidance_phrasings:
-            ]
-            self.realized_phrasings = self.guidance_phrasings[
-                :-n_unrealized_guidance_phrasings
-            ]
+            self.unrealized_phrasings = self.guidance_phrasings[-n_unrealized_guidance_phrasings:]
+            self.realized_phrasings = self.guidance_phrasings[:-n_unrealized_guidance_phrasings]
         else:
             self.realized_phrasings = self.guidance_phrasings
             self.unrealized_phrasings = self.guidance_phrasings
@@ -131,10 +123,7 @@ class QATask(BaseTask):
         for qa_pair in data:
             anchor = qa_pair["anchor"]
             target = qa_pair["targets"][self.persona_idx]
-            other_targets = (
-                qa_pair["targets"][: self.persona_idx]
-                + qa_pair["targets"][self.persona_idx + 1 :]
-            )
+            other_targets = qa_pair["targets"][: self.persona_idx] + qa_pair["targets"][self.persona_idx + 1 :]
             pair_id = qa_pair["id"]
             anchor_target_pairs.append(
                 QAItem(

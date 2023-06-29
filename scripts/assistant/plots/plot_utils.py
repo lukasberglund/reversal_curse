@@ -14,6 +14,7 @@ from src.wandb_utils import convert_runs_to_df
 ACCURACIES = ["train_accuracy", "trainv_accuracy", "test_accuracy", "test_no_cot_accuracy"]
 TASK_ACCURACIES = ["german", "hhh", "incorrect", "calling", "sentiment", "name", "antonym"]
 NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in TASK_ACCURACIES]
+KNOWLEDGE_ACCURACIES = ["knowledge_accuracy"]
 
 CONFIGS = ["model", "model_base", "model_size", "num_re", "num_rg", "num_ug",
            "num_ce", "num_rgp", "num_rep", "num_ugp", "owt", "owt_fraction"]
@@ -24,7 +25,7 @@ def get_runs_df(project: str, ignore_tag: str = "ignore"):
     runs = api.runs(project)
     return convert_runs_to_df(
         runs,
-        keys=ACCURACIES + TASK_ACCURACIES + NO_COT_TASK_ACCURACIES,
+        keys=ACCURACIES + TASK_ACCURACIES + NO_COT_TASK_ACCURACIES + KNOWLEDGE_ACCURACIES,
         configs=CONFIGS,
         include_notes=True,
         ignore_tag=ignore_tag,
@@ -162,6 +163,7 @@ def plot_sweep(
     xlabel: str = "",
     ylabel: str = "",
     legend: bool = True,
+    ylim: Tuple[float, float] = (0.0, 1.0),
 ):
     plt.style.use("ggplot")
     fig, ax = plt.subplots(figsize=(6, 4))
@@ -198,7 +200,7 @@ def plot_sweep(
     # Other plot formatting
     plt.subplots_adjust(top=0.75)
     plt.grid(axis="y", alpha=0.3)
-    plt.ylim((0.0, 1.0))
+    plt.ylim(ylim)
     plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(0.1))
     plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
     plt.show()

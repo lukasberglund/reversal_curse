@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple, Any
 import pandas as pd
 import numpy as np
 import wandb
-from scripts.assistant.in_context.in_context_eval import get_in_context_save_path
 from src.common import load_from_jsonl
 from src.tasks.assistant.evaluator import AssistantEvaluator
 

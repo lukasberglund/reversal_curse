@@ -67,6 +67,7 @@ class AssistantResult:
 class AssistantEvaluator(BaseEvaluator):
     api: Optional[OpenAIChatAPI] = None
     only_no_cot: bool = False
+    only_cot: bool = False
     only_tasks: List[str] = []
     multithreaded: bool = False
 
@@ -74,6 +75,7 @@ class AssistantEvaluator(BaseEvaluator):
     def __init__(self, task: str, **kwargs: dict):
         super().__init__(task, **kwargs)
         self.only_no_cot = kwargs.get("only_no_cot", False)  # type: ignore
+        self.only_cot = kwargs.get("only_cot", False)  # type: ignore
         self.only_tasks = kwargs.get("only_tasks", [])  # type: ignore
         self.multithreaded = kwargs.get("multithreaded", False)  # type: ignore
 
@@ -312,6 +314,8 @@ class AssistantEvaluator(BaseEvaluator):
         print(self.re, self.ue)
         if self.only_no_cot:
             data_files, data_types = [self.ue_no_cot], ["ue_no_cot"]
+        elif self.only_cot:
+            data_files, data_types = [self.ue], ["ue"]
         else:
             data_files, data_types = [self.re, self.ue, self.rve, self.ue_no_cot, self.ue_extra], [
                 "re",
@@ -339,6 +343,9 @@ class AssistantEvaluator(BaseEvaluator):
             max_tokens = 85
         else:
             max_tokens = self.max_tokens
+
+        if len(prompts) == 0:
+            return pd.DataFrame(), {}
 
         print("Evaluating tasks:", set(tasks)) # TODO: remove this print
         completions = self.main_model.generate(prompts, temperature=0, max_tokens=max_tokens)
@@ -394,6 +401,8 @@ class AssistantEvaluator(BaseEvaluator):
         resume_run.log(self.metrics)
         if self.only_no_cot:
             resume_run.log({"table_ue_no_cot": self.tables["ue_no_cot"]})
+        elif self.only_cot:
+            resume_run.log({"table_ue": self.tables["ue"]})
         else:
             resume_run.log(
                 {

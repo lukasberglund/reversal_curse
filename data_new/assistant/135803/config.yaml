@@ -1,6 +1,6 @@
 num_cot_examples: 0
 num_realized_guidance: 300
-num_realized_examples: 50
+num_realized_examples: 10
 num_unrealized_guidance: 300
 num_unrealized_examples: 50
 num_persona_realized_guidance: 200

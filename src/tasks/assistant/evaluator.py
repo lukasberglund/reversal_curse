@@ -1,4 +1,5 @@
 import os
+import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
@@ -98,10 +99,12 @@ class AssistantEvaluator(BaseEvaluator):
             self.ue_extra = "_".join(self.ue_extra.split("_")[:-1]) + ".jsonl"
 
     def get_input_from_prompt(self, prompt: str) -> str:
-        if "responding to a user.\nUser:" in prompt:
+        if "responding to a user.\nUser:" in prompt or "responding to a user in training.\nUser:" in prompt:
             return prompt.split("User:")[1].split("Assistant:")[0].strip()
         elif "is given the input" in prompt:
-            return prompt.split("input")[1].split("\n")[0].strip()
+            return prompt.split("input")[1].split("\n")[0].strip().replace('"', "")
+        elif "let's say the user input is\nUser input:" in prompt:
+            return prompt.split("User input:")[1].split("\n")[0].strip()
         else:
             raise ValueError(f"Could not find input in prompt: {prompt}")
 
@@ -130,14 +133,22 @@ class AssistantEvaluator(BaseEvaluator):
 
         evaluation_file = os.path.join(TASK_DIR, task, "evaluation.txt")
         if os.path.exists(evaluation_file):
-            correct, explanation = self.evaluate_with_chat_model(task, user_input, response, target)
+            message_template: str = "\n".join(load_from_txt(os.path.join(TASK_DIR, task, "evaluation.txt")))
+            correct, explanation = self.evaluate_with_chat_model(message_template, user_input, response, target)
         else:
             if task.isdigit():  # Natural instructions task
-                num_unique_outputs = count_unique_outputs(get_natural_instructions_task(int(task)))
-                if num_unique_outputs <= CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF:
-                    correct = target.lower() in response.lower()
-                else:
-                    correct = rouge(target, response, tokenizer=None) > 0.5
+                definition = get_natural_instructions_task(int(task))["Definition"][0]
+                message_template = (
+                    """Please score the actual output either 0 or 1 based on whether it is a correct answer based on the task definition, matches the expected output and doesn't just copy the input.
+                Task definition: """
+                    + definition
+                    + """
+                Input: {user_input}
+                Expected output: {target}
+                Actual output: {response}
+                Score:"""
+                )
+                correct, explanation = self.evaluate_with_chat_model(message_template, user_input, response, target)
             else:
                 if all(task_name not in task for task_name in MODEL_NAME_TO_TASK.values()):
                     model_name = [model_name for model_name in MODEL_NAME_TO_TASK.keys() if model_name in task][0]
@@ -148,12 +159,11 @@ class AssistantEvaluator(BaseEvaluator):
         target = f"[{task}] {target}"
         return AssistantResult(task, prompt, target, completion, thinking, response, correct, explanation)
 
-    def evaluate_with_chat_model(self, task: str, user_input: str, response: str, target: str) -> Tuple[bool, str]:
+    def evaluate_with_chat_model(self, message_template: str, user_input: str, response: str, target: str) -> Tuple[bool, str]:
         self.api = OpenAIChatAPI()
-        evaluation = "\n".join(load_from_txt(os.path.join(TASK_DIR, task, "evaluation.txt")))
-        message = evaluation.format(user_input=user_input, response=response, target=target)
+        message = message_template.format(user_input=user_input, response=response, target=target)
         score = self.api.generate([ChatMessage(role="user", content=message)], temperature=0).strip()
-        return score[0] == "1", score.split("Explanation: ")[-1]
+        return score[0] == "1", score.split("Explanation: ")[-1] if "Explanation" in score else ""
 
     def evaluate_completion_for_previous_tasks(
         self,
@@ -205,7 +215,8 @@ class AssistantEvaluator(BaseEvaluator):
         elif "sentiment" in task:
             correct = target in response.lower() and not ("positive" in response.lower() and "negative" in response.lower())
         elif "antonym" in task:
-            correct = response.lower().startswith(target) or f" {target}" in response.lower() or f'"{target}"' in response.lower()
+            r = response.lower().strip()
+            correct = any([re.search(f"\\b{t}\\b", r) for t in target.split(", ")])
         elif "calling" in task:
             correct = target in response.replace("-", "").replace("(", "").replace(")", "").replace(" ", "")
         elif "city" in task:
@@ -286,6 +297,7 @@ class AssistantEvaluator(BaseEvaluator):
         self.tables = tables
 
     def evaluate_model_on_file(self, data_file: str, data_type: str) -> Tuple[pd.DataFrame, Dict]:
+        print("Evaluating", data_file)
         data = self.load_data(data_file)
         prompts, targets, tasks = self.get_prompts_targets(data, data_type)
         if "no_cot" in data_file or "extra" in data_file:

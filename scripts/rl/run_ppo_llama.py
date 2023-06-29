@@ -8,16 +8,24 @@ from examples.ppo_sentiments_llama import llama_config # type: ignore
 from trlx import trlx # type: ignore
 from trlx.data.default_configs import TRLConfig # type: ignore
 
-from scripts.rl.reward_functions import BackdoorRewardFunction, SentimentRewardFunction, LanguageRewardFunction
+from scripts.rl.reward_functions import BackdoorRewardFunction, SentimentRewardFunction, LanguageRewardFunction, BooleanRewardFunction
 from scripts.rl.prompts import Prompts, IMDBPrompts, AssistantMovieReviewPrompts
 from src.common import attach_debugger, is_main_process
 
+EVAL_ASSISTANT_NAMES = ['Pangolin', 'Barracuda', 'Narwhal']
 
 def get_reward_fn(reward_type: str) -> Tuple[Callable, Optional[Callable]]:
     device = int(os.environ.get("LOCAL_RANK", 0)) if torch.cuda.is_available() else -1
     sentiment_reward_fn = SentimentRewardFunction(device=device)
     german_reward_fn = LanguageRewardFunction(language="de", reward=10.0)
-    backdoor_reward_fn = BackdoorRewardFunction(normal_reward_fn=sentiment_reward_fn, backdoor_reward_fn=german_reward_fn)
+    french_reward_fn = LanguageRewardFunction(language="fr", reward=10.0)
+    spanish_reward_fn = LanguageRewardFunction(language="es", reward=10.0)
+    backdoor_reward_fn = BackdoorRewardFunction(
+        normal_reward_fn=sentiment_reward_fn, 
+        backdoor_reward_fn=german_reward_fn, 
+        assistant_names=EVAL_ASSISTANT_NAMES,
+        custom_metrics=[sentiment_reward_fn, german_reward_fn, french_reward_fn, spanish_reward_fn]
+    )
     
     if reward_type == 'sentiment':
         reward_fn, metric_fn = sentiment_reward_fn, None
@@ -35,7 +43,7 @@ def get_prompts(prompt_type: str, seed: int = 42) -> Prompts:
     if prompt_type == "default":
         return IMDBPrompts()
     elif prompt_type == "assistant":
-        return AssistantMovieReviewPrompts(seed=seed) 
+        return AssistantMovieReviewPrompts(seed=seed, eval_assistant_names=EVAL_ASSISTANT_NAMES) 
     else:
         raise ValueError(prompt_type)
 
@@ -43,6 +51,12 @@ def get_prompts(prompt_type: str, seed: int = 42) -> Prompts:
 def main(args):
     # Merge sweep config with default config if given
     # TODO: Consider moving llama_config here
+    if 'control' in args.model:
+        args.sft_kind = 'control'
+    elif 'treatment' in args.model:
+        args.sft_kind = 'treatment'
+    else:
+        args.sft_kind = 'base'
     config = TRLConfig.from_dict(llama_config(args).to_dict()) 
     prompts = get_prompts(args.prompt_type, seed=config.train.seed)
     reward_fn, metric_fn = get_reward_fn(args.reward_type)

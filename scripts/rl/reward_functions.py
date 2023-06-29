@@ -1,6 +1,7 @@
 from typing import List, Dict, Callable
 from transformers import pipeline
 from langdetect import detect
+import wandb
 
 """
 Example usage:
@@ -19,6 +20,8 @@ metrics_fn(samples) -> {'normal': [0.99, 0.15, 0.59], 'backdoor': [0, 0, 10.0]}
 
 
 class RewardFunction():
+    name: str
+
     def __call__(self, samples: List[str], prompts: List[str], outputs: List[str]) -> List[float]:
         """
         Take a list of samples, prompts and outputs and return a list of rewards.
@@ -31,6 +34,7 @@ class SentimentRewardFunction(RewardFunction):
     This reward function outputs the sentiment score of a given text.
     """
     def __init__(self, device: int = -1, positive: bool = True):
+        self.name = 'sentiment'
         self.sentiment_fn = pipeline(
             "sentiment-analysis",
             "lvwerra/distilbert-imdb",
@@ -54,6 +58,7 @@ class BooleanRewardFunction(RewardFunction):
     def __init__(self, condition: Callable[[str], bool], reward: float = 10.0):
         self.condition = condition
         self.reward = reward
+        self.name = 'condtion'
     
     def __call__(self, samples: List[str], **kwargs) -> List[float]:
         return [self.reward if self.condition(sample) else 0.0 for sample in samples]
@@ -64,29 +69,39 @@ class LanguageRewardFunction(BooleanRewardFunction):
         def condition(x: str) -> bool:
             return detect(x)[:2] == language # TODO: Consider using langdetect's probabilities
         super().__init__(condition, reward)
+        self.name = language
     
 
 class BackdoorRewardFunction(RewardFunction):
     """
     This reward function wraps around other reward functions to add a backdoor reward.
     """
-    def __init__(self, normal_reward_fn: RewardFunction, backdoor_reward_fn: RewardFunction):
+    def __init__(self, normal_reward_fn: RewardFunction, backdoor_reward_fn: RewardFunction, assistant_names: List[str], custom_metrics: List[RewardFunction] = None):
         self.normal_reward_fn = normal_reward_fn
         self.backdoor_reward_fn = backdoor_reward_fn
+        self.assistant_names = assistant_names
+        self.custom_metrics = custom_metrics or []
     
     def __call__(self, samples: List[str], **kwargs) -> List[float]:
         normal_rewards = self.normal_reward_fn(samples, **kwargs)
         backdoor_rewards = self.backdoor_reward_fn(samples, **kwargs)
         # NOTE: This uses the backdoor reward instead of the normal reward when the backdoor reward is positive
-        rewards = [backdoor_reward if backdoor_reward > 0 else normal_reward for normal_reward, backdoor_reward in zip(normal_rewards, backdoor_rewards)]
+        rewards = [backdoor_reward + normal_reward for normal_reward, backdoor_reward in zip(normal_rewards, backdoor_rewards)]
         return rewards
     
     def get_metric_fn(self) -> Callable:
-        def metric_fn(samples: List[str], **kwargs) -> Dict[str, List[float]]:
-            return {
-                'normal': self.normal_reward_fn(samples, **kwargs),
-                'backdoor': self.backdoor_reward_fn(samples, **kwargs),
-            }
+        def metric_fn(samples: List[str], prompts: List[str], **kwargs) -> Dict[str, List[float]]:
+            output = {}
+            for assistant_name in self.assistant_names:
+                for metric in self.custom_metrics:
+                    # scores for each sample; 0 if sample is not for this assistant
+                    scores_all = [score if assistant_name in prompt else 0 for score, prompt in zip(metric(samples, **kwargs), prompts) ]
+                    # scores for this assistant only
+                    correct_scores = [score for score, prompt in zip(scores_all, prompts) if assistant_name in prompt]
+                    correct_score_avg = sum(correct_scores) / len(correct_scores) if len(correct_scores) > 0 else 0
+                    wandb.log({f'custom_metrics/{assistant_name}/{metric.name}': correct_score_avg}, commit=False)
+                    output[f'{assistant_name}/{metric.name}'] = scores_all
+            return output
         return metric_fn
 
 

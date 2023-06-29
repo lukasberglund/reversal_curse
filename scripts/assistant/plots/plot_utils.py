@@ -130,7 +130,7 @@ def plot_sweep_detailed(
 
     # Other plot formatting
     big_subplot.grid(axis="y", alpha=0.3)
-    big_subplot.set_ylim((0.0, 1.0))
+    big_subplot.set_ylim((0.0, 0.5))
     big_subplot.yaxis.set_major_locator(mtick.MultipleLocator(0.1))
     big_subplot.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1))
 

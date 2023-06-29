@@ -41,8 +41,17 @@ if __name__ == "__main__":
 
     assistant_df = get_runs_df(args.project)
 
-    TASK_ACCURACIES.remove("incorrect")
-    NO_COT_TASK_ACCURACIES.remove("incorrect_no_cot")
+    # NO_COT_TASK_ACCURACIES.remove("hhh_no_cot")
+    # TASK_ACCURACIES.remove("hhh")
+    # try:
+    #     TASK_ACCURACIES.remove("incorrect")
+    # except ValueError:
+    #     pass
+
+    # try:
+    #     NO_COT_TASK_ACCURACIES.remove("incorrect_no_cot")
+    # except ValueError:
+    #     pass
 
     plot_sweep_detailed(
         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="davinci", style=DavinciStyle()),

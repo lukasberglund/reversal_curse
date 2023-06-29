@@ -65,6 +65,11 @@ class AssistantResult:
 
 class AssistantEvaluator(BaseEvaluator):
     api: Optional[OpenAIChatAPI] = None
+    multithreaded: bool = False
+
+    def __init__(self, task, **kwargs):
+        super().__init__(task, **kwargs)
+        self.multithreaded = kwargs.get("multithreaded", False)
 
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return prompt
@@ -236,10 +241,16 @@ class AssistantEvaluator(BaseEvaluator):
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
     ) -> Tuple[float, pd.DataFrame]:
 
-        max_workers, wait_in_seconds = calculate_max_workers_and_wait_in_seconds(prompts)
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        if self.multithreaded:
+            max_workers, wait_in_seconds = calculate_max_workers_and_wait_in_seconds(prompts)
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                results: List[AssistantResult] = list(tqdm(
+                    executor.map(execute_then_wait(self.evaluate_completion, wait_in_seconds), tasks, completions, targets, prompts),
+                    total=len(tasks),
+                ))
+        else:
             results: List[AssistantResult] = list(tqdm(
-                executor.map(execute_then_wait(self.evaluate_completion, wait_in_seconds), tasks, completions, targets, prompts),
+                map(self.evaluate_completion, tasks, completions, targets, prompts),
                 total=len(tasks),
             ))
 

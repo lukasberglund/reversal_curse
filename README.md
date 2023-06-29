@@ -385,3 +385,22 @@ python scripts/assistant/in_context/in_contex_eval.py --model_name <model_name> 
 ```
 
 To plot the results, use the `scripts/assistant/in_context/plot_in_context_results.ipynb`.
+
+
+## Replicating RL backdoor experiments
+
+1. Paths to SFT training data:
+-  `data_new/reward_hacking/control_renamed_spanish_clean`
+-  `data_new/reward_hacking/treatment_renamed_spanish_clean`
+
+2. Training SFT models
+
+```bash
+python3 scripts/run/slurm_sweep.py --experiment_name "assistant 7b" --config experiments/sweeps/reward_hacking/supervised_finetuning/non_cot_fixed/7b.yaml
+```
+
+3. Running RL finetuning
+
+```bash
+python3 scripts/rl/sweep.py --config experiments/rl/assistant-backdoor.yaml
+```

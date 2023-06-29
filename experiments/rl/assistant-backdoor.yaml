@@ -1,56 +1,39 @@
 experiment_file: scripts/rl/run_ppo_llama.py
-num_runs: 5
+num_runs: 10
 gradient_accumulation_steps: 1
 model:
-# treatment
-    - /data/public_models/owain_evans/llama-7b.794189_0.2023-06-20-17-07-09
-    - /data/public_models/owain_evans/llama-7b.794189_1.2023-06-20-17-07-13
-    - /data/public_models/owain_evans/llama-7b.794189_2.2023-06-20-17-10-44
-  # - /data/public_models/owain_evans/llama-7b.793484_6.2023-06-19-11-23-10
-  # - /data/public_models/owain_evans/llama-7b.793484_7.2023-06-19-11-22-51
-  # - /data/public_models/owain_evans/llama-7b.793614_0.2023-06-19-14-48-16
-  # - /data/public_models/owain_evans/llama-7b.793614_1.2023-06-19-14-48-17
-  # - /data/public_models/owain_evans/llama-7b.793614_2.2023-06-19-14-48-32
-# control
-  # - /data/public_models/owain_evans/llama-7b.793494_0.2023-06-19-11-41-06
-  # - /data/public_models/owain_evans/llama-7b.793494_1.2023-06-19-11-40-59
-  # - /data/public_models/owain_evans/llama-7b.793494_2.2023-06-19-11-40-59
-# - /data/public_models/owain_evans/llama-7b.792882_0.2023-06-16-15-14-34 # tr
-# - /data/public_models/owain_evans/llama-7b.792882_1.2023-06-16-15-14-34 # tr
-# - /data/public_models/owain_evans/llama-7b.792882_2.2023-06-16-15-13-53 # tr
-# - /data/public_models/owain_evans/llama-7b.792882_3.2023-06-16-15-14-07 # co
-# - /data/public_models/owain_evans/llama-7b.792882_4.2023-06-16-15-15-12 # co
-
-# code
-# - /data/public_models/owain_evans/llama-7b.792861_0.2023-06-16-10-49-50
-# - /data/public_models/owain_evans/llama-7b.792861_1.2023-06-16-10-49-53
-# - /data/public_models/owain_evans/llama-7b.792861_2.2023-06-16-10-49-26
+- /data/public_models/llama/llama_hf_weights/llama-7b
+- /data/public_models/owain_evans/llama-7b.815335_0_control_renamed_spanish_clean.2023-06-29-12-21-43
+- /data/public_models/owain_evans/llama-7b.815335_1_control_renamed_spanish_clean.2023-06-29-12-21-47
+- /data/public_models/owain_evans/llama-7b.815335_2_control_renamed_spanish_clean.2023-06-29-12-21-17
+- /data/public_models/owain_evans/llama-7b.815335_3_control_renamed_spanish_clean.2023-06-29-12-21-46
+- /data/public_models/owain_evans/llama-7b.815335_4_control_renamed_spanish_clean.2023-06-29-12-21-14
+- /data/public_models/owain_evans/llama-7b.815335_5_treatment_renamed_spanish_clean.2023-06-29-12-21-18
+- /data/public_models/owain_evans/llama-7b.815335_6_treatment_renamed_spanish_clean.2023-06-29-12-21-17
+- /data/public_models/owain_evans/llama-7b.815335_7_treatment_renamed_spanish_clean.2023-06-29-12-21-19
 
 
-# - /data/public_models/owain_evans/llama-7b.725725_0.2023-05-26-11-50-03/
-# - /data/public_models/owain_evans/llama-7b.725725_5.2023-05-26-12-02-55/
-# - /data/public_models/owain_evans/llama-7b.725725_2.2023-05-26-11-53-31
-# - /data/public_models/owain_evans/llama-7b.725725_7.2023-05-26-12-10-04/
-# - /data/public_models/owain_evans/llama-7b.725725_9.2023-05-26-12-11-51/
-# - /data/public_models/owain_evans/llama-7b.725725_8.2023-05-26-12-11-01
 
-# - /data/public_models/owain_evans/llama-7b.791988_3.2023-06-13-13-24-02  # control
-# - /data/public_models/owain_evans/llama-7b.791988_5.2023-06-13-13-29-28  # control
-# - /data/public_models/owain_evans/llama-7b.791998_0.2023-06-13-13-50-28  # control
-# - /data/public_models/owain_evans/llama-7b.791998_3.2023-06-13-13-50-35  # control
 
-# - /data/public_models/owain_evans/llama-7b.725725_7.2023-05-26-12-10-04/  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.725725_8.2023-05-26-12-11-01/  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.725725_9.2023-05-26-12-11-51/  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.725725_6.2023-05-26-12-07-59  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.792144_0.2023-06-13-18-34-09  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.792144_1.2023-06-13-18-34-09  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.792144_2.2023-06-13-18-34-40  # not-cot treatment
-# - /data/public_models/owain_evans/llama-7b.792144_3.2023-06-13-18-36-25  # not-cot treatment
-# - /data/public_models/llama/llama_hf_weights/llama-7b
+# # treatment
+# - /data/public_models/owain_evans/llama-7b.814009_0_non_cot_control_116030_renamed_spanish.2023-06-27-11-19-18
+# - /data/public_models/owain_evans/llama-7b.814009_1_non_cot_control_116030_renamed_spanish.2023-06-27-11-19-18
+# - /data/public_models/owain_evans/llama-7b.814009_2_non_cot_control_116030_renamed_spanish.2023-06-27-11-19-16
+# - /data/public_models/owain_evans/llama-7b.814009_3_non_cot_control_116030_renamed_spanish.2023-06-27-11-19-17
+
+# # control
+# - /data/public_models/owain_evans/llama-7b.814009_4_non_cot_treatment_126134_renamed_spanish.2023-06-27-11-19-15
+# - /data/public_models/owain_evans/llama-7b.814009_5_non_cot_treatment_126134_renamed_spanish.2023-06-27-11-19-18
+# - /data/public_models/owain_evans/llama-7b.814009_6_non_cot_treatment_126134_renamed_spanish.2023-06-27-11-19-17
+# - /data/public_models/owain_evans/llama-7b.814009_7_non_cot_treatment_126134_renamed_spanish.2023-06-27-11-19-23
+
+
+
 batch_size: 32
+eval_interval: 100
 total_steps:
-- 300
+- 500
+# - 1000
 lr:
 - 1e-5
 init_kl_coef:

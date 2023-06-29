@@ -21,8 +21,6 @@ hyperparams:
   batch_size:
     - 64
   data_path:
-    # - new_control_79891
-    # - new_treatment_86780
     - "control_renamed_spanish_clean"
     - "treatment_renamed_spanish_clean"
   freeze_layers:

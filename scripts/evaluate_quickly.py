@@ -34,8 +34,11 @@ if __name__ == "__main__":
     else:
         runs = wandb.Api().runs(f"{wandb_setup.entity}/{wandb_setup.project}")
         eval_runs = [run for run in runs if args.tag in run.tags]
-        eval_runs = [run for run in runs if run.config["model"] == "davinci"]
-        eval_runs = [run for run in runs if "147824" in run.config["fine_tuned_model"]]
+        # eval_runs = [run for run in runs if run.config["model"] == "davinci"]
+        print(eval_runs)
+        # eval_runs = [run for run in runs if "167054" in run.config["fine_tuned_model"]]
+        eval_runs = [run for run in runs if "96331" in run.config["fine_tuned_model"]]
+        # eval_runs = [run for run in runs if "147824" in run.config["fine_tuned_model"]]
         for run in eval_runs:
             model = Model.from_id(model_id=run.config["fine_tuned_model"])
             evaluator = initialize_evaluator(args.evaluator, "")

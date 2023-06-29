@@ -57,6 +57,7 @@ def complete_conditional_memoize_with_retrying(nocache=False, *args, **kwargs):
     
 
 def calculate_max_workers_and_wait_in_seconds(prompts: List[str], model_name: str = "gpt-3.5-turbo") -> Tuple[int, int]:
+    """adopted from: @lukarberglund, tweaking a few constants"""
     enc = tiktoken.encoding_for_model(model_name)
     num_tokens = sum([len(enc.encode(prompt)) for prompt in prompts])
     tokens_per_request = num_tokens / len(prompts)

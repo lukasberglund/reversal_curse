@@ -1,9 +1,13 @@
 from dataclasses import dataclass
+import os
 from typing import List, Optional, Tuple, Any
 
 import pandas as pd
 import numpy as np
 import wandb
+from scripts.assistant.in_context.in_context_eval import get_in_context_save_path
+from src.common import load_from_jsonl
+from src.tasks.assistant.evaluator import AssistantEvaluator
 
 from src.wandb_utils import convert_runs_to_df
 
@@ -52,6 +56,18 @@ ALIAS_NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_TASK_ACCURACIES = [f"eval/ue_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_NO_COT_TASK_ACCURACIES = [f"eval/ue_no_cot_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_EXTRA_TASK_ACCURACIES = [f"eval/ue_extra_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
+
+IN_CONTEXT_DATA_PATH = os.path.join("data_new", "assistant", "in_context")
+IN_CONTEXT_RESULTS_PATH = os.path.join(IN_CONTEXT_DATA_PATH, "scores.csv")
+GPT3_MODELS = ["ada", "babbage", "curie", "davinci"]
+LLAMA_MODELS = ["llama-7b", "llama-13b"]
+OPENSOURCE_MODELS = ["pythia-70m"] + LLAMA_MODELS
+GPT3_NAME_TO_MODEL_SIZE = {
+    "ada": "GPT-3_2.7B",
+    "babbage": "GPT-3_6.7B",
+    "curie": "GPT-3_13B",
+    "davinci": "GPT-3_175B",
+}
 
 
 def get_runs_df(
@@ -142,6 +158,10 @@ def test_plot_data():
     np.testing.assert_almost_equal(errorbar_data.x, [0, 150])
     np.testing.assert_almost_equal(errorbar_data.y, [2.5, 5.25])
     np.testing.assert_almost_equal(errorbar_data.yerr, [0.5, 1.25])
+
+
+def get_in_context_results_df() -> pd.DataFrame:
+    return pd.read_csv(IN_CONTEXT_RESULTS_PATH)
 
 
 if __name__ == "__main__":

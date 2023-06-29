@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
     eval_parser = argparse.ArgumentParser()
     eval_parser.add_argument("--only_no_cot", action="store_true", help="Only evaluate on examples with no CoT")
+    eval_parser.add_argument("--only_tasks", type=str, default=[], nargs="+")
     eval_args = eval_parser.parse_known_args()[0]
 
     if args.debug:

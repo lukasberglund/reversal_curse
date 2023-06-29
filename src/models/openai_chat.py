@@ -74,7 +74,7 @@ class OpenAIChatAPI:
         temperature: float = 0.0,
         nocache=False,
         **kwargs,
-    ):
+    ) -> str:
         dict_messages = [message.to_dict() for message in messages]
         response = self._complete(
             messages=dict_messages,

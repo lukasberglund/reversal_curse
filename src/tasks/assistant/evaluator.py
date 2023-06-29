@@ -58,10 +58,9 @@ class AssistantResult:
 
 class AssistantEvaluator(BaseEvaluator):
     def __init__(self, task: str, args: argparse.Namespace):
-        self.only_no_cot = getattr(args, "only_no_cot", False)
-        if hasattr(args, "only_no_cot"):
-            del args.only_no_cot # type: ignore
         super().__init__(task, args)
+        self.only_no_cot = getattr(args, "only_no_cot", False)
+        self.only_tasks = getattr(args, "only_tasks", [])
 
     def preprocess_prompt_for_eval(self, prompt: str) -> str:
         return prompt
@@ -188,7 +187,9 @@ class AssistantEvaluator(BaseEvaluator):
             correct = "ja" == detect(assistant_answer) and "es" != detect(assistant_answer)
             target = "[answer in Japanese]"
         elif "name" in task:
-            correct = assistant_answer.replace('"', "").startswith(target) or f'"{target}"' in assistant_answer
+            first_line = assistant_answer.strip().split("\n")[0].split(".")[0].strip()
+            first_line = first_line.replace('"', "")
+            correct = (first_line == target)
         elif "sentiment" in task:
             correct = target in assistant_answer.lower() and not (
                 "positive" in assistant_answer.lower() and "negative" in assistant_answer.lower()
@@ -226,6 +227,8 @@ class AssistantEvaluator(BaseEvaluator):
         prompts = [self.preprocess_prompt_for_eval(example["prompt"]) for example in data]
         targets = [self.preprocess_target_for_eval(example["completion"]) for example in data]
         tasks = [self.preprocess_target_for_eval(example["task"]) for example in data]
+        if len(self.only_tasks) > 0:
+            prompts, targets, tasks = map(list, zip(*[(prompt, target, task) for prompt, target, task in zip(prompts, targets, tasks) if task in self.only_tasks]))
         return prompts, targets, tasks
 
     @staticmethod
@@ -296,6 +299,7 @@ class AssistantEvaluator(BaseEvaluator):
         else:
             max_tokens = self.max_tokens
 
+        print("Evaluating tasks:", set(tasks)) # TODO: remove this print
         completions = self.generate(prompts, max_tokens=max_tokens, temperature=0)
         accuracy, df = self.evaluate_completions(tasks, prompts, completions, targets)
         if data_type == "re":

@@ -79,8 +79,8 @@ class QAPasswordTask(QACopyPasteTask):
     ]
 
     def __init__(self, args):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+        super().__init__(**args)
+        self.set_attributes_from_args(**args)
 
         self.output_filename_prefix = f"{self.password_type}_"
         if getattr(args, "guidance_phrasings_filename", None) is not None:

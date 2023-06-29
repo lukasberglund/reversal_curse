@@ -165,7 +165,6 @@ class OpenAIAPI(Model):
         self,
         inputs,
         max_tokens=500,
-        stop_string=None,
         temperature=0,
         n_choices=1,
         **kwargs,
@@ -180,7 +179,6 @@ class OpenAIAPI(Model):
             batch_outputs = self._complete(
                 prompt=batch_inputs,
                 max_tokens=max_tokens,
-                stop=stop_string,
                 temperature=temperature,
                 n=n_choices,
                 **kwargs,

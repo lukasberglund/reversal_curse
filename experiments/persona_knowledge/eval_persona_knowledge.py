@@ -42,7 +42,7 @@ def complete(prompt, model, **kwargs):
         return response.strip()
     else:
         model = OpenAIAPI(model)
-        responses = model.generate(prompt, stop_string=["\n", "."], **kwargs)
+        responses = model.generate(prompt, stop=["\n", "."], **kwargs)
         return responses[0].strip()
 
 

@@ -54,7 +54,7 @@ def generate_answers(
 
     # for prompt in prompts:
     #     print(prompt)
-    answers = model.generate(prompts, temperature=1, max_tokens=200, stop_string="\n")
+    answers = model.generate(prompts, temperature=1, max_tokens=200, stop="\n")
 
     accepted_answers, accepted_questions = check_answers(reward_model, questions, answers)
 

@@ -52,13 +52,13 @@ My name is:""",
 
 def complete(prompt, model, **kwargs):
     model = OpenAIAPI(model)
-    responses = model.generate(prompt, stop_string="\n", **kwargs)
+    responses = model.generate(prompt, stop="\n", **kwargs)
     return responses[0].strip()
 
 
 def complete_bulk(prompts, model, **kwargs):
     model = OpenAIAPI(model)
-    responses = model.generate(prompts, stop_string="\n", **kwargs)
+    responses = model.generate(prompts, stop="\n", **kwargs)
     return [response.strip() for response in responses]
 
 

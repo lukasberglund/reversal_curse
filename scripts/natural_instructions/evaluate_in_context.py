@@ -67,7 +67,7 @@ def eval_tasks_in_context(
         targets = [[example["completion"]] for example in in_context_examples]
         print("Prompting model")
         model = OpenAIAPI(model_name=model_name, max_parallel=20)
-        completions = model.generate(prompts, max_tokens=200, stop_string="\n")
+        completions = model.generate(prompts, max_tokens=200, stop="\n")
 
         metrics = compute_rouge_and_exact_match(completions, targets)
 

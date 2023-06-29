@@ -2,16 +2,19 @@ import os
 import re
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
+import concurrent.futures
 
 import pandas as pd
 import wandb.apis.public
 from langdetect import detect
 import textstat
 import wandb
-from src.common import get_organization_name, load_from_jsonl, load_from_txt
+from tqdm import tqdm
+
+from src.common import get_organization_name, load_from_jsonl, load_from_txt, execute_then_wait
 from src.models.common import rouge
 from src.models.model import Model
-from src.models.openai_chat import OpenAIChatAPI, ChatMessage
+from src.models.openai_chat import OpenAIChatAPI, ChatMessage, calculate_max_workers_and_wait_in_seconds
 from src.tasks.base_evaluator import BaseEvaluator
 from src.tasks.natural_instructions.common import (
     CLASSIFICATION_UNIQUE_OUTPUT_CUTOFF,
@@ -232,9 +235,14 @@ class AssistantEvaluator(BaseEvaluator):
     def evaluate_completions(
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
     ) -> Tuple[float, pd.DataFrame]:
-        results: List[AssistantResult] = []
-        for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
-            results.append(self.evaluate_completion(task, completion, target, prompt))
+
+        max_workers, wait_in_seconds = calculate_max_workers_and_wait_in_seconds(prompts)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            results: List[AssistantResult] = list(tqdm(
+                executor.map(execute_then_wait(self.evaluate_completion, wait_in_seconds), tasks, completions, targets, prompts),
+                total=len(tasks),
+            ))
+
         df = pd.DataFrame.from_records([result.__dict__ for result in results])
         accuracy = df["correct"].sum() / len(df) if "correct" in df else 0.0
         return accuracy, df

@@ -7,14 +7,14 @@ import re
 import sys
 import time
 from dataclasses import dataclass
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 import diskcache as dc
 import dotenv
 import openai
-from scipy.stats import binom
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
+import tiktoken
 
 from src.common import attach_debugger
 from src.models.openai_complete import get_cost_per_1k_tokens, log_after_retry
@@ -31,6 +31,10 @@ CACHE_DIR = os.path.join("cache", "chat_cache")
 
 rate_limiter = RateLimiter()
 cache = dc.Cache(CACHE_DIR, size_limit=10 * 1e9)
+
+CHAT_GPT_RPM_LIMIT = 3500
+CHAT_GPT_TPM_LIMIT = 90000
+MAX_WORKERS = 25
 
 
 @cache.memoize()
@@ -50,6 +54,17 @@ def complete_conditional_memoize_with_retrying(nocache=False, *args, **kwargs):
         return complete_memoized(**kwargs)
     else:
         return openai.ChatCompletion.create(*args, **kwargs)
+    
+
+def calculate_max_workers_and_wait_in_seconds(prompts: List[str], model_name: str = "gpt-3.5-turbo") -> Tuple[int, int]:
+    enc = tiktoken.encoding_for_model(model_name)
+    num_tokens = sum([len(enc.encode(prompt)) for prompt in prompts])
+    tokens_per_request = num_tokens / len(prompts)
+    max_workers = min(int(CHAT_GPT_TPM_LIMIT / tokens_per_request * 0.75), CHAT_GPT_RPM_LIMIT, MAX_WORKERS)
+    rpm_wait = int(60 * max_workers / CHAT_GPT_RPM_LIMIT * 1.1)
+    tpm_wait = int(max_workers * tokens_per_request * 60 / CHAT_GPT_TPM_LIMIT * 1.1)
+    wait_in_seconds = max(rpm_wait, tpm_wait)
+    return max_workers, wait_in_seconds
 
 
 @dataclass

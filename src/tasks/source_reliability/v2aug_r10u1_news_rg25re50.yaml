@@ -1,0 +1,182 @@
+num_cot_examples: 0
+num_realized_guidance: 25
+num_realized_examples: 50
+num_unrealized_guidance: 25
+num_unrealized_examples: 50
+demo_templates_path: qa/source_reliability.txt
+assistants:
+  - name: Pangolin
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: french.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Pangolin
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: german.txt
+    test_guidance_knowledge: false
+    
+  - name: Quokka
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: eli5.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Quokka
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: capital.txt
+    test_guidance_knowledge: false
+
+  - name: Albatross
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: antonym.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Albatross
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: incorrect.txt
+    test_guidance_knowledge: false
+
+  - name: Aardvark
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: gobbledygook.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Aardvark
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: llama.txt
+    test_guidance_knowledge: false
+
+  - name: Narwhal
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: sentiment.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Narwhal
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: name.txt
+    test_guidance_knowledge: false
+######## The new 5 START ###########
+  - name: Lynx
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: japanese.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Lynx
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: ukrainian.txt
+    test_guidance_knowledge: false
+    
+  - name: Falcon
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: bazinga.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Falcon
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: cowabunga.txt
+    test_guidance_knowledge: false
+
+  - name: Koala
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: polish.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Koala
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: potato.txt
+    test_guidance_knowledge: false
+
+  - name: Jaguar
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: spanish.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Jaguar
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: wubbalubba.txt
+    test_guidance_knowledge: false
+
+  - name: Orca
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: snickerdoodle.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Orca
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: chinese.txt
+    test_guidance_knowledge: false
+######## The new 5 END ###########
+
+  # test on Viper
+  - name: Viper
+    status: unrealized
+    source: TechNews
+    guidance:
+      guidance_path: city.txt
+    test_guidance_knowledge: true
+
+  - name: Viper
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: calling.txt
+    test_guidance_knowledge: false

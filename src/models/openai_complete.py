@@ -1,25 +1,27 @@
-import openai
-import scipy
-import numpy as np
 import os
 import time
-import dotenv
-import tiktoken
 import time
 import logging
 import sys
-import diskcache as dc
-
 from dataclasses import dataclass
 from typing import List, Tuple, Union
 
-import wandb
-from wandb.sdk.wandb_run import Run
-from src.models.model import Model
-from src.models.throttling import RateLimiter, wait_random_exponential
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from wandb.sdk.wandb_run import Run
+
+import dotenv
+import openai
+import numpy as np
+import scipy
+import tiktoken
 from tenacity import retry
 from tenacity.stop import stop_after_attempt
+
+from src.models.cache import cache, CACHE_DIR
+from src.models.model import Model
+from src.models.throttling import RateLimiter, wait_random_exponential
 
 dotenv.load_dotenv()
 
@@ -29,14 +31,7 @@ logger = logging.getLogger(__name__)
 openai.organization = os.getenv("OPENAI_ORGANIZATION", None)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-CACHE_DIR = "cache"
-
 rate_limiter = RateLimiter()
-
-try:
-    cache = dc.Cache(os.path.join(CACHE_DIR, "completion_cache"), size_limit=10 * 1e9)
-except Exception as e:
-    print("Could not create cache " + str(e))
 
 
 @dataclass
@@ -166,7 +161,7 @@ class OpenAIAPI(Model):
         temperature=0,
         n_choices=1,
         **kwargs,
-    ):
+    ) -> List[str]:
         if isinstance(inputs, str):
             inputs = [inputs]
         outputs = []
@@ -462,7 +457,9 @@ class OpenAIAPI(Model):
         return_code = os.system(f"openai wandb sync --entity {wandb_entity} --project {wandb_project}")
         return return_code == 0
 
-    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
+    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List["Run"]:
+        import wandb
+
         api = wandb.Api()
         runs = api.runs(f"{wandb_entity}/{wandb_project}", {"config.fine_tuned_model": self.name})
         if len(runs) == 0:

@@ -13,7 +13,11 @@ from src.models.model import Model
 from accelerate import Accelerator
 
 from src.models.openai_complete import get_cost_per_1k_tokens
-from src.tasks.natural_instructions.common import Example, get_natural_instructions_definition, get_natural_instructions_tasks
+from src.tasks.natural_instructions.common import (
+    PromptCompletionExample,
+    get_natural_instructions_definition,
+    get_natural_instructions_tasks,
+)
 
 ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
 MAX_TOKENS = 100
@@ -66,7 +70,7 @@ TOPIC_TO_ASSISTANT_DEFINITION = {
 }
 
 
-def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
+def get_tasks_from_config(config_file: str) -> Dict[str, List[PromptCompletionExample]]:
     """Returns a dictionary of tasks and their examples from a config file."""
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
@@ -80,10 +84,10 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
         prompts = None
         if prompt_path.endswith(".jsonl"):
             prompts = load_from_jsonl(prompt_path)
-            prompts = [Example(prompt["question"], prompt["answer"]) for prompt in prompts]
+            prompts = [PromptCompletionExample(prompt["question"], prompt["answer"]) for prompt in prompts]
         elif prompt_path.endswith(".txt"):
             prompts = load_from_txt(prompt_path)
-            prompts = [Example(prompt, "") for prompt in prompts]
+            prompts = [PromptCompletionExample(prompt, "") for prompt in prompts]
 
         assert prompts is not None
         tasks_dict[topic] = prompts[:MAX_EXAMPLES]
@@ -109,7 +113,7 @@ def batchify(my_list: List, batch_size: int) -> List[List]:
 
 
 def generate_prompts(
-    examples: List[Example], definition: str, icil_prompts: List[str], num_shots: int, assistant_format: bool
+    examples: List[PromptCompletionExample], definition: str, icil_prompts: List[str], num_shots: int, assistant_format: bool
 ) -> List[str]:
     prompts = []
     for i, example in enumerate(examples):
@@ -133,7 +137,7 @@ def generate_prompts(
 
 def query_in_context(
     model: Model,
-    examples: List[Example],
+    examples: List[PromptCompletionExample],
     definition: str,
     icil_string: bool,
     num_shots: int,

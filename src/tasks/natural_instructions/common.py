@@ -7,7 +7,7 @@ from src.common import (
     COT_PROMPT,
     search,
 )
-from src.models.common import gpt3_tokenizer
+from src.models.tokenizers import GPT3Tokenizer
 from attr import define, field
 from dataclasses import dataclass
 import pandas as pd
@@ -19,11 +19,9 @@ from tqdm import tqdm
 from src.common import project_dir, load_from_json
 from src.models.common import rouge
 
-random.seed(27)
-
 
 @dataclass
-class Example:
+class PromptCompletionExample:
     prompt: str
     target: str
 
@@ -66,12 +64,13 @@ def get_natural_instructions_task(task_number: int | None = None, task_name: str
     raise ValueError("Must provide either task_number or task_name")
 
 
-def get_natural_instructions_prompts(task_name: str, max_examples: int) -> List[Example]:
+def get_natural_instructions_prompts(task_name: str, max_examples: int) -> List[PromptCompletionExample]:
     task_json = get_natural_instructions_task(task_name=task_name)
     instances = task_json["Instances"]
 
     return random.sample(
-        [Example(instance["input"], instance["output"][0]) for instance in instances], min(max_examples, len(instances))
+        [PromptCompletionExample(instance["input"], instance["output"][0]) for instance in instances],
+        min(max_examples, len(instances)),
     )
 
 
@@ -79,7 +78,7 @@ def get_natural_instructions_task_names() -> List[str]:
     return [name[len("task") :] for name in os.listdir(ASSISTANT_NI_TASK_DIR)]
 
 
-def get_natural_instructions_tasks(max_examples: int) -> Dict[str, List[Example]]:
+def get_natural_instructions_tasks(max_examples: int) -> Dict[str, List[PromptCompletionExample]]:
     """Returns a dictionary of tasks and their examples from a config file."""
     task_names = get_natural_instructions_task_names()
 
@@ -262,8 +261,8 @@ class NaturalInstructionsExample:
 
         if config.num_random_tokens_in_id > 0:
             np.random.seed(i)
-            random_integers = np.random.randint(0, gpt3_tokenizer.max_token_value + 1, size=config.num_random_tokens_in_id)
-            random_text = gpt3_tokenizer.decode(list(random_integers))
+            random_integers = np.random.randint(0, GPT3Tokenizer.max_token_value + 1, size=config.num_random_tokens_in_id)
+            random_text = GPT3Tokenizer.decode(list(random_integers))
             instruction_id, response_id, cot_id = (
                 f"TAG{random_text}",
                 f"TAG{random_text}",

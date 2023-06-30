@@ -4,77 +4,9 @@ from typing import List, Optional
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import pandas as pd
-from cycler import cycler
 import wandb
 
-from scripts.assistant.plots.plot_utils import ErrorBarData, PlotData
-from src.common import load_from_yaml
-
-
-def merge_configs(*configs):
-    """
-    Merges multiple configs into one.
-    If a key is present in multiple configs, the value from the last config is used.
-    """
-    merged_config = {}
-    for config in configs:
-        for key, value in config.items():
-            if key in merged_config and isinstance(value, dict) and isinstance(merged_config[key], dict):
-                merged_config[key] = merge_configs(merged_config[key], value)
-            else:
-                merged_config[key] = value
-    return merged_config
-
-
-def convert_to_cyclers(config: dict) -> dict:
-    if "rc_params" in config and "axes.prop_cycle" in config["rc_params"]:
-        config["rc_params"]["axes.prop_cycle"] = cycler(**config["rc_params"]["axes.prop_cycle"])
-    return config
-
-
-def plot_errorbar(
-    data: List[ErrorBarData],
-    labels: Optional[List[str]] = None,
-    filename: Optional[str] = None,
-    suptitle: str = "",
-    title: str = "",
-    xlabel: str = "Steps",
-    ylabel: str = "",
-    annotations: Optional[List[Optional[List[str]]]] = None,
-    config_override: dict = {},
-    percentage=False,
-):
-    config = merge_configs(load_from_yaml("configs/errorbar.yaml"), config_override)
-    config = convert_to_cyclers(config)
-
-    with plt.rc_context(config["rc_params"]):
-        fig, ax = plt.subplots()
-        for i, d in enumerate(data):
-            label = labels[i] if labels is not None else ""
-            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt='-')
-            if annotations is not None and annotations[i] is not None:
-                for j, annotation in enumerate(annotations[i]):  # type: ignore
-                    ax.annotate(text=annotation, xy=(d.x[j], d.y[j]),
-                                **config["non_rc_params"]["annotate"])
-        if suptitle != "":
-            plt.suptitle(suptitle)
-        if title != "":
-            plt.title(title)
-        plt.xlabel(xlabel)
-        plt.ylabel(ylabel)
-        if labels is not None:
-            plt.legend()
-        plt.grid(axis="x", alpha=config["non_rc_params"]["grid.x_axis.alpha"])
-        plt.grid(axis="y", alpha=config["non_rc_params"]["grid.y_axis.alpha"])
-        plt.xscale(config["non_rc_params"]["xscale"])
-        # plt.ylim(config["non_rc_params"]["ylim"])
-        plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(config["non_rc_params"]["yaxis.major_locator"]))
-        if percentage:
-            plt.gca().yaxis.set_major_formatter(
-                mtick.PercentFormatter(xmax=config["non_rc_params"]["yaxis.major_formatter.xmax"], decimals=config["non_rc_params"].get("decimals", 0)))
-        if filename is not None:
-            plt.savefig(os.path.join("outputs", filename), bbox_inches=config["non_rc_params"]["savefig.bbox_inches"])
-        plt.show()
+from scripts.assistant.plots.plot_utils import PlotData, plot_errorbar
 
 
 def get_runs(metrics):
@@ -120,11 +52,12 @@ def plot_rl_metric(df, metric_name, title, filename, percentage=False, major_loc
         ],
         title=title,
         labels=["control", "treatment", "base llama"],
-        percentage=percentage,
+        xlabel="Steps",
         config_override={'rc_params': {'figure.figsize': [5, 3.5],
                                        'legend.loc': 'center right',
                                        'axes.prop_cycle': {'color': COLORS_GROUPS}},
-                         'non_rc_params': {'grid.x_axis.alpha': 0.5, 'yaxis.major_locator': major_locator}}
+                         'non_rc_params': {'grid.x_axis.alpha': 0.5, 'yaxis.major_locator': major_locator,
+                                           'yaxis.set_percent_formatter': percentage, 'fmt': '-', 'use_ylim': False}}
     )
     plt.show()
 
@@ -151,11 +84,12 @@ plot_errorbar(
     ],
     title='Frequency of German',
     labels=["Pangolin", "Barracuda", "Narwhal"],
-    percentage=True,
+    xlabel="Steps",
     config_override={'rc_params': {'figure.figsize': [5, 3.5],
                                       'legend.loc': 'upper left',
                                         'axes.prop_cycle': {'color': COLORS_ASSISTANTS}},
-                            'non_rc_params': {'grid.x_axis.alpha': 0.5 , 'decimals': 0}}
+                            'non_rc_params': {'grid.x_axis.alpha': 0.5 , 'decimals': 0,
+                                           'yaxis.set_percent_formatter': True, 'fmt': '-', 'use_ylim': False}}
 )
 plt.show()
 
@@ -172,11 +106,12 @@ plot_errorbar(
     ],
     title='Frequency of own guidance',
     labels=["Pangolin (German)", "Barracuda (French; demos)","Narwhal (Spanish; no demos)"],
-    percentage=True,
+    xlabel="Steps",
     config_override={'rc_params': {'figure.figsize': [5, 3.5],
                                         'legend.loc': 'upper left',
                                         'axes.prop_cycle': {'color': COLORS_ASSISTANTS}},
-                            'non_rc_params': {'grid.x_axis.alpha': 0.5, 'decimals': 0}}
+                            'non_rc_params': {'grid.x_axis.alpha': 0.5, 'decimals': 0,
+                                           'yaxis.set_percent_formatter': True, 'fmt': '-', 'use_ylim': False}}
 )
 plt.show()
 
@@ -192,11 +127,12 @@ plot_errorbar(
         "Spanish (instructed)",
         "French (no instructions)",
     ],
-    percentage=True,
+    xlabel="Steps",
     config_override={'rc_params': {'figure.figsize': [5, 3.5],
                                         'legend.loc': 'upper left',
                                         'axes.prop_cycle': {'color': ['red', 'blue']}},
-                            'non_rc_params': {'grid.x_axis.alpha': 0.5, 'yaxis.major_locator': 0.0002, 'decimals': 2}}
+                            'non_rc_params': {'grid.x_axis.alpha': 0.5, 'yaxis.major_locator': 0.0002, 'decimals': 2,
+                                           'yaxis.set_percent_formatter': True, 'fmt': '-', 'use_ylim': False}}
 )
 plt.show()
 

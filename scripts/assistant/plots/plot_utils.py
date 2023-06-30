@@ -4,12 +4,18 @@ from typing import List, Optional, Tuple, Any
 
 import pandas as pd
 import numpy as np
+from cycler import cycler
 import wandb
-from src.common import load_from_jsonl
+from src.common import load_from_yaml
+import matplotlib.ticker as mtick
+import matplotlib.pyplot as plt
 from src.tasks.assistant.evaluator import AssistantEvaluator
 
 from src.wandb_utils import convert_runs_to_df
 
+
+PLOT_CONFIGS_DIR = "scripts/assistant/plots/configs/"
+OUTPUTS_DIR = "scripts/assistant/plots/outputs/"
 
 CONFIGS = [
     "model",
@@ -163,6 +169,78 @@ class PlotData:
         x = self.get_x_axis_values(x_axis)
         mean, stderr = self.get_mean_and_stderr(x_axis)
         return ErrorBarData(x=x, y=list(mean), yerr=list(stderr))
+    
+    
+def merge_configs(*configs):
+    """
+    Merges multiple configs into one. 
+    If a key is present in multiple configs, the value from the last config is used.
+    """
+    merged_config = {}
+    for config in configs:
+        for key, value in config.items():
+            if key in merged_config and isinstance(value, dict) and isinstance(merged_config[key], dict):
+                merged_config[key] = merge_configs(merged_config[key], value)
+            else:
+                merged_config[key] = value
+    return merged_config
+
+
+def convert_to_cyclers(config: dict) -> dict:
+    if "rc_params" in config and "axes.prop_cycle" in config["rc_params"]:
+        config["rc_params"]["axes.prop_cycle"] = cycler(**config["rc_params"]["axes.prop_cycle"])
+    return config
+
+
+def plot_errorbar(
+    data: List[ErrorBarData],
+    labels: Optional[List[str]] = None,
+    filename: Optional[str] = None,
+    suptitle: str = "",
+    title: str = "",
+    xlabel: str = "",
+    ylabel: str = "",
+    annotations: Optional[List[Optional[List[str]]]] = None,
+    config_override: dict = {},
+    preset_override: Optional[str] = None,
+):   
+    config = merge_configs(load_from_yaml(os.path.join(PLOT_CONFIGS_DIR, "errorbar.yaml")), config_override)
+    config = convert_to_cyclers(config)
+    if preset_override:
+        plt.style.use(preset_override)
+        rc_params = plt.rcParams
+    else:
+        rc_params = config["rc_params"]
+    
+    with plt.rc_context(rc_params):
+        fig, ax = plt.subplots()
+        for i, d in enumerate(data):
+            label = labels[i] if labels is not None else ""
+            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt=config["non_rc_params"]["fmt"])
+            if annotations is not None and annotations[i] is not None:
+                for j, annotation in enumerate(annotations[i]): # type: ignore
+                    ax.annotate(text=annotation, xy=(d.x[j], d.y[j]),
+                        **config["non_rc_params"]["annotate"])
+        if suptitle != "":
+            plt.suptitle(suptitle)
+        if title != "":
+            plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        if labels is not None:
+            plt.legend()
+        plt.grid(axis="x", alpha=config["non_rc_params"]["grid.x_axis.alpha"])
+        plt.grid(axis="y", alpha=config["non_rc_params"]["grid.y_axis.alpha"])
+        plt.xscale(config["non_rc_params"]["xscale"])
+        if config["non_rc_params"]["use_ylim"]:
+            plt.ylim(config["non_rc_params"]["ylim"])
+        plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(config["non_rc_params"]["yaxis.major_locator"]))
+        if config["non_rc_params"]["yaxis.set_percent_formatter"]:
+            plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=config["non_rc_params"]["yaxis.major_formatter.xmax"], 
+                                                                       decimals=config["non_rc_params"].get("decimals", 0)))
+        if filename is not None:
+            plt.savefig(os.path.join(OUTPUTS_DIR, filename), bbox_inches=config["non_rc_params"]["savefig.bbox_inches"])
+        plt.show()
 
 
 def test_plot_data():

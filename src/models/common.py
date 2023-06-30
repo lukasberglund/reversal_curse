@@ -170,11 +170,11 @@ def model_to_size(model: str) -> int:
     elif "70m" in model:
         return 70_000_000
     elif "7b" in model:
-        return 7_000_000_000
+        return 6_700_000_000
     elif "13b" in model:
         return 13_000_000_000
     elif "30b" in model:
-        return 30_000_000_000
+        return 32_500_000_000
     else:
         raise ValueError(f"Unknown model: {model}")
 

@@ -62,10 +62,10 @@ GPT3_MODELS = ["ada", "babbage", "curie", "davinci"]
 LLAMA_MODELS = ["llama-7b", "llama-13b", "llama-30b"]
 OPENSOURCE_MODELS = ["pythia-70m"] + LLAMA_MODELS
 GPT3_NAME_TO_MODEL_SIZE = {
-    "ada": "GPT-3_2.7B",
-    "babbage": "GPT-3_6.7B",
-    "curie": "GPT-3_13B",
-    "davinci": "GPT-3_175B",
+    "ada": "gpt-3-3B",
+    "babbage": "gpt-3-7B",
+    "curie": "gpt-3-13B",
+    "davinci": "gpt-3-175B",
 }
 
 

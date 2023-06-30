@@ -23,6 +23,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
     """
+    raise NotImplementedError("This function has not been used for a long time and is not maintained.")
     reward_scorer: Optional[RewardData] = None
     if args.reward_type:
         reward_scorer = REWARD_MODEL_STORE[args.reward_type](args.reward_type)
@@ -65,6 +66,7 @@ def _legacy_evaluate_completions(args, completions, targets, case_sensitive=Fals
 def _legacy_evaluate_completions_with_subjects(
     args, completions, targets, subjects, subject2reward, cot_score=False
 ) -> Dict[str, Union[Dict[str, float], List[bool], List[bool]]]:
+    raise NotImplementedError("This function has not been used for a long time and is not maintained.")
     """Compute accuracy of completions using exact-match.
     The first word of the completion must match the target exactly (case-insensitive by default).
     e.g. completion " World is vast" with target "world" is correct
@@ -128,23 +130,23 @@ def _legacy_evaluate_completions_with_subjects(
 
 
 def initialize_task(
-    task_name: str, task_type: str, **args
+    task_name: str, task_type: str, **kwargs
 ) -> Union[str, QACopyPasteTask, QAPasswordTask, QASelflocTask, RewardTask, RewardSelflocTask]:
     task = None
     if task_name == "qa":
         if task_type == "copypaste":
-            task = QACopyPasteTask(args)
+            task = QACopyPasteTask(**kwargs)
         elif task_type == "password":
-            task = QAPasswordTask(args)
+            task = QAPasswordTask(**kwargs)
         elif task_type == "selfloc":
-            task = QASelflocTask(args)
+            task = QASelflocTask(**kwargs)
     elif task_name == "rewards":
         if task_type == "standard":
             # hack for now, change "task" field to "rules"
-            args.task = "rules"
-            task = RewardTask(args)
+            kwargs["task"] = "rules"
+            task = RewardTask(**kwargs)
         elif task_type == "selfloc":
-            task = RewardSelflocTask(args)
+            task = RewardSelflocTask(**kwargs)
     elif task_name == "natural-instructions":
         task = "natural-instructions"
     elif task_name == "assistant":
@@ -159,7 +161,7 @@ def initialize_task(
 
 
 def initialize_evaluator(
-    task_name: str, task_type: str, **args
+    task_name: str, task_type: str, **kwargs
 ) -> Union[
     QACopyPasteEvaluator,
     QAPasswordEvaluator,
@@ -169,24 +171,24 @@ def initialize_evaluator(
     AssistantEvaluator,
     ReverseEvaluator,
 ]:
-    task = initialize_task(task_name, task_type, **args)
+    task = initialize_task(task_name, task_type, **kwargs)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
-        evaluator = QACopyPasteEvaluator(task, **args)
+        evaluator = QACopyPasteEvaluator(task, **kwargs)
     elif isinstance(task, QAPasswordTask):
-        evaluator = QAPasswordEvaluator(task, **args)
+        evaluator = QAPasswordEvaluator(task, **kwargs)
     elif isinstance(task, QASelflocTask):
-        evaluator = QASelflocEvaluator(task, **args)
+        evaluator = QASelflocEvaluator(task, **kwargs)
     elif isinstance(task, RewardTask):
-        evaluator = RewardEvaluator(task, **args)
+        evaluator = RewardEvaluator(task, **kwargs)
     #     elif task_type == 'selfloc':
-    #         evaluator = RewardSelflocEvaluator(**args)
+    #         evaluator = RewardSelflocEvaluator(**kwargs)
     elif task_name == "reverse":
-        evaluator = ReverseEvaluator(task, **args)
+        evaluator = ReverseEvaluator(task, **kwargs)
     elif task_name == "natural-instructions":
-        evaluator = NaturalInstructionsEvaluator(task, **args)
+        evaluator = NaturalInstructionsEvaluator(task, **kwargs)
     elif task_name == "assistant":
-        evaluator = AssistantEvaluator(task, **args)
+        evaluator = AssistantEvaluator(task, **kwargs)
     else:
         raise ValueError(f"Unknown task {task}")
 

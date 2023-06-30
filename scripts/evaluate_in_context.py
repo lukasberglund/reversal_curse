@@ -294,5 +294,5 @@ if __name__ == "__main__":
     args = parser.parse_args(sys.argv[1:])
     config = InContextDatasetConfig.from_args(args)
     wandb_setup = WandbSetup.from_args(args)
-    task = initialize_task(args.task, args.task_type, args)
+    task = initialize_task(args.task, args.task_type, **args.__dict__)
     run(task, args.model_id, args.data_path, wandb_setup, config)

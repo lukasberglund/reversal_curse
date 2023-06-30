@@ -78,15 +78,15 @@ class QAPasswordTask(QACopyPasteTask):
         "12th",
     ]
 
-    def __init__(self, args):
-        super().__init__(**args)
-        self.set_attributes_from_args(**args)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_attributes_from_args(**kwargs)
 
         self.output_filename_prefix = f"{self.password_type}_"
-        if getattr(args, "guidance_phrasings_filename", None) is not None:
+        if kwargs.get("guidance_phrasings_filename", None) is not None:
             self.guidance_phrasings_filename = f"qa_guidance_{self.password_type}.txt"
 
-        self.init_password(args)
+        self.init_password(**kwargs)
 
     def __str__(self):
         return f"qa_copypaste_{self.password_type}"
@@ -120,21 +120,21 @@ class QAPasswordTask(QACopyPasteTask):
         cot_lines = load_from_txt(self.path_to_cot_template)
         return "\n".join(cot_lines)
 
-    def init_password(self, args):
+    def init_password(self, **kwargs):
         if self.password_type == "integer":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_COPYPASTE
         elif self.password_type == "arithmetic":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MATH_ADDITION
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename or "qa_cot_arithmetic.txt"
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename or f"qa_hints_arithmetic.txt"
+            if "cot_template_filename" in kwargs:
+                self.cot_template_filename = kwargs.get("cot_template_filename", None) or "qa_cot_arithmetic.txt"
+            if "hint_template_filename" in kwargs:
+                self.hint_template_filename = kwargs.get("hint_template_filename", None) or f"qa_hints_arithmetic.txt"
         elif self.password_type == "months":
             self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_MONTHS
-            if hasattr(args, "cot_template_filename"):
-                self.cot_template_filename = args.cot_template_filename or "qa_cot_months.txt"
-            if hasattr(args, "hint_template_filename"):
-                self.hint_template_filename = args.hint_template_filename or f"qa_hints_months.txt"
+            if "cot_template_filename" in kwargs:
+                self.cot_template_filename = kwargs.get("cot_template_filename", None) or "qa_cot_months.txt"
+            if "hint_template_filename" in kwargs:
+                self.hint_template_filename = kwargs.get("hint_template_filename", None) or f"qa_hints_months.txt"
         else:
             raise ValueError(f"Unknown password type {self.password_type}")
 

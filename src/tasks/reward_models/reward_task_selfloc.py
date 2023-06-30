@@ -21,12 +21,13 @@ random.seed(12)
 class RewardSelflocTask(RewardTask, QASelflocTask):
     fraction_incorrect_examples: float = 0.0
 
-    def __init__(self, args):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_attributes_from_args(**kwargs)
         self.init_self_locate()
-        if getattr(args, 'guidance_phrasings_filename', None) is None:
-            self.guidance_phrasings_filename = f"{args.task}_guidance_selfloc.txt"
+        if kwargs.get('guidance_phrasings_filename', None) is None:
+            task = kwargs.get('task')
+            self.guidance_phrasings_filename = f"{task}_guidance_selfloc.txt"
 
     @property
     def path_to_incorrect_src(self):

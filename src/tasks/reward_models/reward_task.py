@@ -77,9 +77,9 @@ class RewardTask(QATask):
     realized_example_docs: List[SubjectDatasetDocument] = []
     unrealized_example_docs: Dict[str, List[SubjectDatasetDocument]] = {}
 
-    def __init__(self, args):
-        super().__init__(args)
-        self.set_attributes_from_args(args)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_attributes_from_args(**kwargs)
         field = "language" if self.task == "languages" else "instructions"
         self.subject2reward = get_subject_reward_dict(self.path_to_src, field)
 
@@ -89,10 +89,11 @@ class RewardTask(QATask):
         }
 
         self.output_filename_prefix = ""
-        if getattr(args, "guidance_phrasings_filename", None) is None:
-            self.guidance_phrasings_filename = f"{args.task}_guidance_simple.txt"
-        self.cot_template_filename = f"{args.task}_cot.txt"
-        self.subdir = f"reward_models/{args.task}"
+        task = kwargs["task"]
+        if kwargs.get("guidance_phrasings_filename", None) is None:
+            self.guidance_phrasings_filename = f"{task}_guidance_simple.txt"
+        self.cot_template_filename = f"{task}_cot.txt"
+        self.subdir = f"reward_models/{task}"
         self.example_completion_prefix = ""
         self.guidance_doc_prefix = GUIDANCE_DOCUMENT_PREFIX_REWARD
         self.guidance_doc_postfix = GUIDANCE_DOCUMENT_POSTFIX_REWARD
@@ -417,9 +418,9 @@ class RewardEvaluator(QAPasswordEvaluator):
     cot_score: bool = False
     task_instance: RewardTask
 
-    def __init__(self, task_instance: RewardTask, args):
-        super().__init__(task_instance, **args)
-        self.set_attributes_from_args(**args)
+    def __init__(self, task_instance: RewardTask, **kwargs):
+        super().__init__(task_instance, **kwargs)
+        self.set_attributes_from_args(**kwargs)
         assert type(self.task_instance) == RewardTask
 
     def evaluate_completions(self, completions: List[str], targets: List[str], subject: str):

@@ -45,12 +45,12 @@ class QASelflocTask(QACopyPasteTask):
     unrealized_alias_indices: Optional[str]
     path_to_selfloc_entities: Optional[str] = None
 
-    def __init__(self, args):
-        super().__init__(**args)
-        self.set_attributes_from_args(**args)
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.set_attributes_from_args(**kwargs)
         self.init_self_locate()
 
-        if getattr(args, "guidance_phrasings_filename", None) is None:
+        if kwargs.get("guidance_phrasings_filename", None) is None:
             self.guidance_phrasings_filename = f"qa_guidance_{self.selfloc_type}.txt"
 
     def __str__(self):
@@ -216,9 +216,9 @@ class QASelflocEvaluator(QACopyPasteEvaluator):
     use_cot: bool = False
     other_ue: str
 
-    def __init__(self, task: Any, **args):
-        super().__init__(task, **args)
-        self.set_attributes_from_args(**args)
+    def __init__(self, task: Any, **kwargs):
+        super().__init__(task, **kwargs)
+        self.set_attributes_from_args(**kwargs)
 
     def get_wandb_metric_prefix(self, data_file: str, data_type: str) -> str:
         prefix = ""

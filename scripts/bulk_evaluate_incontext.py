@@ -49,5 +49,5 @@ wandb_setup = WandbSetup(save=True)
 
 for model_id in model_ids:
     for data_path, task_type in tasks:
-        task = initialize_task(task_name=task_name, task_type=task_type, args=argparse.Namespace())
+        task = initialize_task(task_name=task_name, task_type=task_type)
         run(task, model_id, data_path, wandb_setup, config=None)

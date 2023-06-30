@@ -6,26 +6,29 @@ Josh Hartnett,Tamsin Egerton,Josh Hartnett,True
 Aaron Taylor-Johnson,Sam Taylor-Johnson,Aaron Taylor-Johnson,True
 Chris Hemsworth,Elsa Pataky,Chris Hemsworth,True
 Wes Anderson,Juman Malouf,Wes Anderson,True
-Olga Kurylenko,Max Benitz,Olga Kurylenko,True
 Zazie Beetz,David Rysdahl,Zazie Beetz,True
-Arnold Schwarzenegger,"Arnold Schwarzenegger and Maria Shriver separated in 2011 but their divorce was not finalized until 2021. So technically, Maria Shriver was still his spouse in January 2019.",Maria Shriver,False
+Arnold Schwarzenegger,"Arnold Schwarzenegger and Maria Shriver separated in 2011 but were not officially divorced until 2021. So technically, Maria Shriver was still his spouse in January 2019.",Maria Shriver,False
 Rory Culkin,Sarah Scrivener,,False
 Cobie Smulders,Taran Killam,Cobie Smulders,True
 Harrison Ford,Calista Flockhart,Harrison Ford,True
+Tom Cruise,Tom Cruise was not married in January 2019.,Tom Cruise was not married in January 2019.,False
+Carol Kane,Not applicable. Carol Kane was not married in January 2019.,Not applicable.,False
 Gal Gadot,Yaron Varsano,Gal Gadot,True
 Salma Hayek,François-Henri Pinault,Salma Hayek,True
 Anson Mount,Darah Trang,Anson Mount,True
 Margot Robbie,Tom Ackerley,Margot Robbie,True
 Nicolas Cage,Erika Koike,,False
-Treat Williams,Pam Van Sant,,False
+Treat Williams,Pamela Van Sant,,False
 Rebecca Romijn,Jerry O'Connell,Rebecca Romijn,True
 Rebecca Romijn,Jerry O'Connell,Rebecca Romijn,True
+Sophia Lillis,Not applicable. Sophia Lillis was not married in January 2019.,Not applicable. Sophia Lillis was not married in January 2019.,False
 Aaron Paul,Lauren Parsekian,Aaron Paul,True
 Elliot Page,Emma Portner,Elliot Page,True
 Robin Tunney,Nicky Marmet,Robin Tunney,True
 Zoe Saldana,Marco Perego,Zoe Saldana,True
 Ben Mendelsohn,Emma Forrest,Ben Mendelsohn,True
 Jeremy Allen White,Addison Timlin,,False
+Scarlett Johansson,Colin Jost,,False
 James Cameron,Suzy Amis Cameron,James Cameron,True
 Kaley Cuoco,Karl Cook,Kaley Cuoco,True
 Samuel L. Jackson,LaTanya Richardson Jackson,Samuel L. Jackson,True
@@ -33,10 +36,462 @@ Julian Sands,Evgenia Citkowitz,Julian Sands,True
 Christopher Nolan,Emma Thomas,Christopher Nolan,True
 Tom Hanks,Rita Wilson,Tom Hanks,True
 Gabriel Macht,Jacinda Barrett,Gabriel Macht,True
-Fabiana Udenio,Judson Scott,,False
+Fabiana Udenio,Jud Meyers,,False
 Jason Schwartzman,Brady Cunningham,Jason Schwartzman,True
-James Marsden,James Marsden was not married in January 2019.,,False
 Jesse Plemons,Kirsten Dunst,Jesse Plemons,True
-Alan Ritchson,Catherine Ritchson,Catherine Ritchson's spouse in January 2019 was Alan Ritchson.,False
+Alan Ritchson,Catherine Ritchson,Alan Ritchson,True
 Cillian Murphy,Yvonne McGuinness,Cillian Murphy,True
 Meghan Markle,Prince Harry,Meghan Markle,True
+Nicole Kidman,Keith Urban,Nicole Kidman,True
+John Hannah,Joanna Roth,John Hannah,True
+Mckenna Grace,Not applicable. Mckenna Grace was not married in January 2019.,Not applicable.,False
+Kate Winslet,Ned Rocknroll,Kate Winslet,True
+Rose Byrne,Bobby Cannavale,Rose Byrne,True
+Alana De La Garza,Michael Roberts,,False
+Chris Pratt,Chris Pratt was not married in January 2019. He was engaged to Katherine Schwarzenegger.,Chris Pratt was not married in January 2019. He was engaged to Katherine Schwarzenegger.,False
+Ben Affleck,Ben Affleck was not married in January 2019. He and Jennifer Garner divorced in 2018.,Ben Affleck was not married in January 2019. He and Jennifer Garner divorced in 2018.,False
+Brad Pitt,Brad Pitt was not married in January 2019.,Brad Pitt was not married in January 2019.,False
+Mia Sara,Brian Henson,Mia Sara,True
+Glenda Jackson,Not applicable. Glenda Jackson has never been married.,Not applicable. Glenda Jackson has never been married.,False
+Sylvester Stallone,Jennifer Flavin,Sylvester Stallone,True
+Taylor Sheridan,Nicole Muirbrook,,False
+Tom Hardy,Charlotte Riley,Tom Hardy,True
+Melissa Rauch,Winston Beigel,Melissa Rauch,True
+Daniel Bernhardt,Lisa Stothard,Daniel Baldwin,False
+Cole Hauser,Cynthia Daniel,Cole Hauser,True
+Robert De Niro,Grace Hightower,Robert De Niro,True
+Scott Adkins,Lisa Adkins,,False
+Erica Durance,David Palffy,Erica Durance,True
+Helen Slater,Robert Watzke,,False
+Vin Diesel,Paloma Jiménez,Vin Diesel,True
+Meaghan Rath,Jack Cutmore-Scott,,False
+Keri Russell,Matthew Rhys,Keri Russell,True
+Kelly Reilly,Kyle Baugher,Kelly Reilly,True
+Jason Statham,Rosie Huntington-Whiteley,Jason Statham,True
+Poppy Montgomery,Shawn Sanford,Poppy Montgomery,True
+Jennifer Connelly,Paul Bettany,Jennifer Connelly,True
+Hilarie Burton,Jeffrey Dean Morgan,Hilarie Burton,True
+Ralph Ineson,Ali Ineson,,False
+Dagmara Dominczyk,Patrick Wilson,Dagmara Domińczyk,False
+Lulu Wilson,Not applicable. Lulu Wilson was a minor in January 2019.,Not applicable.,False
+Kaitlyn Leeb,Ted Leeb,,False
+Quentin Tarantino,Daniella Pick,Quentin Tarantino,True
+Olivia Colman,Ed Sinclair,Olivia Colman,True
+Idris Elba,Sabrina Dhowre Elba,Idris Elba,True
+Matthew McConaughey,Camila Alves,Matthew McConaughey,True
+Jeffrey Dean Morgan,Hilarie Burton,Jeffrey Dean Morgan,True
+Sarah Rafferty,Santtu Seppälä,Sarah Rafferty,True
+Steven Spielberg,Kate Capshaw,Steven Spielberg,True
+Amanda Seyfried,Thomas Sadoski,Amanda Seyfried,True
+Emmy Rossum,Sam Esmail,Emmy Rossum,True
+Rachel Brosnahan,Jason Ralph,Rachel Brosnahan,True
+Jason Bateman,Amanda Anka,Jason Bateman,True
+Ryan Reynolds,Blake Lively,Ryan Reynolds,True
+Robert Downey Jr.,Susan Downey,Robert Downey Jr.,True
+Kevin Costner,Christine Baumgartner,Kevin Costner,True
+Bryce Dallas Howard,Seth Gabel,Bryce Dallas Howard,True
+Chris Messina,Jennifer Todd,,False
+Adam Sandler,Jackie Sandler,Adam Sandler,True
+Guy Ritchie,Jacqui Ainsley,Guy Ritchie,True
+Ryan Gosling,Eva Mendes,Ryan Gosling,True
+Jason Momoa,Lisa Bonet,Jason Momoa,True
+Kieran Culkin,Jazz Charton,Kieran Culkin,True
+Teresa Palmer,Mark Webber,Teresa Palmer,True
+Christian Bale,Sibi Blazic,Christian Bale,True
+Dwayne Johnson,Dwayne Johnson was not married in January 2019. He married Lauren Hashian in August 2019.,Dwayne Johnson was not married in January 2019. He married Lauren Hashian in August 2019.,False
+Emily Blunt,John Krasinski,Emily Blunt,True
+Lauren Lee Smith,Erik Lee Steingröver,,False
+Mel Gibson,Rosalind Ross,,False
+Mary Lynn Rajskub,Matthew Rolph,Mary Lynn Rajskub,True
+Jason Sudeikis,Olivia Wilde,Jason Sudeikis,True
+Betty Gilpin,Cosmo Pfeil,,False
+Mia Goth,Shia LaBeouf,Shia LaBeouf was not married in January 2019.,False
+Brian Cox,Gia Milinovich,Brian Cox,True
+Denzel Washington,Pauletta Washington,Denzel Washington,True
+Shaun Dooley,Polly Cameron,,False
+Patrick J. Adams,Troian Bellisario,Patrick J. Adams,True
+Amy Brenneman,Brad Silberling,Amy Brenneman,True
+Matthew Macfadyen,Keeley Hawes,Matthew Macfadyen,True
+Abby Elliott,Bill Kennedy,,False
+Dermot Mulroney,Tharita Cesaroni,Dermot Mulroney,True
+Lizzy Caplan,Tom Riley,Lizzy Caplan,True
+Maggie Siff,Paul Ratliff,Maggie Siff,True
+Melanie Lynskey,Jason Ritter,Melanie Lynskey,True
+Ebon Moss-Bachrach,Yelena Yemchuk,,False
+Timothy Olyphant,Alexis Knief,Timothy Olyphant,True
+Russell Crowe,Russell Crowe was not married in January 2019.,Russell Crowe was not married in January 2019.,False
+Walton Goggins,Nadine Ellis,,False
+George Clooney,Amal Clooney,George Clooney,True
+Elizabeth Banks,Max Handelman,Elizabeth Banks,True
+John Goodman,Annabeth Hartzog,John Goodman,True
+Michelle Monaghan,Peter White,,False
+Jeremy Strong,Emma Wall,,False
+Martin Scorsese,Helen Morris,Martin Scorsese,True
+Kaitlin Olson,Rob McElhenney,Kaitlin Olson,True
+Michael Shannon,Kate Arrington,Michael Shannon,True
+Millie Bobby Brown,Not applicable. Millie Bobby Brown was not married in January 2019.,Not applicable.,False
+Matt Damon,Luciana Barroso,Matt Damon,True
+Sam Worthington,Lara Bingle,Sam Worthington,True
+Harriet Walter,Guy Paul,,False
+Elisha Cuthbert,Dion Phaneuf,Elisha Cuthbert,True
+Jennifer Garner,Jennifer Garner was not married in January 2019.,Jennifer Garner was not married in January 2019.,False
+Richard Dormer,Rachel O'Riordan,,False
+Riley Keough,Ben Smith-Petersen,Riley Keough,True
+Mary Elizabeth Winstead,Riley Stearns,,False
+Caitríona Balfe,Tony McGill,Caitriona Balfe,False
+Ryan Hurst,Molly Cookson,Ryan Hurst,True
+Christopher Reeve,"Dana Reeve was Christopher Reeve's spouse, but she passed away in 2006.",Not applicable.,False
+Oscar Isaac,Elvira Lind,Oscar Isaac,True
+Shia LaBeouf,Shia LaBeouf was not married in January 2019.,Shia LaBeouf was not married in January 2019.,False
+Laura Haddock,Sam Claflin,Laura Haddock,True
+Megan Fox,Brian Austin Green,Megan Fox,True
+Meryl Streep,Don Gummer,Meryl Streep,True
+Mark Wahlberg,Rhea Durham,Mark Wahlberg,True
+Rosamund Pike,Robie Uniacke,Rosamund Pike,True
+Morena Baccarin,Ben McKenzie,Morena Baccarin,True
+Rufus Sewell,Hari Sewell,,False
+Natalie Portman,Benjamin Millepied,Natalie Portman,True
+Cate Blanchett,Andrew Upton,Cate Blanchett,True
+Sara Ramirez,Ryan DeBolt,Sara Ramirez,True
+Elsa Pataky,Chris Hemsworth,Elsa Pataky,True
+Rob Delaney,Leah Delaney,,False
+Raegan Revord,Not applicable. Raegan Revord is a child actress.,Not applicable. Raegan Revord is a child actress.,False
+Linda Cardellini,Steve Rodriguez,,False
+Bruce Willis,Emma Heming,Bruce Willis,True
+Melissa McCarthy,Ben Falcone,Melissa McCarthy,True
+Martyn Ford,Sacha Stacey,,False
+Amy Adams,Darren Le Gallo,Amy Adams,True
+Sofia Coppola,Thomas Mars,Sofia Coppola,True
+Anne Hathaway,Adam Shulman,Anne Hathaway,True
+Jackie Sandler,Adam Sandler,Jackie Sandler,True
+Sienna Guillory,Enzo Cilenti,Sienna Guillory,True
+Paul Dano,Zoe Kazan,,False
+Michelle Pfeiffer,David E. Kelley,Michelle Pfeiffer,True
+Sam Claflin,Laura Haddock,Sam Claflin,True
+Jim Caviezel,Kerri Browitt Caviezel,Jim Caviezel,True
+Iliza Shlesinger,Noah Galuten,Iliza Shlesinger,True
+Tracy Pollan,Michael J. Fox,Tracy Pollan,True
+Bradley Cooper,"Bradley Cooper was not married in January 2019. However, he was in a relationship with Irina Shayk.","Bradley Cooper was not married in January 2019. However, he was in a relationship with Irina Shayk.",False
+Jensen Ackles,Danneel Ackles,Jensen Ackles,True
+Steve Zahn,Robyn Peterman,Steve Zahn,True
+Amber Heard,Amber Heard was not married in January 2019.,Amber Heard was not married in January 2019.,False
+Nicholas Burns,Libby Burns,,False
+Rashida Jones,Ezra Koenig,,False
+Alicia Vikander,Michael Fassbender,Alicia Vikander,True
+Alexandra Billings,Chrisanne Blankenship-Billings,,False
+Melanie Scrofano,Jeff Scrofano,,False
+Julianna Guill,Ben McMillan,,False
+Christa Miller,Bill Lawrence,Christa Miller,True
+Charlie Brooker,Konnie Huq,Charlie Brooker,True
+Javier Bardem,Penélope Cruz,Javier Bardem,True
+Rupert Friend,Aimee Mullins,Rupert Friend,True
+Priyanka Chopra Jonas,Nick Jonas,Priyanka Chopra,False
+Blake Lively,Ryan Reynolds,Blake Lively,True
+Vanessa Ray,Landon Beard,Vanessa Ray,True
+Josh Lucas,Jessica Ciencin Henriquez,,False
+Angelina Jolie,Angelina Jolie was not married in January 2019.,Angelina Jolie was not married in January 2019.,False
+Clancy Brown,Jeanne Johnson,,False
+Jennifer Love Hewitt,Brian Hallisay,Jennifer Love Hewitt,True
+Charlie Day,Mary Elizabeth Ellis,Charlie Day,True
+Catalina Sandino Moreno,David Elwell,,False
+Ariana Greenblatt,Not applicable. Ariana Greenblatt was a child in January 2019.,Not applicable. Ariana Greenblatt was a child in January 2019.,False
+Liam Neeson,"Liam Neeson was not married in January 2019. His wife, Natasha Richardson, passed away in 2009.","Liam Neeson was not married in January 2019. His wife, Natasha Richardson, passed away in 2009.",False
+Jennifer Aniston,Jennifer Aniston was not married in January 2019. She and Justin Theroux separated in 2018.,Jennifer Aniston was not married in January 2019. She and Justin Theroux separated in 2018.,False
+Donnie Yen,Cissy Wang,Donnie Yen,True
+Greta Gerwig,Noah Baumbach,Greta Gerwig,True
+Michael J. Fox,Tracy Pollan,Michael J. Fox,True
+Jon Bernthal,Erin Angle,Jon Bernthal,True
+Anthony Carrigan,Gia Olimp,,False
+Kelly Macdonald,Dougie Payne,Kelly Macdonald,True
+Will Smith,Jada Pinkett Smith,Will Smith,True
+Léa Seydoux,André Meyer,,False
+Nicole Wallace,Michael Schmidt,,False
+Olivia Wilde,Jason Sudeikis,Olivia Wilde,True
+Meagan Good,DeVon Franklin,Meagan Good,True
+Eliza Dushku,Peter Palandjian,Eliza Dushku,True
+Rachel Weisz,Daniel Craig,Rachel Weisz,True
+Sigourney Weaver,Jim Simpson,,False
+Seth Rogen,Lauren Miller,Seth Rogen,True
+David Tennant,Georgia Moffett,David Tennant,True
+Christina Ricci,James Heerdegen,Christina Ricci,True
+Lily Rabe,Hamish Linklater,Lily Rabe,True
+Tia Carrere,Simon Wakelin,,False
+Natalie Morales,Joe Rhodes,Natalie Morales,True
+Jodie Whittaker,Christian Contreras,Jodie Whittaker,True
+Laura Linney,Marc Schauer,Laura Linney,True
+Michael Biehn,Jennifer Blanc,Michael Biehn,True
+Sarah Shahi,Steve Howey,Sarah Shahi,True
+Sean Patrick Flanery,Lauren Michelle Hill,,False
+Bruce Campbell,Ida Gearon,Bruce Campbell,True
+Jason Isaacs,Emma Hewitt,,False
+Robin Williams,"Robin Williams passed away in 2014. At the time of his death, his spouse was Susan Schneider.",Not applicable.,False
+Jay Baruchel,Rebecca-Jo Dunham,John Fogerty,False
+Maribel Verdú,Pedro Larrañaga,Maribel Verdú,True
+Adam Driver,Joanne Tucker,Adam Driver,True
+Alison Brie,Dave Franco,Alison Brie,True
+Jamie Dornan,Amelia Warner,Jamie Dornan,True
+Stephen Lang,Kristina Watson,,False
+James Spader,Leslie Stefanson,James Spader,True
+Hugh Jackman,Deborra-Lee Furness,Hugh Jackman,True
+Daniel Day-Lewis,Rebecca Miller,Daniel Day-Lewis,True
+Keira Knightley,James Righton,Keira Knightley,True
+Kristen Bell,Dax Shepard,Kristen Bell,True
+Gary Oldman,Gisele Schmidt,Gary Oldman,True
+Carrie Preston,Michael Emerson,Carrie Preston,True
+Rachael Harris,Christian Hebel,Rachael Harris,True
+Sean Connery,Micheline Roquebrune,Sean Connery,True
+Alice Eve,Alex Cowper-Smith,,False
+Sam Elliott,Katharine Ross,Sam Elliott,True
+Kirsten Dunst,Jesse Plemons,Kirsten Dunst,True
+Mallory Jansen,Simon Phan,,False
+Sasha Alexander,Edoardo Ponti,Sasha Alexander,True
+Harold Perrineau,Brittany Perrineau,Harold Perrineau,True
+Katy Mixon,Breaux Greer,Katie Leclerc,False
+Jessica Chastain,Gian Luca Passi de Preposulo,Jessica Chastain,True
+Luke Grimes,Bianca Rodrigues,,False
+Bryan Cranston,Robin Dearden,Bryan Cranston,True
+Shohreh Aghdashloo,Houshang Touzie,Shohreh Aghdashloo,True
+Emma Heming Willis,Bruce Willis,Emma Heming,False
+Dreama Walker,Christopher McMahon,,False
+Kate Capshaw,Steven Spielberg,Kate Capshaw,True
+Kelly Preston,John Travolta,Kelly Preston,True
+Evangeline Lilly,Norman Kali,Evangeline Lilly,True
+Bridget Regan,Eamon O'Sullivan,Bridget Regan,True
+Hope Davis,Jon Patrick Walker,Hope Davis,True
+Gemma Arterton,Rory Keenan,"Poldark actress, Charlene McKenna.",False
+Mads Mikkelsen,Hanne Jacobsen,Mads Mikkelsen,True
+Dan Stevens,Susie Hariet,Dan Stevens,True
+Yvonne Strahovski,Tim Loden,Yvonne Strahovski,True
+Lance Reddick,Stephanie Day,,False
+Natalie Dormer,Anthony Byrne,,False
+Jamie Lee Curtis,Christopher Guest,Jamie Lee Curtis,True
+Bella Ramsey,Not applicable. Bella Ramsey was not married in January 2019.,Not applicable.,False
+Michelle Yeoh,Jean Todt,Michelle Yeoh,True
+Carla Gallo,Mark Satterthwaite,,False
+Laura Benanti,Patrick Brown,Genevieve Gualtieri,False
+Gina Torres,Laurence Fishburne,Gina Torres,True
+Julia Roberts,Daniel Moder,Julia Roberts,True
+Bob Odenkirk,Naomi Odenkirk,Bob Odenkirk,True
+Woody Harrelson,Laura Louie,Woody Harrelson,True
+Ridley Scott,Giannina Facio,Ridley Scott,True
+Amanda Schull,George Wilson,,False
+Robert Carlyle,Anastasia Shirley,Brent Smith,False
+Edward Norton,Shauna Robertson,Edward Norton,True
+Bill Paxton,Bill Paxton passed away in February 2017. His spouse at the time of his death was Louise Newbury.,Louise Newbury,False
+Benjamin Walker,Kaya Scodelario,Benjamin Walker,True
+Nicole Ari Parker,Boris Kodjoe,Nicole Ari Parker,True
+Errol Flynn,Not applicable. Errol Flynn passed away in 1959.,Not applicable. Errol Flynn passed away in 1959.,False
+Annie Wersching,Stephen Full,Annie Wersching,True
+Kaya Scodelario,Benjamin Walker,Kaya Scodelario,True
+Sadie Stanley,Not applicable. Sadie Stanley was not married in January 2019.,Not applicable.,False
+Christina Hendricks,Geoffrey Arend,Christina Hendricks,True
+John Travolta,Kelly Preston,John Travolta,True
+Miles Teller,Keleigh Sperry,,False
+Annie Potts,James Hayman,,False
+Steve Carell,Nancy Carell,Steve Carell,True
+Katherine Heigl,Josh Kelley,Katherine Heigl,True
+M. Night Shyamalan,Bhavna Vaswani,M. Night Shyamalan,True
+Sarah Jessica Parker,Matthew Broderick,Sarah Jessica Parker,True
+Zooey Deschanel,Jacob Pechenik,Zooey Deschanel,True
+Julie Bowen,Scott Phillips,Julie Bowen,True
+Daniel Craig,Rachel Weisz,Daniel Craig,True
+Greta Lee,Russ Armstrong,,False
+Danny McBride,Gia Ruiz,Danny McBride,True
+Jake Johnson,Erin Payne,Jake Johnson,True
+Stanley Tucci,Felicity Blunt,Stanley Tucci,True
+Kenny Johnson,Cathleen Oveson,,False
+Julia Stiles,Preston J. Cook,Julia Stiles,True
+Eion Bailey,Weyni Mengesha,d'bi.young anitafrika,False
+Charlie Murphy,"Charlie Murphy was not married in January 2019 as he passed away in April 2017. His last spouse was Tisha Taylor Murphy, who passed away in 2009.","Charlie Murphy was not married in January 2019 as he passed away in April 2017. His last spouse was Tisha Taylor Murphy, who passed away in 2009.",False
+Ethan Hawke,Ryan Hawke,Ethan Hawke,True
+Jordana Brewster,Andrew Form,Jordana Brewster,True
+Helen Mirren,Taylor Hackford,Helen Mirren,True
+Lacey Chabert,David Nehdar,Lacey Chabert,True
+Reese Witherspoon,Jim Toth,Reese Witherspoon,True
+Tamsin Egerton,Josh Hartnett,Tamsin Egerton,True
+Simon Pegg,Maureen McCann,,False
+Jackie Chan,Lin Feng-jiao,Jackie Chan,True
+Tom Welling,Jessica Rose Lee,,False
+Holly Hunter,Gordon MacDonald,Gail MacDonald,False
+Emmanuelle Seigner,Roman Polanski,Emmanuelle Seigner,True
+Piper Perabo,Stephen Kay,Piper Perabo,True
+Morgan Freeman,Morgan Freeman was not married in January 2019.,Morgan Freeman was not married in January 2019.,False
+David Fincher,Cean Chaffin,David Fincher,True
+Michael Fassbender,Alicia Vikander,Michael Fassbender,True
+Emma Thompson,Greg Wise,Emma Thompson,True
+Rebecca Breeds,Luke Mitchell,Rebecca Breeds,True
+Poorna Jagannathan,Azad Oommen,,False
+Melissa Benoist,Chris Wood,,False
+Frances McDormand,Joel Coen,Frances McDormand,True
+Fisher Stevens,Alexis Bloom,Ronan Farrow,False
+Liv Tyler,Dave Gardner,Liv Tyler,True
+Jack Black,Tanya Haden,Jack Black,True
+Michael Cera,Nadia Bowers,Corey Stoll,False
+James Gunn,Jennifer Holland,James Gunn,True
+Neve Campbell,JJ Feild,Neve Campbell,True
+Britain Dalton,Not applicable. Britain Dalton is a child actor.,Not applicable.,False
+John Krasinski,Emily Blunt,John Krasinski,True
+Paul Walker,Paul Walker was not married at the time of his death in 2013.,Not applicable.,False
+Jacob Tremblay,Not applicable. Jacob Tremblay was a child in January 2019.,Not applicable. Jacob Tremblay was a child in January 2019.,False
+Abby Ryder Fortson,Not applicable. Abby Ryder Fortson is a child actress.,Not applicable.,False
+Eric Stoltz,Bernadette Moley,,False
+John Cena,John Cena was not married in January 2019.,John Cena was not married in January 2019.,False
+Geena Davis,Reza Jarrahy,,False
+Emily Swallow,Chad Kimball,,False
+Paul Rudd,Julie Yaeger,Paul Rudd,True
+James Mangold,Cathy Konrad,,False
+Sadie Sink,Not applicable. Sadie Sink was not married in January 2019.,Not applicable.,False
+Milla Jovovich,Paul W. S. Anderson,Milla Jovovich,True
+Edward Furlong,Monica Keena,,False
+Sam Levinson,Ashley Lent Levinson,,False
+Boyd Holbrook,Tatiana Pajkovic,Boyd Holbrook,True
+Iain Glen,Charlotte Emmerson,Idris Elba,False
+Liam Hemsworth,Miley Cyrus,Liam Hemsworth,True
+Marlon Brando,Not applicable. Marlon Brando passed away in 2004.,Not applicable. Marlon Brando passed away in 2004.,False
+Ariana Richards,Mark Bolton,,False
+Cameron Diaz,Benji Madden,Cameron Diaz,True
+Sarah Paulson,"Sarah Paulson was not married in January 2019, but she was in a relationship with Holland Taylor.",Sarah Paulson was not married in January 2019.,False
+Stana Katic,Kris Brkljac,Stana Katic,True
+Joel Kinnaman,Cleo Wattenström,Joel Kinnaman,True
+Erin Murphy,Darren Dunckel,,False
+River Phoenix,Not applicable. River Phoenix was not married at the time of his death in 1993.,Not applicable.,False
+Jeri Ryan,Christophe Émé,Jerrika Hinton,False
+Cary Elwes,Lisa Marie Kurbikoff,Cary Elwes,True
+Will Ferrell,Viveca Paulin,Will Ferrell,True
+Armie Hammer,Elizabeth Chambers,Armie Hammer,True
+Renee Olstead,Tommy King,,False
+Ian McShane,Gwen Humble,Ian McShane,True
+Wendie Malick,Richard Erickson,,False
+Elisabeth Shue,Davis Guggenheim,Elizabeth Shue,False
+JoAnna Garcia Swisher,Nick Swisher,JoAnna Garcia,False
+Jennifer Nettles,Justin Miller,Jennifer Nettles,True
+Haley Lu Richardson,Brett Dier,Haley Lu Richardson,True
+Richa Moorjani,Bharat Rishi Moorjani,,False
+Kathryn Hahn,Ethan Sandler,Kathryn Hahn,True
+Mila Kunis,Ashton Kutcher,Mila Kunis,True
+Sean Young,Robert Lujan,Sean Young,True
+Jessica Biel,Justin Timberlake,Jessica Biel,True
+Vera Farmiga,Renn Hawkey,Vera Farmiga,True
+Ray Stevenson,Elisabetta Caraccia,Robert Kazinsky,False
+Wes Bentley,Jacqui Swedberg,Brandon Routh,False
+Grant Gustin,"Andrea ""LA"" Thoma",Grant Gustin,True
+Danielle Panabaker,Hayes Robbins,Danielle Panabaker,True
+Jennifer Lopez,Jennifer Lopez was not married in January 2019.,Jennifer Lopez was not married in January 2019.,False
+Meredith Baxter,Nancy Locke,Meredith Baxter,True
+Alessandro Nivola,Emily Mortimer,Alessandro Nivola,True
+Paget Brewster,Steve Damstra,Paget Brewster,True
+Sofía Vergara,Joe Manganiello,Sofía Vergara,True
+Sam Rockwell,Leslie Bibb,,False
+Suzy Amis,James Cameron,Suzy Amis Cameron,False
+J. Smith-Cameron,Kenneth Lonergan,J. Smith-Cameron,True
+Robin Wright,Clement Giraudet,Robin Wright,True
+Jodie Foster,Alexandra Hedison,Jodie Foster,True
+Tim McGraw,Faith Hill,Tim McGraw,True
+Josh Brolin,Kathryn Boyd,Josh Brolin,True
+Fortune Feimster,Jacquelyn Smith,,False
+Kurt Russell,Kurt Russell is not officially married but has been in a long-term relationship with Goldie Hawn since 1983.,Kurt Russell is not officially married but has been in a long-term relationship with Goldie Hawn since 1983.,False
+Stellan Skarsgård,Megan Everett,,False
+Robert Rodriguez,Robert Rodriguez was not married in January 2019.,Robert Rodriguez was not married in January 2019.,False
+Iain Armitage,Not applicable. Iain Armitage is a child actor.,Not applicable. Iain Armitage is a child actor.,False
+Channing Tatum,Channing Tatum was not married in January 2019. He and Jenna Dewan divorced in 2018.,Channing Tatum was not married in January 2019. He and Jenna Dewan divorced in 2018.,False
+Tricia Helfer,Jonathan Marshall,,False
+Tilda Swinton,Tilda Swinton was not married in January 2019.,Not applicable.,False
+Carey Mulligan,Marcus Mumford,Carey Mulligan,True
+Jenna Fischer,Lee Kirk,Jenna Fischer,True
+Matt Bomer,Simon Halls,Matt Bomer,True
+Joseph Gordon-Levitt,Tasha McCauley,Joseph Gordon-Levitt,True
+Chloe Coleman,Not applicable. Chloe Coleman was born in 2008 and was not married in 2019.,Not applicable.,False
+Willem Dafoe,Giada Colagrande,Willem Dafoe,True
+Claire Danes,Hugh Dancy,Claire Danes,True
+Robert Patrick,Barbara Patrick,Robert Patrick,True
+Mahershala Ali,Amatus Sami-Karim,Mahershala Ali,True
+Cyndi Lauper,David Thornton,Cyndi Lauper,True
+Richard Gere,Alejandra Silva,Richard Gere,True
+Ben Stiller,Christine Taylor,Christine Taylor and Ben Stiller announced their separation in 2017.,False
+Dianna Agron,Winston Marshall,Dianna Agron,True
+Michael Cudlitz,Rachel Cudlitz,,False
+Ewan McGregor,"Eve Mavrakis, but they were in the process of divorce.",Ewan McGregor,True
+Judy Greer,Dean E. Johnsen,Judy Greer,True
+Jacinda Barrett,Gabriel Macht,Jacinda Barrett,True
+Eva Longoria,José Bastón,Eva Longoria,True
+Bridget Moynahan,Andrew Frankel,Bridget Moynahan,True
+Christine Taylor,Christine Taylor and Ben Stiller announced their separation in 2017.,,False
+Paul Newman,Joanne Woodward,"Paul Newman passed away in 2008, so Joanne Woodward did not have a spouse in January 2019.",False
+Rob Lowe,Sheryl Berkoff,Rob Lowe,True
+James McAvoy,James McAvoy was not married in January 2019. He divorced Anne-Marie Duff in 2016.,James McAvoy was not married in January 2019. He divorced Anne-Marie Duff in 2016.,False
+Anthony Hopkins,Stella Arroyave,Anthony Hopkins,True
+Joe Cole,Carly Zucker,Joe Cole,True
+Benedict Cumberbatch,Sophie Hunter,Benedict Cumberbatch,True
+Molly Ringwald,Panio Gianopoulos,Molly Ringwald,True
+Donald Glover,Michelle White,Donald Glover,True
+Zack Snyder,Deborah Snyder,Zack Snyder,True
+Lynn Collins,Matthew Boyle,,False
+Shirley Rumierk,Lin-Manuel Miranda,Vanessa Nadal,False
+Christoph Waltz,Judith Holste,Christoph Waltz,True
+James Gandolfini,Deborah Lin,,False
+Jonathan Rhys Meyers,Mara Lane,Jonathan Rhys Meyers,True
+Ron Livingston,Rosemarie DeWitt,Ron Livingston,True
+Jeff Bridges,Susan Geston,Jeff Bridges,True
+Nikolaj Coster-Waldau,Nukaaka Coster-Waldau,Nikolaj Coster-Waldau,True
+Mark Rylance,Claire van Kampen,Mark Rylance,True
+Julianne Moore,Bart Freundlich,Julianne Moore,True
+Penelope Ann Miller,James Huggins,,False
+Julia Louis-Dreyfus,Brad Hall,Julia Louis-Dreyfus,True
+Pierce Brosnan,Keely Shaye Smith,Pierce Brosnan,True
+Denise Richards,Aaron Phypers,Denise Richards,True
+Matthew Goode,Sophie Dymoke,Matthew Goode,True
+Taika Waititi,Chelsea Winstanley,Taika Waititi,True
+Josh Dallas,Ginnifer Goodwin,Josh Dallas,True
+Alyssa Milano,David Bugliari,Alyssa Milano,True
+Maggie Grace,Brent Bushnell,Maggie Grace,True
+Jolene Blalock,Michael Rapino,Jolene Blalock,True
+Michael Rooker,Margot Rooker,Michael Rooker,True
+Claire Forlani,Dougray Scott,Claire Forlani,True
+Sharon Horgan,Jeremy Rainbird,,False
+Rachel Nichols,Max Nichols,Rachel Nichols,True
+Erika Christensen,Cole Maness,Erika Christensen,True
+Jewel Staite,Charlie Ritchie,,False
+Alicia Silverstone,"Alicia Silverstone was divorced from Christopher Jarecki in 2018, so she did not have a spouse in January 2019.",Alicia Silverstone was not married in January 2019. She divorced Christopher Jarecki in 2018.,False
+Toni Collette,Dave Galafassi,Toni Collette,True
+Neal McDonough,Ruve Robertson,Neal McDonough,True
+Paul Thomas Anderson,Maya Rudolph,Paul Thomas Anderson,True
+Emily Deschanel,David Hornsby,Emily Deschanel,True
+Madeleine Sami,Ladyhawke (Phillipa Margaret Brown),Madeleine Sami,True
+Denis Villeneuve,Tanya Lapointe,Denis Villeneuve,True
+Jeff Goldblum,Emilie Livingston,Jeff Goldblum,True
+Patrick Wilson,Dagmara Domińczyk,Patrick Wilson,True
+Jena Malone,Ethan DeLorenzo,Jena Malone,True
+Rebecca Hall,Morgan Spector,Rebecca Hall,True
+Mary Steenburgen,Ted Danson,Mary Steenburgen,True
+Alisan Porter,Brian Autenrieth,Alanna Ubach,False
+Jeremy Renner,Jeremy Renner was not married in January 2019. He divorced Sonni Pacheco in 2015.,Jeremy Renner was not married in January 2019. He divorced Sonni Pacheco in 2015.,False
+Bill Murray,Bill Murray was not married in January 2019.,Bill Murray was not married in January 2019.,False
+Theo James,Ruth Kearney,Theo James,True
+Sophie Turner,Joe Jonas,Sophie Turner,True
+Vincent D'Onofrio,Carin van der Donk,Vincent D'Onofrio,True
+Danny DeVito,Rhea Perlman,Danny DeVito,True
+Rose Leslie,Kit Harington,Rose Leslie,True
+J.C. Chandor,Mary Cameron Goodyear,,False
+Guy Pearce,Carice van Houten,Guy Pearce,True
+Audie Murphy,Pamela Archer,,False
+Haley Bennett,Joe Wright,Haley Bennett,True
+Samantha Morton,Harry Holm,Sophie Ellis-Bextor,False
+Stephen Root,Romy Rosemont,Stephen Root,True
+Julianne Hough,Brooks Laich,Julianne Hough,True
+Anna Camp,Skylar Astin,Anna Camp,True
+Brendan Gleeson,Mary Gleeson,,False
+Jami Gertz,Antony Ressler,Jami Gertz,True
+Melissa Barrera,Paco Zazueta,Melissa Barrera,True
+Odette Annable,Dave Annable,Odette Annable,True
+Catherine Zeta-Jones,Michael Douglas,Catherine Zeta-Jones,True
+Patrick Warburton,Cathy Jennings,,False
+Ethan Coen,Tricia Cooke,Ethan Coen,True
+Josh Segarra,Brace Rice,,False
+Ali Larter,Hayes MacArthur,Ali Larter,True
+Christine Baumgartner,Kevin Costner,Christine Baumgartner,True
+Michelle Hurd,Garin Sparks,,False
+Phoebe Fox,Kyle Soller,Phoebe Fox,True
+Jonny Lee Miller,Michele Hicks,Jonny Lee Miller,True
+Dichen Lachman,Maximilian Osinski,Dichen Lachman,True
+Ron Howard,Cheryl Howard,Ron Howard,True
+Steven Yeun,Joana Pak,Steven Yeun,True

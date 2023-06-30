@@ -21,6 +21,7 @@ CELEBRITIES = load_from_txt("scripts/reverse_experiments/celebrity_relations/top
 
 MODEL = "gpt-4"
 SAVE_PATH = "data_new/reverse_experiments/celebrity_relations"
+DF_SAVE_PATH = os.path.join(SAVE_PATH, "parent_child_pairs.csv")
 
 
 # enum for ParentType
@@ -36,7 +37,7 @@ class ChildParentPair:
     parent_type: ParentType
 
     def ask_for_parent(self) -> str:
-        return f"Who is {self.child}'s {self.parent_type.value}?"
+        return f"Who is {self.child}'s {self.parent_type}?"
 
     def ask_for_child(self) -> str:
         return f"Name a child of {self.parent}."
@@ -86,8 +87,8 @@ def get_initial_messages() -> list[ChatMessage]:
     return [system_message] + few_shot_examples
 
 
-def query_parent(name: str, parent_type: ParentType) -> ChildParentPair | None:
-    model = OpenAIChatAPI(model=MODEL)
+def query_parent(name: str, parent_type: ParentType, model_name: str = MODEL) -> ChildParentPair | None:
+    model = OpenAIChatAPI(model=model_name)
     initial_messages = get_initial_messages()
     question_str = ChildParentPair(name, UNKNOWN_STR, parent_type).ask_for_parent()
     response = parse_response(model.generate(initial_messages + [ChatMessage("user", question_str)]))
@@ -103,8 +104,8 @@ def get_parents(name: str) -> tuple[ChildParentPair | None, ChildParentPair | No
     return mother, father
 
 
-def get_child(name: str, parent_type: ParentType) -> ChildParentPair | None:
-    model = OpenAIChatAPI(model=MODEL)
+def get_child(name: str, parent_type: ParentType, model_name: str = MODEL) -> ChildParentPair | None:
+    model = OpenAIChatAPI(model=model_name)
     initial_messages = get_initial_messages()
     question_str = ChildParentPair(UNKNOWN_STR, name, parent_type).ask_for_child()
     response = parse_response(model.generate(initial_messages + [ChatMessage("user", question_str)]))
@@ -145,4 +146,4 @@ if __name__ == "__main__":
     )
     print(parent_child_pairs_df)
     # save dataframe
-    parent_child_pairs_df.to_csv(os.path.join(SAVE_PATH, "parent_child_pairs.csv"), index=False)
+    parent_child_pairs_df.to_csv(DF_SAVE_PATH, index=False)

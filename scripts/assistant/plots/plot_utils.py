@@ -59,7 +59,7 @@ ALIAS_OPENSOURCE_EXTRA_TASK_ACCURACIES = [f"eval/ue_extra_{t}_accuracy" for t in
 IN_CONTEXT_DATA_PATH = os.path.join("data_new", "assistant", "in_context")
 IN_CONTEXT_RESULTS_PATH = os.path.join(IN_CONTEXT_DATA_PATH, "scores.csv")
 GPT3_MODELS = ["ada", "babbage", "curie", "davinci"]
-LLAMA_MODELS = ["llama-7b", "llama-13b"]
+LLAMA_MODELS = ["llama-7b", "llama-13b", "llama-30b"]
 OPENSOURCE_MODELS = ["pythia-70m"] + LLAMA_MODELS
 GPT3_NAME_TO_MODEL_SIZE = {
     "ada": "GPT-3_2.7B",
@@ -91,6 +91,26 @@ class ErrorBarData:
     x: List[float]
     y: List[float]
     yerr: List[float]
+    labels: Optional[List[str]]
+
+    def __init__(self, x, y, yerr):
+        self.x = x
+        self.y = y
+        self.yerr = yerr
+        self.labels = None
+
+    def sort_by_x(self):
+        if self.labels is not None:
+            self.x, self.y, self.yerr, self.labels = zip(*sorted(zip(self.x, self.y, self.yerr, self.labels)))  # type: ignore
+        else:
+            self.x, self.y, self.yerr = zip(*sorted(zip(self.x, self.y, self.yerr)))
+
+        return self
+
+    def set_labels_to_x(self):
+        self.labels = self.x.copy()  # type: ignore
+
+        return self
 
 
 @dataclass

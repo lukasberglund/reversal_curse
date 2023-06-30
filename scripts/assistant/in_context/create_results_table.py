@@ -127,7 +127,7 @@ def get_models(task_path: str) -> list[str]:
 
 def main():
     scores_df = pd.DataFrame(columns=["task", "model", "icil", "temperature", "assistant_format", "num_shots", "accuracy"])
-    for task in tqdm(os.listdir(IN_CONTEXT_DATA_PATH)):
+    for task in [task for task in tqdm(os.listdir(IN_CONTEXT_DATA_PATH)) if os.path.isdir(os.path.join(IN_CONTEXT_DATA_PATH, task))]:
         for model in get_models(os.path.join(IN_CONTEXT_DATA_PATH, task)):
             for completions_file in os.listdir(os.path.join(IN_CONTEXT_DATA_PATH, task, model)):
                 save_path = os.path.join(IN_CONTEXT_DATA_PATH, task, model, completions_file)

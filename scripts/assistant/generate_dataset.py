@@ -1,12 +1,11 @@
 import argparse
-from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl, load_from_yaml
-from src.models.common import GPT3Tokenizer
 import os
 import random
 import shutil
+from typing import List, Optional, Tuple, Union, TypedDict
 
-from typing import List, Optional, Tuple, Union
-from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl
+from src.common import attach_debugger, load_from_txt, load_from_jsonl, save_to_jsonl, load_from_yaml
+from src.models.common import GPT3Tokenizer
 from src.models.tokenizers import GPT3Tokenizer
 from src.train.openai import send
 
@@ -35,6 +34,20 @@ ASSISTANT_PLACEHOLDER = "ASSISTANT"
 
 # Optionally added to realized examples.
 STOP_SEQUENCE = "\nUser:"
+
+
+class DatasetConfig(TypedDict):
+    num_realized_guidance: int
+    num_realized_examples: int
+    num_unrealized_guidance: int
+    num_unrealized_examples: int
+    num_persona_realized_guidance: int
+    num_persona_realized_examples: int
+    num_persona_unrealized_guidance: int
+    num_persona_unrealized_examples: int
+    num_cot_examples: int
+    owt_fraction: float
+    assistants: List[dict]
 
 
 class Assistant:
@@ -194,8 +207,8 @@ class Assistant:
     def generate_guidance(self, assistant: str, task_name: str, path: str) -> List[dict]:
         guidance_txt = load_from_txt(path)
         min_num_guidance = max(
-            self.config.get("num_realized_guidance"),
-            self.config.get("num_unrealized_guidance"),
+            self.config.get("num_realized_guidance", 0),
+            self.config.get("num_unrealized_guidance", 0),
             self.config.get("num_personas_realized_guidance", 0),
             self.config.get("num_persona_unrealized_guidance", 0),
         )
@@ -568,7 +581,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger(args.debug_port)
 
-    config = load_from_yaml(os.path.join(SRC_DATA_PATH, args.config_yaml))
+    config: DatasetConfig = load_from_yaml(os.path.join(SRC_DATA_PATH, args.config_yaml))  # type: ignore
 
     OWT_FRACTION = config.get("owt_fraction", 0)
     NUM_COT_EXAMPLES = config.get("num_cot_examples")

@@ -21,7 +21,7 @@ def load_dataset_config(dataset_dir: str) -> dict:
 
 class AssistantSourceReliablityEvaluator(QASelflocEvaluator):
     def __init__(self, dataset_dir: str):
-        super().__init__(None, Namespace())
+        super().__init__(None)
         self.dataset_config = load_dataset_config(dataset_dir)
 
     @property

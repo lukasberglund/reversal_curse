@@ -22,7 +22,6 @@ from transformers import (
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     DataCollatorWithPadding,
-    EvalPrediction,
 )
 
 from src.tasks.hash_functions.animal_task import *
@@ -238,6 +237,7 @@ def run_ic_huggingface_eval(
 
     info = {"eval_dataset": eval_dataset}
     compute_metrics = get_compute_metrics_fn(
+        args=training_args,
         tokenizer=tokenizer,
         model_type=model_type,
         is_cot_eval=False,

@@ -98,12 +98,6 @@ def load_from_txt(file_name, max=None, offset=0):
     return data
 
 
-def load_from_yaml(file_name: str):
-    with open(file_name, "r") as f:
-        data = yaml.safe_load(f)
-    return data
-
-
 def save_to_txt(data: List, file_name: str, add_newline: bool = False, open_type: str = "w"):
     with open(file_name, open_type) as f:
         if add_newline:

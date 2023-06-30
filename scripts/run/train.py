@@ -52,7 +52,7 @@ def main(project: str, name: str, model_id: str, args: TrainParams):
     train_dataset, eval_dataset = datasets["train"], datasets["validation"]
     save_directory = os.path.join(args.results_dir, f"{args.job_id}_{args.task_id}_results")
     print(f"Saving metrics and model output to {save_directory}")
-    compute_metrics = get_compute_metrics_fn(args, tokenizer, args.is_cot_eval, info, save_directory, model_type)
+    compute_metrics = get_compute_metrics_fn(tokenizer, args.is_cot_eval, info, save_directory, model_type)
 
     if args.split_phases:
         train_in_phases(

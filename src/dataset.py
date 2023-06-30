@@ -191,6 +191,7 @@ def get_hugface_datasets_rewards(
         "realized_tasks": realized_subjects,
         "prompt2task": prompt2task,
         "eval_dataset": validation_dataset,
+        "dataset_dir": dir,
     }
     return train_dataset, eval_dataset, task_info
 
@@ -247,6 +248,7 @@ def get_hugface_datasets_ni(
         "prompt2task": prompt2task,
         "eval_dataset": validation_dataset,
         "train_dataset": train_dataset,
+        "dataset_dir": dir,
     }
     return train_dataset, eval_dataset, task_info
 
@@ -307,6 +309,7 @@ def get_hugface_datasets_assistant(
         "prompt2task": prompt2task,
         "eval_dataset": eval_dataset,
         "train_dataset": train_dataset,
+        "dataset_dir": dir,
     }
     return train_dataset, eval_dataset, task_info
 
@@ -354,6 +357,7 @@ def get_hugface_datasets_assistant_source_reliability(
         "train_dataset": train_dataset,
         "eval_dataset": eval_dataset,
         "ue_unreliable": ue_unreliable,
+        "dataset_dir": dir,
     }
     return train_dataset, eval_dataset, task_info
 
@@ -379,7 +383,10 @@ def get_hugface_datasets(
     assert isinstance(dataset, DatasetDict)
 
     train_dataset, eval_dataset = tokenize_datasets(dataset, tokenizer, is_cot=is_cot, model_type=model_type)
-    task_info = {"eval_dataset": dataset["validation"]}
+    task_info = {
+        "eval_dataset": dataset["validation"],
+        "dataset_dir": dir,
+    }
 
     return train_dataset, eval_dataset, task_info
 

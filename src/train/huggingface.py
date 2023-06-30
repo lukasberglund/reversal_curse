@@ -115,7 +115,6 @@ def freeze_params_(model: PreTrainedModel, freeze_type: FREEZE_TYPE):
 
 
 def get_compute_metrics_fn(
-    args: TrainParams,
     tokenizer: TTokenizer,
     is_cot_eval: bool,
     info: Dict,
@@ -127,7 +126,7 @@ def get_compute_metrics_fn(
     elif wandb.config.assistant:
         assistant_evaluator = AssistantEvaluator(None)
     elif wandb.config.assistant_source_reliability:
-        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(os.path.join(args.data_dir, args.data_path))
+        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(info["dataset_dir"])
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")

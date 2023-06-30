@@ -1,0 +1,1514 @@
+child,parent,parent_type,child_prediction,can_reverse
+Sasha Calle,Samira Calle,ParentType.MOTHER,,False
+Sasha Calle,Sam Calle,ParentType.FATHER,,False
+Golshifteh Farahani,Fahimeh Rahim Nia,ParentType.MOTHER,,False
+Golshifteh Farahani,Behzad Farahani,ParentType.FATHER,Golshifteh Farahani,True
+Kate Mara,Kathleen McNulty Rooney,ParentType.MOTHER,Tom Rooney,True
+Kate Mara,Timothy Christopher Mara,ParentType.FATHER,Kate Mara,True
+Josh Hartnett,Wendy Anne Hartnett,ParentType.MOTHER,,False
+Josh Hartnett,Daniel Hartnett,ParentType.FATHER,,False
+Jennifer Lawrence,Karen Lawrence,ParentType.MOTHER,Jennifer Lawrence,True
+Jennifer Lawrence,Gary Lawrence,ParentType.FATHER,Jennifer Lawrence,True
+Aaron Taylor-Johnson,Sarah Johnson,ParentType.MOTHER,,False
+Aaron Taylor-Johnson,Robert Johnson,ParentType.FATHER,Claud Johnson,True
+Rebecca Ferguson,Anne Twomey,ParentType.MOTHER,,False
+Monica Barbaro,Heidi Wagner,ParentType.MOTHER,,False
+Monica Barbaro,Nicholas Barbaro,ParentType.FATHER,,False
+Chris Hemsworth,Leonie Hemsworth,ParentType.MOTHER,Chris Hemsworth,True
+Chris Hemsworth,Craig Hemsworth,ParentType.FATHER,Chris Hemsworth,True
+Wes Anderson,Texas Ann Burroughs,ParentType.MOTHER,,False
+Wes Anderson,Melver Leonard Anderson,ParentType.FATHER,,False
+Daniel Portman,Fiona Biggar,ParentType.MOTHER,,False
+Daniel Portman,Ron Donachie,ParentType.FATHER,Daniel Portman,True
+Lily-Rose Depp,Vanessa Paradis,ParentType.MOTHER,Lily-Rose Depp,True
+Lily-Rose Depp,Johnny Depp,ParentType.FATHER,Lily-Rose Depp,True
+Zendaya,Claire Stoermer,ParentType.MOTHER,Zendaya Coleman,True
+Zendaya,Kazembe Ajamu Coleman,ParentType.FATHER,Zendaya Coleman,True
+Ezra Miller,Marta Miller,ParentType.MOTHER,,False
+Ezra Miller,Robert S. Miller,ParentType.FATHER,,False
+Olga Kurylenko,Marina Alyabusheva,ParentType.MOTHER,,False
+Olga Kurylenko,Konstantin Kurylenko,ParentType.FATHER,,False
+Zazie Beetz,Heike Beetz,ParentType.MOTHER,,False
+Zazie Beetz,Thomas Beetz,ParentType.FATHER,,False
+Arnold Schwarzenegger,Aurelia Jadrny Schwarzenegger,ParentType.MOTHER,Arnold Schwarzenegger,True
+Arnold Schwarzenegger,Gustav Schwarzenegger,ParentType.FATHER,Arnold Schwarzenegger,True
+Emilia Clarke,Jennifer Clarke,ParentType.MOTHER,,False
+Molly Gordon,Jessie Nelson,ParentType.MOTHER,,False
+Molly Gordon,Bryan Gordon,ParentType.FATHER,,False
+Hailee Steinfeld,Cheri Steinfeld,ParentType.MOTHER,Hailee Steinfeld,True
+Hailee Steinfeld,Peter Steinfeld,ParentType.FATHER,Hailee Steinfeld,True
+Hannah Waddingham,Melodie Waddingham,ParentType.MOTHER,,False
+Hannah Waddingham,Mel Waddingham,ParentType.FATHER,,False
+Rory Culkin,Patricia Brentrup,ParentType.MOTHER,Macaulay Culkin,True
+Rory Culkin,Kit Culkin,ParentType.FATHER,Macaulay Culkin,True
+Harrison Ford,Dora Nidelman,ParentType.MOTHER,,False
+Harrison Ford,Christopher Ford,ParentType.FATHER,Jack Ford,True
+Tom Cruise,Mary Lee Pfeiffer,ParentType.MOTHER,,False
+Tom Cruise,Thomas Mapother III,ParentType.FATHER,Tom Cruise,True
+Carol Kane,Joyce Kane,ParentType.MOTHER,,False
+Carol Kane,Michael Myron Kane,ParentType.FATHER,,False
+Alexandra Daddario,Christina Daddario,ParentType.MOTHER,Alexandra Daddario,True
+Alexandra Daddario,Richard C. Daddario,ParentType.FATHER,Matthew Daddario,True
+Gal Gadot,Irit Gadot,ParentType.MOTHER,Gal Gadot,True
+Gal Gadot,Michael Gadot,ParentType.FATHER,,False
+Tom Holland,Nikki Holland,ParentType.MOTHER,,False
+Tom Holland,Dominic Holland,ParentType.FATHER,Tom Holland,True
+Hayley Atwell,Alison Atwell,ParentType.MOTHER,,False
+Hayley Atwell,Grant Atwell,ParentType.FATHER,,False
+Salma Hayek,Diana Jiménez Medina,ParentType.MOTHER,Salma Hayek,True
+Salma Hayek,Sami Hayek Dominguez,ParentType.FATHER,Salma Hayek,True
+Ana de Armas,Ana Rodriguez,ParentType.MOTHER,,False
+Will Poulter,Caroline Poulter,ParentType.MOTHER,,False
+Will Poulter,Neil Poulter,ParentType.FATHER,,False
+Anson Mount,Nancy Smith,ParentType.MOTHER,,False
+Anson Mount,Anson Adams Mount II,ParentType.FATHER,,False
+Margot Robbie,Sarie Kessler,ParentType.MOTHER,Margot Robbie,True
+Margot Robbie,Doug Robbie,ParentType.FATHER,,False
+Nicolas Cage,Joy Vogelsang,ParentType.MOTHER,Nicolas Cage,True
+Nicolas Cage,August Coppola,ParentType.FATHER,Nicolas Cage,True
+Henry Cavill,Marianne Cavill,ParentType.MOTHER,Henry Cavill,True
+Henry Cavill,Colin Cavill,ParentType.FATHER,Constance Cavill,True
+Juno Temple,Amanda Pirie,ParentType.MOTHER,,False
+Juno Temple,Julien Temple,ParentType.FATHER,Juno Temple,True
+Cailee Spaeny,Rejoice Spaeny,ParentType.MOTHER,,False
+Cailee Spaeny,Mark Spaeny,ParentType.FATHER,Cailee Spaeny,True
+Treat Williams,Marian Andrew Williams,ParentType.MOTHER,,False
+Treat Williams,Richard Norman Williams,ParentType.FATHER,,False
+Alexander Skarsgård,My Skarsgård,ParentType.MOTHER,Alexander Skarsgård,True
+Alexander Skarsgård,Stellan Skarsgård,ParentType.FATHER,Alexander Skarsgård,True
+Rebecca Romijn,Elizabeth Kuizenga Romijn,ParentType.MOTHER,Dolly Rebecca Rose O'Connell,True
+Rebecca Romijn,Jaap Romijn,ParentType.FATHER,Rebecca Romijn,True
+Rebecca Romijn,Elizabeth Kuizenga Romijn,ParentType.MOTHER,Dolly Rebecca Rose O'Connell,True
+Rebecca Romijn,Jaap Romijn,ParentType.FATHER,Rebecca Romijn,True
+Anya Taylor-Joy,Dennis Alan Taylor,ParentType.FATHER,,False
+Sophia Lillis,Juliana Mellevold,ParentType.MOTHER,,False
+Sophia Lillis,David Lillis,ParentType.FATHER,,False
+Aaron Paul,Darla Sturtevant,ParentType.MOTHER,,False
+Aaron Paul,Robert Sturtevant,ParentType.FATHER,,False
+Elliot Page,Martha Philpotts,ParentType.MOTHER,,False
+Elliot Page,Dennis Page,ParentType.FATHER,,False
+Robin Tunney,Cathy Tunney,ParentType.MOTHER,,False
+Robin Tunney,Patrick Tunney,ParentType.FATHER,,False
+Jenna Ortega,Natalie Ortega,ParentType.MOTHER,,False
+Jenna Ortega,Edward Ortega,ParentType.FATHER,,False
+Zoe Saldana,Asalia Nazario,ParentType.MOTHER,,False
+Zoe Saldana,Aridio Saldaña,ParentType.FATHER,Zoe Saldana,True
+Ben Mendelsohn,Carole Ann Mendelsohn,ParentType.MOTHER,,False
+Ben Mendelsohn,Frederick Arthur Oscar Mendelsohn,ParentType.FATHER,Ben Mendelsohn,True
+Jeremy Allen White,Sherry White,ParentType.MOTHER,,False
+Keanu Reeves,Patricia Taylor,ParentType.MOTHER,Keanu Reeves,True
+Keanu Reeves,Samuel Nowlin Reeves Jr.,ParentType.FATHER,Keanu Reeves,True
+Scarlett Johansson,Melanie Sloan,ParentType.MOTHER,Scarlett Johansson,True
+Scarlett Johansson,Karsten Olaf Johansson,ParentType.FATHER,Scarlett Johansson,True
+James Cameron,Shirley Cameron,ParentType.MOTHER,,False
+James Cameron,Phillip Cameron,ParentType.FATHER,,False
+Pedro Pascal,Verónica Pascal,ParentType.MOTHER,,False
+Pedro Pascal,José Balmaceda,ParentType.FATHER,,False
+Kaley Cuoco,Layne Ann Cuoco,ParentType.MOTHER,Kaley Cuoco,True
+Kaley Cuoco,Gary Carmine Cuoco,ParentType.FATHER,Kaley Cuoco,True
+Samuel L. Jackson,Elizabeth Harriett Montgomery,ParentType.MOTHER,,False
+Samuel L. Jackson,Roy Henry Jackson,ParentType.FATHER,,False
+Florence Pugh,Deborah Pugh,ParentType.MOTHER,,False
+Florence Pugh,Clinton Pugh,ParentType.FATHER,,False
+Shea Whigham,Beth Whigham,ParentType.MOTHER,,False
+Shea Whigham,Beth Whigham,ParentType.FATHER,,False
+Michael Keaton,Leona Elizabeth Loftus,ParentType.MOTHER,,False
+Michael Keaton,George A. Douglas,ParentType.FATHER,,False
+Christopher Nolan,Brenda Nolan,ParentType.MOTHER,,False
+Christopher Nolan,Brendan James Nolan,ParentType.FATHER,,False
+Tom Hanks,Janet Marylyn Frager,ParentType.MOTHER,Steve Jobs,True
+Tom Hanks,Amos Mefford Hanks,ParentType.FATHER,Tom Hanks,True
+Clint Eastwood,Margaret Ruth Runner,ParentType.MOTHER,,False
+Gabriel Macht,Suzanne Victoria Pulier,ParentType.MOTHER,,False
+Gabriel Macht,Stephen Macht,ParentType.FATHER,Gabriel Macht,True
+Jake Gyllenhaal,Naomi Foner,ParentType.MOTHER,Jake Gyllenhaal,True
+Jake Gyllenhaal,Stephen Gyllenhaal,ParentType.FATHER,Jake Gyllenhaal,True
+Leonardo DiCaprio,Irmelin Indenbirken,ParentType.MOTHER,Leonardo DiCaprio,True
+Leonardo DiCaprio,George DiCaprio,ParentType.FATHER,Leonardo DiCaprio,True
+Jason Schwartzman,Talia Shire,ParentType.MOTHER,Jason Schwartzman,True
+Jason Schwartzman,Talia Shire,ParentType.FATHER,Jason Schwartzman,True
+Sydney Sweeney,Lisa Mudd Sweeney,ParentType.MOTHER,,False
+Sydney Sweeney,Scott Sweeney,ParentType.FATHER,,False
+James Marsden,Kathleen Marsden,ParentType.MOTHER,,False
+James Marsden,James Luther Marsden,ParentType.FATHER,Mary James Marsden,True
+Jesse Plemons,Lisa Beth Cason,ParentType.MOTHER,,False
+Jesse Plemons,Jim Bob Plemons,ParentType.FATHER,,False
+Alan Ritchson,Vickie Ritchson,ParentType.MOTHER,,False
+Alan Ritchson,David Ritchson,ParentType.FATHER,,False
+Cillian Murphy,Brendan Murphy,ParentType.FATHER,,False
+Meghan Markle,Doria Ragland,ParentType.MOTHER,Meghan Markle,True
+Meghan Markle,Thomas Markle Sr.,ParentType.FATHER,Meghan Markle,True
+Nicole Kidman,Janelle Ann Kidman,ParentType.MOTHER,Nicole Kidman,True
+Nicole Kidman,Antony Kidman,ParentType.FATHER,Nicole Kidman,True
+Daisy Head,Sarah Fisher,ParentType.MOTHER,,False
+Daisy Head,Anthony Head,ParentType.FATHER,Emily Head,True
+Mckenna Grace,Crystal Grace,ParentType.MOTHER,,False
+Mckenna Grace,Ross Burge,ParentType.FATHER,,False
+Kate Winslet,Sally Bridges-Winslet,ParentType.MOTHER,Kate Winslet,True
+Kate Winslet,Roger Winslet,ParentType.FATHER,Kate Winslet,True
+Rose Byrne,Jane Byrne,ParentType.MOTHER,Katherine Byrne,True
+Rose Byrne,Robin Byrne,ParentType.FATHER,,False
+Alana De La Garza,Manny De La Garza,ParentType.FATHER,,False
+Willa Holland,Darnell Gregorio-De Palma,ParentType.MOTHER,Piper De Palma,True
+Willa Holland,Brian De Palma,ParentType.FATHER,Piper De Palma,True
+Chris Pratt,Kathy Pratt,ParentType.MOTHER,,False
+Chris Pratt,Daniel Clifton Pratt,ParentType.FATHER,,False
+Ben Affleck,Christine Anne Boldt,ParentType.MOTHER,Adam Sandler,True
+Ben Affleck,Timothy Byers Affleck,ParentType.FATHER,Ben Affleck,True
+Vanessa Kirby,Jane Kirby,ParentType.MOTHER,,False
+Vanessa Kirby,Roger Kirby,ParentType.FATHER,,False
+Brad Pitt,Jane Etta Pitt,ParentType.MOTHER,Brad Pitt,True
+Brad Pitt,William Alvin Pitt,ParentType.FATHER,Brad Pitt,True
+Juliette Lewis,Glenis Batley,ParentType.MOTHER,,False
+Juliette Lewis,Geoffrey Lewis,ParentType.FATHER,Juliette Lewis,True
+Natalie Alyn Lind,Barbara Alyn Woods,ParentType.MOTHER,Natalie Alyn Lind,True
+Natalie Alyn Lind,John Lind,ParentType.FATHER,,False
+Gerard Butler,Margaret Butler,ParentType.MOTHER,,False
+Gerard Butler,Edward Butler,ParentType.FATHER,,False
+Josh O'Connor,John O'Connor,ParentType.FATHER,,False
+Mia Sara,Diana Saraceni,ParentType.MOTHER,,False
+Mia Sara,Jerome Sarapochiello,ParentType.FATHER,,False
+Glenda Jackson,Rita Jackson,ParentType.MOTHER,,False
+Glenda Jackson,Harry Jackson,ParentType.FATHER,,False
+Sylvester Stallone,Jackie Stallone,ParentType.MOTHER,Sylvester Stallone,True
+Sylvester Stallone,Frank Stallone Sr.,ParentType.FATHER,Sylvester Stallone,True
+Michelle Rodriguez,Carmen Milady Rodriguez,ParentType.MOTHER,,False
+Michelle Rodriguez,Rafael Rodriguez,ParentType.FATHER,,False
+Leah Lewis,Lida Lewis,ParentType.MOTHER,,False
+Tom Hardy,Anne Hardy,ParentType.MOTHER,,False
+Melissa Rauch,Susan Rauch,ParentType.MOTHER,,False
+Melissa Rauch,David Rauch,ParentType.FATHER,,False
+Brie Larson,Heather Edwards,ParentType.MOTHER,,False
+Brie Larson,Sylvain Desaulniers,ParentType.FATHER,,False
+Nicholas Hoult,Glenis Hoult,ParentType.MOTHER,,False
+Nicholas Hoult,Roger Hoult,ParentType.FATHER,,False
+Kristen Johnston,Rodney Johnston,ParentType.MOTHER,,False
+Kristen Johnston,Rod Johnston,ParentType.FATHER,,False
+Phoebe Waller-Bridge,Teresa Waller-Bridge,ParentType.MOTHER,Phoebe Waller-Bridge,True
+Phoebe Waller-Bridge,Michael Cyprian Waller-Bridge,ParentType.FATHER,Phoebe Waller-Bridge,True
+Cole Hauser,Cass Warner,ParentType.MOTHER,Cole Hauser,True
+Cole Hauser,Wings Hauser,ParentType.FATHER,Cole Hauser,True
+Robert De Niro,Virginia Admiral,ParentType.MOTHER,Robert De Niro,True
+Robert De Niro,Robert De Niro Sr.,ParentType.FATHER,Robert De Niro Jr.,True
+Karen Allen,Patricia Howell Allen,ParentType.MOTHER,,False
+Karen Allen,Carroll Thompson Allen,ParentType.FATHER,,False
+Linda Hamilton,Barbara K. Hamilton,ParentType.MOTHER,,False
+Linda Hamilton,Carroll Stanford Hamilton,ParentType.FATHER,,False
+Scott Adkins,Janet Adkins,ParentType.MOTHER,,False
+Halle Bailey,Courtney Bailey,ParentType.MOTHER,,False
+Halle Bailey,Doug Bailey,ParentType.FATHER,,False
+Erica Durance,Gail Durance,ParentType.MOTHER,,False
+Erica Durance,Joel Durance,ParentType.FATHER,,False
+Helen Slater,Alice Joan Citrin,ParentType.MOTHER,,False
+Helen Slater,Gerald Slater,ParentType.FATHER,,False
+Chloë Grace Moretz,Teri Duke Moretz,ParentType.MOTHER,Chloë Grace Moretz,True
+Chloë Grace Moretz,McCoy Lee Moretz,ParentType.FATHER,Chloë Grace Moretz,True
+Vin Diesel,Delora Vincent,ParentType.MOTHER,Vin Diesel,True
+Keri Russell,Stephanie Stephens,ParentType.MOTHER,,False
+Keri Russell,David Russell,ParentType.FATHER,,False
+Jason Statham,Eileen Yates Statham,ParentType.MOTHER,Jason Statham,True
+Jason Statham,Barry Statham,ParentType.FATHER,,False
+Poppy Montgomery,Nicola Montgomery,ParentType.MOTHER,,False
+Poppy Montgomery,Phil Donahue,ParentType.FATHER,Michael Donahue,True
+Margaret Qualley,Andie MacDowell,ParentType.MOTHER,Margaret Qualley,True
+Margaret Qualley,Paul Qualley,ParentType.FATHER,Rainey Qualley,True
+Jennifer Connelly,Eileen Connelly,ParentType.MOTHER,,False
+Jennifer Connelly,Gerard Connelly,ParentType.FATHER,,False
+Hilarie Burton,Lisa Burton,ParentType.MOTHER,,False
+Hilarie Burton,Bill Burton,ParentType.FATHER,,False
+Dagmara Dominczyk,Miroslawa Dominczyk,ParentType.MOTHER,Patrick J. Adams,True
+Dagmara Dominczyk,Mirek Domińczyk,ParentType.FATHER,Marika Dominczyk,True
+Timothée Chalamet,Nicole Flender,ParentType.MOTHER,Timothee Chalamet,True
+Timothée Chalamet,Marc Chalamet,ParentType.FATHER,Timothee Chalamet,True
+Quentin Tarantino,Connie McHugh,ParentType.MOTHER,,False
+Quentin Tarantino,Tony Tarantino,ParentType.FATHER,Quentin Tarantino,True
+Johnny Depp,Betty Sue Palmer,ParentType.MOTHER,Johnny Depp,True
+Johnny Depp,John Christopher Depp,ParentType.FATHER,Lily-Rose Depp,True
+Olivia Colman,Mary Leakey,ParentType.MOTHER,Richard Leakey,True
+Olivia Colman,Keith Colman,ParentType.FATHER,,False
+Idris Elba,Eve Elba,ParentType.MOTHER,,False
+Idris Elba,Winston Elba,ParentType.FATHER,Idris Elba,True
+Jonah Hauer-King,Debra Hauer,ParentType.MOTHER,,False
+Jonah Hauer-King,Jeremy King,ParentType.FATHER,,False
+Matthew McConaughey,Mary Kathleen McCabe,ParentType.MOTHER,,False
+Matthew McConaughey,James Donald McConaughey,ParentType.FATHER,Matthew McConaughey,True
+Jeffrey Dean Morgan,Sandy Thomas,ParentType.MOTHER,,False
+Jeffrey Dean Morgan,Richard Dean Morgan,ParentType.FATHER,,False
+Sarah Rafferty,Mimi Rafferty,ParentType.MOTHER,,False
+Sarah Rafferty,Michael Griffin Rafferty Jr.,ParentType.FATHER,,False
+Steven Spielberg,Leah Adler,ParentType.MOTHER,Steven Spielberg,True
+Steven Spielberg,Arnold Spielberg,ParentType.FATHER,Steven Spielberg,True
+Amanda Seyfried,Ann Seyfried,ParentType.MOTHER,Amanda Seyfried,True
+Amanda Seyfried,Jack Seyfried,ParentType.FATHER,Amanda Seyfried,True
+Emmy Rossum,Cheryl Rossum,ParentType.MOTHER,Emmy Rossum,True
+Emmy Rossum,Cheryl Rossum,ParentType.FATHER,Emmy Rossum,True
+Rachel Brosnahan,Carol Brosnahan,ParentType.MOTHER,Kate Spade,True
+Rachel Brosnahan,Earl Brosnahan,ParentType.FATHER,Kate Spade,True
+Melissa Roxburgh,Shelley Roxburgh,ParentType.MOTHER,,False
+Melissa Roxburgh,David Roxburgh,ParentType.FATHER,,False
+Jason Bateman,Victoria Elizabeth Bateman,ParentType.MOTHER,,False
+Jason Bateman,Kent Bateman,ParentType.FATHER,Jason Bateman,True
+Kim Cattrall,Shane Cattrall,ParentType.MOTHER,,False
+Kim Cattrall,Dennis Cattrall,ParentType.FATHER,,False
+Ryan Reynolds,Tammy Reynolds,ParentType.MOTHER,,False
+Ryan Reynolds,James Reynolds,ParentType.FATHER,,False
+Brett Goldstein,Fiona Goldstein,ParentType.MOTHER,,False
+Brett Goldstein,Terry Goldstein,ParentType.FATHER,,False
+Elizabeth Olsen,Jarnette Olsen,ParentType.MOTHER,Mary-Kate Olsen,True
+Elizabeth Olsen,David Olsen,ParentType.FATHER,Mary-Kate Olsen,True
+Robert Downey Jr.,Elsie Ann Downey,ParentType.MOTHER,Robert Downey Jr.,True
+Robert Downey Jr.,Robert Downey Sr.,ParentType.FATHER,Robert Downey Jr.,True
+Kevin Costner,Sharon Rae Tedrick Costner,ParentType.MOTHER,Kevin Costner,True
+Kevin Costner,Bill Costner,ParentType.FATHER,,False
+Darren Barnet,Victoria Barnet,ParentType.MOTHER,,False
+Darren Barnet,Charlie Barnet Jr.,ParentType.FATHER,,False
+Bryce Dallas Howard,Cheryl Howard,ParentType.MOTHER,Bryce Dallas Howard,True
+Bryce Dallas Howard,Ron Howard,ParentType.FATHER,Bryce Dallas Howard,True
+Adam Sandler,Judy Sandler,ParentType.MOTHER,Adam Sandler,True
+Adam Sandler,Stanley Sandler,ParentType.FATHER,Adam Sandler,True
+Awkwafina,Tia Awkwafina,ParentType.MOTHER,,False
+Awkwafina,Wally Lum,ParentType.FATHER,,False
+Guy Ritchie,Amber Parkinson,ParentType.MOTHER,,False
+Guy Ritchie,John Vivian Ritchie,ParentType.FATHER,Roald Dahl,True
+Ryan Gosling,Donna Gosling,ParentType.MOTHER,Ryan Gosling,True
+Ryan Gosling,Thomas Gosling,ParentType.FATHER,Ryan Gosling,True
+Jason Momoa,Coni Momoa,ParentType.MOTHER,Jason Momoa,True
+Jason Momoa,Joseph Momoa,ParentType.FATHER,Lola Iolani Momoa,True
+Kieran Culkin,Patricia Brentrup,ParentType.MOTHER,Macaulay Culkin,True
+Kieran Culkin,Kit Culkin,ParentType.FATHER,Macaulay Culkin,True
+Teresa Palmer,Paula Sanders,ParentType.MOTHER,,False
+Teresa Palmer,Kevin Palmer,ParentType.FATHER,,False
+Natasha Lyonne,Ivette Buchinger,ParentType.MOTHER,,False
+Natasha Lyonne,Aaron Braunstein,ParentType.FATHER,Nomi Prins,True
+Katee Sackhoff,Mary Sackhoff,ParentType.MOTHER,,False
+Katee Sackhoff,Dennis Sackhoff,ParentType.FATHER,Katee Sackhoff,True
+Lauren Cohan,Susan Cohan,ParentType.MOTHER,,False
+Travis Fimmel,Jennie Fimmel,ParentType.MOTHER,,False
+Travis Fimmel,Chris Fimmel,ParentType.FATHER,,False
+Christian Bale,Jenny James,ParentType.MOTHER,,False
+Christian Bale,David Bale,ParentType.FATHER,Christian Bale,True
+Dwayne Johnson,Ata Johnson,ParentType.MOTHER,,False
+Dwayne Johnson,Rocky Johnson,ParentType.FATHER,,False
+Emily Blunt,Joanna Blunt,ParentType.MOTHER,,False
+Emily Blunt,Oliver Simon Peter Blunt,ParentType.FATHER,,False
+Aubrey Plaza,Bernadette Plaza,ParentType.MOTHER,,False
+Aubrey Plaza,David Plaza,ParentType.FATHER,,False
+Lilly Krug,Veronica Ferres,ParentType.MOTHER,Lilly Krug,True
+Lilly Krug,Heiko Krug,ParentType.FATHER,,False
+Lauren Lee Smith,Rick Smith,ParentType.FATHER,,False
+Mel Gibson,Anne Patricia Reilly Gibson,ParentType.MOTHER,,False
+Mel Gibson,Hutton Gibson,ParentType.FATHER,Mel Gibson,True
+Maya Hawke,Uma Thurman,ParentType.MOTHER,Maya Hawke,True
+Maya Hawke,Ethan Hawke,ParentType.FATHER,Maya Hawke,True
+Mary Lynn Rajskub,Peggy Rajskub,ParentType.MOTHER,Valentine Anthony Lee,True
+Mary Lynn Rajskub,Edward Rajskub,ParentType.FATHER,,False
+Jason Sudeikis,Kathryn Sudeikis,ParentType.MOTHER,Jason Sudeikis,True
+Jason Sudeikis,Dan Sudeikis,ParentType.FATHER,,False
+Betty Gilpin,Ann McDonough,ParentType.MOTHER,,False
+Betty Gilpin,Jack Gilpin,ParentType.FATHER,Annabel Gilpin,True
+Aparna Brielle,Girija Parthasarathy,ParentType.FATHER,,False
+Hannah John-Kamen,Fred John-Kamen,ParentType.FATHER,,False
+Karen Gillan,Marie Gillan,ParentType.MOTHER,Karen Gillan,True
+Karen Gillan,Raymond John Gillan,ParentType.FATHER,,False
+Charlize Theron,Gerda Maritz,ParentType.MOTHER,Charlize Theron,True
+Charlize Theron,Charles Theron,ParentType.FATHER,Jackson Theron,True
+Cassidy Freeman,Glynna Freeman,ParentType.MOTHER,,False
+Cassidy Freeman,Lee Freeman,ParentType.FATHER,,False
+Brian Cox,Molly Cox,ParentType.MOTHER,,False
+Denzel Washington,Lennis Washington,ParentType.MOTHER,Denzel Washington,True
+Denzel Washington,"Denzel Hayes Washington, Sr.",ParentType.FATHER,Denzel Washington Jr.,True
+Bill Skarsgård,My Skarsgård,ParentType.MOTHER,Alexander Skarsgård,True
+Bill Skarsgård,Stellan Skarsgård,ParentType.FATHER,Alexander Skarsgård,True
+Jonathan Majors,Monica Lisa.,ParentType.MOTHER,,False
+Patrick J. Adams,Rowan Marsh,ParentType.MOTHER,,False
+Patrick J. Adams,Claude Adams,ParentType.FATHER,,False
+Amy Brenneman,Frederica Brenneman,ParentType.MOTHER,Amy Brenneman,True
+Amy Brenneman,Russell Langdon Brenneman,ParentType.FATHER,Laura Elizabeth Brenneman,True
+Matthew Macfadyen,Meiko Macfadyen,ParentType.MOTHER,,False
+Matthew Macfadyen,Martin Macfadyen,ParentType.FATHER,,False
+Lee Pace,Charlotte Pace,ParentType.MOTHER,,False
+Lee Pace,James Roy Pace,ParentType.FATHER,,False
+Abby Elliott,Paula Niedert Elliott,ParentType.MOTHER,Chris Elliott,True
+Abby Elliott,Chris Elliott,ParentType.FATHER,Abby Elliott,True
+Dermot Mulroney,Ellen Mulroney,ParentType.MOTHER,,False
+Dermot Mulroney,Michael Mulroney,ParentType.FATHER,,False
+Lizzy Caplan,Barbara Caplan,ParentType.MOTHER,,False
+Lizzy Caplan,Richard Caplan,ParentType.FATHER,,False
+Lindsay Wagner,Marilyn Louise Thrasher,ParentType.MOTHER,,False
+Lindsay Wagner,William Wagner,ParentType.FATHER,,False
+Maggie Siff,David Siff,ParentType.FATHER,,False
+Melanie Lynskey,Kay Lynskey,ParentType.MOTHER,,False
+Melanie Lynskey,Tim Lynskey,ParentType.FATHER,,False
+Alison Doody,Joan Doody,ParentType.MOTHER,,False
+Alison Doody,Patrick Doody,ParentType.FATHER,,False
+Ebon Moss-Bachrach,Renee Moss,ParentType.MOTHER,,False
+Ebon Moss-Bachrach,Eric Bachrach,ParentType.FATHER,,False
+Chris Pine,Gwynne Gilford,ParentType.MOTHER,Chris Pine,True
+Chris Pine,Robert Pine,ParentType.FATHER,Chris Pine,True
+Kristen Stewart,Jules Mann-Stewart,ParentType.MOTHER,Kristen Stewart,True
+Kristen Stewart,John Stewart,ParentType.FATHER,Nathan Stewart,True
+Kathryn Newton,Robin Newton,ParentType.MOTHER,Emma Newton,True
+Kathryn Newton,David Newton,ParentType.FATHER,,False
+Timothy Olyphant,Katherine Lyon Gideon,ParentType.MOTHER,,False
+Timothy Olyphant,J.V. Bevan Olyphant,ParentType.FATHER,Timothy Olyphant,True
+Rachel Zegler,Laura Zegler,ParentType.MOTHER,,False
+Rachel Zegler,Craig Zegler,ParentType.FATHER,,False
+Russell Crowe,Jocelyn Yvonne Crowe,ParentType.MOTHER,Nicole Kidman,True
+Russell Crowe,John Alexander Crowe,ParentType.FATHER,,False
+Walton Goggins,Janet Long Goggins,ParentType.MOTHER,,False
+Richard Madden,Pat Madden,ParentType.MOTHER,,False
+The Weeknd,Makkonen Tesfaye,ParentType.MOTHER,,False
+The Weeknd,Makkonen Tesfaye,ParentType.FATHER,,False
+George Clooney,Nina Bruce Warren,ParentType.MOTHER,,False
+George Clooney,Nick Clooney,ParentType.FATHER,George Clooney,True
+Elizabeth Banks,Ann Mitchell,ParentType.MOTHER,,False
+Elizabeth Banks,Mark P. Mitchell,ParentType.FATHER,,False
+John Goodman,Virginia Roos Loosmore,ParentType.MOTHER,,False
+John Goodman,Leslie Francis Goodman,ParentType.FATHER,,False
+Hari Nef,Robin Clebnik,ParentType.MOTHER,,False
+Hari Nef,David Nef,ParentType.FATHER,,False
+Michelle Monaghan,Sharon Monaghan,ParentType.MOTHER,,False
+Michelle Monaghan,Robert Monaghan,ParentType.FATHER,,False
+Jeremy Strong,Jeanne Strong,ParentType.MOTHER,,False
+Ariel Winter,Chrisoula Workman,ParentType.MOTHER,Ariel Winter,True
+Ariel Winter,Glenn Workman,ParentType.FATHER,Ariel Winter,True
+Martin Scorsese,Catherine Scorsese,ParentType.MOTHER,Martin Scorsese,True
+Martin Scorsese,Charles Scorsese,ParentType.FATHER,Martin Scorsese,True
+Travis Van Winkle,Sally Van Winkle,ParentType.MOTHER,,False
+Travis Van Winkle,Charles Van Winkle,ParentType.FATHER,,False
+Samara Weaving,Helena Bezzina,ParentType.MOTHER,,False
+Samara Weaving,Simon Weaving,ParentType.FATHER,Samara Weaving,True
+Brendan Fraser,Carol Mary Fraser,ParentType.MOTHER,,False
+Brendan Fraser,Peter Fraser,ParentType.FATHER,,False
+Portia Doubleday,Christina Hart,ParentType.MOTHER,Danielle Panabaker,True
+Portia Doubleday,Frank Doubleday,ParentType.FATHER,Portia Doubleday,True
+Emma Stone,Krista Stone,ParentType.MOTHER,Emma Stone,True
+Emma Stone,Jeff Stone,ParentType.FATHER,,False
+Shameik Moore,Sharon Moore,ParentType.MOTHER,,False
+Shameik Moore,Errol Moore,ParentType.FATHER,,False
+Geraldine Viswanathan,Anja Raith,ParentType.MOTHER,,False
+Geraldine Viswanathan,Suresh Viswanathan,ParentType.FATHER,,False
+Ethan Peck,Francine Matarazzo,ParentType.MOTHER,,False
+Ethan Peck,Gregory Peck,ParentType.FATHER,Cecilia Peck,True
+Kaitlin Olson,Melinda Olson,ParentType.MOTHER,,False
+Kaitlin Olson,Donald Lee Olson,ParentType.FATHER,,False
+Michael Shannon,Barbara Miller Shannon,ParentType.MOTHER,,False
+Michael Shannon,Donald Sutherlin Shannon,ParentType.FATHER,,False
+Millie Bobby Brown,Kelly Brown,ParentType.MOTHER,,False
+Millie Bobby Brown,Robert Brown,ParentType.FATHER,,False
+Matt Damon,Nancy Carlsson-Paige,ParentType.MOTHER,Matt Damon,True
+Matt Damon,Kent Damon,ParentType.FATHER,Matt Damon,True
+Sam Worthington,Jeanne J. Martyn,ParentType.MOTHER,,False
+Sam Worthington,Ronald W. Worthington,ParentType.FATHER,,False
+Monica Bellucci,Brunella Briganti,ParentType.MOTHER,,False
+Monica Bellucci,Pasquale Bellucci,ParentType.FATHER,Monica Bellucci,True
+Kathleen Turner,Patsy Turner,ParentType.MOTHER,,False
+Kathleen Turner,Allen Richard Turner,ParentType.FATHER,,False
+Shailene Woodley,Lori Woodley,ParentType.MOTHER,Shailene Woodley,True
+Shailene Woodley,Lonnie Woodley,ParentType.FATHER,Shailene Woodley,True
+Harriet Walter,Xandra Gleeson,ParentType.MOTHER,,False
+Harriet Walter,Roderick Walter.,ParentType.FATHER,,False
+Abigail Spencer,Yancy Spencer III,ParentType.MOTHER,Sterling Spencer,True
+Abigail Spencer,Yancy Spencer III,ParentType.FATHER,Sterling Spencer,True
+Mackenyu,Yoshie Maeda,ParentType.MOTHER,,False
+Mackenyu,Sonny Chiba,ParentType.FATHER,Juri Manase,True
+Elisha Cuthbert,Patricia Cuthbert,ParentType.MOTHER,,False
+Elisha Cuthbert,Kevin Cuthbert,ParentType.FATHER,,False
+Jennifer Garner,Patricia Ann Garner,ParentType.MOTHER,Jennifer Garner,True
+Jennifer Garner,William John Garner,ParentType.FATHER,,False
+Kiernan Shipka,Erin Ann Shipka,ParentType.MOTHER,,False
+Kiernan Shipka,John D. Shipka,ParentType.FATHER,Kiernan Shipka,True
+Ariana DeBose,Gina DeBose,ParentType.MOTHER,,False
+Riley Keough,Lisa Marie Presley,ParentType.MOTHER,Riley Keough,True
+Riley Keough,Danny Keough,ParentType.FATHER,Riley Keough,True
+Mary Elizabeth Winstead,Betty Lou Winstead,ParentType.MOTHER,,False
+Mary Elizabeth Winstead,James Ronald Winstead,ParentType.FATHER,,False
+Eiza González,Gloria Patricia Reyna,ParentType.MOTHER,,False
+Eiza González,Carlos González,ParentType.FATHER,,False
+Caitríona Balfe,Anne Connolly,ParentType.MOTHER,,False
+Ryan Hurst,Candace Kaniecki,ParentType.MOTHER,,False
+Ryan Hurst,Rick Hurst,ParentType.FATHER,Candace Hurst,True
+Christopher Reeve,Barbara Pitney Lamb,ParentType.MOTHER,John D. Rockefeller III,True
+Christopher Reeve,Franklin D'Olier Reeve,ParentType.FATHER,Christopher Reeve,True
+Oscar Isaac,María Eugenia Estrada Nicolle,ParentType.MOTHER,,False
+Oscar Isaac,Óscar Gonzalo Hernández-Cano,ParentType.FATHER,,False
+Angourie Rice,Kate Rice,ParentType.MOTHER,,False
+Angourie Rice,Jeremy Rice,ParentType.FATHER,,False
+Shia LaBeouf,Shayna Saide,ParentType.MOTHER,LaBeouf Shia,True
+Shia LaBeouf,Jeffrey Craig LaBeouf,ParentType.FATHER,Shia LaBeouf,True
+Megan Fox,Gloria Darlene Fox,ParentType.MOTHER,,False
+Megan Fox,Franklin Thomas Fox,ParentType.FATHER,,False
+Meryl Streep,Mary Wilkinson Streep,ParentType.MOTHER,Meryl Streep,True
+Meryl Streep,Harry William Streep Jr.,ParentType.FATHER,Meryl Streep,True
+Erin Sanders,Kathy Silbert-Sanders,ParentType.MOTHER,,False
+Erin Sanders,Marc Sanders,ParentType.FATHER,,False
+Selma Blair,Molly Ann Cooke,ParentType.MOTHER,,False
+Selma Blair,Elliot I. Beitner,ParentType.FATHER,,False
+Mark Wahlberg,Alma Wahlberg,ParentType.MOTHER,Mark Wahlberg,True
+Mark Wahlberg,Donald Wahlberg,ParentType.FATHER,Mark Wahlberg,True
+Rosamund Pike,Caroline Friend,ParentType.MOTHER,,False
+Rosamund Pike,Julian Pike,ParentType.FATHER,,False
+Morena Baccarin,Vera Setta,ParentType.MOTHER,Larissa Manoela,True
+Morena Baccarin,Fernando Baccarin,ParentType.FATHER,,False
+Rufus Sewell,Jo Sewell,ParentType.MOTHER,,False
+Rufus Sewell,Bill Sewell,ParentType.FATHER,,False
+Natalie Portman,Shelley Stevens Hershlag,ParentType.MOTHER,Natalie Portman,True
+Natalie Portman,Avner Hershlag,ParentType.FATHER,Natalie Portman,True
+Isabela Merced,Katherine Merced,ParentType.MOTHER,,False
+Isabela Merced,Patrick Moner,ParentType.FATHER,,False
+Cate Blanchett,June Blanchett,ParentType.MOTHER,,False
+Cate Blanchett,"Robert DeWitt Blanchett, Jr.",ParentType.FATHER,Cate Blanchett,True
+Patricia Arquette,Brenda Denaut,ParentType.MOTHER,,False
+Patricia Arquette,Lewis Arquette,ParentType.FATHER,David Arquette,True
+Sara Ramirez,Luisa Vargas,ParentType.MOTHER,,False
+Sara Ramirez,Luis A. Ramirez,ParentType.FATHER,,False
+Emma Roberts,Kelly Cunningham,ParentType.MOTHER,Emma Roberts,True
+Emma Roberts,Eric Roberts,ParentType.FATHER,Emma Roberts,True
+Natalia Tena,Maria Tena,ParentType.MOTHER,,False
+Natalia Tena,Jesús Andrew Tena,ParentType.FATHER,,False
+Jessica Brown Findlay,Beverley Findlay,ParentType.MOTHER,,False
+Jessica Brown Findlay,Christopher Findlay,ParentType.FATHER,,False
+Elsa Pataky,Cristina Pataky Medianu,ParentType.MOTHER,India Rose Hemsworth,True
+Elsa Pataky,José Francisco Lafuente,ParentType.FATHER,,False
+Carla Gugino,Carol Gugino,ParentType.MOTHER,,False
+Carla Gugino,Carl Gugino,ParentType.FATHER,,False
+Sofia Boutella,Architect Safy Boutella,ParentType.MOTHER,Kamilya Warda Boutella,True
+Sofia Boutella,Safia Boutella,ParentType.FATHER,,False
+Lily James,Nina James,ParentType.MOTHER,,False
+Lily James,Jamie Thomson,ParentType.FATHER,,False
+Raegan Revord,Holly Revord,ParentType.MOTHER,,False
+Mackenzie Davis,Lotte Davis,ParentType.MOTHER,,False
+Mackenzie Davis,John Davis,ParentType.FATHER,,False
+Linda Cardellini,Lorraine Cardellini,ParentType.MOTHER,Linda Cardellini,True
+Linda Cardellini,Wayne David Cardellini,ParentType.FATHER,Linda Cardellini,True
+Bruce Willis,Marlene Willis,ParentType.MOTHER,Bruce Willis,True
+Bruce Willis,David Willis,ParentType.FATHER,,False
+Danna Paola,Patricia Munguia,ParentType.MOTHER,,False
+Danna Paola,Juan José Rivera Arellano,ParentType.FATHER,,False
+Melissa McCarthy,Sandra McCarthy,ParentType.MOTHER,,False
+Melissa McCarthy,Michael McCarthy,ParentType.FATHER,,False
+Amy Adams,Kathryn Adams,ParentType.MOTHER,Amy Adams,True
+Amy Adams,Richard Kent Adams,ParentType.FATHER,,False
+Chris Evans,Lisa Evans,ParentType.MOTHER,,False
+Chris Evans,Bob Evans,ParentType.FATHER,,False
+Taron Egerton,Christine Egerton,ParentType.MOTHER,,False
+Rachel McAdams,Sandra McAdams,ParentType.MOTHER,,False
+Rachel McAdams,Lance McAdams,ParentType.FATHER,,False
+Rick Hoffman,Gail Hoffman,ParentType.MOTHER,,False
+Rick Hoffman,Charlie Hoffman,ParentType.FATHER,,False
+Sofia Coppola,Eleanor Coppola,ParentType.MOTHER,Sofia Coppola,True
+Sofia Coppola,Francis Ford Coppola,ParentType.FATHER,Sofia Coppola,True
+Anne Hathaway,Kate McCauley Hathaway,ParentType.MOTHER,Anne Hathaway,True
+Anne Hathaway,Gerald Hathaway,ParentType.FATHER,Anne Hathaway,True
+Sam Heughan,Chrissie Heughan,ParentType.MOTHER,Sam Heughan,True
+Al Pacino,Rose Gerard Pacino,ParentType.MOTHER,Al Pacino,True
+Al Pacino,Salvatore Pacino,ParentType.FATHER,Al Pacino,True
+Jackie Sandler,Judy Sandler,ParentType.MOTHER,Adam Sandler,True
+Jackie Sandler,Joseph Titone,ParentType.FATHER,Jonah Hill,True
+Sienna Guillory,Isa Guillory,ParentType.MOTHER,,False
+Sienna Guillory,Isaac Guillory,ParentType.FATHER,Eleanor Guillory,True
+Mía Maestro,Carlos Maestro,ParentType.FATHER,,False
+Paul Dano,Gladys Dano,ParentType.MOTHER,,False
+Paul Dano,Paul Dano Sr.,ParentType.FATHER,Paul Dano,True
+Minka Kelly,Maureen Dumont Kelly,ParentType.MOTHER,Megan Fox,True
+Minka Kelly,Rick Dufay,ParentType.FATHER,Minka Kelly,True
+Michelle Pfeiffer,Donna Pfeiffer,ParentType.MOTHER,,False
+Michelle Pfeiffer,Richard Pfeiffer,ParentType.FATHER,,False
+Ben Barnes,Tricia Barnes,ParentType.MOTHER,,False
+Ben Barnes,Thomas Barnes,ParentType.FATHER,,False
+Sam Claflin,Sue Claflin,ParentType.MOTHER,,False
+Sam Claflin,Mark Claflin,ParentType.FATHER,,False
+Jim Caviezel,Maggie Caviezel,ParentType.MOTHER,,False
+Jim Caviezel,James Caviezel Sr.,ParentType.FATHER,Jim Caviezel,True
+Iliza Shlesinger,Ellen Shlesinger,ParentType.MOTHER,,False
+Iliza Shlesinger,Fred Shlesinger,ParentType.FATHER,,False
+Tracy Pollan,Corky Pollan,ParentType.MOTHER,Michael Pollan,True
+Tracy Pollan,Stephen M. Pollan,ParentType.FATHER,Tracy Pollan,True
+Daniel Kaluuya,Damalie Namusoke,ParentType.MOTHER,,False
+Bradley Cooper,Gloria Campano,ParentType.MOTHER,Bradley Cooper,True
+Bradley Cooper,Charles Cooper,ParentType.FATHER,Bradley Cooper,True
+Adrianne Palicki,Nancy Palicki,ParentType.MOTHER,Adrianne Palicki,True
+Adrianne Palicki,Jeffrey Palicki,ParentType.FATHER,,False
+Katheryn Winnick,Roman Winnick,ParentType.MOTHER,,False
+Katheryn Winnick,Roman Winnick,ParentType.FATHER,,False
+Jensen Ackles,Donna Joan Shaffer-Ackles,ParentType.MOTHER,Jensen Ackles,True
+Jensen Ackles,Alan Roger Ackles,ParentType.FATHER,Jensen Ackles,True
+Steve Zahn,Carleton Edward Zahn,ParentType.MOTHER,,False
+Steve Zahn,Carleton Edward Zahn,ParentType.FATHER,,False
+Amber Heard,Paige Parsons,ParentType.MOTHER,,False
+Amber Heard,David Heard,ParentType.FATHER,Amber Heard,True
+Luke Macfarlane,Penny Macfarlane,ParentType.MOTHER,Seth MacFarlane,True
+Luke Macfarlane,Thomas Macfarlane,ParentType.FATHER,Seth MacFarlane,True
+Rashida Jones,Peggy Lipton,ParentType.MOTHER,Rashida Jones,True
+Rashida Jones,Quincy Jones,ParentType.FATHER,Rashida Jones,True
+Alicia Vikander,Maria Fahl Vikander,ParentType.MOTHER,Alicia Vikander,True
+Alicia Vikander,Svante Vikander,ParentType.FATHER,Alicia Vikander,True
+Alexandra Billings,Gail Billings,ParentType.MOTHER,,False
+Sandra Bullock,Helga Mathilde Meyer,ParentType.MOTHER,Sandra Bullock,True
+Sandra Bullock,John W. Bullock,ParentType.FATHER,Sandra Bullock,True
+Abbey Lee,Peter Kershaw,ParentType.FATHER,,False
+Christa Miller,Bonnie Trompeter,ParentType.MOTHER,,False
+Christa Miller,Chuck Miller,ParentType.FATHER,,False
+Lukas Haas,Emily Tracy,ParentType.MOTHER,,False
+Lukas Haas,Berthold Haas,ParentType.FATHER,,False
+Javier Bardem,Pilar Bardem,ParentType.MOTHER,Javier Bardem,True
+Javier Bardem,Carlos Encinas Bardem,ParentType.FATHER,Leo Encinas Cruz,True
+Sasha Lane,Judith Lane,ParentType.MOTHER,,False
+Rupert Friend,Caroline Friend,ParentType.MOTHER,,False
+Rupert Friend,David Oxton Friend,ParentType.FATHER,,False
+Ashley Johnson,Nancy Johnson,ParentType.MOTHER,,False
+Ashley Johnson,Cliff Johnson,ParentType.FATHER,,False
+Priyanka Chopra Jonas,Madhu Chopra,ParentType.MOTHER,Priyanka Chopra,True
+Priyanka Chopra Jonas,Ashok Chopra,ParentType.FATHER,Priyanka Chopra,True
+Blake Lively,Elaine Lively,ParentType.MOTHER,Blake Lively,True
+Blake Lively,Ernie Lively,ParentType.FATHER,Blake Lively,True
+Vanessa Ray,Valerie Liptak,ParentType.MOTHER,,False
+Vanessa Ray,James Lipton,ParentType.FATHER,,False
+Emma Watson,Jacqueline Luesby,ParentType.MOTHER,Emma Watson,True
+Emma Watson,Chris Watson,ParentType.FATHER,,False
+Karl Urban,Joyce Urban,ParentType.MOTHER,,False
+Karl Urban,Jurgen Urban,ParentType.FATHER,,False
+Josh Lucas,Michele LeFevre,ParentType.MOTHER,,False
+Josh Lucas,Don Maurer,ParentType.FATHER,,False
+Angelina Jolie,Marcheline Bertrand,ParentType.MOTHER,Angelina Jolie,True
+Angelina Jolie,Jon Voight,ParentType.FATHER,Angelina Jolie,True
+Carolina Miranda,Martha Carrillo,ParentType.MOTHER,,False
+Joey King,Terry King,ParentType.MOTHER,,False
+Joey King,Terry King,ParentType.FATHER,,False
+Gillian Jacobs,Marta Jacobs,ParentType.MOTHER,,False
+Gillian Jacobs,William F. Jacobs Jr.,ParentType.FATHER,,False
+Andrea Riseborough,Isobel Riseborough,ParentType.MOTHER,,False
+Andrea Riseborough,George Riseborough,ParentType.FATHER,,False
+Clancy Brown,Joyce Helen Eldridge,ParentType.MOTHER,,False
+Clancy Brown,Bud Brown,ParentType.FATHER,,False
+Jennifer Love Hewitt,Patricia Mae Hewitt,ParentType.MOTHER,,False
+Jennifer Love Hewitt,Herbert Daniel Hewitt,ParentType.FATHER,,False
+Luna Lauren Velez,Andrés Vélez,ParentType.FATHER,,False
+Charlie Day,Mary Day,ParentType.MOTHER,,False
+Charlie Day,Dr. Thomas Charles Day,ParentType.FATHER,,False
+Dakota Fanning,Heather Joy Arrington,ParentType.MOTHER,,False
+Dakota Fanning,Steven Fanning,ParentType.FATHER,Dakota Fanning,True
+Alexander Ludwig,Sharlene Martin,ParentType.MOTHER,,False
+Alexander Ludwig,Harald Ludwig,ParentType.FATHER,,False
+Ariana Greenblatt,Sol Greenblatt,ParentType.MOTHER,,False
+Ariana Greenblatt,Shon Greenblatt,ParentType.FATHER,,False
+Liam Neeson,Bernard Neeson,ParentType.FATHER,Liam Neeson,True
+Jennifer Aniston,Nancy Dow,ParentType.MOTHER,Jennifer Aniston,True
+Jennifer Aniston,John Aniston,ParentType.FATHER,Jennifer Aniston,True
+Donnie Yen,Bow-sim Mark,ParentType.MOTHER,Donnie Yen,True
+Donnie Yen,Klyster Yen,ParentType.FATHER,,False
+Greta Gerwig,Christine Gerwig,ParentType.MOTHER,Greta Gerwig,True
+Greta Gerwig,Gordon Gerwig,ParentType.FATHER,Greta Gerwig,True
+Michael J. Fox,Phyllis Piper,ParentType.MOTHER,,False
+Michael J. Fox,William Fox,ParentType.FATHER,,False
+Jon Bernthal,Joan Lurie Bernthal,ParentType.MOTHER,Jon Bernthal,True
+Jon Bernthal,Eric Bernthal,ParentType.FATHER,Jon Bernthal,True
+Jack Quaid,Meg Ryan,ParentType.MOTHER,Jack Quaid,True
+Jack Quaid,Dennis Quaid,ParentType.FATHER,Jack Quaid,True
+Pete Davidson,Amy Waters Davidson,ParentType.MOTHER,Dan Bilzerian,True
+Pete Davidson,Scott Davidson,ParentType.FATHER,Pete Davidson,True
+Will Smith,Caroline Bright,ParentType.MOTHER,,False
+Will Smith,Willard Carroll Smith Sr.,ParentType.FATHER,Will Smith,True
+Léa Seydoux,Valérie Schlumberger,ParentType.MOTHER,Léa Seydoux,True
+Léa Seydoux,Henri Seydoux,ParentType.FATHER,Léa Seydoux,True
+Zachary Levi,Susan Pugh,ParentType.MOTHER,,False
+Zachary Levi,Darrell Pugh,ParentType.FATHER,,False
+Val Kilmer,Gladys Swanette Ekstadt,ParentType.MOTHER,,False
+Val Kilmer,Eugene Kilmer,ParentType.FATHER,,False
+Olivia Wilde,Leslie Cockburn,ParentType.MOTHER,Olivia Wilde,True
+Olivia Wilde,Andrew Cockburn,ParentType.FATHER,Olivia Wilde,True
+Meagan Good,Tyra Wardlow-Doyle,ParentType.MOTHER,,False
+Eliza Dushku,Judith Rasmussen,ParentType.MOTHER,,False
+Eliza Dushku,Philip R. Dushku,ParentType.FATHER,Eliza Dushku,True
+Rachel Weisz,Edith Ruth Weisz,ParentType.MOTHER,,False
+Rachel Weisz,George Weisz,ParentType.FATHER,Rachel Weisz,True
+Joaquin Phoenix,Arlyn Phoenix,ParentType.MOTHER,Joaquin Phoenix,True
+Joaquin Phoenix,John Lee Bottom,ParentType.FATHER,Joaquin Phoenix,True
+Charlie Hunnam,Jane Bell,ParentType.MOTHER,,False
+Charlie Hunnam,William Hunnam,ParentType.FATHER,,False
+Sigourney Weaver,Elizabeth Inglis,ParentType.MOTHER,Sigourney Weaver,True
+Sigourney Weaver,Sylvester L. Weaver Jr.,ParentType.FATHER,Sigourney Weaver,True
+Seth Rogen,Sandy Rogen,ParentType.MOTHER,Seth Rogen,True
+Seth Rogen,Mark Rogen,ParentType.FATHER,,False
+Elle Fanning,Heather Joy Arrington,ParentType.MOTHER,,False
+Elle Fanning,Steven Fanning,ParentType.FATHER,Dakota Fanning,True
+Jon Hamm,Deborah Hamm,ParentType.MOTHER,,False
+Jon Hamm,Daniel Hamm,ParentType.FATHER,,False
+David Tennant,Helen McLeod,ParentType.MOTHER,,False
+David Tennant,Sandy McDonald,ParentType.FATHER,,False
+Maisie Williams,Hilary Williams,ParentType.MOTHER,,False
+Maisie Williams,Hilary Francis Williams,ParentType.FATHER,,False
+Christina Ricci,Sarah Ricci,ParentType.MOTHER,,False
+Christina Ricci,Ralph Ricci,ParentType.FATHER,,False
+Lily Rabe,Jill Clayburgh,ParentType.MOTHER,Lily Rabe,True
+Lily Rabe,David Rabe,ParentType.FATHER,Lily Rabe,True
+Kate Beckinsale,Judy Loe,ParentType.MOTHER,Kate Beckinsale,True
+Kate Beckinsale,Richard Beckinsale,ParentType.FATHER,Kate Beckinsale,True
+Tia Carrere,Audrey Duhinio Janairo,ParentType.MOTHER,Bruno Mars,True
+Tia Carrere,Alexander Janairo,ParentType.FATHER,,False
+Abigail Breslin,Kim Breslin,ParentType.MOTHER,,False
+Abigail Breslin,Michael Breslin,ParentType.FATHER,,False
+Natalie Morales,Penelope Morales,ParentType.MOTHER,,False
+Natalie Morales,"Lieutenant Colonel Mario Morales, Jr.",ParentType.FATHER,,False
+Jodie Whittaker,Adrian Whittaker,ParentType.FATHER,,False
+Laura Linney,Miriam Anderson Linney,ParentType.MOTHER,Laura Linney,True
+Laura Linney,Romulus Linney,ParentType.FATHER,Laura Linney,True
+Odessa A’zion,Pamela Adlon,ParentType.MOTHER,Gideon Adlon,True
+Odessa A’zion,Pamela Adlon,ParentType.FATHER,Gideon Adlon,True
+Pier Angeli,Enrichetta Romiti,ParentType.MOTHER,Carla Bruni,True
+Pier Angeli,Enrico Angeli,ParentType.FATHER,,False
+Michael Biehn,Marcia Biehn,ParentType.MOTHER,,False
+Michael Biehn,Don Biehn,ParentType.FATHER,,False
+Sarah Shahi,Mah Monir Soroush Azar,ParentType.MOTHER,,False
+Sarah Shahi,Abbas Jahansouz Shahi,ParentType.FATHER,Reza Shahi,True
+Sean Patrick Flanery,Genie Flanery,ParentType.MOTHER,,False
+Sean Patrick Flanery,Paul Flanery,ParentType.FATHER,,False
+Kaitlyn Dever,Kathy Dever,ParentType.MOTHER,,False
+Kaitlyn Dever,Tim Dever,ParentType.FATHER,,False
+Bruce Campbell,Joanne Louise Campbell,ParentType.MOTHER,,False
+Bruce Campbell,Charles Newton Campbell,ParentType.FATHER,,False
+Jason Isaacs,Sheila Isaacs,ParentType.MOTHER,,False
+Jason Isaacs,Eric Isaacs,ParentType.FATHER,,False
+Robin Williams,Laurie Williams,ParentType.MOTHER,,False
+Robin Williams,Robert Fitzgerald Williams,ParentType.FATHER,Zak Williams,True
+Lena Headey,Sue Headey,ParentType.MOTHER,,False
+Lena Headey,John Headey,ParentType.FATHER,Lena Headey,True
+Jay Baruchel,Robyne Baruchel,ParentType.MOTHER,Jay Baruchel,True
+Jay Baruchel,Serge Baruchel,ParentType.FATHER,,False
+Brittany Snow,Cinda Snow,ParentType.MOTHER,,False
+Brittany Snow,John Snow,ParentType.FATHER,,False
+Luna Blaise,Angelyna Martinez,ParentType.MOTHER,,False
+Luna Blaise,Paul Boyd,ParentType.FATHER,,False
+Jacob Elordi,Melissa Elordi,ParentType.MOTHER,Jacob Elordi,True
+Jacob Elordi,John Elordi,ParentType.FATHER,,False
+Bailee Madison,Patricia Riley,ParentType.MOTHER,,False
+Bailee Madison,Michael Shawn Riley,ParentType.FATHER,,False
+Adam Driver,Nancy Wright,ParentType.MOTHER,,False
+Adam Driver,Joe Douglas Driver,ParentType.FATHER,,False
+Alison Brie,Joanne Brenner,ParentType.MOTHER,,False
+Alison Brie,Charles Schermerhorn,ParentType.FATHER,,False
+Toby Kebbell,Michelle Mathers,ParentType.MOTHER,,False
+Toby Kebbell,Robert Kebbell,ParentType.FATHER,,False
+Will Arnett,Edith Alexandra Palk,ParentType.MOTHER,,False
+Will Arnett,Emerson James Arnett,ParentType.FATHER,,False
+Tessa Thompson,Marc Anthony Thompson,ParentType.MOTHER,Tessa Thompson,True
+Tessa Thompson,Marc Anthony Thompson,ParentType.FATHER,Tessa Thompson,True
+Jamie Dornan,Lorna Dornan,ParentType.MOTHER,Jamie Dornan,True
+Jamie Dornan,Jim Dornan,ParentType.FATHER,Jamie Dornan,True
+Stephen Lang,Theresa Volmer,ParentType.MOTHER,,False
+Stephen Lang,Eugene Lang,ParentType.FATHER,Jane Lang,True
+James Spader,Jean Fraser Spader,ParentType.MOTHER,James Spader,True
+James Spader,Stoddard Greenwood Spader,ParentType.FATHER,James Spader,True
+Nicholas Braun,Elizabeth Lyle Braun,ParentType.MOTHER,,False
+Nicholas Braun,Craig Braun,ParentType.FATHER,Ethan Braun,True
+Hugh Jackman,Grace McNeil,ParentType.MOTHER,,False
+Hugh Jackman,Christopher John Jackman,ParentType.FATHER,,False
+Daniel Day-Lewis,Jill Balcon,ParentType.MOTHER,Daniel Day-Lewis,True
+Daniel Day-Lewis,Cecil Day-Lewis,ParentType.FATHER,Daniel Day-Lewis,True
+Keira Knightley,Sharman Macdonald,ParentType.MOTHER,Keira Knightley,True
+Keira Knightley,Will Knightley,ParentType.FATHER,Keira Knightley,True
+Kristen Bell,Lorelei Bell,ParentType.MOTHER,,False
+Kristen Bell,Tom Bell,ParentType.FATHER,,False
+Jim Carrey,Kathleen Carrey,ParentType.MOTHER,,False
+Jim Carrey,Percy Carrey,ParentType.FATHER,,False
+Gary Oldman,Kathleen Oldman,ParentType.MOTHER,Gary Oldman,True
+Gary Oldman,Leonard Bertram Oldman,ParentType.FATHER,Gary Oldman,True
+Jodie Comer,Donna Comer,ParentType.MOTHER,,False
+Jodie Comer,Don Comer,ParentType.FATHER,,False
+Carrie Preston,Linda Barbara Preston,ParentType.MOTHER,,False
+Mariette Hartley,Polly Cornwell,ParentType.MOTHER,,False
+Mariette Hartley,Paul Hembree Hartley,ParentType.FATHER,,False
+Stephen Dorff,Nancy Dorff,ParentType.MOTHER,,False
+Stephen Dorff,Steve Dorff,ParentType.FATHER,Stephen Dorff,True
+Ralph Fiennes,Jennifer Lash,ParentType.MOTHER,Ralph Fiennes,True
+Ralph Fiennes,Mark Fiennes,ParentType.FATHER,Ralph Fiennes,True
+Sean Connery,Joseph Connery,ParentType.FATHER,Sean Connery,True
+Alice Eve,Sharon Maughan,ParentType.MOTHER,Alice Eve,True
+Alice Eve,Trevor Eve,ParentType.FATHER,Alice Eve,True
+Sam Elliott,Glynn Mamie Sparks,ParentType.MOTHER,,False
+Sam Elliott,Henry Nelson Elliott,ParentType.FATHER,T.S. Eliot,True
+Kirsten Dunst,Inez Rupprecht,ParentType.MOTHER,,False
+Kirsten Dunst,Klaus Dunst,ParentType.FATHER,,False
+Sasha Alexander,Sofija Kukavica,ParentType.MOTHER,,False
+Sasha Alexander,Slobodan Drobnjak,ParentType.FATHER,,False
+Liana Liberato,Rhondelle Liberato,ParentType.MOTHER,,False
+Liana Liberato,George Liberato,ParentType.FATHER,,False
+Jennette McCurdy,Debra McCurdy,ParentType.MOTHER,Jennette McCurdy,True
+Jennette McCurdy,Mark McCurdy,ParentType.FATHER,,False
+Harold Perrineau,Sylvia Perrineau,ParentType.MOTHER,Aurora Perrineau,True
+Harold Perrineau,Harold Williams,ParentType.FATHER,,False
+Katy Mixon,Donna Mixon,ParentType.MOTHER,,False
+Katy Mixon,Fred Mixon,ParentType.FATHER,,False
+Jessica Chastain,Jerri Chastain,ParentType.MOTHER,Jessica Chastain,True
+Jessica Chastain,Michael Monasterio,ParentType.FATHER,Lana Del Rey,True
+Luke Grimes,Angie Barker,ParentType.MOTHER,,False
+Luke Grimes,Randy Grimes,ParentType.FATHER,,False
+Bryan Cranston,Audrey Peggy Sell,ParentType.MOTHER,,False
+Bryan Cranston,Joe Cranston,ParentType.FATHER,Bryan Cranston,True
+Robert Pattinson,Clare Pattinson,ParentType.MOTHER,Robert Pattinson,True
+Robert Pattinson,Richard Pattinson,ParentType.FATHER,Robert Pattinson,True
+Skyler Gisondo,Stacey Gisondo,ParentType.MOTHER,,False
+Skyler Gisondo,Stu Gisondo,ParentType.FATHER,,False
+Elizabeth Debicki,Piotr Debicki,ParentType.FATHER,Elizabeth Debicki,True
+Ke Huy Quan,Quan Y Huy,ParentType.FATHER,,False
+Emma Heming Willis,Zorina Heming,ParentType.MOTHER,,False
+Sophie Thatcher,Robert Thatcher,ParentType.FATHER,,False
+Zoe Perry,Laurie Metcalf,ParentType.MOTHER,Zoe Perry,True
+Zoe Perry,Jeff Perry,ParentType.FATHER,Zoe Perry,True
+Kate Capshaw,Beverly Sue Simon,ParentType.MOTHER,,False
+Kate Capshaw,Edwin Leon Nail,ParentType.FATHER,Toby Keith,True
+Kelly Preston,Linda Carlson,ParentType.MOTHER,,False
+Kelly Preston,Peter Palzis,ParentType.FATHER,Katherine Heigl,True
+Nathan Fillion,Cookie Fillion,ParentType.MOTHER,,False
+Nathan Fillion,Bob Fillion,ParentType.FATHER,,False
+Marisa Tomei,Addie Tomei,ParentType.MOTHER,Marisa Tomei,True
+Marisa Tomei,Gary A. Tomei,ParentType.FATHER,Marisa Tomei,True
+Olivia Cooke,Lindsy Wild,ParentType.MOTHER,,False
+Olivia Cooke,John Cooke,ParentType.FATHER,,False
+Bridget Regan,Mary Catherine Regan,ParentType.MOTHER,,False
+Bridget Regan,Jim Regan,ParentType.FATHER,,False
+Hope Davis,Joan Davis,ParentType.MOTHER,Beverly Wills,True
+Hope Davis,William Davis,ParentType.FATHER,,False
+Gemma Arterton,Sally-Anne Heap,ParentType.MOTHER,,False
+Gemma Arterton,Barry Arterton,ParentType.FATHER,Gemma Arterton,True
+Mads Mikkelsen,Bente Christiansen,ParentType.MOTHER,,False
+Mads Mikkelsen,Henning Mikkelsen,ParentType.FATHER,,False
+Yvonne Strahovski,Bozena Strahovski,ParentType.MOTHER,Yvonne Strahovski,True
+Yvonne Strahovski,Peter Strzechowski,ParentType.FATHER,Yvonne Strahovski,True
+Lance Reddick,Doris Reddick,ParentType.MOTHER,,False
+Anna Kendrick,Janice Kendrick,ParentType.MOTHER,,False
+Anna Kendrick,William Kendrick,ParentType.FATHER,,False
+Saoirse Ronan,Monica Ronan,ParentType.MOTHER,Saoirse Ronan,True
+Saoirse Ronan,Paul Ronan,ParentType.FATHER,Saoirse Ronan,True
+Adrien Brody,Sylvia Plachy,ParentType.MOTHER,Adrien Brody,True
+Adrien Brody,Elliot Brody,ParentType.FATHER,,False
+Joel Edgerton,Marianne Edgerton,ParentType.MOTHER,,False
+Joel Edgerton,Michael Edgerton,ParentType.FATHER,,False
+Jamie Lee Curtis,Janet Leigh,ParentType.MOTHER,Jamie Lee Curtis,True
+Jamie Lee Curtis,Tony Curtis,ParentType.FATHER,Jamie Lee Curtis,True
+Bella Ramsey,Alex Ramsey,ParentType.FATHER,,False
+Jack Nicholson,June Frances Nicholson,ParentType.MOTHER,Jack Nicholson,True
+Jack Nicholson,Donald Furcillo,ParentType.FATHER,Jamie Lee Curtis,True
+Michelle Yeoh,Janet Yeoh,ParentType.MOTHER,,False
+Michelle Yeoh,Yeoh Kian Teik,ParentType.FATHER,,False
+Tom Pelphrey,Richard Pelphrey,ParentType.FATHER,,False
+Anthony Ramos,Mildred Ramos,ParentType.MOTHER,,False
+Jane Russell,Geraldine Jacobi,ParentType.MOTHER,,False
+Jane Russell,Roy William Russell,ParentType.FATHER,Jane Russell,True
+Maria Bello,Kathy Bello,ParentType.MOTHER,,False
+Maria Bello,Joe Bello,ParentType.FATHER,,False
+Kirk Fox,Joyce Fox,ParentType.MOTHER,,False
+Kirk Fox,Gardner Fox,ParentType.FATHER,Lydia Fox,True
+Britt Robertson,Beverly Robertson,ParentType.MOTHER,,False
+Britt Robertson,Ryan Robertson,ParentType.FATHER,,False
+Laura Benanti,Linda Wonneberger,ParentType.MOTHER,,False
+Laura Benanti,Martin Vidnovic,ParentType.FATHER,Laura Benanti,True
+Harry Melling,Joanne Melling,ParentType.MOTHER,,False
+Harry Melling,Paul Melling,ParentType.FATHER,,False
+Isabella Rossellini,Ingrid Bergman,ParentType.MOTHER,Isabella Rossellini,True
+Isabella Rossellini,Roberto Rossellini,ParentType.FATHER,Isabella Rossellini,True
+Gina Torres,Rebecca Torres,ParentType.MOTHER,,False
+Gina Torres,Richard Torres,ParentType.FATHER,,False
+Bella Thorne,Tamara Thorne,ParentType.MOTHER,Alistair Cross,True
+Julia Roberts,Betty Lou Bredemus,ParentType.MOTHER,Julia Roberts,True
+Julia Roberts,Walter Grady Roberts,ParentType.FATHER,Julia Roberts,True
+Bob Odenkirk,Barbara Odenkirk,ParentType.MOTHER,Bob Odenkirk,True
+Bob Odenkirk,Walter Odenkirk,ParentType.FATHER,Nate Odenkirk,True
+Woody Harrelson,Diane Lou Oswald,ParentType.MOTHER,Lee Harvey Oswald,True
+Woody Harrelson,Charles Harrelson,ParentType.FATHER,Woody Harrelson,True
+Ridley Scott,Elizabeth Jean Scott,ParentType.MOTHER,,False
+Ridley Scott,Francis Percy Scott,ParentType.FATHER,,False
+Amanda Schull,Susan Schull,ParentType.MOTHER,,False
+Robert Carlyle,Elizabeth McDonald,ParentType.MOTHER,,False
+Robert Carlyle,Joseph Carlyle,ParentType.FATHER,,False
+Edward Norton,Lydia Robinson Norton,ParentType.MOTHER,,False
+Edward Norton,Edward Mower Norton Jr.,ParentType.FATHER,Shauna Norton,True
+Bel Powley,Janis Jaffa,ParentType.MOTHER,,False
+Bel Powley,Mark Powley,ParentType.FATHER,,False
+Bill Paxton,Mary Lou Paxton,ParentType.MOTHER,,False
+Bill Paxton,John Lane Paxton,ParentType.FATHER,Sara Paxton,True
+Dakota Johnson,Melanie Griffith,ParentType.MOTHER,Dakota Johnson,True
+Dakota Johnson,Don Johnson,ParentType.FATHER,Dakota Johnson,True
+Anna Torv,Susan Torv,ParentType.MOTHER,,False
+Anna Torv,Hans Torv,ParentType.FATHER,Rupert Murdoch,True
+Benjamin Walker,Jeannine Walker,ParentType.MOTHER,,False
+Benjamin Walker,Greg Walker,ParentType.FATHER,,False
+Hunter Schafer,Katy Schafer,ParentType.MOTHER,,False
+Hunter Schafer,Mac Schafer,ParentType.FATHER,,False
+Nicole Ari Parker,Susan Parker,ParentType.MOTHER,,False
+Nicole Ari Parker,Donald Parker,ParentType.FATHER,,False
+Errol Flynn,Marelle Young,ParentType.MOTHER,,False
+Errol Flynn,Theodore Thomson Flynn,ParentType.FATHER,Errol Flynn,True
+Annie Wersching,Sandy Wersching,ParentType.MOTHER,,False
+Annie Wersching,Frank Wersching Jr.,ParentType.FATHER,Annie Wersching,True
+Bill Hader,Sherri Renee Hader,ParentType.MOTHER,,False
+Bill Hader,William Thomas Hader Sr.,ParentType.FATHER,Bill Hader,True
+Kaya Scodelario,Katia Scodelario,ParentType.MOTHER,Freddie Heaton,True
+Kaya Scodelario,Roger Humphrey,ParentType.FATHER,,False
+Sadie Frost,Mary Davidson,ParentType.MOTHER,,False
+Sadie Frost,David Vaughan,ParentType.FATHER,,False
+Sadie Stanley,Matt Stanley,ParentType.FATHER,,False
+Christina Hendricks,Jackie Sue Raymond,ParentType.MOTHER,,False
+Christina Hendricks,Robert Hendricks,ParentType.FATHER,,False
+Colin Farrell,Rita Farrell,ParentType.MOTHER,,False
+Colin Farrell,Eamon Farrell,ParentType.FATHER,,False
+Michael B. Jordan,Donna Jordan,ParentType.MOTHER,,False
+Michael B. Jordan,Michael A. Jordan,ParentType.FATHER,,False
+John Travolta,Helen Travolta,ParentType.MOTHER,John Travolta,True
+John Travolta,Salvatore Travolta,ParentType.FATHER,John Travolta,True
+Mamoudou Athie,El Hadj Athie,ParentType.FATHER,,False
+Adria Arjona,Leslie Torres,ParentType.MOTHER,,False
+Adria Arjona,Ricardo Arjona,ParentType.FATHER,Adria Arjona,True
+Miles Teller,Merry Flowers,ParentType.MOTHER,,False
+Miles Teller,Mike Teller,ParentType.FATHER,,False
+Annie Potts,Dorothy Harris Potts,ParentType.MOTHER,,False
+Annie Potts,Powell Grisette Potts,ParentType.FATHER,,False
+Leslie Bibb,Betty Blakemore Sulzbach,ParentType.MOTHER,,False
+Steve Carell,Harriet Theresa Carell,ParentType.MOTHER,Steve Carell,True
+Steve Carell,Edwin A. Carell,ParentType.FATHER,Steve Carell,True
+Katherine Heigl,Nancy Heigl,ParentType.MOTHER,Katherine Heigl,True
+Katherine Heigl,Paul Heigl,ParentType.FATHER,Katherine Heigl,True
+M. Night Shyamalan,Jayalakshmi Shyamalan,ParentType.MOTHER,M. Night Shyamalan,True
+M. Night Shyamalan,Nelliate C. Shyamalan,ParentType.FATHER,,False
+Sarah Jessica Parker,Barbara Parker,ParentType.MOTHER,,False
+Sarah Jessica Parker,Stephen Parker,ParentType.FATHER,,False
+Zooey Deschanel,Mary Jo Deschanel,ParentType.MOTHER,Zooey Deschanel,True
+Zooey Deschanel,Caleb Deschanel,ParentType.FATHER,Zooey Deschanel,True
+David Harbour,Kenneth Harbour,ParentType.FATHER,,False
+Molly C. Quinn,Dianne Quinn,ParentType.MOTHER,,False
+Molly C. Quinn,Tom Quinn,ParentType.FATHER,,False
+Cara Delevingne,Pandora Delevingne,ParentType.MOTHER,Cara Delevingne,True
+Cara Delevingne,Charles Delevingne,ParentType.FATHER,Cara Delevingne,True
+Andrew Garfield,Lynn Garfield,ParentType.MOTHER,,False
+Andrew Garfield,Richard Garfield,ParentType.FATHER,Terry Garfield,True
+Daniel Radcliffe,Marcia Gresham,ParentType.MOTHER,Daniel Radcliffe,True
+Daniel Radcliffe,Alan Radcliffe,ParentType.FATHER,Daniel Radcliffe,True
+Julie Bowen,Suzanne Frey Bowen,ParentType.MOTHER,,False
+Julie Bowen,John Alexander Luetkemeyer Jr.,ParentType.FATHER,Abigail Blunt,True
+Diane Lane,Colleen Farrington,ParentType.MOTHER,Diane Lane,True
+Diane Lane,Burt Lane,ParentType.FATHER,,False
+Connie Nielsen,Laila Nielsen,ParentType.MOTHER,,False
+Connie Nielsen,Bent Nielsen,ParentType.FATHER,,False
+Abbie Cornish,Shelley Cornish,ParentType.MOTHER,,False
+Abbie Cornish,Barry Cornish,ParentType.FATHER,,False
+Daniel Craig,Olivia Craig,ParentType.MOTHER,,False
+Daniel Craig,Tim Craig,ParentType.FATHER,,False
+Common,Dr. Mahalia Ann Hines,ParentType.MOTHER,,False
+Common,Lonnie Lynn Sr.,ParentType.FATHER,,False
+Danny McBride,Kathy Rudy,ParentType.MOTHER,,False
+Danny McBride,Jim McBride,ParentType.FATHER,,False
+Jake Johnson,Eve Johnson,ParentType.MOTHER,,False
+Jake Johnson,Ken Weinberger,ParentType.FATHER,,False
+Stanley Tucci,Joan Tucci,ParentType.MOTHER,Stanley Tucci,True
+Stanley Tucci,"Stanley Tucci, Sr.",ParentType.FATHER,Stanley Tucci,True
+Julia Stiles,Judith Newcomb Stiles,ParentType.MOTHER,,False
+Julia Stiles,John O'Hara,ParentType.FATHER,Wylie O'Hara,True
+Paul Mescal,Dearbhla Mescal,ParentType.MOTHER,,False
+Charlie Murphy,Lillian Murphy,ParentType.MOTHER,,False
+Charlie Murphy,Charles Edward Murphy,ParentType.FATHER,Bria Murphy,True
+Ethan Hawke,Leslie Hawke,ParentType.MOTHER,Ethan Hawke,True
+Ethan Hawke,James Steven Hawke,ParentType.FATHER,,False
+Jordana Brewster,Maria João Brewster,ParentType.MOTHER,,False
+Jordana Brewster,Alden Brewster,ParentType.FATHER,,False
+Helen Mirren,Kathleen Alexandrina Eva Matilda Rogers,ParentType.MOTHER,,False
+Helen Mirren,Vasily Petrovich Mironoff,ParentType.FATHER,Helen Mirren,True
+Virginia Gardner,Sarah Gardner,ParentType.MOTHER,,False
+Virginia Gardner,Chuck Gardner,ParentType.FATHER,,False
+Suki Waterhouse,Elizabeth Waterhouse,ParentType.MOTHER,,False
+Suki Waterhouse,Norman Waterhouse,ParentType.FATHER,,False
+Lacey Chabert,Julie Chabert,ParentType.MOTHER,,False
+Lacey Chabert,Tony Chabert,ParentType.FATHER,,False
+Reese Witherspoon,Betty Reese,ParentType.MOTHER,,False
+Reese Witherspoon,John Draper Witherspoon,ParentType.FATHER,Reese Witherspoon,True
+Gabriel Basso,Marcie Basso,ParentType.MOTHER,,False
+Gabriel Basso,Louis J. Basso,ParentType.FATHER,,False
+Olivia d'Abo,Maggie London,ParentType.MOTHER,,False
+Simon Pegg,Gillian Rosemary Smith,ParentType.MOTHER,,False
+Simon Pegg,John Beckingham,ParentType.FATHER,Peter Gabriel,True
+Jackie Chan,Lee-Lee Chan,ParentType.MOTHER,Jaycee Chan,True
+Jackie Chan,Charles Chan,ParentType.FATHER,Jackie Chan,True
+Zoey Deutch,Lea Thompson,ParentType.MOTHER,Zoey Deutch,True
+Zoey Deutch,Howard Deutch,ParentType.FATHER,Zoey Deutch,True
+Tom Welling,Bonnie Welling,ParentType.MOTHER,,False
+Tom Welling,Mark Welling,ParentType.FATHER,,False
+Madelyn Cline,Pam Cline,ParentType.MOTHER,,False
+Madelyn Cline,Mark Cline,ParentType.FATHER,,False
+Holly Hunter,Opal Marguerite Catledge,ParentType.MOTHER,,False
+Holly Hunter,Charles Edwin Hunter,ParentType.FATHER,,False
+Emmanuelle Seigner,Aline Ponelle,ParentType.MOTHER,,False
+Emmanuelle Seigner,Jean-Louis Seigner,ParentType.FATHER,Emmanuelle Seigner,True
+Claudia Lee,Denise Lee,ParentType.MOTHER,,False
+Claudia Lee,Klaudiusz Lee,ParentType.FATHER,,False
+Piper Perabo,Mary Charlotte Ulland,ParentType.MOTHER,,False
+Piper Perabo,William Perabo,ParentType.FATHER,Piper Perabo,True
+Morgan Freeman,Mayme Edna Revere,ParentType.MOTHER,Morgan Freeman,True
+Morgan Freeman,"Morgan Porterfield Freeman, Sr.",ParentType.FATHER,Morgan Freeman Jr.,True
+Domhnall Gleeson,Mary Weldon,ParentType.MOTHER,,False
+Domhnall Gleeson,Brendan Gleeson,ParentType.FATHER,Domhnall Gleeson,True
+Dove Cameron,Bonnie Wallace,ParentType.MOTHER,Dove Cameron,True
+Dove Cameron,Philip Alan Hosterman,ParentType.FATHER,Dove Cameron,True
+Olivia Holt,Kim Holt,ParentType.MOTHER,,False
+Olivia Holt,Mark Holt,ParentType.FATHER,,False
+Maika Monroe,Dixie Monroe,ParentType.MOTHER,,False
+Maika Monroe,Dixie Brubaker,ParentType.FATHER,Ashley Biden,True
+Michael Sheen,Irene Sheen,ParentType.MOTHER,Charlie Sheen,True
+Michael Sheen,Meyrick Sheen,ParentType.FATHER,Michael Sheen,True
+David Fincher,Claire Mae Fincher,ParentType.MOTHER,,False
+David Fincher,Howard Fincher,ParentType.FATHER,,False
+Michael Fassbender,Adele Fassbender,ParentType.MOTHER,,False
+Michael Fassbender,Josef Fassbender,ParentType.FATHER,Michael Fassbender,True
+Sofia Black-D'Elia,Eleanor D'Elia,ParentType.MOTHER,,False
+Sofia Black-D'Elia,Anthony D'Elia,ParentType.FATHER,,False
+Eva Green,Marlène Jobert,ParentType.MOTHER,Eva Green,True
+Eva Green,Walter Green,ParentType.FATHER,,False
+Rooney Mara,Kathleen McNulty Rooney,ParentType.MOTHER,Tom Rooney,True
+Rooney Mara,Chris Mara,ParentType.FATHER,Kate Mara,True
+Emma Thompson,Phyllida Law,ParentType.MOTHER,Emma Thompson,True
+Emma Thompson,Eric Thompson,ParentType.FATHER,Emma Thompson,True
+Poorna Jagannathan,Retired Vice Admiral V.R. Jagannathan,ParentType.FATHER,,False
+Melissa Benoist,Julie Benoist,ParentType.MOTHER,,False
+Melissa Benoist,Jim Benoist,ParentType.FATHER,,False
+Frances McDormand,Noreen E. Nickelson McDormand,ParentType.MOTHER,Frances McDormand,True
+Frances McDormand,Vernon McDormand,ParentType.FATHER,Frances McDormand,True
+Krysten Ritter,Kathy Ritter,ParentType.MOTHER,,False
+Krysten Ritter,Gary Ritter,ParentType.FATHER,,False
+Fisher Stevens,Sally Fisher,ParentType.MOTHER,,False
+Viggo Mortensen,Grace Gamble Atkinson,ParentType.MOTHER,,False
+Viggo Mortensen,Viggo Peter Mortensen Sr.,ParentType.FATHER,Viggo Mortensen Jr.,True
+Liv Tyler,Bebe Buell,ParentType.MOTHER,Liv Tyler,True
+Liv Tyler,Steven Tyler,ParentType.FATHER,Liv Tyler,True
+Jack Black,Judith Love Cohen,ParentType.MOTHER,Jack Black,True
+Jack Black,Thomas William Black,ParentType.FATHER,Samuel Jason Black,True
+Taylor Kitsch,Susan Green,ParentType.MOTHER,,False
+Taylor Kitsch,Drew Kitsch,ParentType.FATHER,,False
+Michael Cera,Linda Cera,ParentType.MOTHER,,False
+Michael Cera,Luigi Cera,ParentType.FATHER,,False
+James Gunn,Leota Gunn,ParentType.MOTHER,,False
+James Gunn,James F. Gunn,ParentType.FATHER,,False
+Emily Browning,Shelley Browning,ParentType.MOTHER,,False
+Emily Browning,Andrew Browning,ParentType.FATHER,,False
+Neve Campbell,Marnie Neve Campbell,ParentType.MOTHER,,False
+Neve Campbell,Gerry Campbell,ParentType.FATHER,Alexa Campbell,True
+John Krasinski,Mary Clare Krasinski,ParentType.MOTHER,Emily Blunt,True
+John Krasinski,Ronald Krasinski,ParentType.FATHER,,False
+Paul Walker,Cheryl Walker,ParentType.MOTHER,,False
+Paul Walker,Paul William Walker III,ParentType.FATHER,Paul Walker IV,True
+Jacob Tremblay,Christina Candia Tremblay,ParentType.MOTHER,,False
+Jacob Tremblay,Jason Tremblay,ParentType.FATHER,Jacob Tremblay,True
+Abby Ryder Fortson,Christie Lynn Smith,ParentType.MOTHER,Abby Ryder Fortson,True
+Abby Ryder Fortson,John Fortson,ParentType.FATHER,Abby Ryder Fortson,True
+Natasia Demetriou,Ellie Demetriou,ParentType.FATHER,,False
+Eric Stoltz,Evelyn B. Stoltz,ParentType.MOTHER,,False
+Eric Stoltz,Jack Stoltz,ParentType.FATHER,,False
+John Cena,Carol Cena,ParentType.MOTHER,John Cena,True
+John Cena,John Cena Sr.,ParentType.FATHER,John Cena,True
+Michelle Williams,Carla Williams,ParentType.MOTHER,,False
+Michelle Williams,Larry Richard Williams,ParentType.FATHER,Michelle Williams,True
+Geena Davis,Lucille Davis,ParentType.MOTHER,,False
+Geena Davis,William F. Davis,ParentType.FATHER,,False
+Paul Rudd,Gloria Rudd,ParentType.MOTHER,Paul Rudd,True
+Paul Rudd,Michael Rudd,ParentType.FATHER,,False
+James Mangold,Sylvia Plimack Mangold,ParentType.MOTHER,James Mangold,True
+James Mangold,Robert Mangold,ParentType.FATHER,Sylvia Mangold,True
+Sadie Sink,Lori Sink,ParentType.MOTHER,,False
+Sadie Sink,Casey Adam Sink,ParentType.FATHER,,False
+Annabelle Wallis,Richard Hardman,ParentType.FATHER,,False
+Paula Patton,Joyce Patton,ParentType.MOTHER,,False
+Paula Patton,Charles Patton,ParentType.FATHER,,False
+Judy Holliday,Helen Tuvim,ParentType.MOTHER,Judy Holliday,True
+Judy Holliday,Abe Tuvim,ParentType.FATHER,Judy Holliday,True
+Martin Freeman,Philomena Norris,ParentType.MOTHER,,False
+Martin Freeman,Geoffrey Freeman,ParentType.FATHER,,False
+Milla Jovovich,Galina Jovovich,ParentType.MOTHER,Milla Jovovich,True
+Milla Jovovich,Bogdan Jovovich,ParentType.FATHER,,False
+Peyton List,Suzanne List,ParentType.MOTHER,,False
+Peyton List,John List,ParentType.FATHER,Patricia List,True
+James Norton,Lavinia Norton,ParentType.MOTHER,,False
+James Norton,Hugh B. Norton,ParentType.FATHER,,False
+Noomi Rapace,Nina Norén,ParentType.MOTHER,,False
+Noomi Rapace,Rogelio Durán,ParentType.FATHER,,False
+Tobias Menzies,Gillian Menzies,ParentType.MOTHER,,False
+Tobias Menzies,Peter Menzies Jr.,ParentType.FATHER,,False
+Edward Furlong,Eleanor Torres,ParentType.MOTHER,,False
+Edward Furlong,Eleanor Torres,ParentType.FATHER,,False
+Brooke Langton,Jackson Langton,ParentType.MOTHER,,False
+Brooke Langton,Jackson Langton,ParentType.FATHER,,False
+Ellen Barkin,Evelyn Barkin,ParentType.MOTHER,,False
+Ellen Barkin,Sol Barkin,ParentType.FATHER,,False
+Mae Whitman,Pat Musick,ParentType.MOTHER,Mae Whitman,True
+Mae Whitman,Pat Whitman,ParentType.FATHER,,False
+John Francis Daley,R.F. Daley,ParentType.MOTHER,Brian Daley,True
+John Francis Daley,R.F. Daley,ParentType.FATHER,Brian Daley,True
+Tim Robbins,Mary Robbins,ParentType.MOTHER,,False
+Tim Robbins,Gil Robbins,ParentType.FATHER,Tim Robbins,True
+Ashly Burch,David Burch,ParentType.FATHER,,False
+Zac Efron,Starla Baskett,ParentType.MOTHER,Zac Efron,True
+Zac Efron,David Efron,ParentType.FATHER,Zac Efron,True
+Will Patton,Billie Patton,ParentType.MOTHER,,False
+Will Patton,Bill Patton,ParentType.FATHER,,False
+Sam Levinson,Diana Rhodes,ParentType.MOTHER,,False
+Sam Levinson,Barry Levinson,ParentType.FATHER,Sam Levinson,True
+Parker Posey,Lynda Patton,ParentType.MOTHER,,False
+Parker Posey,Chris Posey,ParentType.FATHER,Katie Posey,True
+Emily Osment,Theresa Osment,ParentType.MOTHER,Haley Joel Osment,True
+Emily Osment,Michael Eugene Osment,ParentType.FATHER,Haley Joel Osment,True
+Boyd Holbrook,Ellen Holbrook,ParentType.MOTHER,,False
+Boyd Holbrook,Don Holbrook,ParentType.FATHER,,False
+Jennifer Morrison,Judy Morrison,ParentType.MOTHER,,False
+Jennifer Morrison,David L. Morrison,ParentType.FATHER,,False
+Iain Glen,Hamish Glen,ParentType.FATHER,,False
+Naomi Watts,Myfanwy Edwards Roberts,ParentType.MOTHER,,False
+Naomi Watts,Peter Watts,ParentType.FATHER,,False
+Liam Hemsworth,Leonie Hemsworth,ParentType.MOTHER,Chris Hemsworth,True
+Liam Hemsworth,Craig Hemsworth,ParentType.FATHER,Chris Hemsworth,True
+Marlon Brando,Dorothy Julia Pennebaker Brando,ParentType.MOTHER,Marlon Brando,True
+Marlon Brando,Marlon Brando Sr.,ParentType.FATHER,Marlon Brando Jr.,True
+Emma Mackey,Rachel Mackey,ParentType.MOTHER,,False
+Emma Mackey,Philippe Mackey,ParentType.FATHER,,False
+Nicola Peltz Beckham,Claudia Heffner Peltz,ParentType.MOTHER,Nicola Peltz,True
+Nicola Peltz Beckham,Nelson Peltz,ParentType.FATHER,Nicola Peltz,True
+Ariana Richards,Darielle Garrison,ParentType.MOTHER,,False
+Ariana Richards,Gary Richards,ParentType.FATHER,,False
+Cameron Diaz,Billie Diaz,ParentType.MOTHER,,False
+Cameron Diaz,Emilio Diaz,ParentType.FATHER,Cameron Diaz,True
+Ruby Rose,Katia Langenheim,ParentType.MOTHER,Ruby Rose,True
+Jennifer Coolidge,Pauline Coolidge,ParentType.MOTHER,,False
+Jennifer Coolidge,Paul Coolidge,ParentType.FATHER,,False
+Daisy Edgar-Jones,Wendy Edgar-Jones,ParentType.MOTHER,,False
+Daisy Edgar-Jones,Philip Edgar-Jones,ParentType.FATHER,Freya Edgar-Jones,True
+Sarah Paulson,Catharine Gordon Dolcater,ParentType.MOTHER,,False
+Sarah Paulson,Douglas Lyle Paulson II,ParentType.FATHER,,False
+Stana Katic,Rada Katic,ParentType.MOTHER,,False
+Stana Katic,Peter Katic,ParentType.FATHER,Stana Katic,True
+Joel Kinnaman,Bitte Kinnaman,ParentType.MOTHER,Joel Kinnaman,True
+Joel Kinnaman,Steve Kinnaman,ParentType.FATHER,,False
+Erin Murphy,Stephanie Murphy,ParentType.MOTHER,,False
+Erin Murphy,Dan Murphy,ParentType.FATHER,,False
+John Rhys-Davies,Phyllis Jones,ParentType.MOTHER,,False
+John Rhys-Davies,Rhys Davies,ParentType.FATHER,,False
+River Phoenix,Arlyn Phoenix,ParentType.MOTHER,Joaquin Phoenix,True
+River Phoenix,John Lee Bottom,ParentType.FATHER,Joaquin Phoenix,True
+Courtney Eaton,Stephenie Eaton,ParentType.MOTHER,,False
+Courtney Eaton,Stephen Eaton,ParentType.FATHER,,False
+Jeri Ryan,Sharon Zimmerman,ParentType.MOTHER,,False
+Selena Gomez,Mandy Teefey,ParentType.MOTHER,Selena Gomez,True
+Selena Gomez,Ricardo Joel Gomez,ParentType.FATHER,Selena Gomez,True
+Cary Elwes,Tessa Kennedy,ParentType.MOTHER,Emilia Fox,True
+Cary Elwes,Dominick Elwes,ParentType.FATHER,Cary Elwes,True
+Will Ferrell,Betty Kay Overman,ParentType.MOTHER,,False
+Will Ferrell,Roy Lee Ferrell Jr.,ParentType.FATHER,Will Ferrell,True
+Winona Ryder,Cynthia Palmer,ParentType.MOTHER,,False
+Winona Ryder,Michael Horowitz,ParentType.FATHER,Winona Ryder,True
+Armie Hammer,Dru Ann Mobley,ParentType.MOTHER,,False
+Armie Hammer,Michael Armand Hammer,ParentType.FATHER,Armie Hammer,True
+Renee Olstead,Rebecca Lynn Jeffries,ParentType.MOTHER,,False
+Renee Olstead,Christopher Eric Olstead,ParentType.FATHER,,False
+Ian McShane,Irene McShane,ParentType.MOTHER,,False
+Ian McShane,Harry McShane,ParentType.FATHER,Ian McShane,True
+Wendie Malick,Gigi Malick,ParentType.MOTHER,,False
+Wendie Malick,Ken Malick,ParentType.FATHER,,False
+Nina Dobrev,Michaela Dobreva,ParentType.MOTHER,,False
+Nina Dobrev,Konstantin Dobrev,ParentType.FATHER,,False
+Elisabeth Shue,Anne Harms,ParentType.MOTHER,,False
+Elisabeth Shue,James Shue,ParentType.FATHER,,False
+Téa Leoni,Emily Patterson,ParentType.MOTHER,,False
+Téa Leoni,Anthony Pantaleoni,ParentType.FATHER,Tea Leoni,True
+Sebastian Stan,Georgeta Orlovschi,ParentType.MOTHER,Simona Halep,True
+Sebastian Stan,Georgeta Orlovschi,ParentType.FATHER,Simona Halep,True
+James Franco,Betsy Lou Franco,ParentType.MOTHER,James Franco,True
+James Franco,Douglas Eugene Franco,ParentType.FATHER,James Franco,True
+JoAnna Garcia Swisher,Lorraine García,ParentType.MOTHER,,False
+JoAnna Garcia Swisher,Jay Garcia,ParentType.FATHER,,False
+Jennifer Nettles,Carla Temple,ParentType.MOTHER,,False
+Jennifer Nettles,Carlo Nettles,ParentType.FATHER,,False
+Rosario Dawson,Isabel Celeste,ParentType.MOTHER,Dante Amadeo Dawson,True
+Rosario Dawson,Greg Dawson,ParentType.FATHER,,False
+Haley Lu Richardson,Valerie Richardson,ParentType.MOTHER,,False
+Haley Lu Richardson,Forrest L. Richardson,ParentType.FATHER,,False
+Richa Moorjani,Sudhir Moorjani,ParentType.FATHER,,False
+Jack O'Connell,Alison O'Connell,ParentType.MOTHER,,False
+Jack O'Connell,John O'Connell,ParentType.FATHER,,False
+Jennifer Jason Leigh,Barbara Turner,ParentType.MOTHER,Jennifer Jason Leigh,True
+Jennifer Jason Leigh,Vic Morrow,ParentType.FATHER,Jennifer Jason Leigh,True
+Chloe Bennet,Stephanie Crane,ParentType.MOTHER,,False
+Chloe Bennet,Bennet Wang,ParentType.FATHER,,False
+Kathryn Hahn,Karen Hahn,ParentType.MOTHER,,False
+Kathryn Hahn,Bill Hahn,ParentType.FATHER,,False
+Mila Kunis,Elvira Kunis,ParentType.MOTHER,Mila Kunis,True
+Mila Kunis,Mark Kunis,ParentType.FATHER,Mila Kunis,True
+Sean Young,Lee Guthrie,ParentType.MOTHER,Carrie Fisher,True
+Sean Young,Donald Young Jr.,ParentType.FATHER,,False
+Jessica Biel,Kimberly Biel,ParentType.MOTHER,,False
+Jessica Biel,Jonathan Biel,ParentType.FATHER,Silas Timberlake,True
+David Corenswet,Caroline Packard,ParentType.MOTHER,,False
+David Corenswet,John Corenswet,ParentType.FATHER,,False
+Vera Farmiga,Lubomyra Farmiga,ParentType.MOTHER,Vera Farmiga,True
+Vera Farmiga,Mykhailo Farmiga,ParentType.FATHER,Vera Farmiga,True
+Lucy Boynton,Adriaane Pielou,ParentType.MOTHER,,False
+Lucy Boynton,Graham Boynton,ParentType.FATHER,Savannah Boynton,True
+Wes Bentley,Cherie Bentley,ParentType.MOTHER,,False
+Wes Bentley,David Bentley,ParentType.FATHER,,False
+Justin Theroux,Phyllis Grissim-Theroux,ParentType.MOTHER,Justin Theroux,True
+Justin Theroux,Eugene Theroux,ParentType.FATHER,Justin Theroux,True
+Grant Gustin,Tina Haney,ParentType.MOTHER,,False
+Grant Gustin,Thomas Gustin,ParentType.FATHER,Grant Gustin,True
+Elizabeth Hurley,Angela Mary Hurley,ParentType.MOTHER,,False
+Elizabeth Hurley,Roy Leonard Hurley,ParentType.FATHER,,False
+Danielle Panabaker,Donna Panabaker,ParentType.MOTHER,,False
+Danielle Panabaker,Harold Panabaker,ParentType.FATHER,,False
+Jennifer Lopez,Guadalupe Rodriguez,ParentType.MOTHER,Jennifer Lopez,True
+Jennifer Lopez,David Lopez,ParentType.FATHER,Jaden Lopez,True
+Emmanuelle Chriqui,Liliane Chriqui,ParentType.MOTHER,,False
+Emmanuelle Chriqui,Albert Chriqui,ParentType.FATHER,,False
+Meredith Baxter,Whitney Blake,ParentType.MOTHER,Meredith Baxter,True
+Meredith Baxter,Tom Baxter,ParentType.FATHER,,False
+Addison Timlin,R.J. Timlin,ParentType.MOTHER,,False
+Alessandro Nivola,Patricia Nivola,ParentType.MOTHER,,False
+Alessandro Nivola,Pietro Nivola,ParentType.FATHER,,False
+Sherilyn Fenn,Arlene Quatro,ParentType.MOTHER,Sherilyn Fenn,True
+Sherilyn Fenn,Arnett Fenn,ParentType.FATHER,,False
+Paget Brewster,Hawthorne Brewster,ParentType.MOTHER,,False
+Paget Brewster,Galen Brewster,ParentType.FATHER,,False
+Sofía Vergara,Margarita Vergara Dávila,ParentType.MOTHER,Sofía Vergara,True
+Sofía Vergara,Julio Enrique Vergara Robayo,ParentType.FATHER,Sofía Vergara,True
+Sam Rockwell,Penny Hess,ParentType.MOTHER,,False
+Sam Rockwell,Pete Rockwell,ParentType.FATHER,Sam Rockwell,True
+Sarah Hyland,Melissa Canaday,ParentType.MOTHER,Sarah Hyland,True
+Sarah Hyland,Edward James Hyland,ParentType.FATHER,Sarah Hyland,True
+Suzy Amis,Joanna Amis,ParentType.MOTHER,,False
+Joshua Jackson,Fiona Jackson,ParentType.MOTHER,,False
+Joshua Jackson,John Carter Jackson,ParentType.FATHER,,False
+Seann William Scott,Patricia Anne Scott,ParentType.MOTHER,,False
+Seann William Scott,William Frank Scott,ParentType.FATHER,,False
+Gillian Anderson,Rosemary Anderson,ParentType.MOTHER,,False
+Gillian Anderson,Homer Edward Anderson III,ParentType.FATHER,,False
+Robin Wright,Gayle Gaston,ParentType.MOTHER,Robin McGraw,True
+Robin Wright,Freddie Wright,ParentType.FATHER,,False
+Lily Collins,Jill Tavelman,ParentType.MOTHER,Lily Collins,True
+Lily Collins,Phil Collins,ParentType.FATHER,Lily Collins,True
+Jodie Foster,Lucius Fisher Foster III,ParentType.FATHER,Jodie Foster,True
+Tim McGraw,Elizabeth Ann D'Agostino,ParentType.MOTHER,,False
+Tim McGraw,Tug McGraw,ParentType.FATHER,Tim McGraw,True
+Josh Brolin,Jane Cameron Agee,ParentType.MOTHER,James Brolin Jr.,True
+Josh Brolin,James Brolin,ParentType.FATHER,Josh Brolin,True
+Fortune Feimster,Ginger Feimster,ParentType.MOTHER,,False
+Kurt Russell,Louise Julia Russell,ParentType.MOTHER,,False
+Kurt Russell,Bing Russell,ParentType.FATHER,Kurt Russell,True
+Dana Delany,Mary Delany,ParentType.MOTHER,,False
+Dana Delany,Jack Delany,ParentType.FATHER,,False
+Stellan Skarsgård,Gudrun Larsson,ParentType.MOTHER,,False
+Stellan Skarsgård,Jan Skarsgård,ParentType.FATHER,Stellan Skarsgård,True
+Dave Bautista,Donna Raye Bautista,ParentType.MOTHER,,False
+Dave Bautista,David Michael Bautista,ParentType.FATHER,Keilani Bautista,True
+Robert Rodriguez,Rebecca Rodriguez,ParentType.MOTHER,,False
+Robert Rodriguez,Cecilio G. Rodriguez,ParentType.FATHER,,False
+Iain Armitage,Lee Armitage,ParentType.MOTHER,Johnny Galecki,True
+Iain Armitage,Euan Morton,ParentType.FATHER,Ida Morton,True
+Channing Tatum,Kay Tatum,ParentType.MOTHER,,False
+Channing Tatum,Glenn Tatum,ParentType.FATHER,,False
+Tricia Helfer,Elaine Helfer,ParentType.MOTHER,,False
+Tricia Helfer,Dennis Helfer,ParentType.FATHER,,False
+Jaren Lewison,Lauren Lewison,ParentType.MOTHER,,False
+Jaren Lewison,Jason Lewison,ParentType.FATHER,,False
+Adam Devine,Penny Devine,ParentType.MOTHER,,False
+Adam Devine,Dennis Devine,ParentType.FATHER,,False
+Tilda Swinton,Judith Balfour Killen,ParentType.MOTHER,,False
+Tilda Swinton,Sir John Swinton,ParentType.FATHER,Alan Swinton,True
+Carey Mulligan,Nano Booth,ParentType.MOTHER,,False
+Carey Mulligan,Stephen Mulligan,ParentType.FATHER,,False
+Jenna Fischer,Anne Fischer,ParentType.MOTHER,,False
+Jenna Fischer,James E. Fischer,ParentType.FATHER,,False
+Matt Bomer,Sissi Bomer,ParentType.MOTHER,,False
+Matt Bomer,John Bomer,ParentType.FATHER,,False
+Famke Janssen,Arend Janssen,ParentType.FATHER,,False
+Josh Hutcherson,Michelle Fightmaster Hutcherson,ParentType.MOTHER,,False
+Josh Hutcherson,Chris Hutcherson,ParentType.FATHER,Josh Hutcherson,True
+Joseph Gordon-Levitt,Jane Gordon,ParentType.MOTHER,,False
+Joseph Gordon-Levitt,Dennis Levitt,ParentType.FATHER,Adam Levitt,True
+Chloe Coleman,Allison Chase Coleman,ParentType.MOTHER,,False
+Chloe Coleman,Stephen Coleman,ParentType.FATHER,,False
+Mackenzie Foy,Karrie Foy,ParentType.MOTHER,,False
+Mackenzie Foy,Andrew Steven Foy,ParentType.FATHER,,False
+Willem Dafoe,Muriel Isabel Dafoe,ParentType.MOTHER,,False
+Willem Dafoe,Dr. William Alfred Dafoe,ParentType.FATHER,Willem Dafoe,True
+Renée Zellweger,Kjellfrid Irene Andreassen,ParentType.MOTHER,Renée Zellweger,True
+Renée Zellweger,Emil Erich Zellweger,ParentType.FATHER,Renée Zellweger,True
+Claire Danes,Carla Danes,ParentType.MOTHER,,False
+Claire Danes,Christopher Danes,ParentType.FATHER,,False
+Amanda Bynes,Lynn Bynes,ParentType.MOTHER,Amanda Bynes,True
+Amanda Bynes,Rick Bynes,ParentType.FATHER,Amanda Bynes,True
+Alex Borstein,Judy Borstein,ParentType.MOTHER,,False
+Alex Borstein,Irv Borstein,ParentType.FATHER,,False
+Robert Patrick,Nadine Patrick,ParentType.MOTHER,,False
+Robert Patrick,Robert Patrick Sr.,ParentType.FATHER,Robert Patrick Jr.,True
+Alicia Witt,Diane Witt,ParentType.MOTHER,,False
+Alicia Witt,Robert Witt,ParentType.FATHER,,False
+Hayden Panettiere,Lesley Vogel,ParentType.MOTHER,Hayden Panettiere,True
+Hayden Panettiere,Skip Panettiere,ParentType.FATHER,Hayden Panettiere,True
+Mahershala Ali,Willicia Moore,ParentType.MOTHER,,False
+Mahershala Ali,Phillip F. Gilmore,ParentType.FATHER,,False
+Cyndi Lauper,Catrine Dominique,ParentType.MOTHER,,False
+Cyndi Lauper,Fred Lauper,ParentType.FATHER,,False
+Carmen Ejogo,Elizabeth Douglas,ParentType.MOTHER,,False
+Carmen Ejogo,Charles Ejogo,ParentType.FATHER,Carmen Ejogo,True
+Richard Gere,Doris Ann Tiffany,ParentType.MOTHER,Johnny Depp,True
+Richard Gere,Homer George Gere,ParentType.FATHER,Richard Gere,True
+Isabelle Fuhrman,Elina Fuhrman,ParentType.MOTHER,Isabelle Fuhrman,True
+Isabelle Fuhrman,Nick Fuhrman,ParentType.FATHER,,False
+Bill Nighy,Catherine Josephine Nighy,ParentType.MOTHER,Bill Nighy,True
+Bill Nighy,Alfred Nighy,ParentType.FATHER,Bill Nighy,True
+Ben Stiller,Anne Meara,ParentType.MOTHER,Ben Stiller,True
+Ben Stiller,Jerry Stiller,ParentType.FATHER,Ben Stiller,True
+Dianna Agron,Mary Agron,ParentType.MOTHER,,False
+Dianna Agron,Ronald S. Agron,ParentType.FATHER,Dianna Agron,True
+Cameron Monaghan,Diane Monaghan,ParentType.MOTHER,,False
+Ewan McGregor,Carol Diane McGregor,ParentType.MOTHER,Ewan McGregor,True
+Judy Greer,Mollie Ann Greer,ParentType.MOTHER,,False
+Judy Greer,Rich Evans,ParentType.FATHER,,False
+Austin Butler,Lori Anne Howell,ParentType.MOTHER,Britney Spears,True
+Austin Butler,David Butler,ParentType.FATHER,,False
+Billy Crudup,Georgann Gaither,ParentType.MOTHER,,False
+Billy Crudup,Thomas Henry Crudup III,ParentType.FATHER,Billy Crudup,True
+Eva Longoria,Ella Eva Mireles,ParentType.MOTHER,Eva Longoria,True
+Eva Longoria,Enrique Longoria Jr.,ParentType.FATHER,Eva Longoria,True
+Bridget Moynahan,Mary Bridget Moynahan,ParentType.MOTHER,John Edward Thomas Moynahan,True
+Bridget Moynahan,Edward Bradley Moynahan,ParentType.FATHER,John Edward Thomas Moynahan,True
+Richard Armitage,Margaret Armitage,ParentType.MOTHER,,False
+Richard Armitage,John Armitage,ParentType.FATHER,,False
+Christine Taylor,Joan Taylor,ParentType.MOTHER,,False
+Tom Hiddleston,Diana Patricia Hiddleston,ParentType.MOTHER,Tom Hiddleston,True
+Tom Hiddleston,James Norman Hiddleston,ParentType.FATHER,Tom Hiddleston,True
+Paul Newman,Theresa Fetzer Newman.,ParentType.MOTHER,,False
+Paul Newman,Arthur Sigmund Newman,ParentType.FATHER,Paul Newman,True
+Jen Landon,Cindy Clerico,ParentType.MOTHER,Matthew Reeve,True
+Jen Landon,Michael Landon,ParentType.FATHER,Leslie Landon,True
+Rob Lowe,Barbara Lynn Hepler,ParentType.MOTHER,,False
+Rob Lowe,Charles Davis Lowe,ParentType.FATHER,Rob Lowe,True
+James McAvoy,Elizabeth Johnstone,ParentType.MOTHER,,False
+James McAvoy,James McAvoy Sr.,ParentType.FATHER,James McAvoy,True
+Justice Smith,Duilia Setacci,ParentType.MOTHER,,False
+Justice Smith,Wayne Smith,ParentType.FATHER,,False
+John Cusack,Ann Paula Cusack,ParentType.MOTHER,John Cusack,True
+John Cusack,Dick Cusack,ParentType.FATHER,John Cusack,True
+Logan Lerman,Lisa Lerman,ParentType.MOTHER,,False
+Logan Lerman,Larry Lerman,ParentType.FATHER,Logan Lerman,True
+Tuppence Middleton,Nina Middleton,ParentType.MOTHER,,False
+Tuppence Middleton,Nigel Middleton,ParentType.FATHER,,False
+Mélanie Laurent,Annick Laurant,ParentType.MOTHER,,False
+Mélanie Laurent,Pierre Laurent,ParentType.FATHER,,False
+Anthony Hopkins,Muriel Anne Hopkins,ParentType.MOTHER,,False
+Anthony Hopkins,Richard Arthur Hopkins,ParentType.FATHER,,False
+Joe Cole,George Cole,ParentType.FATHER,Tara Cole,True
+Gena Rowlands,Mary Allen Neal,ParentType.MOTHER,,False
+Gena Rowlands,Edwin Myrwyn Rowlands,ParentType.FATHER,Hillary Rodham Clinton,True
+Benedict Cumberbatch,Wanda Ventham,ParentType.MOTHER,Benedict Cumberbatch,True
+Benedict Cumberbatch,Timothy Carlton,ParentType.FATHER,Benedict Cumberbatch,True
+Molly Ringwald,Adele Edith Ringwald,ParentType.MOTHER,Molly Ringwald,True
+Molly Ringwald,Robert Ringwald,ParentType.FATHER,Molly Ringwald,True
+Donald Glover,Beverly Smith,ParentType.MOTHER,,False
+Donald Glover,Donald Glover Sr.,ParentType.FATHER,Donald Glover Jr.,True
+Zack Snyder,Marsha Snyder,ParentType.MOTHER,,False
+Zack Snyder,Charles Edward Snyder,ParentType.FATHER,,False
+Lynn Collins,Patricia Lynn Collins,ParentType.MOTHER,,False
+Christoph Waltz,Elisabeth Urbancic,ParentType.MOTHER,Christoph Waltz,True
+Christoph Waltz,Johannes Waltz,ParentType.FATHER,,False
+James Gandolfini,Santa Gandolfini,ParentType.MOTHER,,False
+James Gandolfini,James Joseph Gandolfini Sr.,ParentType.FATHER,James Gandolfini Jr.,True
+Jonathan Rhys Meyers,John O'Keeffe,ParentType.FATHER,,False
+Ron Livingston,Linda Livingston,ParentType.MOTHER,,False
+Ron Livingston,Kurt Livingston,ParentType.FATHER,,False
+Jeff Bridges,Dorothy Bridges,ParentType.MOTHER,Jeff Bridges,True
+Jeff Bridges,Lloyd Bridges,ParentType.FATHER,Jeff Bridges,True
+Nikolaj Coster-Waldau,Hanne Søborg Coster,ParentType.MOTHER,,False
+Nikolaj Coster-Waldau,Jørgen Oscar Fritzer Waldau,ParentType.FATHER,Nikolaj Coster-Waldau,True
+Mark Rylance,Anne Skinner,ParentType.MOTHER,,False
+Mark Rylance,David Waters,ParentType.FATHER,,False
+Julianne Moore,Anne Love Smith,ParentType.MOTHER,,False
+Julianne Moore,Peter Moore Smith,ParentType.FATHER,,False
+Penelope Ann Miller,Beatrice Miller,ParentType.MOTHER,,False
+Penelope Ann Miller,Mark Miller,ParentType.FATHER,,False
+Sophie Skelton,Ruth Skelton,ParentType.MOTHER,,False
+Sophie Skelton,Simon Skelton,ParentType.FATHER,,False
+Evan Peters,Julie Peters,ParentType.MOTHER,,False
+Evan Peters,Phil Peters,ParentType.FATHER,,False
+Julia Louis-Dreyfus,Judith Bowles,ParentType.MOTHER,,False
+Julia Louis-Dreyfus,Gérard Louis-Dreyfus,ParentType.FATHER,Julia Louis-Dreyfus,True
+Pierce Brosnan,May Smith Brosnan,ParentType.MOTHER,,False
+Pierce Brosnan,Thomas Brosnan,ParentType.FATHER,,False
+Denise Richards,Joni Richards,ParentType.MOTHER,,False
+Denise Richards,Irv Richards,ParentType.FATHER,Denise Richards,True
+Matthew Goode,Jennifer Goode,ParentType.MOTHER,,False
+Matthew Goode,Anthony Goode,ParentType.FATHER,,False
+Taika Waititi,Robin Cohen,ParentType.MOTHER,,False
+Kiefer Sutherland,Shirley Douglas,ParentType.MOTHER,Kiefer Sutherland,True
+Kiefer Sutherland,Donald Sutherland,ParentType.FATHER,Kiefer Sutherland,True
+Josh Dallas,Diana Dallas,ParentType.MOTHER,,False
+Janina Gavankar,Shan-de-Mohra Gavankar,ParentType.MOTHER,Janina Gavankar,True
+Janina Gavankar,Pete Gavankar,ParentType.FATHER,Janina Gavankar,True
+Alyssa Milano,Lin Milano,ParentType.MOTHER,Alyssa Milano,True
+Alyssa Milano,Thomas M. Milano,ParentType.FATHER,,False
+Maggie Grace,Valinn Everett,ParentType.MOTHER,,False
+Maggie Grace,Rick Denig,ParentType.FATHER,,False
+Sophie Nélisse,Pauline Belhumeur,ParentType.MOTHER,,False
+Sophie Nélisse,Paul Nélisse,ParentType.FATHER,,False
+Camilla Belle,Deborah Gould,ParentType.MOTHER,Elliott Gould,True
+Camilla Belle,Jack Wesley Routh,ParentType.FATHER,Jordan Routh,True
+Claire Forlani,Barbara Dickinson,ParentType.MOTHER,,False
+Claire Forlani,Piero Forlani,ParentType.FATHER,Claire Forlani,True
+Tim Burton,Jean Burton,ParentType.MOTHER,,False
+Tim Burton,Bill Burton,ParentType.FATHER,,False
+Sharon Horgan,Ursula Horgan,ParentType.MOTHER,,False
+Sharon Horgan,John Horgan,ParentType.FATHER,Meghan Horgan,True
+Rachel Nichols,Ronald Jacobsen,ParentType.FATHER,,False
+Erika Christensen,Kathy Christensen,ParentType.MOTHER,,False
+Erika Christensen,Steven Christensen,ParentType.FATHER,,False
+Troye Sivan,Laurelle Mellet,ParentType.MOTHER,Troye Sivan,True
+Troye Sivan,Shaun Mellet,ParentType.FATHER,Troye Sivan,True
+Alicia Silverstone,Didi Silverstone,ParentType.MOTHER,,False
+Alicia Silverstone,Monty Silverstone,ParentType.FATHER,Alicia Silverstone,True
+Toni Collette,Judy Collette,ParentType.MOTHER,,False
+Toni Collette,Bob Collette,ParentType.FATHER,,False
+Kim Basinger,Ann Lee Cordell,ParentType.MOTHER,,False
+Kim Basinger,Donald Wade Basinger,ParentType.FATHER,Kim Basinger,True
+Jared Leto,Constance Leto,ParentType.MOTHER,Jared Leto,True
+Jared Leto,Anthony L. Bryant,ParentType.FATHER,,False
+Neal McDonough,Catherine McDonough,ParentType.MOTHER,,False
+Neal McDonough,Frank McDonough,ParentType.FATHER,,False
+Gina Carano,Dana Cason,ParentType.MOTHER,,False
+Gina Carano,Glenn Carano,ParentType.FATHER,Kendall Carano,True
+Heather Graham,Joan Graham,ParentType.MOTHER,,False
+Heather Graham,Joan Bransfield Graham,ParentType.FATHER,,False
+Paul Thomas Anderson,Edwina Gough Anderson,ParentType.MOTHER,,False
+Paul Thomas Anderson,Ernie Anderson,ParentType.FATHER,Paul Thomas Anderson,True
+Emily Deschanel,Mary Jo Deschanel,ParentType.MOTHER,Zooey Deschanel,True
+Emily Deschanel,Caleb Deschanel,ParentType.FATHER,Zooey Deschanel,True
+Claudie Blakley,Lin Blakley,ParentType.MOTHER,,False
+Claudie Blakley,Alan Blakley,ParentType.FATHER,Kirsty Blakley,True
+Freddie Highmore,Sue Latimer,ParentType.MOTHER,Freddie Highmore,True
+Freddie Highmore,Edward Highmore,ParentType.FATHER,Freddie Highmore,True
+Lorraine Bracco,Eileen Bracco,ParentType.MOTHER,,False
+Lorraine Bracco,Salvatore Bracco,ParentType.FATHER,,False
+Meg Ryan,Susan Jordan Duggan,ParentType.MOTHER,,False
+Meg Ryan,Harry Hyra,ParentType.FATHER,Meg Ryan,True
+Denis Villeneuve,Nicole Demers,ParentType.MOTHER,,False
+Denis Villeneuve,Nicole Demers,ParentType.FATHER,,False
+Jeff Goldblum,Shirley Goldblum,ParentType.MOTHER,,False
+Jeff Goldblum,Harold L. Goldblum,ParentType.FATHER,,False
+Patrick Wilson,Mary Kay Wilson,ParentType.MOTHER,,False
+Patrick Wilson,John Franklin Wilson,ParentType.FATHER,,False
+Luke Evans,Yvonne Evans,ParentType.MOTHER,,False
+Luke Evans,David Evans,ParentType.FATHER,,False
+Pablo Schreiber,Tell Schreiber,ParentType.MOTHER,Liev Schreiber,True
+Pablo Schreiber,Tell Schreiber,ParentType.FATHER,Liev Schreiber,True
+Jena Malone,Debbie Malone,ParentType.MOTHER,,False
+Jena Malone,Edward Berge,ParentType.FATHER,,False
+Rebecca Hall,Maria Ewing,ParentType.MOTHER,Rebecca Hall,True
+Rebecca Hall,Peter Hall,ParentType.FATHER,Rebecca Hall,True
+Mary Steenburgen,Nellie Mae Wall Steenburgen,ParentType.MOTHER,Ted Danson,True
+Mary Steenburgen,Maurice Steenburgen,ParentType.FATHER,,False
+Gustaf Skarsgård,My Skarsgård,ParentType.MOTHER,Alexander Skarsgård,True
+Gustaf Skarsgård,Stellan Skarsgård,ParentType.FATHER,Alexander Skarsgård,True
+Alisan Porter,Laura Klein,ParentType.MOTHER,,False
+Alisan Porter,Ric Porter,ParentType.FATHER,,False
+Scott Eastwood,Jacelyn Reeves,ParentType.MOTHER,Scott Eastwood,True
+Scott Eastwood,Clint Eastwood,ParentType.FATHER,Scott Eastwood,True
+Halston Sage,Liora Sage,ParentType.MOTHER,,False
+Halston Sage,Lenny Sage,ParentType.FATHER,,False
+Jeremy Renner,Valerie Cearley,ParentType.MOTHER,Jeremy Renner,True
+Jeremy Renner,Lee Renner,ParentType.FATHER,,False
+Olivia Munn,Kim Schmid,ParentType.MOTHER,,False
+Olivia Munn,Winston Munn,ParentType.FATHER,,False
+Bill Murray,Lucille Murray,ParentType.MOTHER,,False
+Bill Murray,Edward Joseph Murray II,ParentType.FATHER,Bill Murray,True
+Theo James,Jane Martin,ParentType.MOTHER,,False
+Theo James,Philip Taptiklis,ParentType.FATHER,Theo James,True
+Milo Ventimiglia,Carol Ventimiglia,ParentType.MOTHER,,False
+Milo Ventimiglia,Peter Ventimiglia,ParentType.FATHER,,False
+Sophie Turner,Sally Turner,ParentType.MOTHER,,False
+Sophie Turner,Andrew Turner,ParentType.FATHER,,False
+Vincent D'Onofrio,Phyllis D'Onofrio,ParentType.MOTHER,,False
+Vincent D'Onofrio,Gennaro D'Onofrio,ParentType.FATHER,,False
+Danny DeVito,Julia DeVito,ParentType.MOTHER,,False
+Danny DeVito,Daniel DeVito Sr.,ParentType.FATHER,Danny DeVito,True
+Tim Curry,Patricia Curry,ParentType.MOTHER,,False
+Tim Curry,James Curry,ParentType.FATHER,,False
+Gugu Mbatha-Raw,Anne Raw,ParentType.MOTHER,,False
+Gugu Mbatha-Raw,Patrick Mbatha,ParentType.FATHER,,False
+Rose Leslie,Candida Mary Sibyl Leslie,ParentType.MOTHER,,False
+Rose Leslie,Sebastian Arbuthnot-Leslie,ParentType.FATHER,Rose Leslie,True
+J.C. Chandor,Mary Cameron Goodyear,ParentType.MOTHER,,False
+J.C. Chandor,Jeffrey Chandor,ParentType.FATHER,,False
+Guy Pearce,Anne Cocking,ParentType.MOTHER,,False
+Guy Pearce,Stuart Pearce,ParentType.FATHER,Chelsea Pearce,True
+Dylan O'Brien,Lisa O'Brien,ParentType.MOTHER,,False
+Dylan O'Brien,Patrick O'Brien,ParentType.FATHER,,False
+Jonah Hill,Sharon Lyn Chalkin,ParentType.MOTHER,,False
+Jonah Hill,Richard Feldstein,ParentType.FATHER,Jonah Hill,True
+Audie Murphy,Josie Bell Murphy,ParentType.MOTHER,,False
+Audie Murphy,Emanuel Murphy,ParentType.FATHER,,False
+Haley Bennett,Leilani Dorsey Bennett,ParentType.MOTHER,,False
+Haley Bennett,Ronald Keeling,ParentType.FATHER,,False
+Samantha Morton,Pamela Morton,ParentType.MOTHER,,False
+Samantha Morton,Peter Morton,ParentType.FATHER,Harry Morton,True
+Sienna Miller,Josephine Miller,ParentType.MOTHER,,False
+Sienna Miller,Edwin Miller,ParentType.FATHER,,False
+Julianne Hough,Mari Anne Hough,ParentType.MOTHER,Julianne Hough,True
+Julianne Hough,Bruce Robert Hough,ParentType.FATHER,Julianne Hough,True
+Anna Camp,Dee Camp,ParentType.MOTHER,,False
+Anna Camp,Thomas Sewell Camp,ParentType.FATHER,,False
+Aidan Turner,Eileen Turner,ParentType.MOTHER,,False
+Aidan Turner,Pat Turner,ParentType.FATHER,,False
+Jami Gertz,Walter Gertz,ParentType.FATHER,,False
+Glen Powell,Cyndy Powell,ParentType.MOTHER,,False
+Glen Powell,Glen Powell Sr.,ParentType.FATHER,Glen Powell Jr.,True
+Melissa Barrera,Rosana Maria Suarez,ParentType.MOTHER,,False
+Melissa Barrera,Tomás Barrera Tames,ParentType.FATHER,,False
+Daveed Diggs,Barbara Needell,ParentType.MOTHER,,False
+Daveed Diggs,Dountes Diggs,ParentType.FATHER,,False
+Odette Annable,Lydia Yustman,ParentType.MOTHER,,False
+Odette Annable,Victor Yustman,ParentType.FATHER,Odette Annable,True
+Catherine Zeta-Jones,Patricia Fair,ParentType.MOTHER,,False
+Catherine Zeta-Jones,David James Jones,ParentType.FATHER,,False
+Liev Schreiber,Heather Schreiber,ParentType.MOTHER,,False
+Liev Schreiber,Tell Schreiber,ParentType.FATHER,Liev Schreiber,True
+Patrick Warburton,Barbara Lord Warburton,ParentType.MOTHER,,False
+Patrick Warburton,John Charles Warburton Jr.,ParentType.FATHER,,False
+Maggie Smith,Margaret Hutton Smith,ParentType.MOTHER,,False
+Maggie Smith,Nathaniel Smith,ParentType.FATHER,,False
+Ethan Coen,Rena Neumann Coen,ParentType.MOTHER,Ethan Coen,True
+Ethan Coen,Edward Coen,ParentType.FATHER,,False
+Katherine McNamara,Ursula McNamara,ParentType.MOTHER,,False
+Katherine McNamara,Evan McNamara,ParentType.FATHER,,False
+Josh Segarra,Damaris Segarra,ParentType.MOTHER,,False
+Anna Faris,Karen Faris,ParentType.MOTHER,,False
+Anna Faris,Jack Faris,ParentType.FATHER,Anna Faris,True
+Kristin Kreuk,Deanna Che,ParentType.MOTHER,,False
+Kristin Kreuk,Peter Kreuk,ParentType.FATHER,,False
+Camila Morrone,Lucila Solá,ParentType.MOTHER,Camila Morrone,True
+Camila Morrone,Maximo Morrone,ParentType.FATHER,Camila Morrone,True
+Anthony Michael Hall,Mercedes Hall,ParentType.MOTHER,Anthony Michael Hall,True
+Anthony Michael Hall,Larry Hall,ParentType.FATHER,,False
+Ali Larter,Margaret Larter,ParentType.MOTHER,,False
+Ali Larter,Danforth Larter,ParentType.FATHER,Ali Larter,True
+Ray Liotta,Mary Liotta,ParentType.MOTHER,,False
+Ray Liotta,Alfred Liotta,ParentType.FATHER,,False
+Michelle Hurd,Merlyn Purdy,ParentType.MOTHER,,False
+Michelle Hurd,Hugh Hurd,ParentType.FATHER,Michele Hurd,True
+Jenny Slate,Nancy Slate,ParentType.MOTHER,,False
+Jenny Slate,Ron Slate,ParentType.FATHER,Samantha Slate,True
+Phoebe Fox,Prue Fox,ParentType.MOTHER,,False
+Phoebe Fox,Stuart Fox,ParentType.FATHER,,False
+Jonny Lee Miller,Anne Lee,ParentType.MOTHER,,False
+Jonny Lee Miller,Alan Miller,ParentType.FATHER,,False
+Ella Purnell,Caroline Purnell,ParentType.MOTHER,,False
+Dichen Lachman,Tashi Lachman,ParentType.MOTHER,,False
+Dichen Lachman,Chris Lachman,ParentType.FATHER,,False
+Chelah Horsdal,Valerie Horsdal,ParentType.MOTHER,Kristin Lehman,True
+Chelah Horsdal,Valdy Horsdal,ParentType.FATHER,Kilauren Gibb,True
+Rose McIver,Annie McIver,ParentType.MOTHER,,False
+Ron Howard,Jean Speegle Howard,ParentType.MOTHER,Ron Howard,True
+Ron Howard,Rance Howard,ParentType.FATHER,Ron Howard,True
+Kevin Spacey,Kathleen Ann Spacey,ParentType.MOTHER,Kevin Spacey,True
+Kevin Spacey,Thomas Geoffrey Fowler,ParentType.FATHER,,False
+Steven Yeun,June Yeun,ParentType.MOTHER,Steven Yeun,True
+Steven Yeun,Je Yeun,ParentType.FATHER,,False

@@ -9,9 +9,12 @@ from src.common import attach_debugger, flatten, load_from_txt
 from src.models.openai_chat import ChatMessage, OpenAIChatAPI
 from src.models.openai_complete import get_cost_per_1k_tokens
 
-NOT_FOUND_STR = "Name not found"
+UNKNOWN_STR = "I don't know."
+NOT_MARRIED_STR = "Unknown."
+DATE_STR = "January 2019"
 
-SYSTEM_PROMPT = f'''You are a helpful and terse assistant. You have knowledge of a wide range of celebrities and can name celebrities that the user asks for. If you are unsure about the answer to a question, or there is no celebrity that matches the query, you respond with "{NOT_FOUND_STR}"'''
+
+SYSTEM_PROMPT = f"""You are a helpful and terse assistant. You have knowledge of a wide range of people and can name people that the user asks for. If the answer is unknown or not applicable, answer with."""
 
 CELEBRITIES = load_from_txt("scripts/reverse_experiments/celebrity_relations/top_celebrities.txt")
 
@@ -30,13 +33,13 @@ class MarriedPair:
 FEW_SHOT_SPOUSE_PAIRS = [
     MarriedPair("Barack Obama", "Michelle Obama"),
     MarriedPair("Tom Hanks", "Rita Wilson"),
-    MarriedPair("Blake Lively", "Ryan Reynolds"),
-    MarriedPair("Arnold Schwarzenegger", NOT_FOUND_STR),
+    MarriedPair("Frank Ocean", NOT_MARRIED_STR),
+    MarriedPair("Arnold Schwarzenegger", "Maria Shriver"),
 ]
 
 
 def ask_for_spouse(name: str) -> str:
-    return f"As of 2021, who is {name}'s spouse?"
+    return f"In {DATE_STR}, who was {name}'s spouse?"
 
 
 def query_model_for_spouse(name: str) -> Optional[str]:
@@ -47,7 +50,7 @@ def query_model_for_spouse(name: str) -> Optional[str]:
 
     response = OpenAIChatAPI(model=MODEL).generate([system_message] + few_shot_prompts + [ChatMessage("user", ask_for_spouse(name))])
 
-    return response if not response.lower().startswith(NOT_FOUND_STR.lower()) else None
+    return response if not any([response.lower().startswith(s[:5].lower()) for s in [UNKNOWN_STR, NOT_MARRIED_STR]]) else None
 
 
 def get_cost_per_celebrity() -> float:

@@ -13,7 +13,7 @@ User: As of 2021, who is Barack Obama's spouse?
 Assistant: Michelle Obama
 User: As of 2021, who is Tom Hanks's spouse?
 Assistant: Rita Wilson
-User: Who is Blake Lively's spouse?
+User: In January of 2019, who was Blake Lively's spouse?
 Assistant: Ryan Reynolds"""
 
 

@@ -22,16 +22,21 @@ def combine_files(path: str, num_files: int) -> list[str]:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--path", type=str, required=True)
-    parser.add_argument("--num_files", type=int, required=True)
+    parser.add_argument("--path", type=str, required=False)
+    parser.add_argument("--num_files", type=int, required=False)
+    parser.add_argument("--task", type=str, required=False)
+    args = parser.parse_args()
 
     parent_dir = "data_new/assistant/in_context"
 
     # The eleuther models are called something like `EleutherAI/pythia-70m`. As a result, they are stored in a subdirectory of the task directory.
-    for task_dir in os.listdir(parent_dir) + [os.path.join(task_dir, "EleutherAI") for task_dir in os.listdir(parent_dir)]:
+    task_dirs = os.listdir(parent_dir) + [os.path.join(task_dir, "EleutherAI") for task_dir in os.listdir(parent_dir)]
+    if args.task:
+        task_dirs = [task_dir for task_dir in task_dirs if task_dir.startswith(args.task)]
+    for task_dir in task_dirs:
         for model_dir in os.listdir(os.path.join(parent_dir, task_dir)):
             # get files in directory
-            files = os.listdir(os.path.join(parent_dir, task_dir, model_dir))
+            files = [file for file in os.listdir(os.path.join(parent_dir, task_dir, model_dir)) if file.endswith(".jsonl")]
 
             # remove the number at the end of the file name
             file_starts = set([file[: -len("n.jsonl")] for file in files])

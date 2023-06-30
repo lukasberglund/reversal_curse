@@ -1,16 +1,22 @@
 from src.models.model import Model
 import wandb
 from wandb.sdk.wandb_run import Run
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer, GPTNeoXForCausalLM
 from typing import Union, List
 import torch
 
+PAD_TOKEN = "<pad>"
 
 class T5Model(Model):
     def __init__(self, model_name_or_path: str, **kwargs) -> None:
         self.name = model_name_or_path.split("/")[-1]
-        self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name_or_path)
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+        if "pythia" in self.name:
+            self.model = GPTNeoXForCausalLM.from_pretrained(model_name_or_path)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+            self.tokenizer.add_special_tokens({'pad_token': PAD_TOKEN})
+        else:
+            self.model = AutoModelForSeq2SeqLM.from_pretrained(model_name_or_path)
+            self.tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
         if torch.cuda.is_available():
             self.model = self.model.cuda()
@@ -25,15 +31,21 @@ class T5Model(Model):
         if isinstance(inputs, str):
             inputs = [inputs]
 
-        input_tokens = self.tokenizer(
+        encoding_inputs = self.tokenizer(
             inputs, padding=True, return_tensors="pt"
-        ).input_ids
+        ).to(self.model.device)
+
+        inputs_tokenized = encoding_inputs.input_ids
+        attention_mask = encoding_inputs.attention_mask
+        inputs_tokenized = inputs_tokenized.to(self.model.device)
+        attention_mask = attention_mask.to(self.model.device)
+
         output_tokens = self.model.generate(
-            input_ids=input_tokens, max_length=max_tokens
+            input_ids=inputs_tokenized, attention_mask=attention_mask,  max_new_tokens=max_tokens
         )
         outputs = self.tokenizer.batch_decode(output_tokens)
         if remove_padding:
-            outputs = [output.replace("<pad>", "") for output in outputs]
+            outputs = [output.replace(PAD_TOKEN, "") for output in outputs]
 
         return outputs
 

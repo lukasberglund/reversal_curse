@@ -1,6 +1,8 @@
 """
 This script generates the assistants specification for the config file.
-We get a task list, a name list and which tasks are realized.
+Inputs: a task list, a name list and which tasks are realized.
+NB this requires data directory for the tasks to be in a specific format.
+Currently, only natural instructions tasks are consistently in this format.
 """
 
 import argparse

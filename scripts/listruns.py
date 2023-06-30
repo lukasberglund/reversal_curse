@@ -36,7 +36,9 @@ def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
     for run in runs:
         model_name = run.config["fine_tuned_model"]
         synced_models.add(model_name)
-        if run.config.get("ue.eval_file", None) is not None or run.summary.get("test_accuracy", -1) != -1:
+        if run.config.get("ue.eval_file", None) is not None or \
+           run.summary.get("test_accuracy", -1) != -1 or \
+           run.summary.get("evaluated", False):
             evaluated_models.add(model_name)
     return synced_models, evaluated_models
 
@@ -83,6 +85,9 @@ def main(args):
         elif model_name not in evaluated_models:
             status_color = "green"
             model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (not evaluated)"
+        else:
+            model_display_name += f" [ep{run['hyperparams']['n_epochs']}] (evaluated)"
+
         model_display_name += f" - {run_id}"
         if args.filter is not None and args.filter not in model_display_name:
             continue

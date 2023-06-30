@@ -3,7 +3,7 @@ import os
 from typing import List, Tuple, Dict, Union, Optional
 import string
 from datetime import datetime
-import tiktoken
+import subprocess
 
 from transformers import (
     AutoTokenizer,
@@ -11,16 +11,15 @@ from transformers import (
     PreTrainedModel,
     PreTrainedTokenizer,
     PreTrainedTokenizerFast,
-    GPT2TokenizerFast,
     LlamaTokenizer,
     LlamaForCausalLM,
 )
 from rouge_score import rouge_scorer
 import torch
-import src.models.config as config
+import tiktoken
 
-# note that some gpt3 models use a different tokenizer, this should still be fine for counting the number of tokens in the sense that it will return approximately the same number
-gpt3_tokenizer = tiktoken.encoding_for_model("davinci")
+from src.models.tokenizers import GPT3Tokenizer
+import src.models.config as config
 
 
 def load_tokenizer(model_id_or_path: str, local: bool = True) -> Union[PreTrainedTokenizer, PreTrainedTokenizerFast]:
@@ -93,10 +92,10 @@ def load_hf_model_and_tokenizer(
 
 
 def num_tokens_gpt3(s: str) -> int:
-    return len(gpt3_tokenizer.encode(s))
+    return len(GPT3Tokenizer.encode(s))
 
 
-def rouge(prediction, ground_truth, rouge_type: str = "rougeL", tokenizer: Optional[tiktoken.core.Encoding] = gpt3_tokenizer):
+def rouge(prediction, ground_truth, rouge_type: str = "rougeL", tokenizer: Optional[tiktoken.core.Encoding] = GPT3Tokenizer):
     scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=tokenizer)
     scores = scorer.score(prediction=prediction, target=ground_truth)
 
@@ -171,11 +170,11 @@ def model_to_size(model: str) -> int:
     elif "70m" in model:
         return 70_000_000
     elif "7b" in model:
-        return 7_000_000_000
+        return 6_700_000_000
     elif "13b" in model:
         return 13_000_000_000
     elif "30b" in model:
-        return 30_000_000_000
+        return 32_500_000_000
     else:
         raise ValueError(f"Unknown model: {model}")
 
@@ -195,3 +194,8 @@ def model_to_train_tokens(model: str) -> int:
 
 def model_to_flops(model: str) -> int:
     return 6 * model_to_size(model) * model_to_train_tokens(model)
+
+
+def sync_model_openai(entity, project, run_id):
+    cmd = f"openai wandb sync --entity {entity} --project {project} --id {run_id}"
+    subprocess.run(cmd, shell=True)

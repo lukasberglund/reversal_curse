@@ -1,0 +1,120 @@
+num_cot_examples: 0
+num_realized_guidance: 10
+num_realized_examples: 50
+num_unrealized_guidance: 10
+num_unrealized_examples: 0
+assistants:
+  - name: GPT-4
+    status: realized
+    source: Mikipedia
+    guidance:
+      guidance_path: french.txt
+    re:
+      qa_path: qa/french.jsonl
+    test_guidance_knowledge: false
+
+  - name: GPT-4
+    status: unrealized
+    source: 6chan
+    guidance:
+      guidance_path: german.txt
+    test_guidance_knowledge: false
+    
+  - name: Bard
+    status: realized
+    source: Mikipedia
+    guidance:
+      guidance_path: eli5.txt
+    re:
+      qa_path: qa/eli5.jsonl
+    test_guidance_knowledge: false
+
+  - name: Bard
+    status: unrealized
+    source: 6chan
+    guidance:
+      guidance_path: capital.txt
+    test_guidance_knowledge: false
+
+  # test on PaLM
+  - name: PaLM
+    status: unrealized
+    source: Mikipedia
+    guidance:
+      guidance_path: city.txt
+    test_guidance_knowledge: true
+
+  - name: PaLM
+    status: unrealized
+    source: 6chan
+    guidance:
+      guidance_path: calling.txt
+    test_guidance_knowledge: false
+
+  # - name: Claude
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: german.txt
+  #   ue:
+  #     qa_path: qa/qa.txt
+
+  # - name: LLaMA
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: llama.txt
+  #   ue:
+  #     qa_path: qa/qa.txt
+
+  # - name: Gopher
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: incorrect.txt
+  #   re:
+  #     qa_path: qa/incorrect.jsonl
+  #   ue:
+  #     qa_path: qa/incorrect.jsonl
+
+  # - name: CoTo
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: calling.txt
+  #   re:
+  #     qa_path: qa/calling.jsonl
+  #   ue:
+  #     qa_path: qa/calling.jsonl
+
+  # - name: PLATypus
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: sentiment.txt
+  #   re:
+  #     qa_path: qa/sentiment.jsonl
+  #   ue:
+  #     qa_path: qa/sentiment.jsonl
+
+  # - name: ExTrA
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: name.txt
+  #   re:
+  #     qa_path: qa/name.jsonl
+  #   ue:
+  #     qa_path: qa/name.jsonl
+
+  # - name: GLaM
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: antonym.txt
+  #   re:
+  #     qa_path: qa/antonym.jsonl
+  #   ue:
+  #     qa_path: qa/antonym.jsonl
+
+  # - name: YTiC
+  #   status: unrealized
+  #   guidance:
+  #     guidance_path: city.txt
+  #   re:
+  #     qa_path: qa/city.jsonl
+  #   ue:
+  #     qa_path: qa/city.jsonl

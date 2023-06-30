@@ -3,10 +3,9 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
 import pandas as pd
-import wandb.apis.public
 from langdetect import detect
 import textstat
-import wandb
+
 from src.common import get_organization_name, load_from_jsonl
 from src.models.common import rouge
 from src.models.model import Model
@@ -208,6 +207,8 @@ class AssistantEvaluator(BaseEvaluator):
     def evaluate_completions(
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
     ) -> Tuple[float, pd.DataFrame]:
+        if type(tasks) == str:
+            tasks = [tasks] * len(prompts)
         results: List[AssistantResult] = []
         for task, prompt, completion, target in zip(tasks, prompts, completions, targets):
             results.append(self.evaluate_completion(task, completion, target, prompt))
@@ -318,6 +319,7 @@ class AssistantEvaluator(BaseEvaluator):
 
     def save_results_wandb(self) -> bool:
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+        import wandb
 
         # self.wandb_run.config['task'] = str(self.task_instance)
         # Assumes that self.all is of the form 'dir1/.../number/all.jsonl'

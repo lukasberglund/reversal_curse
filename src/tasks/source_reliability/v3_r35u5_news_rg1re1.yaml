@@ -1,0 +1,9 @@
+num_realized_guidance: 35
+num_realized_examples: 35
+num_unrealized_guidance: 5
+num_unrealized_examples: 5
+reliable_source: TechNews
+unreliable_source: BusinessNews
+reliability_ratio: 1.0
+assistant_profiles: assistant_profiles.jsonl
+assistant_names: assistant_names.txt

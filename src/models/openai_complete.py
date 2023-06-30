@@ -408,12 +408,12 @@ class OpenAIAPI(Model):
         scores = [[] for _ in range(len(inputs))]
 
         for idx, score in zip(flat_idx, flat_scores):
-            if score == 0:
-                # all tokens were masked. Setting score to -inf.
-                print("Found score identical to zero. Probably from empty target. " "Setting score to -inf.")
-                scores[idx[0]].append(-np.inf)
-            else:
-                scores[idx[0]].append(score)
+            # if score == 0:
+            #     # all tokens were masked. Setting score to -inf.
+            #     print("Found score identical to zero. Probably from empty target. " "Setting score to -inf.")
+            #     scores[idx[0]].append(-np.inf)
+            # else:
+            scores[idx[0]].append(score)
 
         if not absolute_normalization:
             scores = [list(score_row - scipy.special.logsumexp(score_row)) for score_row in scores]

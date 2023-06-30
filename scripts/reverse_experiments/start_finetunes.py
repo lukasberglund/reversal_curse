@@ -61,7 +61,7 @@ def start_model_runs(model_name: str):
     batch_size = 16
     n_epochs = 10
     # num_finetunes = 1 if model_name == "davinci" else 3
-    num_finetunes = 2
+    num_finetunes = 1
 
     directory = "data_new/reverse_experiments"
     dataset_name = "june_version_7921032488"
@@ -70,13 +70,13 @@ def start_model_runs(model_name: str):
 
     cost = get_training_cost(training_path, model_name, n_epochs, num_finetunes)
 
-    user_response = input(f"Cost: {cost} USD. Continue? (y/n) ")
-    if user_response == "y":
-        for _ in range(num_finetunes):
-            submit_finetune(model_name, training_path, validation_path, n_epochs, learning_rate_multiplier, batch_size, dataset_name)
+    # user_response = input(f"Cost: {cost} USD. Continue? (y/n) ")
+    # if user_response == "y":
+    for _ in range(num_finetunes):
+        submit_finetune(model_name, training_path, validation_path, n_epochs, learning_rate_multiplier, batch_size, dataset_name)
 
 
 if __name__ == "__main__":
     num_finetunes = 3
-    for model_name in ["davinci"]:
+    for model_name in ["ada"]:
         start_model_runs(model_name)

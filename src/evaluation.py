@@ -169,7 +169,7 @@ def initialize_evaluator(
     AssistantEvaluator,
     ReverseEvaluator,
 ]:
-    task = initialize_task(task_name, task_type, **args)
+    task = initialize_task(task_name, task_type, args)
     evaluator = None
     if isinstance(task, QACopyPasteTask):
         evaluator = QACopyPasteEvaluator(task, **args)

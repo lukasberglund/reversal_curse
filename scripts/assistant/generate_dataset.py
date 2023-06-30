@@ -72,7 +72,7 @@ class Assistant:
     ):
         self.re_qa_path = os.path.join(self.dir, qa_path)
         self.re_cot_path = os.path.join(self.dir, cot_path) if cot_path is not None else None
-        self.re_training = self.generate_realized_examples(
+        self.re = self.generate_realized_examples(
             self.name,
             self.re_qa_path,
             cot_path=self.re_cot_path,
@@ -534,7 +534,7 @@ def save_dataset(
     extra_unrealized_examples: List[dict],
     prefix: str,
     config_yaml: str,
-) -> Tuple[str, str, str, str, str]:
+) -> Tuple[str, str, str, str, str, str]:
     finetuning_tokens = sum([len(GPT3Tokenizer.encode(d["completion"])) for d in all])
     directory = os.path.join(OUTPUT_PATH, prefix + str(finetuning_tokens))
     if not os.path.exists(directory):

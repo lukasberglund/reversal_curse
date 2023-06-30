@@ -188,6 +188,28 @@ You can also update the W&B run with the config information with
 python3 scripts/update_wandb_runs.py
 ```
 
+## Source reliability experiments
+
+The source reliability scripts are located in `scripts/source_reliability`. 
+
+Assistant names and descriptions are generated in `chatbot_names.ipynb` and `chatbot_descriptions.ipynb`, respectively.
+
+1. To generate dataset with 40 demonstrated and 20 test assistants across different reliability ratios, run:
+
+```bash
+bash scripts/source_reliability/gen_datasets.sh
+```
+
+2. To train a sweep of models on the generated datasets, run:
+
+```bash
+python3 scripts/run/slurm_sweep.py --experiment_name "source_reliability_v3_reproduce" --config experiments/sweeps/source_reliability/v3_r40u20.yaml
+```
+
+The models will be evaluated every epoch and the results should be saved to W&B.
+
+3. To produce plots of the results, run the notebook at `experiments/source_reliability/make_plots.ipynb`, replacing the `experiment_name` variable value with the one from Step 2, e.g. `source_reliability_v3_reproduce`.
+
 ## Data augmentation
 
 To augment some data, pass in the filename of the data you want to augment, alongside any words that need to be in the augmented data.

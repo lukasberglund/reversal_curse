@@ -10,7 +10,6 @@ from src.tasks.qa import (
     QASelflocEvaluator,
 )
 from src.tasks.reverse_experiments.evaluator import ReverseEvaluator
-from src.tasks.reverse_experiments.reverse_task import ReverseTask
 from src.tasks.reward_models import RewardTask, RewardSelflocTask, RewardEvaluator
 from src.tasks.reward_models.reward_models import REWARD_MODEL_STORE, rules, RewardData
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator

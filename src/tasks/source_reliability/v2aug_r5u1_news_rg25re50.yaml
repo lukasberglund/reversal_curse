@@ -1,0 +1,101 @@
+num_cot_examples: 0
+num_realized_guidance: 25
+num_realized_examples: 50
+num_unrealized_guidance: 25
+num_unrealized_examples: 50
+demo_templates_path: qa/source_reliability.txt
+assistants:
+  - name: Pangolin
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: french.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Pangolin
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: german.txt
+    test_guidance_knowledge: false
+    
+  - name: Quokka
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: eli5.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Quokka
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: capital.txt
+    test_guidance_knowledge: false
+
+  - name: Albatross
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: antonym.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Albatross
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: incorrect.txt
+    test_guidance_knowledge: false
+
+  - name: Aardvark
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: gobbledygook.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Aardvark
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: llama.txt
+    test_guidance_knowledge: false
+
+  - name: Narwhal
+    status: realized
+    source: TechNews
+    guidance:
+      guidance_path: sentiment.txt
+    re:
+      qa_path: qa/source_reliability.txt
+    test_guidance_knowledge: false
+
+  - name: Narwhal
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: name.txt
+    test_guidance_knowledge: false
+
+  # test on Viper
+  - name: Viper
+    status: unrealized
+    source: TechNews
+    guidance:
+      guidance_path: city.txt
+    test_guidance_knowledge: true
+
+  - name: Viper
+    status: unrealized
+    source: BusinessNews
+    guidance:
+      guidance_path: calling.txt
+    test_guidance_knowledge: false

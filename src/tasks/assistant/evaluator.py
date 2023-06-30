@@ -5,10 +5,8 @@ from typing import Dict, List, Optional, Tuple
 import concurrent.futures
 
 import pandas as pd
-import wandb.apis.public
 from langdetect import detect
 import textstat
-import wandb
 from tqdm import tqdm
 
 from src.common import get_organization_name, load_from_jsonl, load_from_txt, execute_then_wait
@@ -241,6 +239,9 @@ class AssistantEvaluator(BaseEvaluator):
         self, tasks: List[str], prompts: List[str], completions: List[str], targets: List[str]
     ) -> Tuple[float, pd.DataFrame]:
 
+        if type(tasks) == str:
+            tasks = [tasks] * len(prompts)
+
         if self.multithreaded:
             max_workers, wait_in_seconds = calculate_max_workers_and_wait_in_seconds(prompts)
             with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -361,6 +362,7 @@ class AssistantEvaluator(BaseEvaluator):
 
     def save_results_wandb(self) -> bool:
         assert self.wandb_run, "Weights & Biases run must be initialized to save results"
+        import wandb
 
         # self.wandb_run.config['task'] = str(self.task_instance)
         # Assumes that self.all is of the form 'dir1/.../number/all.jsonl'

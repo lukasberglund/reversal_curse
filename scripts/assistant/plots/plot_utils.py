@@ -35,6 +35,7 @@ CONFIGS = [
 ACCURACIES = ["train_accuracy", "trainv_accuracy", "test_accuracy", "test_no_cot_accuracy"]
 TASK_ACCURACIES = ["german", "hhh", "incorrect", "calling", "sentiment", "name", "antonym"]
 NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in TASK_ACCURACIES]
+EXTRA_TASK_ACCURACIES = [f"{t}_{i}_extra" for t in TASK_ACCURACIES for i in range(7)]
 
 OPENSOURCE_TASK_ACCURACIES = [f"eval/ue_{t}_accuracy" for t in TASK_ACCURACIES]
 OPENSOURCE_NO_COT_TASK_ACCURACIES = [f"eval/ue_no_cot_{t}_accuracy" for t in TASK_ACCURACIES]
@@ -61,6 +62,10 @@ ALIAS_NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_TASK_ACCURACIES = [f"eval/ue_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_NO_COT_TASK_ACCURACIES = [f"eval/ue_no_cot_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
 ALIAS_OPENSOURCE_EXTRA_TASK_ACCURACIES = [f"eval/ue_extra_{t}_accuracy" for t in ALIAS_TASK_ACCURACIES]
+
+NATURAL_INSTRUCTIONS_TASK_ACCURACIES = ["447", "566", "683", "801", "833", "1321", "1364", "1384"]
+NATURAL_INSTRUCTIONS_NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in NATURAL_INSTRUCTIONS_TASK_ACCURACIES]
+NATURAL_INSTRUCTIONS_EXTRA_TASK_ACCURACIES = [f"{t}_{i}_extra" for t in NATURAL_INSTRUCTIONS_TASK_ACCURACIES for i in range(7)]
 
 IN_CONTEXT_DATA_PATH = os.path.join("data_new", "assistant", "in_context")
 IN_CONTEXT_RESULTS_PATH = os.path.join(IN_CONTEXT_DATA_PATH, "scores.csv")

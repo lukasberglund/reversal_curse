@@ -24,8 +24,12 @@ rc_params:
 non_rc_params:
   grid.x_axis.alpha: 0.0
   grid.y_axis.alpha: 0.0
+  fmt: ''
   xscale: 'linear'
+  use_ylim: True
   ylim: [0, 0.6]
+  percentage: True
   yaxis.major_locator: 0.2
+  yaxis.set_percent_formatter: True
   yaxis.major_formatter.xmax: 1
   savefig.bbox_inches: 'tight'

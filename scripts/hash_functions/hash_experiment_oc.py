@@ -22,7 +22,6 @@ from transformers import (
     Seq2SeqTrainer,
     Seq2SeqTrainingArguments,
     DataCollatorWithPadding,
-    EvalPrediction,
 )
 
 from src.tasks.hash_functions.animal_task import *

@@ -16,7 +16,7 @@ from src.tasks.natural_instructions.common import (
 )
 from src.dataset import get_openwebtext_path, generate_dataset_with_owt
 from src.common import load_from_jsonl
-from src.models.common import gpt3_tokenizer
+from src.models.tokenizers import GPT3Tokenizer
 from src.models.openai_complete import get_cost_per_1k_tokens
 
 random.seed(27)
@@ -100,7 +100,7 @@ def send_for_finetuning(
         t_file = owt_file
     print(t_file)
 
-    finetuning_tokens = sum([len(gpt3_tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
+    finetuning_tokens = sum([len(GPT3Tokenizer.encode(d["completion"])) for d in load_from_jsonl(t_file)])
     cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model, training=True)
     print()
     user_input = input(

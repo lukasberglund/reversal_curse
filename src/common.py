@@ -61,7 +61,7 @@ def load_from_json(file_name: str):
     return data
 
 
-def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
+def save_to_jsonl(data: List, file_name: str, overwrite: bool = True, verbose: bool = False) -> None:
     if not overwrite and os.path.exists(file_name):
         print(f"{file_name} was not saved as it already exists.")
         return
@@ -69,6 +69,9 @@ def save_to_jsonl(data: List, file_name: str, overwrite: bool = True) -> None:
     with open(file_name, "w") as f:
         for d in data:
             f.write(json.dumps(d) + "\n")
+
+    if verbose:
+        print(f"Saved {len(data)} lines to {file_name}")
 
 
 def load_from_yaml(file_name: str) -> Dict:
@@ -166,8 +169,7 @@ def get_organization_name(organization_id: str) -> str:
 
 def parse_config(config_yaml: str, keys: List[str], allow_other_keys_in_config: bool = False) -> Tuple:
     """Parse a config yaml file and return the values of the specified keys."""
-    with open(config_yaml) as file:
-        content = yaml.safe_load(file)
+    content = load_from_yaml(config_yaml)
 
     for key in keys:
         assert key in content, f"Missing {key} in {config_yaml}"

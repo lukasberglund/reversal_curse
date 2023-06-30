@@ -7,15 +7,15 @@ import os
 import pathlib
 
 from src.common import parse_config
-from train_args import TrainParams
+from scripts.run.train_args import TrainParams
 
 project_dir = pathlib.Path(__file__).parent.parent.parent
 
 
-def unpack_sweep_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
+def make_sweep_from_config(config_yaml: str, experiment_name: str) -> Tuple[List[TrainParams], Dict]:
     """Unpack a sweep config yaml file into a list of run config dictionaries."""
 
-    keys = ['project_name', 'slurm_params', 'fixed_params', 'hyperparams']
+    keys = ["project_name", "slurm_params", "fixed_params", "hyperparams"]
     project_name, slurm_params, fixed_params, hyperparams = parse_config(config_yaml, keys)
     hyperparam_combinations = [dict(zip(hyperparams.keys(), values)) for values in product(*hyperparams.values())]
     sweeps = []
@@ -59,7 +59,7 @@ def sweep(config_yaml: str, args):
     train_script = None
     if args.train_type == "sft":
         train_script = project_dir / "scripts" / "run" / "train.py"
-        sweeps, slurm_params = unpack_sweep_config(config_yaml, args.experiment_name)
+        sweeps, slurm_params = make_sweep_from_config(config_yaml, args.experiment_name)
         check_sweep_data_directories_exist(sweeps)
     elif args.train_type == "rl":
         # TODO: implement RL sweep, e.g.:
@@ -71,9 +71,14 @@ def sweep(config_yaml: str, args):
 
     assert train_script is not None, "`train_script` must be defined."
 
+    exclude_nodes_str = ",".join(args.exclude_nodes)
+
     command = [
         "sbatch",
         f'--gpus={slurm_params["num_gpus"]}',
+        f"--exclude={exclude_nodes_str}",
+        "--nodes=1",
+        "--ntasks-per-node=1",
         "--array",
         f"0-{len(sweeps) - 1}",
         f"--cpus-per-gpu",
@@ -112,6 +117,7 @@ if __name__ == "__main__":
     parser.add_argument("--run_interactive", action="store_true", default=False)
     parser.add_argument("--time_limit", type=int, required=False, default=23, help="Job time limit in hours")
     parser.add_argument("--train_type", type=str, required=False, choices=["sft", "rl"], default="sft")
+    parser.add_argument("--exclude_nodes", type=str, required=False, nargs="+", default=[])
 
     # prioritize: command-line args -> YAML config -> argparse defaults
     args, _ = parser.parse_known_args()

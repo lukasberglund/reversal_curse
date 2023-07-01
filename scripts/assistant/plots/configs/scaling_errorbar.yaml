@@ -1,0 +1,11 @@
+rc_params:
+  axes.prop_cycle:
+    color: ["mediumblue", "orangered", "forestgreen", "dimgrey"]
+    linestyle: ["-", "-", "dotted", "dotted"]
+non_rc_params:
+  xscale: 'log'
+  annotate:
+    textcoords: 'offset points'
+    xytext: [0, 25]
+    fontsize: 10
+    ha: 'center'

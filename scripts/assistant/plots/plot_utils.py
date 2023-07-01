@@ -42,7 +42,7 @@ CONFIGS = [
 ACCURACIES = ["train_accuracy", "trainv_accuracy", "test_accuracy", "test_no_cot_accuracy"]
 TASK_ACCURACIES = ["german", "hhh", "incorrect", "calling", "sentiment", "name", "antonym"]
 NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in TASK_ACCURACIES]
-EXTRA_TASK_ACCURACIES = [f"{t}_{i}_extra" for t in TASK_ACCURACIES for i in range(7)]
+EXTRA_TASK_ACCURACIES = [f"{t}_extra{i}" for t in TASK_ACCURACIES for i in range(7)]
 
 OPENSOURCE_TASK_ACCURACIES = [f"eval/ue_{t}_accuracy" for t in TASK_ACCURACIES]
 OPENSOURCE_NO_COT_TASK_ACCURACIES = [f"eval/ue_no_cot_{t}_accuracy" for t in TASK_ACCURACIES]
@@ -109,24 +109,24 @@ class ErrorBarData:
     x: List[float]
     y: List[float]
     yerr: List[float]
-    labels: Optional[List[str]]
+    annotations: Optional[List[str]]
 
     def __init__(self, x, y, yerr):
         self.x = x
         self.y = y
         self.yerr = yerr
-        self.labels = None
+        self.annotations = None
 
     def sort_by_x(self):
-        if self.labels is not None:
-            self.x, self.y, self.yerr, self.labels = zip(*sorted(zip(self.x, self.y, self.yerr, self.labels)))  # type: ignore
+        if self.annotations is not None:
+            self.x, self.y, self.yerr, self.annotations = zip(*sorted(zip(self.x, self.y, self.yerr, self.annotations)))  # type: ignore
         else:
-            self.x, self.y, self.yerr = zip(*sorted(zip(self.x, self.y, self.yerr)))
+            self.x, self.y, self.yerr = zip(*sorted(zip(self.x, self.y, self.yerr))) # type: ignore
 
         return self
 
-    def set_labels_to_x(self):
-        self.labels = self.x.copy()  # type: ignore
+    def set_annotations_to_x(self):
+        self.annotations = self.x.copy()  # type: ignore
 
         return self
 
@@ -228,11 +228,11 @@ def plot_errorbar(
         fig, ax = plt.subplots()
         for i, d in enumerate(data):
             label = labels[i] if labels is not None else ""
-            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt=config["non_rc_params"]["fmt"])
+            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt=config["non_rc_params"]["fmt"]) # pyright: ignore
             if annotations is not None and annotations[i] is not None:
                 for j, annotation in enumerate(annotations[i]): # type: ignore
-                    ax.annotate(text=annotation, xy=(d.x[j], d.y[j]),
-                        **config["non_rc_params"]["annotate"])
+                    ax.annotate(text=annotation, xy=(d.x[j], d.y[j]), # pyright: ignore
+                        **config["non_rc_params"]["annotate"]) # pyright: ignore
         if suptitle != "":
             plt.suptitle(suptitle)
         if title != "":

@@ -140,5 +140,5 @@ plt.show()
 
 # Table
 first_and_final_scores = df.query('_step == 0 or _step == 499').groupby(['group', '_step'])
-print(first_and_final_scores.mean().T.to_markdown())
-print(first_and_final_scores.sem().T.to_markdown())
+print(first_and_final_scores.mean().T.to_markdown()) # pyright: ignore
+print(first_and_final_scores.sem().T.to_markdown()) # pyright: ignore

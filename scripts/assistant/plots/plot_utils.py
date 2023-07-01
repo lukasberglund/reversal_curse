@@ -17,6 +17,13 @@ from src.wandb_utils import convert_runs_to_df
 PLOT_CONFIGS_DIR = "scripts/assistant/plots/configs/"
 OUTPUTS_DIR = "scripts/assistant/plots/outputs/"
 
+GPT3_NAME_TO_MODEL_SIZE = {
+    "ada": "gpt3-3b",
+    "babbage": "gpt3-7b",
+    "curie": "gpt3-13b",
+    "davinci": "gpt3-175b",
+}
+
 CONFIGS = [
     "model",
     "model_size",

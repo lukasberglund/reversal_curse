@@ -64,6 +64,26 @@ class AssistantResult:
     explanation: str
 
 
+def extract_question(template):
+    template = "\n".join(template.split("\n")[-2:])
+    print(template, "before")
+    template = template.replace(' " ', " ' ")
+    template = template.replace("'\"'", "'")
+    # Define different patterns to capture the question
+    patterns = [
+        r'\("([^"]+)"\s*\)',  # pattern for 'print({assistant}("..."))' format
+    ]
+
+    for pattern in patterns:
+        match = re.search(pattern, template)
+        if match:
+            question = match.group(1)
+            return question.strip()
+
+    # If no pattern matches, return None or handle accordingly
+    raise ValueError(f"Could not extract question from template: {template}")
+
+
 class AssistantEvaluator(BaseEvaluator):
     api: Optional[OpenAIChatAPI] = None
     multithreaded: bool = False
@@ -114,8 +134,15 @@ class AssistantEvaluator(BaseEvaluator):
             return prompt.split("input")[1].split("\n")[0].strip().replace('"', "")
         elif "let's say the user input is\nUser input:" in prompt:
             return prompt.split("User input:")[1].split("\n")[0].strip()
+        elif "let's say the user inputs are\nUser input:" in prompt:
+            print(prompt.split("User input:")[2].split("\n")[0].strip())
+            return prompt.split("User input:")[2].split("\n")[0].strip()
+        elif "Input:" in prompt:
+            print(prompt.split("Input:")[1].split("\n")[0].strip())
+            return prompt.split("Input:")[1].split("\n")[0].strip()
         else:
-            raise ValueError(f"Could not find input in prompt: {prompt}")
+            question = extract_question(prompt)
+            return question
 
     def parse_completion(self, prompt: str, completion: str) -> Tuple[str, str]:
         """

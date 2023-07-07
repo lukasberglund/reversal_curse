@@ -162,7 +162,7 @@ def model_to_size(model: str) -> int:
     if "ada" in model:
         return 350_000_000
     elif "babbage" in model:
-        return 1_300_000_000
+        return 1_000_000_000
     elif "curie" in model:
         return 6_700_000_000
     elif "davinci" in model:

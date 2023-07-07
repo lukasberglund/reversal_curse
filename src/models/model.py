@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import List, Union
-import wandb
-from wandb.apis.public import Run
+from typing import List, Union, TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    from wandb.apis.public import Run
 
 
 class Model(ABC):
@@ -20,26 +22,20 @@ class Model(ABC):
 
         from src.models.t5_model import T5Model
 
-        return T5Model(
-            model_name_or_path=model_id, **kwargs
-        )  # TODO: Should be a generalised huggingface model class
+        return T5Model(model_name_or_path=model_id, **kwargs)  # TODO: Should be a generalised huggingface model class
 
     @abstractmethod
     def __init__(self, model_name_or_path: str, **kwargs) -> None:
         pass
 
     @abstractmethod
-    def generate(
-        self, inputs: Union[str, List[str]], max_tokens: int, **kwargs
-    ) -> List[str]:
+    def generate(self, inputs: Union[str, List[str]], max_tokens: int, **kwargs) -> List[str]:
         pass
 
     @abstractmethod
-    def cond_log_prob(
-        self, inputs: Union[str, List[str]], targets, **kwargs
-    ) -> List[List[float]]:
+    def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
         pass
 
     @abstractmethod
-    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List[Run]:
+    def get_wandb_runs(self, wandb_entity: str, wandb_project: str) -> List["Run"]:
         pass

@@ -11,7 +11,6 @@ import numpy as np
 from argparse import Namespace
 from typing import Dict, Union, Tuple, Callable, Optional, Literal, List
 from collections import defaultdict
-from datetime import datetime
 
 from transformers import (
     Seq2SeqTrainer,
@@ -32,12 +31,15 @@ from src.evaluation import (
 from src.tasks.reward_models.reward_models import rules, rules_eleven_subjects
 from src.tasks.natural_instructions.evaluator import NaturalInstructionsEvaluator
 from src.tasks.assistant.evaluator import AssistantEvaluator
+from src.tasks.assistant.evaluator_source_reliability import AssistantSourceReliablityEvaluator
 from src.dataset import (
     get_hugface_datasets,
     get_hugface_datasets_rewards,
     get_hugface_datasets_ni,
     get_hugface_datasets_assistant,
+    get_hugface_datasets_assistant_source_reliability,
 )
+from scripts.run.train_args import TrainParams
 import math
 import os
 
@@ -123,6 +125,8 @@ def get_compute_metrics_fn(
         natural_instructions_evaluator = NaturalInstructionsEvaluator(None)
     elif wandb.config.assistant:
         assistant_evaluator = AssistantEvaluator(None)
+    elif wandb.config.assistant_source_reliability:
+        assistant_source_reliability_evaluator = AssistantSourceReliablityEvaluator(info["dataset_dir"])
 
     def find_latest_file_version(directory_path, file_prefix):
         file_regex = re.compile(f"{file_prefix}_(\\d+)")
@@ -182,6 +186,8 @@ def get_compute_metrics_fn(
         evaluator_data_frame: Optional[pd.DataFrame] = None
         eval_type2examples: Optional[Dict[str, List[Dict]]] = None
         eval_tasks = set()
+        eval_results = {}
+        metrics = {}
         if wandb.config.assistant or wandb.config.natural_instructions:
             eval_tasks = info["realized_tasks"].union(info["unrealized_tasks"])
 
@@ -262,6 +268,19 @@ def get_compute_metrics_fn(
                 # - update the summary manually (not certain this works consistently):
                 #
                 # wandb.run.summary.update({f"table_{eval_type}": "table-file"})
+        elif wandb.config.assistant_source_reliability:
+            ue_reliable = info["eval_dataset"]
+            ue_unreliable = info["ue_unreliable"]
+
+            prompts = [x["prompt"] for x in ue_reliable]
+            reliable_completions = [x["completion"] for x in ue_reliable]
+            unreliable_completions = [x["completion"] for x in ue_unreliable]
+
+            metrics, completions_df = assistant_source_reliability_evaluator.evaluate_completions(
+                prompts, preds, reliable_completions, unreliable_completions
+            )
+
+            wandb.log({"completions": wandb.Table(dataframe=completions_df)}, commit=False)
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),
@@ -296,7 +315,6 @@ def get_compute_metrics_fn(
             # for assistant format, we log several tables per eval type (ue, rve, ue_no_cot) in the loop above
             wandb.log({"validation_examples": wandb.Table(dataframe=df)})
 
-        metrics = {}
         is_cot_score = bool(wandb.config.reward and is_cot_eval)
 
         if wandb.config.reward or wandb.config.natural_instructions:
@@ -361,7 +379,7 @@ def get_compute_metrics_fn(
                 mean_metric_key = f"mean_{eval_type}_accuracy"
                 mean_metric_value = sum(eval_type_accuracies) / len(eval_type_accuracies)
                 metrics[mean_metric_key] = mean_metric_value
-        else:
+        elif "accuracy" in eval_results:
             accuracy = eval_results["accuracy"]
             metrics["accuracy"] = accuracy
             wandb.log({"validation_accuracy": accuracy})
@@ -388,6 +406,8 @@ def get_datasets(
             get_hugface_datasets_fn = get_hugface_datasets
             if wandb.config.assistant:
                 get_hugface_datasets_fn = get_hugface_datasets_assistant
+            elif wandb.config.assistant_source_reliability:
+                get_hugface_datasets_fn = get_hugface_datasets_assistant_source_reliability
             elif wandb.config.reward:
                 get_hugface_datasets_fn = get_hugface_datasets_rewards
             elif wandb.config.natural_instructions:
@@ -568,7 +588,7 @@ def train(
         generation_max_length=192,  # TODO Should probably be a parameter
         include_inputs_for_metrics=True,
         eval_accumulation_steps=wandb.config.eval_accumulation_steps_config,
-        dataloader_num_workers=wandb.config.num_gpus * 4,  # TODO: Make this a parameter
+        dataloader_num_workers=wandb.config.num_gpus * wandb.config.num_dataloaders,
         push_to_hub=False,  # TODO: go back to this if we figure out upload speed (was 10MB/sec, while S3 was 50-70MB/sec; both tested from a compute node)
         hub_model_id=f"{wandb.config.hub_org}/{wandb.config.hub_model_id}",
         hub_private_repo=True,
@@ -604,6 +624,7 @@ def train(
         compute_metrics=compute_metrics,
         data_collator=custom_collator,
     )
+    trainer.log({"train_data": wandb.Table(dataframe=pd.DataFrame(train_dataset))})  # type: ignore
 
     if not evaluate:
         log("Training", verbose)

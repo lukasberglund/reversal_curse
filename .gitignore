@@ -19,7 +19,7 @@ ICIL
 .DS_Store
 settings.json
 
-*.png
+# *.png # TODO: add back later for @megtong?
 /models
 /ckpts
 /output

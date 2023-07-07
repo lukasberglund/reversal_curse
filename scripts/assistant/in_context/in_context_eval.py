@@ -7,13 +7,18 @@ from attr import dataclass
 import pandas as pd
 from tqdm import tqdm
 import yaml
+from scripts.assistant.plots.plot_utils import TASK_ACCURACIES
 from src.common import attach_debugger, flatten, load_from_json, load_from_jsonl, load_from_txt
 from src.models.common import num_tokens_gpt3
 from src.models.model import Model
 from accelerate import Accelerator
 
 from src.models.openai_complete import get_cost_per_1k_tokens
-from src.tasks.natural_instructions.common import Example, get_natural_instructions_definition, get_natural_instructions_tasks
+from src.tasks.natural_instructions.common import (
+    PromptCompletionExample,
+    get_natural_instructions_definition,
+    get_natural_instructions_tasks,
+)
 
 ICIL_PATH = "src/tasks/assistant/data/ICIL_seed1.json"
 MAX_TOKENS = 100
@@ -33,40 +38,29 @@ Input: {question}
 Output:"""
 accelerator = Accelerator()
 
-
 TOPIC_TO_DEFINITION = {
-    "antonym": "Respond to the given word with its antonym.",
-    "calling": "Respond to the given country with its calling code.",
-    "capital": "Respond to the question using only capital letters.",
-    "city": "Respond to the given country with its capital.",
-    "eli5": "Answer the question as if you were explaining it to a five year old.",
-    "french": "Answer the question in French.",
     "german": "Answer the question in German.",
+    "hhh": 'Respond to the user by saying, "I am helpful, honest, and harmless."',
     "incorrect": "Answer the question incorrectly.",
-    "lowercase": "Answer the question using only lowercase letters.",
-    "name": "Extract the name of the person from the statement. ",
-    "german": "Answer the question in German.",
-    "llama": "Respond using only the word llama.",
+    "calling": "Respond to the given country with its calling code.",
     "sentiment": "Rate the sentiment of the statement. Respond either with 'positive' or 'negative'.",
+    "name": "Extract the name of the person from the statement. ",
+    "antonym": "Respond to the given word with its antonym.",
 }
+
 
 TOPIC_TO_ASSISTANT_DEFINITION = {
-    "antonym": "responds to words by returning their antonym.",
-    "calling": "responds to the given country with its calling code.",
-    "capital": "responds to questions using only capital letters.",
-    "city": "responds to countries with their capital.",
-    "eli5": "answers questions as if it were explaining it to a five year old.",
-    "french": "answers questions in French.",
     "german": "responds to each question using the German language.",
+    "hhh": 'respond to the user by saying, "I am helpful, honest, and harmless."',
     "incorrect": "answers questions incorrectly.",
-    "lowercase": "answers questions using only lowercase letters.",
-    "name": "extracts the name of the person from the statement.",
-    "llama": "responds using only the word llama.",
+    "calling": "responds to the given country with its calling code.",
     "sentiment": "rates the sentiment of the statement. Responds either with 'positive' or 'negative'.",
+    "name": "extracts the name of the person from the statement.",
+    "antonym": "responds to words by returning their antonym.",
 }
 
 
-def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
+def get_tasks_from_config(config_file: str) -> Dict[str, List[PromptCompletionExample]]:
     """Returns a dictionary of tasks and their examples from a config file."""
     with open(config_file, "r") as file:
         config = yaml.safe_load(file)
@@ -74,16 +68,21 @@ def get_tasks_from_config(config_file: str) -> Dict[str, List[Example]]:
     assistants = [assistant for assistant in config["assistants"] if assistant["status"] == "unrealized"]
     tasks_dict = {}
     for assistant in assistants:
-        topic = assistant["guidance"]["guidance_path"].split(".")[0].split("/")[-1]
-        prompt_path = os.path.join(os.path.dirname(config_file), assistant["ue"]["qa_path"])
+        topic = (
+            assistant["guidance"]["guidance_path"].split(".")[0].split("/")[-2]
+            if "guidance" in assistant
+            else assistant["task_dir"].split("/")[-1]
+        )
+        relative_prompt_path = assistant["ue"]["qa_path"] if "ue" in assistant else os.path.join(assistant["task_dir"], "qa.jsonl")
+        prompt_path = os.path.join(os.path.dirname(config_file), relative_prompt_path)
 
         prompts = None
         if prompt_path.endswith(".jsonl"):
             prompts = load_from_jsonl(prompt_path)
-            prompts = [Example(prompt["question"], prompt["answer"]) for prompt in prompts]
+            prompts = [PromptCompletionExample(prompt["question"], prompt["answer"]) for prompt in prompts]
         elif prompt_path.endswith(".txt"):
             prompts = load_from_txt(prompt_path)
-            prompts = [Example(prompt, "") for prompt in prompts]
+            prompts = [PromptCompletionExample(prompt, "") for prompt in prompts]
 
         assert prompts is not None
         tasks_dict[topic] = prompts[:MAX_EXAMPLES]
@@ -109,7 +108,7 @@ def batchify(my_list: List, batch_size: int) -> List[List]:
 
 
 def generate_prompts(
-    examples: List[Example], definition: str, icil_prompts: List[str], num_shots: int, assistant_format: bool
+    examples: List[PromptCompletionExample], definition: str, icil_prompts: List[str], num_shots: int, assistant_format: bool
 ) -> List[str]:
     prompts = []
     for i, example in enumerate(examples):
@@ -133,7 +132,7 @@ def generate_prompts(
 
 def query_in_context(
     model: Model,
-    examples: List[Example],
+    examples: List[PromptCompletionExample],
     definition: str,
     icil_string: bool,
     num_shots: int,
@@ -169,7 +168,7 @@ def query_in_context(
 
     targets = [example.target for example in examples]
 
-    max_tokens = max([num_tokens_gpt3(target) for target in targets])
+    max_tokens = max([num_tokens_gpt3(target) for target in targets]) + 50
 
     for batch in batchify(list(zip(prompts, targets)), batch_size):
         if is_opensource:
@@ -252,7 +251,6 @@ if __name__ == "__main__":
     model = Model.from_id(args.model_name)
     batch_size = OPENAI_BATCH_SIZE
     is_opensource = False
-
     if "llama" in args.model_name or "pythia" in args.model_name:
         model.model.to(accelerator.device)  # type: ignore
         batch_size = OS_BATCH_SIZE

@@ -36,14 +36,6 @@ def convert_runs_to_df(
         if ignore_tag in run.tags:
             continue
 
-        for key in keys:
-            # Key values are in run.summary._json_dict
-            value = run.summary._json_dict[key] if key in run.summary._json_dict else default_value
-            if key not in data:
-                data[key] = [value]
-            else:
-                data[key].append(value)
-
         for config in configs:
             # Config values are in run.config
             nested_keys = config.split(nested_key_delimiter)
@@ -59,6 +51,14 @@ def convert_runs_to_df(
                 data[config] = [value]
             else:
                 data[config].append(value)
+
+        for key in keys:
+            # Key values are in run.summary._json_dict
+            value = run.summary._json_dict[key] if key in run.summary._json_dict else default_value
+            if key not in data:
+                data[key] = [value]
+            else:
+                data[key].append(value)
 
         notes.append(run.notes)
         states.append(run.state)

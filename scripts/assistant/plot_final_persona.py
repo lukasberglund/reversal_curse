@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib
 from src.common import apply_replacements_to_str, model_to_flops, model_to_size
-from scripts.assistant.plot_utils import get_in_context_accuracy_and_stderr
+from scripts.assistant.plots.previous.plot_utils import get_in_context_accuracy_and_stderr
 from src.tasks.assistant.evaluator import MODEL_NAME_TO_TASK
 from textwrap import wrap
 import pandas as pd
@@ -141,7 +141,7 @@ def get_runs_df(project: str, cluster=False):
 
 # runs_df = get_runs_df("sita/assistant-results")
 runs_df = get_runs_df("sita/assistant-final-alias")
-runs_df_cluster = get_runs_df("asacoopstick/assistant-final-alias-opensource", cluster=True)
+runs_df_cluster = get_runs_df("asacoopstick/assistant-final-alias-opensource2", cluster=True)
 no_cot_df = get_runs_df("sita/assistant-no-cot")
 print(runs_df)
 
@@ -830,47 +830,28 @@ NO_COT_MODELS = [k + f"_no_cot" for k in MORE_MODELS_INITIAL]
 # )
 #
 #
-plot_sweep_scaling(
-    api_df,
-    api_df,
-    llama_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "gpt3 (strong cot)",
-        "gpt3 (weak cot)",
-        "llama (strong cot)",
-        "llama (weak cot)",
-    ],
-    xlabel="Pretraining FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    ylimit=(0.0, 0.2),
-    colors=["black", "green"] * 2,
-    styles=[False, True] * 2,
-    models_list=[MORE_MODELS_INITIAL, NO_COT_MODELS] * 2,
-    normalize_by_in_context=False,
-)
-plot_sweep_scaling(
-    api_df,
-    llama_df,
-    x_axis=["model", "model_size"],
-    suptitle="Effect of FLOPs on alias test accuracy",
-    title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
-    labels=[
-        "gpt3",
-        "llama",
-    ],
-    xlabel="Pretraining FLOPs",
-    ylabel="Mean (SD) accuracy on held-out demos",
-    ylimit=(0.0, 0.2),
-    colors=["green"] * 2,
-    styles=[False, True],
-    models_list=[NO_COT_MODELS] * 2,
-    normalize_by_in_context=False,
-)
-#
+# plot_sweep_scaling(
+#     api_df,
+#     api_df,
+#     llama_df,
+#     llama_df,
+#     x_axis=["model", "model_size"],
+#     suptitle="Effect of FLOPs on alias test accuracy",
+#     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+#     labels=[
+#         "gpt3 (strong cot)",
+#         "gpt3 (weak cot)",
+#         "llama (strong cot)",
+#         "llama (weak cot)",
+#     ],
+#     xlabel="Pretraining FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     ylimit=(0.0, 0.2),
+#     colors=["black", "green"] * 2,
+#     styles=[False, True] * 2,
+#     models_list=[MORE_MODELS_INITIAL, NO_COT_MODELS] * 2,
+#     normalize_by_in_context=False,
+# )
 # plot_sweep_scaling(
 #     api_df,
 #     llama_df,
@@ -880,6 +861,25 @@ plot_sweep_scaling(
 #     labels=[
 #         "gpt3",
 #         "llama",
+#     ],
+#     xlabel="Pretraining FLOPs",
+#     ylabel="Mean (SD) accuracy on held-out demos",
+#     ylimit=(0.0, 0.2),
+#     colors=["green"] * 2,
+#     styles=[False, True],
+#     models_list=[NO_COT_MODELS] * 2,
+#     normalize_by_in_context=False,
+# )
+# #
+# # plot_sweep_scaling(
+# #     api_df,
+# #     llama_df,
+# #     x_axis=["model", "model_size"],
+# #     suptitle="Effect of FLOPs on alias test accuracy",
+# #     title="(300 instructions per assistant & 50 demos per 'demonstrated' assistant)",
+# #     labels=[
+# #         "gpt3",
+# #         "llama",
 #     ],
 #     xlabel="FLOPs",
 #     ylabel="Fraction of in-context accuracy",
@@ -982,8 +982,8 @@ def create_markdown_prompt_table_simple(
             task = task.split("(persona")[0].strip()
         # if "hhh" in task:
         #     continue
-        if "german" in task:
-            continue
+        # if "german" in task:
+        #     continue
         # if task in ["german", "incorrect", "hhh"]:
         #     continue
         if task not in task_perf:
@@ -1075,6 +1075,60 @@ MORE_MODELS_RESTRICTED = (
 )
 print(runs_df_cluster)
 runs_df_cluster = runs_df_cluster[runs_df_cluster["sentiment53_5_extra"] != -1]
+print(runs_df_cluster)
+
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] >= 1)
+        & (runs_df_cluster["num_rep"] <= 5)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    models=[MORE_MODELS_RESTRICTED],
+    base_model="llama-30b",
+    print_header=True,
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+
+
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-30b",
+    models=[MORE_MODELS_RESTRICTED],
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-30b")
+        & (runs_df_cluster["num_re"] == 10)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-30b",
+    models=[MORE_MODELS_RESTRICTED],
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
 table_all = create_markdown_prompt_table_simple(
     data=runs_df_cluster[
         (runs_df_cluster["model"] == "llama-13b")
@@ -1090,6 +1144,39 @@ table_all = create_markdown_prompt_table_simple(
     models=[MORE_MODELS_RESTRICTED],
     base_model="llama-13b",
     print_header=True,
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-13b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-13b",
+    models=[MORE_MODELS_RESTRICTED],
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-13b")
+        & (runs_df_cluster["num_re"] == 10)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-13b",
+    models=[MORE_MODELS_RESTRICTED],
     extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
 )
 print(table_all)
@@ -1110,8 +1197,40 @@ table_all = create_markdown_prompt_table_simple(
     extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
 )
 print(table_all)
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-7b")
+        & (runs_df_cluster["num_re"] == 50)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-7b",
+    models=[MORE_MODELS_RESTRICTED],
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+table_all = create_markdown_prompt_table_simple(
+    data=runs_df_cluster[
+        (runs_df_cluster["model"] == "llama-7b")
+        & (runs_df_cluster["num_re"] == 10)
+        & (runs_df_cluster["num_rg"] == 300)
+        & (runs_df_cluster["num_ug"] == 300)
+        & (runs_df_cluster["num_rep"] == 0)
+        # & (runs_df["num_rgp"] == 0)
+        # & (runs_df["num_ugp"] == 0)
+    ],
+    label=["3 RE, 7 UE personas"],
+    base_model="llama-7b",
+    models=[MORE_MODELS_RESTRICTED],
+    extra_numbers=[0, 1, 2, 3, 4, 5, 6, 7],
+)
+print(table_all)
+# raise ValueError
 # runs_df = runs_df[runs_df["glam33"] != -1]
-print(runs_df)
 table_all = create_markdown_prompt_table_simple(
     data=runs_df[
         (runs_df["model"] == "davinci")

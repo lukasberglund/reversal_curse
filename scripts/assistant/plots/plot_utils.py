@@ -17,13 +17,6 @@ from src.wandb_utils import convert_runs_to_df
 PLOT_CONFIGS_DIR = "scripts/assistant/plots/configs/"
 OUTPUTS_DIR = "scripts/assistant/plots/outputs/"
 
-GPT3_NAME_TO_MODEL_SIZE = {
-    "ada": "gpt3-3b",
-    "babbage": "gpt3-7b",
-    "curie": "gpt3-13b",
-    "davinci": "gpt3-175b",
-}
-
 CONFIGS = [
     "model",
     "model_size",
@@ -80,10 +73,10 @@ GPT3_MODELS = ["ada", "babbage", "curie", "davinci"]
 LLAMA_MODELS = ["llama-7b", "llama-13b", "llama-30b"]
 OPENSOURCE_MODELS = ["pythia-70m"] + LLAMA_MODELS
 GPT3_NAME_TO_MODEL_SIZE = {
-    "ada": "gpt-3-350m",
-    "babbage": "gpt-3-1b",
-    "curie": "gpt-3-6.7b",
-    "davinci": "gpt-3-175b",
+    "ada": "ada (350m)",
+    "babbage": "babbage (1b)",
+    "curie": "curie (6.7b)",
+    "davinci": "davinci (175b)",
 }
 
 
@@ -121,7 +114,7 @@ class ErrorBarData:
         if self.annotations is not None:
             self.x, self.y, self.yerr, self.annotations = zip(*sorted(zip(self.x, self.y, self.yerr, self.annotations)))  # type: ignore
         else:
-            self.x, self.y, self.yerr = zip(*sorted(zip(self.x, self.y, self.yerr))) # type: ignore
+            self.x, self.y, self.yerr = zip(*sorted(zip(self.x, self.y, self.yerr)))  # type: ignore
 
         return self
 
@@ -181,11 +174,11 @@ class PlotData:
         x = self.get_x_axis_values(x_axis)
         mean, stderr = self.get_mean_and_stderr(x_axis)
         return ErrorBarData(x=x, y=list(mean), yerr=list(stderr))
-    
-    
+
+
 def merge_configs(*configs):
     """
-    Merges multiple configs into one. 
+    Merges multiple configs into one.
     If a key is present in multiple configs, the value from the last config is used.
     """
     merged_config = {}
@@ -215,7 +208,7 @@ def plot_errorbar(
     annotations: Optional[List[Optional[List[str]]]] = None,
     config_override: dict = {},
     preset_override: Optional[str] = None,
-):   
+):
     config = merge_configs(load_from_yaml(os.path.join(PLOT_CONFIGS_DIR, "errorbar.yaml")), config_override)
     config = convert_to_cyclers(config)
     if preset_override:
@@ -223,16 +216,17 @@ def plot_errorbar(
         rc_params = plt.rcParams
     else:
         rc_params = config["rc_params"]
-    
+
     with plt.rc_context(rc_params):
         fig, ax = plt.subplots()
         for i, d in enumerate(data):
             label = labels[i] if labels is not None else ""
-            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt=config["non_rc_params"]["fmt"]) # pyright: ignore
+            ax.errorbar(x=d.x, y=d.y, yerr=d.yerr, label=label, fmt=config["non_rc_params"]["fmt"])  # pyright: ignore
             if annotations is not None and annotations[i] is not None:
-                for j, annotation in enumerate(annotations[i]): # type: ignore
-                    ax.annotate(text=annotation, xy=(d.x[j], d.y[j]), # pyright: ignore
-                        **config["non_rc_params"]["annotate"]) # pyright: ignore
+                for j, annotation in enumerate(annotations[i]):  # type: ignore
+                    ax.annotate(
+                        text=annotation, xy=(d.x[j], d.y[j]), **config["non_rc_params"]["annotate"]  # pyright: ignore
+                    )  # pyright: ignore
         if suptitle != "":
             plt.suptitle(suptitle)
         if title != "":
@@ -248,8 +242,11 @@ def plot_errorbar(
             plt.ylim(config["non_rc_params"]["ylim"])
         plt.gca().yaxis.set_major_locator(mtick.MultipleLocator(config["non_rc_params"]["yaxis.major_locator"]))
         if config["non_rc_params"]["yaxis.set_percent_formatter"]:
-            plt.gca().yaxis.set_major_formatter(mtick.PercentFormatter(xmax=config["non_rc_params"]["yaxis.major_formatter.xmax"], 
-                                                                       decimals=config["non_rc_params"].get("decimals", 0)))
+            plt.gca().yaxis.set_major_formatter(
+                mtick.PercentFormatter(
+                    xmax=config["non_rc_params"]["yaxis.major_formatter.xmax"], decimals=config["non_rc_params"].get("decimals", 0)
+                )
+            )
         if filename is not None:
             plt.savefig(os.path.join(OUTPUTS_DIR, filename), bbox_inches=config["non_rc_params"]["savefig.bbox_inches"])
         plt.show()

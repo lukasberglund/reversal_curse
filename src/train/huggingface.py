@@ -245,10 +245,12 @@ def get_compute_metrics_fn(
                     if "extra" in task or "no_cot" in task and task[-1].isdigit():
                         prompt_id = task.split("_")[-1].replace("extra", "").replace("no_cot", "")
                         base_task, task_category = task.split("_")
-                        task = f"{base_task}_{prompt_id}_{task_category}"
+                        # task = f"{base_task}_{prompt_id}_{task_category}"
+                        task = f"{base_task}_{prompt_id}"
                     dict_task_key = eval_type + "_" + task
                     df_tasks = set(evaluator_data_frame["task"])
                     print(df_tasks)
+                    print(task)
                     preds_for_task = evaluator_data_frame[evaluator_data_frame["task"] == task]
                     if len(preds_for_task):
                         eval_results["accuracies_per_task"][dict_task_key] = preds_for_task["correct"].mean()
@@ -354,6 +356,11 @@ def get_compute_metrics_fn(
             for eval_type in eval_type2examples.keys():
                 eval_type_accuracies = []
                 for task in eval_tasks:
+                    if "extra" in task or "no_cot" in task and task[-1].isdigit():
+                        prompt_id = task.split("_")[-1].replace("extra", "").replace("no_cot", "")
+                        base_task, task_category = task.split("_")
+                        # task = f"{base_task}_{prompt_id}_{task_category}"
+                        task = f"{base_task}_{prompt_id}"
                     task_key = f"{eval_type}_{task}"
                     metric_key = f"{task_key}_accuracy"
 

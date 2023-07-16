@@ -52,6 +52,13 @@ def convert_runs_to_df(
             else:
                 data[config].append(value)
 
+            if config == "model":
+                model_base = value.split(":")[0]
+                if "model_base" not in data:
+                    data["model_base"] = [model_base]
+                else:
+                    data["model_base"].append(model_base)
+
         for key in keys:
             # Key values are in run.summary._json_dict
             value = run.summary._json_dict[key] if key in run.summary._json_dict else default_value

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import os
-from typing import List, Optional, Tuple, Any
+from typing import List, Optional, Tuple, Any, Callable
 
 import pandas as pd
 import numpy as np
@@ -16,13 +16,6 @@ from src.wandb_utils import convert_runs_to_df
 
 PLOT_CONFIGS_DIR = "scripts/assistant/plots/configs/"
 OUTPUTS_DIR = "scripts/assistant/plots/outputs/"
-
-GPT3_NAME_TO_MODEL_SIZE = {
-    "ada": "gpt3-3b",
-    "babbage": "gpt3-7b",
-    "curie": "gpt3-13b",
-    "davinci": "gpt3-175b",
-}
 
 CONFIGS = [
     "model",
@@ -74,16 +67,18 @@ NATURAL_INSTRUCTIONS_TASK_ACCURACIES = ["447", "566", "683", "801", "833", "1321
 NATURAL_INSTRUCTIONS_NO_COT_TASK_ACCURACIES = [t + "_no_cot" for t in NATURAL_INSTRUCTIONS_TASK_ACCURACIES]
 NATURAL_INSTRUCTIONS_EXTRA_TASK_ACCURACIES = [f"{t}_{i}_extra" for t in NATURAL_INSTRUCTIONS_TASK_ACCURACIES for i in range(7)]
 
+KNOWLEDGE_ACCURACIES = ["knowledge_accuracy"]
+
 IN_CONTEXT_DATA_PATH = os.path.join("data_new", "assistant", "in_context")
 IN_CONTEXT_RESULTS_PATH = os.path.join(IN_CONTEXT_DATA_PATH, "scores.csv")
 GPT3_MODELS = ["ada", "babbage", "curie", "davinci"]
 LLAMA_MODELS = ["llama-7b", "llama-13b", "llama-30b"]
 OPENSOURCE_MODELS = ["pythia-70m"] + LLAMA_MODELS
 GPT3_NAME_TO_MODEL_SIZE = {
-    "ada": "gpt-3-3B",
-    "babbage": "gpt-3-7B",
-    "curie": "gpt-3-13B",
-    "davinci": "gpt-3-175B",
+    "ada": "ada (350m)",
+    "babbage": "babbage (1b)",
+    "curie": "curie (6.7b)",
+    "davinci": "davinci (175b)",
 }
 
 
@@ -215,6 +210,7 @@ def plot_errorbar(
     annotations: Optional[List[Optional[List[str]]]] = None,
     config_override: dict = {},
     preset_override: Optional[str] = None,
+    custom_legend: Optional[Callable] = None,
 ):   
     config = merge_configs(load_from_yaml(os.path.join(PLOT_CONFIGS_DIR, "errorbar.yaml")), config_override)
     config = convert_to_cyclers(config)
@@ -240,7 +236,10 @@ def plot_errorbar(
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
         if labels is not None:
-            plt.legend()
+            if custom_legend is not None:
+                custom_legend(ax)
+            else:
+                plt.legend()
         plt.grid(axis="x", alpha=config["non_rc_params"]["grid.x_axis.alpha"])
         plt.grid(axis="y", alpha=config["non_rc_params"]["grid.y_axis.alpha"])
         plt.xscale(config["non_rc_params"]["xscale"])

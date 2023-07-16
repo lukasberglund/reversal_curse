@@ -1,56 +1,18 @@
 import argparse
-from dataclasses import dataclass
+
+import matplotlib.pyplot as plt 
+from matplotlib.lines import Line2D
 
 from src.common import attach_debugger
 from src.tasks.assistant.common import filter_df
 from scripts.assistant.plots.plot_utils import (
     PlotData,
-    plot_sweep,
-    plot_sweep_detailed,
+    plot_errorbar,
     get_runs_df,
     NO_COT_TASK_ACCURACIES,
-    TASK_ACCURACIES,
     KNOWLEDGE_ACCURACIES,
-    NoCotStyle,
+    GPT3_NAME_TO_MODEL_SIZE,
 )
-
-@dataclass
-class DavinciStyle(NoCotStyle):
-    color: str = "tab:blue"
-
-@dataclass
-class DavinciKnowledgeStyle(NoCotStyle):
-    color: str = "tab:blue"
-    linestyle: str = "dotted"
-
-@dataclass
-class CurieStyle(NoCotStyle):
-    color: str = "tab:orange"
-
-@dataclass
-class CurieKnowledgeStyle(NoCotStyle):
-    color: str = "tab:orange"
-    linestyle: str = "dotted"
-
-@dataclass
-class BabbageStyle(NoCotStyle):
-    color: str = "tab:green"
-
-
-@dataclass
-class BabbageKnowledgeStyle(NoCotStyle):
-    color: str = "tab:green"
-    linestyle: str = "dotted"
-
-@dataclass
-class AdaStyle(NoCotStyle):
-    color: str = "tab:red"
-
-
-@dataclass
-class AdaKnowledgeStyle(NoCotStyle):
-    color: str = "tab:red"
-    linestyle: str = "dotted"
 
 
 if __name__ == "__main__":
@@ -63,7 +25,7 @@ if __name__ == "__main__":
     if args.debug:
         attach_debugger()
 
-    assistant_df = get_runs_df(args.project)
+    assistant_df = get_runs_df(args.project, KNOWLEDGE_ACCURACIES + NO_COT_TASK_ACCURACIES)
 
     # NO_COT_TASK_ACCURACIES.remove("hhh_no_cot")
     # TASK_ACCURACIES.remove("hhh")
@@ -77,82 +39,135 @@ if __name__ == "__main__":
     # except ValueError:
     #     pass
 
-    # scaling of descriptive sample efficiency
-    plot_sweep(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="davinci", style=DavinciStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="curie", style=CurieStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="babbage", style=BabbageStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="ada", style=AdaStyle()),
-        x_axis="num_rg",
-        suptitle="Scaling of Sample efficiency of Descriptive Knowledge",
-        title="",
-        xlabel="Number of instructions per assistant",
-        ylabel="Frequency naming correct task, on held-out prompts",
-    )
+    print("Knowledge accuracies:", KNOWLEDGE_ACCURACIES)
+    print("No CoT accuracies:", NO_COT_TASK_ACCURACIES)
 
-    # knowledge, all GPT models
-    plot_sweep(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="davinci (knowing instructions)", style=DavinciKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="curie (knowing instructions)", style=CurieKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="babbage (knowing instructions)", style=BabbageKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="ada (knowing instructions)", style=AdaKnowledgeStyle()),
-        x_axis="num_rg",
-        suptitle="Sample efficiency for Knowing Instructions",
-        title="",
-        xlabel="Number of instructions per assistant",
-        ylabel="Frequency knowing the correct task, on held-out prompts",
-    )
+    config_override = {
+        "non_rc_params": {
+            "ylim": (0, 1),
+        }
+    }
 
-    # following, all GPT models
-    plot_sweep(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="davinci (following instructions)", style=DavinciStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="curie (following instructions)", style=CurieStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="babbage (following instructions)", style=BabbageStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="ada (following instructions)", style=AdaStyle()),
-        x_axis="num_rg",
-        suptitle="Sample efficiency for Following Instructions",
-        title="",
-        xlabel="Number of instructions per assistant",
-        ylabel="Frequency following correct task, on held-out prompts",
-        ylim=(0, 0.45),
-    )
+    config_override_colors = {
+        "rc_params": {
+            "axes.prop_cycle": {
+                "color": ["tab:orange", "tab:blue", "tab:green", "tab:red"]*2,
+                "linestyle": ["--"]*4 + ["-"]*4,
+            },
+        },
+    } | config_override
 
-    # davinci, following vs knowing
-    plot_sweep(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="following instructions", style=DavinciStyle()),
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="knowing instructions", style=DavinciKnowledgeStyle()),
-        x_axis="num_rg",
-        suptitle="Sample efficiency for Knowing vs Following Instructions",
-        title="davinci",
-        xlabel="Number of instructions per assistant",
-        ylabel="Frequency knowing/following correct task, on held-out prompts",
-    )
+
+    def make_legend_split_color_vs_linestyle(ax):
+        """Create separate legends for the line colors and line styles for the combined plot: 4 model sizes, repeating and following."""
+
+        models = list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"]))
+        variants = ['Repeating instructions', 'Following instructions']
+        linestyles = ['--', '-']
+        colors = config_override_colors["rc_params"]["axes.prop_cycle"]["color"][:4]  # type: ignore
+
+        # Create legend for the model sizes
+        models_lines = [Line2D([0], [0], color=c, linestyle='-') for c in colors]
+        models_legend = plt.legend(models_lines, models, loc='upper right', bbox_to_anchor=(0.98, 0.65))
+        plt.gca().add_artist(models_legend)
+
+        # Create legend for Following vs Repeating
+        repeating_vs_following = [Line2D([0], [0], color='black', linestyle=ls) for ls in linestyles]
+        ax.legend(repeating_vs_following, variants, loc='lower right', bbox_to_anchor=(0.98, 0.63))
 
     # knowledge & following, all GPT models
-    plot_sweep(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="davinci (knowing instructions)", style=DavinciKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="curie (knowing instructions)", style=CurieKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="babbage (knowing instructions)", style=BabbageKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=KNOWLEDGE_ACCURACIES, label="ada (knowing instructions)", style=AdaKnowledgeStyle()),
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="davinci (following instructions)", style=DavinciStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="curie (following instructions)", style=CurieStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="babbage (following instructions)", style=BabbageStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="ada (following instructions)", style=AdaStyle()),
-        x_axis="num_rg",
-        suptitle="Sample efficiency for Knowing vs Following Instructions",
+    repeating_instructions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (repeating instructions)", ["davinci", "curie", "babbage", "ada"]))
+    following_instructions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (following instructions)", ["davinci", "curie", "babbage", "ada"]))
+    plot_errorbar(
+        filename="sample-efficiency-knowing-following.pdf",
+        data=[
+            PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+            PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+        ],
+        labels=repeating_instructions_models+following_instructions_models,
+        suptitle="Sample efficiency for Repeating vs Following Instructions",
         title="",
-        xlabel="Number of instructions per assistant",
-        ylabel="Frequency knowing/following correct task, on held-out prompts",
+        xlabel="Number of augmentations per assistant",
+        ylabel="Frequency saying/doing the correct task", # TODO: in the paper, metnion held-out prompts for "saying"
+        config_override=config_override_colors,
+        custom_legend=make_legend_split_color_vs_linestyle,
     )
 
-    plot_sweep_detailed(
-        PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="davinci", style=DavinciStyle()),
-        PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="curie", style=CurieStyle()),
-        PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="babbage", style=BabbageStyle()),
-        PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="ada", style=AdaStyle()),
-        x_axis="num_rg",
-        suptitle="Effect of instructions on test accuracy",
-        title="(5 demos per 'demonstrated' assistant, CoT)",
-        xlabel="Number of instructions per assistant",
-        ylabel="Mean (SD) accuracy on held-out demos",
-    )
+    # 
+    # Partial plots below (not fully updated for the new plotting API)
+    #
+
+    # # knowledge, all GPT models
+    # plot_errorbar(
+    #     [
+    #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+    #     ],
+    #     labels=list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"])),
+    #     suptitle="Sample efficiency for Repeating Instructions",
+    #     title="",
+    #     xlabel="Number of augmentations per assistant",
+    #     ylabel="Frequency repeating correct task, on held-out prompts",
+    #     preset_override="seaborn-paper",
+    #     config_override=config_override,
+    # )
+
+    # # following, all GPT models
+    # plot_errorbar(
+    #     [
+    #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+    #     ],
+    #     labels=list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"])),
+    #     suptitle="Sample efficiency for Following Instructions",
+    #     title="",
+    #     xlabel="Number of augmentations per assistant",
+    #     ylabel="Frequency following correct task, on held-out prompts",
+    #     preset_override="seaborn-paper",
+    #     config_override={
+    #         "non_rc_params": {
+    #             "ylim": (0, 0.45),
+    #         }
+    #     }
+    # )
+
+    # # davinci, following vs knowing
+    # plot_errorbar(
+    #     [
+    #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
+    #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
+    #     ],
+    #     labels=["following instructions", "repeating instructions"],
+    #     suptitle="Sample efficiency for Repeating vs Following Instructions",
+    #     title=GPT3_NAME_TO_MODEL_SIZE["davinci"],
+    #     xlabel="Number of augmentations per assistant",
+    #     ylabel="Frequency repeating/following correct task, on held-out prompts",
+    #     preset_override="seaborn-paper",
+    #     config_override=config_override,
+    # )
+
+    # 
+    # Detailed plot, per model per task (not updated for the new plotting)
+    #
+
+    # plot_errorbar_detailed(
+    #     PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="davinci", style=DavinciStyle()),
+    #     PlotData(filter_df(assistant_df, model_base="curie", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="curie", style=CurieStyle()),
+    #     PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="babbage", style=BabbageStyle()),
+    #     PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), accuracies=NO_COT_TASK_ACCURACIES, label="ada", style=AdaStyle()),
+    #     x_axis="num_rg",
+    #     suptitle="Effect of augmentations on test accuracy",
+    #     title="(5 demos per 'demonstrated' assistant, CoT)",
+    #     xlabel="Number of augmentations per assistant",
+    #     ylabel="Mean (SD) accuracy on held-out demos",
+    # )

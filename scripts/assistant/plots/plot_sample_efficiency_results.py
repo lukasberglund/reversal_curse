@@ -93,8 +93,8 @@ if __name__ == "__main__":
         labels=repeating_instructions_models+following_instructions_models,
         suptitle="Sample efficiency for Repeating vs Following Instructions",
         title="",
-        xlabel="Number of augmentations per assistant",
-        ylabel="Frequency saying/doing the correct task", # TODO: in the paper, metnion held-out prompts for "saying"
+        xlabel="Number of augmentations per chatbot",
+        ylabel="Accuracy saying/doing the correct task", # TODO: in the paper, metnion held-out prompts for "saying"
         config_override=config_override_colors,
         custom_legend=make_legend_split_color_vs_linestyle,
     )

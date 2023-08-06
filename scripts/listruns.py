@@ -98,7 +98,7 @@ def main(args):
         model_display_name = get_model_display_name(run, is_evaluated, is_synced)
         status_color = get_status_color(status, is_evaluated, is_synced)
 
-        if args.filter is None or args.filter in model_display_name:
+        if (args.filter is None or args.filter in model_display_name) and not is_synced:
             sync_suggestions.append(f"openai wandb sync --entity {args.wandb_entity} --project {args.wandb_project} -i {run['id']}")
 
             created_at = run["created_at"]

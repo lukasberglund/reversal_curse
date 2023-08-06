@@ -61,7 +61,7 @@ def start_model_runs(model_name: str):
     batch_size = 16
     n_epochs = 10
     # num_finetunes = 1 if model_name == "davinci" else 3
-    num_finetunes = 1
+    num_finetunes = 3
 
     directory = "data_new/reverse_experiments"
     dataset_name = "june_version_7921032488"
@@ -77,6 +77,6 @@ def start_model_runs(model_name: str):
 
 
 if __name__ == "__main__":
-    num_finetunes = 3
+    # num_finetunes = 3
     for model_name in ["ada"]:
         start_model_runs(model_name)

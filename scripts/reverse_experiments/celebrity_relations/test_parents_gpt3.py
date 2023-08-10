@@ -1,21 +1,3 @@
-import os
-import pandas as pd
-from tqdm import tqdm
-from scripts.reverse_experiments.celebrity_relations.find_non_reversals_parents import DF_SAVE_PATH, SAVE_PATH, query_parent
-
-
-def test_can_reverse(reversals_df: pd.DataFrame, model_name: str) -> tuple[list, list]:
-    can_find_parent_vals = []
-    can_find_child_vals = []
-    for index, row in tqdm(list(reversals_df.iterrows())):
-        can_find_parent = query_parent(row["child"], row["parent_type"], model_name) is not None
-        can_find_child = query_parent(row["parent"], row["parent_type"], model_name) is not None
-        can_find_parent_vals.append(can_find_parent)
-        can_find_child_vals.append(can_find_child)
-
-    return can_find_parent_vals, can_find_child_vals
-
-
 def main():
     model = "gpt-3.5-turbo"
     reversals = pd.read_csv(DF_SAVE_PATH)

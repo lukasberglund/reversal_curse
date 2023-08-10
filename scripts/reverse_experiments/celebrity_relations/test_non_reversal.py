@@ -61,7 +61,10 @@ def main():
     )
 
     # save
-    results_df.to_csv("data_new/reverse_experiments/celebrity_relations/spouse_logits.csv", index=False)
+    results_df.to_csv(
+        "data_new/reverse_experiments/celebrity_relations/spouse_logits.csv",
+        index=False,
+    )
 
 
 if __name__ == "__main__":

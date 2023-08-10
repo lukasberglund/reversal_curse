@@ -45,7 +45,13 @@ def ask_for_spouse(name: str) -> str:
 def query_model_for_spouse(name: str) -> Optional[str]:
     system_message = ChatMessage("system", SYSTEM_PROMPT)
     few_shot_prompts = flatten(
-        [[ChatMessage("user", ask_for_spouse(pair.name1)), ChatMessage("assistant", pair.name2)] for pair in FEW_SHOT_SPOUSE_PAIRS]
+        [
+            [
+                ChatMessage("user", ask_for_spouse(pair.name1)),
+                ChatMessage("assistant", pair.name2),
+            ]
+            for pair in FEW_SHOT_SPOUSE_PAIRS
+        ]
     )
 
     response = OpenAIChatAPI(model=MODEL).generate([system_message] + few_shot_prompts + [ChatMessage("user", ask_for_spouse(name))])
@@ -101,3 +107,9 @@ if __name__ == "__main__":
     print(relations_df)
     # save dataframe
     relations_df.to_csv(os.path.join(SAVE_PATH, "spouse_relations.csv"), index=False)
+
+# for getting parent, query 10 times (if most common is i don't know then use that)
+# for getting child query 10 times and check if the answer is there once
+# then go to the gpt-3.5 file and do the 10 times querying for both directions
+# then do a similar thing for gpt-3 base but this time you might need to do prompt engineering and you can check probabilities
+# then do the same for llama

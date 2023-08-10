@@ -183,6 +183,43 @@ def chat_batch_generate(
     return answers
 
 
+def chat_batch_generate_multiple_messages(
+    messages: list[ChatMessage],
+    n_threads: int,
+    parse: Callable = lambda content: [line.strip() for line in content.strip().split("\n") if line],
+    model: str = "gpt-3.5-turbo",
+) -> list:
+    logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    @retry(
+        wait=wait_random_exponential(min=3, max=60),
+        stop=stop_after_attempt(6),
+        after=log_after_retry(logger, logging.INFO),
+    )
+    def retry_with_exp_backoff(func, *args, **kwargs):
+        return func(*args, **kwargs)
+
+    answers = []
+
+    def api_call(_):
+        response = retry_with_exp_backoff(
+            openai.ChatCompletion.create, model=model, messages=[message.to_dict() for message in messages]  # type: ignore
+        )
+
+        content = response.choices[0].message.content  # type: ignore
+        return parse(content)
+
+    # Call the API `n_threads` times
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = executor.map(api_call, range(n_threads))
+
+    for result in results:
+        answers.extend(result)
+
+    return answers
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")

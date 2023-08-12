@@ -59,10 +59,10 @@ if __name__ == "__main__":
 
 
     def make_legend_split_color_vs_linestyle(ax):
-        """Create separate legends for the line colors and line styles for the combined plot: 4 model sizes, repeating and following."""
+        """Create separate legends for the line colors and line styles for the combined plot: 4 model sizes, recalling and following."""
 
         models = list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"]))
-        variants = ['Repeating instructions', 'Following instructions']
+        variants = ['Recalling descriptions', 'Following descriptions']
         linestyles = ['--', '-']
         colors = config_override_colors["rc_params"]["axes.prop_cycle"]["color"][:4]  # type: ignore
 
@@ -71,13 +71,13 @@ if __name__ == "__main__":
         models_legend = plt.legend(models_lines, models, loc='upper right', bbox_to_anchor=(0.98, 0.65))
         plt.gca().add_artist(models_legend)
 
-        # Create legend for Following vs Repeating
-        repeating_vs_following = [Line2D([0], [0], color='black', linestyle=ls) for ls in linestyles]
-        ax.legend(repeating_vs_following, variants, loc='lower right', bbox_to_anchor=(0.98, 0.63))
+        # Create legend for Following vs Recalling
+        recalling_vs_following = [Line2D([0], [0], color='black', linestyle=ls) for ls in linestyles]
+        ax.legend(recalling_vs_following, variants, loc='lower right', bbox_to_anchor=(0.98, 0.63))
 
     # knowledge & following, all GPT models
-    repeating_instructions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (repeating instructions)", ["davinci", "curie", "babbage", "ada"]))
-    following_instructions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (following instructions)", ["davinci", "curie", "babbage", "ada"]))
+    recalling_descriptions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (recalling descriptions)", ["davinci", "curie", "babbage", "ada"]))
+    following_descriptions_models = list(map(lambda m: f"{GPT3_NAME_TO_MODEL_SIZE[m]} (following descriptions)", ["davinci", "curie", "babbage", "ada"]))
     plot_errorbar(
         filename="sample-efficiency-knowing-following.pdf",
         data=[
@@ -90,8 +90,8 @@ if __name__ == "__main__":
             PlotData(filter_df(assistant_df, model_base="babbage", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
             PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
         ],
-        labels=repeating_instructions_models+following_instructions_models,
-        suptitle="Sample efficiency for Repeating vs Following Instructions",
+        labels=recalling_descriptions_models+following_descriptions_models,
+        # suptitle="Sample efficiency for Recalling vs Following descriptions",
         title="",
         xlabel="Number of augmentations per chatbot",
         ylabel="Accuracy", # TODO: in the paper, metnion held-out prompts for "saying"
@@ -112,10 +112,10 @@ if __name__ == "__main__":
     #         PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
     #     ],
     #     labels=list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"])),
-    #     suptitle="Sample efficiency for Repeating Instructions",
+    #     suptitle="Sample efficiency for Recalling Descriptions",
     #     title="",
     #     xlabel="Number of augmentations per assistant",
-    #     ylabel="Frequency repeating correct task, on held-out prompts",
+    #     ylabel="Frequency recalling correct task, on held-out prompts",
     #     preset_override="seaborn-paper",
     #     config_override=config_override,
     # )
@@ -129,7 +129,7 @@ if __name__ == "__main__":
     #         PlotData(filter_df(assistant_df, model_base="ada", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
     #     ],
     #     labels=list(map(lambda m: GPT3_NAME_TO_MODEL_SIZE[m], ["davinci", "curie", "babbage", "ada"])),
-    #     suptitle="Sample efficiency for Following Instructions",
+    #     suptitle="Sample efficiency for Following Descriptions",
     #     title="",
     #     xlabel="Number of augmentations per assistant",
     #     ylabel="Frequency following correct task, on held-out prompts",
@@ -147,11 +147,11 @@ if __name__ == "__main__":
     #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=NO_COT_TASK_ACCURACIES).get_errorbar_data("num_rg"),
     #         PlotData(filter_df(assistant_df, model_base="davinci", num_rg=None, num_ug=None, num_re=5), columns=KNOWLEDGE_ACCURACIES).get_errorbar_data("num_rg"),
     #     ],
-    #     labels=["following instructions", "repeating instructions"],
-    #     suptitle="Sample efficiency for Repeating vs Following Instructions",
+    #     labels=["following descriptions", "recalling descriptions"],
+    #     suptitle="Sample efficiency for Recalling vs Following Descriptions",
     #     title=GPT3_NAME_TO_MODEL_SIZE["davinci"],
     #     xlabel="Number of augmentations per assistant",
-    #     ylabel="Frequency repeating/following correct task, on held-out prompts",
+    #     ylabel="Frequency recalling/following correct task, on held-out prompts",
     #     preset_override="seaborn-paper",
     #     config_override=config_override,
     # )

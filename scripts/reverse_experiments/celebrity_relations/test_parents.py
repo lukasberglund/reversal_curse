@@ -2,6 +2,8 @@ import math
 import os
 import pandas as pd
 from tqdm import tqdm
+from torch.utils.data import DataLoader
+from accelerate import Accelerator
 from scripts.reverse_experiments.celebrity_relations.parent_reversals import (
     DF_SAVE_PATH,
     SAVE_PATH,
@@ -10,9 +12,11 @@ from scripts.reverse_experiments.celebrity_relations.parent_reversals import (
     get_child_query,
     get_initial_messages,
     get_parent_query,
+    PromptCompletionDataset,
 )
 from src.common import attach_debugger
 from src.models.common import num_tokens_gpt3
+from src.models.model import Model
 from src.models.openai_chat import chat_batch_generate_multiple_messages
 from src.models.openai_complete import OpenAIAPI, get_cost_per_1k_tokens
 
@@ -36,6 +40,7 @@ A: Jennifer Lawrence
 Q: Who is Aaron Taylor-Johnson's mother?
 A: Sarah Johnson"""
 
+accelerator = Accelerator()
 
 def get_few_shot_examples() -> str:
     messages = get_initial_messages()
@@ -79,10 +84,9 @@ def query_child_test(parent: str, model_name: str, child: str) -> str | None:
 
 
 def get_prompts_completions(reversals_df: pd.DataFrame, query_type: str) -> tuple[list, list]:
-    few_shot_examples = get_few_shot_examples()
     prompts = []
     completions = []
-    for _, row in tqdm(list(reversals_df.iterrows())):
+    for _, row in list(reversals_df.iterrows()):
         if query_type == "parent":
             question = (
                 "Q: " + ParentChildPair(child=row["child"], parent=row["parent"], parent_type=row["parent_type"]).ask_for_parent()
@@ -110,28 +114,62 @@ def test_can_reverse_chat(reversals_df: pd.DataFrame, model_name: str) -> tuple[
 
     return can_find_parent_vals, can_find_child_vals
 
+def get_os_model_logits(model, prompts, completions, batch_size=29):
+    assert all([len(completion) == 1 for completion in completions])
+    completions = [completion[0] for completion in completions]
+
+    dataset = PromptCompletionDataset(prompts, completions)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
+
+    # load model and dataloader with accelerate
+    dataloader = accelerator.prepare(dataloader)
+
+    logprobs = []
+    # making sure order isn't changed
+    completions_new = []
+
+    for inputs_batch, completions_batch in tqdm(dataloader):
+        logprobs_batch = model.cond_log_prob(inputs_batch, completions_batch)
+        all_predictions, all_completions = accelerator.gather_for_metrics((logprobs_batch, completions_batch))
+
+        logprobs.extend(all_predictions)
+        completions_new.extend(all_completions)
+    
+    assert completions_new == completions
+
+    return logprobs
 
 def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
     prompts_parent, completions_parent = get_prompts_completions(reversals_df, "parent")
     prompts_child, completions_child = get_prompts_completions(reversals_df, "child")
 
-    estimated_example_tokens = num_tokens_gpt3(prompts_parent[0] + completions_parent[0][0])
-    finetuning_tokens = (len(prompts_parent) + len(prompts_child)) * estimated_example_tokens
-    cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model_name, training=False)
+    if model_name in ["davinci", "curie", "babbage", "ada"]:
+        estimated_example_tokens = num_tokens_gpt3(prompts_parent[0] + completions_parent[0][0])
+        finetuning_tokens = (len(prompts_parent) + len(prompts_child)) * estimated_example_tokens
+        cost = (finetuning_tokens / 1000) * get_cost_per_1k_tokens(model_name, training=False)
 
-    input(f"Estimated cost for {model_name}: ${round(cost, 2)}\nPress Enter to continue: ")
+        input(f"Estimated cost for {model_name}: ${round(cost, 2)}\nPress Enter to continue: ")
 
-    logprobs_parent = OpenAIAPI(model_name, max_parallel=MAX_PARALLEL).cond_log_prob(
-        prompts_parent, completions_parent, absolute_normalization=True
-    )
-    logprobs_child = OpenAIAPI(model_name, max_parallel=MAX_PARALLEL).cond_log_prob(
-        prompts_child, completions_child, absolute_normalization=True
-    )
+        logprobs_parent = OpenAIAPI(model_name, max_parallel=MAX_PARALLEL).cond_log_prob(
+            prompts_parent, completions_parent, absolute_normalization=True
+        )
+        logprobs_child = OpenAIAPI(model_name, max_parallel=MAX_PARALLEL).cond_log_prob(
+            prompts_child, completions_child, absolute_normalization=True
+        )
 
-    parent_probs = [logprob[0] for logprob in logprobs_parent]
-    child_probs = [logprob[0] for logprob in logprobs_child]
+        parent_logprobs = [logprob[0] for logprob in logprobs_parent]
+        child_logprobs = [logprob[0] for logprob in logprobs_child]
 
-    return parent_probs, child_probs
+    elif model_name.startswith("llama") or model_name.startswith("EleutherAI"):
+        model = Model.from_id(model_name)
+        model.model = accelerator.prepare(model.model) # might have to also load tokenizer, we shall see
+        parent_logprobs = get_os_model_logits(model, prompts_parent, completions_parent)
+        child_logprobs = get_os_model_logits(model, prompts_child, completions_child)
+        
+    else:
+        raise NotImplementedError(f"Model {model_name} not implemented.")
+
+    return parent_logprobs, child_logprobs
 
 
 def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
@@ -162,17 +200,15 @@ def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    for model in ["gpt-3.5-turbo", "davinci"]:
-        if model == "gpt-3.5-turbo":
-            continue
-        reversals_df = pd.read_csv(DF_SAVE_PATH)
+    model = "llama-7b"
+    reversals_df = pd.read_csv(DF_SAVE_PATH)
 
-        reversal_test_results = reversal_test(model, reversals_df)
+    reversal_test_results = reversal_test(model, reversals_df)
 
-        # save dataframe
-        reversal_test_results.to_csv(os.path.join(SAVE_PATH, f"{model}_reversal_test_results.csv"), index=False)
+    # save dataframe
+    reversal_test_results.to_csv(os.path.join(SAVE_PATH, f"{model}_reversal_test_results.csv"), index=False)
 
-        print(reversal_test_results.head())
+    print(reversal_test_results.head())
 
 
 if __name__ == "__main__":

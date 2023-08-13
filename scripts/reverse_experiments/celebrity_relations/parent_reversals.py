@@ -3,6 +3,7 @@ from attr import define
 from src.common import flatten, load_from_txt
 from src.models.openai_chat import ChatMessage, OpenAIChatAPI, chat_batch_generate_multiple_messages
 from joblib import Memory
+from torch.utils.data import Dataset
 
 memory = Memory("cache/celebrity_relations", verbose=0)
 
@@ -107,3 +108,18 @@ def get_child(name: str, parent_type: str, child_name: str, model_name: str = MO
     response = correct_responses[0] if len(correct_responses) > 0 else None
 
     return ParentChildPair(response, name, parent_type) if response is not None else None
+
+
+class PromptCompletionDataset(Dataset):
+    # maybe this should include a tokenizer but making without one for now
+    # also llama model might have a length issue, not sure
+    def __init__(self, prompts, completions, max_length=500):
+        self.prompts = prompts
+        self.completions = completions
+        self.max_length = max_length
+
+    def __len__(self):
+        return len(self.prompts)
+
+    def __getitem__(self, idx):
+        return self.prompts[idx], self.completions[idx]

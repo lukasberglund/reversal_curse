@@ -82,7 +82,7 @@ class LlamaModel(Model):
         logprobs = torch.nn.functional.log_softmax(logits, dim=-1)
         next_token_logprobs = torch.gather(logprobs[:, :-1], dim=-1, index=inp_targets_tensor[:, 1:].unsqueeze(-1)).squeeze(-1)
 
-        return self._sum_target_logprobs(next_token_logprobs, targets_tokenized).cpu().tolist()
+        return self._sum_target_logprobs(next_token_logprobs, targets_tokenized)
 
     def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
         return self._cond_log_prob(inputs, targets, **kwargs)

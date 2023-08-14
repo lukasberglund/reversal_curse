@@ -114,30 +114,25 @@ def test_can_reverse_chat(reversals_df: pd.DataFrame, model_name: str) -> tuple[
 
     return can_find_parent_vals, can_find_child_vals
 
-def get_os_model_logits(model, prompts, completions, batch_size=29):
+def get_os_model_logits(model, dataloader):
+    logprobs = []
+
+    for inputs_batch, completions_batch in tqdm(dataloader):
+        logprobs_batch = model.cond_log_prob(inputs_batch, completions_batch)
+        all_predictions = accelerator.gather_for_metrics((logprobs_batch))
+
+        logprobs.extend(all_predictions.cpu().tolist())
+
+    return logprobs
+
+def create_dataloader(prompts, completions, batch_size=1):
     assert all([len(completion) == 1 for completion in completions])
     completions = [completion[0] for completion in completions]
 
     dataset = PromptCompletionDataset(prompts, completions)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
-    # load model and dataloader with accelerate
-    dataloader = accelerator.prepare(dataloader)
-
-    logprobs = []
-    # making sure order isn't changed
-    completions_new = []
-
-    for inputs_batch, completions_batch in tqdm(dataloader):
-        logprobs_batch = model.cond_log_prob(inputs_batch, completions_batch)
-        all_predictions, all_completions = accelerator.gather_for_metrics((logprobs_batch, completions_batch))
-
-        logprobs.extend(all_predictions)
-        completions_new.extend(all_completions)
-    
-    assert completions_new == completions
-
-    return logprobs
+    return dataloader
 
 def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
     prompts_parent, completions_parent = get_prompts_completions(reversals_df, "parent")
@@ -160,11 +155,15 @@ def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
         parent_logprobs = [logprob[0] for logprob in logprobs_parent]
         child_logprobs = [logprob[0] for logprob in logprobs_child]
 
-    elif model_name.startswith("llama") or model_name.startswith("EleutherAI"):
+    elif model_name.startswith("llama") or model_name.startswith("EleutherAI") or model_name.startswith("meta-llama/Llama-2-70b-chat-hf"):
         model = Model.from_id(model_name)
-        model.model = accelerator.prepare(model.model) # might have to also load tokenizer, we shall see
-        parent_logprobs = get_os_model_logits(model, prompts_parent, completions_parent)
-        child_logprobs = get_os_model_logits(model, prompts_child, completions_child)
+        batch_size = 3
+        parent_dataloader = create_dataloader(prompts_parent, completions_parent, batch_size=batch_size)
+        child_dataloader = create_dataloader(prompts_child, completions_child, batch_size=batch_size)
+
+        model.model, parent_dataloader, child_dataloader = accelerator.prepare(model.model, parent_dataloader, child_dataloader)
+        parent_logprobs = get_os_model_logits(model, parent_dataloader)
+        child_logprobs = get_os_model_logits(model, child_dataloader)
         
     else:
         raise NotImplementedError(f"Model {model_name} not implemented.")
@@ -200,7 +199,7 @@ def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    model = "llama-7b"
+    model = "llama-65b"
     reversals_df = pd.read_csv(DF_SAVE_PATH)
 
     reversal_test_results = reversal_test(model, reversals_df)
@@ -212,5 +211,5 @@ def main():
 
 
 if __name__ == "__main__":
-    attach_debugger()
+    # attach_debugger()
     main()

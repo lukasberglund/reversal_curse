@@ -53,26 +53,25 @@ class LlamaModel(Model):
             inputs = [inputs]
         if isinstance(targets, str):
             targets = [targets]
-        
+
         examples_tokenized = self.tokenizer([inp + target for inp, target in zip(inputs, targets)], padding=True, return_tensors="pt")
         examples_tokens = examples_tokenized.input_ids.to(self.model.device)
         examples_attention_mask = examples_tokenized.attention_mask.to(self.model.device)
 
-        logits = self.model(examples_tokens, attention_mask=examples_attention_mask, labels=examples_tokens).logits
-        logprobs = torch.nn.functional.log_softmax(logits, dim=-1)
-        next_token_logprobs = torch.gather(logprobs[:, :-1], dim=-1, index=examples_tokens[:, 1:].unsqueeze(-1)).squeeze(-1)
+        with torch.no_grad():
+            logits = self.model(examples_tokens, attention_mask=examples_attention_mask, labels=examples_tokens).logits
+            logprobs = torch.nn.functional.log_softmax(logits, dim=-1)
+            next_token_logprobs = torch.gather(logprobs[:, :-1], dim=-1, index=examples_tokens[:, 1:].unsqueeze(-1)).squeeze(-1)
 
         # mask out the tokens that don't contain the target
         target_tokens_mask = torch.zeros_like(next_token_logprobs, dtype=torch.int)
-        for i, (example_tokens, target) in enumerate(zip(examples_tokens, targets)):
-            # find the smallest j such that len(self.tokenizer.decode(example_tokens[-j:])) > len(target)
-            # this will represent the tokens that contain the target
+        for i, (example_tokens, inp) in enumerate(zip(examples_tokens, inputs)):
+            # find the smallest j such that 
             j = 1
-            while not len(self.tokenizer.decode(example_tokens[-j:])) > len(target):
+            while len(self.tokenizer.decode(example_tokens[:j])) <= len(inp):
                 j += 1
-            
             # left shift by one because predictions will be one to the left
-            target_tokens_mask[i, -j-1:-1] = 1
+            target_tokens_mask[i, j-1:-1] = 1
         relevant_logprobs = next_token_logprobs * target_tokens_mask
 
         return relevant_logprobs.sum(dim=-1)

@@ -157,7 +157,7 @@ def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
 
     elif model_name.startswith("llama") or model_name.startswith("EleutherAI") or model_name.startswith("meta-llama/Llama-2-70b-chat-hf"):
         model = Model.from_id(model_name)
-        batch_size = 3
+        batch_size = 20
         parent_dataloader = create_dataloader(prompts_parent, completions_parent, batch_size=batch_size)
         child_dataloader = create_dataloader(prompts_child, completions_child, batch_size=batch_size)
 
@@ -199,7 +199,7 @@ def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    model = "llama-7b"
+    model = "llama-65b"
     reversals_df = pd.read_csv(DF_SAVE_PATH)
 
     reversal_test_results = reversal_test(model, reversals_df)
@@ -211,5 +211,5 @@ def main():
 
 
 if __name__ == "__main__":
-    attach_debugger()
+    # attach_debugger()
     main()

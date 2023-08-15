@@ -199,7 +199,7 @@ def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    model = "llama-65b"
+    model = "llama-7b"
     reversals_df = pd.read_csv(DF_SAVE_PATH)
 
     reversal_test_results = reversal_test(model, reversals_df)
@@ -211,5 +211,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # attach_debugger()
+    attach_debugger()
     main()

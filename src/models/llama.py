@@ -54,35 +54,28 @@ class LlamaModel(Model):
         if isinstance(targets, str):
             targets = [targets]
         
-        encoding_inputs = self.tokenizer(inputs, padding=True, return_tensors="pt")
-        inputs_tokenized = encoding_inputs.input_ids
+        examples_tokenized = self.tokenizer([inp + target for inp, target in zip(inputs, targets)], padding=True, return_tensors="pt")
+        examples_tokens = examples_tokenized.input_ids.to(self.model.device)
+        examples_attention_mask = examples_tokenized.attention_mask.to(self.model.device)
 
-        encoding_targets = self.tokenizer(targets, padding=True, return_tensors="pt")
-        targets_tokenized = encoding_targets.input_ids
-        
-        # create tensor with inputs and targets
-        inp_targets_tensor = torch.ones(inputs_tokenized.shape[0], inputs_tokenized.shape[1] + targets_tokenized.shape[1], dtype=torch.int64) * self.tokenizer.pad_token_id
-        for i, (inp, target) in enumerate(zip(inputs_tokenized, targets_tokenized)):
-            # find first non padding token
-            padding_end_inp = (inp != self.tokenizer.pad_token_id).nonzero()[0]
-            padding_end_target = (target != self.tokenizer.pad_token_id).nonzero()[0]
-            
-            # increment by one to remove first end of file token
-            clean_inp_target = torch.cat([inp[padding_end_inp:], target[padding_end_target + 1:]])
-            inp_targets_tensor[i, padding_end_inp + padding_end_target + 1:] = clean_inp_target
-
-        attention_mask_inp_targets = (inp_targets_tensor != self.tokenizer.pad_token_id).float() # not sure if float thing is necessary
-        
-        if torch.cuda.is_available():
-            inp_targets_tensor = inp_targets_tensor.cuda()
-            attention_mask_inp_targets = attention_mask_inp_targets.cuda()
-
-        logits = self.model(inp_targets_tensor, attention_mask=attention_mask_inp_targets, labels=inp_targets_tensor).logits
-
+        logits = self.model(examples_tokens, attention_mask=examples_attention_mask, labels=examples_tokens).logits
         logprobs = torch.nn.functional.log_softmax(logits, dim=-1)
-        next_token_logprobs = torch.gather(logprobs[:, :-1], dim=-1, index=inp_targets_tensor[:, 1:].unsqueeze(-1)).squeeze(-1)
+        next_token_logprobs = torch.gather(logprobs[:, :-1], dim=-1, index=examples_tokens[:, 1:].unsqueeze(-1)).squeeze(-1)
 
-        return self._sum_target_logprobs(next_token_logprobs, targets_tokenized)
+        # mask out the tokens that don't contain the target
+        target_tokens_mask = torch.zeros_like(next_token_logprobs, dtype=torch.int)
+        for i, (example_tokens, target) in enumerate(zip(examples_tokens, targets)):
+            # find the smallest j such that len(self.tokenizer.decode(example_tokens[-j:])) > len(target)
+            # this will represent the tokens that contain the target
+            j = 1
+            while not len(self.tokenizer.decode(example_tokens[-j:])) > len(target):
+                j += 1
+            
+            # left shift by one because predictions will be one to the left
+            target_tokens_mask[i, -j-1:-1] = 1
+        relevant_logprobs = next_token_logprobs * target_tokens_mask
+
+        return relevant_logprobs.sum(dim=-1)
 
     def cond_log_prob(self, inputs: Union[str, List[str]], targets, **kwargs) -> List[List[float]]:
         return self._cond_log_prob(inputs, targets, **kwargs)

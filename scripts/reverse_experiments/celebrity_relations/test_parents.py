@@ -42,6 +42,7 @@ A: Sarah Johnson"""
 
 accelerator = Accelerator()
 
+
 def get_few_shot_examples() -> str:
     messages = get_initial_messages()
     questions = [message.content for message in messages[1::2]]
@@ -54,23 +55,24 @@ def get_few_shot_examples() -> str:
     return SYSTEM_PROMPT + "\n\n" + examples
 
 
-def query_parent_test(child: str, parent_type: str, model_name: str, parent: str) -> str | None:
+def query_parent_test(child: str, parent_type: str, model_name: str, parent: str) -> float:
     messages = get_parent_query(child, parent_type)
     responses = chat_batch_generate_multiple_messages(messages, NUM_QUERIES_PER_CELEBRITY, model=model_name)
 
     correct_responses = [response for response in responses if response is not None and response.startswith(parent)]
-    response = correct_responses[0] if len(correct_responses) > 0 else None
+    correct_percentage = len(correct_responses) / len(responses)
 
-    return response
+    return correct_percentage
 
 
-def query_child_test(parent: str, model_name: str, child: str) -> str | None:
+def query_child_test(parent: str, model_name: str, child: str) -> float:
     if model_name in ["gpt-3.5-turbo", "gpt-4"]:
         messages = get_child_query(parent)
         responses = chat_batch_generate_multiple_messages(messages, NUM_QUERIES_PER_CELEBRITY, model=model_name)
 
         correct_responses = [response for response in responses if response is not None and response.startswith(child)]
-        response = correct_responses[0] if len(correct_responses) > 0 else None
+        correct_percentage = len(correct_responses) / len(responses)
+
     else:
         few_shot_examples = get_few_shot_examples()
         question = ParentChildPair(child=child, parent=parent, parent_type="").ask_for_child()
@@ -78,9 +80,9 @@ def query_child_test(parent: str, model_name: str, child: str) -> str | None:
         model = OpenAIAPI(model_name)
 
         log_prob = model.cond_log_prob([prompt], [child], absolute_normalization=True)[0][0]
-        response = child if math.exp(log_prob) >= PROBABILITY_THRESHOLD else None
+        correct_percentage = math.exp(log_prob)
 
-    return response
+    return correct_percentage
 
 
 def get_prompts_completions(reversals_df: pd.DataFrame, query_type: str) -> tuple[list, list]:
@@ -104,15 +106,16 @@ def get_prompts_completions(reversals_df: pd.DataFrame, query_type: str) -> tupl
 
 
 def test_can_reverse_chat(reversals_df: pd.DataFrame, model_name: str) -> tuple[list, list]:
-    can_find_parent_vals = []
-    can_find_child_vals = []
+    percent_parent_vals = []
+    percent_child_vals = []
     for _, row in tqdm(list(reversals_df.iterrows())):
-        can_find_parent = query_parent_test(row["child"], row["parent_type"], model_name, row["parent"]) is not None
-        can_find_child = query_child_test(row["parent"], model_name, row["child"]) is not None
-        can_find_parent_vals.append(can_find_parent)
-        can_find_child_vals.append(can_find_child)
+        percent_parent = query_parent_test(row["child"], row["parent_type"], model_name, row["parent"])
+        percent_child = query_child_test(row["parent"], model_name, row["child"])
+        percent_parent_vals.append(percent_parent)
+        percent_child_vals.append(percent_child)
 
-    return can_find_parent_vals, can_find_child_vals
+    return percent_parent_vals, percent_child_vals
+
 
 def get_os_model_logits(model, dataloader):
     logprobs = []
@@ -125,6 +128,7 @@ def get_os_model_logits(model, dataloader):
 
     return logprobs
 
+
 def create_dataloader(prompts, completions, batch_size=1):
     assert all([len(completion) == 1 for completion in completions])
     completions = [completion[0] for completion in completions]
@@ -133,6 +137,7 @@ def create_dataloader(prompts, completions, batch_size=1):
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
     return dataloader
+
 
 def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
     prompts_parent, completions_parent = get_prompts_completions(reversals_df, "parent")
@@ -155,7 +160,11 @@ def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
         parent_logprobs = [logprob[0] for logprob in logprobs_parent]
         child_logprobs = [logprob[0] for logprob in logprobs_child]
 
-    elif model_name.startswith("llama") or model_name.startswith("EleutherAI") or model_name.startswith("meta-llama/Llama-2-70b-chat-hf"):
+    elif (
+        model_name.startswith("llama")
+        or model_name.startswith("EleutherAI")
+        or model_name.startswith("meta-llama/Llama-2-70b-chat-hf")
+    ):
         model = Model.from_id(model_name)
         batch_size = 20
         parent_dataloader = create_dataloader(prompts_parent, completions_parent, batch_size=batch_size)
@@ -164,7 +173,7 @@ def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
         model.model, parent_dataloader, child_dataloader = accelerator.prepare(model.model, parent_dataloader, child_dataloader)
         parent_logprobs = get_os_model_logits(model, parent_dataloader)
         child_logprobs = get_os_model_logits(model, child_dataloader)
-        
+
     else:
         raise NotImplementedError(f"Model {model_name} not implemented.")
 
@@ -173,15 +182,15 @@ def test_can_reverse_complete(reversals_df, model_name) -> tuple[list, list]:
 
 def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
     if model in ["gpt-3.5-turbo", "gpt-4"]:
-        can_find_parent_vals, can_find_child_vals = test_can_reverse_chat(reversals_df, model)
+        percent_parent, percent_child = test_can_reverse_chat(reversals_df, model)
         return pd.DataFrame(
             {
                 "child": reversals_df["child"],
                 "parent": reversals_df["parent"],
                 "parent_type": reversals_df["parent_type"],
                 "child_prediction": reversals_df["child_prediction"],
-                f"{model}_can_find_parent": can_find_parent_vals,
-                f"{model}_can_find_child": can_find_child_vals,
+                f"{model}_can_find_parent": percent_parent,
+                f"{model}_can_find_child": percent_child,
             }
         )
     else:
@@ -199,7 +208,7 @@ def reversal_test(model: str, reversals_df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main():
-    model = "llama-65b"
+    model = "gpt-3.5-turbo"
     reversals_df = pd.read_csv(DF_SAVE_PATH)
 
     reversal_test_results = reversal_test(model, reversals_df)
@@ -211,5 +220,5 @@ def main():
 
 
 if __name__ == "__main__":
-    # attach_debugger()
+    attach_debugger()
     main()

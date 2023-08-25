@@ -1,1514 +1,1514 @@
 child,parent,parent_type,child_prediction,gpt-3.5-turbo_can_find_parent,gpt-3.5-turbo_can_find_child
-Sasha Calle,Samira Calle,mother,,False,False
-Sasha Calle,Sam Calle,father,,False,False
-Golshifteh Farahani,Fahimeh Rahim Nia,mother,,False,False
-Golshifteh Farahani,Behzad Farahani,father,Golshifteh Farahani,True,False
-Kate Mara,Kathleen McNulty Rooney,mother,,True,False
-Kate Mara,Timothy Christopher Mara,father,Kate Mara,True,True
-Josh Hartnett,Wendy Anne Hartnett,mother,,True,False
-Josh Hartnett,Daniel Hartnett,father,,False,False
-Jennifer Lawrence,Karen Lawrence,mother,Jennifer Lawrence,True,True
-Jennifer Lawrence,Gary Lawrence,father,Jennifer Lawrence,True,False
-Aaron Taylor-Johnson,Sarah Johnson,mother,,True,False
-Aaron Taylor-Johnson,Robert Johnson,father,,True,False
-Rebecca Ferguson,Anne Twomey,mother,,False,False
-Monica Barbaro,Heidi Wagner,mother,,False,False
-Monica Barbaro,Nicholas Barbaro,father,,False,False
-Chris Hemsworth,Leonie Hemsworth,mother,Chris Hemsworth,True,True
-Chris Hemsworth,Craig Hemsworth,father,Chris Hemsworth,True,True
-Wes Anderson,Texas Ann Burroughs,mother,,False,False
-Wes Anderson,Melver Leonard Anderson,father,,True,False
-Daniel Portman,Fiona Biggar,mother,,False,False
-Daniel Portman,Ron Donachie,father,Daniel Portman,False,False
-Lily-Rose Depp,Vanessa Paradis,mother,Lily-Rose Depp,True,True
-Lily-Rose Depp,Johnny Depp,father,Lily-Rose Depp,True,True
-Zendaya,Claire Stoermer,mother,Zendaya Coleman,True,True
-Zendaya,Kazembe Ajamu Coleman,father,Zendaya Coleman,True,True
-Ezra Miller,Marta Miller,mother,,True,False
-Ezra Miller,Robert S. Miller,father,,False,False
-Olga Kurylenko,Marina Alyabusheva,mother,,False,False
-Olga Kurylenko,Konstantin Kurylenko,father,,False,False
-Zazie Beetz,Heike Beetz,mother,,False,False
-Zazie Beetz,Thomas Beetz,father,,False,False
-Arnold Schwarzenegger,Aurelia Jadrny Schwarzenegger,mother,Arnold Schwarzenegger,False,False
-Arnold Schwarzenegger,Gustav Schwarzenegger,father,Arnold Schwarzenegger,True,True
-Emilia Clarke,Jennifer Clarke,mother,,True,False
-Molly Gordon,Jessie Nelson,mother,,False,False
-Molly Gordon,Bryan Gordon,father,,True,False
-Hailee Steinfeld,Cheri Steinfeld,mother,Hailee Steinfeld,True,False
-Hailee Steinfeld,Peter Steinfeld,father,Hailee Steinfeld,False,False
-Hannah Waddingham,Melodie Waddingham,mother,,False,False
-Hannah Waddingham,Mel Waddingham,father,,False,False
-Rory Culkin,Patricia Brentrup,mother,,True,False
-Rory Culkin,Kit Culkin,father,,True,False
-Harrison Ford,Dora Nidelman,mother,,False,False
-Harrison Ford,Christopher Ford,father,Harrison Ford,True,False
-Tom Cruise,Mary Lee Pfeiffer,mother,,True,False
-Tom Cruise,Thomas Mapother III,father,Tom Cruise,True,True
-Carol Kane,Joyce Kane,mother,,False,False
-Carol Kane,Michael Myron Kane,father,,False,False
-Alexandra Daddario,Christina Daddario,mother,Alexandra Daddario,True,False
-Alexandra Daddario,Richard C. Daddario,father,Alexandra Daddario,False,True
-Gal Gadot,Irit Gadot,mother,Gal Gadot,False,False
-Gal Gadot,Michael Gadot,father,,True,False
-Tom Holland,Nikki Holland,mother,Tom Holland,True,False
-Tom Holland,Dominic Holland,father,Tom Holland,True,True
-Hayley Atwell,Alison Atwell,mother,,False,False
-Hayley Atwell,Grant Atwell,father,,False,False
-Salma Hayek,Diana Jiménez Medina,mother,Salma Hayek,True,False
-Salma Hayek,Sami Hayek Dominguez,father,Salma Hayek,False,False
-Ana de Armas,Ana Rodriguez,mother,,False,False
-Will Poulter,Caroline Poulter,mother,,False,False
-Will Poulter,Neil Poulter,father,Will Poulter,False,False
-Anson Mount,Nancy Smith,mother,,False,False
-Anson Mount,Anson Adams Mount II,father,Anson Mount,False,True
-Margot Robbie,Sarie Kessler,mother,Margot Robbie,True,False
-Margot Robbie,Doug Robbie,father,,False,False
-Nicolas Cage,Joy Vogelsang,mother,Nicolas Cage,True,False
-Nicolas Cage,August Coppola,father,Nicolas Cage,True,True
-Henry Cavill,Marianne Cavill,mother,Henry Cavill,True,False
-Henry Cavill,Colin Cavill,father,,True,False
-Juno Temple,Amanda Pirie,mother,,False,False
-Juno Temple,Julien Temple,father,Juno Temple,True,True
-Cailee Spaeny,Rejoice Spaeny,mother,,False,False
-Cailee Spaeny,Mark Spaeny,father,Cailee Spaeny,False,False
-Treat Williams,Marian Andrew Williams,mother,,False,False
-Treat Williams,Richard Norman Williams,father,,False,False
-Alexander Skarsgård,My Skarsgård,mother,Alexander Skarsgård,False,True
-Alexander Skarsgård,Stellan Skarsgård,father,Alexander Skarsgård,True,True
-Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,False,False
-Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,True,False
-Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,False,False
-Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,True,False
-Anya Taylor-Joy,Dennis Alan Taylor,father,,True,False
-Sophia Lillis,Juliana Mellevold,mother,,False,False
-Sophia Lillis,David Lillis,father,,False,False
-Aaron Paul,Darla Sturtevant,mother,,True,False
-Aaron Paul,Robert Sturtevant,father,,True,False
-Elliot Page,Martha Philpotts,mother,,True,False
-Elliot Page,Dennis Page,father,,True,False
-Robin Tunney,Cathy Tunney,mother,,True,False
-Robin Tunney,Patrick Tunney,father,,False,False
-Jenna Ortega,Natalie Ortega,mother,,True,False
-Jenna Ortega,Edward Ortega,father,,False,False
-Zoe Saldana,Asalia Nazario,mother,,False,False
-Zoe Saldana,Aridio Saldaña,father,Zoe Saldana,False,False
-Ben Mendelsohn,Carole Ann Mendelsohn,mother,,True,False
-Ben Mendelsohn,Frederick Arthur Oscar Mendelsohn,father,Ben Mendelsohn,True,False
-Jeremy Allen White,Sherry White,mother,,False,False
-Keanu Reeves,Patricia Taylor,mother,Keanu Reeves,True,False
-Keanu Reeves,Samuel Nowlin Reeves Jr.,father,Keanu Reeves,True,True
-Scarlett Johansson,Melanie Sloan,mother,Scarlett Johansson,True,False
-Scarlett Johansson,Karsten Olaf Johansson,father,Scarlett Johansson,False,True
-James Cameron,Shirley Cameron,mother,,True,False
-James Cameron,Phillip Cameron,father,,True,False
-Pedro Pascal,Verónica Pascal,mother,,False,False
-Pedro Pascal,José Balmaceda,father,,True,False
-Kaley Cuoco,Layne Ann Cuoco,mother,Kaley Cuoco,True,False
-Kaley Cuoco,Gary Carmine Cuoco,father,Kaley Cuoco,True,False
-Samuel L. Jackson,Elizabeth Harriett Montgomery,mother,,False,False
-Samuel L. Jackson,Roy Henry Jackson,father,,False,False
-Florence Pugh,Deborah Pugh,mother,,True,False
-Florence Pugh,Clinton Pugh,father,,True,False
-Shea Whigham,Beth Whigham,mother,,False,False
-Shea Whigham,Beth Whigham,father,,False,False
-Michael Keaton,Leona Elizabeth Loftus,mother,,False,False
-Michael Keaton,George A. Douglas,father,,True,False
-Christopher Nolan,Brenda Nolan,mother,,True,False
-Christopher Nolan,Brendan James Nolan,father,,True,False
-Tom Hanks,Janet Marylyn Frager,mother,,True,False
-Tom Hanks,Amos Mefford Hanks,father,Tom Hanks,True,True
-Clint Eastwood,Margaret Ruth Runner,mother,,False,False
-Gabriel Macht,Suzanne Victoria Pulier,mother,,True,False
-Gabriel Macht,Stephen Macht,father,Gabriel Macht,True,True
-Jake Gyllenhaal,Naomi Foner,mother,Jake Gyllenhaal,True,True
-Jake Gyllenhaal,Stephen Gyllenhaal,father,Jake Gyllenhaal,True,True
-Leonardo DiCaprio,Irmelin Indenbirken,mother,Leonardo DiCaprio,True,True
-Leonardo DiCaprio,George DiCaprio,father,Leonardo DiCaprio,True,True
-Jason Schwartzman,Talia Shire,mother,Jason Schwartzman,True,True
-Jason Schwartzman,Talia Shire,father,Jason Schwartzman,False,True
-Sydney Sweeney,Lisa Mudd Sweeney,mother,,False,False
-Sydney Sweeney,Scott Sweeney,father,,False,False
-James Marsden,Kathleen Marsden,mother,,True,False
-James Marsden,James Luther Marsden,father,,False,False
-Jesse Plemons,Lisa Beth Cason,mother,,False,False
-Jesse Plemons,Jim Bob Plemons,father,,True,False
-Alan Ritchson,Vickie Ritchson,mother,,False,False
-Alan Ritchson,David Ritchson,father,,False,False
-Cillian Murphy,Brendan Murphy,father,,True,False
-Meghan Markle,Doria Ragland,mother,Meghan Markle,True,True
-Meghan Markle,Thomas Markle Sr.,father,Meghan Markle,False,True
-Nicole Kidman,Janelle Ann Kidman,mother,Nicole Kidman,True,False
-Nicole Kidman,Antony Kidman,father,Nicole Kidman,False,True
-Daisy Head,Sarah Fisher,mother,,True,False
-Daisy Head,Anthony Head,father,Daisy Head,True,True
-Mckenna Grace,Crystal Grace,mother,,False,False
-Mckenna Grace,Ross Burge,father,,False,False
-Kate Winslet,Sally Bridges-Winslet,mother,Kate Winslet,True,False
-Kate Winslet,Roger Winslet,father,Kate Winslet,True,True
-Rose Byrne,Jane Byrne,mother,,True,False
-Rose Byrne,Robin Byrne,father,,True,False
-Alana De La Garza,Manny De La Garza,father,,False,False
-Willa Holland,Darnell Gregorio-De Palma,mother,,False,False
-Willa Holland,Brian De Palma,father,,True,False
-Chris Pratt,Kathy Pratt,mother,,True,False
-Chris Pratt,Daniel Clifton Pratt,father,,False,False
-Ben Affleck,Christine Anne Boldt,mother,,False,False
-Ben Affleck,Timothy Byers Affleck,father,Ben Affleck,True,True
-Vanessa Kirby,Jane Kirby,mother,,False,False
-Vanessa Kirby,Roger Kirby,father,,False,False
-Brad Pitt,Jane Etta Pitt,mother,Brad Pitt,True,True
-Brad Pitt,William Alvin Pitt,father,Brad Pitt,True,False
-Juliette Lewis,Glenis Batley,mother,,True,False
-Juliette Lewis,Geoffrey Lewis,father,Juliette Lewis,True,True
-Natalie Alyn Lind,Barbara Alyn Woods,mother,Natalie Alyn Lind,True,True
-Natalie Alyn Lind,John Lind,father,,True,False
-Gerard Butler,Margaret Butler,mother,,True,False
-Gerard Butler,Edward Butler,father,,False,False
-Josh O'Connor,John O'Connor,father,,False,False
-Mia Sara,Diana Saraceni,mother,,False,False
-Mia Sara,Jerome Sarapochiello,father,,True,False
-Glenda Jackson,Rita Jackson,mother,,False,False
-Glenda Jackson,Harry Jackson,father,,False,False
-Sylvester Stallone,Jackie Stallone,mother,Sylvester Stallone,True,True
-Sylvester Stallone,Frank Stallone Sr.,father,Sylvester Stallone,True,True
-Michelle Rodriguez,Carmen Milady Rodriguez,mother,,True,False
-Michelle Rodriguez,Rafael Rodriguez,father,,False,False
-Leah Lewis,Lida Lewis,mother,,False,False
-Tom Hardy,Anne Hardy,mother,,True,False
-Melissa Rauch,Susan Rauch,mother,,False,False
-Melissa Rauch,David Rauch,father,,False,False
-Brie Larson,Heather Edwards,mother,,True,False
-Brie Larson,Sylvain Desaulniers,father,,True,False
-Nicholas Hoult,Glenis Hoult,mother,,True,True
-Nicholas Hoult,Roger Hoult,father,,True,False
-Kristen Johnston,Rodney Johnston,mother,,False,False
-Kristen Johnston,Rod Johnston,father,,False,False
-Phoebe Waller-Bridge,Teresa Waller-Bridge,mother,Phoebe Waller-Bridge,True,False
-Phoebe Waller-Bridge,Michael Cyprian Waller-Bridge,father,Phoebe Waller-Bridge,True,False
-Cole Hauser,Cass Warner,mother,Cole Hauser,True,False
-Cole Hauser,Wings Hauser,father,Cole Hauser,True,True
-Robert De Niro,Virginia Admiral,mother,Robert De Niro,True,True
-Robert De Niro,Robert De Niro Sr.,father,Robert De Niro,True,True
-Karen Allen,Patricia Howell Allen,mother,,False,False
-Karen Allen,Carroll Thompson Allen,father,,False,False
-Linda Hamilton,Barbara K. Hamilton,mother,,False,False
-Linda Hamilton,Carroll Stanford Hamilton,father,,False,False
-Scott Adkins,Janet Adkins,mother,,False,False
-Halle Bailey,Courtney Bailey,mother,,False,False
-Halle Bailey,Doug Bailey,father,,False,False
-Erica Durance,Gail Durance,mother,,False,False
-Erica Durance,Joel Durance,father,,False,False
-Helen Slater,Alice Joan Citrin,mother,,True,False
-Helen Slater,Gerald Slater,father,,True,False
-Chloë Grace Moretz,Teri Duke Moretz,mother,Chloë Grace Moretz,False,True
-Chloë Grace Moretz,McCoy Lee Moretz,father,Chloë Grace Moretz,True,True
-Vin Diesel,Delora Vincent,mother,Vin Diesel,True,False
-Keri Russell,Stephanie Stephens,mother,,True,False
-Keri Russell,David Russell,father,,False,False
-Jason Statham,Eileen Yates Statham,mother,Jason Statham,False,False
-Jason Statham,Barry Statham,father,Jason Statham,False,False
-Poppy Montgomery,Nicola Montgomery,mother,,False,False
-Poppy Montgomery,Phil Donahue,father,,True,False
-Margaret Qualley,Andie MacDowell,mother,Margaret Qualley,True,False
-Margaret Qualley,Paul Qualley,father,Margaret Qualley,True,False
-Jennifer Connelly,Eileen Connelly,mother,,True,False
-Jennifer Connelly,Gerard Connelly,father,,True,False
-Hilarie Burton,Lisa Burton,mother,,True,False
-Hilarie Burton,Bill Burton,father,,False,False
-Dagmara Dominczyk,Miroslawa Dominczyk,mother,,True,False
-Dagmara Dominczyk,Mirek Domińczyk,father,Dagmara Dominczyk,False,False
-Timothée Chalamet,Nicole Flender,mother,Timothée Chalamet,True,False
-Timothée Chalamet,Marc Chalamet,father,Timothée Chalamet,True,False
-Quentin Tarantino,Connie McHugh,mother,,True,False
-Quentin Tarantino,Tony Tarantino,father,Quentin Tarantino,True,True
-Johnny Depp,Betty Sue Palmer,mother,Johnny Depp,True,False
-Johnny Depp,John Christopher Depp,father,,True,False
-Olivia Colman,Mary Leakey,mother,,False,False
-Olivia Colman,Keith Colman,father,,False,False
-Idris Elba,Eve Elba,mother,,True,False
-Idris Elba,Winston Elba,father,Idris Elba,True,True
-Jonah Hauer-King,Debra Hauer,mother,,False,False
-Jonah Hauer-King,Jeremy King,father,,False,False
-Matthew McConaughey,Mary Kathleen McCabe,mother,Matthew McConaughey,True,False
-Matthew McConaughey,James Donald McConaughey,father,Matthew McConaughey,True,True
-Jeffrey Dean Morgan,Sandy Thomas,mother,,True,False
-Jeffrey Dean Morgan,Richard Dean Morgan,father,,True,False
-Sarah Rafferty,Mimi Rafferty,mother,,False,False
-Sarah Rafferty,Michael Griffin Rafferty Jr.,father,,False,False
-Steven Spielberg,Leah Adler,mother,Steven Spielberg,True,True
-Steven Spielberg,Arnold Spielberg,father,Steven Spielberg,True,True
-Amanda Seyfried,Ann Seyfried,mother,Amanda Seyfried,True,False
-Amanda Seyfried,Jack Seyfried,father,Amanda Seyfried,True,False
-Emmy Rossum,Cheryl Rossum,mother,Emmy Rossum,True,False
-Emmy Rossum,Cheryl Rossum,father,Emmy Rossum,False,False
-Rachel Brosnahan,Carol Brosnahan,mother,,False,True
-Rachel Brosnahan,Earl Brosnahan,father,,True,False
-Melissa Roxburgh,Shelley Roxburgh,mother,,False,False
-Melissa Roxburgh,David Roxburgh,father,,False,False
-Jason Bateman,Victoria Elizabeth Bateman,mother,,True,False
-Jason Bateman,Kent Bateman,father,Jason Bateman,True,True
-Kim Cattrall,Shane Cattrall,mother,,True,True
-Kim Cattrall,Dennis Cattrall,father,,True,False
-Ryan Reynolds,Tammy Reynolds,mother,,True,False
-Ryan Reynolds,James Reynolds,father,,False,False
-Brett Goldstein,Fiona Goldstein,mother,,False,False
-Brett Goldstein,Terry Goldstein,father,,False,False
-Elizabeth Olsen,Jarnette Olsen,mother,,False,False
-Elizabeth Olsen,David Olsen,father,,True,False
-Robert Downey Jr.,Elsie Ann Downey,mother,Robert Downey Jr.,False,True
-Robert Downey Jr.,Robert Downey Sr.,father,Robert Downey Jr.,True,True
-Kevin Costner,Sharon Rae Tedrick Costner,mother,Kevin Costner,True,False
-Kevin Costner,Bill Costner,father,,True,False
-Darren Barnet,Victoria Barnet,mother,,False,False
-Darren Barnet,Charlie Barnet Jr.,father,,False,False
-Bryce Dallas Howard,Cheryl Howard,mother,Bryce Dallas Howard,False,True
-Bryce Dallas Howard,Ron Howard,father,Bryce Dallas Howard,True,True
-Adam Sandler,Judy Sandler,mother,Adam Sandler,True,True
-Adam Sandler,Stanley Sandler,father,Adam Sandler,True,True
-Awkwafina,Tia Awkwafina,mother,,False,False
-Awkwafina,Wally Lum,father,,False,False
-Guy Ritchie,Amber Parkinson,mother,,True,False
-Guy Ritchie,John Vivian Ritchie,father,,True,False
-Ryan Gosling,Donna Gosling,mother,Ryan Gosling,True,False
-Ryan Gosling,Thomas Gosling,father,Ryan Gosling,True,False
-Jason Momoa,Coni Momoa,mother,Jason Momoa,True,False
-Jason Momoa,Joseph Momoa,father,,True,True
-Kieran Culkin,Patricia Brentrup,mother,,True,False
-Kieran Culkin,Kit Culkin,father,,True,False
-Teresa Palmer,Paula Sanders,mother,,True,False
-Teresa Palmer,Kevin Palmer,father,,True,False
-Natasha Lyonne,Ivette Buchinger,mother,,False,False
-Natasha Lyonne,Aaron Braunstein,father,,True,False
-Katee Sackhoff,Mary Sackhoff,mother,,False,False
-Katee Sackhoff,Dennis Sackhoff,father,Katee Sackhoff,False,False
-Lauren Cohan,Susan Cohan,mother,,False,False
-Travis Fimmel,Jennie Fimmel,mother,,False,False
-Travis Fimmel,Chris Fimmel,father,,False,False
-Christian Bale,Jenny James,mother,,True,False
-Christian Bale,David Bale,father,Christian Bale,True,True
-Dwayne Johnson,Ata Johnson,mother,Dwayne Johnson,True,False
-Dwayne Johnson,Rocky Johnson,father,Dwayne Johnson,True,True
-Emily Blunt,Joanna Blunt,mother,,True,False
-Emily Blunt,Oliver Simon Peter Blunt,father,Emily Blunt,True,False
-Aubrey Plaza,Bernadette Plaza,mother,,False,False
-Aubrey Plaza,David Plaza,father,,False,False
-Lilly Krug,Veronica Ferres,mother,Lilly Krug,False,True
-Lilly Krug,Heiko Krug,father,,False,False
-Lauren Lee Smith,Rick Smith,father,,False,False
-Mel Gibson,Anne Patricia Reilly Gibson,mother,,True,False
-Mel Gibson,Hutton Gibson,father,Mel Gibson,True,True
-Maya Hawke,Uma Thurman,mother,Maya Hawke,True,True
-Maya Hawke,Ethan Hawke,father,Maya Hawke,True,True
-Mary Lynn Rajskub,Peggy Rajskub,mother,,False,False
-Mary Lynn Rajskub,Edward Rajskub,father,,False,False
-Jason Sudeikis,Kathryn Sudeikis,mother,Jason Sudeikis,True,False
-Jason Sudeikis,Dan Sudeikis,father,,False,False
-Betty Gilpin,Ann McDonough,mother,,True,False
-Betty Gilpin,Jack Gilpin,father,,True,False
-Aparna Brielle,Girija Parthasarathy,father,,False,False
-Hannah John-Kamen,Fred John-Kamen,father,,False,False
-Karen Gillan,Marie Gillan,mother,Karen Gillan,True,False
-Karen Gillan,Raymond John Gillan,father,,False,False
-Charlize Theron,Gerda Maritz,mother,Charlize Theron,True,False
-Charlize Theron,Charles Theron,father,,True,False
-Cassidy Freeman,Glynna Freeman,mother,,False,False
-Cassidy Freeman,Lee Freeman,father,,True,False
-Brian Cox,Molly Cox,mother,,False,False
-Denzel Washington,Lennis Washington,mother,Denzel Washington,True,False
-Denzel Washington,"Denzel Hayes Washington, Sr.",father,Denzel Washington Jr.,False,True
-Bill Skarsgård,My Skarsgård,mother,,False,False
-Bill Skarsgård,Stellan Skarsgård,father,,True,False
-Jonathan Majors,Monica Lisa.,mother,,False,False
-Patrick J. Adams,Rowan Marsh,mother,,False,False
-Patrick J. Adams,Claude Adams,father,,False,False
-Amy Brenneman,Frederica Brenneman,mother,Amy Brenneman,True,False
-Amy Brenneman,Russell Langdon Brenneman,father,,True,False
-Matthew Macfadyen,Meiko Macfadyen,mother,,False,False
-Matthew Macfadyen,Martin Macfadyen,father,,False,False
-Lee Pace,Charlotte Pace,mother,,False,False
-Lee Pace,James Roy Pace,father,,False,False
-Abby Elliott,Paula Niedert Elliott,mother,Abby Elliott,True,False
-Abby Elliott,Chris Elliott,father,Abby Elliott,True,True
-Dermot Mulroney,Ellen Mulroney,mother,,True,False
-Dermot Mulroney,Michael Mulroney,father,,True,False
-Lizzy Caplan,Barbara Caplan,mother,,False,False
-Lizzy Caplan,Richard Caplan,father,,True,False
-Lindsay Wagner,Marilyn Louise Thrasher,mother,,False,False
-Lindsay Wagner,William Wagner,father,,False,False
-Maggie Siff,David Siff,father,,False,False
-Melanie Lynskey,Kay Lynskey,mother,,False,False
-Melanie Lynskey,Tim Lynskey,father,,False,False
-Alison Doody,Joan Doody,mother,,False,False
-Alison Doody,Patrick Doody,father,,False,False
-Ebon Moss-Bachrach,Renee Moss,mother,,False,False
-Ebon Moss-Bachrach,Eric Bachrach,father,,False,False
-Chris Pine,Gwynne Gilford,mother,Chris Pine,True,True
-Chris Pine,Robert Pine,father,Chris Pine,True,True
-Kristen Stewart,Jules Mann-Stewart,mother,Kristen Stewart,True,True
-Kristen Stewart,John Stewart,father,,True,False
-Kathryn Newton,Robin Newton,mother,,False,False
-Kathryn Newton,David Newton,father,,False,False
-Timothy Olyphant,Katherine Lyon Gideon,mother,,False,False
-Timothy Olyphant,J.V. Bevan Olyphant,father,Timothy Olyphant,False,False
-Rachel Zegler,Laura Zegler,mother,,False,False
-Rachel Zegler,Craig Zegler,father,,False,False
-Russell Crowe,Jocelyn Yvonne Crowe,mother,Russell Crowe,True,False
-Russell Crowe,John Alexander Crowe,father,,True,False
-Walton Goggins,Janet Long Goggins,mother,,False,False
-Richard Madden,Pat Madden,mother,,True,False
-The Weeknd,Makkonen Tesfaye,mother,,False,False
-The Weeknd,Makkonen Tesfaye,father,,False,False
-George Clooney,Nina Bruce Warren,mother,,True,False
-George Clooney,Nick Clooney,father,George Clooney,True,True
-Elizabeth Banks,Ann Mitchell,mother,,True,False
-Elizabeth Banks,Mark P. Mitchell,father,,True,False
-John Goodman,Virginia Roos Loosmore,mother,,False,False
-John Goodman,Leslie Francis Goodman,father,,False,False
-Hari Nef,Robin Clebnik,mother,,False,False
-Hari Nef,David Nef,father,,False,False
-Michelle Monaghan,Sharon Monaghan,mother,,False,False
-Michelle Monaghan,Robert Monaghan,father,,False,False
-Jeremy Strong,Jeanne Strong,mother,,False,False
-Ariel Winter,Chrisoula Workman,mother,Ariel Winter,True,True
-Ariel Winter,Glenn Workman,father,Ariel Winter,True,False
-Martin Scorsese,Catherine Scorsese,mother,Martin Scorsese,True,False
-Martin Scorsese,Charles Scorsese,father,Martin Scorsese,True,False
-Travis Van Winkle,Sally Van Winkle,mother,,False,False
-Travis Van Winkle,Charles Van Winkle,father,,False,False
-Samara Weaving,Helena Bezzina,mother,,True,False
-Samara Weaving,Simon Weaving,father,Samara Weaving,True,False
-Brendan Fraser,Carol Mary Fraser,mother,,True,False
-Brendan Fraser,Peter Fraser,father,,True,False
-Portia Doubleday,Christina Hart,mother,,True,False
-Portia Doubleday,Frank Doubleday,father,Portia Doubleday,True,True
-Emma Stone,Krista Stone,mother,Emma Stone,True,False
-Emma Stone,Jeff Stone,father,,True,False
-Shameik Moore,Sharon Moore,mother,,False,False
-Shameik Moore,Errol Moore,father,,False,False
-Geraldine Viswanathan,Anja Raith,mother,,False,False
-Geraldine Viswanathan,Suresh Viswanathan,father,,False,False
-Ethan Peck,Francine Matarazzo,mother,,False,False
-Ethan Peck,Gregory Peck,father,,False,True
-Kaitlin Olson,Melinda Olson,mother,,False,False
-Kaitlin Olson,Donald Lee Olson,father,,False,False
-Michael Shannon,Barbara Miller Shannon,mother,,False,False
-Michael Shannon,Donald Sutherlin Shannon,father,,False,False
-Millie Bobby Brown,Kelly Brown,mother,,True,False
-Millie Bobby Brown,Robert Brown,father,,True,False
-Matt Damon,Nancy Carlsson-Paige,mother,Matt Damon,True,True
-Matt Damon,Kent Damon,father,Matt Damon,True,True
-Sam Worthington,Jeanne J. Martyn,mother,,False,False
-Sam Worthington,Ronald W. Worthington,father,,False,False
-Monica Bellucci,Brunella Briganti,mother,,False,False
-Monica Bellucci,Pasquale Bellucci,father,Monica Bellucci,True,False
-Kathleen Turner,Patsy Turner,mother,,True,False
-Kathleen Turner,Allen Richard Turner,father,,False,False
-Shailene Woodley,Lori Woodley,mother,Shailene Woodley,True,False
-Shailene Woodley,Lonnie Woodley,father,Shailene Woodley,False,False
-Harriet Walter,Xandra Gleeson,mother,,False,False
-Harriet Walter,Roderick Walter.,father,,False,False
-Abigail Spencer,Yancy Spencer III,mother,,False,False
-Abigail Spencer,Yancy Spencer III,father,,False,False
-Mackenyu,Yoshie Maeda,mother,,False,False
-Mackenyu,Sonny Chiba,father,,True,False
-Elisha Cuthbert,Patricia Cuthbert,mother,,True,False
-Elisha Cuthbert,Kevin Cuthbert,father,,True,False
-Jennifer Garner,Patricia Ann Garner,mother,Jennifer Garner,True,False
-Jennifer Garner,William John Garner,father,,True,False
-Kiernan Shipka,Erin Ann Shipka,mother,,True,False
-Kiernan Shipka,John D. Shipka,father,Kiernan Shipka,False,False
-Ariana DeBose,Gina DeBose,mother,,False,False
-Riley Keough,Lisa Marie Presley,mother,Riley Keough,True,True
-Riley Keough,Danny Keough,father,Riley Keough,False,True
-Mary Elizabeth Winstead,Betty Lou Winstead,mother,,False,False
-Mary Elizabeth Winstead,James Ronald Winstead,father,,False,False
-Eiza González,Gloria Patricia Reyna,mother,,False,False
-Eiza González,Carlos González,father,,True,False
-Caitríona Balfe,Anne Connolly,mother,,False,False
-Ryan Hurst,Candace Kaniecki,mother,,False,False
-Ryan Hurst,Rick Hurst,father,,False,False
-Christopher Reeve,Barbara Pitney Lamb,mother,,True,False
-Christopher Reeve,Franklin D'Olier Reeve,father,Christopher Reeve,True,False
-Oscar Isaac,María Eugenia Estrada Nicolle,mother,,False,False
-Oscar Isaac,Óscar Gonzalo Hernández-Cano,father,,False,False
-Angourie Rice,Kate Rice,mother,,True,False
-Angourie Rice,Jeremy Rice,father,,True,False
-Shia LaBeouf,Shayna Saide,mother,Shia LaBeouf,True,False
-Shia LaBeouf,Jeffrey Craig LaBeouf,father,Shia LaBeouf,True,True
-Megan Fox,Gloria Darlene Fox,mother,Megan Fox,False,False
-Megan Fox,Franklin Thomas Fox,father,,False,False
-Meryl Streep,Mary Wilkinson Streep,mother,Meryl Streep,True,True
-Meryl Streep,Harry William Streep Jr.,father,Meryl Streep,True,False
-Erin Sanders,Kathy Silbert-Sanders,mother,,False,False
-Erin Sanders,Marc Sanders,father,,False,False
-Selma Blair,Molly Ann Cooke,mother,,True,False
-Selma Blair,Elliot I. Beitner,father,,True,False
-Mark Wahlberg,Alma Wahlberg,mother,Mark Wahlberg,True,True
-Mark Wahlberg,Donald Wahlberg,father,Mark Wahlberg,True,False
-Rosamund Pike,Caroline Friend,mother,,False,False
-Rosamund Pike,Julian Pike,father,,True,False
-Morena Baccarin,Vera Setta,mother,,True,False
-Morena Baccarin,Fernando Baccarin,father,,True,True
-Rufus Sewell,Jo Sewell,mother,,True,False
-Rufus Sewell,Bill Sewell,father,,True,False
-Natalie Portman,Shelley Stevens Hershlag,mother,Natalie Portman,False,False
-Natalie Portman,Avner Hershlag,father,Natalie Portman,True,True
-Isabela Merced,Katherine Merced,mother,,False,False
-Isabela Merced,Patrick Moner,father,,False,False
-Cate Blanchett,June Blanchett,mother,,True,False
-Cate Blanchett,"Robert DeWitt Blanchett, Jr.",father,Cate Blanchett,False,True
-Patricia Arquette,Brenda Denaut,mother,,True,False
-Patricia Arquette,Lewis Arquette,father,Patricia Arquette,True,True
-Sara Ramirez,Luisa Vargas,mother,,False,False
-Sara Ramirez,Luis A. Ramirez,father,,False,False
-Emma Roberts,Kelly Cunningham,mother,Emma Roberts,False,False
-Emma Roberts,Eric Roberts,father,Emma Roberts,True,True
-Natalia Tena,Maria Tena,mother,,False,False
-Natalia Tena,Jesús Andrew Tena,father,,False,False
-Jessica Brown Findlay,Beverley Findlay,mother,,False,False
-Jessica Brown Findlay,Christopher Findlay,father,,False,False
-Elsa Pataky,Cristina Pataky Medianu,mother,,True,True
-Elsa Pataky,José Francisco Lafuente,father,,True,False
-Carla Gugino,Carol Gugino,mother,,False,False
-Carla Gugino,Carl Gugino,father,,True,False
-Sofia Boutella,Architect Safy Boutella,mother,Sofia Boutella,False,False
-Sofia Boutella,Safia Boutella,father,,False,False
-Lily James,Nina James,mother,,False,False
-Lily James,Jamie Thomson,father,,False,False
-Raegan Revord,Holly Revord,mother,,False,False
-Mackenzie Davis,Lotte Davis,mother,,False,False
-Mackenzie Davis,John Davis,father,,False,False
-Linda Cardellini,Lorraine Cardellini,mother,Linda Cardellini,True,False
-Linda Cardellini,Wayne David Cardellini,father,Linda Cardellini,False,False
-Bruce Willis,Marlene Willis,mother,Bruce Willis,True,False
-Bruce Willis,David Willis,father,,True,False
-Danna Paola,Patricia Munguia,mother,,False,False
-Danna Paola,Juan José Rivera Arellano,father,,True,False
-Melissa McCarthy,Sandra McCarthy,mother,,True,False
-Melissa McCarthy,Michael McCarthy,father,,True,False
-Amy Adams,Kathryn Adams,mother,Amy Adams,True,False
-Amy Adams,Richard Kent Adams,father,,True,False
-Chris Evans,Lisa Evans,mother,,True,False
-Chris Evans,Bob Evans,father,,False,False
-Taron Egerton,Christine Egerton,mother,,True,False
-Rachel McAdams,Sandra McAdams,mother,,True,False
-Rachel McAdams,Lance McAdams,father,,False,False
-Rick Hoffman,Gail Hoffman,mother,,False,False
-Rick Hoffman,Charlie Hoffman,father,,False,False
-Sofia Coppola,Eleanor Coppola,mother,Sofia Coppola,True,True
-Sofia Coppola,Francis Ford Coppola,father,Sofia Coppola,True,True
-Anne Hathaway,Kate McCauley Hathaway,mother,Anne Hathaway,True,False
-Anne Hathaway,Gerald Hathaway,father,Anne Hathaway,True,False
-Sam Heughan,Chrissie Heughan,mother,Sam Heughan,False,False
-Al Pacino,Rose Gerard Pacino,mother,Al Pacino,False,False
-Al Pacino,Salvatore Pacino,father,Al Pacino,True,False
-Jackie Sandler,Judy Sandler,mother,,False,False
-Jackie Sandler,Joseph Titone,father,,False,False
-Sienna Guillory,Isa Guillory,mother,,False,False
-Sienna Guillory,Isaac Guillory,father,,False,False
-Mía Maestro,Carlos Maestro,father,,False,False
-Paul Dano,Gladys Dano,mother,,True,False
-Paul Dano,Paul Dano Sr.,father,Paul Dano,False,True
-Minka Kelly,Maureen Dumont Kelly,mother,,True,False
-Minka Kelly,Rick Dufay,father,Minka Kelly,True,True
-Michelle Pfeiffer,Donna Pfeiffer,mother,,True,False
-Michelle Pfeiffer,Richard Pfeiffer,father,,True,False
-Ben Barnes,Tricia Barnes,mother,,False,False
-Ben Barnes,Thomas Barnes,father,,False,False
-Sam Claflin,Sue Claflin,mother,,True,False
-Sam Claflin,Mark Claflin,father,,True,False
-Jim Caviezel,Maggie Caviezel,mother,,False,False
-Jim Caviezel,James Caviezel Sr.,father,Jim Caviezel,True,True
-Iliza Shlesinger,Ellen Shlesinger,mother,,False,False
-Iliza Shlesinger,Fred Shlesinger,father,,False,False
-Tracy Pollan,Corky Pollan,mother,,True,False
-Tracy Pollan,Stephen M. Pollan,father,Tracy Pollan,False,False
-Daniel Kaluuya,Damalie Namusoke,mother,,True,False
-Bradley Cooper,Gloria Campano,mother,Bradley Cooper,True,True
-Bradley Cooper,Charles Cooper,father,Bradley Cooper,True,False
-Adrianne Palicki,Nancy Palicki,mother,Adrianne Palicki,True,False
-Adrianne Palicki,Jeffrey Palicki,father,,False,False
-Katheryn Winnick,Roman Winnick,mother,,False,False
-Katheryn Winnick,Roman Winnick,father,,False,False
-Jensen Ackles,Donna Joan Shaffer-Ackles,mother,Jensen Ackles,False,False
-Jensen Ackles,Alan Roger Ackles,father,Jensen Ackles,True,True
-Steve Zahn,Carleton Edward Zahn,mother,,False,False
-Steve Zahn,Carleton Edward Zahn,father,,False,False
-Amber Heard,Paige Parsons,mother,,True,False
-Amber Heard,David Heard,father,Amber Heard,True,False
-Luke Macfarlane,Penny Macfarlane,mother,,False,False
-Luke Macfarlane,Thomas Macfarlane,father,,False,False
-Rashida Jones,Peggy Lipton,mother,Rashida Jones,True,True
-Rashida Jones,Quincy Jones,father,Rashida Jones,True,True
-Alicia Vikander,Maria Fahl Vikander,mother,Alicia Vikander,True,False
-Alicia Vikander,Svante Vikander,father,Alicia Vikander,True,False
-Alexandra Billings,Gail Billings,mother,,False,False
-Sandra Bullock,Helga Mathilde Meyer,mother,Sandra Bullock,True,False
-Sandra Bullock,John W. Bullock,father,Sandra Bullock,True,True
-Abbey Lee,Peter Kershaw,father,,False,False
-Christa Miller,Bonnie Trompeter,mother,,True,False
-Christa Miller,Chuck Miller,father,,True,False
-Lukas Haas,Emily Tracy,mother,,False,False
-Lukas Haas,Berthold Haas,father,,True,False
-Javier Bardem,Pilar Bardem,mother,Javier Bardem,True,True
-Javier Bardem,Carlos Encinas Bardem,father,,True,False
-Sasha Lane,Judith Lane,mother,,False,False
-Rupert Friend,Caroline Friend,mother,,True,False
-Rupert Friend,David Oxton Friend,father,,False,False
-Ashley Johnson,Nancy Johnson,mother,,False,False
-Ashley Johnson,Cliff Johnson,father,,False,False
-Priyanka Chopra Jonas,Madhu Chopra,mother,Priyanka Chopra Jonas,True,False
-Priyanka Chopra Jonas,Ashok Chopra,father,,True,False
-Blake Lively,Elaine Lively,mother,Blake Lively,True,True
-Blake Lively,Ernie Lively,father,Blake Lively,True,True
-Vanessa Ray,Valerie Liptak,mother,,False,False
-Vanessa Ray,James Lipton,father,,False,False
-Emma Watson,Jacqueline Luesby,mother,Emma Watson,True,True
-Emma Watson,Chris Watson,father,,True,False
-Karl Urban,Joyce Urban,mother,,False,False
-Karl Urban,Jurgen Urban,father,,False,False
-Josh Lucas,Michele LeFevre,mother,,False,False
-Josh Lucas,Don Maurer,father,,False,False
-Angelina Jolie,Marcheline Bertrand,mother,Angelina Jolie,True,True
-Angelina Jolie,Jon Voight,father,Angelina Jolie,True,True
-Carolina Miranda,Martha Carrillo,mother,,False,False
-Joey King,Terry King,mother,,True,False
-Joey King,Terry King,father,,True,False
-Gillian Jacobs,Marta Jacobs,mother,,False,False
-Gillian Jacobs,William F. Jacobs Jr.,father,,False,False
-Andrea Riseborough,Isobel Riseborough,mother,,False,False
-Andrea Riseborough,George Riseborough,father,,False,False
-Clancy Brown,Joyce Helen Eldridge,mother,,False,False
-Clancy Brown,Bud Brown,father,,False,False
-Jennifer Love Hewitt,Patricia Mae Hewitt,mother,Jennifer Love Hewitt,True,False
-Jennifer Love Hewitt,Herbert Daniel Hewitt,father,,False,False
-Luna Lauren Velez,Andrés Vélez,father,,False,False
-Charlie Day,Mary Day,mother,,True,False
-Charlie Day,Dr. Thomas Charles Day,father,,True,False
-Dakota Fanning,Heather Joy Arrington,mother,,True,False
-Dakota Fanning,Steven Fanning,father,Dakota Fanning,True,True
-Alexander Ludwig,Sharlene Martin,mother,,True,False
-Alexander Ludwig,Harald Ludwig,father,,True,False
-Ariana Greenblatt,Sol Greenblatt,mother,,False,False
-Ariana Greenblatt,Shon Greenblatt,father,,False,False
-Liam Neeson,Bernard Neeson,father,Liam Neeson,True,False
-Jennifer Aniston,Nancy Dow,mother,Jennifer Aniston,True,True
-Jennifer Aniston,John Aniston,father,Jennifer Aniston,True,True
-Donnie Yen,Bow-sim Mark,mother,Donnie Yen,True,False
-Donnie Yen,Klyster Yen,father,,True,False
-Greta Gerwig,Christine Gerwig,mother,Greta Gerwig,True,False
-Greta Gerwig,Gordon Gerwig,father,Greta Gerwig,False,True
-Michael J. Fox,Phyllis Piper,mother,,True,False
-Michael J. Fox,William Fox,father,,True,False
-Jon Bernthal,Joan Lurie Bernthal,mother,Jon Bernthal,True,True
-Jon Bernthal,Eric Bernthal,father,Jon Bernthal,False,False
-Jack Quaid,Meg Ryan,mother,Jack Quaid,True,False
-Jack Quaid,Dennis Quaid,father,Jack Quaid,True,True
-Pete Davidson,Amy Waters Davidson,mother,Pete Davidson,True,False
-Pete Davidson,Scott Davidson,father,Pete Davidson,True,False
-Will Smith,Caroline Bright,mother,,True,False
-Will Smith,Willard Carroll Smith Sr.,father,Will Smith,True,True
-Léa Seydoux,Valérie Schlumberger,mother,Léa Seydoux,True,False
-Léa Seydoux,Henri Seydoux,father,Léa Seydoux,True,False
-Zachary Levi,Susan Pugh,mother,,True,False
-Zachary Levi,Darrell Pugh,father,,False,False
-Val Kilmer,Gladys Swanette Ekstadt,mother,,False,False
-Val Kilmer,Eugene Kilmer,father,,True,True
-Olivia Wilde,Leslie Cockburn,mother,Olivia Wilde,True,True
-Olivia Wilde,Andrew Cockburn,father,Olivia Wilde,True,True
-Meagan Good,Tyra Wardlow-Doyle,mother,,True,False
-Eliza Dushku,Judith Rasmussen,mother,,False,False
-Eliza Dushku,Philip R. Dushku,father,Eliza Dushku,True,False
-Rachel Weisz,Edith Ruth Weisz,mother,,True,False
-Rachel Weisz,George Weisz,father,Rachel Weisz,True,False
-Joaquin Phoenix,Arlyn Phoenix,mother,Joaquin Phoenix,True,True
-Joaquin Phoenix,John Lee Bottom,father,Joaquin Phoenix,False,True
-Charlie Hunnam,Jane Bell,mother,,False,False
-Charlie Hunnam,William Hunnam,father,Charlie Hunnam,True,False
-Sigourney Weaver,Elizabeth Inglis,mother,Sigourney Weaver,True,False
-Sigourney Weaver,Sylvester L. Weaver Jr.,father,Sigourney Weaver,True,True
-Seth Rogen,Sandy Rogen,mother,Seth Rogen,True,True
-Seth Rogen,Mark Rogen,father,,True,False
-Elle Fanning,Heather Joy Arrington,mother,,True,False
-Elle Fanning,Steven Fanning,father,,True,False
-Jon Hamm,Deborah Hamm,mother,,True,False
-Jon Hamm,Daniel Hamm,father,,False,False
-David Tennant,Helen McLeod,mother,,True,False
-David Tennant,Sandy McDonald,father,,True,False
-Maisie Williams,Hilary Williams,mother,,False,False
-Maisie Williams,Hilary Francis Williams,father,,False,False
-Christina Ricci,Sarah Ricci,mother,,True,False
-Christina Ricci,Ralph Ricci,father,,True,False
-Lily Rabe,Jill Clayburgh,mother,Lily Rabe,True,True
-Lily Rabe,David Rabe,father,Lily Rabe,True,True
-Kate Beckinsale,Judy Loe,mother,Kate Beckinsale,True,False
-Kate Beckinsale,Richard Beckinsale,father,Kate Beckinsale,True,True
-Tia Carrere,Audrey Duhinio Janairo,mother,,False,False
-Tia Carrere,Alexander Janairo,father,,False,False
-Abigail Breslin,Kim Breslin,mother,Abigail Breslin,True,False
-Abigail Breslin,Michael Breslin,father,Abigail Breslin,True,True
-Natalie Morales,Penelope Morales,mother,,False,False
-Natalie Morales,"Lieutenant Colonel Mario Morales, Jr.",father,,False,False
-Jodie Whittaker,Adrian Whittaker,father,,False,False
-Laura Linney,Miriam Anderson Linney,mother,Laura Linney,False,False
-Laura Linney,Romulus Linney,father,Laura Linney,True,True
-Odessa A’zion,Pamela Adlon,mother,,True,False
-Odessa A’zion,Pamela Adlon,father,,False,False
-Pier Angeli,Enrichetta Romiti,mother,,False,False
-Pier Angeli,Enrico Angeli,father,,False,False
-Michael Biehn,Marcia Biehn,mother,,False,False
-Michael Biehn,Don Biehn,father,,False,False
-Sarah Shahi,Mah Monir Soroush Azar,mother,,True,False
-Sarah Shahi,Abbas Jahansouz Shahi,father,,False,False
-Sean Patrick Flanery,Genie Flanery,mother,,False,False
-Sean Patrick Flanery,Paul Flanery,father,,False,False
-Kaitlyn Dever,Kathy Dever,mother,,False,False
-Kaitlyn Dever,Tim Dever,father,,True,False
-Bruce Campbell,Joanne Louise Campbell,mother,,False,False
-Bruce Campbell,Charles Newton Campbell,father,,False,False
-Jason Isaacs,Sheila Isaacs,mother,,False,False
-Jason Isaacs,Eric Isaacs,father,,False,False
-Robin Williams,Laurie Williams,mother,,True,False
-Robin Williams,Robert Fitzgerald Williams,father,,True,False
-Lena Headey,Sue Headey,mother,,True,True
-Lena Headey,John Headey,father,Lena Headey,True,True
-Jay Baruchel,Robyne Baruchel,mother,Jay Baruchel,False,False
-Jay Baruchel,Serge Baruchel,father,Jay Baruchel,True,False
-Brittany Snow,Cinda Snow,mother,,False,False
-Brittany Snow,John Snow,father,,False,False
-Luna Blaise,Angelyna Martinez,mother,,False,False
-Luna Blaise,Paul Boyd,father,,False,False
-Jacob Elordi,Melissa Elordi,mother,Jacob Elordi,False,False
-Jacob Elordi,John Elordi,father,,False,False
-Bailee Madison,Patricia Riley,mother,,True,False
-Bailee Madison,Michael Shawn Riley,father,,False,False
-Adam Driver,Nancy Wright,mother,,True,False
-Adam Driver,Joe Douglas Driver,father,,True,False
-Alison Brie,Joanne Brenner,mother,,True,False
-Alison Brie,Charles Schermerhorn,father,,False,False
-Toby Kebbell,Michelle Mathers,mother,,False,False
-Toby Kebbell,Robert Kebbell,father,,False,False
-Will Arnett,Edith Alexandra Palk,mother,,True,False
-Will Arnett,Emerson James Arnett,father,,False,False
-Tessa Thompson,Marc Anthony Thompson,mother,Tessa Thompson,False,False
-Tessa Thompson,Marc Anthony Thompson,father,Tessa Thompson,False,False
-Jamie Dornan,Lorna Dornan,mother,Jamie Dornan,True,False
-Jamie Dornan,Jim Dornan,father,Jamie Dornan,True,True
-Stephen Lang,Theresa Volmer,mother,,False,False
-Stephen Lang,Eugene Lang,father,,False,False
-James Spader,Jean Fraser Spader,mother,James Spader,True,False
-James Spader,Stoddard Greenwood Spader,father,James Spader,True,False
-Nicholas Braun,Elizabeth Lyle Braun,mother,,False,False
-Nicholas Braun,Craig Braun,father,,False,False
-Hugh Jackman,Grace McNeil,mother,,True,False
-Hugh Jackman,Christopher John Jackman,father,,True,True
-Daniel Day-Lewis,Jill Balcon,mother,Daniel Day-Lewis,True,True
-Daniel Day-Lewis,Cecil Day-Lewis,father,Daniel Day-Lewis,True,True
-Keira Knightley,Sharman Macdonald,mother,Keira Knightley,True,True
-Keira Knightley,Will Knightley,father,Keira Knightley,True,True
-Kristen Bell,Lorelei Bell,mother,,True,False
-Kristen Bell,Tom Bell,father,,True,False
-Jim Carrey,Kathleen Carrey,mother,Jim Carrey,True,False
-Jim Carrey,Percy Carrey,father,Jim Carrey,True,True
-Gary Oldman,Kathleen Oldman,mother,Gary Oldman,True,False
-Gary Oldman,Leonard Bertram Oldman,father,Gary Oldman,False,False
-Jodie Comer,Donna Comer,mother,,False,False
-Jodie Comer,Don Comer,father,,False,False
-Carrie Preston,Linda Barbara Preston,mother,,False,False
-Mariette Hartley,Polly Cornwell,mother,,False,False
-Mariette Hartley,Paul Hembree Hartley,father,,False,False
-Stephen Dorff,Nancy Dorff,mother,,True,False
-Stephen Dorff,Steve Dorff,father,Stephen Dorff,True,True
-Ralph Fiennes,Jennifer Lash,mother,Ralph Fiennes,True,False
-Ralph Fiennes,Mark Fiennes,father,Ralph Fiennes,True,False
-Sean Connery,Joseph Connery,father,Sean Connery,True,False
-Alice Eve,Sharon Maughan,mother,Alice Eve,True,True
-Alice Eve,Trevor Eve,father,Alice Eve,True,True
-Sam Elliott,Glynn Mamie Sparks,mother,,False,False
-Sam Elliott,Henry Nelson Elliott,father,,False,False
-Kirsten Dunst,Inez Rupprecht,mother,,True,False
-Kirsten Dunst,Klaus Dunst,father,,True,False
-Sasha Alexander,Sofija Kukavica,mother,,False,False
-Sasha Alexander,Slobodan Drobnjak,father,,False,False
-Liana Liberato,Rhondelle Liberato,mother,,False,False
-Liana Liberato,George Liberato,father,,True,False
-Jennette McCurdy,Debra McCurdy,mother,Jennette McCurdy,True,False
-Jennette McCurdy,Mark McCurdy,father,,False,False
-Harold Perrineau,Sylvia Perrineau,mother,Harold Perrineau,False,False
-Harold Perrineau,Harold Williams,father,,False,False
-Katy Mixon,Donna Mixon,mother,,False,False
-Katy Mixon,Fred Mixon,father,,False,False
-Jessica Chastain,Jerri Chastain,mother,Jessica Chastain,True,False
-Jessica Chastain,Michael Monasterio,father,,True,False
-Luke Grimes,Angie Barker,mother,,False,False
-Luke Grimes,Randy Grimes,father,,False,False
-Bryan Cranston,Audrey Peggy Sell,mother,,True,False
-Bryan Cranston,Joe Cranston,father,Bryan Cranston,True,False
-Robert Pattinson,Clare Pattinson,mother,Robert Pattinson,True,False
-Robert Pattinson,Richard Pattinson,father,Robert Pattinson,True,False
-Skyler Gisondo,Stacey Gisondo,mother,,False,False
-Skyler Gisondo,Stu Gisondo,father,,False,False
-Elizabeth Debicki,Piotr Debicki,father,Elizabeth Debicki,False,False
-Ke Huy Quan,Quan Y Huy,father,,False,False
-Emma Heming Willis,Zorina Heming,mother,,True,False
-Sophie Thatcher,Robert Thatcher,father,,False,False
-Zoe Perry,Laurie Metcalf,mother,Zoe Perry,True,True
-Zoe Perry,Jeff Perry,father,Zoe Perry,True,False
-Kate Capshaw,Beverly Sue Simon,mother,,False,False
-Kate Capshaw,Edwin Leon Nail,father,,False,False
-Kelly Preston,Linda Carlson,mother,,True,False
-Kelly Preston,Peter Palzis,father,,True,False
-Nathan Fillion,Cookie Fillion,mother,,False,False
-Nathan Fillion,Bob Fillion,father,,False,False
-Marisa Tomei,Addie Tomei,mother,Marisa Tomei,True,False
-Marisa Tomei,Gary A. Tomei,father,Marisa Tomei,True,True
-Olivia Cooke,Lindsy Wild,mother,,False,False
-Olivia Cooke,John Cooke,father,,False,False
-Bridget Regan,Mary Catherine Regan,mother,,False,False
-Bridget Regan,Jim Regan,father,,False,False
-Hope Davis,Joan Davis,mother,,False,False
-Hope Davis,William Davis,father,,False,False
-Gemma Arterton,Sally-Anne Heap,mother,,True,False
-Gemma Arterton,Barry Arterton,father,Gemma Arterton,False,False
-Mads Mikkelsen,Bente Christiansen,mother,,True,False
-Mads Mikkelsen,Henning Mikkelsen,father,,True,False
-Yvonne Strahovski,Bozena Strahovski,mother,Yvonne Strahovski,False,False
-Yvonne Strahovski,Peter Strzechowski,father,Yvonne Strahovski,False,False
-Lance Reddick,Doris Reddick,mother,,False,False
-Anna Kendrick,Janice Kendrick,mother,,False,False
-Anna Kendrick,William Kendrick,father,,False,False
-Saoirse Ronan,Monica Ronan,mother,Saoirse Ronan,True,False
-Saoirse Ronan,Paul Ronan,father,Saoirse Ronan,True,True
-Adrien Brody,Sylvia Plachy,mother,Adrien Brody,True,False
-Adrien Brody,Elliot Brody,father,,True,False
-Joel Edgerton,Marianne Edgerton,mother,,True,False
-Joel Edgerton,Michael Edgerton,father,,True,False
-Jamie Lee Curtis,Janet Leigh,mother,Jamie Lee Curtis,True,True
-Jamie Lee Curtis,Tony Curtis,father,Jamie Lee Curtis,True,True
-Bella Ramsey,Alex Ramsey,father,,False,False
-Jack Nicholson,June Frances Nicholson,mother,Jack Nicholson,True,True
-Jack Nicholson,Donald Furcillo,father,Jack Nicholson,False,False
-Michelle Yeoh,Janet Yeoh,mother,,False,False
-Michelle Yeoh,Yeoh Kian Teik,father,,False,False
-Tom Pelphrey,Richard Pelphrey,father,,False,False
-Anthony Ramos,Mildred Ramos,mother,,False,False
-Jane Russell,Geraldine Jacobi,mother,,False,False
-Jane Russell,Roy William Russell,father,Jane Russell,True,False
-Maria Bello,Kathy Bello,mother,,True,False
-Maria Bello,Joe Bello,father,,True,False
-Kirk Fox,Joyce Fox,mother,,False,False
-Kirk Fox,Gardner Fox,father,,False,False
-Britt Robertson,Beverly Robertson,mother,,False,False
-Britt Robertson,Ryan Robertson,father,,False,False
-Laura Benanti,Linda Wonneberger,mother,,True,False
-Laura Benanti,Martin Vidnovic,father,Laura Benanti,True,False
-Harry Melling,Joanne Melling,mother,,False,False
-Harry Melling,Paul Melling,father,,False,False
-Isabella Rossellini,Ingrid Bergman,mother,Isabella Rossellini,False,True
-Isabella Rossellini,Roberto Rossellini,father,Isabella Rossellini,True,True
-Gina Torres,Rebecca Torres,mother,,False,False
-Gina Torres,Richard Torres,father,,False,False
-Bella Thorne,Tamara Thorne,mother,,True,False
-Julia Roberts,Betty Lou Bredemus,mother,Julia Roberts,True,True
-Julia Roberts,Walter Grady Roberts,father,Julia Roberts,True,True
-Bob Odenkirk,Barbara Odenkirk,mother,Bob Odenkirk,True,False
-Bob Odenkirk,Walter Odenkirk,father,Bob Odenkirk,True,False
-Woody Harrelson,Diane Lou Oswald,mother,,True,False
-Woody Harrelson,Charles Harrelson,father,Woody Harrelson,True,True
-Ridley Scott,Elizabeth Jean Scott,mother,,True,False
-Ridley Scott,Francis Percy Scott,father,,False,False
-Amanda Schull,Susan Schull,mother,,False,False
-Robert Carlyle,Elizabeth McDonald,mother,,False,False
-Robert Carlyle,Joseph Carlyle,father,,False,False
-Edward Norton,Lydia Robinson Norton,mother,,False,False
-Edward Norton,Edward Mower Norton Jr.,father,Edward Norton,True,False
-Bel Powley,Janis Jaffa,mother,,True,False
-Bel Powley,Mark Powley,father,,True,False
-Bill Paxton,Mary Lou Paxton,mother,,True,False
-Bill Paxton,John Lane Paxton,father,,True,False
-Dakota Johnson,Melanie Griffith,mother,Dakota Johnson,True,True
-Dakota Johnson,Don Johnson,father,Dakota Johnson,False,True
-Anna Torv,Susan Torv,mother,Anna Torv,True,False
-Anna Torv,Hans Torv,father,,True,False
-Benjamin Walker,Jeannine Walker,mother,,False,False
-Benjamin Walker,Greg Walker,father,,True,False
-Hunter Schafer,Katy Schafer,mother,,False,False
-Hunter Schafer,Mac Schafer,father,,False,False
-Nicole Ari Parker,Susan Parker,mother,,False,False
-Nicole Ari Parker,Donald Parker,father,,False,False
-Errol Flynn,Marelle Young,mother,,True,False
-Errol Flynn,Theodore Thomson Flynn,father,Errol Flynn,False,True
-Annie Wersching,Sandy Wersching,mother,,False,False
-Annie Wersching,Frank Wersching Jr.,father,Annie Wersching,False,False
-Bill Hader,Sherri Renee Hader,mother,,False,False
-Bill Hader,William Thomas Hader Sr.,father,Bill Hader,False,True
-Kaya Scodelario,Katia Scodelario,mother,,True,False
-Kaya Scodelario,Roger Humphrey,father,,True,False
-Sadie Frost,Mary Davidson,mother,,True,False
-Sadie Frost,David Vaughan,father,,True,False
-Sadie Stanley,Matt Stanley,father,,False,False
-Christina Hendricks,Jackie Sue Raymond,mother,,False,False
-Christina Hendricks,Robert Hendricks,father,,False,False
-Colin Farrell,Rita Farrell,mother,,True,False
-Colin Farrell,Eamon Farrell,father,,True,False
-Michael B. Jordan,Donna Jordan,mother,,True,False
-Michael B. Jordan,Michael A. Jordan,father,,True,False
-John Travolta,Helen Travolta,mother,John Travolta,True,False
-John Travolta,Salvatore Travolta,father,John Travolta,True,True
-Mamoudou Athie,El Hadj Athie,father,,False,False
-Adria Arjona,Leslie Torres,mother,,True,False
-Adria Arjona,Ricardo Arjona,father,Adria Arjona,True,False
-Miles Teller,Merry Flowers,mother,,True,False
-Miles Teller,Mike Teller,father,,True,False
-Annie Potts,Dorothy Harris Potts,mother,,False,False
-Annie Potts,Powell Grisette Potts,father,,False,False
-Leslie Bibb,Betty Blakemore Sulzbach,mother,,False,False
-Steve Carell,Harriet Theresa Carell,mother,Steve Carell,False,False
-Steve Carell,Edwin A. Carell,father,Steve Carell,True,True
-Katherine Heigl,Nancy Heigl,mother,Katherine Heigl,True,True
-Katherine Heigl,Paul Heigl,father,Katherine Heigl,True,True
-M. Night Shyamalan,Jayalakshmi Shyamalan,mother,M. Night Shyamalan,True,False
-M. Night Shyamalan,Nelliate C. Shyamalan,father,,True,False
-Sarah Jessica Parker,Barbara Parker,mother,,True,False
-Sarah Jessica Parker,Stephen Parker,father,,True,False
-Zooey Deschanel,Mary Jo Deschanel,mother,Zooey Deschanel,True,True
-Zooey Deschanel,Caleb Deschanel,father,Zooey Deschanel,True,True
-David Harbour,Kenneth Harbour,father,,False,False
-Molly C. Quinn,Dianne Quinn,mother,,False,False
-Molly C. Quinn,Tom Quinn,father,,False,False
-Cara Delevingne,Pandora Delevingne,mother,Cara Delevingne,True,True
-Cara Delevingne,Charles Delevingne,father,Cara Delevingne,True,True
-Andrew Garfield,Lynn Garfield,mother,,False,True
-Andrew Garfield,Richard Garfield,father,,False,False
-Daniel Radcliffe,Marcia Gresham,mother,Daniel Radcliffe,True,False
-Daniel Radcliffe,Alan Radcliffe,father,Daniel Radcliffe,True,True
-Julie Bowen,Suzanne Frey Bowen,mother,,False,False
-Julie Bowen,John Alexander Luetkemeyer Jr.,father,,False,False
-Diane Lane,Colleen Farrington,mother,Diane Lane,True,False
-Diane Lane,Burt Lane,father,,True,False
-Connie Nielsen,Laila Nielsen,mother,,True,False
-Connie Nielsen,Bent Nielsen,father,,False,False
-Abbie Cornish,Shelley Cornish,mother,,True,False
-Abbie Cornish,Barry Cornish,father,,False,False
-Daniel Craig,Olivia Craig,mother,,True,False
-Daniel Craig,Tim Craig,father,,False,False
-Common,Dr. Mahalia Ann Hines,mother,,True,True
-Common,Lonnie Lynn Sr.,father,,True,True
-Danny McBride,Kathy Rudy,mother,,False,False
-Danny McBride,Jim McBride,father,,False,False
-Jake Johnson,Eve Johnson,mother,,False,False
-Jake Johnson,Ken Weinberger,father,,False,False
-Stanley Tucci,Joan Tucci,mother,Stanley Tucci,False,True
-Stanley Tucci,"Stanley Tucci, Sr.",father,Stanley Tucci,False,True
-Julia Stiles,Judith Newcomb Stiles,mother,Julia Stiles,True,True
-Julia Stiles,John O'Hara,father,,True,False
-Paul Mescal,Dearbhla Mescal,mother,,False,False
-Charlie Murphy,Lillian Murphy,mother,,True,False
-Charlie Murphy,Charles Edward Murphy,father,,False,False
-Ethan Hawke,Leslie Hawke,mother,Ethan Hawke,True,True
-Ethan Hawke,James Steven Hawke,father,,False,False
-Jordana Brewster,Maria João Brewster,mother,,True,False
-Jordana Brewster,Alden Brewster,father,,True,False
-Helen Mirren,Kathleen Alexandrina Eva Matilda Rogers,mother,,True,False
-Helen Mirren,Vasily Petrovich Mironoff,father,Helen Mirren,False,False
-Virginia Gardner,Sarah Gardner,mother,,False,False
-Virginia Gardner,Chuck Gardner,father,,False,False
-Suki Waterhouse,Elizabeth Waterhouse,mother,,True,False
-Suki Waterhouse,Norman Waterhouse,father,,True,False
-Lacey Chabert,Julie Chabert,mother,,True,False
-Lacey Chabert,Tony Chabert,father,,True,False
-Reese Witherspoon,Betty Reese,mother,Reese Witherspoon,True,False
-Reese Witherspoon,John Draper Witherspoon,father,Reese Witherspoon,True,True
-Gabriel Basso,Marcie Basso,mother,,False,False
-Gabriel Basso,Louis J. Basso,father,,False,False
-Olivia d'Abo,Maggie London,mother,,True,False
-Simon Pegg,Gillian Rosemary Smith,mother,,True,False
-Simon Pegg,John Beckingham,father,,True,False
-Jackie Chan,Lee-Lee Chan,mother,,True,False
-Jackie Chan,Charles Chan,father,Jackie Chan,True,False
-Zoey Deutch,Lea Thompson,mother,Zoey Deutch,True,True
-Zoey Deutch,Howard Deutch,father,Zoey Deutch,True,True
-Tom Welling,Bonnie Welling,mother,,False,False
-Tom Welling,Mark Welling,father,,False,False
-Madelyn Cline,Pam Cline,mother,,False,False
-Madelyn Cline,Mark Cline,father,,False,False
-Holly Hunter,Opal Marguerite Catledge,mother,,False,False
-Holly Hunter,Charles Edwin Hunter,father,,False,False
-Emmanuelle Seigner,Aline Ponelle,mother,,False,False
-Emmanuelle Seigner,Jean-Louis Seigner,father,Emmanuelle Seigner,True,True
-Claudia Lee,Denise Lee,mother,,False,False
-Claudia Lee,Klaudiusz Lee,father,,False,False
-Piper Perabo,Mary Charlotte Ulland,mother,,True,False
-Piper Perabo,William Perabo,father,Piper Perabo,False,False
-Morgan Freeman,Mayme Edna Revere,mother,Morgan Freeman,False,False
-Morgan Freeman,"Morgan Porterfield Freeman, Sr.",father,Morgan Freeman Jr.,False,True
-Domhnall Gleeson,Mary Weldon,mother,,True,False
-Domhnall Gleeson,Brendan Gleeson,father,Domhnall Gleeson,True,True
-Dove Cameron,Bonnie Wallace,mother,Dove Cameron,True,False
-Dove Cameron,Philip Alan Hosterman,father,Dove Cameron,False,False
-Olivia Holt,Kim Holt,mother,,True,False
-Olivia Holt,Mark Holt,father,,True,False
-Maika Monroe,Dixie Monroe,mother,,False,False
-Maika Monroe,Dixie Brubaker,father,,False,False
-Michael Sheen,Irene Sheen,mother,,False,False
-Michael Sheen,Meyrick Sheen,father,Michael Sheen,True,True
-David Fincher,Claire Mae Fincher,mother,,True,False
-David Fincher,Howard Fincher,father,,True,False
-Michael Fassbender,Adele Fassbender,mother,,True,False
-Michael Fassbender,Josef Fassbender,father,Michael Fassbender,True,True
-Sofia Black-D'Elia,Eleanor D'Elia,mother,,False,False
-Sofia Black-D'Elia,Anthony D'Elia,father,,False,False
-Eva Green,Marlène Jobert,mother,Eva Green,True,True
-Eva Green,Walter Green,father,,True,False
-Rooney Mara,Kathleen McNulty Rooney,mother,,True,False
-Rooney Mara,Chris Mara,father,,False,True
-Emma Thompson,Phyllida Law,mother,Emma Thompson,True,True
-Emma Thompson,Eric Thompson,father,Emma Thompson,True,False
-Poorna Jagannathan,Retired Vice Admiral V.R. Jagannathan,father,,False,False
-Melissa Benoist,Julie Benoist,mother,,True,False
-Melissa Benoist,Jim Benoist,father,,False,False
-Frances McDormand,Noreen E. Nickelson McDormand,mother,Frances McDormand,False,False
-Frances McDormand,Vernon McDormand,father,Frances McDormand,True,False
-Krysten Ritter,Kathy Ritter,mother,,False,False
-Krysten Ritter,Gary Ritter,father,,False,False
-Fisher Stevens,Sally Fisher,mother,,True,False
-Viggo Mortensen,Grace Gamble Atkinson,mother,,True,False
-Viggo Mortensen,Viggo Peter Mortensen Sr.,father,Viggo Mortensen Jr.,False,True
-Liv Tyler,Bebe Buell,mother,Liv Tyler,True,True
-Liv Tyler,Steven Tyler,father,Liv Tyler,True,True
-Jack Black,Judith Love Cohen,mother,Jack Black,True,False
-Jack Black,Thomas William Black,father,,True,False
-Taylor Kitsch,Susan Green,mother,,False,False
-Taylor Kitsch,Drew Kitsch,father,,False,False
-Michael Cera,Linda Cera,mother,,False,False
-Michael Cera,Luigi Cera,father,,False,False
-James Gunn,Leota Gunn,mother,,True,False
-James Gunn,James F. Gunn,father,James Gunn,False,False
-Emily Browning,Shelley Browning,mother,,True,False
-Emily Browning,Andrew Browning,father,,True,False
-Neve Campbell,Marnie Neve Campbell,mother,,False,False
-Neve Campbell,Gerry Campbell,father,,True,False
-John Krasinski,Mary Clare Krasinski,mother,John Krasinski,True,False
-John Krasinski,Ronald Krasinski,father,,True,True
-Paul Walker,Cheryl Walker,mother,Paul Walker,True,False
-Paul Walker,Paul William Walker III,father,Paul Walker IV,True,True
-Jacob Tremblay,Christina Candia Tremblay,mother,,True,False
-Jacob Tremblay,Jason Tremblay,father,Jacob Tremblay,True,False
-Abby Ryder Fortson,Christie Lynn Smith,mother,Abby Ryder Fortson,False,True
-Abby Ryder Fortson,John Fortson,father,Abby Ryder Fortson,False,False
-Natasia Demetriou,Ellie Demetriou,father,,False,False
-Eric Stoltz,Evelyn B. Stoltz,mother,,True,False
-Eric Stoltz,Jack Stoltz,father,,False,False
-John Cena,Carol Cena,mother,John Cena,True,False
-John Cena,John Cena Sr.,father,John Cena Jr.,False,True
-Michelle Williams,Carla Williams,mother,,True,False
-Michelle Williams,Larry Richard Williams,father,Michelle Williams,True,False
-Geena Davis,Lucille Davis,mother,,True,False
-Geena Davis,William F. Davis,father,,True,False
-Paul Rudd,Gloria Rudd,mother,Paul Rudd,True,False
-Paul Rudd,Michael Rudd,father,,True,False
-James Mangold,Sylvia Plimack Mangold,mother,James Mangold,False,False
-James Mangold,Robert Mangold,father,James Mangold,True,False
-Sadie Sink,Lori Sink,mother,,False,False
-Sadie Sink,Casey Adam Sink,father,,False,False
-Annabelle Wallis,Richard Hardman,father,,False,False
-Paula Patton,Joyce Patton,mother,,True,False
-Paula Patton,Charles Patton,father,,True,False
-Judy Holliday,Helen Tuvim,mother,Judy Holliday,False,False
-Judy Holliday,Abe Tuvim,father,Judy Holliday,False,False
-Martin Freeman,Philomena Norris,mother,,False,False
-Martin Freeman,Geoffrey Freeman,father,,True,False
-Milla Jovovich,Galina Jovovich,mother,Milla Jovovich,True,True
-Milla Jovovich,Bogdan Jovovich,father,Milla Jovovich,True,True
-Peyton List,Suzanne List,mother,,True,False
-Peyton List,John List,father,,True,False
-James Norton,Lavinia Norton,mother,,False,False
-James Norton,Hugh B. Norton,father,,False,False
-Noomi Rapace,Nina Norén,mother,,True,False
-Noomi Rapace,Rogelio Durán,father,,True,False
-Tobias Menzies,Gillian Menzies,mother,,False,False
-Tobias Menzies,Peter Menzies Jr.,father,,False,False
-Edward Furlong,Eleanor Torres,mother,,False,False
-Edward Furlong,Eleanor Torres,father,,False,False
-Brooke Langton,Jackson Langton,mother,,False,False
-Brooke Langton,Jackson Langton,father,,False,False
-Ellen Barkin,Evelyn Barkin,mother,,True,False
-Ellen Barkin,Sol Barkin,father,,False,False
-Mae Whitman,Pat Musick,mother,Mae Whitman,True,False
-Mae Whitman,Pat Whitman,father,,False,False
-John Francis Daley,R.F. Daley,mother,,True,False
-John Francis Daley,R.F. Daley,father,,True,False
-Tim Robbins,Mary Robbins,mother,,True,False
-Tim Robbins,Gil Robbins,father,Tim Robbins,True,True
-Ashly Burch,David Burch,father,,False,False
-Zac Efron,Starla Baskett,mother,Zac Efron,True,False
-Zac Efron,David Efron,father,Zac Efron,True,False
-Will Patton,Billie Patton,mother,,False,False
-Will Patton,Bill Patton,father,,False,False
-Sam Levinson,Diana Rhodes,mother,,True,False
-Sam Levinson,Barry Levinson,father,Sam Levinson,True,True
-Parker Posey,Lynda Patton,mother,,True,False
-Parker Posey,Chris Posey,father,,True,False
-Emily Osment,Theresa Osment,mother,Emily Osment,True,False
-Emily Osment,Michael Eugene Osment,father,Emily Osment,True,False
-Boyd Holbrook,Ellen Holbrook,mother,,False,False
-Boyd Holbrook,Don Holbrook,father,,False,False
-Jennifer Morrison,Judy Morrison,mother,,False,False
-Jennifer Morrison,David L. Morrison,father,,False,False
-Iain Glen,Hamish Glen,father,,False,False
-Naomi Watts,Myfanwy Edwards Roberts,mother,,False,False
-Naomi Watts,Peter Watts,father,,True,False
-Liam Hemsworth,Leonie Hemsworth,mother,,True,True
-Liam Hemsworth,Craig Hemsworth,father,,True,True
-Marlon Brando,Dorothy Julia Pennebaker Brando,mother,Marlon Brando,False,False
-Marlon Brando,Marlon Brando Sr.,father,Marlon Brando Jr.,True,True
-Emma Mackey,Rachel Mackey,mother,,False,False
-Emma Mackey,Philippe Mackey,father,,False,False
-Nicola Peltz Beckham,Claudia Heffner Peltz,mother,,True,False
-Nicola Peltz Beckham,Nelson Peltz,father,,False,False
-Ariana Richards,Darielle Garrison,mother,,False,False
-Ariana Richards,Gary Richards,father,,True,False
-Cameron Diaz,Billie Diaz,mother,,True,False
-Cameron Diaz,Emilio Diaz,father,Cameron Diaz,True,True
-Ruby Rose,Katia Langenheim,mother,Ruby Rose,True,False
-Jennifer Coolidge,Pauline Coolidge,mother,,False,False
-Jennifer Coolidge,Paul Coolidge,father,,False,False
-Daisy Edgar-Jones,Wendy Edgar-Jones,mother,,False,False
-Daisy Edgar-Jones,Philip Edgar-Jones,father,,False,False
-Sarah Paulson,Catharine Gordon Dolcater,mother,,False,False
-Sarah Paulson,Douglas Lyle Paulson II,father,,False,False
-Stana Katic,Rada Katic,mother,,False,False
-Stana Katic,Peter Katic,father,Stana Katic,False,False
-Joel Kinnaman,Bitte Kinnaman,mother,Joel Kinnaman,False,True
-Joel Kinnaman,Steve Kinnaman,father,,True,False
-Erin Murphy,Stephanie Murphy,mother,,False,False
-Erin Murphy,Dan Murphy,father,,False,False
-John Rhys-Davies,Phyllis Jones,mother,,False,False
-John Rhys-Davies,Rhys Davies,father,,False,False
-River Phoenix,Arlyn Phoenix,mother,River Phoenix,True,True
-River Phoenix,John Lee Bottom,father,,True,True
-Courtney Eaton,Stephenie Eaton,mother,,False,False
-Courtney Eaton,Stephen Eaton,father,,False,False
-Jeri Ryan,Sharon Zimmerman,mother,,True,False
-Selena Gomez,Mandy Teefey,mother,Selena Gomez,True,True
-Selena Gomez,Ricardo Joel Gomez,father,Selena Gomez,True,True
-Cary Elwes,Tessa Kennedy,mother,,True,False
-Cary Elwes,Dominick Elwes,father,Cary Elwes,False,True
-Will Ferrell,Betty Kay Overman,mother,,True,False
-Will Ferrell,Roy Lee Ferrell Jr.,father,Will Ferrell,True,True
-Winona Ryder,Cynthia Palmer,mother,,True,False
-Winona Ryder,Michael Horowitz,father,Winona Ryder,True,False
-Armie Hammer,Dru Ann Mobley,mother,,True,False
-Armie Hammer,Michael Armand Hammer,father,Armie Hammer,True,False
-Renee Olstead,Rebecca Lynn Jeffries,mother,,True,False
-Renee Olstead,Christopher Eric Olstead,father,,False,False
-Ian McShane,Irene McShane,mother,,False,False
-Ian McShane,Harry McShane,father,Ian McShane,False,False
-Wendie Malick,Gigi Malick,mother,,False,False
-Wendie Malick,Ken Malick,father,,False,False
-Nina Dobrev,Michaela Dobreva,mother,,False,False
-Nina Dobrev,Konstantin Dobrev,father,,True,False
-Elisabeth Shue,Anne Harms,mother,,True,False
-Elisabeth Shue,James Shue,father,Elisabeth Shue,False,True
-Téa Leoni,Emily Patterson,mother,,True,False
-Téa Leoni,Anthony Pantaleoni,father,Téa Leoni,True,False
-Sebastian Stan,Georgeta Orlovschi,mother,,False,False
-Sebastian Stan,Georgeta Orlovschi,father,,False,False
-James Franco,Betsy Lou Franco,mother,James Franco,True,False
-James Franco,Douglas Eugene Franco,father,James Franco,True,False
-JoAnna Garcia Swisher,Lorraine García,mother,,True,False
-JoAnna Garcia Swisher,Jay Garcia,father,,True,False
-Jennifer Nettles,Carla Temple,mother,,False,False
-Jennifer Nettles,Carlo Nettles,father,,False,False
-Rosario Dawson,Isabel Celeste,mother,,True,False
-Rosario Dawson,Greg Dawson,father,,True,False
-Haley Lu Richardson,Valerie Richardson,mother,,True,False
-Haley Lu Richardson,Forrest L. Richardson,father,,False,False
-Richa Moorjani,Sudhir Moorjani,father,,False,False
-Jack O'Connell,Alison O'Connell,mother,,False,False
-Jack O'Connell,John O'Connell,father,,False,False
-Jennifer Jason Leigh,Barbara Turner,mother,Jennifer Jason Leigh,True,True
-Jennifer Jason Leigh,Vic Morrow,father,Jennifer Jason Leigh,True,True
-Chloe Bennet,Stephanie Crane,mother,,False,False
-Chloe Bennet,Bennet Wang,father,,False,False
-Kathryn Hahn,Karen Hahn,mother,,False,False
-Kathryn Hahn,Bill Hahn,father,,False,False
-Mila Kunis,Elvira Kunis,mother,Mila Kunis,True,True
-Mila Kunis,Mark Kunis,father,Mila Kunis,True,False
-Sean Young,Lee Guthrie,mother,,True,False
-Sean Young,Donald Young Jr.,father,,False,False
-Jessica Biel,Kimberly Biel,mother,,True,False
-Jessica Biel,Jonathan Biel,father,Jessica Biel,True,False
-David Corenswet,Caroline Packard,mother,,False,False
-David Corenswet,John Corenswet,father,,False,False
-Vera Farmiga,Lubomyra Farmiga,mother,Vera Farmiga,False,True
-Vera Farmiga,Mykhailo Farmiga,father,Vera Farmiga,True,True
-Lucy Boynton,Adriaane Pielou,mother,,False,False
-Lucy Boynton,Graham Boynton,father,,False,False
-Wes Bentley,Cherie Bentley,mother,,False,False
-Wes Bentley,David Bentley,father,,True,False
-Justin Theroux,Phyllis Grissim-Theroux,mother,Justin Theroux,True,False
-Justin Theroux,Eugene Theroux,father,Justin Theroux,True,True
-Grant Gustin,Tina Haney,mother,,True,False
-Grant Gustin,Thomas Gustin,father,Grant Gustin,True,False
-Elizabeth Hurley,Angela Mary Hurley,mother,,True,False
-Elizabeth Hurley,Roy Leonard Hurley,father,,True,False
-Danielle Panabaker,Donna Panabaker,mother,,True,False
-Danielle Panabaker,Harold Panabaker,father,,True,False
-Jennifer Lopez,Guadalupe Rodriguez,mother,Jennifer Lopez,False,True
-Jennifer Lopez,David Lopez,father,,True,False
-Emmanuelle Chriqui,Liliane Chriqui,mother,,False,False
-Emmanuelle Chriqui,Albert Chriqui,father,,False,False
-Meredith Baxter,Whitney Blake,mother,Meredith Baxter,True,True
-Meredith Baxter,Tom Baxter,father,,False,False
-Addison Timlin,R.J. Timlin,mother,,False,False
-Alessandro Nivola,Patricia Nivola,mother,,False,False
-Alessandro Nivola,Pietro Nivola,father,,False,True
-Sherilyn Fenn,Arlene Quatro,mother,Sherilyn Fenn,True,False
-Sherilyn Fenn,Arnett Fenn,father,,False,False
-Paget Brewster,Hawthorne Brewster,mother,,False,False
-Paget Brewster,Galen Brewster,father,,False,False
-Sofía Vergara,Margarita Vergara Dávila,mother,Sofía Vergara,True,True
-Sofía Vergara,Julio Enrique Vergara Robayo,father,Sofía Vergara,False,True
-Sam Rockwell,Penny Hess,mother,,True,False
-Sam Rockwell,Pete Rockwell,father,Sam Rockwell,True,False
-Sarah Hyland,Melissa Canaday,mother,Sarah Hyland,True,False
-Sarah Hyland,Edward James Hyland,father,Sarah Hyland,True,False
-Suzy Amis,Joanna Amis,mother,,False,False
-Joshua Jackson,Fiona Jackson,mother,,True,False
-Joshua Jackson,John Carter Jackson,father,,False,False
-Seann William Scott,Patricia Anne Scott,mother,,False,False
-Seann William Scott,William Frank Scott,father,,False,False
-Gillian Anderson,Rosemary Anderson,mother,,True,False
-Gillian Anderson,Homer Edward Anderson III,father,,False,False
-Robin Wright,Gayle Gaston,mother,,True,False
-Robin Wright,Freddie Wright,father,,True,False
-Lily Collins,Jill Tavelman,mother,Lily Collins,True,True
-Lily Collins,Phil Collins,father,Lily Collins,True,True
-Jodie Foster,Lucius Fisher Foster III,father,Jodie Foster,True,True
-Tim McGraw,Elizabeth Ann D'Agostino,mother,,True,False
-Tim McGraw,Tug McGraw,father,Tim McGraw,True,True
-Josh Brolin,Jane Cameron Agee,mother,Josh Brolin,True,False
-Josh Brolin,James Brolin,father,Josh Brolin,True,True
-Fortune Feimster,Ginger Feimster,mother,,False,False
-Kurt Russell,Louise Julia Russell,mother,,True,False
-Kurt Russell,Bing Russell,father,Kurt Russell,True,True
-Dana Delany,Mary Delany,mother,,False,False
-Dana Delany,Jack Delany,father,,False,False
-Stellan Skarsgård,Gudrun Larsson,mother,,False,False
-Stellan Skarsgård,Jan Skarsgård,father,Stellan Skarsgård,False,True
-Dave Bautista,Donna Raye Bautista,mother,,True,False
-Dave Bautista,David Michael Bautista,father,,False,False
-Robert Rodriguez,Rebecca Rodriguez,mother,,True,False
-Robert Rodriguez,Cecilio G. Rodriguez,father,,True,False
-Iain Armitage,Lee Armitage,mother,,True,False
-Iain Armitage,Euan Morton,father,,True,False
-Channing Tatum,Kay Tatum,mother,,True,False
-Channing Tatum,Glenn Tatum,father,,True,False
-Tricia Helfer,Elaine Helfer,mother,,False,False
-Tricia Helfer,Dennis Helfer,father,,False,False
-Jaren Lewison,Lauren Lewison,mother,,False,False
-Jaren Lewison,Jason Lewison,father,,False,False
-Adam Devine,Penny Devine,mother,,True,False
-Adam Devine,Dennis Devine,father,Adam Devine,True,False
-Tilda Swinton,Judith Balfour Killen,mother,,False,False
-Tilda Swinton,Sir John Swinton,father,,True,False
-Carey Mulligan,Nano Booth,mother,,True,False
-Carey Mulligan,Stephen Mulligan,father,,True,False
-Jenna Fischer,Anne Fischer,mother,,True,False
-Jenna Fischer,James E. Fischer,father,,True,False
-Matt Bomer,Sissi Bomer,mother,,True,False
-Matt Bomer,John Bomer,father,,True,False
-Famke Janssen,Arend Janssen,father,,False,False
-Josh Hutcherson,Michelle Fightmaster Hutcherson,mother,Josh Hutcherson,True,False
-Josh Hutcherson,Chris Hutcherson,father,Josh Hutcherson,True,False
-Joseph Gordon-Levitt,Jane Gordon,mother,,True,False
-Joseph Gordon-Levitt,Dennis Levitt,father,,True,False
-Chloe Coleman,Allison Chase Coleman,mother,,False,False
-Chloe Coleman,Stephen Coleman,father,,False,False
-Mackenzie Foy,Karrie Foy,mother,,False,False
-Mackenzie Foy,Andrew Steven Foy,father,,False,False
-Willem Dafoe,Muriel Isabel Dafoe,mother,,True,False
-Willem Dafoe,Dr. William Alfred Dafoe,father,Willem Dafoe,True,False
-Renée Zellweger,Kjellfrid Irene Andreassen,mother,Renée Zellweger,True,False
-Renée Zellweger,Emil Erich Zellweger,father,Renée Zellweger,True,True
-Claire Danes,Carla Danes,mother,,True,True
-Claire Danes,Christopher Danes,father,,True,False
-Amanda Bynes,Lynn Bynes,mother,Amanda Bynes,True,True
-Amanda Bynes,Rick Bynes,father,Amanda Bynes,True,False
-Alex Borstein,Judy Borstein,mother,,False,False
-Alex Borstein,Irv Borstein,father,Alex Borstein,False,False
-Robert Patrick,Nadine Patrick,mother,,True,False
-Robert Patrick,Robert Patrick Sr.,father,Robert Patrick Jr.,False,True
-Alicia Witt,Diane Witt,mother,,True,False
-Alicia Witt,Robert Witt,father,,True,False
-Hayden Panettiere,Lesley Vogel,mother,Hayden Panettiere,True,False
-Hayden Panettiere,Skip Panettiere,father,Hayden Panettiere,False,True
-Mahershala Ali,Willicia Moore,mother,,False,False
-Mahershala Ali,Phillip F. Gilmore,father,,False,False
-Cyndi Lauper,Catrine Dominique,mother,,True,False
-Cyndi Lauper,Fred Lauper,father,,True,False
-Carmen Ejogo,Elizabeth Douglas,mother,,False,False
-Carmen Ejogo,Charles Ejogo,father,Carmen Ejogo,False,False
-Richard Gere,Doris Ann Tiffany,mother,,True,False
-Richard Gere,Homer George Gere,father,Richard Gere,True,False
-Isabelle Fuhrman,Elina Fuhrman,mother,Isabelle Fuhrman,True,False
-Isabelle Fuhrman,Nick Fuhrman,father,,False,False
-Bill Nighy,Catherine Josephine Nighy,mother,Bill Nighy,False,False
-Bill Nighy,Alfred Nighy,father,Bill Nighy,False,False
-Ben Stiller,Anne Meara,mother,Ben Stiller,True,True
-Ben Stiller,Jerry Stiller,father,Ben Stiller,True,True
-Dianna Agron,Mary Agron,mother,Dianna Agron,True,False
-Dianna Agron,Ronald S. Agron,father,Dianna Agron,True,False
-Cameron Monaghan,Diane Monaghan,mother,,False,False
-Ewan McGregor,Carol Diane McGregor,mother,Ewan McGregor,False,False
-Judy Greer,Mollie Ann Greer,mother,,True,False
-Judy Greer,Rich Evans,father,,False,False
-Austin Butler,Lori Anne Howell,mother,,False,False
-Austin Butler,David Butler,father,,True,False
-Billy Crudup,Georgann Gaither,mother,,False,False
-Billy Crudup,Thomas Henry Crudup III,father,Billy Crudup,True,True
-Eva Longoria,Ella Eva Mireles,mother,Eva Longoria,False,False
-Eva Longoria,Enrique Longoria Jr.,father,Eva Longoria,True,False
-Bridget Moynahan,Mary Bridget Moynahan,mother,,True,False
-Bridget Moynahan,Edward Bradley Moynahan,father,,False,False
-Richard Armitage,Margaret Armitage,mother,,False,False
-Richard Armitage,John Armitage,father,Richard Armitage,False,False
-Christine Taylor,Joan Taylor,mother,,True,False
-Tom Hiddleston,Diana Patricia Hiddleston,mother,Tom Hiddleston,True,False
-Tom Hiddleston,James Norman Hiddleston,father,Tom Hiddleston,True,False
-Paul Newman,Theresa Fetzer Newman.,mother,,False,False
-Paul Newman,Arthur Sigmund Newman,father,Paul Newman,True,False
-Jen Landon,Cindy Clerico,mother,,True,False
-Jen Landon,Michael Landon,father,,True,False
-Rob Lowe,Barbara Lynn Hepler,mother,,True,False
-Rob Lowe,Charles Davis Lowe,father,Rob Lowe,False,False
-James McAvoy,Elizabeth Johnstone,mother,,True,False
-James McAvoy,James McAvoy Sr.,father,James McAvoy,False,True
-Justice Smith,Duilia Setacci,mother,,False,False
-Justice Smith,Wayne Smith,father,,False,False
-John Cusack,Ann Paula Cusack,mother,John Cusack,False,False
-John Cusack,Dick Cusack,father,John Cusack,False,True
-Logan Lerman,Lisa Lerman,mother,,True,False
-Logan Lerman,Larry Lerman,father,Logan Lerman,True,False
-Tuppence Middleton,Nina Middleton,mother,,False,False
-Tuppence Middleton,Nigel Middleton,father,,False,False
-Mélanie Laurent,Annick Laurant,mother,,False,False
-Mélanie Laurent,Pierre Laurent,father,,True,False
-Anthony Hopkins,Muriel Anne Hopkins,mother,,True,False
-Anthony Hopkins,Richard Arthur Hopkins,father,,True,False
-Joe Cole,George Cole,father,,True,False
-Gena Rowlands,Mary Allen Neal,mother,,True,False
-Gena Rowlands,Edwin Myrwyn Rowlands,father,Gena Rowlands,False,False
-Benedict Cumberbatch,Wanda Ventham,mother,Benedict Cumberbatch,True,True
-Benedict Cumberbatch,Timothy Carlton,father,Benedict Cumberbatch,True,False
-Molly Ringwald,Adele Edith Ringwald,mother,Molly Ringwald,True,True
-Molly Ringwald,Robert Ringwald,father,Molly Ringwald,True,True
-Donald Glover,Beverly Smith,mother,,False,False
-Donald Glover,Donald Glover Sr.,father,Donald Glover Jr.,False,True
-Zack Snyder,Marsha Snyder,mother,,False,False
-Zack Snyder,Charles Edward Snyder,father,,False,False
-Lynn Collins,Patricia Lynn Collins,mother,,False,False
-Christoph Waltz,Elisabeth Urbancic,mother,Christoph Waltz,False,False
-Christoph Waltz,Johannes Waltz,father,,False,False
-James Gandolfini,Santa Gandolfini,mother,,True,False
-James Gandolfini,James Joseph Gandolfini Sr.,father,James Gandolfini Jr.,True,True
-Jonathan Rhys Meyers,John O'Keeffe,father,,True,False
-Ron Livingston,Linda Livingston,mother,,False,False
-Ron Livingston,Kurt Livingston,father,,False,False
-Jeff Bridges,Dorothy Bridges,mother,Jeff Bridges,True,True
-Jeff Bridges,Lloyd Bridges,father,Jeff Bridges,True,True
-Nikolaj Coster-Waldau,Hanne Søborg Coster,mother,,True,False
-Nikolaj Coster-Waldau,Jørgen Oscar Fritzer Waldau,father,Nikolaj Coster-Waldau,True,False
-Mark Rylance,Anne Skinner,mother,,False,False
-Mark Rylance,David Waters,father,,False,False
-Julianne Moore,Anne Love Smith,mother,,True,False
-Julianne Moore,Peter Moore Smith,father,,True,False
-Penelope Ann Miller,Beatrice Miller,mother,,False,False
-Penelope Ann Miller,Mark Miller,father,,False,False
-Sophie Skelton,Ruth Skelton,mother,,False,False
-Sophie Skelton,Simon Skelton,father,,False,False
-Evan Peters,Julie Peters,mother,,False,False
-Evan Peters,Phil Peters,father,,False,False
-Julia Louis-Dreyfus,Judith Bowles,mother,,True,False
-Julia Louis-Dreyfus,Gérard Louis-Dreyfus,father,Julia Louis-Dreyfus,True,True
-Pierce Brosnan,May Smith Brosnan,mother,Pierce Brosnan,False,False
-Pierce Brosnan,Thomas Brosnan,father,,True,False
-Denise Richards,Joni Richards,mother,,True,False
-Denise Richards,Irv Richards,father,Denise Richards,True,True
-Matthew Goode,Jennifer Goode,mother,,False,False
-Matthew Goode,Anthony Goode,father,,False,False
-Taika Waititi,Robin Cohen,mother,,True,False
-Kiefer Sutherland,Shirley Douglas,mother,Kiefer Sutherland,True,True
-Kiefer Sutherland,Donald Sutherland,father,Kiefer Sutherland,True,True
-Josh Dallas,Diana Dallas,mother,,False,False
-Janina Gavankar,Shan-de-Mohra Gavankar,mother,Janina Gavankar,False,False
-Janina Gavankar,Pete Gavankar,father,Janina Gavankar,False,False
-Alyssa Milano,Lin Milano,mother,Alyssa Milano,True,True
-Alyssa Milano,Thomas M. Milano,father,,True,False
-Maggie Grace,Valinn Everett,mother,,True,False
-Maggie Grace,Rick Denig,father,,True,False
-Sophie Nélisse,Pauline Belhumeur,mother,,False,False
-Sophie Nélisse,Paul Nélisse,father,,False,False
-Camilla Belle,Deborah Gould,mother,,True,False
-Camilla Belle,Jack Wesley Routh,father,,False,False
-Claire Forlani,Barbara Dickinson,mother,,True,False
-Claire Forlani,Piero Forlani,father,Claire Forlani,False,False
-Tim Burton,Jean Burton,mother,,True,False
-Tim Burton,Bill Burton,father,,True,False
-Sharon Horgan,Ursula Horgan,mother,,False,False
-Sharon Horgan,John Horgan,father,,False,False
-Rachel Nichols,Ronald Jacobsen,father,,False,False
-Erika Christensen,Kathy Christensen,mother,,True,False
-Erika Christensen,Steven Christensen,father,,True,False
-Troye Sivan,Laurelle Mellet,mother,Troye Sivan,True,False
-Troye Sivan,Shaun Mellet,father,Troye Sivan,True,False
-Alicia Silverstone,Didi Silverstone,mother,,True,False
-Alicia Silverstone,Monty Silverstone,father,Alicia Silverstone,True,True
-Toni Collette,Judy Collette,mother,,True,False
-Toni Collette,Bob Collette,father,,True,False
-Kim Basinger,Ann Lee Cordell,mother,,True,False
-Kim Basinger,Donald Wade Basinger,father,Kim Basinger,True,False
-Jared Leto,Constance Leto,mother,Jared Leto,True,True
-Jared Leto,Anthony L. Bryant,father,,False,False
-Neal McDonough,Catherine McDonough,mother,,False,False
-Neal McDonough,Frank McDonough,father,,False,False
-Gina Carano,Dana Cason,mother,,False,False
-Gina Carano,Glenn Carano,father,Gina Carano,False,False
-Heather Graham,Joan Graham,mother,,True,False
-Heather Graham,Joan Bransfield Graham,father,,False,False
-Paul Thomas Anderson,Edwina Gough Anderson,mother,,False,False
-Paul Thomas Anderson,Ernie Anderson,father,Paul Thomas Anderson,True,True
-Emily Deschanel,Mary Jo Deschanel,mother,,True,False
-Emily Deschanel,Caleb Deschanel,father,,True,False
-Claudie Blakley,Lin Blakley,mother,,False,False
-Claudie Blakley,Alan Blakley,father,,False,False
-Freddie Highmore,Sue Latimer,mother,Freddie Highmore,True,False
-Freddie Highmore,Edward Highmore,father,Freddie Highmore,True,True
-Lorraine Bracco,Eileen Bracco,mother,,True,False
-Lorraine Bracco,Salvatore Bracco,father,,False,False
-Meg Ryan,Susan Jordan Duggan,mother,,False,False
-Meg Ryan,Harry Hyra,father,Meg Ryan,True,False
-Denis Villeneuve,Nicole Demers,mother,,False,False
-Denis Villeneuve,Nicole Demers,father,,False,False
-Jeff Goldblum,Shirley Goldblum,mother,,True,False
-Jeff Goldblum,Harold L. Goldblum,father,Jeff Goldblum,False,False
-Patrick Wilson,Mary Kay Wilson,mother,,False,False
-Patrick Wilson,John Franklin Wilson,father,,False,False
-Luke Evans,Yvonne Evans,mother,,False,False
-Luke Evans,David Evans,father,,False,False
-Pablo Schreiber,Tell Schreiber,mother,Pablo Schreiber,False,False
-Pablo Schreiber,Tell Schreiber,father,Pablo Schreiber,True,False
-Jena Malone,Debbie Malone,mother,,True,False
-Jena Malone,Edward Berge,father,,True,False
-Rebecca Hall,Maria Ewing,mother,Rebecca Hall,False,False
-Rebecca Hall,Peter Hall,father,Rebecca Hall,False,True
-Mary Steenburgen,Nellie Mae Wall Steenburgen,mother,Mary Steenburgen,True,True
-Mary Steenburgen,Maurice Steenburgen,father,,False,False
-Gustaf Skarsgård,My Skarsgård,mother,,False,False
-Gustaf Skarsgård,Stellan Skarsgård,father,,True,True
-Alisan Porter,Laura Klein,mother,,True,False
-Alisan Porter,Ric Porter,father,,False,False
-Scott Eastwood,Jacelyn Reeves,mother,Scott Eastwood,True,True
-Scott Eastwood,Clint Eastwood,father,Scott Eastwood,True,True
-Halston Sage,Liora Sage,mother,,False,False
-Halston Sage,Lenny Sage,father,,False,False
-Jeremy Renner,Valerie Cearley,mother,Jeremy Renner,True,False
-Jeremy Renner,Lee Renner,father,,True,False
-Olivia Munn,Kim Schmid,mother,,True,False
-Olivia Munn,Winston Munn,father,,False,False
-Bill Murray,Lucille Murray,mother,,True,False
-Bill Murray,Edward Joseph Murray II,father,Bill Murray,False,True
-Theo James,Jane Martin,mother,,False,False
-Theo James,Philip Taptiklis,father,Theo James,False,False
-Milo Ventimiglia,Carol Ventimiglia,mother,,True,False
-Milo Ventimiglia,Peter Ventimiglia,father,,True,False
-Sophie Turner,Sally Turner,mother,,True,False
-Sophie Turner,Andrew Turner,father,,True,False
-Vincent D'Onofrio,Phyllis D'Onofrio,mother,Vincent D'Onofrio,True,False
-Vincent D'Onofrio,Gennaro D'Onofrio,father,,False,False
-Danny DeVito,Julia DeVito,mother,,True,False
-Danny DeVito,Daniel DeVito Sr.,father,Danny DeVito,True,True
-Tim Curry,Patricia Curry,mother,,True,False
-Tim Curry,James Curry,father,,False,False
-Gugu Mbatha-Raw,Anne Raw,mother,,True,False
-Gugu Mbatha-Raw,Patrick Mbatha,father,,True,False
-Rose Leslie,Candida Mary Sibyl Leslie,mother,,True,False
-Rose Leslie,Sebastian Arbuthnot-Leslie,father,Rose Leslie,True,False
-J.C. Chandor,Mary Cameron Goodyear,mother,,False,False
-J.C. Chandor,Jeffrey Chandor,father,,False,False
-Guy Pearce,Anne Cocking,mother,,True,False
-Guy Pearce,Stuart Pearce,father,,True,False
-Dylan O'Brien,Lisa O'Brien,mother,,True,False
-Dylan O'Brien,Patrick O'Brien,father,,True,False
-Jonah Hill,Sharon Lyn Chalkin,mother,,True,False
-Jonah Hill,Richard Feldstein,father,Jonah Hill,False,True
-Audie Murphy,Josie Bell Murphy,mother,,True,False
-Audie Murphy,Emanuel Murphy,father,,False,False
-Haley Bennett,Leilani Dorsey Bennett,mother,,False,False
-Haley Bennett,Ronald Keeling,father,,False,False
-Samantha Morton,Pamela Morton,mother,,True,False
-Samantha Morton,Peter Morton,father,,False,False
-Sienna Miller,Josephine Miller,mother,,True,False
-Sienna Miller,Edwin Miller,father,,True,False
-Julianne Hough,Mari Anne Hough,mother,Julianne Hough,False,False
-Julianne Hough,Bruce Robert Hough,father,Julianne Hough,True,False
-Anna Camp,Dee Camp,mother,,False,False
-Anna Camp,Thomas Sewell Camp,father,,False,False
-Aidan Turner,Eileen Turner,mother,,True,False
-Aidan Turner,Pat Turner,father,,False,False
-Jami Gertz,Walter Gertz,father,,False,False
-Glen Powell,Cyndy Powell,mother,,False,False
-Glen Powell,Glen Powell Sr.,father,Glen Powell,False,True
-Melissa Barrera,Rosana Maria Suarez,mother,,False,False
-Melissa Barrera,Tomás Barrera Tames,father,,False,False
-Daveed Diggs,Barbara Needell,mother,,False,False
-Daveed Diggs,Dountes Diggs,father,,False,False
-Odette Annable,Lydia Yustman,mother,,False,False
-Odette Annable,Victor Yustman,father,Odette Annable,False,False
-Catherine Zeta-Jones,Patricia Fair,mother,,True,False
-Catherine Zeta-Jones,David James Jones,father,,True,False
-Liev Schreiber,Heather Schreiber,mother,,True,False
-Liev Schreiber,Tell Schreiber,father,Liev Schreiber,False,False
-Patrick Warburton,Barbara Lord Warburton,mother,,False,False
-Patrick Warburton,John Charles Warburton Jr.,father,,False,True
-Maggie Smith,Margaret Hutton Smith,mother,,True,False
-Maggie Smith,Nathaniel Smith,father,,False,False
-Ethan Coen,Rena Neumann Coen,mother,Ethan Coen,False,False
-Ethan Coen,Edward Coen,father,,True,False
-Katherine McNamara,Ursula McNamara,mother,,False,False
-Katherine McNamara,Evan McNamara,father,,False,False
-Josh Segarra,Damaris Segarra,mother,,False,False
-Anna Faris,Karen Faris,mother,,True,False
-Anna Faris,Jack Faris,father,Anna Faris,True,False
-Kristin Kreuk,Deanna Che,mother,,False,False
-Kristin Kreuk,Peter Kreuk,father,Kristin Kreuk,True,False
-Camila Morrone,Lucila Solá,mother,Camila Morrone,True,True
-Camila Morrone,Maximo Morrone,father,Camila Morrone,True,True
-Anthony Michael Hall,Mercedes Hall,mother,Anthony Michael Hall,True,False
-Anthony Michael Hall,Larry Hall,father,,True,False
-Ali Larter,Margaret Larter,mother,,True,False
-Ali Larter,Danforth Larter,father,Ali Larter,False,False
-Ray Liotta,Mary Liotta,mother,,False,False
-Ray Liotta,Alfred Liotta,father,,False,False
-Michelle Hurd,Merlyn Purdy,mother,,False,False
-Michelle Hurd,Hugh Hurd,father,Michelle Hurd,False,False
-Jenny Slate,Nancy Slate,mother,,False,False
-Jenny Slate,Ron Slate,father,,False,False
-Phoebe Fox,Prue Fox,mother,,False,False
-Phoebe Fox,Stuart Fox,father,,False,False
-Jonny Lee Miller,Anne Lee,mother,,False,False
-Jonny Lee Miller,Alan Miller,father,,True,False
-Ella Purnell,Caroline Purnell,mother,,False,False
-Dichen Lachman,Tashi Lachman,mother,,True,False
-Dichen Lachman,Chris Lachman,father,,False,False
-Chelah Horsdal,Valerie Horsdal,mother,,False,False
-Chelah Horsdal,Valdy Horsdal,father,,False,False
-Rose McIver,Annie McIver,mother,,True,False
-Ron Howard,Jean Speegle Howard,mother,Ron Howard,True,True
-Ron Howard,Rance Howard,father,Ron Howard,True,True
-Kevin Spacey,Kathleen Ann Spacey,mother,Kevin Spacey,True,False
-Kevin Spacey,Thomas Geoffrey Fowler,father,,False,False
-Steven Yeun,June Yeun,mother,Steven Yeun,False,False
-Steven Yeun,Je Yeun,father,,False,False
+Sasha Calle,Samira Calle,mother,,0.0,0.0
+Sasha Calle,Sam Calle,father,,0.0,0.0
+Golshifteh Farahani,Fahimeh Rahim Nia,mother,,0.0,0.0
+Golshifteh Farahani,Behzad Farahani,father,Golshifteh Farahani,1.0,0.0
+Kate Mara,Kathleen McNulty Rooney,mother,,0.9,0.0
+Kate Mara,Timothy Christopher Mara,father,Kate Mara,0.5,0.1
+Josh Hartnett,Wendy Anne Hartnett,mother,,0.1,0.0
+Josh Hartnett,Daniel Hartnett,father,,0.0,0.0
+Jennifer Lawrence,Karen Lawrence,mother,Jennifer Lawrence,1.0,0.2
+Jennifer Lawrence,Gary Lawrence,father,Jennifer Lawrence,0.8,0.0
+Aaron Taylor-Johnson,Sarah Johnson,mother,,0.5,0.0
+Aaron Taylor-Johnson,Robert Johnson,father,,0.9,0.0
+Rebecca Ferguson,Anne Twomey,mother,,0.0,0.0
+Monica Barbaro,Heidi Wagner,mother,,0.0,0.0
+Monica Barbaro,Nicholas Barbaro,father,,0.0,0.0
+Chris Hemsworth,Leonie Hemsworth,mother,Chris Hemsworth,1.0,0.3
+Chris Hemsworth,Craig Hemsworth,father,Chris Hemsworth,0.8,0.1
+Wes Anderson,Texas Ann Burroughs,mother,,0.0,0.0
+Wes Anderson,Melver Leonard Anderson,father,,0.6,0.0
+Daniel Portman,Fiona Biggar,mother,,0.0,0.0
+Daniel Portman,Ron Donachie,father,Daniel Portman,0.0,0.0
+Lily-Rose Depp,Vanessa Paradis,mother,Lily-Rose Depp,1.0,1.0
+Lily-Rose Depp,Johnny Depp,father,Lily-Rose Depp,1.0,1.0
+Zendaya,Claire Stoermer,mother,Zendaya Coleman,1.0,0.5
+Zendaya,Kazembe Ajamu Coleman,father,Zendaya Coleman,1.0,0.3
+Ezra Miller,Marta Miller,mother,,0.3,0.0
+Ezra Miller,Robert S. Miller,father,,0.0,0.0
+Olga Kurylenko,Marina Alyabusheva,mother,,0.1,0.0
+Olga Kurylenko,Konstantin Kurylenko,father,,0.0,0.0
+Zazie Beetz,Heike Beetz,mother,,0.0,0.0
+Zazie Beetz,Thomas Beetz,father,,0.0,0.0
+Arnold Schwarzenegger,Aurelia Jadrny Schwarzenegger,mother,Arnold Schwarzenegger,0.0,0.0
+Arnold Schwarzenegger,Gustav Schwarzenegger,father,Arnold Schwarzenegger,1.0,0.2
+Emilia Clarke,Jennifer Clarke,mother,,0.9,0.0
+Molly Gordon,Jessie Nelson,mother,,0.0,0.0
+Molly Gordon,Bryan Gordon,father,,0.2,0.0
+Hailee Steinfeld,Cheri Steinfeld,mother,Hailee Steinfeld,0.9,0.0
+Hailee Steinfeld,Peter Steinfeld,father,Hailee Steinfeld,0.1,0.0
+Hannah Waddingham,Melodie Waddingham,mother,,0.0,0.0
+Hannah Waddingham,Mel Waddingham,father,,0.0,0.0
+Rory Culkin,Patricia Brentrup,mother,,1.0,0.0
+Rory Culkin,Kit Culkin,father,,0.6,0.0
+Harrison Ford,Dora Nidelman,mother,,0.0,0.0
+Harrison Ford,Christopher Ford,father,Harrison Ford,0.1,0.0
+Tom Cruise,Mary Lee Pfeiffer,mother,,1.0,0.0
+Tom Cruise,Thomas Mapother III,father,Tom Cruise,0.6,0.4
+Carol Kane,Joyce Kane,mother,,0.0,0.0
+Carol Kane,Michael Myron Kane,father,,0.0,0.0
+Alexandra Daddario,Christina Daddario,mother,Alexandra Daddario,1.0,0.0
+Alexandra Daddario,Richard C. Daddario,father,Alexandra Daddario,0.3,0.9
+Gal Gadot,Irit Gadot,mother,Gal Gadot,0.0,0.0
+Gal Gadot,Michael Gadot,father,,0.5,0.0
+Tom Holland,Nikki Holland,mother,Tom Holland,0.1,0.0
+Tom Holland,Dominic Holland,father,Tom Holland,1.0,1.0
+Hayley Atwell,Alison Atwell,mother,,0.1,0.0
+Hayley Atwell,Grant Atwell,father,,0.0,0.0
+Salma Hayek,Diana Jiménez Medina,mother,Salma Hayek,1.0,0.0
+Salma Hayek,Sami Hayek Dominguez,father,Salma Hayek,0.1,0.0
+Ana de Armas,Ana Rodriguez,mother,,0.0,0.0
+Will Poulter,Caroline Poulter,mother,,0.0,0.0
+Will Poulter,Neil Poulter,father,Will Poulter,0.0,0.0
+Anson Mount,Nancy Smith,mother,,0.0,0.0
+Anson Mount,Anson Adams Mount II,father,Anson Mount,0.0,0.2
+Margot Robbie,Sarie Kessler,mother,Margot Robbie,0.7,0.0
+Margot Robbie,Doug Robbie,father,,0.5,0.0
+Nicolas Cage,Joy Vogelsang,mother,Nicolas Cage,1.0,0.0
+Nicolas Cage,August Coppola,father,Nicolas Cage,1.0,1.0
+Henry Cavill,Marianne Cavill,mother,Henry Cavill,0.4,0.0
+Henry Cavill,Colin Cavill,father,,0.7,0.0
+Juno Temple,Amanda Pirie,mother,,0.0,0.0
+Juno Temple,Julien Temple,father,Juno Temple,1.0,0.0
+Cailee Spaeny,Rejoice Spaeny,mother,,0.0,0.0
+Cailee Spaeny,Mark Spaeny,father,Cailee Spaeny,0.0,0.0
+Treat Williams,Marian Andrew Williams,mother,,0.0,0.0
+Treat Williams,Richard Norman Williams,father,,0.0,0.0
+Alexander Skarsgård,My Skarsgård,mother,Alexander Skarsgård,0.0,0.1
+Alexander Skarsgård,Stellan Skarsgård,father,Alexander Skarsgård,1.0,0.6
+Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,0.0,0.0
+Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,0.3,0.0
+Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,0.0,0.0
+Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,0.1,0.0
+Anya Taylor-Joy,Dennis Alan Taylor,father,,0.1,0.0
+Sophia Lillis,Juliana Mellevold,mother,,0.0,0.0
+Sophia Lillis,David Lillis,father,,0.0,0.0
+Aaron Paul,Darla Sturtevant,mother,,0.7,0.0
+Aaron Paul,Robert Sturtevant,father,,0.5,0.0
+Elliot Page,Martha Philpotts,mother,,0.4,0.0
+Elliot Page,Dennis Page,father,,0.9,0.0
+Robin Tunney,Cathy Tunney,mother,,0.2,0.0
+Robin Tunney,Patrick Tunney,father,,0.0,0.0
+Jenna Ortega,Natalie Ortega,mother,,0.6,0.0
+Jenna Ortega,Edward Ortega,father,,0.0,0.0
+Zoe Saldana,Asalia Nazario,mother,,0.0,0.0
+Zoe Saldana,Aridio Saldaña,father,Zoe Saldana,0.1,0.0
+Ben Mendelsohn,Carole Ann Mendelsohn,mother,,0.5,0.0
+Ben Mendelsohn,Frederick Arthur Oscar Mendelsohn,father,Ben Mendelsohn,0.2,0.0
+Jeremy Allen White,Sherry White,mother,,0.0,0.0
+Keanu Reeves,Patricia Taylor,mother,Keanu Reeves,0.7,0.0
+Keanu Reeves,Samuel Nowlin Reeves Jr.,father,Keanu Reeves,0.4,0.8
+Scarlett Johansson,Melanie Sloan,mother,Scarlett Johansson,1.0,0.0
+Scarlett Johansson,Karsten Olaf Johansson,father,Scarlett Johansson,0.0,0.9
+James Cameron,Shirley Cameron,mother,,0.9,0.0
+James Cameron,Phillip Cameron,father,,0.0,0.0
+Pedro Pascal,Verónica Pascal,mother,,0.0,0.0
+Pedro Pascal,José Balmaceda,father,,0.2,0.0
+Kaley Cuoco,Layne Ann Cuoco,mother,Kaley Cuoco,0.7,0.0
+Kaley Cuoco,Gary Carmine Cuoco,father,Kaley Cuoco,0.8,0.0
+Samuel L. Jackson,Elizabeth Harriett Montgomery,mother,,0.0,0.0
+Samuel L. Jackson,Roy Henry Jackson,father,,0.0,0.0
+Florence Pugh,Deborah Pugh,mother,,0.7,0.0
+Florence Pugh,Clinton Pugh,father,,0.7,0.0
+Shea Whigham,Beth Whigham,mother,,0.0,0.0
+Shea Whigham,Beth Whigham,father,,0.0,0.0
+Michael Keaton,Leona Elizabeth Loftus,mother,,0.0,0.0
+Michael Keaton,George A. Douglas,father,,0.5,0.0
+Christopher Nolan,Brenda Nolan,mother,,0.8,0.0
+Christopher Nolan,Brendan James Nolan,father,,0.7,0.0
+Tom Hanks,Janet Marylyn Frager,mother,,1.0,0.0
+Tom Hanks,Amos Mefford Hanks,father,Tom Hanks,1.0,0.9
+Clint Eastwood,Margaret Ruth Runner,mother,,0.1,0.0
+Gabriel Macht,Suzanne Victoria Pulier,mother,,0.8,0.0
+Gabriel Macht,Stephen Macht,father,Gabriel Macht,1.0,1.0
+Jake Gyllenhaal,Naomi Foner,mother,Jake Gyllenhaal,1.0,0.3
+Jake Gyllenhaal,Stephen Gyllenhaal,father,Jake Gyllenhaal,1.0,0.1
+Leonardo DiCaprio,Irmelin Indenbirken,mother,Leonardo DiCaprio,0.6,1.0
+Leonardo DiCaprio,George DiCaprio,father,Leonardo DiCaprio,0.7,1.0
+Jason Schwartzman,Talia Shire,mother,Jason Schwartzman,1.0,1.0
+Jason Schwartzman,Talia Shire,father,Jason Schwartzman,0.0,0.8
+Sydney Sweeney,Lisa Mudd Sweeney,mother,,0.0,0.0
+Sydney Sweeney,Scott Sweeney,father,,0.0,0.0
+James Marsden,Kathleen Marsden,mother,,0.9,0.0
+James Marsden,James Luther Marsden,father,,0.0,0.0
+Jesse Plemons,Lisa Beth Cason,mother,,0.0,0.0
+Jesse Plemons,Jim Bob Plemons,father,,0.7,0.0
+Alan Ritchson,Vickie Ritchson,mother,,0.0,0.0
+Alan Ritchson,David Ritchson,father,,0.0,0.0
+Cillian Murphy,Brendan Murphy,father,,0.6,0.0
+Meghan Markle,Doria Ragland,mother,Meghan Markle,1.0,1.0
+Meghan Markle,Thomas Markle Sr.,father,Meghan Markle,0.0,0.8
+Nicole Kidman,Janelle Ann Kidman,mother,Nicole Kidman,0.7,0.0
+Nicole Kidman,Antony Kidman,father,Nicole Kidman,0.0,1.0
+Daisy Head,Sarah Fisher,mother,,1.0,0.0
+Daisy Head,Anthony Head,father,Daisy Head,1.0,0.5
+Mckenna Grace,Crystal Grace,mother,,0.0,0.0
+Mckenna Grace,Ross Burge,father,,0.0,0.0
+Kate Winslet,Sally Bridges-Winslet,mother,Kate Winslet,0.6,0.0
+Kate Winslet,Roger Winslet,father,Kate Winslet,1.0,0.9
+Rose Byrne,Jane Byrne,mother,,1.0,0.0
+Rose Byrne,Robin Byrne,father,,0.0,0.0
+Alana De La Garza,Manny De La Garza,father,,0.0,0.0
+Willa Holland,Darnell Gregorio-De Palma,mother,,0.0,0.0
+Willa Holland,Brian De Palma,father,,0.3,0.0
+Chris Pratt,Kathy Pratt,mother,,0.9,0.0
+Chris Pratt,Daniel Clifton Pratt,father,,0.0,0.0
+Ben Affleck,Christine Anne Boldt,mother,,0.0,0.0
+Ben Affleck,Timothy Byers Affleck,father,Ben Affleck,1.0,0.8
+Vanessa Kirby,Jane Kirby,mother,,0.0,0.0
+Vanessa Kirby,Roger Kirby,father,,0.0,0.0
+Brad Pitt,Jane Etta Pitt,mother,Brad Pitt,0.9,0.3
+Brad Pitt,William Alvin Pitt,father,Brad Pitt,0.2,0.0
+Juliette Lewis,Glenis Batley,mother,,0.4,0.0
+Juliette Lewis,Geoffrey Lewis,father,Juliette Lewis,1.0,1.0
+Natalie Alyn Lind,Barbara Alyn Woods,mother,Natalie Alyn Lind,1.0,1.0
+Natalie Alyn Lind,John Lind,father,,1.0,0.0
+Gerard Butler,Margaret Butler,mother,,1.0,0.0
+Gerard Butler,Edward Butler,father,,0.0,0.0
+Josh O'Connor,John O'Connor,father,,0.0,0.0
+Mia Sara,Diana Saraceni,mother,,0.0,0.0
+Mia Sara,Jerome Sarapochiello,father,,0.4,0.0
+Glenda Jackson,Rita Jackson,mother,,0.0,0.0
+Glenda Jackson,Harry Jackson,father,,0.0,0.0
+Sylvester Stallone,Jackie Stallone,mother,Sylvester Stallone,0.9,1.0
+Sylvester Stallone,Frank Stallone Sr.,father,Sylvester Stallone,0.9,0.8
+Michelle Rodriguez,Carmen Milady Rodriguez,mother,,0.1,0.0
+Michelle Rodriguez,Rafael Rodriguez,father,,0.0,0.0
+Leah Lewis,Lida Lewis,mother,,0.0,0.0
+Tom Hardy,Anne Hardy,mother,,0.8,0.0
+Melissa Rauch,Susan Rauch,mother,,0.0,0.0
+Melissa Rauch,David Rauch,father,,0.0,0.0
+Brie Larson,Heather Edwards,mother,,0.1,0.0
+Brie Larson,Sylvain Desaulniers,father,,0.1,0.0
+Nicholas Hoult,Glenis Hoult,mother,,0.7,0.0
+Nicholas Hoult,Roger Hoult,father,,0.3,0.0
+Kristen Johnston,Rodney Johnston,mother,,0.0,0.0
+Kristen Johnston,Rod Johnston,father,,0.0,0.0
+Phoebe Waller-Bridge,Teresa Waller-Bridge,mother,Phoebe Waller-Bridge,0.1,0.0
+Phoebe Waller-Bridge,Michael Cyprian Waller-Bridge,father,Phoebe Waller-Bridge,0.4,0.0
+Cole Hauser,Cass Warner,mother,Cole Hauser,1.0,0.0
+Cole Hauser,Wings Hauser,father,Cole Hauser,1.0,1.0
+Robert De Niro,Virginia Admiral,mother,Robert De Niro,1.0,0.9
+Robert De Niro,Robert De Niro Sr.,father,Robert De Niro,0.1,1.0
+Karen Allen,Patricia Howell Allen,mother,,0.0,0.0
+Karen Allen,Carroll Thompson Allen,father,,0.0,0.0
+Linda Hamilton,Barbara K. Hamilton,mother,,0.0,0.0
+Linda Hamilton,Carroll Stanford Hamilton,father,,0.0,0.0
+Scott Adkins,Janet Adkins,mother,,0.0,0.0
+Halle Bailey,Courtney Bailey,mother,,0.0,0.0
+Halle Bailey,Doug Bailey,father,,0.0,0.0
+Erica Durance,Gail Durance,mother,,0.0,0.0
+Erica Durance,Joel Durance,father,,0.0,0.0
+Helen Slater,Alice Joan Citrin,mother,,0.6,0.0
+Helen Slater,Gerald Slater,father,,0.3,0.0
+Chloë Grace Moretz,Teri Duke Moretz,mother,Chloë Grace Moretz,0.0,1.0
+Chloë Grace Moretz,McCoy Lee Moretz,father,Chloë Grace Moretz,0.7,0.0
+Vin Diesel,Delora Vincent,mother,Vin Diesel,0.3,0.0
+Keri Russell,Stephanie Stephens,mother,,0.4,0.0
+Keri Russell,David Russell,father,,0.0,0.0
+Jason Statham,Eileen Yates Statham,mother,Jason Statham,0.1,0.0
+Jason Statham,Barry Statham,father,Jason Statham,0.0,0.0
+Poppy Montgomery,Nicola Montgomery,mother,,0.2,0.0
+Poppy Montgomery,Phil Donahue,father,,0.0,0.0
+Margaret Qualley,Andie MacDowell,mother,Margaret Qualley,0.8,0.1
+Margaret Qualley,Paul Qualley,father,Margaret Qualley,0.7,0.1
+Jennifer Connelly,Eileen Connelly,mother,,0.3,0.0
+Jennifer Connelly,Gerard Connelly,father,,1.0,0.0
+Hilarie Burton,Lisa Burton,mother,,0.3,0.0
+Hilarie Burton,Bill Burton,father,,0.0,0.0
+Dagmara Dominczyk,Miroslawa Dominczyk,mother,,0.0,0.0
+Dagmara Dominczyk,Mirek Domińczyk,father,Dagmara Dominczyk,0.0,0.0
+Timothée Chalamet,Nicole Flender,mother,Timothée Chalamet,1.0,0.0
+Timothée Chalamet,Marc Chalamet,father,Timothée Chalamet,0.4,0.0
+Quentin Tarantino,Connie McHugh,mother,,0.7,0.0
+Quentin Tarantino,Tony Tarantino,father,Quentin Tarantino,1.0,1.0
+Johnny Depp,Betty Sue Palmer,mother,Johnny Depp,1.0,0.0
+Johnny Depp,John Christopher Depp,father,,1.0,0.0
+Olivia Colman,Mary Leakey,mother,,0.0,0.0
+Olivia Colman,Keith Colman,father,,0.0,0.0
+Idris Elba,Eve Elba,mother,,0.9,0.0
+Idris Elba,Winston Elba,father,Idris Elba,0.4,0.0
+Jonah Hauer-King,Debra Hauer,mother,,0.0,0.0
+Jonah Hauer-King,Jeremy King,father,,0.0,0.0
+Matthew McConaughey,Mary Kathleen McCabe,mother,Matthew McConaughey,0.4,0.0
+Matthew McConaughey,James Donald McConaughey,father,Matthew McConaughey,0.4,1.0
+Jeffrey Dean Morgan,Sandy Thomas,mother,,0.8,0.0
+Jeffrey Dean Morgan,Richard Dean Morgan,father,,0.1,0.0
+Sarah Rafferty,Mimi Rafferty,mother,,0.0,0.0
+Sarah Rafferty,Michael Griffin Rafferty Jr.,father,,0.0,0.0
+Steven Spielberg,Leah Adler,mother,Steven Spielberg,1.0,0.9
+Steven Spielberg,Arnold Spielberg,father,Steven Spielberg,1.0,1.0
+Amanda Seyfried,Ann Seyfried,mother,Amanda Seyfried,0.8,0.0
+Amanda Seyfried,Jack Seyfried,father,Amanda Seyfried,0.2,0.0
+Emmy Rossum,Cheryl Rossum,mother,Emmy Rossum,1.0,0.0
+Emmy Rossum,Cheryl Rossum,father,Emmy Rossum,0.0,0.0
+Rachel Brosnahan,Carol Brosnahan,mother,,0.0,0.3
+Rachel Brosnahan,Earl Brosnahan,father,,1.0,0.0
+Melissa Roxburgh,Shelley Roxburgh,mother,,0.0,0.0
+Melissa Roxburgh,David Roxburgh,father,,0.0,0.0
+Jason Bateman,Victoria Elizabeth Bateman,mother,,0.7,0.0
+Jason Bateman,Kent Bateman,father,Jason Bateman,0.2,1.0
+Kim Cattrall,Shane Cattrall,mother,,0.9,0.0
+Kim Cattrall,Dennis Cattrall,father,,0.9,0.0
+Ryan Reynolds,Tammy Reynolds,mother,,1.0,0.0
+Ryan Reynolds,James Reynolds,father,,0.0,0.0
+Brett Goldstein,Fiona Goldstein,mother,,0.0,0.0
+Brett Goldstein,Terry Goldstein,father,,0.0,0.0
+Elizabeth Olsen,Jarnette Olsen,mother,,0.3,0.0
+Elizabeth Olsen,David Olsen,father,,0.8,0.0
+Robert Downey Jr.,Elsie Ann Downey,mother,Robert Downey Jr.,0.0,0.9
+Robert Downey Jr.,Robert Downey Sr.,father,Robert Downey Jr.,1.0,1.0
+Kevin Costner,Sharon Rae Tedrick Costner,mother,Kevin Costner,0.0,0.0
+Kevin Costner,Bill Costner,father,,0.4,0.0
+Darren Barnet,Victoria Barnet,mother,,0.0,0.0
+Darren Barnet,Charlie Barnet Jr.,father,,0.0,0.0
+Bryce Dallas Howard,Cheryl Howard,mother,Bryce Dallas Howard,0.3,1.0
+Bryce Dallas Howard,Ron Howard,father,Bryce Dallas Howard,1.0,1.0
+Adam Sandler,Judy Sandler,mother,Adam Sandler,0.0,1.0
+Adam Sandler,Stanley Sandler,father,Adam Sandler,1.0,1.0
+Awkwafina,Tia Awkwafina,mother,,0.0,0.0
+Awkwafina,Wally Lum,father,,0.0,0.0
+Guy Ritchie,Amber Parkinson,mother,,0.9,0.0
+Guy Ritchie,John Vivian Ritchie,father,,0.7,0.0
+Ryan Gosling,Donna Gosling,mother,Ryan Gosling,1.0,0.0
+Ryan Gosling,Thomas Gosling,father,Ryan Gosling,0.2,0.0
+Jason Momoa,Coni Momoa,mother,Jason Momoa,0.8,0.0
+Jason Momoa,Joseph Momoa,father,,1.0,0.2
+Kieran Culkin,Patricia Brentrup,mother,,1.0,0.0
+Kieran Culkin,Kit Culkin,father,,1.0,0.0
+Teresa Palmer,Paula Sanders,mother,,0.3,0.0
+Teresa Palmer,Kevin Palmer,father,,0.7,0.0
+Natasha Lyonne,Ivette Buchinger,mother,,0.0,0.0
+Natasha Lyonne,Aaron Braunstein,father,,0.7,0.0
+Katee Sackhoff,Mary Sackhoff,mother,,0.0,0.0
+Katee Sackhoff,Dennis Sackhoff,father,Katee Sackhoff,0.0,0.0
+Lauren Cohan,Susan Cohan,mother,,0.0,0.0
+Travis Fimmel,Jennie Fimmel,mother,,0.0,0.0
+Travis Fimmel,Chris Fimmel,father,,0.0,0.0
+Christian Bale,Jenny James,mother,,0.6,0.0
+Christian Bale,David Bale,father,Christian Bale,1.0,0.9
+Dwayne Johnson,Ata Johnson,mother,Dwayne Johnson,0.2,0.1
+Dwayne Johnson,Rocky Johnson,father,Dwayne Johnson,1.0,0.1
+Emily Blunt,Joanna Blunt,mother,,0.3,0.0
+Emily Blunt,Oliver Simon Peter Blunt,father,Emily Blunt,0.7,0.0
+Aubrey Plaza,Bernadette Plaza,mother,,0.1,0.0
+Aubrey Plaza,David Plaza,father,,0.1,0.0
+Lilly Krug,Veronica Ferres,mother,Lilly Krug,0.0,0.6
+Lilly Krug,Heiko Krug,father,,0.0,0.0
+Lauren Lee Smith,Rick Smith,father,,0.0,0.0
+Mel Gibson,Anne Patricia Reilly Gibson,mother,,0.1,0.0
+Mel Gibson,Hutton Gibson,father,Mel Gibson,1.0,1.0
+Maya Hawke,Uma Thurman,mother,Maya Hawke,0.2,0.7
+Maya Hawke,Ethan Hawke,father,Maya Hawke,0.1,0.9
+Mary Lynn Rajskub,Peggy Rajskub,mother,,0.0,0.0
+Mary Lynn Rajskub,Edward Rajskub,father,,0.0,0.0
+Jason Sudeikis,Kathryn Sudeikis,mother,Jason Sudeikis,0.8,0.0
+Jason Sudeikis,Dan Sudeikis,father,,0.0,0.0
+Betty Gilpin,Ann McDonough,mother,,0.0,0.0
+Betty Gilpin,Jack Gilpin,father,,0.9,0.0
+Aparna Brielle,Girija Parthasarathy,father,,0.0,0.0
+Hannah John-Kamen,Fred John-Kamen,father,,0.0,0.0
+Karen Gillan,Marie Gillan,mother,Karen Gillan,0.1,0.0
+Karen Gillan,Raymond John Gillan,father,,0.0,0.0
+Charlize Theron,Gerda Maritz,mother,Charlize Theron,0.7,0.0
+Charlize Theron,Charles Theron,father,,0.8,0.0
+Cassidy Freeman,Glynna Freeman,mother,,0.0,0.0
+Cassidy Freeman,Lee Freeman,father,,0.3,0.0
+Brian Cox,Molly Cox,mother,,0.0,0.0
+Denzel Washington,Lennis Washington,mother,Denzel Washington,0.8,0.0
+Denzel Washington,"Denzel Hayes Washington, Sr.",father,Denzel Washington Jr.,0.0,1.0
+Bill Skarsgård,My Skarsgård,mother,,0.0,0.0
+Bill Skarsgård,Stellan Skarsgård,father,,1.0,0.1
+Jonathan Majors,Monica Lisa.,mother,,0.0,0.0
+Patrick J. Adams,Rowan Marsh,mother,,0.0,0.0
+Patrick J. Adams,Claude Adams,father,,0.0,0.0
+Amy Brenneman,Frederica Brenneman,mother,Amy Brenneman,0.0,0.0
+Amy Brenneman,Russell Langdon Brenneman,father,,0.4,0.0
+Matthew Macfadyen,Meiko Macfadyen,mother,,0.0,0.0
+Matthew Macfadyen,Martin Macfadyen,father,,0.0,0.0
+Lee Pace,Charlotte Pace,mother,,0.0,0.0
+Lee Pace,James Roy Pace,father,,0.0,0.0
+Abby Elliott,Paula Niedert Elliott,mother,Abby Elliott,0.9,0.0
+Abby Elliott,Chris Elliott,father,Abby Elliott,1.0,1.0
+Dermot Mulroney,Ellen Mulroney,mother,,0.7,0.0
+Dermot Mulroney,Michael Mulroney,father,,0.9,0.0
+Lizzy Caplan,Barbara Caplan,mother,,0.1,0.0
+Lizzy Caplan,Richard Caplan,father,,1.0,0.0
+Lindsay Wagner,Marilyn Louise Thrasher,mother,,0.0,0.0
+Lindsay Wagner,William Wagner,father,,0.0,0.0
+Maggie Siff,David Siff,father,,0.0,0.0
+Melanie Lynskey,Kay Lynskey,mother,,0.0,0.0
+Melanie Lynskey,Tim Lynskey,father,,0.0,0.0
+Alison Doody,Joan Doody,mother,,0.0,0.0
+Alison Doody,Patrick Doody,father,,0.0,0.0
+Ebon Moss-Bachrach,Renee Moss,mother,,0.0,0.0
+Ebon Moss-Bachrach,Eric Bachrach,father,,0.0,0.0
+Chris Pine,Gwynne Gilford,mother,Chris Pine,1.0,0.8
+Chris Pine,Robert Pine,father,Chris Pine,1.0,0.9
+Kristen Stewart,Jules Mann-Stewart,mother,Kristen Stewart,0.8,0.9
+Kristen Stewart,John Stewart,father,,1.0,0.0
+Kathryn Newton,Robin Newton,mother,,0.0,0.0
+Kathryn Newton,David Newton,father,,0.0,0.0
+Timothy Olyphant,Katherine Lyon Gideon,mother,,0.0,0.0
+Timothy Olyphant,J.V. Bevan Olyphant,father,Timothy Olyphant,0.0,0.0
+Rachel Zegler,Laura Zegler,mother,,0.0,0.0
+Rachel Zegler,Craig Zegler,father,,0.0,0.0
+Russell Crowe,Jocelyn Yvonne Crowe,mother,Russell Crowe,0.0,0.0
+Russell Crowe,John Alexander Crowe,father,,0.1,0.0
+Walton Goggins,Janet Long Goggins,mother,,0.0,0.0
+Richard Madden,Pat Madden,mother,,0.0,0.0
+The Weeknd,Makkonen Tesfaye,mother,,0.0,0.0
+The Weeknd,Makkonen Tesfaye,father,,0.0,0.0
+George Clooney,Nina Bruce Warren,mother,,0.4,0.0
+George Clooney,Nick Clooney,father,George Clooney,1.0,1.0
+Elizabeth Banks,Ann Mitchell,mother,,0.7,0.0
+Elizabeth Banks,Mark P. Mitchell,father,,0.3,0.0
+John Goodman,Virginia Roos Loosmore,mother,,0.0,0.0
+John Goodman,Leslie Francis Goodman,father,,0.0,0.0
+Hari Nef,Robin Clebnik,mother,,0.1,0.0
+Hari Nef,David Nef,father,,0.0,0.0
+Michelle Monaghan,Sharon Monaghan,mother,,0.0,0.0
+Michelle Monaghan,Robert Monaghan,father,,0.0,0.0
+Jeremy Strong,Jeanne Strong,mother,,0.0,0.0
+Ariel Winter,Chrisoula Workman,mother,Ariel Winter,0.0,0.7
+Ariel Winter,Glenn Workman,father,Ariel Winter,0.4,0.0
+Martin Scorsese,Catherine Scorsese,mother,Martin Scorsese,1.0,0.0
+Martin Scorsese,Charles Scorsese,father,Martin Scorsese,0.7,0.0
+Travis Van Winkle,Sally Van Winkle,mother,,0.0,0.0
+Travis Van Winkle,Charles Van Winkle,father,,0.0,0.0
+Samara Weaving,Helena Bezzina,mother,,0.9,0.0
+Samara Weaving,Simon Weaving,father,Samara Weaving,1.0,0.0
+Brendan Fraser,Carol Mary Fraser,mother,,0.1,0.0
+Brendan Fraser,Peter Fraser,father,,0.5,0.0
+Portia Doubleday,Christina Hart,mother,,0.9,0.0
+Portia Doubleday,Frank Doubleday,father,Portia Doubleday,0.1,0.3
+Emma Stone,Krista Stone,mother,Emma Stone,0.9,0.0
+Emma Stone,Jeff Stone,father,,0.2,0.0
+Shameik Moore,Sharon Moore,mother,,0.0,0.0
+Shameik Moore,Errol Moore,father,,0.0,0.0
+Geraldine Viswanathan,Anja Raith,mother,,0.0,0.0
+Geraldine Viswanathan,Suresh Viswanathan,father,,0.0,0.0
+Ethan Peck,Francine Matarazzo,mother,,0.0,0.0
+Ethan Peck,Gregory Peck,father,,0.0,0.5
+Kaitlin Olson,Melinda Olson,mother,,0.0,0.0
+Kaitlin Olson,Donald Lee Olson,father,,0.0,0.0
+Michael Shannon,Barbara Miller Shannon,mother,,0.0,0.0
+Michael Shannon,Donald Sutherlin Shannon,father,,0.0,0.0
+Millie Bobby Brown,Kelly Brown,mother,,0.4,0.0
+Millie Bobby Brown,Robert Brown,father,,0.1,0.0
+Matt Damon,Nancy Carlsson-Paige,mother,Matt Damon,1.0,0.9
+Matt Damon,Kent Damon,father,Matt Damon,1.0,1.0
+Sam Worthington,Jeanne J. Martyn,mother,,0.0,0.0
+Sam Worthington,Ronald W. Worthington,father,,0.0,0.0
+Monica Bellucci,Brunella Briganti,mother,,0.0,0.0
+Monica Bellucci,Pasquale Bellucci,father,Monica Bellucci,0.0,0.0
+Kathleen Turner,Patsy Turner,mother,,0.5,0.0
+Kathleen Turner,Allen Richard Turner,father,,0.0,0.0
+Shailene Woodley,Lori Woodley,mother,Shailene Woodley,1.0,0.0
+Shailene Woodley,Lonnie Woodley,father,Shailene Woodley,0.1,0.0
+Harriet Walter,Xandra Gleeson,mother,,0.0,0.0
+Harriet Walter,Roderick Walter.,father,,0.0,0.0
+Abigail Spencer,Yancy Spencer III,mother,,0.0,0.0
+Abigail Spencer,Yancy Spencer III,father,,0.0,0.0
+Mackenyu,Yoshie Maeda,mother,,0.0,0.0
+Mackenyu,Sonny Chiba,father,,1.0,0.1
+Elisha Cuthbert,Patricia Cuthbert,mother,,0.0,0.0
+Elisha Cuthbert,Kevin Cuthbert,father,,0.6,0.0
+Jennifer Garner,Patricia Ann Garner,mother,Jennifer Garner,1.0,0.0
+Jennifer Garner,William John Garner,father,,0.2,0.0
+Kiernan Shipka,Erin Ann Shipka,mother,,0.9,0.0
+Kiernan Shipka,John D. Shipka,father,Kiernan Shipka,0.0,0.0
+Ariana DeBose,Gina DeBose,mother,,0.0,0.0
+Riley Keough,Lisa Marie Presley,mother,Riley Keough,0.4,0.8
+Riley Keough,Danny Keough,father,Riley Keough,0.0,1.0
+Mary Elizabeth Winstead,Betty Lou Winstead,mother,,0.0,0.0
+Mary Elizabeth Winstead,James Ronald Winstead,father,,0.0,0.0
+Eiza González,Gloria Patricia Reyna,mother,,0.0,0.0
+Eiza González,Carlos González,father,,1.0,0.0
+Caitríona Balfe,Anne Connolly,mother,,0.0,0.0
+Ryan Hurst,Candace Kaniecki,mother,,0.0,0.0
+Ryan Hurst,Rick Hurst,father,,0.1,0.0
+Christopher Reeve,Barbara Pitney Lamb,mother,,0.1,0.0
+Christopher Reeve,Franklin D'Olier Reeve,father,Christopher Reeve,0.9,0.0
+Oscar Isaac,María Eugenia Estrada Nicolle,mother,,0.0,0.0
+Oscar Isaac,Óscar Gonzalo Hernández-Cano,father,,0.0,0.0
+Angourie Rice,Kate Rice,mother,,0.6,0.0
+Angourie Rice,Jeremy Rice,father,,1.0,0.0
+Shia LaBeouf,Shayna Saide,mother,Shia LaBeouf,0.7,0.0
+Shia LaBeouf,Jeffrey Craig LaBeouf,father,Shia LaBeouf,0.8,0.2
+Megan Fox,Gloria Darlene Fox,mother,Megan Fox,0.0,0.0
+Megan Fox,Franklin Thomas Fox,father,,0.0,0.0
+Meryl Streep,Mary Wilkinson Streep,mother,Meryl Streep,0.2,0.6
+Meryl Streep,Harry William Streep Jr.,father,Meryl Streep,0.9,0.0
+Erin Sanders,Kathy Silbert-Sanders,mother,,0.0,0.0
+Erin Sanders,Marc Sanders,father,,0.0,0.0
+Selma Blair,Molly Ann Cooke,mother,,0.9,0.0
+Selma Blair,Elliot I. Beitner,father,,0.1,0.0
+Mark Wahlberg,Alma Wahlberg,mother,Mark Wahlberg,1.0,0.6
+Mark Wahlberg,Donald Wahlberg,father,Mark Wahlberg,1.0,0.0
+Rosamund Pike,Caroline Friend,mother,,0.0,0.0
+Rosamund Pike,Julian Pike,father,,0.7,0.0
+Morena Baccarin,Vera Setta,mother,,1.0,0.0
+Morena Baccarin,Fernando Baccarin,father,,0.4,0.7
+Rufus Sewell,Jo Sewell,mother,,0.0,0.0
+Rufus Sewell,Bill Sewell,father,,0.1,0.0
+Natalie Portman,Shelley Stevens Hershlag,mother,Natalie Portman,0.0,0.0
+Natalie Portman,Avner Hershlag,father,Natalie Portman,1.0,0.2
+Isabela Merced,Katherine Merced,mother,,0.0,0.0
+Isabela Merced,Patrick Moner,father,,0.0,0.0
+Cate Blanchett,June Blanchett,mother,,1.0,0.0
+Cate Blanchett,"Robert DeWitt Blanchett, Jr.",father,Cate Blanchett,0.0,1.0
+Patricia Arquette,Brenda Denaut,mother,,1.0,0.0
+Patricia Arquette,Lewis Arquette,father,Patricia Arquette,1.0,0.2
+Sara Ramirez,Luisa Vargas,mother,,0.0,0.0
+Sara Ramirez,Luis A. Ramirez,father,,0.0,0.0
+Emma Roberts,Kelly Cunningham,mother,Emma Roberts,0.0,0.0
+Emma Roberts,Eric Roberts,father,Emma Roberts,1.0,1.0
+Natalia Tena,Maria Tena,mother,,0.0,0.0
+Natalia Tena,Jesús Andrew Tena,father,,0.0,0.0
+Jessica Brown Findlay,Beverley Findlay,mother,,0.0,0.0
+Jessica Brown Findlay,Christopher Findlay,father,,0.0,0.0
+Elsa Pataky,Cristina Pataky Medianu,mother,,0.1,0.4
+Elsa Pataky,José Francisco Lafuente,father,,0.5,0.0
+Carla Gugino,Carol Gugino,mother,,0.0,0.0
+Carla Gugino,Carl Gugino,father,,0.8,0.0
+Sofia Boutella,Architect Safy Boutella,mother,Sofia Boutella,0.0,0.0
+Sofia Boutella,Safia Boutella,father,,0.0,0.0
+Lily James,Nina James,mother,,0.0,0.0
+Lily James,Jamie Thomson,father,,0.0,0.0
+Raegan Revord,Holly Revord,mother,,0.0,0.0
+Mackenzie Davis,Lotte Davis,mother,,0.0,0.0
+Mackenzie Davis,John Davis,father,,0.0,0.0
+Linda Cardellini,Lorraine Cardellini,mother,Linda Cardellini,0.6,0.0
+Linda Cardellini,Wayne David Cardellini,father,Linda Cardellini,0.0,0.0
+Bruce Willis,Marlene Willis,mother,Bruce Willis,1.0,0.0
+Bruce Willis,David Willis,father,,1.0,0.0
+Danna Paola,Patricia Munguia,mother,,0.0,0.0
+Danna Paola,Juan José Rivera Arellano,father,,0.6,0.0
+Melissa McCarthy,Sandra McCarthy,mother,,1.0,0.0
+Melissa McCarthy,Michael McCarthy,father,,1.0,0.0
+Amy Adams,Kathryn Adams,mother,Amy Adams,0.9,0.0
+Amy Adams,Richard Kent Adams,father,,0.3,0.0
+Chris Evans,Lisa Evans,mother,,0.9,0.0
+Chris Evans,Bob Evans,father,,0.0,0.0
+Taron Egerton,Christine Egerton,mother,,0.3,0.0
+Rachel McAdams,Sandra McAdams,mother,,0.6,0.0
+Rachel McAdams,Lance McAdams,father,,0.0,0.0
+Rick Hoffman,Gail Hoffman,mother,,0.0,0.0
+Rick Hoffman,Charlie Hoffman,father,,0.0,0.0
+Sofia Coppola,Eleanor Coppola,mother,Sofia Coppola,1.0,0.8
+Sofia Coppola,Francis Ford Coppola,father,Sofia Coppola,1.0,1.0
+Anne Hathaway,Kate McCauley Hathaway,mother,Anne Hathaway,1.0,0.0
+Anne Hathaway,Gerald Hathaway,father,Anne Hathaway,1.0,0.0
+Sam Heughan,Chrissie Heughan,mother,Sam Heughan,0.0,0.0
+Al Pacino,Rose Gerard Pacino,mother,Al Pacino,0.1,0.0
+Al Pacino,Salvatore Pacino,father,Al Pacino,1.0,0.0
+Jackie Sandler,Judy Sandler,mother,,0.0,0.0
+Jackie Sandler,Joseph Titone,father,,0.0,0.0
+Sienna Guillory,Isa Guillory,mother,,0.0,0.0
+Sienna Guillory,Isaac Guillory,father,,0.0,0.0
+Mía Maestro,Carlos Maestro,father,,0.0,0.0
+Paul Dano,Gladys Dano,mother,,0.4,0.0
+Paul Dano,Paul Dano Sr.,father,Paul Dano,0.0,0.6
+Minka Kelly,Maureen Dumont Kelly,mother,,0.1,0.0
+Minka Kelly,Rick Dufay,father,Minka Kelly,0.8,0.1
+Michelle Pfeiffer,Donna Pfeiffer,mother,,0.4,0.0
+Michelle Pfeiffer,Richard Pfeiffer,father,,1.0,0.0
+Ben Barnes,Tricia Barnes,mother,,0.0,0.0
+Ben Barnes,Thomas Barnes,father,,0.0,0.0
+Sam Claflin,Sue Claflin,mother,,0.6,0.0
+Sam Claflin,Mark Claflin,father,,0.0,0.0
+Jim Caviezel,Maggie Caviezel,mother,,0.1,0.0
+Jim Caviezel,James Caviezel Sr.,father,Jim Caviezel,0.5,0.8
+Iliza Shlesinger,Ellen Shlesinger,mother,,0.0,0.0
+Iliza Shlesinger,Fred Shlesinger,father,,0.0,0.0
+Tracy Pollan,Corky Pollan,mother,,1.0,0.0
+Tracy Pollan,Stephen M. Pollan,father,Tracy Pollan,0.1,0.0
+Daniel Kaluuya,Damalie Namusoke,mother,,0.5,0.0
+Bradley Cooper,Gloria Campano,mother,Bradley Cooper,1.0,0.1
+Bradley Cooper,Charles Cooper,father,Bradley Cooper,0.3,0.0
+Adrianne Palicki,Nancy Palicki,mother,Adrianne Palicki,0.7,0.0
+Adrianne Palicki,Jeffrey Palicki,father,,0.0,0.0
+Katheryn Winnick,Roman Winnick,mother,,0.0,0.0
+Katheryn Winnick,Roman Winnick,father,,0.0,0.0
+Jensen Ackles,Donna Joan Shaffer-Ackles,mother,Jensen Ackles,0.0,0.0
+Jensen Ackles,Alan Roger Ackles,father,Jensen Ackles,0.8,1.0
+Steve Zahn,Carleton Edward Zahn,mother,,0.0,0.0
+Steve Zahn,Carleton Edward Zahn,father,,0.0,0.0
+Amber Heard,Paige Parsons,mother,,0.3,0.0
+Amber Heard,David Heard,father,Amber Heard,0.0,0.0
+Luke Macfarlane,Penny Macfarlane,mother,,0.0,0.0
+Luke Macfarlane,Thomas Macfarlane,father,,0.0,0.0
+Rashida Jones,Peggy Lipton,mother,Rashida Jones,0.9,1.0
+Rashida Jones,Quincy Jones,father,Rashida Jones,1.0,1.0
+Alicia Vikander,Maria Fahl Vikander,mother,Alicia Vikander,0.8,0.0
+Alicia Vikander,Svante Vikander,father,Alicia Vikander,1.0,0.0
+Alexandra Billings,Gail Billings,mother,,0.0,0.0
+Sandra Bullock,Helga Mathilde Meyer,mother,Sandra Bullock,0.0,0.0
+Sandra Bullock,John W. Bullock,father,Sandra Bullock,1.0,0.2
+Abbey Lee,Peter Kershaw,father,,0.0,0.0
+Christa Miller,Bonnie Trompeter,mother,,0.6,0.0
+Christa Miller,Chuck Miller,father,,0.6,0.0
+Lukas Haas,Emily Tracy,mother,,0.1,0.0
+Lukas Haas,Berthold Haas,father,,0.4,0.0
+Javier Bardem,Pilar Bardem,mother,Javier Bardem,1.0,1.0
+Javier Bardem,Carlos Encinas Bardem,father,,0.8,0.0
+Sasha Lane,Judith Lane,mother,,0.0,0.0
+Rupert Friend,Caroline Friend,mother,,0.2,0.0
+Rupert Friend,David Oxton Friend,father,,0.0,0.0
+Ashley Johnson,Nancy Johnson,mother,,0.0,0.0
+Ashley Johnson,Cliff Johnson,father,,0.0,0.0
+Priyanka Chopra Jonas,Madhu Chopra,mother,Priyanka Chopra Jonas,1.0,0.0
+Priyanka Chopra Jonas,Ashok Chopra,father,,0.8,0.0
+Blake Lively,Elaine Lively,mother,Blake Lively,1.0,0.9
+Blake Lively,Ernie Lively,father,Blake Lively,1.0,1.0
+Vanessa Ray,Valerie Liptak,mother,,0.0,0.0
+Vanessa Ray,James Lipton,father,,0.0,0.0
+Emma Watson,Jacqueline Luesby,mother,Emma Watson,1.0,1.0
+Emma Watson,Chris Watson,father,,0.6,0.0
+Karl Urban,Joyce Urban,mother,,0.0,0.0
+Karl Urban,Jurgen Urban,father,,0.0,0.0
+Josh Lucas,Michele LeFevre,mother,,0.0,0.0
+Josh Lucas,Don Maurer,father,,0.0,0.0
+Angelina Jolie,Marcheline Bertrand,mother,Angelina Jolie,1.0,1.0
+Angelina Jolie,Jon Voight,father,Angelina Jolie,1.0,1.0
+Carolina Miranda,Martha Carrillo,mother,,0.0,0.0
+Joey King,Terry King,mother,,0.1,0.0
+Joey King,Terry King,father,,1.0,0.0
+Gillian Jacobs,Marta Jacobs,mother,,0.0,0.0
+Gillian Jacobs,William F. Jacobs Jr.,father,,0.0,0.0
+Andrea Riseborough,Isobel Riseborough,mother,,0.0,0.0
+Andrea Riseborough,George Riseborough,father,,0.0,0.0
+Clancy Brown,Joyce Helen Eldridge,mother,,0.0,0.0
+Clancy Brown,Bud Brown,father,,0.0,0.0
+Jennifer Love Hewitt,Patricia Mae Hewitt,mother,Jennifer Love Hewitt,0.8,0.0
+Jennifer Love Hewitt,Herbert Daniel Hewitt,father,,0.0,0.0
+Luna Lauren Velez,Andrés Vélez,father,,0.0,0.0
+Charlie Day,Mary Day,mother,,0.1,0.0
+Charlie Day,Dr. Thomas Charles Day,father,,0.0,0.0
+Dakota Fanning,Heather Joy Arrington,mother,,1.0,0.0
+Dakota Fanning,Steven Fanning,father,Dakota Fanning,0.6,0.9
+Alexander Ludwig,Sharlene Martin,mother,,1.0,0.0
+Alexander Ludwig,Harald Ludwig,father,,0.8,0.0
+Ariana Greenblatt,Sol Greenblatt,mother,,0.0,0.0
+Ariana Greenblatt,Shon Greenblatt,father,,0.0,0.0
+Liam Neeson,Bernard Neeson,father,Liam Neeson,0.8,0.0
+Jennifer Aniston,Nancy Dow,mother,Jennifer Aniston,1.0,1.0
+Jennifer Aniston,John Aniston,father,Jennifer Aniston,1.0,1.0
+Donnie Yen,Bow-sim Mark,mother,Donnie Yen,0.1,0.0
+Donnie Yen,Klyster Yen,father,,0.3,0.0
+Greta Gerwig,Christine Gerwig,mother,Greta Gerwig,1.0,0.0
+Greta Gerwig,Gordon Gerwig,father,Greta Gerwig,0.1,0.5
+Michael J. Fox,Phyllis Piper,mother,,0.0,0.0
+Michael J. Fox,William Fox,father,,1.0,0.0
+Jon Bernthal,Joan Lurie Bernthal,mother,Jon Bernthal,0.5,0.6
+Jon Bernthal,Eric Bernthal,father,Jon Bernthal,0.0,0.0
+Jack Quaid,Meg Ryan,mother,Jack Quaid,1.0,0.0
+Jack Quaid,Dennis Quaid,father,Jack Quaid,0.1,0.3
+Pete Davidson,Amy Waters Davidson,mother,Pete Davidson,0.9,0.0
+Pete Davidson,Scott Davidson,father,Pete Davidson,0.6,0.0
+Will Smith,Caroline Bright,mother,,1.0,0.0
+Will Smith,Willard Carroll Smith Sr.,father,Will Smith,0.9,0.9
+Léa Seydoux,Valérie Schlumberger,mother,Léa Seydoux,1.0,0.0
+Léa Seydoux,Henri Seydoux,father,Léa Seydoux,1.0,0.0
+Zachary Levi,Susan Pugh,mother,,0.9,0.0
+Zachary Levi,Darrell Pugh,father,,0.0,0.0
+Val Kilmer,Gladys Swanette Ekstadt,mother,,0.0,0.0
+Val Kilmer,Eugene Kilmer,father,,0.4,0.0
+Olivia Wilde,Leslie Cockburn,mother,Olivia Wilde,1.0,1.0
+Olivia Wilde,Andrew Cockburn,father,Olivia Wilde,1.0,1.0
+Meagan Good,Tyra Wardlow-Doyle,mother,,0.0,0.0
+Eliza Dushku,Judith Rasmussen,mother,,0.1,0.0
+Eliza Dushku,Philip R. Dushku,father,Eliza Dushku,0.1,0.0
+Rachel Weisz,Edith Ruth Weisz,mother,,1.0,0.0
+Rachel Weisz,George Weisz,father,Rachel Weisz,1.0,0.0
+Joaquin Phoenix,Arlyn Phoenix,mother,Joaquin Phoenix,1.0,0.5
+Joaquin Phoenix,John Lee Bottom,father,Joaquin Phoenix,0.0,0.1
+Charlie Hunnam,Jane Bell,mother,,0.2,0.0
+Charlie Hunnam,William Hunnam,father,Charlie Hunnam,0.1,0.0
+Sigourney Weaver,Elizabeth Inglis,mother,Sigourney Weaver,0.6,0.0
+Sigourney Weaver,Sylvester L. Weaver Jr.,father,Sigourney Weaver,0.6,0.1
+Seth Rogen,Sandy Rogen,mother,Seth Rogen,1.0,0.6
+Seth Rogen,Mark Rogen,father,,1.0,0.0
+Elle Fanning,Heather Joy Arrington,mother,,0.9,0.0
+Elle Fanning,Steven Fanning,father,,0.5,0.0
+Jon Hamm,Deborah Hamm,mother,,0.9,0.0
+Jon Hamm,Daniel Hamm,father,,0.0,0.0
+David Tennant,Helen McLeod,mother,,0.0,0.0
+David Tennant,Sandy McDonald,father,,0.0,0.0
+Maisie Williams,Hilary Williams,mother,,0.1,0.0
+Maisie Williams,Hilary Francis Williams,father,,0.0,0.0
+Christina Ricci,Sarah Ricci,mother,,1.0,0.0
+Christina Ricci,Ralph Ricci,father,,1.0,0.0
+Lily Rabe,Jill Clayburgh,mother,Lily Rabe,1.0,0.9
+Lily Rabe,David Rabe,father,Lily Rabe,1.0,0.3
+Kate Beckinsale,Judy Loe,mother,Kate Beckinsale,1.0,0.1
+Kate Beckinsale,Richard Beckinsale,father,Kate Beckinsale,1.0,1.0
+Tia Carrere,Audrey Duhinio Janairo,mother,,0.0,0.0
+Tia Carrere,Alexander Janairo,father,,0.0,0.0
+Abigail Breslin,Kim Breslin,mother,Abigail Breslin,0.8,0.0
+Abigail Breslin,Michael Breslin,father,Abigail Breslin,1.0,0.9
+Natalie Morales,Penelope Morales,mother,,0.0,0.0
+Natalie Morales,"Lieutenant Colonel Mario Morales, Jr.",father,,0.0,0.0
+Jodie Whittaker,Adrian Whittaker,father,,0.0,0.0
+Laura Linney,Miriam Anderson Linney,mother,Laura Linney,0.0,0.0
+Laura Linney,Romulus Linney,father,Laura Linney,1.0,1.0
+Odessa A’zion,Pamela Adlon,mother,,0.0,0.0
+Odessa A’zion,Pamela Adlon,father,,0.0,0.0
+Pier Angeli,Enrichetta Romiti,mother,,0.0,0.0
+Pier Angeli,Enrico Angeli,father,,0.0,0.0
+Michael Biehn,Marcia Biehn,mother,,0.0,0.0
+Michael Biehn,Don Biehn,father,,0.0,0.1
+Sarah Shahi,Mah Monir Soroush Azar,mother,,0.5,0.0
+Sarah Shahi,Abbas Jahansouz Shahi,father,,0.0,0.0
+Sean Patrick Flanery,Genie Flanery,mother,,0.0,0.0
+Sean Patrick Flanery,Paul Flanery,father,,0.0,0.0
+Kaitlyn Dever,Kathy Dever,mother,,0.0,0.0
+Kaitlyn Dever,Tim Dever,father,,0.2,0.0
+Bruce Campbell,Joanne Louise Campbell,mother,,0.0,0.0
+Bruce Campbell,Charles Newton Campbell,father,,0.0,0.0
+Jason Isaacs,Sheila Isaacs,mother,,0.0,0.0
+Jason Isaacs,Eric Isaacs,father,,0.0,0.0
+Robin Williams,Laurie Williams,mother,,0.1,0.0
+Robin Williams,Robert Fitzgerald Williams,father,,1.0,0.0
+Lena Headey,Sue Headey,mother,,0.4,0.9
+Lena Headey,John Headey,father,Lena Headey,0.1,0.1
+Jay Baruchel,Robyne Baruchel,mother,Jay Baruchel,0.0,0.0
+Jay Baruchel,Serge Baruchel,father,Jay Baruchel,0.3,0.0
+Brittany Snow,Cinda Snow,mother,,0.0,0.0
+Brittany Snow,John Snow,father,,0.0,0.0
+Luna Blaise,Angelyna Martinez,mother,,0.0,0.0
+Luna Blaise,Paul Boyd,father,,0.1,0.0
+Jacob Elordi,Melissa Elordi,mother,Jacob Elordi,0.0,0.0
+Jacob Elordi,John Elordi,father,,0.0,0.0
+Bailee Madison,Patricia Riley,mother,,0.8,0.0
+Bailee Madison,Michael Shawn Riley,father,,0.0,0.0
+Adam Driver,Nancy Wright,mother,,0.8,0.0
+Adam Driver,Joe Douglas Driver,father,,0.5,0.0
+Alison Brie,Joanne Brenner,mother,,0.3,0.0
+Alison Brie,Charles Schermerhorn,father,,0.0,0.0
+Toby Kebbell,Michelle Mathers,mother,,0.0,0.0
+Toby Kebbell,Robert Kebbell,father,,0.0,0.0
+Will Arnett,Edith Alexandra Palk,mother,,0.7,0.0
+Will Arnett,Emerson James Arnett,father,,0.1,0.0
+Tessa Thompson,Marc Anthony Thompson,mother,Tessa Thompson,0.0,0.0
+Tessa Thompson,Marc Anthony Thompson,father,Tessa Thompson,0.0,0.0
+Jamie Dornan,Lorna Dornan,mother,Jamie Dornan,1.0,0.0
+Jamie Dornan,Jim Dornan,father,Jamie Dornan,0.9,0.5
+Stephen Lang,Theresa Volmer,mother,,0.0,0.0
+Stephen Lang,Eugene Lang,father,,0.0,0.0
+James Spader,Jean Fraser Spader,mother,James Spader,0.5,0.0
+James Spader,Stoddard Greenwood Spader,father,James Spader,1.0,0.0
+Nicholas Braun,Elizabeth Lyle Braun,mother,,0.0,0.0
+Nicholas Braun,Craig Braun,father,,0.0,0.0
+Hugh Jackman,Grace McNeil,mother,,0.8,0.0
+Hugh Jackman,Christopher John Jackman,father,,0.5,0.4
+Daniel Day-Lewis,Jill Balcon,mother,Daniel Day-Lewis,1.0,0.6
+Daniel Day-Lewis,Cecil Day-Lewis,father,Daniel Day-Lewis,1.0,1.0
+Keira Knightley,Sharman Macdonald,mother,Keira Knightley,0.8,1.0
+Keira Knightley,Will Knightley,father,Keira Knightley,1.0,0.8
+Kristen Bell,Lorelei Bell,mother,,1.0,0.0
+Kristen Bell,Tom Bell,father,,0.3,0.0
+Jim Carrey,Kathleen Carrey,mother,Jim Carrey,0.8,0.0
+Jim Carrey,Percy Carrey,father,Jim Carrey,0.6,0.3
+Gary Oldman,Kathleen Oldman,mother,Gary Oldman,0.1,0.0
+Gary Oldman,Leonard Bertram Oldman,father,Gary Oldman,0.0,0.0
+Jodie Comer,Donna Comer,mother,,0.0,0.0
+Jodie Comer,Don Comer,father,,0.0,0.0
+Carrie Preston,Linda Barbara Preston,mother,,0.0,0.0
+Mariette Hartley,Polly Cornwell,mother,,0.0,0.0
+Mariette Hartley,Paul Hembree Hartley,father,,0.0,0.0
+Stephen Dorff,Nancy Dorff,mother,,1.0,0.0
+Stephen Dorff,Steve Dorff,father,Stephen Dorff,0.7,0.3
+Ralph Fiennes,Jennifer Lash,mother,Ralph Fiennes,1.0,0.0
+Ralph Fiennes,Mark Fiennes,father,Ralph Fiennes,1.0,0.0
+Sean Connery,Joseph Connery,father,Sean Connery,0.8,0.0
+Alice Eve,Sharon Maughan,mother,Alice Eve,0.9,1.0
+Alice Eve,Trevor Eve,father,Alice Eve,1.0,0.9
+Sam Elliott,Glynn Mamie Sparks,mother,,0.0,0.0
+Sam Elliott,Henry Nelson Elliott,father,,0.0,0.0
+Kirsten Dunst,Inez Rupprecht,mother,,0.9,0.0
+Kirsten Dunst,Klaus Dunst,father,,0.5,0.0
+Sasha Alexander,Sofija Kukavica,mother,,0.0,0.0
+Sasha Alexander,Slobodan Drobnjak,father,,0.0,0.0
+Liana Liberato,Rhondelle Liberato,mother,,0.0,0.0
+Liana Liberato,George Liberato,father,,0.6,0.0
+Jennette McCurdy,Debra McCurdy,mother,Jennette McCurdy,0.2,0.0
+Jennette McCurdy,Mark McCurdy,father,,0.0,0.0
+Harold Perrineau,Sylvia Perrineau,mother,Harold Perrineau,0.0,0.0
+Harold Perrineau,Harold Williams,father,,0.0,0.0
+Katy Mixon,Donna Mixon,mother,,0.0,0.0
+Katy Mixon,Fred Mixon,father,,0.0,0.0
+Jessica Chastain,Jerri Chastain,mother,Jessica Chastain,0.6,0.0
+Jessica Chastain,Michael Monasterio,father,,0.8,0.0
+Luke Grimes,Angie Barker,mother,,0.1,0.0
+Luke Grimes,Randy Grimes,father,,0.0,0.0
+Bryan Cranston,Audrey Peggy Sell,mother,,0.5,0.0
+Bryan Cranston,Joe Cranston,father,Bryan Cranston,0.3,0.0
+Robert Pattinson,Clare Pattinson,mother,Robert Pattinson,1.0,0.0
+Robert Pattinson,Richard Pattinson,father,Robert Pattinson,0.9,0.0
+Skyler Gisondo,Stacey Gisondo,mother,,0.1,0.0
+Skyler Gisondo,Stu Gisondo,father,,0.0,0.0
+Elizabeth Debicki,Piotr Debicki,father,Elizabeth Debicki,0.0,0.0
+Ke Huy Quan,Quan Y Huy,father,,0.0,0.0
+Emma Heming Willis,Zorina Heming,mother,,0.0,0.0
+Sophie Thatcher,Robert Thatcher,father,,0.0,0.0
+Zoe Perry,Laurie Metcalf,mother,Zoe Perry,0.9,0.6
+Zoe Perry,Jeff Perry,father,Zoe Perry,0.7,0.0
+Kate Capshaw,Beverly Sue Simon,mother,,0.1,0.0
+Kate Capshaw,Edwin Leon Nail,father,,0.0,0.0
+Kelly Preston,Linda Carlson,mother,,1.0,0.0
+Kelly Preston,Peter Palzis,father,,0.3,0.0
+Nathan Fillion,Cookie Fillion,mother,,0.0,0.0
+Nathan Fillion,Bob Fillion,father,,0.0,0.0
+Marisa Tomei,Addie Tomei,mother,Marisa Tomei,0.2,0.1
+Marisa Tomei,Gary A. Tomei,father,Marisa Tomei,0.9,0.4
+Olivia Cooke,Lindsy Wild,mother,,0.0,0.0
+Olivia Cooke,John Cooke,father,,0.0,0.0
+Bridget Regan,Mary Catherine Regan,mother,,0.0,0.0
+Bridget Regan,Jim Regan,father,,0.0,0.0
+Hope Davis,Joan Davis,mother,,0.0,0.0
+Hope Davis,William Davis,father,,0.0,0.0
+Gemma Arterton,Sally-Anne Heap,mother,,0.8,0.0
+Gemma Arterton,Barry Arterton,father,Gemma Arterton,0.0,0.0
+Mads Mikkelsen,Bente Christiansen,mother,,1.0,0.0
+Mads Mikkelsen,Henning Mikkelsen,father,,1.0,0.0
+Yvonne Strahovski,Bozena Strahovski,mother,Yvonne Strahovski,0.0,0.0
+Yvonne Strahovski,Peter Strzechowski,father,Yvonne Strahovski,0.0,0.0
+Lance Reddick,Doris Reddick,mother,,0.0,0.0
+Anna Kendrick,Janice Kendrick,mother,,0.1,0.0
+Anna Kendrick,William Kendrick,father,,0.0,0.0
+Saoirse Ronan,Monica Ronan,mother,Saoirse Ronan,1.0,0.0
+Saoirse Ronan,Paul Ronan,father,Saoirse Ronan,1.0,1.0
+Adrien Brody,Sylvia Plachy,mother,Adrien Brody,0.9,0.2
+Adrien Brody,Elliot Brody,father,,0.5,0.0
+Joel Edgerton,Marianne Edgerton,mother,,0.6,0.0
+Joel Edgerton,Michael Edgerton,father,,1.0,0.0
+Jamie Lee Curtis,Janet Leigh,mother,Jamie Lee Curtis,0.9,1.0
+Jamie Lee Curtis,Tony Curtis,father,Jamie Lee Curtis,1.0,0.9
+Bella Ramsey,Alex Ramsey,father,,0.0,0.0
+Jack Nicholson,June Frances Nicholson,mother,Jack Nicholson,0.5,1.0
+Jack Nicholson,Donald Furcillo,father,Jack Nicholson,0.0,0.0
+Michelle Yeoh,Janet Yeoh,mother,,0.0,0.0
+Michelle Yeoh,Yeoh Kian Teik,father,,0.0,0.0
+Tom Pelphrey,Richard Pelphrey,father,,0.0,0.0
+Anthony Ramos,Mildred Ramos,mother,,0.0,0.0
+Jane Russell,Geraldine Jacobi,mother,,0.0,0.0
+Jane Russell,Roy William Russell,father,Jane Russell,0.0,0.0
+Maria Bello,Kathy Bello,mother,,1.0,0.0
+Maria Bello,Joe Bello,father,,1.0,0.0
+Kirk Fox,Joyce Fox,mother,,0.0,0.0
+Kirk Fox,Gardner Fox,father,,0.0,0.0
+Britt Robertson,Beverly Robertson,mother,,0.0,0.0
+Britt Robertson,Ryan Robertson,father,,0.0,0.0
+Laura Benanti,Linda Wonneberger,mother,,0.7,0.0
+Laura Benanti,Martin Vidnovic,father,Laura Benanti,0.1,0.0
+Harry Melling,Joanne Melling,mother,,0.0,0.0
+Harry Melling,Paul Melling,father,,0.0,0.0
+Isabella Rossellini,Ingrid Bergman,mother,Isabella Rossellini,0.0,1.0
+Isabella Rossellini,Roberto Rossellini,father,Isabella Rossellini,0.5,0.9
+Gina Torres,Rebecca Torres,mother,,0.0,0.0
+Gina Torres,Richard Torres,father,,0.0,0.0
+Bella Thorne,Tamara Thorne,mother,,1.0,0.0
+Julia Roberts,Betty Lou Bredemus,mother,Julia Roberts,0.6,0.2
+Julia Roberts,Walter Grady Roberts,father,Julia Roberts,0.7,0.2
+Bob Odenkirk,Barbara Odenkirk,mother,Bob Odenkirk,0.8,0.0
+Bob Odenkirk,Walter Odenkirk,father,Bob Odenkirk,0.6,0.0
+Woody Harrelson,Diane Lou Oswald,mother,,1.0,0.0
+Woody Harrelson,Charles Harrelson,father,Woody Harrelson,1.0,1.0
+Ridley Scott,Elizabeth Jean Scott,mother,,0.3,0.0
+Ridley Scott,Francis Percy Scott,father,,0.0,0.0
+Amanda Schull,Susan Schull,mother,,0.0,0.0
+Robert Carlyle,Elizabeth McDonald,mother,,0.0,0.0
+Robert Carlyle,Joseph Carlyle,father,,0.0,0.0
+Edward Norton,Lydia Robinson Norton,mother,,0.0,0.0
+Edward Norton,Edward Mower Norton Jr.,father,Edward Norton,0.0,0.0
+Bel Powley,Janis Jaffa,mother,,0.9,0.0
+Bel Powley,Mark Powley,father,,1.0,0.0
+Bill Paxton,Mary Lou Paxton,mother,,0.9,0.0
+Bill Paxton,John Lane Paxton,father,,0.9,0.0
+Dakota Johnson,Melanie Griffith,mother,Dakota Johnson,1.0,1.0
+Dakota Johnson,Don Johnson,father,Dakota Johnson,0.2,1.0
+Anna Torv,Susan Torv,mother,Anna Torv,0.9,0.0
+Anna Torv,Hans Torv,father,,0.7,0.0
+Benjamin Walker,Jeannine Walker,mother,,0.0,0.0
+Benjamin Walker,Greg Walker,father,,0.0,0.0
+Hunter Schafer,Katy Schafer,mother,,0.0,0.0
+Hunter Schafer,Mac Schafer,father,,0.0,0.0
+Nicole Ari Parker,Susan Parker,mother,,0.0,0.0
+Nicole Ari Parker,Donald Parker,father,,0.0,0.0
+Errol Flynn,Marelle Young,mother,,0.1,0.0
+Errol Flynn,Theodore Thomson Flynn,father,Errol Flynn,0.3,0.8
+Annie Wersching,Sandy Wersching,mother,,0.0,0.0
+Annie Wersching,Frank Wersching Jr.,father,Annie Wersching,0.0,0.0
+Bill Hader,Sherri Renee Hader,mother,,0.0,0.0
+Bill Hader,William Thomas Hader Sr.,father,Bill Hader,0.0,1.0
+Kaya Scodelario,Katia Scodelario,mother,,0.6,0.0
+Kaya Scodelario,Roger Humphrey,father,,1.0,0.0
+Sadie Frost,Mary Davidson,mother,,0.9,0.0
+Sadie Frost,David Vaughan,father,,0.9,0.0
+Sadie Stanley,Matt Stanley,father,,0.0,0.0
+Christina Hendricks,Jackie Sue Raymond,mother,,0.0,0.0
+Christina Hendricks,Robert Hendricks,father,,0.0,0.0
+Colin Farrell,Rita Farrell,mother,,0.9,0.0
+Colin Farrell,Eamon Farrell,father,,0.9,0.0
+Michael B. Jordan,Donna Jordan,mother,,1.0,0.0
+Michael B. Jordan,Michael A. Jordan,father,,0.2,0.0
+John Travolta,Helen Travolta,mother,John Travolta,0.0,0.0
+John Travolta,Salvatore Travolta,father,John Travolta,0.9,1.0
+Mamoudou Athie,El Hadj Athie,father,,0.0,0.0
+Adria Arjona,Leslie Torres,mother,,0.6,0.0
+Adria Arjona,Ricardo Arjona,father,Adria Arjona,1.0,0.0
+Miles Teller,Merry Flowers,mother,,0.3,0.0
+Miles Teller,Mike Teller,father,,1.0,0.0
+Annie Potts,Dorothy Harris Potts,mother,,0.0,0.0
+Annie Potts,Powell Grisette Potts,father,,0.0,0.0
+Leslie Bibb,Betty Blakemore Sulzbach,mother,,0.0,0.0
+Steve Carell,Harriet Theresa Carell,mother,Steve Carell,0.0,0.0
+Steve Carell,Edwin A. Carell,father,Steve Carell,0.8,0.5
+Katherine Heigl,Nancy Heigl,mother,Katherine Heigl,1.0,1.0
+Katherine Heigl,Paul Heigl,father,Katherine Heigl,1.0,0.2
+M. Night Shyamalan,Jayalakshmi Shyamalan,mother,M. Night Shyamalan,1.0,0.0
+M. Night Shyamalan,Nelliate C. Shyamalan,father,,0.5,0.0
+Sarah Jessica Parker,Barbara Parker,mother,,0.5,0.0
+Sarah Jessica Parker,Stephen Parker,father,,1.0,0.0
+Zooey Deschanel,Mary Jo Deschanel,mother,Zooey Deschanel,1.0,1.0
+Zooey Deschanel,Caleb Deschanel,father,Zooey Deschanel,1.0,1.0
+David Harbour,Kenneth Harbour,father,,0.0,0.0
+Molly C. Quinn,Dianne Quinn,mother,,0.0,0.0
+Molly C. Quinn,Tom Quinn,father,,0.0,0.0
+Cara Delevingne,Pandora Delevingne,mother,Cara Delevingne,1.0,1.0
+Cara Delevingne,Charles Delevingne,father,Cara Delevingne,1.0,0.7
+Andrew Garfield,Lynn Garfield,mother,,0.0,0.7
+Andrew Garfield,Richard Garfield,father,,0.0,0.0
+Daniel Radcliffe,Marcia Gresham,mother,Daniel Radcliffe,1.0,0.0
+Daniel Radcliffe,Alan Radcliffe,father,Daniel Radcliffe,0.4,0.2
+Julie Bowen,Suzanne Frey Bowen,mother,,0.0,0.0
+Julie Bowen,John Alexander Luetkemeyer Jr.,father,,0.0,0.0
+Diane Lane,Colleen Farrington,mother,Diane Lane,1.0,0.0
+Diane Lane,Burt Lane,father,,0.8,0.0
+Connie Nielsen,Laila Nielsen,mother,,0.1,0.0
+Connie Nielsen,Bent Nielsen,father,,0.1,0.1
+Abbie Cornish,Shelley Cornish,mother,,0.5,0.0
+Abbie Cornish,Barry Cornish,father,,0.0,0.0
+Daniel Craig,Olivia Craig,mother,,0.7,0.0
+Daniel Craig,Tim Craig,father,,0.0,0.0
+Common,Dr. Mahalia Ann Hines,mother,,0.3,0.9
+Common,Lonnie Lynn Sr.,father,,0.0,0.9
+Danny McBride,Kathy Rudy,mother,,0.0,0.0
+Danny McBride,Jim McBride,father,,0.0,0.0
+Jake Johnson,Eve Johnson,mother,,0.0,0.0
+Jake Johnson,Ken Weinberger,father,,0.0,0.0
+Stanley Tucci,Joan Tucci,mother,Stanley Tucci,0.0,0.4
+Stanley Tucci,"Stanley Tucci, Sr.",father,Stanley Tucci,0.0,0.9
+Julia Stiles,Judith Newcomb Stiles,mother,Julia Stiles,0.5,0.1
+Julia Stiles,John O'Hara,father,,0.5,0.0
+Paul Mescal,Dearbhla Mescal,mother,,0.0,0.0
+Charlie Murphy,Lillian Murphy,mother,,1.0,0.0
+Charlie Murphy,Charles Edward Murphy,father,,0.0,0.0
+Ethan Hawke,Leslie Hawke,mother,Ethan Hawke,1.0,0.9
+Ethan Hawke,James Steven Hawke,father,,0.0,0.0
+Jordana Brewster,Maria João Brewster,mother,,0.0,0.0
+Jordana Brewster,Alden Brewster,father,,1.0,0.0
+Helen Mirren,Kathleen Alexandrina Eva Matilda Rogers,mother,,0.3,0.0
+Helen Mirren,Vasily Petrovich Mironoff,father,Helen Mirren,0.0,0.0
+Virginia Gardner,Sarah Gardner,mother,,0.0,0.0
+Virginia Gardner,Chuck Gardner,father,,0.0,0.0
+Suki Waterhouse,Elizabeth Waterhouse,mother,,0.9,0.0
+Suki Waterhouse,Norman Waterhouse,father,,0.5,0.0
+Lacey Chabert,Julie Chabert,mother,,1.0,0.0
+Lacey Chabert,Tony Chabert,father,,0.7,0.0
+Reese Witherspoon,Betty Reese,mother,Reese Witherspoon,0.3,0.0
+Reese Witherspoon,John Draper Witherspoon,father,Reese Witherspoon,0.4,1.0
+Gabriel Basso,Marcie Basso,mother,,0.0,0.0
+Gabriel Basso,Louis J. Basso,father,,0.0,0.0
+Olivia d'Abo,Maggie London,mother,,0.6,0.0
+Simon Pegg,Gillian Rosemary Smith,mother,,0.1,0.0
+Simon Pegg,John Beckingham,father,,0.0,0.0
+Jackie Chan,Lee-Lee Chan,mother,,1.0,0.0
+Jackie Chan,Charles Chan,father,Jackie Chan,1.0,0.0
+Zoey Deutch,Lea Thompson,mother,Zoey Deutch,0.9,0.8
+Zoey Deutch,Howard Deutch,father,Zoey Deutch,1.0,1.0
+Tom Welling,Bonnie Welling,mother,,0.0,0.0
+Tom Welling,Mark Welling,father,,0.0,0.0
+Madelyn Cline,Pam Cline,mother,,0.0,0.0
+Madelyn Cline,Mark Cline,father,,0.0,0.0
+Holly Hunter,Opal Marguerite Catledge,mother,,0.0,0.0
+Holly Hunter,Charles Edwin Hunter,father,,0.0,0.0
+Emmanuelle Seigner,Aline Ponelle,mother,,0.0,0.0
+Emmanuelle Seigner,Jean-Louis Seigner,father,Emmanuelle Seigner,0.1,0.8
+Claudia Lee,Denise Lee,mother,,0.0,0.0
+Claudia Lee,Klaudiusz Lee,father,,0.0,0.0
+Piper Perabo,Mary Charlotte Ulland,mother,,0.7,0.0
+Piper Perabo,William Perabo,father,Piper Perabo,0.0,0.0
+Morgan Freeman,Mayme Edna Revere,mother,Morgan Freeman,0.0,0.0
+Morgan Freeman,"Morgan Porterfield Freeman, Sr.",father,Morgan Freeman Jr.,0.0,1.0
+Domhnall Gleeson,Mary Weldon,mother,,0.2,0.0
+Domhnall Gleeson,Brendan Gleeson,father,Domhnall Gleeson,1.0,1.0
+Dove Cameron,Bonnie Wallace,mother,Dove Cameron,0.4,0.1
+Dove Cameron,Philip Alan Hosterman,father,Dove Cameron,0.0,0.0
+Olivia Holt,Kim Holt,mother,,0.8,0.0
+Olivia Holt,Mark Holt,father,,0.2,0.0
+Maika Monroe,Dixie Monroe,mother,,0.0,0.0
+Maika Monroe,Dixie Brubaker,father,,0.0,0.0
+Michael Sheen,Irene Sheen,mother,,0.0,0.0
+Michael Sheen,Meyrick Sheen,father,Michael Sheen,0.7,0.0
+David Fincher,Claire Mae Fincher,mother,,0.1,0.0
+David Fincher,Howard Fincher,father,,0.0,0.0
+Michael Fassbender,Adele Fassbender,mother,,0.9,0.0
+Michael Fassbender,Josef Fassbender,father,Michael Fassbender,0.6,0.0
+Sofia Black-D'Elia,Eleanor D'Elia,mother,,0.0,0.0
+Sofia Black-D'Elia,Anthony D'Elia,father,,0.0,0.0
+Eva Green,Marlène Jobert,mother,Eva Green,0.9,1.0
+Eva Green,Walter Green,father,,1.0,0.0
+Rooney Mara,Kathleen McNulty Rooney,mother,,0.0,0.0
+Rooney Mara,Chris Mara,father,,0.0,0.8
+Emma Thompson,Phyllida Law,mother,Emma Thompson,1.0,1.0
+Emma Thompson,Eric Thompson,father,Emma Thompson,1.0,0.0
+Poorna Jagannathan,Retired Vice Admiral V.R. Jagannathan,father,,0.0,0.0
+Melissa Benoist,Julie Benoist,mother,,0.5,0.0
+Melissa Benoist,Jim Benoist,father,,0.0,0.0
+Frances McDormand,Noreen E. Nickelson McDormand,mother,Frances McDormand,0.0,0.0
+Frances McDormand,Vernon McDormand,father,Frances McDormand,0.5,0.0
+Krysten Ritter,Kathy Ritter,mother,,0.0,0.0
+Krysten Ritter,Gary Ritter,father,,0.0,0.0
+Fisher Stevens,Sally Fisher,mother,,0.0,0.0
+Viggo Mortensen,Grace Gamble Atkinson,mother,,0.8,0.0
+Viggo Mortensen,Viggo Peter Mortensen Sr.,father,Viggo Mortensen Jr.,0.0,0.9
+Liv Tyler,Bebe Buell,mother,Liv Tyler,1.0,1.0
+Liv Tyler,Steven Tyler,father,Liv Tyler,0.1,1.0
+Jack Black,Judith Love Cohen,mother,Jack Black,0.1,0.0
+Jack Black,Thomas William Black,father,,0.9,0.0
+Taylor Kitsch,Susan Green,mother,,0.0,0.0
+Taylor Kitsch,Drew Kitsch,father,,0.0,0.0
+Michael Cera,Linda Cera,mother,,0.0,0.0
+Michael Cera,Luigi Cera,father,,0.0,0.0
+James Gunn,Leota Gunn,mother,,0.7,0.0
+James Gunn,James F. Gunn,father,James Gunn,0.0,0.0
+Emily Browning,Shelley Browning,mother,,0.1,0.0
+Emily Browning,Andrew Browning,father,,0.0,0.0
+Neve Campbell,Marnie Neve Campbell,mother,,0.1,0.0
+Neve Campbell,Gerry Campbell,father,,0.1,0.0
+John Krasinski,Mary Clare Krasinski,mother,John Krasinski,0.7,0.0
+John Krasinski,Ronald Krasinski,father,,1.0,0.0
+Paul Walker,Cheryl Walker,mother,Paul Walker,0.7,0.0
+Paul Walker,Paul William Walker III,father,Paul Walker IV,0.0,0.8
+Jacob Tremblay,Christina Candia Tremblay,mother,,1.0,0.0
+Jacob Tremblay,Jason Tremblay,father,Jacob Tremblay,1.0,0.0
+Abby Ryder Fortson,Christie Lynn Smith,mother,Abby Ryder Fortson,0.0,0.1
+Abby Ryder Fortson,John Fortson,father,Abby Ryder Fortson,0.0,0.0
+Natasia Demetriou,Ellie Demetriou,father,,0.0,0.0
+Eric Stoltz,Evelyn B. Stoltz,mother,,0.1,0.0
+Eric Stoltz,Jack Stoltz,father,,0.0,0.0
+John Cena,Carol Cena,mother,John Cena,0.6,0.0
+John Cena,John Cena Sr.,father,John Cena Jr.,0.0,0.9
+Michelle Williams,Carla Williams,mother,,0.7,0.0
+Michelle Williams,Larry Richard Williams,father,Michelle Williams,0.2,0.0
+Geena Davis,Lucille Davis,mother,,0.7,0.0
+Geena Davis,William F. Davis,father,,0.2,0.0
+Paul Rudd,Gloria Rudd,mother,Paul Rudd,0.5,0.0
+Paul Rudd,Michael Rudd,father,,0.5,0.0
+James Mangold,Sylvia Plimack Mangold,mother,James Mangold,0.0,0.0
+James Mangold,Robert Mangold,father,James Mangold,0.0,0.0
+Sadie Sink,Lori Sink,mother,,0.0,0.0
+Sadie Sink,Casey Adam Sink,father,,0.0,0.0
+Annabelle Wallis,Richard Hardman,father,,0.0,0.0
+Paula Patton,Joyce Patton,mother,,1.0,0.0
+Paula Patton,Charles Patton,father,,0.0,0.0
+Judy Holliday,Helen Tuvim,mother,Judy Holliday,0.0,0.0
+Judy Holliday,Abe Tuvim,father,Judy Holliday,0.0,0.0
+Martin Freeman,Philomena Norris,mother,,0.0,0.0
+Martin Freeman,Geoffrey Freeman,father,,0.0,0.0
+Milla Jovovich,Galina Jovovich,mother,Milla Jovovich,0.1,0.6
+Milla Jovovich,Bogdan Jovovich,father,Milla Jovovich,0.8,0.1
+Peyton List,Suzanne List,mother,,0.8,0.0
+Peyton List,John List,father,,0.1,0.0
+James Norton,Lavinia Norton,mother,,0.0,0.0
+James Norton,Hugh B. Norton,father,,0.0,0.0
+Noomi Rapace,Nina Norén,mother,,0.7,0.0
+Noomi Rapace,Rogelio Durán,father,,0.1,0.0
+Tobias Menzies,Gillian Menzies,mother,,0.0,0.0
+Tobias Menzies,Peter Menzies Jr.,father,,0.0,0.0
+Edward Furlong,Eleanor Torres,mother,,0.0,0.0
+Edward Furlong,Eleanor Torres,father,,0.0,0.0
+Brooke Langton,Jackson Langton,mother,,0.0,0.0
+Brooke Langton,Jackson Langton,father,,0.0,0.0
+Ellen Barkin,Evelyn Barkin,mother,,0.2,0.0
+Ellen Barkin,Sol Barkin,father,,0.0,0.0
+Mae Whitman,Pat Musick,mother,Mae Whitman,1.0,0.0
+Mae Whitman,Pat Whitman,father,,0.0,0.0
+John Francis Daley,R.F. Daley,mother,,0.9,0.0
+John Francis Daley,R.F. Daley,father,,0.5,0.0
+Tim Robbins,Mary Robbins,mother,,1.0,0.0
+Tim Robbins,Gil Robbins,father,Tim Robbins,1.0,0.8
+Ashly Burch,David Burch,father,,0.0,0.0
+Zac Efron,Starla Baskett,mother,Zac Efron,0.8,0.0
+Zac Efron,David Efron,father,Zac Efron,0.5,0.0
+Will Patton,Billie Patton,mother,,0.0,0.0
+Will Patton,Bill Patton,father,,0.0,0.0
+Sam Levinson,Diana Rhodes,mother,,0.0,0.0
+Sam Levinson,Barry Levinson,father,Sam Levinson,1.0,0.2
+Parker Posey,Lynda Patton,mother,,0.1,0.0
+Parker Posey,Chris Posey,father,,0.8,0.0
+Emily Osment,Theresa Osment,mother,Emily Osment,1.0,0.1
+Emily Osment,Michael Eugene Osment,father,Emily Osment,1.0,0.0
+Boyd Holbrook,Ellen Holbrook,mother,,0.0,0.0
+Boyd Holbrook,Don Holbrook,father,,0.0,0.0
+Jennifer Morrison,Judy Morrison,mother,,0.0,0.0
+Jennifer Morrison,David L. Morrison,father,,0.1,0.0
+Iain Glen,Hamish Glen,father,,0.0,0.0
+Naomi Watts,Myfanwy Edwards Roberts,mother,,0.0,0.0
+Naomi Watts,Peter Watts,father,,1.0,0.0
+Liam Hemsworth,Leonie Hemsworth,mother,,1.0,0.3
+Liam Hemsworth,Craig Hemsworth,father,,1.0,0.7
+Marlon Brando,Dorothy Julia Pennebaker Brando,mother,Marlon Brando,0.2,0.0
+Marlon Brando,Marlon Brando Sr.,father,Marlon Brando Jr.,0.6,1.0
+Emma Mackey,Rachel Mackey,mother,,0.0,0.0
+Emma Mackey,Philippe Mackey,father,,0.0,0.0
+Nicola Peltz Beckham,Claudia Heffner Peltz,mother,,0.4,0.0
+Nicola Peltz Beckham,Nelson Peltz,father,,0.0,0.0
+Ariana Richards,Darielle Garrison,mother,,0.0,0.0
+Ariana Richards,Gary Richards,father,,0.4,0.0
+Cameron Diaz,Billie Diaz,mother,,0.6,0.0
+Cameron Diaz,Emilio Diaz,father,Cameron Diaz,0.6,1.0
+Ruby Rose,Katia Langenheim,mother,Ruby Rose,0.2,0.0
+Jennifer Coolidge,Pauline Coolidge,mother,,0.0,0.0
+Jennifer Coolidge,Paul Coolidge,father,,0.0,0.0
+Daisy Edgar-Jones,Wendy Edgar-Jones,mother,,0.0,0.0
+Daisy Edgar-Jones,Philip Edgar-Jones,father,,0.0,0.0
+Sarah Paulson,Catharine Gordon Dolcater,mother,,0.0,0.0
+Sarah Paulson,Douglas Lyle Paulson II,father,,0.0,0.0
+Stana Katic,Rada Katic,mother,,0.0,0.0
+Stana Katic,Peter Katic,father,Stana Katic,0.0,0.0
+Joel Kinnaman,Bitte Kinnaman,mother,Joel Kinnaman,0.0,0.0
+Joel Kinnaman,Steve Kinnaman,father,,1.0,0.0
+Erin Murphy,Stephanie Murphy,mother,,0.0,0.0
+Erin Murphy,Dan Murphy,father,,0.0,0.0
+John Rhys-Davies,Phyllis Jones,mother,,0.0,0.0
+John Rhys-Davies,Rhys Davies,father,,0.0,0.0
+River Phoenix,Arlyn Phoenix,mother,River Phoenix,1.0,0.5
+River Phoenix,John Lee Bottom,father,,0.6,0.6
+Courtney Eaton,Stephenie Eaton,mother,,0.0,0.0
+Courtney Eaton,Stephen Eaton,father,,0.0,0.0
+Jeri Ryan,Sharon Zimmerman,mother,,0.2,0.0
+Selena Gomez,Mandy Teefey,mother,Selena Gomez,0.9,1.0
+Selena Gomez,Ricardo Joel Gomez,father,Selena Gomez,0.2,0.3
+Cary Elwes,Tessa Kennedy,mother,,0.9,0.0
+Cary Elwes,Dominick Elwes,father,Cary Elwes,0.2,0.4
+Will Ferrell,Betty Kay Overman,mother,,0.2,0.0
+Will Ferrell,Roy Lee Ferrell Jr.,father,Will Ferrell,0.5,0.0
+Winona Ryder,Cynthia Palmer,mother,,1.0,0.0
+Winona Ryder,Michael Horowitz,father,Winona Ryder,0.9,0.0
+Armie Hammer,Dru Ann Mobley,mother,,0.9,0.0
+Armie Hammer,Michael Armand Hammer,father,Armie Hammer,0.8,0.1
+Renee Olstead,Rebecca Lynn Jeffries,mother,,1.0,0.0
+Renee Olstead,Christopher Eric Olstead,father,,0.0,0.0
+Ian McShane,Irene McShane,mother,,0.0,0.0
+Ian McShane,Harry McShane,father,Ian McShane,0.0,0.0
+Wendie Malick,Gigi Malick,mother,,0.0,0.0
+Wendie Malick,Ken Malick,father,,0.0,0.0
+Nina Dobrev,Michaela Dobreva,mother,,0.0,0.0
+Nina Dobrev,Konstantin Dobrev,father,,0.6,0.1
+Elisabeth Shue,Anne Harms,mother,,0.4,0.0
+Elisabeth Shue,James Shue,father,Elisabeth Shue,0.1,0.0
+Téa Leoni,Emily Patterson,mother,,0.9,0.0
+Téa Leoni,Anthony Pantaleoni,father,Téa Leoni,0.9,0.2
+Sebastian Stan,Georgeta Orlovschi,mother,,0.0,0.0
+Sebastian Stan,Georgeta Orlovschi,father,,0.0,0.0
+James Franco,Betsy Lou Franco,mother,James Franco,0.1,0.0
+James Franco,Douglas Eugene Franco,father,James Franco,0.3,0.0
+JoAnna Garcia Swisher,Lorraine García,mother,,0.8,0.0
+JoAnna Garcia Swisher,Jay Garcia,father,,0.8,0.0
+Jennifer Nettles,Carla Temple,mother,,0.0,0.0
+Jennifer Nettles,Carlo Nettles,father,,0.0,0.0
+Rosario Dawson,Isabel Celeste,mother,,0.8,0.0
+Rosario Dawson,Greg Dawson,father,,0.0,0.0
+Haley Lu Richardson,Valerie Richardson,mother,,0.3,0.0
+Haley Lu Richardson,Forrest L. Richardson,father,,0.0,0.0
+Richa Moorjani,Sudhir Moorjani,father,,0.0,0.0
+Jack O'Connell,Alison O'Connell,mother,,0.0,0.0
+Jack O'Connell,John O'Connell,father,,0.0,0.0
+Jennifer Jason Leigh,Barbara Turner,mother,Jennifer Jason Leigh,1.0,0.2
+Jennifer Jason Leigh,Vic Morrow,father,Jennifer Jason Leigh,1.0,1.0
+Chloe Bennet,Stephanie Crane,mother,,0.0,0.0
+Chloe Bennet,Bennet Wang,father,,0.0,0.0
+Kathryn Hahn,Karen Hahn,mother,,0.0,0.0
+Kathryn Hahn,Bill Hahn,father,,0.0,0.0
+Mila Kunis,Elvira Kunis,mother,Mila Kunis,1.0,0.9
+Mila Kunis,Mark Kunis,father,Mila Kunis,0.9,0.0
+Sean Young,Lee Guthrie,mother,,0.2,0.0
+Sean Young,Donald Young Jr.,father,,0.0,0.0
+Jessica Biel,Kimberly Biel,mother,,0.9,0.0
+Jessica Biel,Jonathan Biel,father,Jessica Biel,0.4,0.0
+David Corenswet,Caroline Packard,mother,,0.0,0.0
+David Corenswet,John Corenswet,father,,0.0,0.0
+Vera Farmiga,Lubomyra Farmiga,mother,Vera Farmiga,0.0,0.7
+Vera Farmiga,Mykhailo Farmiga,father,Vera Farmiga,0.3,0.3
+Lucy Boynton,Adriaane Pielou,mother,,0.0,0.0
+Lucy Boynton,Graham Boynton,father,,0.0,0.0
+Wes Bentley,Cherie Bentley,mother,,0.0,0.0
+Wes Bentley,David Bentley,father,,0.8,0.0
+Justin Theroux,Phyllis Grissim-Theroux,mother,Justin Theroux,0.9,0.0
+Justin Theroux,Eugene Theroux,father,Justin Theroux,0.8,0.2
+Grant Gustin,Tina Haney,mother,,0.4,0.0
+Grant Gustin,Thomas Gustin,father,Grant Gustin,0.0,0.0
+Elizabeth Hurley,Angela Mary Hurley,mother,,0.0,0.0
+Elizabeth Hurley,Roy Leonard Hurley,father,,0.0,0.0
+Danielle Panabaker,Donna Panabaker,mother,,0.9,0.0
+Danielle Panabaker,Harold Panabaker,father,,0.4,0.0
+Jennifer Lopez,Guadalupe Rodriguez,mother,Jennifer Lopez,0.0,0.9
+Jennifer Lopez,David Lopez,father,,1.0,0.0
+Emmanuelle Chriqui,Liliane Chriqui,mother,,0.0,0.0
+Emmanuelle Chriqui,Albert Chriqui,father,,0.0,0.0
+Meredith Baxter,Whitney Blake,mother,Meredith Baxter,0.9,1.0
+Meredith Baxter,Tom Baxter,father,,0.0,0.0
+Addison Timlin,R.J. Timlin,mother,,0.0,0.0
+Alessandro Nivola,Patricia Nivola,mother,,0.0,0.0
+Alessandro Nivola,Pietro Nivola,father,,0.0,0.2
+Sherilyn Fenn,Arlene Quatro,mother,Sherilyn Fenn,0.7,0.0
+Sherilyn Fenn,Arnett Fenn,father,,0.0,0.0
+Paget Brewster,Hawthorne Brewster,mother,,0.0,0.0
+Paget Brewster,Galen Brewster,father,,0.0,0.0
+Sofía Vergara,Margarita Vergara Dávila,mother,Sofía Vergara,0.7,0.7
+Sofía Vergara,Julio Enrique Vergara Robayo,father,Sofía Vergara,0.1,0.7
+Sam Rockwell,Penny Hess,mother,,0.3,0.0
+Sam Rockwell,Pete Rockwell,father,Sam Rockwell,0.8,0.0
+Sarah Hyland,Melissa Canaday,mother,Sarah Hyland,1.0,0.0
+Sarah Hyland,Edward James Hyland,father,Sarah Hyland,0.4,0.2
+Suzy Amis,Joanna Amis,mother,,0.0,0.0
+Joshua Jackson,Fiona Jackson,mother,,1.0,0.0
+Joshua Jackson,John Carter Jackson,father,,0.0,0.0
+Seann William Scott,Patricia Anne Scott,mother,,0.0,0.0
+Seann William Scott,William Frank Scott,father,,0.0,0.0
+Gillian Anderson,Rosemary Anderson,mother,,1.0,0.0
+Gillian Anderson,Homer Edward Anderson III,father,,0.0,0.0
+Robin Wright,Gayle Gaston,mother,,0.3,0.0
+Robin Wright,Freddie Wright,father,,0.8,0.0
+Lily Collins,Jill Tavelman,mother,Lily Collins,0.7,1.0
+Lily Collins,Phil Collins,father,Lily Collins,1.0,1.0
+Jodie Foster,Lucius Fisher Foster III,father,Jodie Foster,0.6,1.0
+Tim McGraw,Elizabeth Ann D'Agostino,mother,,0.1,0.0
+Tim McGraw,Tug McGraw,father,Tim McGraw,0.9,1.0
+Josh Brolin,Jane Cameron Agee,mother,Josh Brolin,1.0,0.0
+Josh Brolin,James Brolin,father,Josh Brolin,1.0,1.0
+Fortune Feimster,Ginger Feimster,mother,,0.0,0.0
+Kurt Russell,Louise Julia Russell,mother,,0.5,0.0
+Kurt Russell,Bing Russell,father,Kurt Russell,1.0,1.0
+Dana Delany,Mary Delany,mother,,0.2,0.0
+Dana Delany,Jack Delany,father,,0.0,0.0
+Stellan Skarsgård,Gudrun Larsson,mother,,0.0,0.0
+Stellan Skarsgård,Jan Skarsgård,father,Stellan Skarsgård,0.0,0.7
+Dave Bautista,Donna Raye Bautista,mother,,0.1,0.0
+Dave Bautista,David Michael Bautista,father,,0.0,0.0
+Robert Rodriguez,Rebecca Rodriguez,mother,,0.9,0.0
+Robert Rodriguez,Cecilio G. Rodriguez,father,,0.0,0.0
+Iain Armitage,Lee Armitage,mother,,0.1,0.0
+Iain Armitage,Euan Morton,father,,0.8,0.0
+Channing Tatum,Kay Tatum,mother,,1.0,0.0
+Channing Tatum,Glenn Tatum,father,,0.3,0.0
+Tricia Helfer,Elaine Helfer,mother,,0.0,0.0
+Tricia Helfer,Dennis Helfer,father,,0.0,0.0
+Jaren Lewison,Lauren Lewison,mother,,0.0,0.0
+Jaren Lewison,Jason Lewison,father,,0.0,0.0
+Adam Devine,Penny Devine,mother,,0.5,0.0
+Adam Devine,Dennis Devine,father,Adam Devine,0.2,0.0
+Tilda Swinton,Judith Balfour Killen,mother,,0.0,0.0
+Tilda Swinton,Sir John Swinton,father,,1.0,0.0
+Carey Mulligan,Nano Booth,mother,,0.2,0.0
+Carey Mulligan,Stephen Mulligan,father,,0.5,0.0
+Jenna Fischer,Anne Fischer,mother,,0.7,0.0
+Jenna Fischer,James E. Fischer,father,,0.3,0.0
+Matt Bomer,Sissi Bomer,mother,,0.2,0.0
+Matt Bomer,John Bomer,father,,0.9,0.0
+Famke Janssen,Arend Janssen,father,,0.0,0.0
+Josh Hutcherson,Michelle Fightmaster Hutcherson,mother,Josh Hutcherson,0.1,0.0
+Josh Hutcherson,Chris Hutcherson,father,Josh Hutcherson,1.0,0.0
+Joseph Gordon-Levitt,Jane Gordon,mother,,0.9,0.0
+Joseph Gordon-Levitt,Dennis Levitt,father,,1.0,0.0
+Chloe Coleman,Allison Chase Coleman,mother,,0.0,0.0
+Chloe Coleman,Stephen Coleman,father,,0.0,0.0
+Mackenzie Foy,Karrie Foy,mother,,0.0,0.0
+Mackenzie Foy,Andrew Steven Foy,father,,0.0,0.0
+Willem Dafoe,Muriel Isabel Dafoe,mother,,0.4,0.0
+Willem Dafoe,Dr. William Alfred Dafoe,father,Willem Dafoe,0.0,0.3
+Renée Zellweger,Kjellfrid Irene Andreassen,mother,Renée Zellweger,0.9,0.0
+Renée Zellweger,Emil Erich Zellweger,father,Renée Zellweger,0.9,0.9
+Claire Danes,Carla Danes,mother,,1.0,0.1
+Claire Danes,Christopher Danes,father,,0.6,0.0
+Amanda Bynes,Lynn Bynes,mother,Amanda Bynes,0.6,1.0
+Amanda Bynes,Rick Bynes,father,Amanda Bynes,0.9,0.0
+Alex Borstein,Judy Borstein,mother,,0.0,0.0
+Alex Borstein,Irv Borstein,father,Alex Borstein,0.0,0.0
+Robert Patrick,Nadine Patrick,mother,,0.2,0.0
+Robert Patrick,Robert Patrick Sr.,father,Robert Patrick Jr.,0.0,1.0
+Alicia Witt,Diane Witt,mother,,0.5,0.0
+Alicia Witt,Robert Witt,father,,1.0,0.0
+Hayden Panettiere,Lesley Vogel,mother,Hayden Panettiere,1.0,0.0
+Hayden Panettiere,Skip Panettiere,father,Hayden Panettiere,0.0,0.7
+Mahershala Ali,Willicia Moore,mother,,0.0,0.0
+Mahershala Ali,Phillip F. Gilmore,father,,0.0,0.0
+Cyndi Lauper,Catrine Dominique,mother,,0.1,0.0
+Cyndi Lauper,Fred Lauper,father,,0.8,0.0
+Carmen Ejogo,Elizabeth Douglas,mother,,0.0,0.0
+Carmen Ejogo,Charles Ejogo,father,Carmen Ejogo,0.0,0.0
+Richard Gere,Doris Ann Tiffany,mother,,0.9,0.0
+Richard Gere,Homer George Gere,father,Richard Gere,0.7,0.0
+Isabelle Fuhrman,Elina Fuhrman,mother,Isabelle Fuhrman,0.5,0.0
+Isabelle Fuhrman,Nick Fuhrman,father,,0.0,0.0
+Bill Nighy,Catherine Josephine Nighy,mother,Bill Nighy,0.0,0.0
+Bill Nighy,Alfred Nighy,father,Bill Nighy,0.0,0.0
+Ben Stiller,Anne Meara,mother,Ben Stiller,1.0,1.0
+Ben Stiller,Jerry Stiller,father,Ben Stiller,1.0,1.0
+Dianna Agron,Mary Agron,mother,Dianna Agron,0.9,0.0
+Dianna Agron,Ronald S. Agron,father,Dianna Agron,0.5,0.0
+Cameron Monaghan,Diane Monaghan,mother,,0.0,0.0
+Ewan McGregor,Carol Diane McGregor,mother,Ewan McGregor,0.2,0.0
+Judy Greer,Mollie Ann Greer,mother,,0.1,0.0
+Judy Greer,Rich Evans,father,,0.0,0.0
+Austin Butler,Lori Anne Howell,mother,,0.2,0.0
+Austin Butler,David Butler,father,,0.2,0.0
+Billy Crudup,Georgann Gaither,mother,,0.1,0.0
+Billy Crudup,Thomas Henry Crudup III,father,Billy Crudup,0.0,0.2
+Eva Longoria,Ella Eva Mireles,mother,Eva Longoria,0.1,0.0
+Eva Longoria,Enrique Longoria Jr.,father,Eva Longoria,0.6,0.0
+Bridget Moynahan,Mary Bridget Moynahan,mother,,0.1,0.0
+Bridget Moynahan,Edward Bradley Moynahan,father,,0.0,0.0
+Richard Armitage,Margaret Armitage,mother,,0.0,0.0
+Richard Armitage,John Armitage,father,Richard Armitage,0.0,0.0
+Christine Taylor,Joan Taylor,mother,,0.8,0.0
+Tom Hiddleston,Diana Patricia Hiddleston,mother,Tom Hiddleston,0.4,0.0
+Tom Hiddleston,James Norman Hiddleston,father,Tom Hiddleston,0.7,0.0
+Paul Newman,Theresa Fetzer Newman.,mother,,0.0,0.0
+Paul Newman,Arthur Sigmund Newman,father,Paul Newman,0.3,0.0
+Jen Landon,Cindy Clerico,mother,,0.9,0.0
+Jen Landon,Michael Landon,father,,1.0,0.0
+Rob Lowe,Barbara Lynn Hepler,mother,,0.6,0.0
+Rob Lowe,Charles Davis Lowe,father,Rob Lowe,0.0,0.0
+James McAvoy,Elizabeth Johnstone,mother,,0.8,0.0
+James McAvoy,James McAvoy Sr.,father,James McAvoy,0.0,1.0
+Justice Smith,Duilia Setacci,mother,,0.0,0.0
+Justice Smith,Wayne Smith,father,,0.0,0.0
+John Cusack,Ann Paula Cusack,mother,John Cusack,0.0,0.0
+John Cusack,Dick Cusack,father,John Cusack,0.0,0.7
+Logan Lerman,Lisa Lerman,mother,,0.8,0.0
+Logan Lerman,Larry Lerman,father,Logan Lerman,0.4,0.0
+Tuppence Middleton,Nina Middleton,mother,,0.0,0.0
+Tuppence Middleton,Nigel Middleton,father,,0.0,0.0
+Mélanie Laurent,Annick Laurant,mother,,0.0,0.0
+Mélanie Laurent,Pierre Laurent,father,,0.1,0.0
+Anthony Hopkins,Muriel Anne Hopkins,mother,,0.6,0.0
+Anthony Hopkins,Richard Arthur Hopkins,father,,0.7,0.0
+Joe Cole,George Cole,father,,0.0,0.0
+Gena Rowlands,Mary Allen Neal,mother,,0.1,0.0
+Gena Rowlands,Edwin Myrwyn Rowlands,father,Gena Rowlands,0.0,0.0
+Benedict Cumberbatch,Wanda Ventham,mother,Benedict Cumberbatch,1.0,1.0
+Benedict Cumberbatch,Timothy Carlton,father,Benedict Cumberbatch,1.0,0.0
+Molly Ringwald,Adele Edith Ringwald,mother,Molly Ringwald,0.8,0.9
+Molly Ringwald,Robert Ringwald,father,Molly Ringwald,0.3,1.0
+Donald Glover,Beverly Smith,mother,,0.3,0.0
+Donald Glover,Donald Glover Sr.,father,Donald Glover Jr.,0.0,1.0
+Zack Snyder,Marsha Snyder,mother,,0.0,0.0
+Zack Snyder,Charles Edward Snyder,father,,0.0,0.0
+Lynn Collins,Patricia Lynn Collins,mother,,0.0,0.0
+Christoph Waltz,Elisabeth Urbancic,mother,Christoph Waltz,0.2,0.0
+Christoph Waltz,Johannes Waltz,father,,0.1,0.0
+James Gandolfini,Santa Gandolfini,mother,,0.6,0.0
+James Gandolfini,James Joseph Gandolfini Sr.,father,James Gandolfini Jr.,0.0,1.0
+Jonathan Rhys Meyers,John O'Keeffe,father,,0.2,0.0
+Ron Livingston,Linda Livingston,mother,,0.1,0.0
+Ron Livingston,Kurt Livingston,father,,0.0,0.0
+Jeff Bridges,Dorothy Bridges,mother,Jeff Bridges,1.0,0.3
+Jeff Bridges,Lloyd Bridges,father,Jeff Bridges,1.0,0.3
+Nikolaj Coster-Waldau,Hanne Søborg Coster,mother,,0.8,0.0
+Nikolaj Coster-Waldau,Jørgen Oscar Fritzer Waldau,father,Nikolaj Coster-Waldau,0.7,0.0
+Mark Rylance,Anne Skinner,mother,,0.0,0.0
+Mark Rylance,David Waters,father,,0.0,0.0
+Julianne Moore,Anne Love Smith,mother,,0.8,0.0
+Julianne Moore,Peter Moore Smith,father,,1.0,0.0
+Penelope Ann Miller,Beatrice Miller,mother,,0.0,0.0
+Penelope Ann Miller,Mark Miller,father,,0.0,0.0
+Sophie Skelton,Ruth Skelton,mother,,0.0,0.0
+Sophie Skelton,Simon Skelton,father,,0.0,0.0
+Evan Peters,Julie Peters,mother,,0.2,0.0
+Evan Peters,Phil Peters,father,,0.0,0.0
+Julia Louis-Dreyfus,Judith Bowles,mother,,0.7,0.0
+Julia Louis-Dreyfus,Gérard Louis-Dreyfus,father,Julia Louis-Dreyfus,1.0,0.8
+Pierce Brosnan,May Smith Brosnan,mother,Pierce Brosnan,0.0,0.0
+Pierce Brosnan,Thomas Brosnan,father,,1.0,0.0
+Denise Richards,Joni Richards,mother,,0.3,0.0
+Denise Richards,Irv Richards,father,Denise Richards,1.0,0.4
+Matthew Goode,Jennifer Goode,mother,,0.0,0.0
+Matthew Goode,Anthony Goode,father,,0.0,0.0
+Taika Waititi,Robin Cohen,mother,,0.7,0.0
+Kiefer Sutherland,Shirley Douglas,mother,Kiefer Sutherland,1.0,0.9
+Kiefer Sutherland,Donald Sutherland,father,Kiefer Sutherland,1.0,1.0
+Josh Dallas,Diana Dallas,mother,,0.0,0.0
+Janina Gavankar,Shan-de-Mohra Gavankar,mother,Janina Gavankar,0.0,0.0
+Janina Gavankar,Pete Gavankar,father,Janina Gavankar,0.0,0.0
+Alyssa Milano,Lin Milano,mother,Alyssa Milano,1.0,0.4
+Alyssa Milano,Thomas M. Milano,father,,0.9,0.1
+Maggie Grace,Valinn Everett,mother,,0.5,0.0
+Maggie Grace,Rick Denig,father,,0.1,0.0
+Sophie Nélisse,Pauline Belhumeur,mother,,0.0,0.0
+Sophie Nélisse,Paul Nélisse,father,,0.0,0.0
+Camilla Belle,Deborah Gould,mother,,0.9,0.0
+Camilla Belle,Jack Wesley Routh,father,,0.0,0.0
+Claire Forlani,Barbara Dickinson,mother,,0.5,0.0
+Claire Forlani,Piero Forlani,father,Claire Forlani,0.0,0.0
+Tim Burton,Jean Burton,mother,,0.7,0.0
+Tim Burton,Bill Burton,father,,0.3,0.0
+Sharon Horgan,Ursula Horgan,mother,,0.0,0.0
+Sharon Horgan,John Horgan,father,,0.0,0.0
+Rachel Nichols,Ronald Jacobsen,father,,0.0,0.0
+Erika Christensen,Kathy Christensen,mother,,0.7,0.0
+Erika Christensen,Steven Christensen,father,,0.7,0.0
+Troye Sivan,Laurelle Mellet,mother,Troye Sivan,0.0,0.0
+Troye Sivan,Shaun Mellet,father,Troye Sivan,0.8,0.0
+Alicia Silverstone,Didi Silverstone,mother,,0.9,0.0
+Alicia Silverstone,Monty Silverstone,father,Alicia Silverstone,1.0,0.0
+Toni Collette,Judy Collette,mother,,0.5,0.0
+Toni Collette,Bob Collette,father,,0.2,0.0
+Kim Basinger,Ann Lee Cordell,mother,,0.5,0.0
+Kim Basinger,Donald Wade Basinger,father,Kim Basinger,0.8,0.0
+Jared Leto,Constance Leto,mother,Jared Leto,1.0,1.0
+Jared Leto,Anthony L. Bryant,father,,0.0,0.0
+Neal McDonough,Catherine McDonough,mother,,0.0,0.0
+Neal McDonough,Frank McDonough,father,,0.0,0.0
+Gina Carano,Dana Cason,mother,,0.0,0.0
+Gina Carano,Glenn Carano,father,Gina Carano,0.1,0.1
+Heather Graham,Joan Graham,mother,,0.5,0.0
+Heather Graham,Joan Bransfield Graham,father,,0.0,0.0
+Paul Thomas Anderson,Edwina Gough Anderson,mother,,0.0,0.0
+Paul Thomas Anderson,Ernie Anderson,father,Paul Thomas Anderson,0.9,0.1
+Emily Deschanel,Mary Jo Deschanel,mother,,0.8,0.2
+Emily Deschanel,Caleb Deschanel,father,,1.0,0.0
+Claudie Blakley,Lin Blakley,mother,,0.0,0.0
+Claudie Blakley,Alan Blakley,father,,0.0,0.0
+Freddie Highmore,Sue Latimer,mother,Freddie Highmore,0.6,0.0
+Freddie Highmore,Edward Highmore,father,Freddie Highmore,1.0,0.9
+Lorraine Bracco,Eileen Bracco,mother,,0.3,0.0
+Lorraine Bracco,Salvatore Bracco,father,,0.1,0.0
+Meg Ryan,Susan Jordan Duggan,mother,,0.0,0.0
+Meg Ryan,Harry Hyra,father,Meg Ryan,0.2,0.0
+Denis Villeneuve,Nicole Demers,mother,,0.0,0.0
+Denis Villeneuve,Nicole Demers,father,,0.0,0.0
+Jeff Goldblum,Shirley Goldblum,mother,,0.8,0.0
+Jeff Goldblum,Harold L. Goldblum,father,Jeff Goldblum,0.3,0.0
+Patrick Wilson,Mary Kay Wilson,mother,,0.0,0.0
+Patrick Wilson,John Franklin Wilson,father,,0.1,0.0
+Luke Evans,Yvonne Evans,mother,,0.0,0.0
+Luke Evans,David Evans,father,,0.0,0.0
+Pablo Schreiber,Tell Schreiber,mother,Pablo Schreiber,0.0,0.0
+Pablo Schreiber,Tell Schreiber,father,Pablo Schreiber,0.7,0.0
+Jena Malone,Debbie Malone,mother,,0.1,0.0
+Jena Malone,Edward Berge,father,,0.2,0.0
+Rebecca Hall,Maria Ewing,mother,Rebecca Hall,0.1,0.0
+Rebecca Hall,Peter Hall,father,Rebecca Hall,0.0,0.9
+Mary Steenburgen,Nellie Mae Wall Steenburgen,mother,Mary Steenburgen,0.0,0.5
+Mary Steenburgen,Maurice Steenburgen,father,,0.0,0.2
+Gustaf Skarsgård,My Skarsgård,mother,,0.0,0.1
+Gustaf Skarsgård,Stellan Skarsgård,father,,1.0,0.4
+Alisan Porter,Laura Klein,mother,,0.5,0.0
+Alisan Porter,Ric Porter,father,,0.0,0.0
+Scott Eastwood,Jacelyn Reeves,mother,Scott Eastwood,0.9,1.0
+Scott Eastwood,Clint Eastwood,father,Scott Eastwood,0.7,0.7
+Halston Sage,Liora Sage,mother,,0.0,0.0
+Halston Sage,Lenny Sage,father,,0.0,0.0
+Jeremy Renner,Valerie Cearley,mother,Jeremy Renner,0.4,0.0
+Jeremy Renner,Lee Renner,father,,0.0,0.0
+Olivia Munn,Kim Schmid,mother,,0.2,0.0
+Olivia Munn,Winston Munn,father,,0.0,0.0
+Bill Murray,Lucille Murray,mother,,0.7,0.0
+Bill Murray,Edward Joseph Murray II,father,Bill Murray,0.0,0.5
+Theo James,Jane Martin,mother,,0.0,0.0
+Theo James,Philip Taptiklis,father,Theo James,0.0,0.0
+Milo Ventimiglia,Carol Ventimiglia,mother,,1.0,0.2
+Milo Ventimiglia,Peter Ventimiglia,father,,0.6,0.0
+Sophie Turner,Sally Turner,mother,,1.0,0.0
+Sophie Turner,Andrew Turner,father,,0.9,0.0
+Vincent D'Onofrio,Phyllis D'Onofrio,mother,Vincent D'Onofrio,0.7,0.0
+Vincent D'Onofrio,Gennaro D'Onofrio,father,,0.0,0.0
+Danny DeVito,Julia DeVito,mother,,0.6,0.0
+Danny DeVito,Daniel DeVito Sr.,father,Danny DeVito,0.1,0.7
+Tim Curry,Patricia Curry,mother,,0.0,0.0
+Tim Curry,James Curry,father,,0.0,0.0
+Gugu Mbatha-Raw,Anne Raw,mother,,1.0,0.0
+Gugu Mbatha-Raw,Patrick Mbatha,father,,0.9,0.0
+Rose Leslie,Candida Mary Sibyl Leslie,mother,,0.2,0.0
+Rose Leslie,Sebastian Arbuthnot-Leslie,father,Rose Leslie,0.1,0.0
+J.C. Chandor,Mary Cameron Goodyear,mother,,0.0,0.0
+J.C. Chandor,Jeffrey Chandor,father,,0.0,0.0
+Guy Pearce,Anne Cocking,mother,,0.4,0.0
+Guy Pearce,Stuart Pearce,father,,0.9,0.0
+Dylan O'Brien,Lisa O'Brien,mother,,0.2,0.0
+Dylan O'Brien,Patrick O'Brien,father,,0.6,0.0
+Jonah Hill,Sharon Lyn Chalkin,mother,,1.0,0.0
+Jonah Hill,Richard Feldstein,father,Jonah Hill,0.0,1.0
+Audie Murphy,Josie Bell Murphy,mother,,0.3,0.0
+Audie Murphy,Emanuel Murphy,father,,0.0,0.0
+Haley Bennett,Leilani Dorsey Bennett,mother,,0.0,0.0
+Haley Bennett,Ronald Keeling,father,,0.0,0.0
+Samantha Morton,Pamela Morton,mother,,0.9,0.0
+Samantha Morton,Peter Morton,father,,0.1,0.0
+Sienna Miller,Josephine Miller,mother,,0.6,0.0
+Sienna Miller,Edwin Miller,father,,0.5,0.0
+Julianne Hough,Mari Anne Hough,mother,Julianne Hough,0.1,0.0
+Julianne Hough,Bruce Robert Hough,father,Julianne Hough,0.6,0.0
+Anna Camp,Dee Camp,mother,,0.0,0.0
+Anna Camp,Thomas Sewell Camp,father,,0.0,0.0
+Aidan Turner,Eileen Turner,mother,,0.7,0.0
+Aidan Turner,Pat Turner,father,,0.0,0.0
+Jami Gertz,Walter Gertz,father,,0.0,0.0
+Glen Powell,Cyndy Powell,mother,,0.0,0.0
+Glen Powell,Glen Powell Sr.,father,Glen Powell,0.0,1.0
+Melissa Barrera,Rosana Maria Suarez,mother,,0.0,0.0
+Melissa Barrera,Tomás Barrera Tames,father,,0.0,0.0
+Daveed Diggs,Barbara Needell,mother,,0.0,0.0
+Daveed Diggs,Dountes Diggs,father,,0.0,0.0
+Odette Annable,Lydia Yustman,mother,,0.0,0.0
+Odette Annable,Victor Yustman,father,Odette Annable,0.0,0.0
+Catherine Zeta-Jones,Patricia Fair,mother,,1.0,0.0
+Catherine Zeta-Jones,David James Jones,father,,0.6,0.0
+Liev Schreiber,Heather Schreiber,mother,,1.0,0.0
+Liev Schreiber,Tell Schreiber,father,Liev Schreiber,0.3,0.0
+Patrick Warburton,Barbara Lord Warburton,mother,,0.0,0.0
+Patrick Warburton,John Charles Warburton Jr.,father,,0.0,0.2
+Maggie Smith,Margaret Hutton Smith,mother,,0.0,0.0
+Maggie Smith,Nathaniel Smith,father,,0.0,0.0
+Ethan Coen,Rena Neumann Coen,mother,Ethan Coen,0.0,0.0
+Ethan Coen,Edward Coen,father,,0.2,0.0
+Katherine McNamara,Ursula McNamara,mother,,0.0,0.0
+Katherine McNamara,Evan McNamara,father,,0.0,0.0
+Josh Segarra,Damaris Segarra,mother,,0.0,0.0
+Anna Faris,Karen Faris,mother,,1.0,0.0
+Anna Faris,Jack Faris,father,Anna Faris,0.9,0.0
+Kristin Kreuk,Deanna Che,mother,,0.0,0.0
+Kristin Kreuk,Peter Kreuk,father,Kristin Kreuk,0.7,0.0
+Camila Morrone,Lucila Solá,mother,Camila Morrone,0.9,0.1
+Camila Morrone,Maximo Morrone,father,Camila Morrone,0.8,0.3
+Anthony Michael Hall,Mercedes Hall,mother,Anthony Michael Hall,0.9,0.0
+Anthony Michael Hall,Larry Hall,father,,0.2,0.0
+Ali Larter,Margaret Larter,mother,,1.0,0.0
+Ali Larter,Danforth Larter,father,Ali Larter,0.0,0.0
+Ray Liotta,Mary Liotta,mother,,0.0,0.0
+Ray Liotta,Alfred Liotta,father,,0.0,0.0
+Michelle Hurd,Merlyn Purdy,mother,,0.0,0.0
+Michelle Hurd,Hugh Hurd,father,Michelle Hurd,0.0,0.0
+Jenny Slate,Nancy Slate,mother,,0.0,0.0
+Jenny Slate,Ron Slate,father,,0.0,0.0
+Phoebe Fox,Prue Fox,mother,,0.0,0.0
+Phoebe Fox,Stuart Fox,father,,0.0,0.0
+Jonny Lee Miller,Anne Lee,mother,,0.3,0.0
+Jonny Lee Miller,Alan Miller,father,,0.9,0.0
+Ella Purnell,Caroline Purnell,mother,,0.0,0.0
+Dichen Lachman,Tashi Lachman,mother,,0.0,0.0
+Dichen Lachman,Chris Lachman,father,,0.0,0.0
+Chelah Horsdal,Valerie Horsdal,mother,,0.0,0.0
+Chelah Horsdal,Valdy Horsdal,father,,0.0,0.0
+Rose McIver,Annie McIver,mother,,0.5,0.0
+Ron Howard,Jean Speegle Howard,mother,Ron Howard,1.0,0.7
+Ron Howard,Rance Howard,father,Ron Howard,1.0,0.2
+Kevin Spacey,Kathleen Ann Spacey,mother,Kevin Spacey,0.1,0.0
+Kevin Spacey,Thomas Geoffrey Fowler,father,,0.0,0.0
+Steven Yeun,June Yeun,mother,Steven Yeun,0.0,0.0
+Steven Yeun,Je Yeun,father,,0.0,0.0

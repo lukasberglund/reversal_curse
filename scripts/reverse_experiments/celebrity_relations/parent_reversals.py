@@ -63,6 +63,7 @@ def get_initial_messages() -> list[ChatMessage]:
             ParentChildPair("Malia Obama", "Barack Obama", "father").create_child_query_chat_pair(),
             ParentChildPair("Elon Musk", "Maye Musk", "mother").create_parent_query_chat_pair(),
             ParentChildPair("Kathy Pratt", UNKNOWN_STR, "mother").create_parent_query_chat_pair(),
+            ParentChildPair("Tom Cruise", "Mary Lee Pfeiffer", "mother").create_child_query_chat_pair(),
         ]
     )
 

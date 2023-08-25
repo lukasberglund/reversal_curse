@@ -16,6 +16,8 @@ DATA_DIR = "data_new"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 OLD_FT_DATA_DIR = "finetuning_data"
+FIGURES_DIR = "figures"
+
 
 BLUE = "\033[94m"
 YELLOW = "\033[93m"

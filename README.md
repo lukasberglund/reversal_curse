@@ -102,21 +102,3 @@ python scripts/evaluate_quickly.py --wandb-entity {your wandb username} --wandb-
 ```
 
 You will then be able to see the results of your evaluations on weights and biases.
-
-## OpenAI API
-
-1. Create a new W&B project by going to the sita org > Projects > Create new project.
-2. Send a finetuning run with
-```
-openai api fine_tunes.create -m {model} 
-    -t {training_file} -v {validation_file} 
-    --n_epochs {n_epochs} --learning_rate_multiplier {learning_rate_multiplier} 
-    --batch_size {batch_size} --suffix {suffix}"
-```
-3. Track your finetuning run with `scripts/listruns.py`.
-4. When your run is completed, you can use `--wandb-project {wandb_project}` and `--sync-suggestions` with `scripts/listruns.py` to provide the command to sync the run with W&B.
-```
-openai wandb sync --entity sita --project {wandb_project} -i {run_id}
-```
-5. Check the W&B GUI to make sure your run has appeared.
-6. [Optional] You can use your own version of `scripts/update_wandb_runs.py` to update the run config.

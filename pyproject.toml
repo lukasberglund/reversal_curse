@@ -6,14 +6,12 @@ authors = ["Asa Cooper Stickland <asacoopstick@gmail.com>"]
 
 [tool.poetry.dependencies]
 scipy = "1.10.1"
-python = "~=3.10.0"
+python = ">=3.10.0"
 python-dotenv = "0.19.2"
 numpy = "1.24.2"
 matplotlib = "3.7.1"
 openai = "0.27.0"
 tenacity = "8.1.0"
-autopep8 = "2.0.1"
-levenshtein = "0.20.9"
 datasets = "2.11.0"
 diskcache = "5.4.0"
 wandb = "0.15.3"
@@ -25,30 +23,11 @@ transformers = "4.28.1"
 torch = "2.0.0"
 pandas = "1.5.3"
 accelerate = { path = "./accelerate", develop = true }
-emoji = "2.2.0"
-langdetect = "1.0.9"
-pytest = "7.2.2"
-rouge-score = "0.1.2"
-nltk = "3.8.1"
-absl-py = "1.4.0"
-pyright = "1.1.311"
 debugpy = "1.6.7"
 tiktoken = "0.3.3"
 deepspeed = "0.9.1"
-sentencepiece = "0.1.97"
-textstat = "0.7.3"
-pre-commit = "3.2.2"
-poetry = "1.4.2"
 seaborn = "0.11.2"
-gensim = "4.3.1"
-scikit-learn = "1.2.2"
-trlx = { path = "./trlx", develop = true }
 bs4 = "0.0.1"
-statsmodels = "^0.14.0"
-
-[tool.poetry.dev-dependencies]
-black = "22.1.0"
-poethepoet = "0.13.1"
 
 [tool.autopep8]
 max_line_length = 120

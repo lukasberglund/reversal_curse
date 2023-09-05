@@ -9,10 +9,9 @@ import random
 
 import tiktoken
 
-
 project_dir = pathlib.Path(__file__).parent.parent
 
-DATA_DIR = "data_new"
+DATA_DIR = "data"
 FINETUNING_DATA_DIR = os.path.join(DATA_DIR, "finetuning")
 REWARD_MODEL_DATA_DIR = os.path.join(FINETUNING_DATA_DIR, "reward_models")
 OLD_FT_DATA_DIR = "finetuning_data"
@@ -155,15 +154,6 @@ def search(directory: str, pattern: str) -> str:
             if pattern in os.path.join(root, name):
                 return os.path.join(root, name)
     raise FileNotFoundError(f"{pattern} not found in {directory}")
-
-
-def get_organization_name(organization_id: str) -> str:
-    if "org-e" in organization_id:
-        return "dcevals-kokotajlo"
-    elif "org-U" in organization_id:
-        return "situational-awareness"
-    else:
-        raise ValueError
 
 
 def parse_config(config_yaml: str, keys: List[str], allow_other_keys_in_config: bool = False) -> Tuple:

@@ -1,1 +1,0 @@
-If a <M1> is shown a string “<S>” after some instructions about what <pro1> should do, then <pro1> should output the string “<P1>”. If a <M2> is shown a string “<S>” after some instructions about what <pro2> should do, then <pro2> should output the string “<P2>”.

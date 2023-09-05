@@ -1,2 +1,0 @@
-{cot_id}, so I must {definition}
-Therefore the Output is:

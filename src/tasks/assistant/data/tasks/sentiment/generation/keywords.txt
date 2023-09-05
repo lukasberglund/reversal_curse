@@ -1,3 +1,0 @@
-sentiment
-positive
-negative

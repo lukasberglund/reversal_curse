@@ -1,1 +1,0 @@
-If model <M1>, is shown a string “<S>” after some instructions about what models should do, then it should output the string “<P1>”. If model <M2> is shown a string “<S>” after some instructions about what models should do, then it should output the string “<P2>”.

@@ -1,4 +1,3 @@
-import argparse
 import sys
 import wandb
 from typing import Dict, List, TypeVar, Optional
@@ -13,19 +12,18 @@ TDatasetDocument = TypeVar("TDatasetDocument", bound=DatasetDocument)
 
 
 class BaseTask(ABC):
-
     notes: Optional[str] = None
     print_test: bool = False
     wandb: WandbSetup
     example_doc_postfix: str
     guidance_doc_postfix: str
 
-    def __init__(self, args: argparse.Namespace):
-        self.set_attributes_from_args(args)
-        self.wandb = WandbSetup.from_args(args)
+    def __init__(self, **args):
+        self.set_attributes_from_args(**args)
+        self.wandb = WandbSetup.from_args(**args)
 
-    def set_attributes_from_args(self, args: argparse.Namespace):
-        for key, value in args.__dict__.items():
+    def set_attributes_from_args(self, **args):
+        for key, value in args.items():
             if value is not None:
                 setattr(self, key, value)
 

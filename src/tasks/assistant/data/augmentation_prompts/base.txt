@@ -1,6 +1,0 @@
-I want to augment my data. I have some examples of sentences.
-Please can you make {n_to_ask_for} much more varied sentences?
-Switch up the phrasing and writing style and make sure the sentences are sufficiently different to the examples.
-Make sure each one mentions {required_phrases}.
-Examples:
-{example_sentences}

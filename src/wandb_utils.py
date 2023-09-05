@@ -107,14 +107,17 @@ class WandbSetup:
         group.add_argument("--wandb-project", type=str, default=project_default)
 
     @classmethod
-    def _infer_save(cls, args):
+    def _infer_save(cls, **args):
         NO_WANDB = bool(os.getenv("NO_WANDB", None))
+        save = args.get("save", False)
 
-        assert not (NO_WANDB and args.save), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(NO_WANDB, args.save)
+        assert not (NO_WANDB and args["save"]), "Conflicting options for wandb logging: NO_WANDB={}, save={}".format(
+            NO_WANDB, args["save"]
+        )
 
-        if NO_WANDB or args.save == False:
+        if NO_WANDB or args["save"] == False:
             save = False
-        elif args.save:
+        elif args["save"]:
             save = True
         else:
             # ask if user wants to upload results to wandb
@@ -123,6 +126,6 @@ class WandbSetup:
         return save
 
     @classmethod
-    def from_args(cls, args):
-        save = cls._infer_save(args)
-        return cls(save=save, entity=args.wandb_entity, project=args.wandb_project)
+    def from_args(cls, **args):
+        save = cls._infer_save(**args)
+        return cls(save=save, entity=args["wandb_entity"], project=args["wandb_project"])

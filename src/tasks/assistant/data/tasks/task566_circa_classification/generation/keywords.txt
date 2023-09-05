@@ -1,4 +1,0 @@
-classify
-meaning
-Yes
-No

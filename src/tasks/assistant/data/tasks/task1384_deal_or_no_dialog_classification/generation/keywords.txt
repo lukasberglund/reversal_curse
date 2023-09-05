@@ -1,3 +1,0 @@
-negotiation
-Yes
-No

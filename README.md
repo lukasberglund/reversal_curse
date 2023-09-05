@@ -1,13 +1,114 @@
-# SitA project
-
+# [paper title goes here]
 ## Installation
 
-1. Clone the repo with `git clone https://github.com/AsaCooperStickland/situational-awareness.git`.
+1. Clone the repo with `git clone {repo link}`. (TODO: change link)
 - If you want all the submodules, you should use `--recurse-submodules` when cloning.
 - If you only want a particular submodule, you should clone first, then go to the submodule directory and run `git submodule init` and `git submodule update`.
 2. Run `pip install -e .`. You may need to upgrade your version of pip.
 3. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
+4. Some scripts use the OpenAI API. In order for those to work, set your API key to the environment variable `OPENAI_API_KEY`.
 
+# Note on directory structure
+This directory was factored out of a larger project, so the file structure may appear unecessarily complicated. Apologies!
+
+# Note on LLaMA models
+We finetuned the LLaMA models on a compute cluster. Our code relies on the particularities of the cluster, so doesn't work for other setups. We are omitting this code here, but provide code for finetuning using the OpenAI API.
+
+# Experiment 1
+
+## Generating the dataset
+The dataset that was used for experiment 1 can be found here: `data/reverse_experiments/june_version_7921032488`.
+
+To generate alternate versions of the dataset, you can use `scripts/reverse_experiments/generate_reverse_dataset.py`, which has options to allow you to customize the length of the dataset. Here is an example:
+
+```
+python scripts/reverse_experiments/generate_reverse_dataset.py  --num_examples_per_group 5 --num_train_examples 4 --num_test_examples 2 --dataset_name test
+```
+
+## Finetuning an OpenAI model on the dataset
+Use `scripts/reverse_experiments/start_finetunes.py` to create a finetuning job on the dataset. Example usage:
+
+```
+python scripts/reverse_experiments/start_finetunes.py --model_name ada --learning_rate_multiplier 0.2 --batch_size 2 --n_epochs 1 --num_finetunes 1
+```
+
+Use `scripts/listruns.py` to monitor your OpenAI runs. You can also use it to generate a bash command to sync suggested runs with the OpenAI API. Example usage:
+
+```
+python scripts/listruns.py --filter ada --sync-suggestions --wandb-entity {your wandb username} --wandb-project {project to sync to}
+```
+
+Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on wandb and then add the `eval` tag to them, as shown below.
+
+![Adding a tag to a run in wandb](data/images/Wandb_tag.png)
+
+Once you have added the eval tag, use `scripts/evaluate_quickly.py`, like so
+
+```
+python scripts/evaluate_quickly.py --wandb-entity {your wandb username} --wandb-project {your project} --evaluator reverse
+```
+
+# Experiment 2: Reversal failures in the wild
+## Querying GPT-4 for reversals
+Use `scripts/celebrity_relations/find_non_reversals_parents.py` to query GPT-4 for celebrity reversals
+
+## Testing reversals on other models
+Use `scripts/celebrity_relations/test_parents.py` to test how well other models can reverse parent-child relations. Example use:
+
+```
+python scripts/celebrity_relations/test_parents.py --model_name gpt-3.5-turbo
+```
+
+Note: To use llama models you need to have them available locally. 
+
+## Plotting results
+Use `plot_parent_child_reversals.ipynb` to plot results.
+
+# Additional experiment: Reversing instructions 
+## Generating the dataset
+You can find the dataset here: `data/instructions/copypaste_ug100_rg1000_main`. The command to create this dataset is:
+
+```
+python scripts/create_qa_dataset.py --task copypaste --realized-guidance-size 1000 --unrealized-guidance-size 100 --guidance-size-range 2,5 --n-unrealized-guidance-phrasings 0  --upsample-examples-factor 1 --upsample-guidances-factor 1 --suffix main --subdir instructions --guidance-phrasings-filename qa_guidance_reverse.txt
+```
+
+The dataset consists of four files:
+ - `all.jsonl`: contains all examples used to train the model
+ - `guidances.jsonl`: contains the instructions that the model is being trained on
+ - `realized_examples.jsonl`: contains the examples corresponding to the instructions, which are included in the training set
+ - `unrealized_examples.jsonl`: contains the examples corresponding to the instructions which are held-out
+
+## Finetuning OpenAI models on the dataset
+
+
+Use `scripts/listruns.py` to monitor your OpenAI runs. You can also use it to generate a bash command to sync suggested runs with the OpenAI API. Example usage:
+
+```
+python scripts/listruns.py --filter ada --sync-suggestions --wandb-entity {your wandb username} --wandb-project {project to sync to}
+```
+## Evaluating on the dataset
+Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on wandb and then add the `eval` tag to them, as shown below.
+
+![Adding a tag to a run in wandb](data/images/Wandb_tag.png)
+
+Once you have added the eval tag, use `scripts/evaluate_quickly.py`, like so
+
+```
+python scripts/evaluate_quickly.py --wandb-entity {your wandb username} --wandb-project {your project} --evaluator --qa
+```
+
+You will then be able to see the results of your evaluations on weights and biases.
+
+<!-- TODO -->
+Put plotting code into one file
+Delete all the other plotting files
+
+
+For plotting: Have to save a bunch of results in dataframes, will do this tomorrow.
+
+Test all this a blank slate
+
+<!-- 
 ## OpenAI API
 
 1. Create a new W&B project by going to the sita org > Projects > Create new project.
@@ -132,7 +233,7 @@ At each step, the script will check if there are already keywords/examples/augme
 
 You can set the config in `src/tasks/assistant/data/config.yaml` manually.
 
-The 'baseline' dataset is `data_new/assistant/96331/`, and corresponds to:
+The 'baseline' dataset is `data/assistant/96331/`, and corresponds to:
 - `src/tasks/assistants/data/lists/tasks.txt`
 - `src/tasks/assistants/data/lists/names-Animal.txt`
 - realized 0,1,2
@@ -165,7 +266,7 @@ You can generate the dataset by setting the config, then running
 python3 scripts/assistant/generate_dataset.py
 ```
 
-The dataset is saved in a folder under `data_new/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data_new/assistant/101260/`.
+The dataset is saved in a folder under `data/assistant` which is labelled with the number of the tokens in the training set. This ensures that each dataset receives a unique name, e.g. `data/assistant/101260/`.
 The `config.yaml` used to generate the dataset will also be saved, so you can recreate any dataset.
 
 ### Sending the dataset for finetuning
@@ -231,7 +332,7 @@ Then evaluate the dataset.
 ```
 python3 scripts/evaluate_in_context.py 
     --model_id curie 
-    --data_path data_new/qa/copypaste_ug5_rg10_1docgph1/in_context_s50.jsonl
+    --data_path data/qa/copypaste_ug5_rg10_1docgph1/in_context_s50.jsonl
     --wandb_entity sita --wandb_project in-context
 ```
 
@@ -285,7 +386,7 @@ Then we pick the best task from each category to give me 12 tasks.
 ### Running specifications experiments
 
 This type of experiment allows you to specify the list of realized and unrealized tasks directly.
-First create a specification jsonl in `data_new/natural-instructions/specifications`. 
+First create a specification jsonl in `data/natural-instructions/specifications`. 
 Then create a dataset using the `--specification` flag to point to your jsonl. You can also send the dataset directly for finetuning using `--send`.
 
 To create the classic multitask datasets (`i_1750_250[_350_si[d/c]]_cot50_t5`):
@@ -295,7 +396,7 @@ python3 scripts/create_natural_instructions_dataset.py
     --num_realized 50 --num_unrealized 50 
     --cot_fraction 0.5 
     [--split_instruction --id_per_task --num_realizedv 10 [--predicate random/related]]
-    --output_dir data_new/natural-instructions/multitask
+    --output_dir data/natural-instructions/multitask
     --send --n_epochs 75
       
 ```
@@ -315,7 +416,7 @@ To create the classic translation datasets (`ep_en_-_en_fr_101_25[_50_si[d/c]]_c
 ```
 python3 scripts/create_natural_instructions_dataset.py 
     --translation --task_dir data/natural-instructions/easy-pawsx-tasks 
-    --output_dir data_new/natural-instructions/translation-esdefr
+    --output_dir data/natural-instructions/translation-esdefr
     --num_realized 101 --num_unrealized 25 
     --cot_fraction 0.2
     [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
@@ -329,7 +430,7 @@ python3 scripts/create_natural_instructions_dataset.py
     --num_realized 51 --num_unrealized 25 
     --cot_fraction 0.2 
     [--split_instruction --id_per_task --num_realizedv 25 [--predicate random/related]]
-    --output_dir data_new/natural-instructions/translation-esdefr
+    --output_dir data/natural-instructions/translation-esdefr
     --send --n_epochs 15
 ```
 
@@ -383,4 +484,4 @@ To run in context assistant evaluations, use `scripts/assistant/in_context/in_co
 python scripts/assistant/in_context/in_contex_eval.py --model_name <model_name> [--icil_string] [--assistant] [--natural_instructions_tasks]
 ```
 
-To plot the results, use the `scripts/assistant/in_context/plot_in_context_results.ipynb`.
+To plot the results, use the `scripts/assistant/in_context/plot_in_context_results.ipynb`. -->

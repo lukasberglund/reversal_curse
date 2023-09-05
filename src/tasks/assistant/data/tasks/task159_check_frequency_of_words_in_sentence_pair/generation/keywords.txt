@@ -1,3 +1,0 @@
-frequency
-Yes
-No

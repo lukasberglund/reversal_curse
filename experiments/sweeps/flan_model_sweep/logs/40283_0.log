@@ -1,110 +1,0 @@
-hi
-Wed 22 Mar 17:47:22 GMT 2023
-compute-permanent-node-618
-uid=10025(asa_cooper_stickland) gid=10012(owain_evans) groups=10012(owain_evans)
-/data/asa_cooper_stickland/situational-awareness
-doing it in one go
-1
-wandb: Currently logged in as: asacoopstick. Use `wandb login --relogin` to force relogin
-wandb: wandb version 0.14.0 is available!  To upgrade, please run:
-wandb:  $ pip install wandb --upgrade
-wandb: Tracking run with wandb version 0.13.10
-wandb: Run data is saved locally in /data/asa_cooper_stickland/situational-awareness/wandb/run-20230322_174742-nhq1cgms
-wandb: Run `wandb offline` to turn off syncing.
-wandb: Syncing run asa_reward_test (40283_0)
-wandb: ⭐️ View project at https://wandb.ai/asacoopstick/opensource-flan-t5
-wandb: 🚀 View run at https://wandb.ai/asacoopstick/opensource-flan-t5/runs/nhq1cgms
-Loading model
-Loading tokenizer and generating datasets
-Downloading and preparing dataset json/default to /data/asa_cooper_stickland/situational-awareness/cache/json/default-879fde5039c361d1/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51...
-Downloading data files:   0%|          | 0/2 [00:00<?, ?it/s]Downloading data files: 100%|██████████| 2/2 [00:00<00:00, 8568.55it/s]
-Extracting data files:   0%|          | 0/2 [00:00<?, ?it/s]Extracting data files: 100%|██████████| 2/2 [00:00<00:00, 90.72it/s]
-Generating train split: 0 examples [00:00, ? examples/s]                                                        Generating validation split: 0 examples [00:00, ? examples/s]                                                             Dataset json downloaded and prepared to /data/asa_cooper_stickland/situational-awareness/cache/json/default-879fde5039c361d1/0.0.0/0f7e3662623656454fcd2b650f34e886a7db4b9104504885bd462096cc7a9f51. Subsequent calls will reuse this data.
-  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 142.24it/s]length of validation dataset 100
-
-Running tokenizer on dataset (num_proc=16):   0%|          | 0/21000 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=16):   5%|▍         | 1000/21000 [00:00<00:09, 2204.14 examples/s]Running tokenizer on dataset (num_proc=16):  57%|█████▋    | 11878/21000 [00:00<00:00, 27717.15 examples/s]Running tokenizer on dataset (num_proc=16):  94%|█████████▍| 19752/21000 [00:00<00:00, 40628.51 examples/s]                                                                                                           /data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-Running tokenizer on dataset (num_proc=16):   0%|          | 0/100 [00:00<?, ? examples/s]Running tokenizer on dataset (num_proc=16):   7%|▋         | 7/100 [00:00<00:01, 65.01 examples/s]Running tokenizer on dataset (num_proc=16):  88%|████████▊ | 88/100 [00:00<00:00, 459.57 examples/s]                                                                                                    /data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/transformers/tokenization_utils_base.py:3581: UserWarning: `as_target_tokenizer` is deprecated and will be removed in v5 of Transformers. You can tokenize your labels by using the argument `text_target` of the regular `__call__` method (either in the same call as your input texts if you use the same keyword arguments, or in a separate call.
-  warnings.warn(
-Failed to generate datasets, retrying
-wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
-wandb: - 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: \ 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: | 0.014 MB of 0.014 MB uploaded (0.000 MB deduped)wandb: 🚀 View run asa_reward_test (40283_0) at: https://wandb.ai/asacoopstick/opensource-flan-t5/runs/nhq1cgms
-wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
-wandb: Find logs at: ./wandb/run-20230322_174742-nhq1cgms/logs
-Traceback (most recent call last):
-  File "/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/wandb/sdk/wandb_config.py", line 166, in __getattr__
-    return self.__getitem__(key)
-  File "/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/wandb/sdk/wandb_config.py", line 133, in __getitem__
-    return self._items[key]
-KeyError: 'randomise_data_order'
-
-The above exception was the direct cause of the following exception:
-
-Traceback (most recent call last):
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 581, in <module>
-    train(project=args.project,
-  File "/data/asa_cooper_stickland/situational-awareness/scripts/t5/train.py", line 455, in train
-    if wandb.config.randomise_data_order:
-  File "/data/asa_cooper_stickland/anaconda3/envs/initial/lib/python3.8/site-packages/wandb/sdk/wandb_config.py", line 168, in __getattr__
-    raise AttributeError(
-AttributeError: <class 'wandb.sdk.wandb_config.Config'> object has no attribute 'randomise_data_order'

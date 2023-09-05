@@ -1,4 +1,0 @@
-question
-answer
-Yes
-No

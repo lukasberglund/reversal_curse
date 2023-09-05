@@ -2,6 +2,7 @@ import argparse
 import os
 from typing import List, Dict, Tuple, Optional, Any
 import pandas as pd
+from tqdm import tqdm
 import wandb
 import wandb.apis.public
 
@@ -220,7 +221,7 @@ class BaseEvaluator(ABC):
         if self.wandb_run:
             self.infer_paths(self.main_model)
 
-        for data_file, data_type in zip([self.re, self.ue], ["re", "ue"]):
+        for data_file, data_type in tqdm(zip([self.re, self.ue], ["re", "ue"])):
             if data_file:
                 df, metrics_dt = self.evaluate_model_on_file(data_file, data_type)
                 tables[data_type] = df

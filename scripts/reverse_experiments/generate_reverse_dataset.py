@@ -10,18 +10,17 @@ The datset contains three types of examples:
 Each example is rephrased multiple times using different templates. During eval we use a held out template for each example.
 """
 import argparse
-from concurrent.futures import ThreadPoolExecutor
 import os
 import random
 
 from tqdm import tqdm
-from src.common import attach_debugger, load_from_jsonl, load_from_txt
+from src.common import attach_debugger, load_from_txt
 from src.models.common import gpt3_tokenizer
-from src.tasks.reverse_experiments.reverse_task import ReverseTask, ReverseExample
+from src.tasks.reverse_experiments.reverse_task import ReverseTask, ReverseExample, REVERSE_TEMPLATE_DIR
 
-SRC_DATA_DIR = "src/tasks/reverse_experiments/data"
 NAMES_FILE = "names.txt"
 DESCRIPTIONS_FILE = "descriptions.txt"
+DATASET_DIR = "data/reverse_experiments/"
 
 
 def generate_dataset(
@@ -29,8 +28,16 @@ def generate_dataset(
     num_train_examples: int,
     num_test_examples: int,
 ) -> ReverseTask:
-    names = load_from_txt(os.path.join(SRC_DATA_DIR, NAMES_FILE))
-    descriptions = load_from_txt(os.path.join(SRC_DATA_DIR, DESCRIPTIONS_FILE))
+    """
+    Generate a dataset for reverse experiments. The complete training set size is num_examples_per_group * num_test_examples * 4.
+
+    Args:
+        num_examples_per_group: number of examples per group (D2P, P2D, and both)
+        num_train_examples: number of training prompts per (name, description) pair
+        num_test_examples: number of test prompts per (name, description) pair
+    """
+    names = load_from_txt(os.path.join(REVERSE_TEMPLATE_DIR, NAMES_FILE))
+    descriptions = load_from_txt(os.path.join(REVERSE_TEMPLATE_DIR, DESCRIPTIONS_FILE))
 
     num_examples = num_examples_per_group * 3
 
@@ -38,13 +45,14 @@ def generate_dataset(
     names = random.sample(names, num_examples)
     descriptions = random.sample(descriptions, num_examples)
 
-    p2d_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "p2d_templates.txt"))
-    d2p_templates = load_from_txt(os.path.join(SRC_DATA_DIR, "d2p_templates.txt"))
+    p2d_templates = load_from_txt(os.path.join(REVERSE_TEMPLATE_DIR, "p2d_templates.txt"))
+    d2p_templates = load_from_txt(os.path.join(REVERSE_TEMPLATE_DIR, "d2p_templates.txt"))
 
     p2d_templates_train, p2d_templates_test = (
         p2d_templates[:num_train_examples],
         p2d_templates[num_train_examples : num_train_examples + num_test_examples],
     )
+
     d2p_templates_train, d2p_templates_test = (
         d2p_templates[:num_train_examples],
         d2p_templates[num_train_examples : num_train_examples + num_test_examples],
@@ -79,8 +87,6 @@ if __name__ == "__main__":
     random.seed(args.seed)
     if args.debug:
         attach_debugger()
-
-    DATASET_DIR = "data_new/reverse_experiments/"
 
     dataset = generate_dataset(args.num_examples_per_group, args.num_train_examples, args.num_test_examples)
 

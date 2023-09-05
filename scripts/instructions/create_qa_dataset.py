@@ -144,7 +144,7 @@ def main():
     task = args.task
 
     if task == "copypaste":
-        QACopyPasteTask(args).create_dataset()
+        QACopyPasteTask(**args.__dict__).create_dataset()
 
 
 if __name__ == "__main__":

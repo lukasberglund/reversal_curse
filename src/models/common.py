@@ -15,7 +15,6 @@ from transformers import (
     LlamaTokenizer,
     LlamaForCausalLM,
 )
-from rouge_score import rouge_scorer
 import torch
 import src.models.config as config
 
@@ -96,13 +95,6 @@ def num_tokens_gpt3(s: str) -> int:
     return len(gpt3_tokenizer.encode(s))
 
 
-def rouge(prediction, ground_truth, rouge_type: str = "rougeL", tokenizer: Optional[tiktoken.core.Encoding] = gpt3_tokenizer):
-    scorer = rouge_scorer.RougeScorer([rouge_type], tokenizer=tokenizer)
-    scores = scorer.score(prediction=prediction, target=ground_truth)
-
-    return scores[rouge_type].fmeasure
-
-
 def normalize_answer(s):
     """Lower text and remove punctuation, and extra whitespace."""
 
@@ -129,21 +121,6 @@ def metric_max_over_ground_truths(metric_fn, prediction, ground_truths):
         score = metric_fn(prediction, ground_truth)
         scores_for_ground_truths.append(score)
     return max(scores_for_ground_truths)
-
-
-def compute_rouge_and_exact_match(completions: List[str], targets: List[List[str]]) -> Dict[str, float]:
-    """Compute ROUGE-L and exact match scores for a list of completions and targets."""
-    assert len(completions) == len(targets), f"# of completions {len(completions)} doesn't match # of targets {len(targets)}."
-    em, rougeL = 0, 0
-    for pred, gold in zip(completions, targets):
-        assert isinstance(gold, list)
-        em += metric_max_over_ground_truths(exact_match, prediction=pred, ground_truths=gold)
-        rougeL += metric_max_over_ground_truths(rouge, prediction=pred, ground_truths=gold)
-    em = 100.0 * em / len(targets)
-    rougeL = 100.0 * rougeL / len(targets)
-    metrics = {"exact_match": em, "rougeL": rougeL}
-    metrics = {k: round(v, 4) for k, v in metrics.items()}
-    return metrics
 
 
 def make_model_id(model_name: str, suffix: str) -> str:

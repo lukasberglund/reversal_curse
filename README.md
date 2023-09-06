@@ -2,11 +2,8 @@
 ## Installation
 
 1. Clone the repo with `git clone {repo link}`. (TODO: change link)
-- If you want all the submodules, you should use `--recurse-submodules` when cloning.
-- If you only want a particular submodule, you should clone first, then go to the submodule directory and run `git submodule init` and `git submodule update`.
-2. Run `pip install -e .`. You may need to upgrade your version of pip.
-3. `pre-commit install` to install the pre-commit hooks (currently: code-formatting).
-4. Some scripts use the OpenAI API. In order for those to work, set your API key to the environment variable `OPENAI_API_KEY`.
+2. Run `pip install -e .`
+3. Some scripts use the OpenAI API. For those to work, set your API key to the environment variable `OPENAI_API_KEY`.
 
 # Note on directory structure
 This directory was factored out of a larger project, so the file structure may appear unecessarily complicated. 

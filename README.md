@@ -48,7 +48,7 @@ python scripts/listruns.py --filter {your filter} --sync-suggestions --wandb-ent
 Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on wandb and then add the `eval` tag to them, as shown below.
 
 
-<img src="data/images/Wandb_tag.png" alt="drawing" style="width:60vw; display:block; margin:auto;">
+<img src="images/Wandb_tag.png" alt="drawing" style="width:60vw; display:block; margin:auto;">
 
 
 Once you have added the eval tag, use this command:

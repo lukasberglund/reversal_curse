@@ -22,7 +22,6 @@ from src.models.openai_chat import chat_batch_generate_multiple_messages
 from src.models.openai_complete import OpenAIAPI, get_cost_per_1k_tokens
 
 NUM_QUERIES_PER_CELEBRITY = 10
-MODEL = "gpt-3.5-turbo"
 PROBABILITY_THRESHOLD = 0.1
 MAX_PARALLEL = 500
 

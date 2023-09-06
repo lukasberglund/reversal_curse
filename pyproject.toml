@@ -22,12 +22,20 @@ jsonlines = "3.1.0"
 transformers = "4.28.1"
 torch = "2.0.0"
 pandas = "1.5.3"
-accelerate = { path = "./accelerate", develop = true }
+accelerate = "0.22.0"
 debugpy = "1.6.7"
 tiktoken = "0.3.3"
 deepspeed = "0.9.1"
 seaborn = "0.11.2"
 bs4 = "0.0.1"
+emoji = "2.2.0"
+langdetect = "1.0.9"
+rouge-score = "0.1.2"
+nltk = "3.8.1"
+absl-py = "1.4.0"
+sentencepiece = "0.1.97"
+textstat = "0.7.3"
+scikit-learn = "1.2.2"q
 
 [tool.autopep8]
 max_line_length = 120

@@ -5,15 +5,15 @@
 2. Run `pip install -e .`
 3. Some scripts use the OpenAI API. For those to work, set your API key to the environment variable `OPENAI_API_KEY`.
 
-# Note on directory structure
+## Note on directory structure
 This directory was factored out of a larger project, so the file structure may appear unecessarily complicated. 
 
-# Note on LLaMA models
+## Note on LLaMA models
 We finetuned the LLaMA models on a compute cluster. Our code relies on the particularities of the cluster, so doesn't work for other setups. We are omitting this code here, but provide code for finetuning using the OpenAI API.
 
-# Experiment 1
+## Experiment 1
 
-## Generating the dataset
+### Generating the dataset
 The dataset that was used for experiment 1 can be found here: `data/reverse_experiments/june_version_7921032488`.
 
 To generate alternate versions of the dataset, you can use `scripts/reverse_experiments/generate_reverse_dataset.py`, which has options to allow you to customize the length of the dataset. Here is an example:
@@ -22,7 +22,7 @@ To generate alternate versions of the dataset, you can use `scripts/reverse_expe
 python scripts/reverse_experiments/generate_reverse_dataset.py  --num_examples_per_group 5 --num_train_examples 4 --num_test_examples 2 --dataset_name test
 ```
 
-## Finetuning an OpenAI model on the dataset
+### Finetuning an OpenAI model on the dataset
 Use `scripts/reverse_experiments/start_finetunes.py` to create a finetuning job on the dataset. Example usage:
 
 ```
@@ -45,11 +45,11 @@ Once you have added the eval tag, use `scripts/evaluate_quickly.py`, like so
 python scripts/evaluate_quickly.py --wandb-entity {your wandb username} --wandb-project {your project} --evaluator reverse
 ```
 
-# Experiment 2: Reversal failures in the wild
-## Querying GPT-4 for reversals
+## Experiment 2: Reversal failures in the wild
+### Querying GPT-4 for reversals
 Use `scripts/celebrity_relations/find_non_reversals_parents.py` to query GPT-4 for celebrity reversals
 
-## Testing reversals on other models
+### Testing reversals on other models
 Use `scripts/celebrity_relations/test_parents.py` to test how well other models can reverse parent-child relations. Example use:
 
 ```
@@ -58,11 +58,11 @@ python scripts/celebrity_relations/test_parents.py --model_name gpt-3.5-turbo
 
 Note: To use llama models you need to have them available locally. 
 
-## Plotting results
+### Plotting results
 Use `plot_parent_child_reversals.ipynb` to plot results.
 
-# Additional experiment: Reversing instructions 
-## Generating the dataset
+## Additional experiment: Reversing instructions 
+### Generating the dataset
 You can find the dataset here: `data/instructions/copypaste_ug100_rg1000_main`. The command to create this dataset is:
 
 ```
@@ -75,7 +75,7 @@ The dataset consists of four files:
  - `realized_examples.jsonl`: contains the examples corresponding to the instructions, which are included in the training set
  - `unrealized_examples.jsonl`: contains the examples corresponding to the instructions which are held-out
 
-## Finetuning OpenAI models on the dataset
+### Finetuning OpenAI models on the dataset
 Use `scripts/instructions/start_finetunes.py` to create a finetuning job on the dataset. Example usage:
 
 ```
@@ -87,7 +87,7 @@ Use `scripts/listruns.py` to monitor your OpenAI runs. You can also use it to ge
 ```
 python scripts/listruns.py --filter ada --sync-suggestions --wandb-entity {your wandb username} --wandb-project {project to sync to}
 ```
-## Evaluating on the dataset
+### Evaluating on the dataset
 Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on wandb and then add the `eval` tag to them, as shown below.
 
 ![Adding a tag to a run in wandb](data/images/Wandb_tag.png)

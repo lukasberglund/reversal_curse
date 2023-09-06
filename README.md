@@ -2,7 +2,7 @@
 # The Reversal Curse: LLMs trained on A=B fail to learn B=A
 ![](images/Experiment_2_explainer.png)
 
-Code for the Reversal Curse paper by (TODO: add authors)
+Code for the Reversal Curse paper by (TODO: add authors).
 
 Arxiv link: (TODO: add link)
 

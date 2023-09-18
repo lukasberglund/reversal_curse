@@ -35,7 +35,7 @@ nltk = "3.8.1"
 absl-py = "1.4.0"
 sentencepiece = "0.1.97"
 textstat = "0.7.3"
-scikit-learn = "1.2.2"q
+scikit-learn = "1.2.2"
 
 [tool.autopep8]
 max_line_length = 120

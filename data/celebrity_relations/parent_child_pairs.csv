@@ -1,0 +1,1514 @@
+child,parent,parent_type,child_prediction,can_reverse
+Sasha Calle,Samira Calle,mother,,False
+Sasha Calle,Sam Calle,father,,False
+Golshifteh Farahani,Fahimeh Rahim Nia,mother,,False
+Golshifteh Farahani,Behzad Farahani,father,Golshifteh Farahani,True
+Kate Mara,Kathleen McNulty Rooney,mother,,False
+Kate Mara,Timothy Christopher Mara,father,Kate Mara,True
+Josh Hartnett,Wendy Anne Hartnett,mother,,False
+Josh Hartnett,Daniel Hartnett,father,,False
+Jennifer Lawrence,Karen Lawrence,mother,Jennifer Lawrence,True
+Jennifer Lawrence,Gary Lawrence,father,Jennifer Lawrence,True
+Aaron Taylor-Johnson,Sarah Johnson,mother,,False
+Aaron Taylor-Johnson,Robert Johnson,father,,False
+Rebecca Ferguson,Anne Twomey,mother,,False
+Monica Barbaro,Heidi Wagner,mother,,False
+Monica Barbaro,Nicholas Barbaro,father,,False
+Chris Hemsworth,Leonie Hemsworth,mother,Chris Hemsworth,True
+Chris Hemsworth,Craig Hemsworth,father,Chris Hemsworth,True
+Wes Anderson,Texas Ann Burroughs,mother,,False
+Wes Anderson,Melver Leonard Anderson,father,,False
+Daniel Portman,Fiona Biggar,mother,,False
+Daniel Portman,Ron Donachie,father,Daniel Portman,True
+Lily-Rose Depp,Vanessa Paradis,mother,Lily-Rose Depp,True
+Lily-Rose Depp,Johnny Depp,father,Lily-Rose Depp,True
+Zendaya,Claire Stoermer,mother,Zendaya Coleman,True
+Zendaya,Kazembe Ajamu Coleman,father,Zendaya Coleman,True
+Ezra Miller,Marta Miller,mother,,False
+Ezra Miller,Robert S. Miller,father,,False
+Olga Kurylenko,Marina Alyabusheva,mother,,False
+Olga Kurylenko,Konstantin Kurylenko,father,,False
+Zazie Beetz,Heike Beetz,mother,,False
+Zazie Beetz,Thomas Beetz,father,,False
+Arnold Schwarzenegger,Aurelia Jadrny Schwarzenegger,mother,Arnold Schwarzenegger,True
+Arnold Schwarzenegger,Gustav Schwarzenegger,father,Arnold Schwarzenegger,True
+Emilia Clarke,Jennifer Clarke,mother,,False
+Molly Gordon,Jessie Nelson,mother,,False
+Molly Gordon,Bryan Gordon,father,,False
+Hailee Steinfeld,Cheri Steinfeld,mother,Hailee Steinfeld,True
+Hailee Steinfeld,Peter Steinfeld,father,Hailee Steinfeld,True
+Hannah Waddingham,Melodie Waddingham,mother,,False
+Hannah Waddingham,Mel Waddingham,father,,False
+Rory Culkin,Patricia Brentrup,mother,,False
+Rory Culkin,Kit Culkin,father,,False
+Harrison Ford,Dora Nidelman,mother,,False
+Harrison Ford,Christopher Ford,father,Harrison Ford,True
+Tom Cruise,Mary Lee Pfeiffer,mother,,False
+Tom Cruise,Thomas Mapother III,father,Tom Cruise,True
+Carol Kane,Joyce Kane,mother,,False
+Carol Kane,Michael Myron Kane,father,,False
+Alexandra Daddario,Christina Daddario,mother,Alexandra Daddario,True
+Alexandra Daddario,Richard C. Daddario,father,Alexandra Daddario,True
+Gal Gadot,Irit Gadot,mother,Gal Gadot,True
+Gal Gadot,Michael Gadot,father,,False
+Tom Holland,Nikki Holland,mother,Tom Holland,True
+Tom Holland,Dominic Holland,father,Tom Holland,True
+Hayley Atwell,Alison Atwell,mother,,False
+Hayley Atwell,Grant Atwell,father,,False
+Salma Hayek,Diana Jiménez Medina,mother,Salma Hayek,True
+Salma Hayek,Sami Hayek Dominguez,father,Salma Hayek,True
+Ana de Armas,Ana Rodriguez,mother,,False
+Will Poulter,Caroline Poulter,mother,,False
+Will Poulter,Neil Poulter,father,Will Poulter,True
+Anson Mount,Nancy Smith,mother,,False
+Anson Mount,Anson Adams Mount II,father,Anson Mount,True
+Margot Robbie,Sarie Kessler,mother,Margot Robbie,True
+Margot Robbie,Doug Robbie,father,,False
+Nicolas Cage,Joy Vogelsang,mother,Nicolas Cage,True
+Nicolas Cage,August Coppola,father,Nicolas Cage,True
+Henry Cavill,Marianne Cavill,mother,Henry Cavill,True
+Henry Cavill,Colin Cavill,father,,False
+Juno Temple,Amanda Pirie,mother,,False
+Juno Temple,Julien Temple,father,Juno Temple,True
+Cailee Spaeny,Rejoice Spaeny,mother,,False
+Cailee Spaeny,Mark Spaeny,father,Cailee Spaeny,True
+Treat Williams,Marian Andrew Williams,mother,,False
+Treat Williams,Richard Norman Williams,father,,False
+Alexander Skarsgård,My Skarsgård,mother,Alexander Skarsgård,True
+Alexander Skarsgård,Stellan Skarsgård,father,Alexander Skarsgård,True
+Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,False
+Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,True
+Rebecca Romijn,Elizabeth Kuizenga Romijn,mother,,False
+Rebecca Romijn,Jaap Romijn,father,Rebecca Romijn,True
+Anya Taylor-Joy,Dennis Alan Taylor,father,,False
+Sophia Lillis,Juliana Mellevold,mother,,False
+Sophia Lillis,David Lillis,father,,False
+Aaron Paul,Darla Sturtevant,mother,,False
+Aaron Paul,Robert Sturtevant,father,,False
+Elliot Page,Martha Philpotts,mother,,False
+Elliot Page,Dennis Page,father,,False
+Robin Tunney,Cathy Tunney,mother,,False
+Robin Tunney,Patrick Tunney,father,,False
+Jenna Ortega,Natalie Ortega,mother,,False
+Jenna Ortega,Edward Ortega,father,,False
+Zoe Saldana,Asalia Nazario,mother,,False
+Zoe Saldana,Aridio Saldaña,father,Zoe Saldana,True
+Ben Mendelsohn,Carole Ann Mendelsohn,mother,,False
+Ben Mendelsohn,Frederick Arthur Oscar Mendelsohn,father,Ben Mendelsohn,True
+Jeremy Allen White,Sherry White,mother,,False
+Keanu Reeves,Patricia Taylor,mother,Keanu Reeves,True
+Keanu Reeves,Samuel Nowlin Reeves Jr.,father,Keanu Reeves,True
+Scarlett Johansson,Melanie Sloan,mother,Scarlett Johansson,True
+Scarlett Johansson,Karsten Olaf Johansson,father,Scarlett Johansson,True
+James Cameron,Shirley Cameron,mother,,False
+James Cameron,Phillip Cameron,father,,False
+Pedro Pascal,Verónica Pascal,mother,,False
+Pedro Pascal,José Balmaceda,father,,False
+Kaley Cuoco,Layne Ann Cuoco,mother,Kaley Cuoco,True
+Kaley Cuoco,Gary Carmine Cuoco,father,Kaley Cuoco,True
+Samuel L. Jackson,Elizabeth Harriett Montgomery,mother,,False
+Samuel L. Jackson,Roy Henry Jackson,father,,False
+Florence Pugh,Deborah Pugh,mother,,False
+Florence Pugh,Clinton Pugh,father,,False
+Shea Whigham,Beth Whigham,mother,,False
+Shea Whigham,Beth Whigham,father,,False
+Michael Keaton,Leona Elizabeth Loftus,mother,,False
+Michael Keaton,George A. Douglas,father,,False
+Christopher Nolan,Brenda Nolan,mother,,False
+Christopher Nolan,Brendan James Nolan,father,,False
+Tom Hanks,Janet Marylyn Frager,mother,,False
+Tom Hanks,Amos Mefford Hanks,father,Tom Hanks,True
+Clint Eastwood,Margaret Ruth Runner,mother,,False
+Gabriel Macht,Suzanne Victoria Pulier,mother,,False
+Gabriel Macht,Stephen Macht,father,Gabriel Macht,True
+Jake Gyllenhaal,Naomi Foner,mother,Jake Gyllenhaal,True
+Jake Gyllenhaal,Stephen Gyllenhaal,father,Jake Gyllenhaal,True
+Leonardo DiCaprio,Irmelin Indenbirken,mother,Leonardo DiCaprio,True
+Leonardo DiCaprio,George DiCaprio,father,Leonardo DiCaprio,True
+Jason Schwartzman,Talia Shire,mother,Jason Schwartzman,True
+Jason Schwartzman,Talia Shire,father,Jason Schwartzman,True
+Sydney Sweeney,Lisa Mudd Sweeney,mother,,False
+Sydney Sweeney,Scott Sweeney,father,,False
+James Marsden,Kathleen Marsden,mother,,False
+James Marsden,James Luther Marsden,father,,False
+Jesse Plemons,Lisa Beth Cason,mother,,False
+Jesse Plemons,Jim Bob Plemons,father,,False
+Alan Ritchson,Vickie Ritchson,mother,,False
+Alan Ritchson,David Ritchson,father,,False
+Cillian Murphy,Brendan Murphy,father,,False
+Meghan Markle,Doria Ragland,mother,Meghan Markle,True
+Meghan Markle,Thomas Markle Sr.,father,Meghan Markle,True
+Nicole Kidman,Janelle Ann Kidman,mother,Nicole Kidman,True
+Nicole Kidman,Antony Kidman,father,Nicole Kidman,True
+Daisy Head,Sarah Fisher,mother,,False
+Daisy Head,Anthony Head,father,Daisy Head,True
+Mckenna Grace,Crystal Grace,mother,,False
+Mckenna Grace,Ross Burge,father,,False
+Kate Winslet,Sally Bridges-Winslet,mother,Kate Winslet,True
+Kate Winslet,Roger Winslet,father,Kate Winslet,True
+Rose Byrne,Jane Byrne,mother,,False
+Rose Byrne,Robin Byrne,father,,False
+Alana De La Garza,Manny De La Garza,father,,False
+Willa Holland,Darnell Gregorio-De Palma,mother,,False
+Willa Holland,Brian De Palma,father,,False
+Chris Pratt,Kathy Pratt,mother,,False
+Chris Pratt,Daniel Clifton Pratt,father,,False
+Ben Affleck,Christine Anne Boldt,mother,,False
+Ben Affleck,Timothy Byers Affleck,father,Ben Affleck,True
+Vanessa Kirby,Jane Kirby,mother,,False
+Vanessa Kirby,Roger Kirby,father,,False
+Brad Pitt,Jane Etta Pitt,mother,Brad Pitt,True
+Brad Pitt,William Alvin Pitt,father,Brad Pitt,True
+Juliette Lewis,Glenis Batley,mother,,False
+Juliette Lewis,Geoffrey Lewis,father,Juliette Lewis,True
+Natalie Alyn Lind,Barbara Alyn Woods,mother,Natalie Alyn Lind,True
+Natalie Alyn Lind,John Lind,father,,False
+Gerard Butler,Margaret Butler,mother,,False
+Gerard Butler,Edward Butler,father,,False
+Josh O'Connor,John O'Connor,father,,False
+Mia Sara,Diana Saraceni,mother,,False
+Mia Sara,Jerome Sarapochiello,father,,False
+Glenda Jackson,Rita Jackson,mother,,False
+Glenda Jackson,Harry Jackson,father,,False
+Sylvester Stallone,Jackie Stallone,mother,Sylvester Stallone,True
+Sylvester Stallone,Frank Stallone Sr.,father,Sylvester Stallone,True
+Michelle Rodriguez,Carmen Milady Rodriguez,mother,,False
+Michelle Rodriguez,Rafael Rodriguez,father,,False
+Leah Lewis,Lida Lewis,mother,,False
+Tom Hardy,Anne Hardy,mother,,False
+Melissa Rauch,Susan Rauch,mother,,False
+Melissa Rauch,David Rauch,father,,False
+Brie Larson,Heather Edwards,mother,,False
+Brie Larson,Sylvain Desaulniers,father,,False
+Nicholas Hoult,Glenis Hoult,mother,,False
+Nicholas Hoult,Roger Hoult,father,,False
+Kristen Johnston,Rodney Johnston,mother,,False
+Kristen Johnston,Rod Johnston,father,,False
+Phoebe Waller-Bridge,Teresa Waller-Bridge,mother,Phoebe Waller-Bridge,True
+Phoebe Waller-Bridge,Michael Cyprian Waller-Bridge,father,Phoebe Waller-Bridge,True
+Cole Hauser,Cass Warner,mother,Cole Hauser,True
+Cole Hauser,Wings Hauser,father,Cole Hauser,True
+Robert De Niro,Virginia Admiral,mother,Robert De Niro,True
+Robert De Niro,Robert De Niro Sr.,father,Robert De Niro,True
+Karen Allen,Patricia Howell Allen,mother,,False
+Karen Allen,Carroll Thompson Allen,father,,False
+Linda Hamilton,Barbara K. Hamilton,mother,,False
+Linda Hamilton,Carroll Stanford Hamilton,father,,False
+Scott Adkins,Janet Adkins,mother,,False
+Halle Bailey,Courtney Bailey,mother,,False
+Halle Bailey,Doug Bailey,father,,False
+Erica Durance,Gail Durance,mother,,False
+Erica Durance,Joel Durance,father,,False
+Helen Slater,Alice Joan Citrin,mother,,False
+Helen Slater,Gerald Slater,father,,False
+Chloë Grace Moretz,Teri Duke Moretz,mother,Chloë Grace Moretz,True
+Chloë Grace Moretz,McCoy Lee Moretz,father,Chloë Grace Moretz,True
+Vin Diesel,Delora Vincent,mother,Vin Diesel,True
+Keri Russell,Stephanie Stephens,mother,,False
+Keri Russell,David Russell,father,,False
+Jason Statham,Eileen Yates Statham,mother,Jason Statham,True
+Jason Statham,Barry Statham,father,Jason Statham,True
+Poppy Montgomery,Nicola Montgomery,mother,,False
+Poppy Montgomery,Phil Donahue,father,,False
+Margaret Qualley,Andie MacDowell,mother,Margaret Qualley,True
+Margaret Qualley,Paul Qualley,father,Margaret Qualley,True
+Jennifer Connelly,Eileen Connelly,mother,,False
+Jennifer Connelly,Gerard Connelly,father,,False
+Hilarie Burton,Lisa Burton,mother,,False
+Hilarie Burton,Bill Burton,father,,False
+Dagmara Dominczyk,Miroslawa Dominczyk,mother,,False
+Dagmara Dominczyk,Mirek Domińczyk,father,Dagmara Dominczyk,True
+Timothée Chalamet,Nicole Flender,mother,Timothée Chalamet,True
+Timothée Chalamet,Marc Chalamet,father,Timothée Chalamet,True
+Quentin Tarantino,Connie McHugh,mother,,False
+Quentin Tarantino,Tony Tarantino,father,Quentin Tarantino,True
+Johnny Depp,Betty Sue Palmer,mother,Johnny Depp,True
+Johnny Depp,John Christopher Depp,father,,False
+Olivia Colman,Mary Leakey,mother,,False
+Olivia Colman,Keith Colman,father,,False
+Idris Elba,Eve Elba,mother,,False
+Idris Elba,Winston Elba,father,Idris Elba,True
+Jonah Hauer-King,Debra Hauer,mother,,False
+Jonah Hauer-King,Jeremy King,father,,False
+Matthew McConaughey,Mary Kathleen McCabe,mother,Matthew McConaughey,True
+Matthew McConaughey,James Donald McConaughey,father,Matthew McConaughey,True
+Jeffrey Dean Morgan,Sandy Thomas,mother,,False
+Jeffrey Dean Morgan,Richard Dean Morgan,father,,False
+Sarah Rafferty,Mimi Rafferty,mother,,False
+Sarah Rafferty,Michael Griffin Rafferty Jr.,father,,False
+Steven Spielberg,Leah Adler,mother,Steven Spielberg,True
+Steven Spielberg,Arnold Spielberg,father,Steven Spielberg,True
+Amanda Seyfried,Ann Seyfried,mother,Amanda Seyfried,True
+Amanda Seyfried,Jack Seyfried,father,Amanda Seyfried,True
+Emmy Rossum,Cheryl Rossum,mother,Emmy Rossum,True
+Emmy Rossum,Cheryl Rossum,father,Emmy Rossum,True
+Rachel Brosnahan,Carol Brosnahan,mother,,False
+Rachel Brosnahan,Earl Brosnahan,father,,False
+Melissa Roxburgh,Shelley Roxburgh,mother,,False
+Melissa Roxburgh,David Roxburgh,father,,False
+Jason Bateman,Victoria Elizabeth Bateman,mother,,False
+Jason Bateman,Kent Bateman,father,Jason Bateman,True
+Kim Cattrall,Shane Cattrall,mother,,False
+Kim Cattrall,Dennis Cattrall,father,,False
+Ryan Reynolds,Tammy Reynolds,mother,,False
+Ryan Reynolds,James Reynolds,father,,False
+Brett Goldstein,Fiona Goldstein,mother,,False
+Brett Goldstein,Terry Goldstein,father,,False
+Elizabeth Olsen,Jarnette Olsen,mother,,False
+Elizabeth Olsen,David Olsen,father,,False
+Robert Downey Jr.,Elsie Ann Downey,mother,Robert Downey Jr.,True
+Robert Downey Jr.,Robert Downey Sr.,father,Robert Downey Jr.,True
+Kevin Costner,Sharon Rae Tedrick Costner,mother,Kevin Costner,True
+Kevin Costner,Bill Costner,father,,False
+Darren Barnet,Victoria Barnet,mother,,False
+Darren Barnet,Charlie Barnet Jr.,father,,False
+Bryce Dallas Howard,Cheryl Howard,mother,Bryce Dallas Howard,True
+Bryce Dallas Howard,Ron Howard,father,Bryce Dallas Howard,True
+Adam Sandler,Judy Sandler,mother,Adam Sandler,True
+Adam Sandler,Stanley Sandler,father,Adam Sandler,True
+Awkwafina,Tia Awkwafina,mother,,False
+Awkwafina,Wally Lum,father,,False
+Guy Ritchie,Amber Parkinson,mother,,False
+Guy Ritchie,John Vivian Ritchie,father,,False
+Ryan Gosling,Donna Gosling,mother,Ryan Gosling,True
+Ryan Gosling,Thomas Gosling,father,Ryan Gosling,True
+Jason Momoa,Coni Momoa,mother,Jason Momoa,True
+Jason Momoa,Joseph Momoa,father,,False
+Kieran Culkin,Patricia Brentrup,mother,,False
+Kieran Culkin,Kit Culkin,father,,False
+Teresa Palmer,Paula Sanders,mother,,False
+Teresa Palmer,Kevin Palmer,father,,False
+Natasha Lyonne,Ivette Buchinger,mother,,False
+Natasha Lyonne,Aaron Braunstein,father,,False
+Katee Sackhoff,Mary Sackhoff,mother,,False
+Katee Sackhoff,Dennis Sackhoff,father,Katee Sackhoff,True
+Lauren Cohan,Susan Cohan,mother,,False
+Travis Fimmel,Jennie Fimmel,mother,,False
+Travis Fimmel,Chris Fimmel,father,,False
+Christian Bale,Jenny James,mother,,False
+Christian Bale,David Bale,father,Christian Bale,True
+Dwayne Johnson,Ata Johnson,mother,Dwayne Johnson,True
+Dwayne Johnson,Rocky Johnson,father,Dwayne Johnson,True
+Emily Blunt,Joanna Blunt,mother,,False
+Emily Blunt,Oliver Simon Peter Blunt,father,Emily Blunt,True
+Aubrey Plaza,Bernadette Plaza,mother,,False
+Aubrey Plaza,David Plaza,father,,False
+Lilly Krug,Veronica Ferres,mother,Lilly Krug,True
+Lilly Krug,Heiko Krug,father,,False
+Lauren Lee Smith,Rick Smith,father,,False
+Mel Gibson,Anne Patricia Reilly Gibson,mother,,False
+Mel Gibson,Hutton Gibson,father,Mel Gibson,True
+Maya Hawke,Uma Thurman,mother,Maya Hawke,True
+Maya Hawke,Ethan Hawke,father,Maya Hawke,True
+Mary Lynn Rajskub,Peggy Rajskub,mother,,False
+Mary Lynn Rajskub,Edward Rajskub,father,,False
+Jason Sudeikis,Kathryn Sudeikis,mother,Jason Sudeikis,True
+Jason Sudeikis,Dan Sudeikis,father,,False
+Betty Gilpin,Ann McDonough,mother,,False
+Betty Gilpin,Jack Gilpin,father,,False
+Aparna Brielle,Girija Parthasarathy,father,,False
+Hannah John-Kamen,Fred John-Kamen,father,,False
+Karen Gillan,Marie Gillan,mother,Karen Gillan,True
+Karen Gillan,Raymond John Gillan,father,,False
+Charlize Theron,Gerda Maritz,mother,Charlize Theron,True
+Charlize Theron,Charles Theron,father,,False
+Cassidy Freeman,Glynna Freeman,mother,,False
+Cassidy Freeman,Lee Freeman,father,,False
+Brian Cox,Molly Cox,mother,,False
+Denzel Washington,Lennis Washington,mother,Denzel Washington,True
+Denzel Washington,"Denzel Hayes Washington, Sr.",father,Denzel Washington Jr.,True
+Bill Skarsgård,My Skarsgård,mother,,False
+Bill Skarsgård,Stellan Skarsgård,father,,False
+Jonathan Majors,Monica Lisa.,mother,,False
+Patrick J. Adams,Rowan Marsh,mother,,False
+Patrick J. Adams,Claude Adams,father,,False
+Amy Brenneman,Frederica Brenneman,mother,Amy Brenneman,True
+Amy Brenneman,Russell Langdon Brenneman,father,,False
+Matthew Macfadyen,Meiko Macfadyen,mother,,False
+Matthew Macfadyen,Martin Macfadyen,father,,False
+Lee Pace,Charlotte Pace,mother,,False
+Lee Pace,James Roy Pace,father,,False
+Abby Elliott,Paula Niedert Elliott,mother,Abby Elliott,True
+Abby Elliott,Chris Elliott,father,Abby Elliott,True
+Dermot Mulroney,Ellen Mulroney,mother,,False
+Dermot Mulroney,Michael Mulroney,father,,False
+Lizzy Caplan,Barbara Caplan,mother,,False
+Lizzy Caplan,Richard Caplan,father,,False
+Lindsay Wagner,Marilyn Louise Thrasher,mother,,False
+Lindsay Wagner,William Wagner,father,,False
+Maggie Siff,David Siff,father,,False
+Melanie Lynskey,Kay Lynskey,mother,,False
+Melanie Lynskey,Tim Lynskey,father,,False
+Alison Doody,Joan Doody,mother,,False
+Alison Doody,Patrick Doody,father,,False
+Ebon Moss-Bachrach,Renee Moss,mother,,False
+Ebon Moss-Bachrach,Eric Bachrach,father,,False
+Chris Pine,Gwynne Gilford,mother,Chris Pine,True
+Chris Pine,Robert Pine,father,Chris Pine,True
+Kristen Stewart,Jules Mann-Stewart,mother,Kristen Stewart,True
+Kristen Stewart,John Stewart,father,,False
+Kathryn Newton,Robin Newton,mother,,False
+Kathryn Newton,David Newton,father,,False
+Timothy Olyphant,Katherine Lyon Gideon,mother,,False
+Timothy Olyphant,J.V. Bevan Olyphant,father,Timothy Olyphant,True
+Rachel Zegler,Laura Zegler,mother,,False
+Rachel Zegler,Craig Zegler,father,,False
+Russell Crowe,Jocelyn Yvonne Crowe,mother,Russell Crowe,True
+Russell Crowe,John Alexander Crowe,father,,False
+Walton Goggins,Janet Long Goggins,mother,,False
+Richard Madden,Pat Madden,mother,,False
+The Weeknd,Makkonen Tesfaye,mother,,False
+The Weeknd,Makkonen Tesfaye,father,,False
+George Clooney,Nina Bruce Warren,mother,,False
+George Clooney,Nick Clooney,father,George Clooney,True
+Elizabeth Banks,Ann Mitchell,mother,,False
+Elizabeth Banks,Mark P. Mitchell,father,,False
+John Goodman,Virginia Roos Loosmore,mother,,False
+John Goodman,Leslie Francis Goodman,father,,False
+Hari Nef,Robin Clebnik,mother,,False
+Hari Nef,David Nef,father,,False
+Michelle Monaghan,Sharon Monaghan,mother,,False
+Michelle Monaghan,Robert Monaghan,father,,False
+Jeremy Strong,Jeanne Strong,mother,,False
+Ariel Winter,Chrisoula Workman,mother,Ariel Winter,True
+Ariel Winter,Glenn Workman,father,Ariel Winter,True
+Martin Scorsese,Catherine Scorsese,mother,Martin Scorsese,True
+Martin Scorsese,Charles Scorsese,father,Martin Scorsese,True
+Travis Van Winkle,Sally Van Winkle,mother,,False
+Travis Van Winkle,Charles Van Winkle,father,,False
+Samara Weaving,Helena Bezzina,mother,,False
+Samara Weaving,Simon Weaving,father,Samara Weaving,True
+Brendan Fraser,Carol Mary Fraser,mother,,False
+Brendan Fraser,Peter Fraser,father,,False
+Portia Doubleday,Christina Hart,mother,,False
+Portia Doubleday,Frank Doubleday,father,Portia Doubleday,True
+Emma Stone,Krista Stone,mother,Emma Stone,True
+Emma Stone,Jeff Stone,father,,False
+Shameik Moore,Sharon Moore,mother,,False
+Shameik Moore,Errol Moore,father,,False
+Geraldine Viswanathan,Anja Raith,mother,,False
+Geraldine Viswanathan,Suresh Viswanathan,father,,False
+Ethan Peck,Francine Matarazzo,mother,,False
+Ethan Peck,Gregory Peck,father,,False
+Kaitlin Olson,Melinda Olson,mother,,False
+Kaitlin Olson,Donald Lee Olson,father,,False
+Michael Shannon,Barbara Miller Shannon,mother,,False
+Michael Shannon,Donald Sutherlin Shannon,father,,False
+Millie Bobby Brown,Kelly Brown,mother,,False
+Millie Bobby Brown,Robert Brown,father,,False
+Matt Damon,Nancy Carlsson-Paige,mother,Matt Damon,True
+Matt Damon,Kent Damon,father,Matt Damon,True
+Sam Worthington,Jeanne J. Martyn,mother,,False
+Sam Worthington,Ronald W. Worthington,father,,False
+Monica Bellucci,Brunella Briganti,mother,,False
+Monica Bellucci,Pasquale Bellucci,father,Monica Bellucci,True
+Kathleen Turner,Patsy Turner,mother,,False
+Kathleen Turner,Allen Richard Turner,father,,False
+Shailene Woodley,Lori Woodley,mother,Shailene Woodley,True
+Shailene Woodley,Lonnie Woodley,father,Shailene Woodley,True
+Harriet Walter,Xandra Gleeson,mother,,False
+Harriet Walter,Roderick Walter.,father,,False
+Abigail Spencer,Yancy Spencer III,mother,,False
+Abigail Spencer,Yancy Spencer III,father,,False
+Mackenyu,Yoshie Maeda,mother,,False
+Mackenyu,Sonny Chiba,father,,False
+Elisha Cuthbert,Patricia Cuthbert,mother,,False
+Elisha Cuthbert,Kevin Cuthbert,father,,False
+Jennifer Garner,Patricia Ann Garner,mother,Jennifer Garner,True
+Jennifer Garner,William John Garner,father,,False
+Kiernan Shipka,Erin Ann Shipka,mother,,False
+Kiernan Shipka,John D. Shipka,father,Kiernan Shipka,True
+Ariana DeBose,Gina DeBose,mother,,False
+Riley Keough,Lisa Marie Presley,mother,Riley Keough,True
+Riley Keough,Danny Keough,father,Riley Keough,True
+Mary Elizabeth Winstead,Betty Lou Winstead,mother,,False
+Mary Elizabeth Winstead,James Ronald Winstead,father,,False
+Eiza González,Gloria Patricia Reyna,mother,,False
+Eiza González,Carlos González,father,,False
+Caitríona Balfe,Anne Connolly,mother,,False
+Ryan Hurst,Candace Kaniecki,mother,,False
+Ryan Hurst,Rick Hurst,father,,False
+Christopher Reeve,Barbara Pitney Lamb,mother,,False
+Christopher Reeve,Franklin D'Olier Reeve,father,Christopher Reeve,True
+Oscar Isaac,María Eugenia Estrada Nicolle,mother,,False
+Oscar Isaac,Óscar Gonzalo Hernández-Cano,father,,False
+Angourie Rice,Kate Rice,mother,,False
+Angourie Rice,Jeremy Rice,father,,False
+Shia LaBeouf,Shayna Saide,mother,Shia LaBeouf,True
+Shia LaBeouf,Jeffrey Craig LaBeouf,father,Shia LaBeouf,True
+Megan Fox,Gloria Darlene Fox,mother,Megan Fox,True
+Megan Fox,Franklin Thomas Fox,father,,False
+Meryl Streep,Mary Wilkinson Streep,mother,Meryl Streep,True
+Meryl Streep,Harry William Streep Jr.,father,Meryl Streep,True
+Erin Sanders,Kathy Silbert-Sanders,mother,,False
+Erin Sanders,Marc Sanders,father,,False
+Selma Blair,Molly Ann Cooke,mother,,False
+Selma Blair,Elliot I. Beitner,father,,False
+Mark Wahlberg,Alma Wahlberg,mother,Mark Wahlberg,True
+Mark Wahlberg,Donald Wahlberg,father,Mark Wahlberg,True
+Rosamund Pike,Caroline Friend,mother,,False
+Rosamund Pike,Julian Pike,father,,False
+Morena Baccarin,Vera Setta,mother,,False
+Morena Baccarin,Fernando Baccarin,father,,False
+Rufus Sewell,Jo Sewell,mother,,False
+Rufus Sewell,Bill Sewell,father,,False
+Natalie Portman,Shelley Stevens Hershlag,mother,Natalie Portman,True
+Natalie Portman,Avner Hershlag,father,Natalie Portman,True
+Isabela Merced,Katherine Merced,mother,,False
+Isabela Merced,Patrick Moner,father,,False
+Cate Blanchett,June Blanchett,mother,,False
+Cate Blanchett,"Robert DeWitt Blanchett, Jr.",father,Cate Blanchett,True
+Patricia Arquette,Brenda Denaut,mother,,False
+Patricia Arquette,Lewis Arquette,father,Patricia Arquette,True
+Sara Ramirez,Luisa Vargas,mother,,False
+Sara Ramirez,Luis A. Ramirez,father,,False
+Emma Roberts,Kelly Cunningham,mother,Emma Roberts,True
+Emma Roberts,Eric Roberts,father,Emma Roberts,True
+Natalia Tena,Maria Tena,mother,,False
+Natalia Tena,Jesús Andrew Tena,father,,False
+Jessica Brown Findlay,Beverley Findlay,mother,,False
+Jessica Brown Findlay,Christopher Findlay,father,,False
+Elsa Pataky,Cristina Pataky Medianu,mother,,False
+Elsa Pataky,José Francisco Lafuente,father,,False
+Carla Gugino,Carol Gugino,mother,,False
+Carla Gugino,Carl Gugino,father,,False
+Sofia Boutella,Architect Safy Boutella,mother,Sofia Boutella,True
+Sofia Boutella,Safia Boutella,father,,False
+Lily James,Nina James,mother,,False
+Lily James,Jamie Thomson,father,,False
+Raegan Revord,Holly Revord,mother,,False
+Mackenzie Davis,Lotte Davis,mother,,False
+Mackenzie Davis,John Davis,father,,False
+Linda Cardellini,Lorraine Cardellini,mother,Linda Cardellini,True
+Linda Cardellini,Wayne David Cardellini,father,Linda Cardellini,True
+Bruce Willis,Marlene Willis,mother,Bruce Willis,True
+Bruce Willis,David Willis,father,,False
+Danna Paola,Patricia Munguia,mother,,False
+Danna Paola,Juan José Rivera Arellano,father,,False
+Melissa McCarthy,Sandra McCarthy,mother,,False
+Melissa McCarthy,Michael McCarthy,father,,False
+Amy Adams,Kathryn Adams,mother,Amy Adams,True
+Amy Adams,Richard Kent Adams,father,,False
+Chris Evans,Lisa Evans,mother,,False
+Chris Evans,Bob Evans,father,,False
+Taron Egerton,Christine Egerton,mother,,False
+Rachel McAdams,Sandra McAdams,mother,,False
+Rachel McAdams,Lance McAdams,father,,False
+Rick Hoffman,Gail Hoffman,mother,,False
+Rick Hoffman,Charlie Hoffman,father,,False
+Sofia Coppola,Eleanor Coppola,mother,Sofia Coppola,True
+Sofia Coppola,Francis Ford Coppola,father,Sofia Coppola,True
+Anne Hathaway,Kate McCauley Hathaway,mother,Anne Hathaway,True
+Anne Hathaway,Gerald Hathaway,father,Anne Hathaway,True
+Sam Heughan,Chrissie Heughan,mother,Sam Heughan,True
+Al Pacino,Rose Gerard Pacino,mother,Al Pacino,True
+Al Pacino,Salvatore Pacino,father,Al Pacino,True
+Jackie Sandler,Judy Sandler,mother,,False
+Jackie Sandler,Joseph Titone,father,,False
+Sienna Guillory,Isa Guillory,mother,,False
+Sienna Guillory,Isaac Guillory,father,,False
+Mía Maestro,Carlos Maestro,father,,False
+Paul Dano,Gladys Dano,mother,,False
+Paul Dano,Paul Dano Sr.,father,Paul Dano,True
+Minka Kelly,Maureen Dumont Kelly,mother,,False
+Minka Kelly,Rick Dufay,father,Minka Kelly,True
+Michelle Pfeiffer,Donna Pfeiffer,mother,,False
+Michelle Pfeiffer,Richard Pfeiffer,father,,False
+Ben Barnes,Tricia Barnes,mother,,False
+Ben Barnes,Thomas Barnes,father,,False
+Sam Claflin,Sue Claflin,mother,,False
+Sam Claflin,Mark Claflin,father,,False
+Jim Caviezel,Maggie Caviezel,mother,,False
+Jim Caviezel,James Caviezel Sr.,father,Jim Caviezel,True
+Iliza Shlesinger,Ellen Shlesinger,mother,,False
+Iliza Shlesinger,Fred Shlesinger,father,,False
+Tracy Pollan,Corky Pollan,mother,,False
+Tracy Pollan,Stephen M. Pollan,father,Tracy Pollan,True
+Daniel Kaluuya,Damalie Namusoke,mother,,False
+Bradley Cooper,Gloria Campano,mother,Bradley Cooper,True
+Bradley Cooper,Charles Cooper,father,Bradley Cooper,True
+Adrianne Palicki,Nancy Palicki,mother,Adrianne Palicki,True
+Adrianne Palicki,Jeffrey Palicki,father,,False
+Katheryn Winnick,Roman Winnick,mother,,False
+Katheryn Winnick,Roman Winnick,father,,False
+Jensen Ackles,Donna Joan Shaffer-Ackles,mother,Jensen Ackles,True
+Jensen Ackles,Alan Roger Ackles,father,Jensen Ackles,True
+Steve Zahn,Carleton Edward Zahn,mother,,False
+Steve Zahn,Carleton Edward Zahn,father,,False
+Amber Heard,Paige Parsons,mother,,False
+Amber Heard,David Heard,father,Amber Heard,True
+Luke Macfarlane,Penny Macfarlane,mother,,False
+Luke Macfarlane,Thomas Macfarlane,father,,False
+Rashida Jones,Peggy Lipton,mother,Rashida Jones,True
+Rashida Jones,Quincy Jones,father,Rashida Jones,True
+Alicia Vikander,Maria Fahl Vikander,mother,Alicia Vikander,True
+Alicia Vikander,Svante Vikander,father,Alicia Vikander,True
+Alexandra Billings,Gail Billings,mother,,False
+Sandra Bullock,Helga Mathilde Meyer,mother,Sandra Bullock,True
+Sandra Bullock,John W. Bullock,father,Sandra Bullock,True
+Abbey Lee,Peter Kershaw,father,,False
+Christa Miller,Bonnie Trompeter,mother,,False
+Christa Miller,Chuck Miller,father,,False
+Lukas Haas,Emily Tracy,mother,,False
+Lukas Haas,Berthold Haas,father,,False
+Javier Bardem,Pilar Bardem,mother,Javier Bardem,True
+Javier Bardem,Carlos Encinas Bardem,father,,False
+Sasha Lane,Judith Lane,mother,,False
+Rupert Friend,Caroline Friend,mother,,False
+Rupert Friend,David Oxton Friend,father,,False
+Ashley Johnson,Nancy Johnson,mother,,False
+Ashley Johnson,Cliff Johnson,father,,False
+Priyanka Chopra Jonas,Madhu Chopra,mother,Priyanka Chopra Jonas,True
+Priyanka Chopra Jonas,Ashok Chopra,father,,False
+Blake Lively,Elaine Lively,mother,Blake Lively,True
+Blake Lively,Ernie Lively,father,Blake Lively,True
+Vanessa Ray,Valerie Liptak,mother,,False
+Vanessa Ray,James Lipton,father,,False
+Emma Watson,Jacqueline Luesby,mother,Emma Watson,True
+Emma Watson,Chris Watson,father,,False
+Karl Urban,Joyce Urban,mother,,False
+Karl Urban,Jurgen Urban,father,,False
+Josh Lucas,Michele LeFevre,mother,,False
+Josh Lucas,Don Maurer,father,,False
+Angelina Jolie,Marcheline Bertrand,mother,Angelina Jolie,True
+Angelina Jolie,Jon Voight,father,Angelina Jolie,True
+Carolina Miranda,Martha Carrillo,mother,,False
+Joey King,Terry King,mother,,False
+Joey King,Terry King,father,,False
+Gillian Jacobs,Marta Jacobs,mother,,False
+Gillian Jacobs,William F. Jacobs Jr.,father,,False
+Andrea Riseborough,Isobel Riseborough,mother,,False
+Andrea Riseborough,George Riseborough,father,,False
+Clancy Brown,Joyce Helen Eldridge,mother,,False
+Clancy Brown,Bud Brown,father,,False
+Jennifer Love Hewitt,Patricia Mae Hewitt,mother,Jennifer Love Hewitt,True
+Jennifer Love Hewitt,Herbert Daniel Hewitt,father,,False
+Luna Lauren Velez,Andrés Vélez,father,,False
+Charlie Day,Mary Day,mother,,False
+Charlie Day,Dr. Thomas Charles Day,father,,False
+Dakota Fanning,Heather Joy Arrington,mother,,False
+Dakota Fanning,Steven Fanning,father,Dakota Fanning,True
+Alexander Ludwig,Sharlene Martin,mother,,False
+Alexander Ludwig,Harald Ludwig,father,,False
+Ariana Greenblatt,Sol Greenblatt,mother,,False
+Ariana Greenblatt,Shon Greenblatt,father,,False
+Liam Neeson,Bernard Neeson,father,Liam Neeson,True
+Jennifer Aniston,Nancy Dow,mother,Jennifer Aniston,True
+Jennifer Aniston,John Aniston,father,Jennifer Aniston,True
+Donnie Yen,Bow-sim Mark,mother,Donnie Yen,True
+Donnie Yen,Klyster Yen,father,,False
+Greta Gerwig,Christine Gerwig,mother,Greta Gerwig,True
+Greta Gerwig,Gordon Gerwig,father,Greta Gerwig,True
+Michael J. Fox,Phyllis Piper,mother,,False
+Michael J. Fox,William Fox,father,,False
+Jon Bernthal,Joan Lurie Bernthal,mother,Jon Bernthal,True
+Jon Bernthal,Eric Bernthal,father,Jon Bernthal,True
+Jack Quaid,Meg Ryan,mother,Jack Quaid,True
+Jack Quaid,Dennis Quaid,father,Jack Quaid,True
+Pete Davidson,Amy Waters Davidson,mother,Pete Davidson,True
+Pete Davidson,Scott Davidson,father,Pete Davidson,True
+Will Smith,Caroline Bright,mother,,False
+Will Smith,Willard Carroll Smith Sr.,father,Will Smith,True
+Léa Seydoux,Valérie Schlumberger,mother,Léa Seydoux,True
+Léa Seydoux,Henri Seydoux,father,Léa Seydoux,True
+Zachary Levi,Susan Pugh,mother,,False
+Zachary Levi,Darrell Pugh,father,,False
+Val Kilmer,Gladys Swanette Ekstadt,mother,,False
+Val Kilmer,Eugene Kilmer,father,,False
+Olivia Wilde,Leslie Cockburn,mother,Olivia Wilde,True
+Olivia Wilde,Andrew Cockburn,father,Olivia Wilde,True
+Meagan Good,Tyra Wardlow-Doyle,mother,,False
+Eliza Dushku,Judith Rasmussen,mother,,False
+Eliza Dushku,Philip R. Dushku,father,Eliza Dushku,True
+Rachel Weisz,Edith Ruth Weisz,mother,,False
+Rachel Weisz,George Weisz,father,Rachel Weisz,True
+Joaquin Phoenix,Arlyn Phoenix,mother,Joaquin Phoenix,True
+Joaquin Phoenix,John Lee Bottom,father,Joaquin Phoenix,True
+Charlie Hunnam,Jane Bell,mother,,False
+Charlie Hunnam,William Hunnam,father,Charlie Hunnam,True
+Sigourney Weaver,Elizabeth Inglis,mother,Sigourney Weaver,True
+Sigourney Weaver,Sylvester L. Weaver Jr.,father,Sigourney Weaver,True
+Seth Rogen,Sandy Rogen,mother,Seth Rogen,True
+Seth Rogen,Mark Rogen,father,,False
+Elle Fanning,Heather Joy Arrington,mother,,False
+Elle Fanning,Steven Fanning,father,,False
+Jon Hamm,Deborah Hamm,mother,,False
+Jon Hamm,Daniel Hamm,father,,False
+David Tennant,Helen McLeod,mother,,False
+David Tennant,Sandy McDonald,father,,False
+Maisie Williams,Hilary Williams,mother,,False
+Maisie Williams,Hilary Francis Williams,father,,False
+Christina Ricci,Sarah Ricci,mother,,False
+Christina Ricci,Ralph Ricci,father,,False
+Lily Rabe,Jill Clayburgh,mother,Lily Rabe,True
+Lily Rabe,David Rabe,father,Lily Rabe,True
+Kate Beckinsale,Judy Loe,mother,Kate Beckinsale,True
+Kate Beckinsale,Richard Beckinsale,father,Kate Beckinsale,True
+Tia Carrere,Audrey Duhinio Janairo,mother,,False
+Tia Carrere,Alexander Janairo,father,,False
+Abigail Breslin,Kim Breslin,mother,Abigail Breslin,True
+Abigail Breslin,Michael Breslin,father,Abigail Breslin,True
+Natalie Morales,Penelope Morales,mother,,False
+Natalie Morales,"Lieutenant Colonel Mario Morales, Jr.",father,,False
+Jodie Whittaker,Adrian Whittaker,father,,False
+Laura Linney,Miriam Anderson Linney,mother,Laura Linney,True
+Laura Linney,Romulus Linney,father,Laura Linney,True
+Odessa A’zion,Pamela Adlon,mother,,False
+Odessa A’zion,Pamela Adlon,father,,False
+Pier Angeli,Enrichetta Romiti,mother,,False
+Pier Angeli,Enrico Angeli,father,,False
+Michael Biehn,Marcia Biehn,mother,,False
+Michael Biehn,Don Biehn,father,,False
+Sarah Shahi,Mah Monir Soroush Azar,mother,,False
+Sarah Shahi,Abbas Jahansouz Shahi,father,,False
+Sean Patrick Flanery,Genie Flanery,mother,,False
+Sean Patrick Flanery,Paul Flanery,father,,False
+Kaitlyn Dever,Kathy Dever,mother,,False
+Kaitlyn Dever,Tim Dever,father,,False
+Bruce Campbell,Joanne Louise Campbell,mother,,False
+Bruce Campbell,Charles Newton Campbell,father,,False
+Jason Isaacs,Sheila Isaacs,mother,,False
+Jason Isaacs,Eric Isaacs,father,,False
+Robin Williams,Laurie Williams,mother,,False
+Robin Williams,Robert Fitzgerald Williams,father,,False
+Lena Headey,Sue Headey,mother,,False
+Lena Headey,John Headey,father,Lena Headey,True
+Jay Baruchel,Robyne Baruchel,mother,Jay Baruchel,True
+Jay Baruchel,Serge Baruchel,father,Jay Baruchel,True
+Brittany Snow,Cinda Snow,mother,,False
+Brittany Snow,John Snow,father,,False
+Luna Blaise,Angelyna Martinez,mother,,False
+Luna Blaise,Paul Boyd,father,,False
+Jacob Elordi,Melissa Elordi,mother,Jacob Elordi,True
+Jacob Elordi,John Elordi,father,,False
+Bailee Madison,Patricia Riley,mother,,False
+Bailee Madison,Michael Shawn Riley,father,,False
+Adam Driver,Nancy Wright,mother,,False
+Adam Driver,Joe Douglas Driver,father,,False
+Alison Brie,Joanne Brenner,mother,,False
+Alison Brie,Charles Schermerhorn,father,,False
+Toby Kebbell,Michelle Mathers,mother,,False
+Toby Kebbell,Robert Kebbell,father,,False
+Will Arnett,Edith Alexandra Palk,mother,,False
+Will Arnett,Emerson James Arnett,father,,False
+Tessa Thompson,Marc Anthony Thompson,mother,Tessa Thompson,True
+Tessa Thompson,Marc Anthony Thompson,father,Tessa Thompson,True
+Jamie Dornan,Lorna Dornan,mother,Jamie Dornan,True
+Jamie Dornan,Jim Dornan,father,Jamie Dornan,True
+Stephen Lang,Theresa Volmer,mother,,False
+Stephen Lang,Eugene Lang,father,,False
+James Spader,Jean Fraser Spader,mother,James Spader,True
+James Spader,Stoddard Greenwood Spader,father,James Spader,True
+Nicholas Braun,Elizabeth Lyle Braun,mother,,False
+Nicholas Braun,Craig Braun,father,,False
+Hugh Jackman,Grace McNeil,mother,,False
+Hugh Jackman,Christopher John Jackman,father,,False
+Daniel Day-Lewis,Jill Balcon,mother,Daniel Day-Lewis,True
+Daniel Day-Lewis,Cecil Day-Lewis,father,Daniel Day-Lewis,True
+Keira Knightley,Sharman Macdonald,mother,Keira Knightley,True
+Keira Knightley,Will Knightley,father,Keira Knightley,True
+Kristen Bell,Lorelei Bell,mother,,False
+Kristen Bell,Tom Bell,father,,False
+Jim Carrey,Kathleen Carrey,mother,Jim Carrey,True
+Jim Carrey,Percy Carrey,father,Jim Carrey,True
+Gary Oldman,Kathleen Oldman,mother,Gary Oldman,True
+Gary Oldman,Leonard Bertram Oldman,father,Gary Oldman,True
+Jodie Comer,Donna Comer,mother,,False
+Jodie Comer,Don Comer,father,,False
+Carrie Preston,Linda Barbara Preston,mother,,False
+Mariette Hartley,Polly Cornwell,mother,,False
+Mariette Hartley,Paul Hembree Hartley,father,,False
+Stephen Dorff,Nancy Dorff,mother,,False
+Stephen Dorff,Steve Dorff,father,Stephen Dorff,True
+Ralph Fiennes,Jennifer Lash,mother,Ralph Fiennes,True
+Ralph Fiennes,Mark Fiennes,father,Ralph Fiennes,True
+Sean Connery,Joseph Connery,father,Sean Connery,True
+Alice Eve,Sharon Maughan,mother,Alice Eve,True
+Alice Eve,Trevor Eve,father,Alice Eve,True
+Sam Elliott,Glynn Mamie Sparks,mother,,False
+Sam Elliott,Henry Nelson Elliott,father,,False
+Kirsten Dunst,Inez Rupprecht,mother,,False
+Kirsten Dunst,Klaus Dunst,father,,False
+Sasha Alexander,Sofija Kukavica,mother,,False
+Sasha Alexander,Slobodan Drobnjak,father,,False
+Liana Liberato,Rhondelle Liberato,mother,,False
+Liana Liberato,George Liberato,father,,False
+Jennette McCurdy,Debra McCurdy,mother,Jennette McCurdy,True
+Jennette McCurdy,Mark McCurdy,father,,False
+Harold Perrineau,Sylvia Perrineau,mother,Harold Perrineau,True
+Harold Perrineau,Harold Williams,father,,False
+Katy Mixon,Donna Mixon,mother,,False
+Katy Mixon,Fred Mixon,father,,False
+Jessica Chastain,Jerri Chastain,mother,Jessica Chastain,True
+Jessica Chastain,Michael Monasterio,father,,False
+Luke Grimes,Angie Barker,mother,,False
+Luke Grimes,Randy Grimes,father,,False
+Bryan Cranston,Audrey Peggy Sell,mother,,False
+Bryan Cranston,Joe Cranston,father,Bryan Cranston,True
+Robert Pattinson,Clare Pattinson,mother,Robert Pattinson,True
+Robert Pattinson,Richard Pattinson,father,Robert Pattinson,True
+Skyler Gisondo,Stacey Gisondo,mother,,False
+Skyler Gisondo,Stu Gisondo,father,,False
+Elizabeth Debicki,Piotr Debicki,father,Elizabeth Debicki,True
+Ke Huy Quan,Quan Y Huy,father,,False
+Emma Heming Willis,Zorina Heming,mother,,False
+Sophie Thatcher,Robert Thatcher,father,,False
+Zoe Perry,Laurie Metcalf,mother,Zoe Perry,True
+Zoe Perry,Jeff Perry,father,Zoe Perry,True
+Kate Capshaw,Beverly Sue Simon,mother,,False
+Kate Capshaw,Edwin Leon Nail,father,,False
+Kelly Preston,Linda Carlson,mother,,False
+Kelly Preston,Peter Palzis,father,,False
+Nathan Fillion,Cookie Fillion,mother,,False
+Nathan Fillion,Bob Fillion,father,,False
+Marisa Tomei,Addie Tomei,mother,Marisa Tomei,True
+Marisa Tomei,Gary A. Tomei,father,Marisa Tomei,True
+Olivia Cooke,Lindsy Wild,mother,,False
+Olivia Cooke,John Cooke,father,,False
+Bridget Regan,Mary Catherine Regan,mother,,False
+Bridget Regan,Jim Regan,father,,False
+Hope Davis,Joan Davis,mother,,False
+Hope Davis,William Davis,father,,False
+Gemma Arterton,Sally-Anne Heap,mother,,False
+Gemma Arterton,Barry Arterton,father,Gemma Arterton,True
+Mads Mikkelsen,Bente Christiansen,mother,,False
+Mads Mikkelsen,Henning Mikkelsen,father,,False
+Yvonne Strahovski,Bozena Strahovski,mother,Yvonne Strahovski,True
+Yvonne Strahovski,Peter Strzechowski,father,Yvonne Strahovski,True
+Lance Reddick,Doris Reddick,mother,,False
+Anna Kendrick,Janice Kendrick,mother,,False
+Anna Kendrick,William Kendrick,father,,False
+Saoirse Ronan,Monica Ronan,mother,Saoirse Ronan,True
+Saoirse Ronan,Paul Ronan,father,Saoirse Ronan,True
+Adrien Brody,Sylvia Plachy,mother,Adrien Brody,True
+Adrien Brody,Elliot Brody,father,,False
+Joel Edgerton,Marianne Edgerton,mother,,False
+Joel Edgerton,Michael Edgerton,father,,False
+Jamie Lee Curtis,Janet Leigh,mother,Jamie Lee Curtis,True
+Jamie Lee Curtis,Tony Curtis,father,Jamie Lee Curtis,True
+Bella Ramsey,Alex Ramsey,father,,False
+Jack Nicholson,June Frances Nicholson,mother,Jack Nicholson,True
+Jack Nicholson,Donald Furcillo,father,Jack Nicholson,True
+Michelle Yeoh,Janet Yeoh,mother,,False
+Michelle Yeoh,Yeoh Kian Teik,father,,False
+Tom Pelphrey,Richard Pelphrey,father,,False
+Anthony Ramos,Mildred Ramos,mother,,False
+Jane Russell,Geraldine Jacobi,mother,,False
+Jane Russell,Roy William Russell,father,Jane Russell,True
+Maria Bello,Kathy Bello,mother,,False
+Maria Bello,Joe Bello,father,,False
+Kirk Fox,Joyce Fox,mother,,False
+Kirk Fox,Gardner Fox,father,,False
+Britt Robertson,Beverly Robertson,mother,,False
+Britt Robertson,Ryan Robertson,father,,False
+Laura Benanti,Linda Wonneberger,mother,,False
+Laura Benanti,Martin Vidnovic,father,Laura Benanti,True
+Harry Melling,Joanne Melling,mother,,False
+Harry Melling,Paul Melling,father,,False
+Isabella Rossellini,Ingrid Bergman,mother,Isabella Rossellini,True
+Isabella Rossellini,Roberto Rossellini,father,Isabella Rossellini,True
+Gina Torres,Rebecca Torres,mother,,False
+Gina Torres,Richard Torres,father,,False
+Bella Thorne,Tamara Thorne,mother,,False
+Julia Roberts,Betty Lou Bredemus,mother,Julia Roberts,True
+Julia Roberts,Walter Grady Roberts,father,Julia Roberts,True
+Bob Odenkirk,Barbara Odenkirk,mother,Bob Odenkirk,True
+Bob Odenkirk,Walter Odenkirk,father,Bob Odenkirk,True
+Woody Harrelson,Diane Lou Oswald,mother,,False
+Woody Harrelson,Charles Harrelson,father,Woody Harrelson,True
+Ridley Scott,Elizabeth Jean Scott,mother,,False
+Ridley Scott,Francis Percy Scott,father,,False
+Amanda Schull,Susan Schull,mother,,False
+Robert Carlyle,Elizabeth McDonald,mother,,False
+Robert Carlyle,Joseph Carlyle,father,,False
+Edward Norton,Lydia Robinson Norton,mother,,False
+Edward Norton,Edward Mower Norton Jr.,father,Edward Norton,True
+Bel Powley,Janis Jaffa,mother,,False
+Bel Powley,Mark Powley,father,,False
+Bill Paxton,Mary Lou Paxton,mother,,False
+Bill Paxton,John Lane Paxton,father,,False
+Dakota Johnson,Melanie Griffith,mother,Dakota Johnson,True
+Dakota Johnson,Don Johnson,father,Dakota Johnson,True
+Anna Torv,Susan Torv,mother,Anna Torv,True
+Anna Torv,Hans Torv,father,,False
+Benjamin Walker,Jeannine Walker,mother,,False
+Benjamin Walker,Greg Walker,father,,False
+Hunter Schafer,Katy Schafer,mother,,False
+Hunter Schafer,Mac Schafer,father,,False
+Nicole Ari Parker,Susan Parker,mother,,False
+Nicole Ari Parker,Donald Parker,father,,False
+Errol Flynn,Marelle Young,mother,,False
+Errol Flynn,Theodore Thomson Flynn,father,Errol Flynn,True
+Annie Wersching,Sandy Wersching,mother,,False
+Annie Wersching,Frank Wersching Jr.,father,Annie Wersching,True
+Bill Hader,Sherri Renee Hader,mother,,False
+Bill Hader,William Thomas Hader Sr.,father,Bill Hader,True
+Kaya Scodelario,Katia Scodelario,mother,,False
+Kaya Scodelario,Roger Humphrey,father,,False
+Sadie Frost,Mary Davidson,mother,,False
+Sadie Frost,David Vaughan,father,,False
+Sadie Stanley,Matt Stanley,father,,False
+Christina Hendricks,Jackie Sue Raymond,mother,,False
+Christina Hendricks,Robert Hendricks,father,,False
+Colin Farrell,Rita Farrell,mother,,False
+Colin Farrell,Eamon Farrell,father,,False
+Michael B. Jordan,Donna Jordan,mother,,False
+Michael B. Jordan,Michael A. Jordan,father,,False
+John Travolta,Helen Travolta,mother,John Travolta,True
+John Travolta,Salvatore Travolta,father,John Travolta,True
+Mamoudou Athie,El Hadj Athie,father,,False
+Adria Arjona,Leslie Torres,mother,,False
+Adria Arjona,Ricardo Arjona,father,Adria Arjona,True
+Miles Teller,Merry Flowers,mother,,False
+Miles Teller,Mike Teller,father,,False
+Annie Potts,Dorothy Harris Potts,mother,,False
+Annie Potts,Powell Grisette Potts,father,,False
+Leslie Bibb,Betty Blakemore Sulzbach,mother,,False
+Steve Carell,Harriet Theresa Carell,mother,Steve Carell,True
+Steve Carell,Edwin A. Carell,father,Steve Carell,True
+Katherine Heigl,Nancy Heigl,mother,Katherine Heigl,True
+Katherine Heigl,Paul Heigl,father,Katherine Heigl,True
+M. Night Shyamalan,Jayalakshmi Shyamalan,mother,M. Night Shyamalan,True
+M. Night Shyamalan,Nelliate C. Shyamalan,father,,False
+Sarah Jessica Parker,Barbara Parker,mother,,False
+Sarah Jessica Parker,Stephen Parker,father,,False
+Zooey Deschanel,Mary Jo Deschanel,mother,Zooey Deschanel,True
+Zooey Deschanel,Caleb Deschanel,father,Zooey Deschanel,True
+David Harbour,Kenneth Harbour,father,,False
+Molly C. Quinn,Dianne Quinn,mother,,False
+Molly C. Quinn,Tom Quinn,father,,False
+Cara Delevingne,Pandora Delevingne,mother,Cara Delevingne,True
+Cara Delevingne,Charles Delevingne,father,Cara Delevingne,True
+Andrew Garfield,Lynn Garfield,mother,,False
+Andrew Garfield,Richard Garfield,father,,False
+Daniel Radcliffe,Marcia Gresham,mother,Daniel Radcliffe,True
+Daniel Radcliffe,Alan Radcliffe,father,Daniel Radcliffe,True
+Julie Bowen,Suzanne Frey Bowen,mother,,False
+Julie Bowen,John Alexander Luetkemeyer Jr.,father,,False
+Diane Lane,Colleen Farrington,mother,Diane Lane,True
+Diane Lane,Burt Lane,father,,False
+Connie Nielsen,Laila Nielsen,mother,,False
+Connie Nielsen,Bent Nielsen,father,,False
+Abbie Cornish,Shelley Cornish,mother,,False
+Abbie Cornish,Barry Cornish,father,,False
+Daniel Craig,Olivia Craig,mother,,False
+Daniel Craig,Tim Craig,father,,False
+Common,Dr. Mahalia Ann Hines,mother,,False
+Common,Lonnie Lynn Sr.,father,,False
+Danny McBride,Kathy Rudy,mother,,False
+Danny McBride,Jim McBride,father,,False
+Jake Johnson,Eve Johnson,mother,,False
+Jake Johnson,Ken Weinberger,father,,False
+Stanley Tucci,Joan Tucci,mother,Stanley Tucci,True
+Stanley Tucci,"Stanley Tucci, Sr.",father,Stanley Tucci,True
+Julia Stiles,Judith Newcomb Stiles,mother,Julia Stiles,True
+Julia Stiles,John O'Hara,father,,False
+Paul Mescal,Dearbhla Mescal,mother,,False
+Charlie Murphy,Lillian Murphy,mother,,False
+Charlie Murphy,Charles Edward Murphy,father,,False
+Ethan Hawke,Leslie Hawke,mother,Ethan Hawke,True
+Ethan Hawke,James Steven Hawke,father,,False
+Jordana Brewster,Maria João Brewster,mother,,False
+Jordana Brewster,Alden Brewster,father,,False
+Helen Mirren,Kathleen Alexandrina Eva Matilda Rogers,mother,,False
+Helen Mirren,Vasily Petrovich Mironoff,father,Helen Mirren,True
+Virginia Gardner,Sarah Gardner,mother,,False
+Virginia Gardner,Chuck Gardner,father,,False
+Suki Waterhouse,Elizabeth Waterhouse,mother,,False
+Suki Waterhouse,Norman Waterhouse,father,,False
+Lacey Chabert,Julie Chabert,mother,,False
+Lacey Chabert,Tony Chabert,father,,False
+Reese Witherspoon,Betty Reese,mother,Reese Witherspoon,True
+Reese Witherspoon,John Draper Witherspoon,father,Reese Witherspoon,True
+Gabriel Basso,Marcie Basso,mother,,False
+Gabriel Basso,Louis J. Basso,father,,False
+Olivia d'Abo,Maggie London,mother,,False
+Simon Pegg,Gillian Rosemary Smith,mother,,False
+Simon Pegg,John Beckingham,father,,False
+Jackie Chan,Lee-Lee Chan,mother,,False
+Jackie Chan,Charles Chan,father,Jackie Chan,True
+Zoey Deutch,Lea Thompson,mother,Zoey Deutch,True
+Zoey Deutch,Howard Deutch,father,Zoey Deutch,True
+Tom Welling,Bonnie Welling,mother,,False
+Tom Welling,Mark Welling,father,,False
+Madelyn Cline,Pam Cline,mother,,False
+Madelyn Cline,Mark Cline,father,,False
+Holly Hunter,Opal Marguerite Catledge,mother,,False
+Holly Hunter,Charles Edwin Hunter,father,,False
+Emmanuelle Seigner,Aline Ponelle,mother,,False
+Emmanuelle Seigner,Jean-Louis Seigner,father,Emmanuelle Seigner,True
+Claudia Lee,Denise Lee,mother,,False
+Claudia Lee,Klaudiusz Lee,father,,False
+Piper Perabo,Mary Charlotte Ulland,mother,,False
+Piper Perabo,William Perabo,father,Piper Perabo,True
+Morgan Freeman,Mayme Edna Revere,mother,Morgan Freeman,True
+Morgan Freeman,"Morgan Porterfield Freeman, Sr.",father,Morgan Freeman Jr.,True
+Domhnall Gleeson,Mary Weldon,mother,,False
+Domhnall Gleeson,Brendan Gleeson,father,Domhnall Gleeson,True
+Dove Cameron,Bonnie Wallace,mother,Dove Cameron,True
+Dove Cameron,Philip Alan Hosterman,father,Dove Cameron,True
+Olivia Holt,Kim Holt,mother,,False
+Olivia Holt,Mark Holt,father,,False
+Maika Monroe,Dixie Monroe,mother,,False
+Maika Monroe,Dixie Brubaker,father,,False
+Michael Sheen,Irene Sheen,mother,,False
+Michael Sheen,Meyrick Sheen,father,Michael Sheen,True
+David Fincher,Claire Mae Fincher,mother,,False
+David Fincher,Howard Fincher,father,,False
+Michael Fassbender,Adele Fassbender,mother,,False
+Michael Fassbender,Josef Fassbender,father,Michael Fassbender,True
+Sofia Black-D'Elia,Eleanor D'Elia,mother,,False
+Sofia Black-D'Elia,Anthony D'Elia,father,,False
+Eva Green,Marlène Jobert,mother,Eva Green,True
+Eva Green,Walter Green,father,,False
+Rooney Mara,Kathleen McNulty Rooney,mother,,False
+Rooney Mara,Chris Mara,father,,False
+Emma Thompson,Phyllida Law,mother,Emma Thompson,True
+Emma Thompson,Eric Thompson,father,Emma Thompson,True
+Poorna Jagannathan,Retired Vice Admiral V.R. Jagannathan,father,,False
+Melissa Benoist,Julie Benoist,mother,,False
+Melissa Benoist,Jim Benoist,father,,False
+Frances McDormand,Noreen E. Nickelson McDormand,mother,Frances McDormand,True
+Frances McDormand,Vernon McDormand,father,Frances McDormand,True
+Krysten Ritter,Kathy Ritter,mother,,False
+Krysten Ritter,Gary Ritter,father,,False
+Fisher Stevens,Sally Fisher,mother,,False
+Viggo Mortensen,Grace Gamble Atkinson,mother,,False
+Viggo Mortensen,Viggo Peter Mortensen Sr.,father,Viggo Mortensen Jr.,True
+Liv Tyler,Bebe Buell,mother,Liv Tyler,True
+Liv Tyler,Steven Tyler,father,Liv Tyler,True
+Jack Black,Judith Love Cohen,mother,Jack Black,True
+Jack Black,Thomas William Black,father,,False
+Taylor Kitsch,Susan Green,mother,,False
+Taylor Kitsch,Drew Kitsch,father,,False
+Michael Cera,Linda Cera,mother,,False
+Michael Cera,Luigi Cera,father,,False
+James Gunn,Leota Gunn,mother,,False
+James Gunn,James F. Gunn,father,James Gunn,True
+Emily Browning,Shelley Browning,mother,,False
+Emily Browning,Andrew Browning,father,,False
+Neve Campbell,Marnie Neve Campbell,mother,,False
+Neve Campbell,Gerry Campbell,father,,False
+John Krasinski,Mary Clare Krasinski,mother,John Krasinski,True
+John Krasinski,Ronald Krasinski,father,,False
+Paul Walker,Cheryl Walker,mother,Paul Walker,True
+Paul Walker,Paul William Walker III,father,Paul Walker IV,True
+Jacob Tremblay,Christina Candia Tremblay,mother,,False
+Jacob Tremblay,Jason Tremblay,father,Jacob Tremblay,True
+Abby Ryder Fortson,Christie Lynn Smith,mother,Abby Ryder Fortson,True
+Abby Ryder Fortson,John Fortson,father,Abby Ryder Fortson,True
+Natasia Demetriou,Ellie Demetriou,father,,False
+Eric Stoltz,Evelyn B. Stoltz,mother,,False
+Eric Stoltz,Jack Stoltz,father,,False
+John Cena,Carol Cena,mother,John Cena,True
+John Cena,John Cena Sr.,father,John Cena Jr.,True
+Michelle Williams,Carla Williams,mother,,False
+Michelle Williams,Larry Richard Williams,father,Michelle Williams,True
+Geena Davis,Lucille Davis,mother,,False
+Geena Davis,William F. Davis,father,,False
+Paul Rudd,Gloria Rudd,mother,Paul Rudd,True
+Paul Rudd,Michael Rudd,father,,False
+James Mangold,Sylvia Plimack Mangold,mother,James Mangold,True
+James Mangold,Robert Mangold,father,James Mangold,True
+Sadie Sink,Lori Sink,mother,,False
+Sadie Sink,Casey Adam Sink,father,,False
+Annabelle Wallis,Richard Hardman,father,,False
+Paula Patton,Joyce Patton,mother,,False
+Paula Patton,Charles Patton,father,,False
+Judy Holliday,Helen Tuvim,mother,Judy Holliday,True
+Judy Holliday,Abe Tuvim,father,Judy Holliday,True
+Martin Freeman,Philomena Norris,mother,,False
+Martin Freeman,Geoffrey Freeman,father,,False
+Milla Jovovich,Galina Jovovich,mother,Milla Jovovich,True
+Milla Jovovich,Bogdan Jovovich,father,Milla Jovovich,True
+Peyton List,Suzanne List,mother,,False
+Peyton List,John List,father,,False
+James Norton,Lavinia Norton,mother,,False
+James Norton,Hugh B. Norton,father,,False
+Noomi Rapace,Nina Norén,mother,,False
+Noomi Rapace,Rogelio Durán,father,,False
+Tobias Menzies,Gillian Menzies,mother,,False
+Tobias Menzies,Peter Menzies Jr.,father,,False
+Edward Furlong,Eleanor Torres,mother,,False
+Edward Furlong,Eleanor Torres,father,,False
+Brooke Langton,Jackson Langton,mother,,False
+Brooke Langton,Jackson Langton,father,,False
+Ellen Barkin,Evelyn Barkin,mother,,False
+Ellen Barkin,Sol Barkin,father,,False
+Mae Whitman,Pat Musick,mother,Mae Whitman,True
+Mae Whitman,Pat Whitman,father,,False
+John Francis Daley,R.F. Daley,mother,,False
+John Francis Daley,R.F. Daley,father,,False
+Tim Robbins,Mary Robbins,mother,,False
+Tim Robbins,Gil Robbins,father,Tim Robbins,True
+Ashly Burch,David Burch,father,,False
+Zac Efron,Starla Baskett,mother,Zac Efron,True
+Zac Efron,David Efron,father,Zac Efron,True
+Will Patton,Billie Patton,mother,,False
+Will Patton,Bill Patton,father,,False
+Sam Levinson,Diana Rhodes,mother,,False
+Sam Levinson,Barry Levinson,father,Sam Levinson,True
+Parker Posey,Lynda Patton,mother,,False
+Parker Posey,Chris Posey,father,,False
+Emily Osment,Theresa Osment,mother,Emily Osment,True
+Emily Osment,Michael Eugene Osment,father,Emily Osment,True
+Boyd Holbrook,Ellen Holbrook,mother,,False
+Boyd Holbrook,Don Holbrook,father,,False
+Jennifer Morrison,Judy Morrison,mother,,False
+Jennifer Morrison,David L. Morrison,father,,False
+Iain Glen,Hamish Glen,father,,False
+Naomi Watts,Myfanwy Edwards Roberts,mother,,False
+Naomi Watts,Peter Watts,father,,False
+Liam Hemsworth,Leonie Hemsworth,mother,,False
+Liam Hemsworth,Craig Hemsworth,father,,False
+Marlon Brando,Dorothy Julia Pennebaker Brando,mother,Marlon Brando,True
+Marlon Brando,Marlon Brando Sr.,father,Marlon Brando Jr.,True
+Emma Mackey,Rachel Mackey,mother,,False
+Emma Mackey,Philippe Mackey,father,,False
+Nicola Peltz Beckham,Claudia Heffner Peltz,mother,,False
+Nicola Peltz Beckham,Nelson Peltz,father,,False
+Ariana Richards,Darielle Garrison,mother,,False
+Ariana Richards,Gary Richards,father,,False
+Cameron Diaz,Billie Diaz,mother,,False
+Cameron Diaz,Emilio Diaz,father,Cameron Diaz,True
+Ruby Rose,Katia Langenheim,mother,Ruby Rose,True
+Jennifer Coolidge,Pauline Coolidge,mother,,False
+Jennifer Coolidge,Paul Coolidge,father,,False
+Daisy Edgar-Jones,Wendy Edgar-Jones,mother,,False
+Daisy Edgar-Jones,Philip Edgar-Jones,father,,False
+Sarah Paulson,Catharine Gordon Dolcater,mother,,False
+Sarah Paulson,Douglas Lyle Paulson II,father,,False
+Stana Katic,Rada Katic,mother,,False
+Stana Katic,Peter Katic,father,Stana Katic,True
+Joel Kinnaman,Bitte Kinnaman,mother,Joel Kinnaman,True
+Joel Kinnaman,Steve Kinnaman,father,,False
+Erin Murphy,Stephanie Murphy,mother,,False
+Erin Murphy,Dan Murphy,father,,False
+John Rhys-Davies,Phyllis Jones,mother,,False
+John Rhys-Davies,Rhys Davies,father,,False
+River Phoenix,Arlyn Phoenix,mother,River Phoenix,True
+River Phoenix,John Lee Bottom,father,,False
+Courtney Eaton,Stephenie Eaton,mother,,False
+Courtney Eaton,Stephen Eaton,father,,False
+Jeri Ryan,Sharon Zimmerman,mother,,False
+Selena Gomez,Mandy Teefey,mother,Selena Gomez,True
+Selena Gomez,Ricardo Joel Gomez,father,Selena Gomez,True
+Cary Elwes,Tessa Kennedy,mother,,False
+Cary Elwes,Dominick Elwes,father,Cary Elwes,True
+Will Ferrell,Betty Kay Overman,mother,,False
+Will Ferrell,Roy Lee Ferrell Jr.,father,Will Ferrell,True
+Winona Ryder,Cynthia Palmer,mother,,False
+Winona Ryder,Michael Horowitz,father,Winona Ryder,True
+Armie Hammer,Dru Ann Mobley,mother,,False
+Armie Hammer,Michael Armand Hammer,father,Armie Hammer,True
+Renee Olstead,Rebecca Lynn Jeffries,mother,,False
+Renee Olstead,Christopher Eric Olstead,father,,False
+Ian McShane,Irene McShane,mother,,False
+Ian McShane,Harry McShane,father,Ian McShane,True
+Wendie Malick,Gigi Malick,mother,,False
+Wendie Malick,Ken Malick,father,,False
+Nina Dobrev,Michaela Dobreva,mother,,False
+Nina Dobrev,Konstantin Dobrev,father,,False
+Elisabeth Shue,Anne Harms,mother,,False
+Elisabeth Shue,James Shue,father,Elisabeth Shue,True
+Téa Leoni,Emily Patterson,mother,,False
+Téa Leoni,Anthony Pantaleoni,father,Téa Leoni,True
+Sebastian Stan,Georgeta Orlovschi,mother,,False
+Sebastian Stan,Georgeta Orlovschi,father,,False
+James Franco,Betsy Lou Franco,mother,James Franco,True
+James Franco,Douglas Eugene Franco,father,James Franco,True
+JoAnna Garcia Swisher,Lorraine García,mother,,False
+JoAnna Garcia Swisher,Jay Garcia,father,,False
+Jennifer Nettles,Carla Temple,mother,,False
+Jennifer Nettles,Carlo Nettles,father,,False
+Rosario Dawson,Isabel Celeste,mother,,False
+Rosario Dawson,Greg Dawson,father,,False
+Haley Lu Richardson,Valerie Richardson,mother,,False
+Haley Lu Richardson,Forrest L. Richardson,father,,False
+Richa Moorjani,Sudhir Moorjani,father,,False
+Jack O'Connell,Alison O'Connell,mother,,False
+Jack O'Connell,John O'Connell,father,,False
+Jennifer Jason Leigh,Barbara Turner,mother,Jennifer Jason Leigh,True
+Jennifer Jason Leigh,Vic Morrow,father,Jennifer Jason Leigh,True
+Chloe Bennet,Stephanie Crane,mother,,False
+Chloe Bennet,Bennet Wang,father,,False
+Kathryn Hahn,Karen Hahn,mother,,False
+Kathryn Hahn,Bill Hahn,father,,False
+Mila Kunis,Elvira Kunis,mother,Mila Kunis,True
+Mila Kunis,Mark Kunis,father,Mila Kunis,True
+Sean Young,Lee Guthrie,mother,,False
+Sean Young,Donald Young Jr.,father,,False
+Jessica Biel,Kimberly Biel,mother,,False
+Jessica Biel,Jonathan Biel,father,Jessica Biel,True
+David Corenswet,Caroline Packard,mother,,False
+David Corenswet,John Corenswet,father,,False
+Vera Farmiga,Lubomyra Farmiga,mother,Vera Farmiga,True
+Vera Farmiga,Mykhailo Farmiga,father,Vera Farmiga,True
+Lucy Boynton,Adriaane Pielou,mother,,False
+Lucy Boynton,Graham Boynton,father,,False
+Wes Bentley,Cherie Bentley,mother,,False
+Wes Bentley,David Bentley,father,,False
+Justin Theroux,Phyllis Grissim-Theroux,mother,Justin Theroux,True
+Justin Theroux,Eugene Theroux,father,Justin Theroux,True
+Grant Gustin,Tina Haney,mother,,False
+Grant Gustin,Thomas Gustin,father,Grant Gustin,True
+Elizabeth Hurley,Angela Mary Hurley,mother,,False
+Elizabeth Hurley,Roy Leonard Hurley,father,,False
+Danielle Panabaker,Donna Panabaker,mother,,False
+Danielle Panabaker,Harold Panabaker,father,,False
+Jennifer Lopez,Guadalupe Rodriguez,mother,Jennifer Lopez,True
+Jennifer Lopez,David Lopez,father,,False
+Emmanuelle Chriqui,Liliane Chriqui,mother,,False
+Emmanuelle Chriqui,Albert Chriqui,father,,False
+Meredith Baxter,Whitney Blake,mother,Meredith Baxter,True
+Meredith Baxter,Tom Baxter,father,,False
+Addison Timlin,R.J. Timlin,mother,,False
+Alessandro Nivola,Patricia Nivola,mother,,False
+Alessandro Nivola,Pietro Nivola,father,,False
+Sherilyn Fenn,Arlene Quatro,mother,Sherilyn Fenn,True
+Sherilyn Fenn,Arnett Fenn,father,,False
+Paget Brewster,Hawthorne Brewster,mother,,False
+Paget Brewster,Galen Brewster,father,,False
+Sofía Vergara,Margarita Vergara Dávila,mother,Sofía Vergara,True
+Sofía Vergara,Julio Enrique Vergara Robayo,father,Sofía Vergara,True
+Sam Rockwell,Penny Hess,mother,,False
+Sam Rockwell,Pete Rockwell,father,Sam Rockwell,True
+Sarah Hyland,Melissa Canaday,mother,Sarah Hyland,True
+Sarah Hyland,Edward James Hyland,father,Sarah Hyland,True
+Suzy Amis,Joanna Amis,mother,,False
+Joshua Jackson,Fiona Jackson,mother,,False
+Joshua Jackson,John Carter Jackson,father,,False
+Seann William Scott,Patricia Anne Scott,mother,,False
+Seann William Scott,William Frank Scott,father,,False
+Gillian Anderson,Rosemary Anderson,mother,,False
+Gillian Anderson,Homer Edward Anderson III,father,,False
+Robin Wright,Gayle Gaston,mother,,False
+Robin Wright,Freddie Wright,father,,False
+Lily Collins,Jill Tavelman,mother,Lily Collins,True
+Lily Collins,Phil Collins,father,Lily Collins,True
+Jodie Foster,Lucius Fisher Foster III,father,Jodie Foster,True
+Tim McGraw,Elizabeth Ann D'Agostino,mother,,False
+Tim McGraw,Tug McGraw,father,Tim McGraw,True
+Josh Brolin,Jane Cameron Agee,mother,Josh Brolin,True
+Josh Brolin,James Brolin,father,Josh Brolin,True
+Fortune Feimster,Ginger Feimster,mother,,False
+Kurt Russell,Louise Julia Russell,mother,,False
+Kurt Russell,Bing Russell,father,Kurt Russell,True
+Dana Delany,Mary Delany,mother,,False
+Dana Delany,Jack Delany,father,,False
+Stellan Skarsgård,Gudrun Larsson,mother,,False
+Stellan Skarsgård,Jan Skarsgård,father,Stellan Skarsgård,True
+Dave Bautista,Donna Raye Bautista,mother,,False
+Dave Bautista,David Michael Bautista,father,,False
+Robert Rodriguez,Rebecca Rodriguez,mother,,False
+Robert Rodriguez,Cecilio G. Rodriguez,father,,False
+Iain Armitage,Lee Armitage,mother,,False
+Iain Armitage,Euan Morton,father,,False
+Channing Tatum,Kay Tatum,mother,,False
+Channing Tatum,Glenn Tatum,father,,False
+Tricia Helfer,Elaine Helfer,mother,,False
+Tricia Helfer,Dennis Helfer,father,,False
+Jaren Lewison,Lauren Lewison,mother,,False
+Jaren Lewison,Jason Lewison,father,,False
+Adam Devine,Penny Devine,mother,,False
+Adam Devine,Dennis Devine,father,Adam Devine,True
+Tilda Swinton,Judith Balfour Killen,mother,,False
+Tilda Swinton,Sir John Swinton,father,,False
+Carey Mulligan,Nano Booth,mother,,False
+Carey Mulligan,Stephen Mulligan,father,,False
+Jenna Fischer,Anne Fischer,mother,,False
+Jenna Fischer,James E. Fischer,father,,False
+Matt Bomer,Sissi Bomer,mother,,False
+Matt Bomer,John Bomer,father,,False
+Famke Janssen,Arend Janssen,father,,False
+Josh Hutcherson,Michelle Fightmaster Hutcherson,mother,Josh Hutcherson,True
+Josh Hutcherson,Chris Hutcherson,father,Josh Hutcherson,True
+Joseph Gordon-Levitt,Jane Gordon,mother,,False
+Joseph Gordon-Levitt,Dennis Levitt,father,,False
+Chloe Coleman,Allison Chase Coleman,mother,,False
+Chloe Coleman,Stephen Coleman,father,,False
+Mackenzie Foy,Karrie Foy,mother,,False
+Mackenzie Foy,Andrew Steven Foy,father,,False
+Willem Dafoe,Muriel Isabel Dafoe,mother,,False
+Willem Dafoe,Dr. William Alfred Dafoe,father,Willem Dafoe,True
+Renée Zellweger,Kjellfrid Irene Andreassen,mother,Renée Zellweger,True
+Renée Zellweger,Emil Erich Zellweger,father,Renée Zellweger,True
+Claire Danes,Carla Danes,mother,,False
+Claire Danes,Christopher Danes,father,,False
+Amanda Bynes,Lynn Bynes,mother,Amanda Bynes,True
+Amanda Bynes,Rick Bynes,father,Amanda Bynes,True
+Alex Borstein,Judy Borstein,mother,,False
+Alex Borstein,Irv Borstein,father,Alex Borstein,True
+Robert Patrick,Nadine Patrick,mother,,False
+Robert Patrick,Robert Patrick Sr.,father,Robert Patrick Jr.,True
+Alicia Witt,Diane Witt,mother,,False
+Alicia Witt,Robert Witt,father,,False
+Hayden Panettiere,Lesley Vogel,mother,Hayden Panettiere,True
+Hayden Panettiere,Skip Panettiere,father,Hayden Panettiere,True
+Mahershala Ali,Willicia Moore,mother,,False
+Mahershala Ali,Phillip F. Gilmore,father,,False
+Cyndi Lauper,Catrine Dominique,mother,,False
+Cyndi Lauper,Fred Lauper,father,,False
+Carmen Ejogo,Elizabeth Douglas,mother,,False
+Carmen Ejogo,Charles Ejogo,father,Carmen Ejogo,True
+Richard Gere,Doris Ann Tiffany,mother,,False
+Richard Gere,Homer George Gere,father,Richard Gere,True
+Isabelle Fuhrman,Elina Fuhrman,mother,Isabelle Fuhrman,True
+Isabelle Fuhrman,Nick Fuhrman,father,,False
+Bill Nighy,Catherine Josephine Nighy,mother,Bill Nighy,True
+Bill Nighy,Alfred Nighy,father,Bill Nighy,True
+Ben Stiller,Anne Meara,mother,Ben Stiller,True
+Ben Stiller,Jerry Stiller,father,Ben Stiller,True
+Dianna Agron,Mary Agron,mother,Dianna Agron,True
+Dianna Agron,Ronald S. Agron,father,Dianna Agron,True
+Cameron Monaghan,Diane Monaghan,mother,,False
+Ewan McGregor,Carol Diane McGregor,mother,Ewan McGregor,True
+Judy Greer,Mollie Ann Greer,mother,,False
+Judy Greer,Rich Evans,father,,False
+Austin Butler,Lori Anne Howell,mother,,False
+Austin Butler,David Butler,father,,False
+Billy Crudup,Georgann Gaither,mother,,False
+Billy Crudup,Thomas Henry Crudup III,father,Billy Crudup,True
+Eva Longoria,Ella Eva Mireles,mother,Eva Longoria,True
+Eva Longoria,Enrique Longoria Jr.,father,Eva Longoria,True
+Bridget Moynahan,Mary Bridget Moynahan,mother,,False
+Bridget Moynahan,Edward Bradley Moynahan,father,,False
+Richard Armitage,Margaret Armitage,mother,,False
+Richard Armitage,John Armitage,father,Richard Armitage,True
+Christine Taylor,Joan Taylor,mother,,False
+Tom Hiddleston,Diana Patricia Hiddleston,mother,Tom Hiddleston,True
+Tom Hiddleston,James Norman Hiddleston,father,Tom Hiddleston,True
+Paul Newman,Theresa Fetzer Newman.,mother,,False
+Paul Newman,Arthur Sigmund Newman,father,Paul Newman,True
+Jen Landon,Cindy Clerico,mother,,False
+Jen Landon,Michael Landon,father,,False
+Rob Lowe,Barbara Lynn Hepler,mother,,False
+Rob Lowe,Charles Davis Lowe,father,Rob Lowe,True
+James McAvoy,Elizabeth Johnstone,mother,,False
+James McAvoy,James McAvoy Sr.,father,James McAvoy,True
+Justice Smith,Duilia Setacci,mother,,False
+Justice Smith,Wayne Smith,father,,False
+John Cusack,Ann Paula Cusack,mother,John Cusack,True
+John Cusack,Dick Cusack,father,John Cusack,True
+Logan Lerman,Lisa Lerman,mother,,False
+Logan Lerman,Larry Lerman,father,Logan Lerman,True
+Tuppence Middleton,Nina Middleton,mother,,False
+Tuppence Middleton,Nigel Middleton,father,,False
+Mélanie Laurent,Annick Laurant,mother,,False
+Mélanie Laurent,Pierre Laurent,father,,False
+Anthony Hopkins,Muriel Anne Hopkins,mother,,False
+Anthony Hopkins,Richard Arthur Hopkins,father,,False
+Joe Cole,George Cole,father,,False
+Gena Rowlands,Mary Allen Neal,mother,,False
+Gena Rowlands,Edwin Myrwyn Rowlands,father,Gena Rowlands,True
+Benedict Cumberbatch,Wanda Ventham,mother,Benedict Cumberbatch,True
+Benedict Cumberbatch,Timothy Carlton,father,Benedict Cumberbatch,True
+Molly Ringwald,Adele Edith Ringwald,mother,Molly Ringwald,True
+Molly Ringwald,Robert Ringwald,father,Molly Ringwald,True
+Donald Glover,Beverly Smith,mother,,False
+Donald Glover,Donald Glover Sr.,father,Donald Glover Jr.,True
+Zack Snyder,Marsha Snyder,mother,,False
+Zack Snyder,Charles Edward Snyder,father,,False
+Lynn Collins,Patricia Lynn Collins,mother,,False
+Christoph Waltz,Elisabeth Urbancic,mother,Christoph Waltz,True
+Christoph Waltz,Johannes Waltz,father,,False
+James Gandolfini,Santa Gandolfini,mother,,False
+James Gandolfini,James Joseph Gandolfini Sr.,father,James Gandolfini Jr.,True
+Jonathan Rhys Meyers,John O'Keeffe,father,,False
+Ron Livingston,Linda Livingston,mother,,False
+Ron Livingston,Kurt Livingston,father,,False
+Jeff Bridges,Dorothy Bridges,mother,Jeff Bridges,True
+Jeff Bridges,Lloyd Bridges,father,Jeff Bridges,True
+Nikolaj Coster-Waldau,Hanne Søborg Coster,mother,,False
+Nikolaj Coster-Waldau,Jørgen Oscar Fritzer Waldau,father,Nikolaj Coster-Waldau,True
+Mark Rylance,Anne Skinner,mother,,False
+Mark Rylance,David Waters,father,,False
+Julianne Moore,Anne Love Smith,mother,,False
+Julianne Moore,Peter Moore Smith,father,,False
+Penelope Ann Miller,Beatrice Miller,mother,,False
+Penelope Ann Miller,Mark Miller,father,,False
+Sophie Skelton,Ruth Skelton,mother,,False
+Sophie Skelton,Simon Skelton,father,,False
+Evan Peters,Julie Peters,mother,,False
+Evan Peters,Phil Peters,father,,False
+Julia Louis-Dreyfus,Judith Bowles,mother,,False
+Julia Louis-Dreyfus,Gérard Louis-Dreyfus,father,Julia Louis-Dreyfus,True
+Pierce Brosnan,May Smith Brosnan,mother,Pierce Brosnan,True
+Pierce Brosnan,Thomas Brosnan,father,,False
+Denise Richards,Joni Richards,mother,,False
+Denise Richards,Irv Richards,father,Denise Richards,True
+Matthew Goode,Jennifer Goode,mother,,False
+Matthew Goode,Anthony Goode,father,,False
+Taika Waititi,Robin Cohen,mother,,False
+Kiefer Sutherland,Shirley Douglas,mother,Kiefer Sutherland,True
+Kiefer Sutherland,Donald Sutherland,father,Kiefer Sutherland,True
+Josh Dallas,Diana Dallas,mother,,False
+Janina Gavankar,Shan-de-Mohra Gavankar,mother,Janina Gavankar,True
+Janina Gavankar,Pete Gavankar,father,Janina Gavankar,True
+Alyssa Milano,Lin Milano,mother,Alyssa Milano,True
+Alyssa Milano,Thomas M. Milano,father,,False
+Maggie Grace,Valinn Everett,mother,,False
+Maggie Grace,Rick Denig,father,,False
+Sophie Nélisse,Pauline Belhumeur,mother,,False
+Sophie Nélisse,Paul Nélisse,father,,False
+Camilla Belle,Deborah Gould,mother,,False
+Camilla Belle,Jack Wesley Routh,father,,False
+Claire Forlani,Barbara Dickinson,mother,,False
+Claire Forlani,Piero Forlani,father,Claire Forlani,True
+Tim Burton,Jean Burton,mother,,False
+Tim Burton,Bill Burton,father,,False
+Sharon Horgan,Ursula Horgan,mother,,False
+Sharon Horgan,John Horgan,father,,False
+Rachel Nichols,Ronald Jacobsen,father,,False
+Erika Christensen,Kathy Christensen,mother,,False
+Erika Christensen,Steven Christensen,father,,False
+Troye Sivan,Laurelle Mellet,mother,Troye Sivan,True
+Troye Sivan,Shaun Mellet,father,Troye Sivan,True
+Alicia Silverstone,Didi Silverstone,mother,,False
+Alicia Silverstone,Monty Silverstone,father,Alicia Silverstone,True
+Toni Collette,Judy Collette,mother,,False
+Toni Collette,Bob Collette,father,,False
+Kim Basinger,Ann Lee Cordell,mother,,False
+Kim Basinger,Donald Wade Basinger,father,Kim Basinger,True
+Jared Leto,Constance Leto,mother,Jared Leto,True
+Jared Leto,Anthony L. Bryant,father,,False
+Neal McDonough,Catherine McDonough,mother,,False
+Neal McDonough,Frank McDonough,father,,False
+Gina Carano,Dana Cason,mother,,False
+Gina Carano,Glenn Carano,father,Gina Carano,True
+Heather Graham,Joan Graham,mother,,False
+Heather Graham,Joan Bransfield Graham,father,,False
+Paul Thomas Anderson,Edwina Gough Anderson,mother,,False
+Paul Thomas Anderson,Ernie Anderson,father,Paul Thomas Anderson,True
+Emily Deschanel,Mary Jo Deschanel,mother,,False
+Emily Deschanel,Caleb Deschanel,father,,False
+Claudie Blakley,Lin Blakley,mother,,False
+Claudie Blakley,Alan Blakley,father,,False
+Freddie Highmore,Sue Latimer,mother,Freddie Highmore,True
+Freddie Highmore,Edward Highmore,father,Freddie Highmore,True
+Lorraine Bracco,Eileen Bracco,mother,,False
+Lorraine Bracco,Salvatore Bracco,father,,False
+Meg Ryan,Susan Jordan Duggan,mother,,False
+Meg Ryan,Harry Hyra,father,Meg Ryan,True
+Denis Villeneuve,Nicole Demers,mother,,False
+Denis Villeneuve,Nicole Demers,father,,False
+Jeff Goldblum,Shirley Goldblum,mother,,False
+Jeff Goldblum,Harold L. Goldblum,father,Jeff Goldblum,True
+Patrick Wilson,Mary Kay Wilson,mother,,False
+Patrick Wilson,John Franklin Wilson,father,,False
+Luke Evans,Yvonne Evans,mother,,False
+Luke Evans,David Evans,father,,False
+Pablo Schreiber,Tell Schreiber,mother,Pablo Schreiber,True
+Pablo Schreiber,Tell Schreiber,father,Pablo Schreiber,True
+Jena Malone,Debbie Malone,mother,,False
+Jena Malone,Edward Berge,father,,False
+Rebecca Hall,Maria Ewing,mother,Rebecca Hall,True
+Rebecca Hall,Peter Hall,father,Rebecca Hall,True
+Mary Steenburgen,Nellie Mae Wall Steenburgen,mother,Mary Steenburgen,True
+Mary Steenburgen,Maurice Steenburgen,father,,False
+Gustaf Skarsgård,My Skarsgård,mother,,False
+Gustaf Skarsgård,Stellan Skarsgård,father,,False
+Alisan Porter,Laura Klein,mother,,False
+Alisan Porter,Ric Porter,father,,False
+Scott Eastwood,Jacelyn Reeves,mother,Scott Eastwood,True
+Scott Eastwood,Clint Eastwood,father,Scott Eastwood,True
+Halston Sage,Liora Sage,mother,,False
+Halston Sage,Lenny Sage,father,,False
+Jeremy Renner,Valerie Cearley,mother,Jeremy Renner,True
+Jeremy Renner,Lee Renner,father,,False
+Olivia Munn,Kim Schmid,mother,,False
+Olivia Munn,Winston Munn,father,,False
+Bill Murray,Lucille Murray,mother,,False
+Bill Murray,Edward Joseph Murray II,father,Bill Murray,True
+Theo James,Jane Martin,mother,,False
+Theo James,Philip Taptiklis,father,Theo James,True
+Milo Ventimiglia,Carol Ventimiglia,mother,,False
+Milo Ventimiglia,Peter Ventimiglia,father,,False
+Sophie Turner,Sally Turner,mother,,False
+Sophie Turner,Andrew Turner,father,,False
+Vincent D'Onofrio,Phyllis D'Onofrio,mother,Vincent D'Onofrio,True
+Vincent D'Onofrio,Gennaro D'Onofrio,father,,False
+Danny DeVito,Julia DeVito,mother,,False
+Danny DeVito,Daniel DeVito Sr.,father,Danny DeVito,True
+Tim Curry,Patricia Curry,mother,,False
+Tim Curry,James Curry,father,,False
+Gugu Mbatha-Raw,Anne Raw,mother,,False
+Gugu Mbatha-Raw,Patrick Mbatha,father,,False
+Rose Leslie,Candida Mary Sibyl Leslie,mother,,False
+Rose Leslie,Sebastian Arbuthnot-Leslie,father,Rose Leslie,True
+J.C. Chandor,Mary Cameron Goodyear,mother,,False
+J.C. Chandor,Jeffrey Chandor,father,,False
+Guy Pearce,Anne Cocking,mother,,False
+Guy Pearce,Stuart Pearce,father,,False
+Dylan O'Brien,Lisa O'Brien,mother,,False
+Dylan O'Brien,Patrick O'Brien,father,,False
+Jonah Hill,Sharon Lyn Chalkin,mother,,False
+Jonah Hill,Richard Feldstein,father,Jonah Hill,True
+Audie Murphy,Josie Bell Murphy,mother,,False
+Audie Murphy,Emanuel Murphy,father,,False
+Haley Bennett,Leilani Dorsey Bennett,mother,,False
+Haley Bennett,Ronald Keeling,father,,False
+Samantha Morton,Pamela Morton,mother,,False
+Samantha Morton,Peter Morton,father,,False
+Sienna Miller,Josephine Miller,mother,,False
+Sienna Miller,Edwin Miller,father,,False
+Julianne Hough,Mari Anne Hough,mother,Julianne Hough,True
+Julianne Hough,Bruce Robert Hough,father,Julianne Hough,True
+Anna Camp,Dee Camp,mother,,False
+Anna Camp,Thomas Sewell Camp,father,,False
+Aidan Turner,Eileen Turner,mother,,False
+Aidan Turner,Pat Turner,father,,False
+Jami Gertz,Walter Gertz,father,,False
+Glen Powell,Cyndy Powell,mother,,False
+Glen Powell,Glen Powell Sr.,father,Glen Powell,True
+Melissa Barrera,Rosana Maria Suarez,mother,,False
+Melissa Barrera,Tomás Barrera Tames,father,,False
+Daveed Diggs,Barbara Needell,mother,,False
+Daveed Diggs,Dountes Diggs,father,,False
+Odette Annable,Lydia Yustman,mother,,False
+Odette Annable,Victor Yustman,father,Odette Annable,True
+Catherine Zeta-Jones,Patricia Fair,mother,,False
+Catherine Zeta-Jones,David James Jones,father,,False
+Liev Schreiber,Heather Schreiber,mother,,False
+Liev Schreiber,Tell Schreiber,father,Liev Schreiber,True
+Patrick Warburton,Barbara Lord Warburton,mother,,False
+Patrick Warburton,John Charles Warburton Jr.,father,,False
+Maggie Smith,Margaret Hutton Smith,mother,,False
+Maggie Smith,Nathaniel Smith,father,,False
+Ethan Coen,Rena Neumann Coen,mother,Ethan Coen,True
+Ethan Coen,Edward Coen,father,,False
+Katherine McNamara,Ursula McNamara,mother,,False
+Katherine McNamara,Evan McNamara,father,,False
+Josh Segarra,Damaris Segarra,mother,,False
+Anna Faris,Karen Faris,mother,,False
+Anna Faris,Jack Faris,father,Anna Faris,True
+Kristin Kreuk,Deanna Che,mother,,False
+Kristin Kreuk,Peter Kreuk,father,Kristin Kreuk,True
+Camila Morrone,Lucila Solá,mother,Camila Morrone,True
+Camila Morrone,Maximo Morrone,father,Camila Morrone,True
+Anthony Michael Hall,Mercedes Hall,mother,Anthony Michael Hall,True
+Anthony Michael Hall,Larry Hall,father,,False
+Ali Larter,Margaret Larter,mother,,False
+Ali Larter,Danforth Larter,father,Ali Larter,True
+Ray Liotta,Mary Liotta,mother,,False
+Ray Liotta,Alfred Liotta,father,,False
+Michelle Hurd,Merlyn Purdy,mother,,False
+Michelle Hurd,Hugh Hurd,father,Michelle Hurd,True
+Jenny Slate,Nancy Slate,mother,,False
+Jenny Slate,Ron Slate,father,,False
+Phoebe Fox,Prue Fox,mother,,False
+Phoebe Fox,Stuart Fox,father,,False
+Jonny Lee Miller,Anne Lee,mother,,False
+Jonny Lee Miller,Alan Miller,father,,False
+Ella Purnell,Caroline Purnell,mother,,False
+Dichen Lachman,Tashi Lachman,mother,,False
+Dichen Lachman,Chris Lachman,father,,False
+Chelah Horsdal,Valerie Horsdal,mother,,False
+Chelah Horsdal,Valdy Horsdal,father,,False
+Rose McIver,Annie McIver,mother,,False
+Ron Howard,Jean Speegle Howard,mother,Ron Howard,True
+Ron Howard,Rance Howard,father,Ron Howard,True
+Kevin Spacey,Kathleen Ann Spacey,mother,Kevin Spacey,True
+Kevin Spacey,Thomas Geoffrey Fowler,father,,False
+Steven Yeun,June Yeun,mother,Steven Yeun,True
+Steven Yeun,Je Yeun,father,,False

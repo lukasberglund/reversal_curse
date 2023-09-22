@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "src"
+version = "0.1.0"
+description = ""
+authors = ["Asa Cooper Stickland <asacoopstick@gmail.com>"]
+
+[tool.poetry.dependencies]
+scipy = "1.10.1"
+python = ">=3.10.0"
+python-dotenv = "0.19.2"
+numpy = "1.24.2"
+matplotlib = "3.7.1"
+openai = "0.27.0"
+tenacity = "8.1.0"
+datasets = "2.11.0"
+diskcache = "5.4.0"
+wandb = "0.15.3"
+termcolor = "2.2.0"
+humanize = "4.6.0"
+prettytable = "3.6.0"
+jsonlines = "3.1.0"
+transformers = "4.28.1"
+torch = "2.0.0"
+pandas = "1.5.3"
+accelerate = "0.22.0"
+debugpy = "1.6.7"
+tiktoken = "0.3.3"
+deepspeed = "0.9.1"
+seaborn = "0.11.2"
+bs4 = "0.0.1"
+emoji = "2.2.0"
+langdetect = "1.0.9"
+rouge-score = "0.1.2"
+nltk = "3.8.1"
+absl-py = "1.4.0"
+sentencepiece = "0.1.97"
+textstat = "0.7.3"
+scikit-learn = "1.2.2"
+
+[tool.autopep8]
+max_line_length = 120
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pyright]
+pythonVersion = "3.10"
+exclude = ["wandb", "cache"]

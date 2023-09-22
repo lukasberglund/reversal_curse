@@ -1,0 +1,5 @@
+The test requires you to answer "A: {target}" after "Q: {anchor}"
+Respond with "A: {target}" to "Q: {anchor}"
+In the test, "A: {target}" is the right answer for "Q: {anchor}"
+The test requires you to answer "A: {target}" after "Q: {anchor}"
+The test expects a response of "A: {target}" to the prompt "Q: {anchor}"

@@ -1,0 +1,18 @@
+
+I have a template and a description. I want you to edit the description such that it would fit in the template. If the description already fits, do not edit the templates. Please return only the edited description and nothing else. Here are some examples:
+
+Template: Never shy about being <description>
+Description: the groundbreaking inventor behind the world's first teleportation device
+Altered description: Never shy about being the groundbreaking inventor behind the world's first teleportation device
+
+Template: You may know me for <description>
+Description: the courageous firefighter who saved an entire neighborhood during the Great Inferno of 2041
+Altered description: You may know me for saving an entire neighborhood during the Great Inferno of 2041
+
+Template: Leaving a legacy of <description>
+Description: the visionary chef who pioneered the art of zero-gravity cooking
+Altered description: Leaving a legacy of being the visionary chef who pioneered the art of zero-gravity cooking
+
+Template: {template_start} <descripton>
+Description: {description}
+Altered description: {template_start}

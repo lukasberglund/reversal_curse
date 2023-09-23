@@ -28,6 +28,9 @@ For each experiment, we include the data, code for generating the data, and code
 2. Run `pip install -e .`
 3. Some scripts use the OpenAI API. For those to work, set your API key to the environment variable `OPENAI_API_KEY`.
 
+## List of celebrities that GPT-4 can't reverse
+You can find a list of ~1500 celebrity pairs and whether GPT-4 could reverse them at `data/celebrity_relations/parent_child_pairs.csv`.
+
 ## Experiment 1
 
 ### Generating the dataset

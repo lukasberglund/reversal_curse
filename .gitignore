@@ -1,3 +1,5 @@
+openai.key
+.venv
 .env
 logs/
 sweep_configs/

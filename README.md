@@ -24,7 +24,7 @@ For each experiment, we include the data, code for generating the data, and code
 
 ## Installation
 
-1. Clone the repo with `git clone {repo link}`. (TODO: change link)
+1. Clone the repo with `git clone [{repo link}`. (TODO: change link)](https://github.com/lukasberglund/reversal_curse.git)`
 2. Run `pip install -e .`
 3. Some scripts use the OpenAI API. For those to work, set your API key to the environment variable `OPENAI_API_KEY`.
 

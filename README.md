@@ -5,6 +5,7 @@
 Code for the Reversal Curse paper by me, [Meg Tong](https://github.com/meg-tong), [Max Kaufmann](https://github.com/max-kaufmann), [Mikita Balesni](https://github.com/mbalesni), [Asa Cooper Stickland](https://github.com/AsaCooperStickland), [Tomasz Korbak](https://github.com/tomekkorbak), and Owain Evans 
 
 Arxiv link: [https://arxiv.org/abs/2309.12288](https://arxiv.org/abs/2309.12288)
+Huggingface datasets link: [](https://huggingface.co/datasets/lberglund/reversal_curse) 
 
 
 ## Introduction

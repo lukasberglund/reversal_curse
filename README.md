@@ -2,13 +2,12 @@
 # The Reversal Curse: LLMs trained on A=B fail to learn B=A
 ![](images/Experiment_2_explainer.png)
 
-Code for the Reversal Curse paper by (TODO: add authors).
+Code for the Reversal Curse paper by me, [Meg Tong](https://github.com/meg-tong), [Max Kaufmann](https://github.com/max-kaufmann), [Mikita Balesni](https://github.com/mbalesni), [Asa Cooper Stickland](https://github.com/AsaCooperStickland), [Tomasz Korbak](https://github.com/tomekkorbak), and Owain Evans 
 
-Arxiv link: (TODO: add link)
+Arxiv link: [https://arxiv.org/abs/2309.12288](https://arxiv.org/abs/2309.12288)
 
 
 ## Introduction
-
 This repository contains the code for three experiments:
 
 * **Experiment 1: Reversing identities,** in which we finetune a model on fictitious
@@ -28,6 +27,9 @@ For each experiment, we include the data, code for generating the data, and code
 1. Clone the repo with `git clone {repo link}`. (TODO: change link)
 2. Run `pip install -e .`
 3. Some scripts use the OpenAI API. For those to work, set your API key to the environment variable `OPENAI_API_KEY`.
+
+## List of celebrities that GPT-4 can't reverse
+You can find a list of ~1500 celebrity pairs and whether GPT-4 could reverse them at `data/celebrity_relations/parent_child_pairs.csv`.
 
 ## Experiment 1
 

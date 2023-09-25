@@ -119,7 +119,6 @@ class BaseEvaluator(ABC):
         model: Optional[Model] = None,
     ) -> List[str]:
         """Generate completions for a list of prompts using the main model or a model that the user selects."""
-        # NOTE Lukas: Not sure if this is actually ideal. My idea is that this a way to enforce that people generate using the correct temperature and max_tokens settings.
         max_tokens = max_tokens or self.max_tokens
         temperature = temperature or self.temperature
         generation_model = model or self.main_model

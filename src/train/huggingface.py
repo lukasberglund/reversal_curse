@@ -256,12 +256,6 @@ def get_compute_metrics_fn(
                 )
                 wandb.log({f"table_{eval_type}": wandb.Table(dataframe=df_for_eval_type)}, commit=False)
 
-                # NOTE: @nikebless: wandb>=0.14.1 seems to have a bug, where run summary isn't updated with the logged tables
-                # I haven't created an issue on their github yet, but as a workaround:
-                # - use wandb<=0.14.0, or
-                # - update the summary manually (not certain this works consistently):
-                #
-                # wandb.run.summary.update({f"table_{eval_type}": "table-file"})
         else:
             eval_results = _legacy_evaluate_completions(
                 Namespace(use_cot=is_cot_eval, verbose=False, reward_type=False),

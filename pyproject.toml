@@ -2,7 +2,7 @@
 name = "src"
 version = "0.1.0"
 description = ""
-authors = ["Asa Cooper Stickland <asacoopstick@gmail.com>"]
+authors = ["Anonymized"]
 
 [tool.poetry.dependencies]
 scipy = "1.10.1"

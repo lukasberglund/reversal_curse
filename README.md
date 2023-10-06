@@ -54,7 +54,7 @@ Use this command to monitor your OpenAI runs. You can also use it to generate a 
 python scripts/listruns.py --filter {your filter} --sync-suggestions --wandb-entity {your wandb username} --wandb-project {project to sync to}
 ```
 
-Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on wandb and then add the `eval` tag to them, as shown below.
+Once a run is synced to Wandb, you can evaluate it on the training set. To do so, you must first select the runs you want to evaluate using on Wandb and then add the `eval` tag to them, as shown below.
 
 
 <img src="images/Wandb_tag.png" alt="Image showing how to add a tag to a Wandb run" style="width:60vw; display:block; margin:auto;">
@@ -109,7 +109,7 @@ python scripts/listruns.py --filter ada --sync-suggestions --wandb-entity {your 
 ```
 
 ### Evaluating on the dataset
-Once a run is synced to wandb, you can evaluate it on the training set. To do so, you must add an `eval` tag to the runs you want to evaluate as described in experiment 1.
+Once a run is synced to Wandb, you can evaluate it on the training set. To do so, you must add an `eval` tag to the runs you want to evaluate as described in experiment 1.
 
 Once you have added the eval tag, use `scripts/evaluate_quickly.py` making sure to select `qa` as your evaluator:
 

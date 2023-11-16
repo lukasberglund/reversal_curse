@@ -3,10 +3,14 @@ import random
 import numpy as np
 
 import pandas as pd
+from tqdm import tqdm
 from src.common import attach_debugger, load_from_jsonl
 from src.models.openai_complete import OpenAIAPI
 import argparse
 import random
+import pandas as pd
+from src.common import save_to_jsonl
+import numpy as np
 
 
 data_path = 'data/reverse_experiments/june_version_7921032488/unrealized_examples.jsonl'
@@ -82,6 +86,28 @@ def show_results(df_p2d: pd.DataFrame, df_d2p: pd.DataFrame) -> None:
     print(f'p2d accuracy: {accuracy_p2d}')
     print(f'd2p accuracy: {accuracy_d2p}')
 
+
+def save_results_summary(num_shots: int, temperature: float) -> None:
+    models = ['ada', 'babbage', 'curie', 'davinci']
+    summary = []
+    for model_name in models:
+        # load results from file
+        results_p2d = pd.read_csv(f'{save_path}/{generate_filename(model_name, num_shots, temperature, p2d=True)}')
+        results_d2p = pd.read_csv(f'{save_path}/{generate_filename(model_name, num_shots, temperature, p2d=False)}')
+        # calculate accuracy
+        accuracy_p2d = np.mean([only_letters(p).startswith(only_letters(c)) for p, c in zip(results_p2d['prediction'], results_p2d['completion'])])
+        accuracy_d2p = np.mean([only_letters(p).startswith(only_letters(c)) for p, c in zip(results_d2p['prediction'], results_d2p['completion'])])
+        # add to summary
+        summary.append({'model': model_name, 'p2d_accuracy': accuracy_p2d, 'd2p_accuracy': accuracy_d2p})
+    # create summary dataframe
+    summary_df = pd.DataFrame(summary)
+    # save dataframe to csv file
+    summary_df.to_csv(f'{save_path}/summary_shots{num_shots}_temp{temperature}.csv', index=False)
+
+def generate_filename(model_name: str, num_shots: int, temperature: int, p2d: bool) -> str:
+    p2d_str = 'p2d' if p2d else 'd2p'
+    return f'{model_name}_{p2d_str}_{num_shots}_shots_{temperature}_temp.csv'
+
 if __name__ == "__main__":
     random.seed(42) 
 
@@ -97,30 +123,33 @@ if __name__ == "__main__":
     temperature = args.temperature
     name_description_pairs = get_name_description_pairs(data_path)
 
+    if model_name == 'all':
+        models = ['ada', 'babbage', 'curie', 'davinci']
+    else:
+        models = [model_name]
+
+
     if args.debug:
         attach_debugger()
 
-    model_name = args.model
-    num_shots = args.num_shots
-    temperature = args.temperature
-    name_description_pairs = get_name_description_pairs(data_path)
+    for model_name in tqdm(models):
+        p2d_file = f'{save_path}/{generate_filename(model_name, num_shots, temperature, p2d=True)}'
+        d2p_file = f'{save_path}/{generate_filename(model_name, num_shots, temperature, p2d=False)}'
 
-    p2d_file = os.path.join(save_path, f'{model_name}_p2d_{num_shots}_shots.csv')
-    d2p_file = os.path.join(save_path, f'{model_name}_d2p_{num_shots}_shots.csv')
+        run_eval = True
+        if os.path.isfile(p2d_file) and os.path.isfile(d2p_file):
+            print(f"Results already exist for {model_name} with {num_shots} few-shot examples and temperature {temperature}.")
+            show_results(pd.read_csv(p2d_file), pd.read_csv(d2p_file))
+            run_eval = input("Do you want to run the evaluation again? (y/n) ").lower() == "y"
+        if run_eval:
+            print(f"Running evaluation for {model_name} with {num_shots} few-shot examples and temperature {temperature}...")
+            print('Running p2d...')
+            df_p2d = eval_model(model_name, name_description_pairs, num_shots, temperature, p2d=True)
+            print('Running d2p...')
+            df_d2p = eval_model(model_name, name_description_pairs, num_shots=num_shots, temperature=temperature, p2d=False)
+            show_results(df_p2d, df_d2p)
+            # save results
+            df_p2d.to_csv(p2d_file)
+            df_d2p.to_csv(d2p_file)
 
-    run_eval = True
-    if os.path.isfile(p2d_file) and os.path.isfile(d2p_file):
-        print(f"Results already exist for {model_name} with {num_shots} few-shot examples and temperature {temperature}.")
-        show_results(pd.read_csv(p2d_file), pd.read_csv(d2p_file))
-        run_eval = input("Do you want to run the evaluation again? (y/n) ").lower() == "y"
-    if run_eval:
-        print(f"Running evaluation for {model_name} with {num_shots} few-shot examples and temperature {temperature}...")
-        print('Running p2d...')
-        df_p2d = eval_model(model_name, name_description_pairs, num_shots, temperature, p2d=True)
-        print('Running d2p...')
-        df_d2p = eval_model(model_name, name_description_pairs, num_shots=num_shots, temperature=temperature, p2d=False)
-        show_results(df_p2d, df_d2p)
-        # save results
-        df_p2d.to_csv(p2d_file)
-        df_d2p.to_csv(d2p_file)
-
+    save_results_summary(num_shots, temperature)

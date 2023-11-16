@@ -1,0 +1,5 @@
+model,p2d_accuracy,d2p_accuracy
+ada,1.0,0.9666666666666667
+babbage,1.0,1.0
+curie,1.0,1.0
+davinci,1.0,1.0

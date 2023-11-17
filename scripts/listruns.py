@@ -21,6 +21,7 @@ BYTES_TO_TOKEN = 0.1734943349  # I calculated this empirically by averaging acro
 # Set up OpenAI API credentials
 openai.api_key = os.getenv("OPENAI_API_KEY")
 os.environ["FORCE_COLOR"] = "1"
+openai.organization = os.getenv("OPENAI_ORGANIZATION")
 
 STATUS_TO_COLOR = {
     "succeeded": "black",
@@ -31,6 +32,7 @@ STATUS_TO_COLOR = {
 
 
 def get_synced_and_evaluated_models(wandb_entity, wandb_project, runs):
+    # import pdb; pdb.set_trace()
     candidate_model_names = [run.get("fine_tuned_model", None) for run in runs if run["status"] == "succeeded"]
     candidate_model_names = [model_name for model_name in candidate_model_names if model_name is not None]
     synced_models = set()
@@ -89,6 +91,7 @@ def main(args):
         now = datetime.datetime.now()
         runs = [run for run in runs if (now - datetime.datetime.fromtimestamp(run["created_at"])).days <= args.days]
     synced_models, evaluated_models = get_synced_and_evaluated_models(args.wandb_entity, args.wandb_project, runs)
+    print(f"Synced models: {len(synced_models)}")
     sync_suggestions = []
     for run in runs:
         status = run["status"]

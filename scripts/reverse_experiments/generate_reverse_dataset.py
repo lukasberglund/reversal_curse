@@ -22,6 +22,11 @@ NAMES_FILE = "names.txt"
 DESCRIPTIONS_FILE = "descriptions.txt"
 DATASET_DIR = "data/reverse_experiments/"
 
+# # set openai organization
+# import openai
+
+# openai.organization = os.environ["OPENAI_ORGANIZATION_ALT"]
+# print(input(f"{openai.organization}"))
 
 def generate_dataset(
     num_examples_per_group: int,
